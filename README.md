@@ -3,7 +3,7 @@
 
 
 
-### 引入
+## 引入
 
 ```html
 <!-- import Vue -->
@@ -16,7 +16,7 @@
 <script src="dist/form-builder.min.js"></script>
 ```
 
-### 使用
+## 使用
 
 ```js
 let rules = [],el = document.body;
@@ -31,46 +31,45 @@ new Vue({
 
 #### $formBuilder 参数
 
-```js
-rules // 生成表单规则 [inputRule,selectRule,...]
-el // 插入的Dom节点 默认为 document.body
-```
+`rules` 表单 [规则](#rule-规则)  [inputRule,selectRule,...]
+
+`el`  :插入的Dom节点 默认为 document.body
 
 
 
 #### $fb 实例方法
 
-**获得表单数据**
+获得表单数据
 
 `$fb.formData()`
 
-**修改表单数据**
+修改表单数据
 
 `$fb.changeField(field,value)`
 
-**表单验证**
+表单验证
 
 `$fb.validate(successFn,errorFn)`
 
-**表单验证指定字段**
+表单验证指定字段
 
 `$fb.validateField(field,errorFn)`
 
-**重置表单**
+重置表单
 
 `$fb.resetFields()`
 
-**移除表单**
+移除表单
 
 `$fb.remove()`
 
-**获得表单所有字段**
+获得表单所有字段
 
 `$fb.fields()`
 
 
 
-### rules 规则:
+## rules 规则:
 
 #### hidden 隐藏字段
 
