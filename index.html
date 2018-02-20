@@ -13,12 +13,13 @@
 <div id="app">
 </div>
 <script>
+    Vue.use(formBuilder);
     new Vue({
         el:'#app',
         data:{
         },
         mounted:function(){
-            this.$formBuilder(mock);
+            $fb = this.$formBuilder(mock);
         }
     });
 </script>

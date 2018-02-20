@@ -1,3 +1,4 @@
+/*! formBuilder v1.0.0 | github https://github.com/xaboy/form-builder.git */
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -205,7 +206,7 @@ formBuilder.default = {
     }
 };
 
-var formBuilderStyle = '.form-builder-upload .form-builder-upload-list{display: inline-block;width: 60px;height: 60px;text-align: center;line-height: 60px;border: 1px solid transparent;border-radius: 4px;overflow: hidden;background: #fff;position: relative;box-shadow: 0 1px 1px rgba(0,0,0,.2);margin-right: 4px;}' + '.form-builder-upload .form-builder-upload-list img{width:100%;height:100%;display:block;}' + '.form-builder-upload .ivu-upload{display: inline-block;}' + '.form-builder-upload .ivu-upload .form-builder-upload-btn{ width: 58px;height: 58px;line-height: 58px;}' + '.form-builder-upload .ivu-upload .form-builder-upload-btn i{font-size: 20px;}' + '.form-builder-upload  .form-upload-list-cover{ display: none; position: absolute; top: 0; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,.6); }' + '.form-builder-upload  .form-upload-list-cover i{ color: #fff; font-size: 20px; cursor: pointer; margin: 0 2px; }' + '.form-builder-upload .form-builder-upload-list:hover .form-upload-list-cover{ display: block; }';
+var formBuilderStyle = '.form-builder-upload .form-builder-upload-list{display: inline-block;width: 60px;height: 60px;text-align: center;line-height: 60px;border: 1px solid transparent;border-radius: 4px;overflow: hidden;background: #fff;position: relative;box-shadow: 0 1px 1px rgba(0,0,0,.2);margin-right: 4px;}' + '.form-builder-upload .form-builder-upload-list img{width:100%;height:100%;display:block;}' + '.form-builder-upload .ivu-upload{display: inline-block;}' + '.form-builder-upload .ivu-upload .form-builder-upload-btn{ width: 58px;height: 58px;line-height: 58px;}' + '.form-builder-upload .ivu-upload .form-builder-upload-btn i{font-size: 20px;}' + '.form-builder-upload  .form-upload-list-cover{ display: none; position: absolute; top: 0; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,.6); }' + '.form-builder-upload  .form-upload-list-cover i{ color: #fff; font-size: 20px; cursor: pointer; margin: 0 2px; }' + '.form-builder-upload .form-builder-upload-list:hover .form-upload-list-cover{ display: block; }' + '.form-builder-upload .ivu-upload-list-file{ display: inline-block;float: left; }' + '.form-builder-upload .ivu-upload-list{ position: absolute;left: 0; }' + '.form-builder-upload .ivu-upload-select .form-builder-upload-btn{ background: #fff;border: 1px dashed #dddee1;border-radius: 4px;text-align: center;cursor: pointer;position: relative;overflow: hidden;transition: border-color .2s ease; }';
 
 formBuilder.formBuilderSetStyle = function () {
     if (document.getElementById(formBuilderStyleElId) !== null) return;
@@ -250,7 +251,7 @@ formBuilder.prototype = {
             return rule.field !== undefined;
         }).map(function (rule) {
             rule.props === undefined && (rule.props = {});
-            rule.type = rule.type === undefined ? 'text' : rule.type.toLowerCase();
+            rule.type = rule.type === undefined ? 'input' : rule.type.toLowerCase();
             var parseValue = void 0;
             if (rule.type !== 'hidden') {
                 _this2._data.rules[rule.field] = {
@@ -261,7 +262,12 @@ formBuilder.prototype = {
                     props: rule.props || {}
                 };
                 _this2._data.validate[rule.field] = rule.validate === undefined ? [] : (0, _util.isArray)(rule.validate) ? rule.validate : [rule.validate];
-                if (rule.type === 'switch') _this2._data.rules[rule.field]['slot'] = rule.slot === undefined ? {} : rule.slot;else if (_datePicker.indexOf(rule.type) !== -1) {
+                if (rule.type === 'switch') {
+                    _this2._data.rules[rule.field]['slot'] = rule.slot === undefined ? {} : rule.slot;
+                    parseValue = rule.value;
+                } else if (rule.type === 'select' && rule.props && rule.props.multiple === true) {
+                    parseValue = rule.value === undefined || rule.value === '' ? [] : (0, _util.isArray)(rule.value) ? rule.value : [rule.value];
+                } else if (_datePicker.indexOf(rule.type) !== -1) {
                     parseValue = _formBuilderRender2.default.tidyDateInput(rule, rule.value);
                 } else if (_checkedType.indexOf(rule.type) !== -1) {
                     parseValue = _formBuilderRender2.default.tidyCheckedInput(rule, rule.value);
@@ -269,7 +275,7 @@ formBuilder.prototype = {
                     parseValue = parseFloat(rule.value);
                 } else if (rule.type === 'upload') {
                     parseValue = (0, _util.isArray)(rule.value) ? rule.value : [rule.value];
-                } else parseValue = rule.value.toString();
+                } else parseValue = rule.value;
             } else parseValue = rule.value;
             _this2._data.formData[rule.field] = parseValue;
         });
@@ -317,9 +323,13 @@ formBuilder.prototype = {
                     return _formBuilderRender2.default.parseData(this.formData, _this.rules());
                 },
                 _api: function _api() {
+                    var _this4 = this;
+
                     return {
-                        formData: this.parseData,
-                        change: function change(field, value) {
+                        formData: function formData() {
+                            return _this4.parseData();
+                        },
+                        changeField: function changeField(field, value) {
                             var rule = _this._data.rules[field];
                             if (rule !== undefined) {
                                 if (_datePicker.indexOf(rule.type) !== -1) {
@@ -330,7 +340,7 @@ formBuilder.prototype = {
                                     value = parseFloat(value);
                                 } else if (rule.type === 'upload') {
                                     value = (0, _util.isArray)(value) ? value : [value];
-                                } else value = value.toString();
+                                }
                             }
                             _this.vm.$set(_this.vm.formData, field, value);
                         },
@@ -342,8 +352,16 @@ formBuilder.prototype = {
                         validateField: function validateField(field, errorFn) {
                             _this.vm.$refs.formBuilder.validateField(field, errorFn);
                         },
-                        resetField: function resetField() {
+                        resetFields: function resetFields() {
                             _this.vm.$refs.formBuilder.resetFields();
+                        },
+                        remove: function remove() {
+                            _this.vm.$el.remove();
+                            _this.vm.$destroy();
+                        },
+
+                        fields: function fields() {
+                            return _this.field();
                         }
                     };
                 }
@@ -432,13 +450,13 @@ formBuilderRender.parseData = function (formData, rules) {
                 if (Array.isArray(value)) {
                     parseValue = [];
                     value.map(function (value) {
-                        rule.options.map(function (v, k) {
-                            v.props.label === value && parseValue.push(v.props.value);
+                        rule.options.map(function (option, k) {
+                            option.label === value && parseValue.push(option.value);
                         });
                     });
                 } else {
-                    rule.options.map(function (v, k) {
-                        v.props.label === value && (parseValue = v.props.value);
+                    rule.options.map(function (option, k) {
+                        option.label === value && (parseValue = option.value);
                     });
                 }
             } else parseValue = value;
@@ -451,7 +469,7 @@ formBuilderRender.parseData = function (formData, rules) {
 
 formBuilderRender.tidyDateInput = function (rule, value) {
     if (_datePickerType.indexOf(rule.props.type) !== -1) {
-        Array.isArray(value) || (rule.value = ['', '']);
+        Array.isArray(value) || (value = ['', '']);
         return value.map(function (time) {
             return time === '' ? '' : timeStampToDate(time);
         });
@@ -465,12 +483,12 @@ formBuilderRender.tidyCheckedInput = function (rule, value) {
         parseValue = [];
         value.map(function (val) {
             rule.options.map(function (option) {
-                option.props.value === val && parseValue.push(option.props.label);
+                option.value === val && parseValue.push(option.label);
             });
         });
     } else {
         rule.options.map(function (option, k) {
-            option.props.value === value && (parseValue = option.props.label);
+            option.value === value && (parseValue = option.label);
         });
     }
     return parseValue;
@@ -516,7 +534,7 @@ formBuilderRender.prototype = {
         var t = this.inputProps(rule);
         return this.cvm.radioGroup(t.get(), function () {
             return rule.options.map(function (option) {
-                return _this2.cvm.radio({ props: option.props });
+                return _this2.cvm.radio({ props: option });
             });
         });
     },
@@ -526,7 +544,7 @@ formBuilderRender.prototype = {
         var t = this.inputProps(rule);
         return this.cvm.checkboxGroup(t.get(), function () {
             return rule.options.map(function (option) {
-                return _this3.cvm.checkbox({ props: option.props });
+                return _this3.cvm.checkbox({ props: option });
             });
         });
     },
@@ -535,7 +553,7 @@ formBuilderRender.prototype = {
 
         var t = this.inputProps(rule);
         return this.cvm.select(t.get(), rule.options.map(function (option) {
-            return _this4.cvm.option({ props: option.props });
+            return _this4.cvm.option({ props: option });
         }));
     },
     makeSwitch: function makeSwitch(rule) {
@@ -568,17 +586,47 @@ formBuilderRender.prototype = {
 
         var options = this.options,
             data = _props2.default.init().props(rule.props).props({
-            'value': this.getInputValue(rule.field),
-            'before-upload': options.upload.beforeUpload,
-            'on-progress': options.upload.onProgress,
-            'on-success': function onSuccess(response, file, fileList) {
-                options.upload.onSuccess(_this5.getInputValue(rule.field).push, response, file, fileList);
+            'beforeUpload': function beforeUpload() {
+                var _options$upload, _rule$props;
+
+                rule.props.beforeUpload === undefined ? (_options$upload = options.upload).beforeUpload.apply(_options$upload, arguments) : (_rule$props = rule.props).beforeUpload.apply(_rule$props, arguments);
             },
-            'on-preview': options.upload.onPreview,
-            'on-remove': options.upload.onRemove,
-            'on-format-error': options.upload.onFormatError,
-            'on-exceeded-size': options.upload.onExceededSize,
-            'on-error': options.upload.onError
+            'onProgress': function onProgress() {
+                var _options$upload2, _rule$props2;
+
+                rule.props.onProgress === undefined ? (_options$upload2 = options.upload).onProgress.apply(_options$upload2, arguments) : (_rule$props2 = rule.props).onProgress.apply(_rule$props2, arguments);
+            },
+            'onSuccess': function onSuccess(response, file, fileList) {
+                var push = function push(filePath) {
+                    _this5.getInputValue(rule.field).push(filePath);
+                };
+                rule.props.onSuccess === undefined ? options.upload.onSuccess(push, response, file, fileList) : rule.props.onSuccess(push, response, file, fileList);
+            },
+            'onPreview': function onPreview() {
+                var _options$upload3, _rule$props3;
+
+                rule.props.onPreview === undefined ? (_options$upload3 = options.upload).onPreview.apply(_options$upload3, arguments) : (_rule$props3 = rule.props).onPreview.apply(_rule$props3, arguments);
+            },
+            'onRemove': function onRemove() {
+                var _options$upload4, _rule$props4;
+
+                rule.props.onRemove === undefined ? (_options$upload4 = options.upload).onRemove.apply(_options$upload4, arguments) : (_rule$props4 = rule.props).onRemove.apply(_rule$props4, arguments);
+            },
+            'onFormatError': function onFormatError() {
+                var _options$upload5, _rule$props5;
+
+                rule.props.onFormatError === undefined ? (_options$upload5 = options.upload).onFormatError.apply(_options$upload5, arguments) : (_rule$props5 = rule.props).onFormatError.apply(_rule$props5, arguments);
+            },
+            'onExceededSize': function onExceededSize() {
+                var _options$upload6, _rule$props6;
+
+                rule.props.onExceededSize === undefined ? (_options$upload6 = options.upload).onExceededSize.apply(_options$upload6, arguments) : (_rule$props6 = rule.props).onExceededSize.apply(_rule$props6, arguments);
+            },
+            'onError': function onError() {
+                var _options$upload7, _rule$props7;
+
+                rule.props.onError === undefined ? (_options$upload7 = options.upload).onError.apply(_options$upload7, arguments) : (_rule$props7 = rule.props).onError.apply(_rule$props7, arguments);
+            }
         }).get();
         return function () {
             var render = [],
@@ -638,7 +686,7 @@ formBuilderRender.prototype = {
     getInputValue: function getInputValue(field) {
         return this.vm.formData[field];
     },
-    text: function text(rule) {
+    input: function input(rule) {
         return this.makeInput(rule);
     },
     radio: function radio(rule) {

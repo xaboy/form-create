@@ -57,7 +57,10 @@ const formBuilderStyle = '.form-builder-upload .form-builder-upload-list{display
     '.form-builder-upload .ivu-upload .form-builder-upload-btn i{font-size: 20px;}' +
     '.form-builder-upload  .form-upload-list-cover{ display: none; position: absolute; top: 0; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,.6); }' +
     '.form-builder-upload  .form-upload-list-cover i{ color: #fff; font-size: 20px; cursor: pointer; margin: 0 2px; }' +
-    '.form-builder-upload .form-builder-upload-list:hover .form-upload-list-cover{ display: block; }';
+    '.form-builder-upload .form-builder-upload-list:hover .form-upload-list-cover{ display: block; }' +
+    '.form-builder-upload .ivu-upload-list-file{ display: inline-block;float: left; }'+
+    '.form-builder-upload .ivu-upload-list{ position: absolute;left: 0; }'+
+    '.form-builder-upload .ivu-upload-select .form-builder-upload-btn{ background: #fff;border: 1px dashed #dddee1;border-radius: 4px;text-align: center;cursor: pointer;position: relative;overflow: hidden;transition: border-color .2s ease; }';
 
 
 formBuilder.formBuilderSetStyle = function () {
@@ -95,7 +98,7 @@ formBuilder.prototype = {
         this.options = assign({},formBuilder.default.options);
         this._data.original.filter((rule)=>rule.field !== undefined).map((rule)=> {
             rule.props === undefined && (rule.props = {});
-            rule.type = rule.type === undefined ? 'text' : rule.type.toLowerCase();
+            rule.type = rule.type === undefined ? 'input' : rule.type.toLowerCase();
             let parseValue;
             if(rule.type !== 'hidden'){
                 this._data.rules[rule.field] = {
@@ -110,9 +113,16 @@ formBuilder.prototype = {
                     : (isArray(rule.validate)
                         ? rule.validate
                         : [rule.validate]);
-                if(rule.type === 'switch')
-                    this._data.rules[rule.field]['slot'] = rule.slot === undefined  ? {} : rule.slot;
-                else if (_datePicker.indexOf(rule.type) !== -1){
+                if(rule.type === 'switch') {
+                    this._data.rules[rule.field]['slot'] = rule.slot === undefined ? {} : rule.slot;
+                    parseValue = rule.value;
+                }else if(rule.type === 'select' && rule.props && rule.props.multiple === true){
+                    parseValue = rule.value === undefined || rule.value === ''
+                        ? []
+                        : (isArray(rule.value)
+                            ? rule.value
+                            : [rule.value]);
+                } else if (_datePicker.indexOf(rule.type) !== -1){
                     parseValue = formBuilderRender.tidyDateInput(rule,rule.value);
                 }else if(_checkedType.indexOf(rule.type) !== -1){
                     parseValue = formBuilderRender.tidyCheckedInput(rule,rule.value);
@@ -121,7 +131,7 @@ formBuilder.prototype = {
                 }else if(rule.type === 'upload'){
                     parseValue = isArray(rule.value) ? rule.value : [rule.value];
                 }else
-                    parseValue = rule.value.toString();
+                    parseValue = rule.value;
             }else
                 parseValue = rule.value;
             this._data.formData[rule.field] = parseValue;
@@ -168,8 +178,8 @@ formBuilder.prototype = {
                 },
                 _api:function () {
                     return {
-                        formData : this.parseData,
-                        change(field,value){
+                        formData : ()=>this.parseData(),
+                        changeField(field,value){
                             let rule = _this._data.rules[field];
                             if(rule !== undefined) {
                                 if (_datePicker.indexOf(rule.type) !== -1) {
@@ -180,8 +190,7 @@ formBuilder.prototype = {
                                     value = parseFloat(value);
                                 }else if(rule.type === 'upload'){
                                     value = isArray(value) ? value : [value];
-                                }else
-                                    value = value.toString();
+                                }
                             }
                             _this.vm.$set(_this.vm.formData,field,value);
                         },
@@ -193,9 +202,14 @@ formBuilder.prototype = {
                         validateField(field,errorFn){
                             _this.vm.$refs.formBuilder.validateField(field,errorFn);
                         },
-                        resetField(){
+                        resetFields(){
                             _this.vm.$refs.formBuilder.resetFields();
-                        }
+                        },
+                        remove(){
+                            _this.vm.$el.remove();
+                            _this.vm.$destroy();
+                        },
+                        fields:()=>_this.field()
                     };
                 }
             },

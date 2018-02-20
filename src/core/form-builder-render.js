@@ -38,13 +38,13 @@ formBuilderRender.parseData = (formData,rules) =>{
                     if(Array.isArray(value)){
                         parseValue = [];
                         value.map((value)=>{
-                            rule.options.map((v,k)=>{
-                                v.props.label === value && (parseValue.push(v.props.value));
+                            rule.options.map((option,k)=>{
+                                option.label === value && (parseValue.push(option.value));
                             });
                         });
                     }else{
-                        rule.options.map((v,k)=>{
-                            v.props.label === value && (parseValue = v.props.value);
+                        rule.options.map((option,k)=>{
+                            option.label === value && (parseValue = option.value);
                         });
                     }
                 }
@@ -61,7 +61,7 @@ formBuilderRender.parseData = (formData,rules) =>{
 
 formBuilderRender.tidyDateInput = function (rule,value) {
     if( _datePickerType.indexOf(rule.props.type) !== -1){
-        Array.isArray(value) || (rule.value = ['','']);
+        Array.isArray(value) || (value = ['','']);
         return value.map((time)=>time === '' ? '' : timeStampToDate(time));
     }else{
         return value === '' ? '' : timeStampToDate(value);
@@ -73,12 +73,12 @@ formBuilderRender.tidyCheckedInput = function (rule,value) {
         parseValue = [];
         value.map((val)=>{
             rule.options.map((option)=>{
-                option.props.value === val && (parseValue.push(option.props.label));
+                option.value === val && (parseValue.push(option.label));
             });
         });
     }else{
         rule.options.map((option,k)=>{
-            option.props.value === value && (parseValue = option.props.label);
+            option.value === value && (parseValue = option.label);
         });
     }
     return parseValue;
@@ -117,15 +117,15 @@ formBuilderRender.prototype = {
     },
     makeRadio(rule){
         let t = this.inputProps(rule);
-        return this.cvm.radioGroup(t.get(),()=>rule.options.map((option)=>this.cvm.radio({props:option.props})));
+        return this.cvm.radioGroup(t.get(),()=>rule.options.map((option)=>this.cvm.radio({props:option})));
     },
     makeCheckBox(rule){
         let t = this.inputProps(rule);
-        return this.cvm.checkboxGroup(t.get(),()=>rule.options.map((option)=>this.cvm.checkbox({props:option.props})));
+        return this.cvm.checkboxGroup(t.get(),()=>rule.options.map((option)=>this.cvm.checkbox({props:option})));
     },
     makeSelect(rule){
         let t = this.inputProps(rule);
-        return this.cvm.select(t.get(),rule.options.map((option)=>this.cvm.option({props:option.props})));
+        return this.cvm.select(t.get(),rule.options.map((option)=>this.cvm.option({props:option})));
     },
     makeSwitch(rule){
         let t = this.inputProps(rule).scopedSlots({
@@ -150,17 +150,49 @@ formBuilderRender.prototype = {
     },
     makeUpload(rule){
         let options = this.options,data = props.init().props(rule.props).props({
-            'value' : this.getInputValue(rule.field),
-            'before-upload': options.upload.beforeUpload,
-            'on-progress': options.upload.onProgress,
-            'on-success': (response, file, fileList)=>{
-                options.upload.onSuccess(this.getInputValue(rule.field).push,response, file, fileList);
+            'beforeUpload': (...arg)=>{
+                rule.props.beforeUpload === undefined
+                    ? options.upload.beforeUpload(...arg)
+                    : rule.props.beforeUpload(...arg);
             },
-            'on-preview' : options.upload.onPreview,
-            'on-remove' : options.upload.onRemove,
-            'on-format-error' : options.upload.onFormatError,
-            'on-exceeded-size' : options.upload.onExceededSize,
-            'on-error' : options.upload.onError
+            'onProgress': (...arg)=>{
+                rule.props.onProgress === undefined
+                    ? options.upload.onProgress(...arg)
+                    : rule.props.onProgress(...arg);
+            },
+            'onSuccess': (response, file, fileList)=>{
+                let push = (filePath)=>{
+                    this.getInputValue(rule.field).push(filePath);
+                };
+                rule.props.onSuccess === undefined
+                    ? options.upload.onSuccess(push,response, file, fileList)
+                    : rule.props.onSuccess(push,response, file, fileList);
+            },
+            'onPreview' : (...arg)=>{
+                rule.props.onPreview === undefined
+                    ? options.upload.onPreview(...arg)
+                    : rule.props.onPreview(...arg);
+            },
+            'onRemove' : (...arg)=>{
+                rule.props.onRemove === undefined
+                    ? options.upload.onRemove(...arg)
+                    : rule.props.onRemove(...arg);
+            },
+            'onFormatError' : (...arg)=>{
+                rule.props.onFormatError === undefined
+                    ? options.upload.onFormatError(...arg)
+                    : rule.props.onFormatError(...arg);
+            },
+            'onExceededSize' : (...arg)=>{
+                rule.props.onExceededSize === undefined
+                    ? options.upload.onExceededSize(...arg)
+                    : rule.props.onExceededSize(...arg);
+            },
+            'onError' : (...arg)=>{
+                rule.props.onError === undefined
+                    ? options.upload.onError(...arg)
+                    : rule.props.onError(...arg);
+            }
         }).get();
         return (()=>{
             let render = [],value = this.getInputValue(rule.field);
@@ -219,7 +251,7 @@ formBuilderRender.prototype = {
     {
         return this.vm.formData[field];
     },
-    text(rule){
+    input(rule){
         return this.makeInput(rule);
     },
     radio(rule){
