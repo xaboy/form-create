@@ -330,18 +330,18 @@ UploadRule :
         "accept":"", //接受上传的文件类型
         "format":[], //支持的文件类型，与 accept 不同的是，format 是识别文件的后缀名，accept 为 input 标签原生的 accept 属性，会在选择文件时过滤，可以两者结合使用
         "max-size":undefined, //文件大小限制，单位 kb
-        "before-upload":()=>{}, //上传文件之前的钩子，参数为上传的文件，若返回 false 或者 Promise 则停止上传
-        "on-progress":()=>{}, //文件上传时的钩子，返回字段为 event, file, fileList
-        "on-success":( push, response, file, fileList)=>{
+        "beforeUpload":()=>{}, //上传文件之前的钩子，参数为上传的文件，若返回 false 或者 Promise 则停止上传
+        "onProgress":()=>{}, //文件上传时的钩子，返回字段为 event, file, fileList
+        "onSuccess":( push, response, file, fileList)=>{
           let filePath = response.data.filePath;
           push(filePath);
           //其他操作
         }, //文件上传成功时的钩子，返回字段为 push, response, file, fileList.  push(filePath) 将上传后的路径添加到value中
-        "on-error":()=>{}, //文件上传失败时的钩子，返回字段为 error, file, fileList
-        "on-preview":()=>{}, //点击已上传的文件链接时的钩子，返回字段为 file， 可以通过 file.response 拿到服务端返回数据
-        "on-remove":()=>{}, //文件列表移除文件时的钩子，返回字段为 file, fileList
-        "on-format-error":()=>{}, //文件格式验证失败时的钩子，返回字段为 file, fileList
-        "on-exceeded-size":()=>{}, //文件超出指定大小限制时的钩子，返回字段为 file, fileList
+        "onError":()=>{}, //文件上传失败时的钩子，返回字段为 error, file, fileList
+        "onPreview":()=>{}, //点击已上传的文件链接时的钩子，返回字段为 file， 可以通过 file.response 拿到服务端返回数据
+        "onRemove":()=>{}, //文件列表移除文件时的钩子，返回字段为 file, fileList
+        "onFormatError":()=>{}, //文件格式验证失败时的钩子，返回字段为 file, fileList
+        "onExceededSize":()=>{}, //文件超出指定大小限制时的钩子，返回字段为 file, fileList
         "default-file-list":[
             {
                 name: 'img1.jpg',
