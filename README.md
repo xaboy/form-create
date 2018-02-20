@@ -22,42 +22,53 @@
 let rules = [],el = document.body;
 new Vue({
   mounted:function(){
-    var $fb = this.$formBuilder([inputRule,selectRule,...],el);
+    var $fb = this.$formBuilder(rules,el);
   }
 })
 ```
 
 
 
-#### $fb实例方法
+#### $formBuilder 参数
 
-##### 获得表单数据
+```js
+rules // 生成表单规则 [inputRule,selectRule,...]
+el // 插入的Dom节点 默认为 document.body
+```
+
+
+
+#### $fb 实例方法
+
+**获得表单数据**
 
 `$fb.formData()`
 
-##### 修改表单数据
+**修改表单数据**
 
 `$fb.changeField(field,value)`
 
-##### 表单验证
+**表单验证**
 
 `$fb.validate(successFn,errorFn)`
 
-##### 表单验证指定字段
+**表单验证指定字段**
 
 `$fb.validateField(field,errorFn)`
 
-##### 重置表单
+**重置表单**
 
 `$fb.resetFields()`
 
-##### 移除表单
+**移除表单**
 
 `$fb.remove()`
 
-##### 获得表单所有字段
+**获得表单所有字段**
 
 `$fb.fields()`
+
+
 
 ### rules 规则:
 
