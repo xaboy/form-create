@@ -1,26 +1,27 @@
 {
-  "name": "form-builder",
+  "name": "form-create",
   "version": "1.0.0",
   "description": "use iView create form builder",
   "main": "index.js",
   "scripts": {
-    "test": "dev"
+    "test": "echo \"Error:no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/xaboy/form-builder.git"
+    "url": "https://github.com/xaboy/form-create.git"
   },
   "keywords": [
     "form builder",
+    "form create",
     "form init",
     "create form"
   ],
   "author": "xaboy",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/xaboy/form-builder/issues"
+    "url": "https://github.com/xaboy/form-create/issues"
   },
-  "homepage": "https://github.com/xaboy/form-builder#readme",
+  "homepage": "https://github.com/xaboy/form-create#readme",
   "devDependencies": {
     "axios": "^0.17.1",
     "babel-core": "^6.26.0",
