@@ -1,5 +1,7 @@
 # form-builder
-使用iview快速创建form表单
+**使用iview快速创建form表单**
+
+
 
 ### 引入
 
@@ -100,7 +102,7 @@ inputRule :
 }
 ```
 
-validate 表单验证规则，具体配置查看 : [https://github.com/yiminghe/async-validator](表单验证规则，具体配置查看)
+validate 表单验证规则，具体配置查看 : [https://github.com/yiminghe/async-validator](https://github.com/yiminghe/async-validator)
 
 #### radio 单选框
 
@@ -345,7 +347,7 @@ UploadRule :
 }
 ```
 
-accept 文件类型： [https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#attr-accept
+accept 文件类型： [https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#attr-accept](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#attr-accept)
 
 
 
@@ -395,9 +397,9 @@ accept 文件类型： [https://developer.mozilla.org/en-US/docs/Web/HTML/Elemen
 
 -----
 
-![https://raw.githubusercontent.com/xaboy/form-builder/master/exceptional.jpg](打赏)
+##### 打赏扫这里，请留下尊姓大名
 
-打赏扫这里，请留下尊姓大名
+![https://raw.githubusercontent.com/xaboy/form-builder/master/exceptional.jpg](https://raw.githubusercontent.com/xaboy/form-builder/master/exceptional.jpg)
 
 
 
