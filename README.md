@@ -31,7 +31,7 @@ new Vue({
 
 #### $formBuilder 参数
 
-`rules` 表单 [规则](#rule-规则)  [inputRule,selectRule,...]
+`rules` 表单规则  [inputRule,selectRule,...]
 
 `el`  :插入的Dom节点 默认为 document.body
 
