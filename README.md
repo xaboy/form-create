@@ -11,6 +11,8 @@ npm install form-create
 OR
 ```c
 git clone https://github.com/xaboy/form-create.git
+cd form-create
+npm install
 ```
 
 ## 引入
