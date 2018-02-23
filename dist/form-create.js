@@ -362,6 +362,9 @@ formCreate.prototype = {
 
                         fields: function fields() {
                             return _this.field();
+                        },
+                        submit: function submit() {
+                            _this.vm.$refs.formCreate.$el.submit();
                         }
                     };
                 }

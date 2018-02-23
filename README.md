@@ -38,36 +38,39 @@ new Vue({
 
 
 
-#### $fb 实例方法
+#### $f 实例方法
 
 获得表单数据
 
-`$fb.formData()`
+`$f.formData()`
 
 修改表单数据
 
-`$fb.changeField(field,value)`
+`$f.changeField(field,value)`
 
 表单验证
 
-`$fb.validate(successFn,errorFn)`
+`$f.validate(successFn,errorFn)`
 
 表单验证指定字段
 
-`$fb.validateField(field,errorFn)`
+`$f.validateField(field,errorFn)`
 
 重置表单
 
-`$fb.resetFields()`
+`$f.resetFields()`
 
 移除表单
 
-`$fb.remove()`
+`$f.remove()`
 
 获得表单所有字段
 
-`$fb.fields()`
+`$f.fields()`
 
+提交表单
+
+`$f.submit()`
 
 
 ## rules 规则:

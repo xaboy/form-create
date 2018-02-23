@@ -209,7 +209,10 @@ formCreate.prototype = {
                             _this.vm.$el.remove();
                             _this.vm.$destroy();
                         },
-                        fields:()=>_this.field()
+                        fields:()=>_this.field(),
+                        submit(){
+                            _this.vm.$refs.formCreate.$el.submit();
+                        }
                     };
                 }
             },
