@@ -16,12 +16,13 @@ git clone https://github.com/xaboy/form-create.git
 ## 引入
 
 ```html
-<!-- import Vue v2.5 -->
-<script src="//vuejs.org/js/vue.min.js"></script>
-<!-- import iview v2 css -->
-<link rel="stylesheet" href="//unpkg.com/iview/dist/styles/iview.css">
-<!-- import iview v2 -->
-<script src="//unpkg.com/iview/dist/iview.min.js"></script>
+<!-- import Vue -->
+<script src="node_modules/vue/dist/vue.min.js"></script>
+
+<!-- import iview -->
+<link rel="stylesheet" href="node_modules/iview/dist/styles/iview.css">
+<script src="node_modules/iview/dist/iview.min.js"></script>
+
 <!-- import formCreate -->
 <script src="dist/form-create.min.js"></script>
 ```
