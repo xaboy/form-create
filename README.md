@@ -4,6 +4,9 @@
 
 具有数据收集、校验和提交功能的表单生成器，包含复选框、单选框、输入框、下拉选择框等元素以及时间选择,日期选择,颜色选择,文件/图片上传功能。
 
+![https://raw.githubusercontent.com/xaboy/form-create/master/images/sample01.jpg](https://raw.githubusercontent.com/xaboy/form-create/master/images/sample01.jpg)
+
+
 ## 安装
 ```c
 npm install form-create
@@ -425,7 +428,7 @@ accept 文件类型： [https://developer.mozilla.org/en-US/docs/Web/HTML/Elemen
 
 ##### 打赏扫这里，请留下尊姓大名
 
-![https://raw.githubusercontent.com/xaboy/form-builder/master/exceptional.jpg](https://raw.githubusercontent.com/xaboy/form-builder/master/exceptional.jpg)
+![https://raw.githubusercontent.com/xaboy/form-create/master/images/exceptional.jpg](https://raw.githubusercontent.com/xaboy/form-create/master/images/exceptional.jpg)
 
 
 
