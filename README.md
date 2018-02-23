@@ -4,6 +4,14 @@
 
 具有数据收集、校验和提交功能的表单生成器，包含复选框、单选框、输入框、下拉选择框等元素以及时间选择,日期选择,颜色选择,文件/图片上传功能。
 
+## 安装
+```c
+npm install form-create
+```
+OR
+```c
+git clone https://github.com/xaboy/form-create.git
+```
 
 ## 引入
 
