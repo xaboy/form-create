@@ -1,17 +1,17 @@
-import formBuilderRender from "./form-builder-render";
+import formCreateRender from "./form-create-render";
 import {assign, isArray, throwIfMissing} from "./util";
 
-const formBuilderName = 'form-builder';
+const formCreateName = 'form-create';
 
-const formBuilderStyleElId = 'form-builder-style';
+const formCreateStyleElId = 'form-create-style';
 
-const formBuilder = function(rules){
-    if(!this instanceof formBuilder)
-        throwIfMissing('formBuilder is a constructor and should be called with the `new` keyword');
+const formCreate = function(rules){
+    if(!this instanceof formCreate)
+        throwIfMissing('formCreate is a constructor and should be called with the `new` keyword');
     this.init(rules);
 };
 
-formBuilder.default = {
+formCreate.default = {
     options : {
         formProps:{
             labelWidth:125,
@@ -21,7 +21,7 @@ formBuilder.default = {
             inline:false
         },
         form:{
-            ref:'formBuilder',
+            ref:'formCreate',
             method:'POST',
             action:'',
             onSubmit:(e)=>{}
@@ -50,31 +50,31 @@ formBuilder.default = {
     }
 };
 
-const formBuilderStyle = '.form-builder-upload .form-builder-upload-list{display: inline-block;width: 60px;height: 60px;text-align: center;line-height: 60px;border: 1px solid transparent;border-radius: 4px;overflow: hidden;background: #fff;position: relative;box-shadow: 0 1px 1px rgba(0,0,0,.2);margin-right: 4px;}' +
-    '.form-builder-upload .form-builder-upload-list img{width:100%;height:100%;display:block;}' +
-    '.form-builder-upload .ivu-upload{display: inline-block;}' +
-    '.form-builder-upload .ivu-upload .form-builder-upload-btn{ width: 58px;height: 58px;line-height: 58px;}' +
-    '.form-builder-upload .ivu-upload .form-builder-upload-btn i{font-size: 20px;}' +
-    '.form-builder-upload  .form-upload-list-cover{ display: none; position: absolute; top: 0; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,.6); }' +
-    '.form-builder-upload  .form-upload-list-cover i{ color: #fff; font-size: 20px; cursor: pointer; margin: 0 2px; }' +
-    '.form-builder-upload .form-builder-upload-list:hover .form-upload-list-cover{ display: block; }' +
-    '.form-builder-upload .ivu-upload-list-file{ display: inline-block;float: left; }'+
-    '.form-builder-upload .ivu-upload-list{ position: absolute;left: 0; }'+
-    '.form-builder-upload .ivu-upload-select .form-builder-upload-btn{ background: #fff;border: 1px dashed #dddee1;border-radius: 4px;text-align: center;cursor: pointer;position: relative;overflow: hidden;transition: border-color .2s ease; }';
+const formCreateStyle = '.form-create-upload .form-create-upload-list{display: inline-block;width: 60px;height: 60px;text-align: center;line-height: 60px;border: 1px solid transparent;border-radius: 4px;overflow: hidden;background: #fff;position: relative;box-shadow: 0 1px 1px rgba(0,0,0,.2);margin-right: 4px;}' +
+    '.form-create-upload .form-create-upload-list img{width:100%;height:100%;display:block;}' +
+    '.form-create-upload .ivu-upload{display: inline-block;}' +
+    '.form-create-upload .ivu-upload .form-create-upload-btn{ width: 58px;height: 58px;line-height: 58px;}' +
+    '.form-create-upload .ivu-upload .form-create-upload-btn i{font-size: 20px;}' +
+    '.form-create-upload  .form-upload-list-cover{ display: none; position: absolute; top: 0; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,.6); }' +
+    '.form-create-upload  .form-upload-list-cover i{ color: #fff; font-size: 20px; cursor: pointer; margin: 0 2px; }' +
+    '.form-create-upload .form-create-upload-list:hover .form-upload-list-cover{ display: block; }' +
+    '.form-create-upload .ivu-upload-list-file{ display: inline-block;float: left; }'+
+    '.form-create-upload .ivu-upload-list{ position: absolute;left: 0; }'+
+    '.form-create-upload .ivu-upload-select .form-create-upload-btn{ background: #fff;border: 1px dashed #dddee1;border-radius: 4px;text-align: center;cursor: pointer;position: relative;overflow: hidden;transition: border-color .2s ease; }';
 
 
-formBuilder.formBuilderSetStyle = function () {
-    if (document.getElementById(formBuilderStyleElId) !== null) return;
+formCreate.formCreateSetStyle = function () {
+    if (document.getElementById(formCreateStyleElId) !== null) return;
     let style = document.createElement('style');
-    style.id = formBuilderStyleElId;
-    style.innerText = formBuilderStyle;
+    style.id = formCreateStyleElId;
+    style.innerText = formCreateStyle;
     document.getElementsByTagName('head')[0].appendChild(style);
 };
 
-formBuilder.install = function(Vue){
+formCreate.install = function(Vue){
     let that = this;
-    Vue.prototype.$formBuilder = function(rules,el = undefined){
-        formBuilder.formBuilderSetStyle();
+    Vue.prototype.$formCreate = function(rules,el = undefined){
+        formCreate.formCreateSetStyle();
         let fBuilder = new that(rules),$fb = Vue.extend(fBuilder.component())
             ,$vm = new $fb().$mount(),dom = el === undefined ? document.body : document.querySelector(el);
         dom.appendChild($vm.$el);
@@ -86,7 +86,7 @@ const _datePicker = ['datepicker', 'timepicker'];
 
 const _checkedType = ['checkbox','radio'];
 
-formBuilder.prototype = {
+formCreate.prototype = {
     init(rules){
         this._data = {
             original : Array.isArray(rules) ? rules : [],
@@ -95,7 +95,7 @@ formBuilder.prototype = {
             validate:{},
             vm:null
         };
-        this.options = assign({},formBuilder.default.options);
+        this.options = assign({},formCreate.default.options);
         this._data.original.filter((rule)=>rule.field !== undefined).map((rule)=> {
             rule.props === undefined && (rule.props = {});
             rule.type = rule.type === undefined ? 'input' : rule.type.toLowerCase();
@@ -123,9 +123,9 @@ formBuilder.prototype = {
                             ? rule.value
                             : [rule.value]);
                 } else if (_datePicker.indexOf(rule.type) !== -1){
-                    parseValue = formBuilderRender.tidyDateInput(rule,rule.value);
+                    parseValue = formCreateRender.tidyDateInput(rule,rule.value);
                 }else if(_checkedType.indexOf(rule.type) !== -1){
-                    parseValue = formBuilderRender.tidyCheckedInput(rule,rule.value);
+                    parseValue = formCreateRender.tidyCheckedInput(rule,rule.value);
                 }else if(rule.type === 'inputnumber') {
                     parseValue = parseFloat(rule.value);
                 }else if(rule.type === 'upload'){
@@ -159,7 +159,7 @@ formBuilder.prototype = {
     component(){
         let formData = this.formData(),_this = this;
         return {
-            name:formBuilderName,
+            name:formCreateName,
             data:()=>{
                 return {
                     formData:formData
@@ -174,7 +174,7 @@ formBuilder.prototype = {
             },
             methods:{
                 parseData:function(){
-                    return formBuilderRender.parseData(this.formData,_this.rules());
+                    return formCreateRender.parseData(this.formData,_this.rules());
                 },
                 _api:function () {
                     return {
@@ -183,9 +183,9 @@ formBuilder.prototype = {
                             let rule = _this._data.rules[field];
                             if(rule !== undefined) {
                                 if (_datePicker.indexOf(rule.type) !== -1) {
-                                    value = formBuilderRender.tidyDateInput(rule, value);
+                                    value = formCreateRender.tidyDateInput(rule, value);
                                 } else if (_checkedType.indexOf(rule.type) !== -1) {
-                                    value = formBuilderRender.tidyCheckedInput(rule, value);
+                                    value = formCreateRender.tidyCheckedInput(rule, value);
                                 } else if (rule.type === 'inputnumber') {
                                     value = parseFloat(value);
                                 }else if(rule.type === 'upload'){
@@ -195,15 +195,15 @@ formBuilder.prototype = {
                             _this.vm.$set(_this.vm.formData,field,value);
                         },
                         validate(successFn,errorFn){
-                            _this.vm.$refs.formBuilder.validate((valid)=>{
+                            _this.vm.$refs.formCreate.validate((valid)=>{
                                 valid === true ? successFn() : errorFn();
                             });
                         },
                         validateField(field,errorFn){
-                            _this.vm.$refs.formBuilder.validateField(field,errorFn);
+                            _this.vm.$refs.formCreate.validateField(field,errorFn);
                         },
                         resetFields(){
-                            _this.vm.$refs.formBuilder.resetFields();
+                            _this.vm.$refs.formCreate.resetFields();
                         },
                         remove(){
                             _this.vm.$el.remove();
@@ -219,7 +219,7 @@ formBuilder.prototype = {
         }
     },
     render(){
-        return  new formBuilderRender({
+        return  new formCreateRender({
             vm : this.vm,
             rules : this.rules(),
             formData : this.formData(),
@@ -228,4 +228,4 @@ formBuilder.prototype = {
     }
 };
 
-export default formBuilder;
+export default formCreate;

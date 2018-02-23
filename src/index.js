@@ -1,10 +1,10 @@
-import formBuilder from './core/form-builder'
+import formCreate from './core/form-create'
 
 if(typeof window !== 'undefined'){
-    window["formBuilder"] = formBuilder;
+    window["formCreate"] = formCreate;
     if (window.Vue && (window.iview || window.iView)) {
-        window.Vue.use(formBuilder);
+        window.Vue.use(formCreate);
     }
 }
 
-export default formBuilder
+export default formCreate

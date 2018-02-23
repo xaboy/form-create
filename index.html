@@ -2,24 +2,24 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>form-builder</title>
+    <title>form-create</title>
     <link rel="stylesheet" href="./node_modules/iview/dist/styles/iview.css">
     <script src="node_modules/vue/dist/vue.min.js"></script>
     <script src="./node_modules/iview/dist/iview.min.js"></script>
     <script src="./src/mock.js"></script>
-    <script src="./dist/form-builder.js"></script>
+    <script src="./dist/form-create.min.js"></script>
 </head>
 <body>
 <div id="app">
 </div>
 <script>
-    Vue.use(formBuilder);
+    Vue.use(formCreate);
     new Vue({
         el:'#app',
         data:{
         },
         mounted:function(){
-            $fb = this.$formBuilder(mock);
+            $f = this.$formCreate(mock);
         }
     });
 </script>

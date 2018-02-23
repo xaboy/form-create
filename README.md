@@ -1,19 +1,19 @@
-# form-builder
+# form-create
 **使用iview快速创建form表单**
-
+具有数据收集、校验和提交功能的表单生成器，包含复选框、单选框、输入框、下拉选择框等元素以及时间选择,日期选择,颜色选择,文件/图片上传功能。
 
 
 ## 引入
 
 ```html
-<!-- import Vue -->
+<!-- import Vue v2.5 -->
 <script src="//vuejs.org/js/vue.min.js"></script>
-<!-- import iview css -->
+<!-- import iview v2 css -->
 <link rel="stylesheet" href="//unpkg.com/iview/dist/styles/iview.css">
-<!-- import iview -->
+<!-- import iview v2 -->
 <script src="//unpkg.com/iview/dist/iview.min.js"></script>
-<!-- import formBuilder -->
-<script src="dist/form-builder.min.js"></script>
+<!-- import formCreate -->
+<script src="dist/form-create.min.js"></script>
 ```
 
 ## 使用
@@ -22,14 +22,14 @@
 let rules = [],el = document.body;
 new Vue({
   mounted:function(){
-    var $fb = this.$formBuilder(rules,el);
+    var $f = this.$formCreate(rules,el);
   }
 })
 ```
 
 
 
-#### $formBuilder 参数
+#### $formCreate 参数
 
 `rules`  表单规则  [inputRule,selectRule,...]
 
@@ -208,7 +208,7 @@ selectRule :
         "disabled": false //是否禁用
     },
     options: [
-      {"value": "104", "label": "生态蔬菜", "disabled": false}, 
+      {"value": "104", "label": "生态蔬菜", "disabled": false},
       {"value": "105", "label": "新鲜水果", "disabled": false}
     ]
 }
@@ -324,7 +324,7 @@ UploadRule :
         "headers": {}, //设置上传的请求头部
         "multiple": false, //是否支持多选文件
         "data":{}, //上传时附带的额外参数
-        "name":"formBuilder", //上传的文件字段名
+        "name":"", //上传的文件字段名
         "with-credentials":false, //支持发送 cookie 凭证信息
         "show-upload-list":true, //是否显示已上传文件列表
         "accept":"", //接受上传的文件类型

@@ -2,7 +2,7 @@ import props from './props'
 import cvm from "./cvm";
 import {isDate, isFunction} from "./util";
 
-const formBuilderRender = function ({vm,rules,formData,validate},opt = {}) {
+const formCreateRender = function ({vm,rules,formData,validate},opt = {}) {
     this.vm = vm;
     this.rules = rules;
     this.cvm = cvm.init(vm.$createElement);
@@ -25,7 +25,7 @@ const dateToTimeStamp = function(date){
 const _datePickerType = ['daterange','datetimerange','timerange'];
 
 
-formBuilderRender.parseData = (formData,rules) =>{
+formCreateRender.parseData = (formData,rules) =>{
         let parseData = {};
         Object.keys(formData).map((field)=>{
             let value = formData[field],rule = rules[field],parseValue;
@@ -59,7 +59,7 @@ formBuilderRender.parseData = (formData,rules) =>{
         return parseData;
 };
 
-formBuilderRender.tidyDateInput = function (rule,value) {
+formCreateRender.tidyDateInput = function (rule,value) {
     if( _datePickerType.indexOf(rule.props.type) !== -1){
         Array.isArray(value) || (value = ['','']);
         return value.map((time)=>time === '' ? '' : timeStampToDate(time));
@@ -67,7 +67,7 @@ formBuilderRender.tidyDateInput = function (rule,value) {
         return value === '' ? '' : timeStampToDate(value);
     }
 };
-formBuilderRender.tidyCheckedInput = function (rule,value) {
+formCreateRender.tidyCheckedInput = function (rule,value) {
     let parseValue ;
     if(Array.isArray(rule.value)){
         parseValue = [];
@@ -84,7 +84,7 @@ formBuilderRender.tidyCheckedInput = function (rule,value) {
     return parseValue;
 };
 
-formBuilderRender.prototype = {
+formCreateRender.prototype = {
     parse(){
         return this.makeForm(()=>{
             return Object.keys(this.rules).map((field)=>{
@@ -196,10 +196,10 @@ formBuilderRender.prototype = {
         }).get();
         return (()=>{
             let render = [],value = this.getInputValue(rule.field);
-            return this.cvm.make('div',{class:{'form-builder-upload':true}},()=>{
+            return this.cvm.make('div',{class:{'form-create-upload':true}},()=>{
                 render.push((()=>{
                     return value.map((img)=>{
-                        return this.cvm.make('div',{class:{'form-builder-upload-list':true}},((img)=>{
+                        return this.cvm.make('div',{class:{'form-create-upload-list':true}},((img)=>{
                             let container = [this.cvm.make('img',{attrs:{src:img}})];
                             if(options.upload.handleRemove !== false || options.upload.handleView !== false)
                                 container.push(this.cvm.make('div',{class:{'form-upload-list-cover':true}},((img)=>{
@@ -232,7 +232,7 @@ formBuilderRender.prototype = {
                 if(!rule.props['max-length'] || rule.props['max-length'] > this.getInputValue(rule.field).length)
                     render.push((()=>{
                         return this.cvm.upload(data,()=>{
-                            return [this.cvm.make('div',{class:{'form-builder-upload-btn':true}},[this.cvm.icon({props:{type:"camera", size:20}})])]
+                            return [this.cvm.make('div',{class:{'form-create-upload-btn':true}},[this.cvm.icon({props:{type:"camera", size:20}})])]
                         })
                     })());
                 return render;
@@ -283,6 +283,6 @@ formBuilderRender.prototype = {
     }
 };
 
-export default formBuilderRender
+export default formCreateRender
 
 export {timeStampToDate,dateToTimeStamp}

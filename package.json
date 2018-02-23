@@ -1,7 +1,7 @@
 {
   "name": "form-create",
   "version": "1.0.0",
-  "description": "use iView create form builder",
+  "description": "使用ivew快速创建form表单/use iView create form builder",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error:no test specified\" && exit 1"
@@ -14,7 +14,8 @@
     "form builder",
     "form create",
     "form init",
-    "create form"
+    "create form",
+    "easy form"
   ],
   "author": "xaboy",
   "license": "ISC",
