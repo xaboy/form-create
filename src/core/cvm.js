@@ -4,7 +4,13 @@ const cvm = function(createElement = throwIfMissing('缺少参数:createElement'
     this.$h = createElement
 };
 
-cvm.init = (createElement) => new cvm(createElement);
+let _instance = null;
+
+cvm.instance = (createElement)=>{
+    if(false === _instance instanceof cvm)
+        _instance = new cvm(createElement);
+    return _instance;
+};
 
 cvm.prototype = {
     form(data,VNodeFn){
@@ -49,6 +55,9 @@ cvm.prototype = {
     colorPicker(data,VNodeFn){
         return this.make('Color-Picker',data,VNodeFn);
     },
+    cascader(data,VNodeFn){
+        return this.make('Cascader',data,VNodeFn);
+    },
     upload(data,VNodeFn){
         return this.make('Upload',data,VNodeFn);
     },
@@ -60,6 +69,9 @@ cvm.prototype = {
     },
     button(data,VNodeFn){
         return this.make('i-button',data,VNodeFn);
+    },
+    progress(data,VNodeFn){
+        return this.make('i-progress',data,VNodeFn);
     },
     modal(data,VNodeFn){
         return this.make('Modal',data,VNodeFn);

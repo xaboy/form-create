@@ -1,11 +1,17 @@
-import {throwIfMissing,isObject,concat,assign,isArray} from './util';
+import {throwIfMissing,isPlainObject,concat,assign,isArray} from './util';
 
 const props = function () {
     this._data = this._initData();
     this._prev = null;
 };
 
-props.init = () =>new props;
+let _instance = null;
+
+props.instance = ()=>{
+    if(false === _instance instanceof props)
+        _instance = new props;
+    return _instance;
+};
 
 props.prototype = {
     _initData(){
@@ -29,7 +35,7 @@ props.prototype = {
             classList.map((cls)=>{
                 this._data.class[cls.toString()] = true
             })
-        }else if(isObject(classList)){
+        }else if(isPlainObject(classList)){
             this._data.class = assign({},this._data.class,classList)
         }else{
             this._data.class[classList.toString()] = (status === undefined ? true : status)
@@ -37,7 +43,7 @@ props.prototype = {
         return this
     },
     style(style = throwIfMissing('缺少参数:style'),value = undefined){
-        if(isObject(style)){
+        if(isPlainObject(style)){
             this._data.style = assign({},this._data.style,style)
         }else if(value !== undefined){
             this._data.style[style.toString()] = value
@@ -45,7 +51,7 @@ props.prototype = {
         return this
     },
     attrs(attrs = throwIfMissing('缺少参数:attrs'),value = ''){
-        if(isObject(attrs)){
+        if(isPlainObject(attrs)){
             this._data.attrs = assign({},this._data.attrs,attrs)
         }else{
             this._data.attrs[attrs.toString()] = value
@@ -53,7 +59,7 @@ props.prototype = {
         return this
     },
     props(props = throwIfMissing('缺少参数:props'),value = undefined){
-        if(isObject(props)){
+        if(isPlainObject(props)){
             this._data.props = assign({},this._data.props,props)
         }else{
             this._data.props[props.toString()] = value
@@ -61,7 +67,7 @@ props.prototype = {
         return this
     },
     domProps(domProps = throwIfMissing('缺少参数:domProps'),value = undefined){
-        if(isObject(domProps)){
+        if(isPlainObject(domProps)){
             this._data.domProps = assign({},this._data.domProps,domProps)
         }else{
             this._data.domProps[domProps.toString()] = value
@@ -69,16 +75,15 @@ props.prototype = {
         return this
     },
     on(onType = throwIfMissing('缺少参数:onType'),call = function(){}){
-        if(isObject(onType)){
+        if(isPlainObject(onType)){
             this._data.on = assign({},this._data.on,onType)
         }else{
             this._data.on[onType.toString()] = call
         }
-
         return this
     },
     nativeOn(onType = throwIfMissing('缺少参数:onType'),call = function(){}){
-        if(isObject(onType)){
+        if(isPlainObject(onType)){
             this._data.nativeOn = assign({},this._data.nativeOn,onType)
         }else{
             this._data.nativeOn[onType.toString()] = call
@@ -90,7 +95,7 @@ props.prototype = {
         return this
     },
     scopedSlots(scopedSlot = throwIfMissing('缺少参数:scopedSlot'),call = function(){}){
-        if(isObject(scopedSlot)){
+        if(isPlainObject(scopedSlot)){
             this._data.scopedSlots = assign({},this._data.scopedSlots,scopedSlot)
         }else{
             this._data.scopedSlots[scopedSlot.toString()] = call
@@ -120,7 +125,7 @@ props.prototype = {
     getPrev(){
         return this._prev
     }
-}
+};
 
 
 export default props

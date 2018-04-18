@@ -157,11 +157,13 @@ window.mock = [
             "multiple": true, //是否支持多选
             "clearable": false, //是否可以清空选项，只在单选时有效
             "filterable": true, //	是否支持搜索
+
             // 暂不支持远程搜索
             // "remote": false, //是否使用远程搜索
             // "remote-method":Function, //远程搜索的方法
             // "loading": false, //当前是否正在远程搜索
             // "loading-text": "加载中", //远程搜索中的文字提示
+
             "size":"default", //选择框大小，可选值为large、small、default或者不填
             "placeholder": "请选择", //选择框默认文字
             "not-found-text": "无匹配数据", //当下拉列表为空时显示的内容

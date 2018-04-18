@@ -1,10 +1,12 @@
-import {formRender} from "./form-render";
-import {deepExtend, isElement, isFunction} from "./util";
-import formHandler from "./form-handler"
+import {formRender} from "./core/form-render";
+import {deepExtend, isElement, isFunction} from "./core/util";
+import formHandler from "./core/form-handler"
 
-//表单生成全局配置
+//formCreate全局配置
 const createOptions = {
+    //插入节点,默认document.body
     el:null,
+    //form配置
     form:{
         //是否开启行内表单模式
         inline:false,
@@ -21,7 +23,7 @@ const createOptions = {
         //上传文件之前的钩子，参数为上传的文件，若返回 false 或者 Promise 则停止上传
         beforeUpload:()=>{},
         //文件上传时的钩子，返回字段为 event, file, fileList
-        onProgress:(event, file, fileList)=>{ console.log('onProgress')},
+        onProgress:(event, file, fileList)=>{},
         //文件上传成功时的钩子，返回字段为 response, file, fileList,若需有把文件添加到文件列表中,在函数值返回即可
         onSuccess:(response, file, fileList)=>{
             // return filePath;
@@ -39,7 +41,7 @@ const createOptions = {
         //操作按钮的图标 ,设置为false将不显示
         handleIcon:'ios-eye-outline',
         //点击操作按钮事件
-        onHandle:(src)=>{console.log('onHandle')},
+        onHandle:(src)=>{},
         //是否可删除,设置为false是不显示删除按钮
         allowRemove:true
     },
@@ -121,7 +123,6 @@ formCreateComponent.install = function(Vue,opt = {}){
         if(isElement(opt)) opt = {el:opt};
         let fComponent = new formCreateComponent(rules,deepExtend(options,opt)),
             $vm = fComponent.mount(Vue);
-        window.vm =$vm;
         return fComponent.fCreateApi;
     };
 };
@@ -154,7 +155,6 @@ formCreateComponent.prototype = {
                 }
             },
             render:function(){
-                console.log('render');
                 return fComponent.fRender.parse();
             },
             created(){
