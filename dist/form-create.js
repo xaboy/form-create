@@ -803,7 +803,7 @@ formCreateComponent.prototype = {
             },
             validate: function validate(successFn, errorFn) {
                 _this2.vm.$refs.cForm.validate(function (valid) {
-                    valid === true ? successFn() : errorFn();
+                    valid === true ? successFn && successFn() : errorFn && errorFn();
                 });
             },
             validateField: function validateField(field, errorFn) {

@@ -225,7 +225,7 @@ formCreateComponent.prototype = {
             },
             validate:(successFn,errorFn)=>{
                 this.vm.$refs.cForm.validate((valid)=>{
-                    valid === true ? successFn() : errorFn();
+                    valid === true ? (successFn && successFn()) : (errorFn && errorFn());
                 });
             },
             validateField:(field,errorFn)=>{

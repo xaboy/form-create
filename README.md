@@ -44,15 +44,16 @@ npm install
 <link rel="stylesheet" href="node_modules/iview/dist/styles/iview.css">
 <script src="node_modules/iview/dist/iview.min.js"></script>
 
-<!--省市区三级联动json数据-->
+<!-- 省市区三级联动json数据 -->
 <script src="/district/province_city_area.js"></script>
 
-<!--模拟数据-->
+<!-- 模拟数据 -->
 <script src="mock.js"></script>
 
 <!-- import formCreate -->
 <script src="dist/form-create.min.js"></script>
 ```
+** 注意 iview版本请`>=2.9.2`,否则可能存在问题
 
 ## 使用
 
