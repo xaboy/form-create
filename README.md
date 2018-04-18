@@ -19,7 +19,7 @@
 
 ## 示例
 
-![https://raw.githubusercontent.com/xaboy/form-create/master/images/sample01.jpg](https://raw.githubusercontent.com/xaboy/form-create/master/images/sample110.jpg)
+![https://raw.githubusercontent.com/xaboy/form-create/master/images/sample110.jpg](https://raw.githubusercontent.com/xaboy/form-create/master/images/sample110.jpg)
 
 
 ## 安装
