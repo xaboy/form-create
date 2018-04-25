@@ -808,15 +808,9 @@ accept 文件类型： [https://developer.mozilla.org/en-US/docs/Web/HTML/Elemen
 
 
 
-## 联系&打赏
+## 联系
 
 ##### 联系邮箱 : xaboy2005@qq.com
-
------
-
-##### 打赏扫这里，请留下尊姓大名
-
-![https://raw.githubusercontent.com/xaboy/form-create/master/images/exceptional.jpg](https://raw.githubusercontent.com/xaboy/form-create/master/images/exceptional.jpg)
 
 
 
