@@ -410,7 +410,7 @@ DatePickerRule :
         field: "section_day",//必填!
         title: "活动日期",//必填!
         //input值, type为daterange,datetimerange value为数组 [start_value,end_value]
-        value: [1519110955000, new Date()], 
+        value: ['2018-02-20', new Date()], 
         props: {
             
             //显示类型，可选值为 date、daterange、datetime、datetimerange、year、month
@@ -676,9 +676,9 @@ UploadRule :
             "onFormatError":()=>{}, 
             //文件超出指定大小限制时的钩子，返回字段为 file, fileList
             "onExceededSize":()=>{}, 
-            //操作按钮的图标 ,设置为false将不显示
+            //辅助操作按钮的图标 ,设置为false将不显示
             handleIcon:'ionic',
-            //点击操作按钮事件
+            //点击辅助操作按钮事件
             onHandle:(src)=>{},
             //是否可删除,设置为false是不显示删除按钮
             allowRemove:true,
@@ -710,7 +710,9 @@ accept 文件类型： [https://developer.mozilla.org/en-US/docs/Web/HTML/Elemen
         //原生的 autocomplete 属性，可选值为 off 或 on
         autocomplete:'off',
     },
+    //文件上传全局配置
     upload:{
+    
         //上传文件之前的钩子，参数为上传的文件，若返回 false 或者 Promise 则停止上传
         beforeUpload:()=>{},
         //文件上传时的钩子，返回字段为 event, file, fileList
@@ -729,9 +731,9 @@ accept 文件类型： [https://developer.mozilla.org/en-US/docs/Web/HTML/Elemen
         onFormatError:(file, fileList)=>{},
         //文件超出指定大小限制时的钩子，返回字段为 file, fileList
         onExceededSize:(file, fileList)=>{},
-        //操作按钮的图标 ,设置为false将不显示
+        //辅助操作按钮的图标 ,设置为false将不显示
         handleIcon:'ios-eye-outline',
-        //点击操作按钮事件
+        //点击辅助操作按钮事件
         onHandle:(src)=>{},
         //是否可删除,设置为false是不显示删除按钮
         allowRemove:true,
@@ -742,6 +744,7 @@ accept 文件类型： [https://developer.mozilla.org/en-US/docs/Web/HTML/Elemen
     
     //提交按钮配置,设置为false时不显示按钮
     submitBtn:{
+    
         //按钮类型，可选值为primary、ghost、dashed、text、info、success、warning、error或者不设置
         type:"primary",
         //按钮大小，可选值为large、small、default或者不设置
