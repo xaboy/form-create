@@ -1,6 +1,21 @@
-# form-create
+<h1 align="center">form-create</h1>
 
-具有数据收集、校验和提交功能的表单生成器，包含复选框、单选框、输入框、下拉选择框等元素以及,省市区三级联动,时间选择,日期选择,颜色选择,文件/图片上传功能，支持事件扩展。
+<p align="center">
+  <a href="https://github.com/xaboy/form-create/blob/master/LICENSE">
+    <img src="https://img.shields.io/badge/License-MIT-yellow.svg" />
+  </a>
+  <a href="https://github.com/xaboy">
+    <img src="https://img.shields.io/badge/author-xaboy-blue.svg" />
+  </a>
+  <a href="https://www.npmjs.com/package/form-create">
+    <img src="https://badge.fury.io/js/form-create.svg" alt="version" />
+  </a>
+</p>
+
+<p align="center">
+  <b>具有数据收集、校验和提交功能的表单生成器，包含复选框、单选框、输入框、下拉选择框等元素以及,省市区三级联动,时间选择,日期选择,颜色选择,文件/图片上传功能，支持事件扩展。</b>
+</p>
+<br />
 
 ## 1.1版本重大更新
 
