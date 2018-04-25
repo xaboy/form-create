@@ -123,7 +123,7 @@ new Vue({
 * **append(rule,field = undefined)** 在field的字段之前输入指定表单元素,不传入field默认在最后一个
 
 ```javascript
-    $f.prepend({
+    $f.append({
        type:"input",
        title:"商品简介",
        field:"goods_info",
@@ -138,7 +138,7 @@ new Vue({
     });
 ```
 
-* **submitStatus(props)** 修改表单提交按钮状态onSubmit事件
+* **submitStatus(props)** 修改表单提交按钮状态
 
 ```javascript
     $f.submitStatus({
