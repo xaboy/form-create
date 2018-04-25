@@ -128,14 +128,22 @@ formCreateComponent.install = function(Vue,opt = {}){
 };
 
 formCreateComponent.prototype = {
+    checkRule(rule){
+        rule.type = rule.type === undefined ? 'input' : rule.type.toLowerCase();
+        if(!rule.field) rule.field = '';
+        return rule;
+    },
+    setHandler(handler){
+        let field = handler.rule.field;
+        this.handlers[field] = handler;
+        this.formData[field] = handler.getParseValue();
+        this.validate[field] = handler.getValidate();
+    },
     init(vm){
         this.vm = vm;
         this.rules.filter((rule)=>rule.field !== undefined).map((rule)=> {
-            rule.type = rule.type === undefined ? 'input' : rule.type.toLowerCase();
-            let handler = formHandler(this.vm,rule,this.options);
-            this.handlers[rule.field] = handler;
-            this.formData[rule.field] = handler.getParseValue();
-            this.validate[rule.field] = handler.getValidate();
+            rule = this.checkRule(rule);
+            this.setHandler(formHandler(this.vm,rule,this.options));
         });
         this.fCreateApi = this.api();
     },
@@ -148,13 +156,13 @@ formCreateComponent.prototype = {
         let fComponent = this;
         return {
             name:formCreateName,
-            data:function () {
+            data() {
                 return {
                     formData:{},
                     buttonProps:{}
                 }
             },
-            render:function(){
+            render(){
                 return fComponent.fRender.parse();
             },
             created(){
@@ -172,19 +180,46 @@ formCreateComponent.prototype = {
                 },
                 changeButtonProps(props){
                     this.$set(this,'buttonProps',Object.assign(this.buttonProps,props));
-                }
+                },
+                setField(field,value){
+                    this.$set(this.formData,field,value);
+                },
             },
-            mounted:function(){
+            mounted(){
                 Object.keys(this.formData).map((field)=>{
-                    let unWatch = fComponent.vm.$watch(`formData.${field}`,(n,o)=>{
-                        if(fComponent.handlers[field] !== undefined)
-                            fComponent.handlers[field].changeParseValue(n,false);
-                        else
-                            unWatch();
-                    });
+                    fComponent.addHandlerWatch(fComponent.handlers[field]);
                 });
             }
         }
+    },
+    append(rule,after,pre){
+        let _rule = deepExtend(Object.create(null),this.checkRule(rule));
+        if(Object.keys(this.handlers).indexOf(_rule.field) !== -1)
+            throw new Error(`${_rule.field}字段已存在`);
+
+        let handler = formHandler(this.vm,_rule,this.options);
+        this.fRender.setRender(_rule.field,handler.render,after,pre);
+        this.setHandler(handler);
+        this.vm.setField(handler.rule.field,handler.getParseValue());
+        this.addHandlerWatch(handler);
+    },
+    removeField(field){
+        if(!this.handlers[field])
+            throw new Error(`${field}字段不存在`);
+
+        this.vm.removeFormData(field);
+        delete this.handlers[field];
+        delete this.validate[field];
+        this.fRender.removeRender(field);
+        delete this.formData[field];
+    },
+    addHandlerWatch(handler){
+        let unWatch = this.vm.$watch(`formData.${handler.rule.field}`,(n,o)=>{
+            if(handler !== undefined)
+                handler.changeParseValue(n,false);
+            else
+                unWatch();
+        });
     },
     api(){
         let fComponent = this;
@@ -213,32 +248,30 @@ formCreateComponent.prototype = {
                 }
             },
             removeField:(field)=>{
-                if(this.handlers[field] === undefined)
-                    console.error(`${field} 字段不存在!`);
-                else{
-                    this.vm.removeFormData(field);
-                    delete this.handlers[field];
-                    delete this.validate[field];
-                    this.fRender.remove(field);
-                    delete this.formData[field];
-                }
+                fComponent.removeField(field);
             },
             validate:(successFn,errorFn)=>{
                 this.vm.$refs.cForm.validate((valid)=>{
                     valid === true ? (successFn && successFn()) : (errorFn && errorFn());
                 });
             },
-            validateField:(field,errorFn)=>{
-                this.vm.$refs.cForm.validateField(field,errorFn);
+            validateField:(field,callback)=>{
+                this.vm.$refs.cForm.validateField(field,callback);
             },
             resetFields:()=>{
                 this.vm.$refs.cForm.resetFields();
             },
-            remove:()=>{
+            destroy:()=>{
                 this.vm.$el.remove();
                 this.vm.$destroy();
             },
             fields:()=>this.fields(),
+            append:(rule,after)=>{
+                fComponent.append(rule,after,false);
+            },
+            prepend:(rule,after)=>{
+                fComponent.append(rule,after,true);
+            },
             submit:function(successFn){
                 this.validate(()=>{
                    let formData = this.formData();
@@ -250,6 +283,14 @@ formCreateComponent.prototype = {
             },
             submitStatus:(props = {})=>{
                 this.vm.changeButtonProps(props);
+            },
+            btn:{
+                loading:()=>{
+                    this.vm.changeButtonProps({loading:true});
+                },
+                finish:()=>{
+                    this.vm.changeButtonProps({loading:false});
+                }
             }
         }
     },

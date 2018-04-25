@@ -62,7 +62,7 @@ window.mock = [
             "placeholder": "请输入商品名称", //占位文本
             "size": "default", //输入框尺寸，可选值为large、small、default或者不设置,
             "spellcheck": false, //原生的 spellcheck 属性
-            "required":true,
+            "required":false,
         },
         event:{
             //按下回车键时触发
@@ -83,7 +83,7 @@ window.mock = [
             keypress:(event)=>{},
         },
         validate:[
-            { required: true, message: '请输入goods_name', trigger: 'blur' },
+            { required: true, message: '请输入商品名称', trigger: 'blur' },
         ],
     },
     {
@@ -339,3 +339,17 @@ window.mock = [
         validate:[],
     },
 ];
+
+$r = {
+    type:"input",
+    title:"商品简介",//label名称
+    field:"goods_info",//字段名称
+    value:"",//input值,
+    props: {
+        "type": "text", //输入框类型，可选值为 text、password、textarea、url、email、date
+        "placeholder": "请输入商品简介", //占位文本
+    },
+    validate:[
+        { required: true, message: '请输入商品简介', trigger: 'blur' },
+    ],
+};

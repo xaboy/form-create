@@ -233,7 +233,8 @@ const formRender = function ({vm,options,handlers,formData,validate,fCreateApi})
     this.vm = vm;
     this.options = options;
     this.handlers = handlers;
-    this.renders = Object.keys(handlers).reduce((initial,field)=>{
+    this.renderSort = Object.keys(handlers);
+    this.renders = this.renderSort.reduce((initial,field)=>{
         initial[field] = handlers[field].render;
         return initial;
     },{});
@@ -248,20 +249,23 @@ const formRender = function ({vm,options,handlers,formData,validate,fCreateApi})
 
 formRender.prototype = {
     parse(){
-        let propsData = this.props.props(Object.assign(this.options.form,this.form)).ref('cForm').get();
-        return this.cvm.form(propsData,()=>{
-            let vn = Object.keys(this.renders).map((field)=>{
-                let render = this.renders[field],{title,type} = render.handler.rule;
+        let propsData = this.props.props(Object.assign({},this.options.form,this.form)).ref('cForm').get(),
+            vn = this.renderSort.map((field)=>{
+                let render = this.renders[field],{type} = render.handler.rule;
                 if(type !== 'hidden')
-                    return this.makeFormItem(field,title,render.parse());
+                    return this.makeFormItem(render.handler,render.parse());
             });
-            if(false !== this.options.submitBtn)
-                vn.push(this.makeSubmitBtn());
-            return vn;
-        });
+        if(false !== this.options.submitBtn)
+            vn.push(this.makeSubmitBtn());
+        return this.cvm.form(propsData,vn);
     },
-    makeFormItem(prop,label,VNodeFn){
-        let propsData = this.props.props({prop,label,labelFor:prop}).get();
+    makeFormItem({rule,unique},VNodeFn){
+        let propsData = this.props.props({
+            prop: rule.field,
+            label: rule.title,
+            labelFor:rule.field,
+            rules: rule.validate,
+        }).key(unique).get();
         return this.cvm.formItem(propsData,VNodeFn);
     },
     makeSubmitBtn(){
@@ -269,8 +273,22 @@ formRender.prototype = {
             this.fCreateApi.submit();
         }}},[this.cvm.span(this.options.submitBtn.innerText)]);
     },
-    remove(field){
+    removeRender(field){
         delete this.renders[field];
+        this.renderSort.splice(this.renderSort.indexOf(field),1);
+    },
+    setRender(field,render,after,pre){
+        this.renders[field] = render;
+        this.changeSort(field,after,pre);
+    },
+    changeSort(field,after,pre){
+        let index = this.renderSort.indexOf(after);
+        if(index !== -1)
+            this.renderSort.splice(pre === false ? index+1 : index,0,field);
+        else if (!pre)
+            this.renderSort.push(field);
+        else
+            this.renderSort.unshift(field);
     }
 };
 

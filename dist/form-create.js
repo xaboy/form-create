@@ -1,4 +1,4 @@
-/*! formBuilder v1.1.0 | github https://github.com/xaboy/form-builder.git */
+/*! form-create v1.1 | github https://github.com/xaboy/form-builder.git */
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -486,7 +486,8 @@ var formRender = function formRender(_ref) {
     this.vm = vm;
     this.options = options;
     this.handlers = handlers;
-    this.renders = Object.keys(handlers).reduce(function (initial, field) {
+    this.renderSort = Object.keys(handlers);
+    this.renders = this.renderSort.reduce(function (initial, field) {
         initial[field] = handlers[field].render;
         return initial;
     }, {});
@@ -503,21 +504,25 @@ formRender.prototype = {
     parse: function parse() {
         var _this11 = this;
 
-        var propsData = this.props.props(Object.assign(this.options.form, this.form)).ref('cForm').get();
-        return this.cvm.form(propsData, function () {
-            var vn = Object.keys(_this11.renders).map(function (field) {
-                var render = _this11.renders[field],
-                    _render$handler$rule = render.handler.rule,
-                    title = _render$handler$rule.title,
-                    type = _render$handler$rule.type;
-                if (type !== 'hidden') return _this11.makeFormItem(field, title, render.parse());
-            });
-            if (false !== _this11.options.submitBtn) vn.push(_this11.makeSubmitBtn());
-            return vn;
+        var propsData = this.props.props(Object.assign({}, this.options.form, this.form)).ref('cForm').get(),
+            vn = this.renderSort.map(function (field) {
+            var render = _this11.renders[field],
+                type = render.handler.rule.type;
+            if (type !== 'hidden') return _this11.makeFormItem(render.handler, render.parse());
         });
+        if (false !== this.options.submitBtn) vn.push(this.makeSubmitBtn());
+        return this.cvm.form(propsData, vn);
     },
-    makeFormItem: function makeFormItem(prop, label, VNodeFn) {
-        var propsData = this.props.props({ prop: prop, label: label, labelFor: prop }).get();
+    makeFormItem: function makeFormItem(_ref2, VNodeFn) {
+        var rule = _ref2.rule,
+            unique = _ref2.unique;
+
+        var propsData = this.props.props({
+            prop: rule.field,
+            label: rule.title,
+            labelFor: rule.field,
+            rules: rule.validate
+        }).key(unique).get();
         return this.cvm.formItem(propsData, VNodeFn);
     },
     makeSubmitBtn: function makeSubmitBtn() {
@@ -527,8 +532,17 @@ formRender.prototype = {
                     _this12.fCreateApi.submit();
                 } } }, [this.cvm.span(this.options.submitBtn.innerText)]);
     },
-    remove: function remove(field) {
+    removeRender: function removeRender(field) {
         delete this.renders[field];
+        this.renderSort.splice(this.renderSort.indexOf(field), 1);
+    },
+    setRender: function setRender(field, render, after, pre) {
+        this.renders[field] = render;
+        this.changeSort(field, after, pre);
+    },
+    changeSort: function changeSort(field, after, pre) {
+        var index = this.renderSort.indexOf(after);
+        if (index !== -1) this.renderSort.splice(pre === false ? index + 1 : index, 0, field);else if (!pre) this.renderSort.push(field);else this.renderSort.unshift(field);
     }
 };
 
@@ -707,6 +721,17 @@ formCreateComponent.install = function (Vue) {
 };
 
 formCreateComponent.prototype = {
+    checkRule: function checkRule(rule) {
+        rule.type = rule.type === undefined ? 'input' : rule.type.toLowerCase();
+        if (!rule.field) rule.field = '';
+        return rule;
+    },
+    setHandler: function setHandler(handler) {
+        var field = handler.rule.field;
+        this.handlers[field] = handler;
+        this.formData[field] = handler.getParseValue();
+        this.validate[field] = handler.getValidate();
+    },
     init: function init(vm) {
         var _this = this;
 
@@ -714,11 +739,8 @@ formCreateComponent.prototype = {
         this.rules.filter(function (rule) {
             return rule.field !== undefined;
         }).map(function (rule) {
-            rule.type = rule.type === undefined ? 'input' : rule.type.toLowerCase();
-            var handler = (0, _formHandler2.default)(_this.vm, rule, _this.options);
-            _this.handlers[rule.field] = handler;
-            _this.formData[rule.field] = handler.getParseValue();
-            _this.validate[rule.field] = handler.getValidate();
+            rule = _this.checkRule(rule);
+            _this.setHandler((0, _formHandler2.default)(_this.vm, rule, _this.options));
         });
         this.fCreateApi = this.api();
     },
@@ -757,16 +779,41 @@ formCreateComponent.prototype = {
                 },
                 changeButtonProps: function changeButtonProps(props) {
                     this.$set(this, 'buttonProps', Object.assign(this.buttonProps, props));
+                },
+                setField: function setField(field, value) {
+                    this.$set(this.formData, field, value);
                 }
             },
             mounted: function mounted() {
                 Object.keys(this.formData).map(function (field) {
-                    var unWatch = fComponent.vm.$watch("formData." + field, function (n, o) {
-                        if (fComponent.handlers[field] !== undefined) fComponent.handlers[field].changeParseValue(n, false);else unWatch();
-                    });
+                    fComponent.addHandlerWatch(fComponent.handlers[field]);
                 });
             }
         };
+    },
+    append: function append(rule, after, pre) {
+        var _rule = (0, _util.deepExtend)(Object.create(null), this.checkRule(rule));
+        if (Object.keys(this.handlers).indexOf(_rule.field) !== -1) throw new Error(_rule.field + "\u5B57\u6BB5\u5DF2\u5B58\u5728");
+
+        var handler = (0, _formHandler2.default)(this.vm, _rule, this.options);
+        this.fRender.setRender(_rule.field, handler.render, after, pre);
+        this.setHandler(handler);
+        this.vm.setField(handler.rule.field, handler.getParseValue());
+        this.addHandlerWatch(handler);
+    },
+    removeField: function removeField(field) {
+        if (!this.handlers[field]) throw new Error(field + "\u5B57\u6BB5\u4E0D\u5B58\u5728");
+
+        this.vm.removeFormData(field);
+        delete this.handlers[field];
+        delete this.validate[field];
+        this.fRender.removeRender(field);
+        delete this.formData[field];
+    },
+    addHandlerWatch: function addHandlerWatch(handler) {
+        var unWatch = this.vm.$watch("formData." + handler.rule.field, function (n, o) {
+            if (handler !== undefined) handler.changeParseValue(n, false);else unWatch();
+        });
     },
     api: function api() {
         var _this2 = this;
@@ -793,31 +840,31 @@ formCreateComponent.prototype = {
                 }
             },
             removeField: function removeField(field) {
-                if (_this2.handlers[field] === undefined) console.error(field + " \u5B57\u6BB5\u4E0D\u5B58\u5728!");else {
-                    _this2.vm.removeFormData(field);
-                    delete _this2.handlers[field];
-                    delete _this2.validate[field];
-                    _this2.fRender.remove(field);
-                    delete _this2.formData[field];
-                }
+                fComponent.removeField(field);
             },
             validate: function validate(successFn, errorFn) {
                 _this2.vm.$refs.cForm.validate(function (valid) {
                     valid === true ? successFn && successFn() : errorFn && errorFn();
                 });
             },
-            validateField: function validateField(field, errorFn) {
-                _this2.vm.$refs.cForm.validateField(field, errorFn);
+            validateField: function validateField(field, callback) {
+                _this2.vm.$refs.cForm.validateField(field, callback);
             },
             resetFields: function resetFields() {
                 _this2.vm.$refs.cForm.resetFields();
             },
-            remove: function remove() {
+            destroy: function destroy() {
                 _this2.vm.$el.remove();
                 _this2.vm.$destroy();
             },
             fields: function fields() {
                 return _this2.fields();
+            },
+            append: function append(rule, after) {
+                fComponent.append(rule, after, false);
+            },
+            prepend: function prepend(rule, after) {
+                fComponent.append(rule, after, true);
             },
             submit: function submit(successFn) {
                 var _this3 = this;
@@ -831,6 +878,14 @@ formCreateComponent.prototype = {
                 var props = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
                 _this2.vm.changeButtonProps(props);
+            },
+            btn: {
+                loading: function loading() {
+                    _this2.vm.changeButtonProps({ loading: true });
+                },
+                finish: function finish() {
+                    _this2.vm.changeButtonProps({ loading: false });
+                }
             }
         };
     },
@@ -1132,6 +1187,8 @@ var _util = __webpack_require__(0);
 
 var _formRender = __webpack_require__(1);
 
+var i = 1;
+
 var handler = function handler(vm, _ref) {
     var field = _ref.field,
         type = _ref.type,
@@ -1159,6 +1216,7 @@ var handler = function handler(vm, _ref) {
         }, {})
     };
     this.vm = vm;
+    this.unique = i++;
     this.verify();
     this.handle();
 };

@@ -1,6 +1,6 @@
 {
   "name": "form-create",
-  "version": "1.1.2",
+  "version": "1.1.4",
   "description": "使用ivew快速创建form表单 / use iView create form builder",
   "main": "index.js",
   "scripts": {

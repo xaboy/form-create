@@ -1,6 +1,6 @@
 # form-create
 
-具有数据收集、校验和提交功能的表单生成器，包含复选框、单选框、输入框、下拉选择框等元素以及,省市区三级联动,时间选择,日期选择,颜色选择,文件/图片上传功能。
+具有数据收集、校验和提交功能的表单生成器，包含复选框、单选框、输入框、下拉选择框等元素以及,省市区三级联动,时间选择,日期选择,颜色选择,文件/图片上传功能，支持事件扩展。
 
 ## 1.1版本重大更新
 
@@ -12,7 +12,7 @@
 ## 待完善
 
 - [ ] 动态显示隐藏表单
-- [ ] 动态增加表单
+- [x] 动态增加表单
 - [ ] 树形控件生成
 
 ## 示例
@@ -55,16 +55,18 @@ npm install
 
 ## 使用
 
-```js
+```javascript
 let rules = window.mock;
 new Vue({
   mounted:function(){
-    var $f = this.$formCreate(rules,{
+    let $f = this.$formCreate(mock,{
                 onSubmit:function (formData) {
                     console.log(formData);
                     $f.submitStatus({loading:true});
-                }
-            });
+            }
+        });
+        //动态添加
+        $f.append($r,'goods_name');
   }
 })
 ```
@@ -73,81 +75,118 @@ new Vue({
 
 #### $formCreate 参数
 
-`rules`  表单规则  [inputRule,selectRule,...]
-
-`options`  组件配置 (详细见底部 createOptions)
-
+* **rules**  表单生成规则  [inputRule,selectRule,...]
+* **options** 初始化配置参数 (详细见底部 createOptions)
 
 #### $f 实例方法
 
-获得表单数据
+* **$f.formData()** 获取表单的value
+* **$f.getValue(field)** 获取指定字段的value
+* **$f.changeField(field,value)** 修改指定字段的value
+* **$f.resetFields()** 重置表单
+* **$f.destroy()** 销毁表单
+* **$f.removeField(field)** 删除指定字段
+* **$f.fields()** 获得表单所有字段名称
+* **$f.submit()** 表单验证通过后提交表单,触发onSubmit事件
+* **$f.validate(successFn,errorFn)** 表单验证,如果验证通过执行successFn,未通过则执行errorFn
+* **$f.validateField(field,callback)** 表单验证指定字段
+```javascript
+    $f.validateField(field,(errMsg)=>{
+        if(errMsg){
+            //TODO 验证未通过
+        }else{
+            //TODO 验证通过
+        }
+    });
+````
+* **$f.prepend(rule,field = undefined)** 在field的字段之前输入指定表单元素,不传入field默认在第一个
+```javascript
+    $f.prepend({
+       type:"input",
+       title:"商品简介",
+       field:"goods_info",
+       value:"",
+       props: {
+           "type": "text",
+           "placeholder": "请输入商品简介",
+       },
+       validate:[
+           { required: true, message: '请输入商品简介', trigger: 'blur' },
+       ],
+   });
+```
+* **$f.append(rule,field = undefined)** 在field的字段之前输入指定表单元素,不传入field默认在最后一个
+```javascript
+    $f.prepend({
+       type:"input",
+       title:"商品简介",
+       field:"goods_info",
+       value:"",
+       props: {
+           "type": "text",
+           "placeholder": "请输入商品简介",
+       },
+       validate:[
+           { required: true, message: '请输入商品简介', trigger: 'blur' },
+       ],
+       });
+```
+* **$f.submitStatus(props)** 修改表单提交按钮状态onSubmit事件
+```javascript
+    $f.submitStatus({
+            //按钮类型，可选值为primary、ghost、dashed、text、info、success、warning、error或者不设置
+            type:"primary",
+            //按钮大小，可选值为large、small、default或者不设置
+            size:"large",
+            //按钮形状，可选值为circle或者不设置
+            shape:undefined,
+            //开启后，按钮的长度为 100%
+            long:true,
+            //设置button原生的type，可选值为button、submit、reset
+            htmlType:"button",
+            //设置按钮为禁用状态
+            disabled:false,
+            //设置按钮的图标类型
+            icon:"ios-upload",
+            //按钮文字提示
+            innerText:"提交",
+            //设置按钮为加载中状态
+            loading:false
+    })
+```
+* **$f.btn.loading()** 让表单提交按钮进入loading状态 
+* **$f.btn.finish()** 让表单提交按钮恢复正常状态 
 
-`$f.formData()`
-
-获得指定字段数据
-
-`$f.getValue(field)`
-
-修改表单数据
-
-`$f.changeField(field,value)`
-
-表单验证
-
-`$f.validate(successFn,errorFn)`
-
-表单验证指定字段
-
-`$f.validateField(field,errorFn)`
-
-重置表单
-
-`$f.resetFields()`
-
-删除整个表单
-
-`$f.remove()`
-
-删除指定字段
-
-`$f.removeField(field)`
-
-获得表单所有字段
-
-`$f.fields()`
-
-提交表单
-
-`$f.submit()`
-
-修改提交按钮状态
-
-`$f.submitStatus(props) //详细见底部createOptions.submitBtn`
-
-## rules 规则
+## rules 表单元素规则
 
 #### hidden 隐藏字段
 
-```js
+```javascript
 hiddenRule:
 {
   type:"hidden",
+  //必填!
   field:"id", //字段名称
+  //必填!
   value:"14" //input值
 }
 ```
 
 #### input 输入框
 
-```js
+```javascript
 inputRule :
 {
+        //必填! 
         type:"input",
+        //必填!
         title:"商品名称",//label名称
+        //必填!
         field:"goods_name",//字段名称
         value:"iphone 7",//input值,
         props: {
-            "type": "text", //输入框类型，可选值为 text、password、textarea、url、email、date
+            //必填!
+            "type": "text", //必填! 输入框类型，可选值为 text、password、textarea、url、email、date
             "clearable":false, //是否显示清空按钮
             "disabled": false, //设置输入框为禁用状态
             "readonly": false, //设置输入框为只读
@@ -189,13 +228,16 @@ validate 表单验证规则，具体配置查看 : [https://github.com/yiminghe/
 
 #### radio 单选框
 
-```js
+```javascript
 radioRule :
 {
         type:"radio",
+        //必填!
         title:"是否包邮",//label名称
+        //必填!
         field:"is_postage",//字段名称
         value:"0",//input值,
+        //必填!
         options:[
             {value:"0",label:"不包邮",disabled:false},
             {value:"1",label:"包邮",disabled:true},
@@ -215,15 +257,19 @@ radioRule :
 
 #### checkbox 复选框
 
-```js
+```javascript
 checkboxRule :
 {
+        //必填!
         type:"checkbox",
+        //必填!
         title:"标签",//label名称
+        //必填!
         field:"label",//字段名称
         value:[
             "1","2","3"
         ],//input值,
+        //必填!
         options:[
             {value:"1",label:"好用",disabled:true},
             {value:"2",label:"方便",disabled:false},
@@ -243,11 +289,14 @@ checkboxRule :
 
 #### switch 开关
 
-```js
+```javascript
 switchRule :
 {
+        //必填!
         type:"switch",
+        //必填!
         title:"是否上架",//label名称
+        //必填!
         field:"is_show",//字段名称
         value:"1",//input值,
         props: {
@@ -270,11 +319,14 @@ switchRule :
 
 #### select 选择器
 
-```js
+```javascript
 selectRule :
 {
+        //必填!
         type: "select",
+        //必填!
         field: "cate_id",
+        //必填!
         title: "产品分类",
         props: {
             "multiple": true, //是否支持多选
@@ -294,6 +346,7 @@ selectRule :
             "disabled": false, //是否禁用
         },
         value: ["104","105"],
+        //必填!
         options: [
             {"value": "104", "label": "生态蔬菜", "disabled": false},
             {"value": "105", "label": "新鲜水果", "disabled": false},
@@ -310,14 +363,18 @@ selectRule :
 
 #### DatePicker 日期选择器
 
-```js
+```javascript
 DatePickerRule :
 {
+        //必填!
         type: "DatePicker",
+        //必填!
         field: "section_day",
+        //必填!
         title: "活动日期",
         value: [1519110955000, new Date()], //input值, type为daterange,datetimerange value为数组 [start_value,end_value]
         props: {
+            //必填!
             "type": "datetimerange", //显示类型，可选值为 date、daterange、datetime、datetimerange、year、month
             "format": "yyyy-MM-dd HH:mm:ss", //展示的日期格式
             "placement": "bottom-start", //	日期选择器出现的位置，可选值为toptop-starttop-endbottombottom-startbottom-endleftleft-startleft-endrightright-startright-end
@@ -343,14 +400,18 @@ DatePickerRule :
 
 #### TimePicker 时间选择器
 
-```js
+```javascript
 TimePickerRule :
 {
+        //必填!
         type: "TimePicker",
+        //必填!
         field: "section_time",
+        //必填!
         title: "活动时间",
         value: [], //input值, type为timerange value为数组 [start_value,end_value]
         props: {
+            //必填!
             "type": "timerange", //显示类型，可选值为 time、timerange
             "format": "HH:mm:ss", //展示的时间格式
             "steps": [], //下拉列表的时间间隔，数组的三项分别对应小时、分钟、秒。例如设置为 [1, 15] 时，分钟会显示：00、15、30、45。
@@ -377,11 +438,14 @@ TimePickerRule :
 
 ####  InputNumber 数字输入框
 
-```js
+```javascript
 InputNumberRule :
 {
+        //必填!
         type: "InputNumber",
+        //必填!
         field: "sort",
+        //必填!
         title: "排序",
         value: 0, //input值
         props: {
@@ -408,11 +472,14 @@ InputNumberRule :
 
 #### ColorPicker 颜色选择器
 
-```js
+```javascript
 ColorPickerRule :
 {
+        //必填!
         type: "ColorPicker",
+        //必填!
         field: "color",
+        //必填!
         title: "颜色",
         value: '#ff7271', //input值
         props: {
@@ -434,38 +501,31 @@ ColorPickerRule :
 ```
 #### 多级联动
 
-```js
+```javascript
 cascaderRule:
 {
+        //必填!
         type:"cascader",
+        //必填!
         title:"所在区域",
+        //必填!
         field:"address",
         value:['陕西省','西安市','新城区'],
         props:{
-            //可选项的数据源，格式参照示例说明
-            data:window.province || [],
-            //选择后展示的函数，用于自定义显示格式
-            renderFormat:label => label.join(' / '),
-            //是否禁用选择器
-            disabled:false,
-            //是否支持清除
-            clearable:true,
-            //输入框占位符
-            placeholder:'请选择',
-            //次级菜单展开方式，可选值为 click 或 hover
-            trigger:'click',
-            //当此项为 true 时，点选每级菜单选项值都会发生变化，具体见上面的示例
-            changeOnSelect:false,
-            //输入框大小，可选值为large和small或者不填
-            size:undefined,
-            //动态获取数据，数据源需标识 loading
-            loadData:()=>{},
-            //是否支持搜索
-            filterable:false,
-            //当搜索列表为空时显示的内容
-            notFoundText:'无匹配数据',
-            //是否将弹层放置于 body 内，在 Tabs、带有 fixed 的 Table 列内使用时，建议添加此属性，它将不受父级样式影响，从而达到更好的效果
-            transfer:false,
+            //必填!
+            data:window.province || [],//可选项的数据源，格式参照示例说明
+            
+            renderFormat:label => label.join(' / '),//选择后展示的函数，用于自定义显示格式
+            disabled:false,//是否禁用选择器
+            clearable:true,//是否支持清除
+            placeholder:'请选择',//输入框占位符
+            trigger:'click',//次级菜单展开方式，可选值为 click 或 hover
+            changeOnSelect:false,//当此项为 true 时，点选每级菜单选项值都会发生变化，具体见上面的示例
+            size:undefined,//输入框大小，可选值为large和small或者不填
+            loadData:()=>{},//动态获取数据，数据源需标识 loading
+            filterable:false,//是否支持搜索
+            notFoundText:'无匹配数据',//当搜索列表为空时显示的内容
+            transfer:false,//是否将弹层放置于 body 内，在 Tabs、带有 fixed 的 Table 列内使用时，建议添加此属性，它将不受父级样式影响，从而达到更好的效果
         },
         event:{
             //选择完成后的回调，返回值 value 即已选值 value，selectedData 为已选项的具体数据
@@ -481,17 +541,23 @@ cascaderRule:
 
 #### Upload 上传
 
-```js
+```javascript
 UploadRule :
 {
+        //必填!
         type: "Upload",
+        //必填!
         field: "pic",
+        //必填!
         title: "轮播图",
         value: ['http://img1.touxiang.cn/uploads/20131030/30-075657_191.jpg','http://img1.touxiang.cn/uploads/20131030/30-075657_191.jpg'], //input值
         props: {
+            //必填!
             "type":"select", //上传控件的类型，可选值为 select（点击选择），drag（支持拖拽）
+            //必填!
             "uploadType":"image", //上传文件类型，可选值为 image（图片上传），file（文件上传）
-            "action": "", //上传的地址，必填
+            //必填!
+            "action": "", //上传的地址
             "headers": {}, //设置上传的请求头部
             "multiple": true, //是否支持多选文件
             "data":{}, //上传时附带的额外参数
@@ -508,9 +574,10 @@ UploadRule :
             "maxLength":1,
             "beforeUpload":()=>{}, //上传文件之前的钩子，参数为上传的文件，若返回 false 或者 Promise 则停止上传
             "onProgress":()=>{}, //文件上传时的钩子，返回字段为 event, file, fileList
+            //必填!
             "onSuccess":function () {
                 return 'http://img1.touxiang.cn/uploads/20131030/30-075657_191.jpg';
-            }, //文件上传成功时的钩子，返回字段为 response, file, fileList, 使用$f.uploadPush(field,filePath) 将上传后的路径添加到value中
+            }, //文件上传成功时的钩子，返回字段为 response, file, fileList,若需有把文件添加到文件列表中,在函数值返回即可
             "onError":(error, file, fileList)=>{}, //文件上传失败时的钩子，返回字段为 error, file, fileList
             "onPreview":()=>{}, //点击已上传的文件链接时的钩子，返回字段为 file， 可以通过 file.response 拿到服务端返回数据
             "onRemove":()=>{}, //文件列表移除文件时的钩子，返回字段为 file, fileList
@@ -524,71 +591,71 @@ accept 文件类型： [https://developer.mozilla.org/en-US/docs/Web/HTML/Elemen
 
 ### 全局配置 createOptions
 
-```js
+```javascript
 {
-    //插入节点,默认document.body
-    el:null,
+    
+    el:null,//插入节点,默认document.body
     //form配置
     form:{
-        //是否开启行内表单模式
-        inline:false,
-        //表单域标签的位置，可选值为 left、right、top
-        labelPosition:'right',
-        //表单域标签的宽度，所有的 FormItem 都会继承 Form 组件的 label-width 的值
-        labelWidth:125,
-        //是否显示校验错误信息
-        showMessage:true,
-        //原生的 autocomplete 属性，可选值为 off 或 on
-        autocomplete:'off',
+        
+        inline:false,//是否开启行内表单模式
+        
+        labelPosition:'right',//表单域标签的位置，可选值为 left、right、top
+        
+        labelWidth:125,//表单域标签的宽度，所有的 FormItem 都会继承 Form 组件的 label-width 的值
+        
+        showMessage:true,//是否显示校验错误信息
+        
+        autocomplete:'off',//原生的 autocomplete 属性，可选值为 off 或 on
     },
     upload:{
-        //上传文件之前的钩子，参数为上传的文件，若返回 false 或者 Promise 则停止上传
-        beforeUpload:()=>{},
-        //文件上传时的钩子，返回字段为 event, file, fileList
-        onProgress:(event, file, fileList)=>{},
-        //文件上传成功时的钩子，返回字段为 response, file, fileList,若需有把文件添加到文件列表中,在函数值返回即可
+        
+        beforeUpload:()=>{},//上传文件之前的钩子，参数为上传的文件，若返回 false 或者 Promise 则停止上传
+        
+        onProgress:(event, file, fileList)=>{},//文件上传时的钩子，返回字段为 event, file, fileList
+        
         onSuccess:(response, file, fileList)=>{
             // return filePath;
-        },
-        //文件上传失败时的钩子，返回字段为 error, file, fileList
-        onError:(error, file, fileList)=>{},
-        //点击已上传的文件链接时的钩子，返回字段为 file， 可以通过 file.response 拿到服务端返回数据
-        onPreview:(file)=>{},
-        //文件列表移除文件时的钩子，返回字段为 file, fileList
-        onRemove:(file, removeFn)=>{removeFn();},
-        //文件格式验证失败时的钩子，返回字段为 file, fileList
-        onFormatError:(file, fileList)=>{},
-        //文件超出指定大小限制时的钩子，返回字段为 file, fileList
-        onExceededSize:(file, fileList)=>{},
-        //操作按钮的图标 ,设置为false将不显示
-        handleIcon:'ios-eye-outline',
-        //点击操作按钮事件
-        onHandle:(src)=>{},
-        //是否可删除,设置为false是不显示删除按钮
-        allowRemove:true
+        },//文件上传成功时的钩子，返回字段为 response, file, fileList,若需有把文件添加到文件列表中,在函数值返回即可
+        
+        onError:(error, file, fileList)=>{},//文件上传失败时的钩子，返回字段为 error, file, fileList
+        
+        onPreview:(file)=>{},//点击已上传的文件链接时的钩子，返回字段为 file， 可以通过 file.response 拿到服务端返回数据
+        
+        onRemove:(file, removeFn)=>{removeFn();},//文件列表移除文件时的钩子，返回字段为 file, fileList
+        
+        onFormatError:(file, fileList)=>{},//文件格式验证失败时的钩子，返回字段为 file, fileList
+        
+        onExceededSize:(file, fileList)=>{},//文件超出指定大小限制时的钩子，返回字段为 file, fileList
+        
+        handleIcon:'ios-eye-outline',//操作按钮的图标 ,设置为false将不显示
+        
+        onHandle:(src)=>{},//点击操作按钮事件
+        
+        allowRemove:true//是否可删除,设置为false是不显示删除按钮
     },
-    //表单提交事件
-    onSubmit:(formData)=>{},
+    
+    onSubmit:(formData)=>{},//表单提交事件
     //提交按钮配置,设置为false时不显示按钮
     submitBtn:{
-        //按钮类型，可选值为primary、ghost、dashed、text、info、success、warning、error或者不设置
-        type:"primary",
-        //按钮大小，可选值为large、small、default或者不设置
-        size:"large",
-        //按钮形状，可选值为circle或者不设置
-        shape:undefined,
-        //开启后，按钮的长度为 100%
-        long:true,
-        //设置button原生的type，可选值为button、submit、reset
-        htmlType:"button",
-        //设置按钮为禁用状态
-        disabled:false,
-        //设置按钮的图标类型
-        icon:"ios-upload",
-        //按钮文字提示
-        innerText:"提交",
-        //设置按钮为加载中状态
-        loading:false
+        
+        type:"primary",//按钮类型，可选值为primary、ghost、dashed、text、info、success、warning、error或者不设置
+        
+        size:"large",//按钮大小，可选值为large、small、default或者不设置
+        
+        shape:undefined,//按钮形状，可选值为circle或者不设置
+        
+        long:true,//开启后，按钮的长度为 100%
+        
+        htmlType:"button",//设置button原生的type，可选值为button、submit、reset
+        
+        disabled:false,//设置按钮为禁用状态
+        
+        icon:"ios-upload",//设置按钮的图标类型
+        
+        innerText:"提交",//按钮文字提示
+        
+        loading:false//设置按钮为加载中状态
     }
 }
 ```

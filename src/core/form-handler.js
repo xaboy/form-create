@@ -1,6 +1,8 @@
 import {isArray, isDate} from "./util";
 import {getRender} from "./form-render";
 
+let i = 1;
+
 let handler = function (vm,{field,type,title = '',options=[],props={},validate = [],event = {},value = '',slot = {}}) {
     this.rule = {
         field, type, title, options, props,slot,value,
@@ -11,6 +13,7 @@ let handler = function (vm,{field,type,title = '',options=[],props={},validate =
         },{}),
     };
     this.vm = vm;
+    this.unique = i++;
     this.verify();
     this.handle();
 };
