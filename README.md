@@ -51,7 +51,8 @@ npm install
 <!-- import formCreate -->
 <script src="dist/form-create.min.js"></script>
 ```
-** 注意 iview版本请`>=2.9.2`,否则可能存在问题
+
+ **注意! iview版本请`>=2.9.2`,否则可能存在问题**
 
 ## 使用
 
