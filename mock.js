@@ -187,7 +187,7 @@ window.mock = [
         type: "DatePicker",
         field: "section_day",
         title: "活动日期",
-        value: [1519110955000, new Date()], //input值, type为daterange,datetimerange value为数组 [start_value,end_value]
+        value: ['2018-02-20', new Date()], //input值, type为daterange,datetimerange value为数组 [start_value,end_value]
         props: {
             "type": "datetimerange", //显示类型，可选值为 date、daterange、datetime、datetimerange、year、month
             "format": "yyyy-MM-dd HH:mm:ss", //展示的日期格式
@@ -317,6 +317,12 @@ window.mock = [
             "onRemove":()=>{}, //文件列表移除文件时的钩子，返回字段为 file, fileList
             "onFormatError":()=>{}, //文件格式验证失败时的钩子，返回字段为 file, fileList
             "onExceededSize":()=>{}, //文件超出指定大小限制时的钩子，返回字段为 file, fileList
+            //操作按钮的图标 ,设置为false将不显示
+            handleIcon:'ionic',
+            //点击操作按钮事件
+            onHandle:(src)=>{},
+            //是否可删除,设置为false是不显示删除按钮
+            allowRemove:true,
         },
     },
     {

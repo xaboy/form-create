@@ -676,6 +676,12 @@ UploadRule :
             "onFormatError":()=>{}, 
             //文件超出指定大小限制时的钩子，返回字段为 file, fileList
             "onExceededSize":()=>{}, 
+            //操作按钮的图标 ,设置为false将不显示
+            handleIcon:'ionic',
+            //点击操作按钮事件
+            onHandle:(src)=>{},
+            //是否可删除,设置为false是不显示删除按钮
+            allowRemove:true,
         },
     }
 ```
@@ -718,7 +724,7 @@ accept 文件类型： [https://developer.mozilla.org/en-US/docs/Web/HTML/Elemen
         //点击已上传的文件链接时的钩子，返回字段为 file， 可以通过 file.response 拿到服务端返回数据
         onPreview:(file)=>{},
         //文件列表移除文件时的钩子，返回字段为 file, fileList
-        onRemove:(file, removeFn)=>{removeFn();},
+        onRemove:(file, fileList)=>{},
         //文件格式验证失败时的钩子，返回字段为 file, fileList
         onFormatError:(file, fileList)=>{},
         //文件超出指定大小限制时的钩子，返回字段为 file, fileList

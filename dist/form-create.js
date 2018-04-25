@@ -439,12 +439,10 @@ var uploadRender = renderFactory({
         var _this9 = this;
 
         return this.cvm.icon({ props: { type: 'ios-trash-outline' }, nativeOn: { 'click': function click() {
-                    _this9.options.upload.onRemove(src, function () {
-                        var _handler$getParseValu = _this9.handler.getParseValue(),
-                            files = _handler$getParseValu.files;
+                    var _handler$getParseValu = _this9.handler.getParseValue(),
+                        files = _handler$getParseValu.files;
 
-                        files.splice(files.indexOf(src), 1);
-                    });
+                    files.splice(files.indexOf(src), 1);
                 } } });
     },
     makeHandleIcon: function makeHandleIcon(src) {
@@ -638,9 +636,7 @@ var createOptions = {
         //点击已上传的文件链接时的钩子，返回字段为 file， 可以通过 file.response 拿到服务端返回数据
         onPreview: function onPreview(file) {},
         //文件列表移除文件时的钩子，返回字段为 file, fileList
-        onRemove: function onRemove(file, removeFn) {
-            removeFn();
-        },
+        onRemove: function onRemove(file, fileList) {},
         //文件格式验证失败时的钩子，返回字段为 file, fileList
         onFormatError: function onFormatError(file, fileList) {},
         //文件超出指定大小限制时的钩子，返回字段为 file, fileList
@@ -1327,8 +1323,8 @@ var checkedHandler = handlerFactory({
  */
 var selectedHandler = handlerFactory({
     handle: function handle() {
-        var parseValue = this.rule.props && this.rule.props.multiple === true && !(0, _util.isArray)(this.rule.value) ? [this.rule.value] : this.rule.value;
-        this.changeParseValue(parseValue);
+        var isArr = (0, _util.isArray)(this.rule.value);
+        if (this.rule.props && this.rule.props.multiple === true) this.changeParseValue(isArr === true ? this.rule.value : [this.rule.value]);else this.changeParseValue(isArr === true ? this.rule.value[0] : this.rule.value);
     }
 });
 

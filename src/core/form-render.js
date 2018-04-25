@@ -197,10 +197,8 @@ const uploadRender = renderFactory({
     },
     makeRemoveIcon(src){
         return this.cvm.icon({props:{type:'ios-trash-outline'},nativeOn:{'click':()=>{
-            this.options.upload.onRemove(src,()=>{
-                let {files} = this.handler.getParseValue();
-                files.splice(files.indexOf(src),1);
-            });
+            let {files} = this.handler.getParseValue();
+            files.splice(files.indexOf(src),1);
         }}});
     },
     makeHandleIcon(src){

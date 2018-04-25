@@ -122,10 +122,11 @@ const checkedHandler = handlerFactory({
  */
 const selectedHandler = handlerFactory({
     handle() {
-        let parseValue = ((this.rule.props && this.rule.props.multiple === true && !isArray(this.rule.value))
-            ? [this.rule.value]
-            : this.rule.value);
-        this.changeParseValue(parseValue);
+        let isArr = isArray(this.rule.value);
+        if(this.rule.props && this.rule.props.multiple === true)
+            this.changeParseValue(isArr === true ? this.rule.value : [this.rule.value]);
+        else
+            this.changeParseValue(isArr === true ? this.rule.value[0] : this.rule.value);
     }
 });
 
