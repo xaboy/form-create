@@ -569,10 +569,10 @@ ColorPickerRule :
         validate:[],
     }
 ```
-#### 多级联动
+#### Cascader 多级联动
 
 ```javascript
-cascaderRule:
+CascaderRule:
 {
         
         type:"cascader",//必填!
