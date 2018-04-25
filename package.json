@@ -20,10 +20,13 @@
     "url": "https://github.com/xaboy/form-create.git"
   },
   "keywords": [
+    "form",
+    "form generate",
     "form builder",
-    "form create",
+    "form-create",
     "form init",
     "create form",
+    "form create",
     "easy form"
   ],
   "author": "xaboy",
