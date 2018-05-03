@@ -24,13 +24,9 @@
 - 新增 组件事件扩展
 - 优化 文件上传,时间选择等组件
 
-## 待完善
+## [中文文档](https://xaboy.gitbooks.io/form-create/content/kuai-su-shang-shou.html)
 
-- [ ] 动态显示隐藏表单元素
-- [x] 动态增加表单元素
-- [ ] 树形控件生成
-
-## 示例
+## 示例 
 
 ![https://raw.githubusercontent.com/xaboy/form-create/dev/images/sample110.jpg](https://raw.githubusercontent.com/xaboy/form-create/dev/images/sample110.jpg)
 
