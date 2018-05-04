@@ -24,6 +24,18 @@
 - 新增 组件事件扩展
 - 优化 文件上传,时间选择等组件
 
+## 更新说明
+
+#### 1.1.5 (2018-5-4)
+- 修复时间,日期组件值获取问题
+- 修复同时生成多个form表单冲突问题
+- 升级iview版本到2.13.0
+
+#### 1.1.4
+- 新增动态添加表单元素功能
+- 优化操作接口
+
+
 ## [中文文档](https://xaboy.gitbooks.io/form-create/content/kuai-su-shang-shou.html)
 
 ## 示例 
@@ -46,10 +58,10 @@ npm install
 ## 引入
 
 ```html
-<!-- import Vue -->
+<!-- import Vue ^2.5.16-->
 <script src="node_modules/vue/dist/vue.min.js"></script>
 
-<!-- import iview -->
+<!-- import iview ^2.13.0-->
 <link rel="stylesheet" href="node_modules/iview/dist/styles/iview.css">
 <script src="node_modules/iview/dist/iview.min.js"></script>
 
@@ -63,27 +75,32 @@ npm install
 <script src="dist/form-create.min.js"></script>
 ```
 
- **注意! iview版本请`>=2.9.2`,否则可能存在问题**
+**注意! iview版本为`2.13.0`,Vue版本为`2.5.*`**
 
 ## 使用
 
 ```javascript
 let rules = window.mock;
 new Vue({
-  mounted:function(){
-    let $f = this.$formCreate(mock,
-            {
-                onSubmit:function (formData) {
-                    console.log(formData);
-                    $f.submitStatus({loading:true});
+    mounted:function(){
+        let root = document.getElementById('app'),that = this;
+        $f = this.$formCreate(mock,{
+            el:root,
+            onSubmit:function (formData) {
+                console.log(formData);
+                //提交状态
+                $f.btn.loading();
+                //点击状态
+                //                    $f.btn.finish();
+                //创建第二个表单
+                $f2 = that.$formCreate(mock,root);
             }
-        });
+            });
         //动态添加表单元素
         $f.append($r,'goods_name');
     }
 })
 ```
-
 
 
 #### $formCreate 参数

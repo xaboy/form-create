@@ -1,11 +1,10 @@
-import {isArray, isDate} from "./util";
+import {deepExtend, isArray, isDate, uniqueId} from "./util";
 import {getRender} from "./form-render";
-
-let i = 1;
 
 let handler = function (vm,{field,type,title = '',options=[],props={},validate = [],event = {},value = '',slot = {}}) {
     this.rule = {
-        field, type, title, options, props,slot,value,
+        field, type, title, options, props,slot,
+        value:deepExtend(Object.create(null),{value}).value,
         validate: isArray(validate) ? validate : [validate],
         event: Object.keys(event).reduce(function (initial,eventName) {
             initial[`on-${eventName}`] = event[eventName];
@@ -13,15 +12,16 @@ let handler = function (vm,{field,type,title = '',options=[],props={},validate =
         },{}),
     };
     this.vm = vm;
-    this.unique = i++;
+    this.unique = uniqueId();
     this.verify();
     this.handle();
+    this.refName = field+''+this.unique;
 };
 
 handler.prototype = {
     el(){
         if(!this._el)
-            this._el = this.vm.$refs[this.rule.field];
+            this._el = this.vm.$refs[this.refName];
         return this._el || {};
     },
     handle(){

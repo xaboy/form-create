@@ -93,7 +93,8 @@ window.mock = [
         value:"0",//input值,
         options:[
             {value:"0",label:"不包邮",disabled:false},
-            {value:"1",label:"包邮",disabled:true},
+            {value:"1",label:"包邮",disabled:false},
+            {value:"1",label:"未知",disabled:true},
         ],
         props: {
             "type":undefined, //可选值为 button 或不填，为 button 时使用按钮样式

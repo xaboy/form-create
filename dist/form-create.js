@@ -61,7 +61,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 2);
+/******/ 	return __webpack_require__(__webpack_require__.s = 3);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -115,7 +115,7 @@ var deepExtend = function deepExtend(origin) {
 
     var isArr = false;
     for (var key in target) {
-        if (target.hasOwnProperty(key)) {
+        if (Object.prototype.hasOwnProperty.call(target, key)) {
             var clone = target[key];
             if ((isArr = isArray(clone)) || isPlainObject(clone)) {
                 var nst = origin[key] === undefined;
@@ -134,6 +134,13 @@ var deepExtend = function deepExtend(origin) {
     return origin;
 };
 
+var uniqueId = function () {
+    var id = 0;
+    return function () {
+        return id++;
+    };
+}();
+
 exports.concat = concat;
 exports.assign = assign;
 exports.toString = toString;
@@ -145,6 +152,7 @@ exports.isString = isString;
 exports.isArray = isArray;
 exports.deepExtend = deepExtend;
 exports.isElement = isElement;
+exports.uniqueId = uniqueId;
 
 /***/ }),
 /* 1 */
@@ -158,13 +166,15 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.getRender = exports.uploadRender = exports.colorpickerRender = exports.timepickerRender = exports.datepickerRender = exports.switchRender = exports.selectRender = exports.checkboxRender = exports.radioRender = exports.inputnumberRender = exports.inputRender = exports.hiddenRender = exports.formRender = undefined;
 
-var _cvm = __webpack_require__(4);
+var _cvm = __webpack_require__(2);
 
 var _cvm2 = _interopRequireDefault(_cvm);
 
 var _props = __webpack_require__(5);
 
 var _props2 = _interopRequireDefault(_props);
+
+var _util = __webpack_require__(0);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -191,11 +201,14 @@ render.prototype = {
     inputProps: function inputProps() {
         var _this = this;
 
-        var _handler$rule = this.handler.rule,
+        var _handler = this.handler,
+            refName = _handler.refName,
+            unique = _handler.unique,
+            _handler$rule = _handler.rule,
             props = _handler$rule.props,
             field = _handler$rule.field;
 
-        return this.props.props(Object.assign(props, { model: 'formData.' + field, value: this.vm.formData[field], elementId: field })).ref(field).on(this.event).on('input', function (value) {
+        return this.props.props(Object.assign(props, { model: 'formData.' + field, value: this.vm.formData[field], elementId: refName })).ref(refName).key('fip' + unique).on(this.event).on('input', function (value) {
             _this.vm.$emit('input', value);
             _this.vm.$set(_this.vm.formData, field, value);
         });
@@ -237,11 +250,13 @@ var radioRender = renderFactory({
         var _this2 = this;
 
         this.propsData = this.inputProps().get();
-        var options = this.handler.rule.options;
+        var _handler2 = this.handler,
+            unique = _handler2.unique,
+            options = _handler2.rule.options;
 
         return [this.cvm.radioGroup(this.propsData, function () {
-            return options.map(function (option) {
-                return _this2.cvm.radio({ props: option });
+            return options.map(function (option, index) {
+                return _this2.cvm.radio({ props: option, key: 'ropt' + index + unique });
             });
         })];
     }
@@ -252,11 +267,13 @@ var checkboxRender = renderFactory({
         var _this3 = this;
 
         this.propsData = this.inputProps().get();
-        var options = this.handler.rule.options;
+        var _handler3 = this.handler,
+            unique = _handler3.unique,
+            options = _handler3.rule.options;
 
         return [this.cvm.checkboxGroup(this.propsData, function () {
-            return options.map(function (option) {
-                return _this3.cvm.checkbox({ props: option });
+            return options.map(function (option, index) {
+                return _this3.cvm.checkbox({ props: option, key: 'copt' + index + unique });
             });
         })];
     }
@@ -267,11 +284,13 @@ var selectRender = renderFactory({
         var _this4 = this;
 
         this.propsData = this.inputProps().get();
-        var options = this.handler.rule.options;
+        var _handler4 = this.handler,
+            unique = _handler4.unique,
+            options = _handler4.rule.options;
 
         return [this.cvm.select(this.propsData, function () {
-            return options.map(function (option) {
-                return _this4.cvm.option({ props: option });
+            return options.map(function (option, index) {
+                return _this4.cvm.option({ props: option, key: 'sopt' + index + unique });
             });
         })];
     }
@@ -391,64 +410,67 @@ var uploadRender = renderFactory({
             }
 
             return (_uploadOptions$onErro = _this5.uploadOptions.onError).call.apply(_uploadOptions$onErro, [null].concat(arg));
-        }).ref(field).get();
+        }).ref(this.handler.refName).key('fip' + this.handler.unique).get();
     },
     parse: function parse() {
         var _this6 = this;
 
-        var rule = this.handler.rule,
+        var _handler5 = this.handler,
+            rule = _handler5.rule,
+            unique = _handler5.unique,
             value = this.vm.formData[rule.field],
-            render = [].concat(_toConsumableArray(value.files.map(function (img) {
-            return _this6.makeUploadView(img);
+            render = [].concat(_toConsumableArray(value.files.map(function (img, index) {
+            return _this6.makeUploadView(img, '' + index + unique);
         })));
-        if (value.status.showProgress === true) render.push(this.makeProgress(value.status));
-        if (!this.uploadOptions.maxLength || this.uploadOptions.maxLength > this.vm.formData[rule.field].files.length) render.push(this.makeUploadBtn());
-        return [this.cvm.make('div', { class: { 'fc-upload': true } }, render)];
+
+        if (value.status.showProgress === true) render.push(this.makeProgress(value.status, unique));
+        if (!this.uploadOptions.maxLength || this.uploadOptions.maxLength > this.vm.formData[rule.field].files.length) render.push(this.makeUploadBtn(unique));
+        return [this.cvm.make('div', { key: 'div4' + unique, class: { 'fc-upload': true } }, render)];
     },
-    makeUploadView: function makeUploadView(src) {
+    makeUploadView: function makeUploadView(src, key) {
         var _this7 = this;
 
-        return this.cvm.make('div', { class: { 'fc-files': true } }, function () {
+        return this.cvm.make('div', { key: 'div1' + key, class: { 'fc-files': true } }, function () {
             var container = [];
             if (_this7.uploadOptions.uploadType === 'image') {
-                container.push(_this7.cvm.make('img', { attrs: { src: src } }));
+                container.push(_this7.cvm.make('img', { key: 'img' + key, attrs: { src: src } }));
             } else {
-                container.push(_this7.cvm.icon({ props: { type: "document-text", size: 40 } }));
+                container.push(_this7.cvm.icon({ key: 'file' + key, props: { type: "document-text", size: 40 } }));
             }
-            if (_this7.issetIcon) container.push(_this7.makeIcons(src));
+            if (_this7.issetIcon) container.push(_this7.makeIcons(src, key));
             return container;
         });
     },
-    makeIcons: function makeIcons(src) {
+    makeIcons: function makeIcons(src, key) {
         var _this8 = this;
 
-        return this.cvm.make('div', { class: { 'fc-upload-cover': true } }, function () {
+        return this.cvm.make('div', { key: 'div2' + key, class: { 'fc-upload-cover': true } }, function () {
             var icon = [];
-            if (!!_this8.uploadOptions.handleIcon) icon.push(_this8.makeHandleIcon(src));
-            if (_this8.uploadOptions.allowRemove === true) icon.push(_this8.makeRemoveIcon(src));
+            if (!!_this8.uploadOptions.handleIcon) icon.push(_this8.makeHandleIcon(src, key));
+            if (_this8.uploadOptions.allowRemove === true) icon.push(_this8.makeRemoveIcon(src, key));
             return icon;
         });
     },
-    makeProgress: function makeProgress(file) {
-        return this.cvm.make('div', { class: { 'fc-files': true } }, [this.cvm.progress({ props: { percent: file.percentage, hideInfo: true } })]);
+    makeProgress: function makeProgress(file, unique) {
+        return this.cvm.make('div', { key: 'div3' + unique, class: { 'fc-files': true } }, [this.cvm.progress({ key: 'upp' + unique, props: { percent: file.percentage, hideInfo: true } })]);
     },
-    makeUploadBtn: function makeUploadBtn() {
-        return this.cvm.upload(this.propsData, [this.cvm.make('div', { class: { 'fc-upload-btn': true } }, [this.cvm.icon({ props: { type: "camera", size: 20 } })])]);
+    makeUploadBtn: function makeUploadBtn(unique) {
+        return this.cvm.upload(this.propsData, [this.cvm.make('div', { key: 'div5' + unique, class: { 'fc-upload-btn': true } }, [this.cvm.icon({ key: 'upi' + unique, props: { type: "camera", size: 20 } })])]);
     },
-    makeRemoveIcon: function makeRemoveIcon(src) {
+    makeRemoveIcon: function makeRemoveIcon(src, key) {
         var _this9 = this;
 
-        return this.cvm.icon({ props: { type: 'ios-trash-outline' }, nativeOn: { 'click': function click() {
+        return this.cvm.icon({ key: 'uph' + key, props: { type: 'ios-trash-outline' }, nativeOn: { 'click': function click() {
                     var _handler$getParseValu = _this9.handler.getParseValue(),
                         files = _handler$getParseValu.files;
 
                     files.splice(files.indexOf(src), 1);
                 } } });
     },
-    makeHandleIcon: function makeHandleIcon(src) {
+    makeHandleIcon: function makeHandleIcon(src, key) {
         var _this10 = this;
 
-        return this.cvm.icon({ props: { type: this.uploadOptions.handleIcon.toString() }, nativeOn: { 'click': function click() {
+        return this.cvm.icon({ key: 'uph' + key, props: { type: this.uploadOptions.handleIcon.toString() }, nativeOn: { 'click': function click() {
                     _this10.uploadOptions.onHandle(src);
                 } } });
     }
@@ -496,37 +518,43 @@ var formRender = function formRender(_ref) {
     this.fCreateApi = fCreateApi;
     this.cvm = _cvm2.default.instance(vm.$createElement);
     this.props = _props2.default.instance();
+    this.unique = (0, _util.uniqueId)();
+    this.refName = 'cForm' + this.unique;
 };
 
 formRender.prototype = {
     parse: function parse() {
         var _this11 = this;
 
-        var propsData = this.props.props(Object.assign({}, this.options.form, this.form)).ref('cForm').get(),
+        var unique = this.unique,
+            propsData = this.props.props(Object.assign({}, this.options.form, this.form)).ref(this.refName).key(unique).get(),
             vn = this.renderSort.map(function (field) {
             var render = _this11.renders[field],
-                type = render.handler.rule.type;
-            if (type !== 'hidden') return _this11.makeFormItem(render.handler, render.parse());
+                _render$handler = render.handler,
+                key = _render$handler.key,
+                type = _render$handler.rule.type;
+            if (type !== 'hidden') return _this11.makeFormItem(render.handler, render.parse(), 'fItem' + key + unique);
         });
-        if (false !== this.options.submitBtn) vn.push(this.makeSubmitBtn());
+        if (false !== this.options.submitBtn) vn.push(this.makeSubmitBtn(unique));
         return this.cvm.form(propsData, vn);
     },
     makeFormItem: function makeFormItem(_ref2, VNodeFn) {
         var rule = _ref2.rule,
+            refName = _ref2.refName,
             unique = _ref2.unique;
 
         var propsData = this.props.props({
             prop: rule.field,
             label: rule.title,
-            labelFor: rule.field,
+            labelFor: refName,
             rules: rule.validate
         }).key(unique).get();
         return this.cvm.formItem(propsData, VNodeFn);
     },
-    makeSubmitBtn: function makeSubmitBtn() {
+    makeSubmitBtn: function makeSubmitBtn(unique) {
         var _this12 = this;
 
-        return this.cvm.button({ props: this.vm.buttonProps, on: { "click": function click() {
+        return this.cvm.button({ key: 'fbtn' + unique, props: this.vm.buttonProps, on: { "click": function click() {
                     _this12.fCreateApi.submit();
                 } } }, [this.cvm.span(this.options.submitBtn.innerText)]);
     },
@@ -569,7 +597,119 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _formCreate = __webpack_require__(3);
+var _util = __webpack_require__(0);
+
+var cvm = function cvm() {
+    var createElement = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : (0, _util.throwIfMissing)('缺少参数:createElement');
+
+    this.$h = createElement;
+};
+
+var _instance = null;
+
+var vm = null;
+
+cvm.instance = function (createElement) {
+    if (false === _instance instanceof cvm) _instance = new cvm(createElement);
+    return _instance;
+};
+
+cvm.setVm = function ($vm) {
+    vm = $vm;
+};
+cvm.clearVm = function () {
+    vm = null;
+};
+
+cvm.prototype = {
+    form: function form(data, VNodeFn) {
+        return this.make('i-form', data, VNodeFn);
+    },
+    formItem: function formItem(data, VNodeFn) {
+        return this.make('form-Item', data, VNodeFn);
+    },
+    input: function input(data, VNodeFn) {
+        return this.make('i-input', data, VNodeFn);
+    },
+    inputNumber: function inputNumber(data, VNodeFn) {
+        return this.make('Input-Number', data, VNodeFn);
+    },
+    radioGroup: function radioGroup(data, VNodeFn) {
+        return this.make('Radio-Group', data, VNodeFn);
+    },
+    radio: function radio(data, VNodeFn) {
+        return this.make('Radio', data, VNodeFn);
+    },
+    checkboxGroup: function checkboxGroup(data, VNodeFn) {
+        return this.make('Checkbox-Group', data, VNodeFn);
+    },
+    checkbox: function checkbox(data, VNodeFn) {
+        return this.make('Checkbox', data, VNodeFn);
+    },
+    select: function select(data, VNodeFn) {
+        return this.make('i-select', data, VNodeFn);
+    },
+    option: function option(data, VNodeFn) {
+        return this.make('i-option', data, VNodeFn);
+    },
+    switch: function _switch(data, VNodeFn) {
+        return this.make('i-switch', data, VNodeFn);
+    },
+    datePicker: function datePicker(data, VNodeFn) {
+        return this.make('Date-Picker', data, VNodeFn);
+    },
+    timePicker: function timePicker(data, VNodeFn) {
+        return this.make('Time-Picker', data, VNodeFn);
+    },
+    colorPicker: function colorPicker(data, VNodeFn) {
+        return this.make('Color-Picker', data, VNodeFn);
+    },
+    cascader: function cascader(data, VNodeFn) {
+        return this.make('Cascader', data, VNodeFn);
+    },
+    upload: function upload(data, VNodeFn) {
+        return this.make('Upload', data, VNodeFn);
+    },
+    span: function span(data, VNodeFn) {
+        return this.make('span', data, VNodeFn);
+    },
+    icon: function icon(data, VNodeFn) {
+        return this.make('Icon', data, VNodeFn);
+    },
+    button: function button(data, VNodeFn) {
+        return this.make('i-button', data, VNodeFn);
+    },
+    progress: function progress(data, VNodeFn) {
+        return this.make('i-progress', data, VNodeFn);
+    },
+    modal: function modal(data, VNodeFn) {
+        return this.make('Modal', data, VNodeFn);
+    },
+    make: function make(nodeName, data, VNodeFn) {
+        if ((0, _util.isString)(data)) data = { domProps: { innerHTML: data } };
+        var Node = this.$h(nodeName, data, this.getVNode(VNodeFn));
+        if (vm !== null) Node.context = vm;
+        return Node;
+    },
+    getVNode: function getVNode(VNode) {
+        return (0, _util.isFunction)(VNode) ? VNode() : VNode;
+    }
+};
+
+exports.default = cvm;
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _formCreate = __webpack_require__(4);
 
 var _formCreate2 = _interopRequireDefault(_formCreate);
 
@@ -585,7 +725,7 @@ if (typeof window !== 'undefined') {
 exports.default = _formCreate2.default;
 
 /***/ }),
-/* 3 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -602,6 +742,10 @@ var _util = __webpack_require__(0);
 var _formHandler = __webpack_require__(6);
 
 var _formHandler2 = _interopRequireDefault(_formHandler);
+
+var _cvm = __webpack_require__(2);
+
+var _cvm2 = _interopRequireDefault(_cvm);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -710,7 +854,7 @@ formCreateComponent.install = function (Vue) {
         var opt = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
         if ((0, _util.isElement)(opt)) opt = { el: opt };
-        var fComponent = new formCreateComponent(rules, (0, _util.deepExtend)(options, opt)),
+        var fComponent = new formCreateComponent(rules, (0, _util.deepExtend)((0, _util.deepExtend)(Object.create(null), options), opt)),
             $vm = fComponent.mount(Vue);
         return fComponent.fCreateApi;
     };
@@ -756,7 +900,9 @@ formCreateComponent.prototype = {
                     buttonProps: {}
                 };
             },
+
             render: function render() {
+                _cvm2.default.setVm(fComponent.vm);
                 return fComponent.fRender.parse();
             },
             created: function created() {
@@ -811,6 +957,9 @@ formCreateComponent.prototype = {
             if (handler !== undefined) handler.changeParseValue(n, false);else unWatch();
         });
     },
+    getFormRef: function getFormRef() {
+        return this.vm.$refs[this.fRender.refName];
+    },
     api: function api() {
         var _this2 = this;
 
@@ -819,14 +968,14 @@ formCreateComponent.prototype = {
             formData: function formData() {
                 var data = {};
                 _this2.fields().map(function (field) {
-                    data[field] = _this2.handlers[field].getValue() || '';
+                    data[field] = _this2.handlers[field].getValue();
                 });
                 return data;
             },
             getValue: function getValue(field) {
                 var handler = _this2.handlers[field];
                 if (handler === undefined) console.error(field + " \u5B57\u6BB5\u4E0D\u5B58\u5728!");else {
-                    return handler.getValue() || '';
+                    return handler.getValue();
                 }
             },
             changeField: function changeField(field, value) {
@@ -839,15 +988,15 @@ formCreateComponent.prototype = {
                 fComponent.removeField(field);
             },
             validate: function validate(successFn, errorFn) {
-                _this2.vm.$refs.cForm.validate(function (valid) {
+                fComponent.getFormRef().validate(function (valid) {
                     valid === true ? successFn && successFn() : errorFn && errorFn();
                 });
             },
             validateField: function validateField(field, callback) {
-                _this2.vm.$refs.cForm.validateField(field, callback);
+                fComponent.getFormRef().validateField(field, callback);
             },
             resetFields: function resetFields() {
-                _this2.vm.$refs.cForm.resetFields();
+                fComponent.getFormRef().resetFields();
             },
             destroy: function destroy() {
                 _this2.vm.$el.remove();
@@ -871,8 +1020,9 @@ formCreateComponent.prototype = {
                 });
             },
             submitStatus: function submitStatus() {
-                var props = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+                var _props = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
+                var props = (0, _util.deepExtend)(Object.create(null), _props);
                 _this2.vm.changeButtonProps(props);
             },
             btn: {
@@ -891,107 +1041,6 @@ formCreateComponent.prototype = {
 };
 
 exports.default = formCreateComponent;
-
-/***/ }),
-/* 4 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _util = __webpack_require__(0);
-
-var cvm = function cvm() {
-    var createElement = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : (0, _util.throwIfMissing)('缺少参数:createElement');
-
-    this.$h = createElement;
-};
-
-var _instance = null;
-
-cvm.instance = function (createElement) {
-    if (false === _instance instanceof cvm) _instance = new cvm(createElement);
-    return _instance;
-};
-
-cvm.prototype = {
-    form: function form(data, VNodeFn) {
-        return this.make('i-form', data, VNodeFn);
-    },
-    formItem: function formItem(data, VNodeFn) {
-        return this.make('form-Item', data, VNodeFn);
-    },
-    input: function input(data, VNodeFn) {
-        return this.make('i-input', data, VNodeFn);
-    },
-    inputNumber: function inputNumber(data, VNodeFn) {
-        return this.make('Input-Number', data, VNodeFn);
-    },
-    radioGroup: function radioGroup(data, VNodeFn) {
-        return this.make('Radio-Group', data, VNodeFn);
-    },
-    radio: function radio(data, VNodeFn) {
-        return this.make('Radio', data, VNodeFn);
-    },
-    checkboxGroup: function checkboxGroup(data, VNodeFn) {
-        return this.make('Checkbox-Group', data, VNodeFn);
-    },
-    checkbox: function checkbox(data, VNodeFn) {
-        return this.make('Checkbox', data, VNodeFn);
-    },
-    select: function select(data, VNodeFn) {
-        return this.make('i-select', data, VNodeFn);
-    },
-    option: function option(data, VNodeFn) {
-        return this.make('i-option', data, VNodeFn);
-    },
-    switch: function _switch(data, VNodeFn) {
-        return this.make('i-switch', data, VNodeFn);
-    },
-    datePicker: function datePicker(data, VNodeFn) {
-        return this.make('Date-Picker', data, VNodeFn);
-    },
-    timePicker: function timePicker(data, VNodeFn) {
-        return this.make('Time-Picker', data, VNodeFn);
-    },
-    colorPicker: function colorPicker(data, VNodeFn) {
-        return this.make('Color-Picker', data, VNodeFn);
-    },
-    cascader: function cascader(data, VNodeFn) {
-        return this.make('Cascader', data, VNodeFn);
-    },
-    upload: function upload(data, VNodeFn) {
-        return this.make('Upload', data, VNodeFn);
-    },
-    span: function span(data, VNodeFn) {
-        return this.make('span', data, VNodeFn);
-    },
-    icon: function icon(data, VNodeFn) {
-        return this.make('Icon', data, VNodeFn);
-    },
-    button: function button(data, VNodeFn) {
-        return this.make('i-button', data, VNodeFn);
-    },
-    progress: function progress(data, VNodeFn) {
-        return this.make('i-progress', data, VNodeFn);
-    },
-    modal: function modal(data, VNodeFn) {
-        return this.make('Modal', data, VNodeFn);
-    },
-    make: function make(nodeName, data, VNodeFn) {
-        if ((0, _util.isString)(data)) data = { domProps: { innerHTML: data } };
-        return this.$h(nodeName, data, this.getVNode(VNodeFn));
-    },
-    getVNode: function getVNode(VNode) {
-        return (0, _util.isFunction)(VNode) ? VNode() : VNode;
-    }
-};
-
-exports.default = cvm;
 
 /***/ }),
 /* 5 */
@@ -1183,8 +1232,6 @@ var _util = __webpack_require__(0);
 
 var _formRender = __webpack_require__(1);
 
-var i = 1;
-
 var handler = function handler(vm, _ref) {
     var field = _ref.field,
         type = _ref.type,
@@ -1204,7 +1251,8 @@ var handler = function handler(vm, _ref) {
         slot = _ref$slot === undefined ? {} : _ref$slot;
 
     this.rule = {
-        field: field, type: type, title: title, options: options, props: props, slot: slot, value: value,
+        field: field, type: type, title: title, options: options, props: props, slot: slot,
+        value: (0, _util.deepExtend)(Object.create(null), { value: value }).value,
         validate: (0, _util.isArray)(validate) ? validate : [validate],
         event: Object.keys(event).reduce(function (initial, eventName) {
             initial["on-" + eventName] = event[eventName];
@@ -1212,14 +1260,15 @@ var handler = function handler(vm, _ref) {
         }, {})
     };
     this.vm = vm;
-    this.unique = i++;
+    this.unique = (0, _util.uniqueId)();
     this.verify();
     this.handle();
+    this.refName = field + '' + this.unique;
 };
 
 handler.prototype = {
     el: function el() {
-        if (!this._el) this._el = this.vm.$refs[this.rule.field];
+        if (!this._el) this._el = this.vm.$refs[this.refName];
         return this._el || {};
     },
     handle: function handle() {

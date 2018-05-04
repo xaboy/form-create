@@ -1,5 +1,6 @@
 import cvm from './cvm'
 import props from './props'
+import {uniqueId} from "./util";
 
 const render = function (vm, handler, options = {}) {
     this.handler = handler;
@@ -18,10 +19,10 @@ render.prototype = {
         throw new Error('请实现parse方法');
     },
     inputProps(){
-        let {props,field} = this.handler.rule;
+        let {refName,unique,rule:{props,field}} = this.handler;
         return this.props
-            .props(Object.assign(props,{model:`formData.${field}`,value:this.vm.formData[field],elementId:field}))
-            .ref(field).on(this.event).on('input',(value)=>{
+            .props(Object.assign(props,{model:`formData.${field}`,value:this.vm.formData[field],elementId:refName}))
+            .ref(refName).key(`fip${unique}`).on(this.event).on('input',(value)=>{
                 this.vm.$emit('input',value);
                 this.vm.$set(this.vm.formData,field,value);
             });
@@ -61,24 +62,24 @@ const inputnumberRender = renderFactory({
 const radioRender = renderFactory({
     parse(){
         this.propsData = this.inputProps().get();
-        let {options} = this.handler.rule;
-        return [this.cvm.radioGroup(this.propsData,()=>options.map((option)=>this.cvm.radio({props:option})))];
+        let {unique,rule:{options}} = this.handler;
+        return [this.cvm.radioGroup(this.propsData,()=>options.map((option,index)=>this.cvm.radio({props:option,key:`ropt${index}${unique}`})))];
     }
 });
 
 const checkboxRender = renderFactory({
     parse(){
         this.propsData = this.inputProps().get();
-        let {options} = this.handler.rule;
-        return [this.cvm.checkboxGroup(this.propsData,()=>options.map((option)=>this.cvm.checkbox({props:option})))];
+        let {unique,rule:{options}} = this.handler;
+        return [this.cvm.checkboxGroup(this.propsData,()=>options.map((option,index)=>this.cvm.checkbox({props:option,key:`copt${index}${unique}`})))];
     }
 });
 
 const selectRender = renderFactory({
     parse(){
         this.propsData = this.inputProps().get();
-        let {options} = this.handler.rule;
-        return [this.cvm.select(this.propsData,()=>options.map((option)=>this.cvm.option({props:option})))];
+        let {unique,rule:{options}} = this.handler;
+        return [this.cvm.select(this.propsData,()=>options.map((option,index)=>this.cvm.option({props:option,key:`sopt${index}${unique}`})))];
     }
 });
 
@@ -148,61 +149,61 @@ const uploadRender = renderFactory({
                 return this.uploadOptions.onExceededSize.call(null,...arg);
             }).props('onError',(...arg)=>{
                 return this.uploadOptions.onError.call(null,...arg);
-            }).ref(field).get();
+            }).ref(this.handler.refName).key(`fip${this.handler.unique}`).get();
     },
     parse(){
-        let rule = this.handler.rule,
+        let {rule,unique} = this.handler,
             value = this.vm.formData[rule.field],
-            render = [...value.files.map((img)=>this.makeUploadView(img))];
+            render = [...value.files.map((img,index)=>this.makeUploadView(img,`${index}${unique}`))];
         if(value.status.showProgress === true)
-            render.push(this.makeProgress(value.status));
+            render.push(this.makeProgress(value.status,unique));
         if(!this.uploadOptions.maxLength || this.uploadOptions.maxLength > this.vm.formData[rule.field].files.length)
-            render.push(this.makeUploadBtn());
-        return [this.cvm.make('div',{class:{'fc-upload':true}},render)];
+            render.push(this.makeUploadBtn(unique));
+        return [this.cvm.make('div',{key:`div4${unique}`,class:{'fc-upload':true}},render)];
     },
-    makeUploadView(src){
-        return this.cvm.make('div',{class:{'fc-files':true}},()=>{
+    makeUploadView(src,key){
+        return this.cvm.make('div',{key:`div1${key}`,class:{'fc-files':true}},()=>{
             let container = [];
             if(this.uploadOptions.uploadType === 'image'){
-                container.push(this.cvm.make('img',{attrs:{src}}));
+                container.push(this.cvm.make('img',{key:`img${key}`,attrs:{src}}));
             }else{
-                container.push(this.cvm.icon({props:{type:"document-text", size:40}}))
+                container.push(this.cvm.icon({key:`file${key}`,props:{type:"document-text", size:40}}))
             }
             if(this.issetIcon)
-                container.push(this.makeIcons(src));
+                container.push(this.makeIcons(src,key));
             return container;
         });
     },
-    makeIcons(src){
-        return this.cvm.make('div',{class:{'fc-upload-cover':true}},()=>{
+    makeIcons(src,key){
+        return this.cvm.make('div',{key:`div2${key}`,class:{'fc-upload-cover':true}},()=>{
             let icon = [];
             if(!!this.uploadOptions.handleIcon)
-                icon.push(this.makeHandleIcon(src));
+                icon.push(this.makeHandleIcon(src,key));
             if(this.uploadOptions.allowRemove === true)
-                icon.push(this.makeRemoveIcon(src));
+                icon.push(this.makeRemoveIcon(src,key));
             return icon;
         });
     },
-    makeProgress(file) {
-        return this.cvm.make('div', {class: {'fc-files': true}}, [
-            this.cvm.progress({props:{percent:file.percentage,hideInfo:true}})
+    makeProgress(file,unique) {
+        return this.cvm.make('div', {key:`div3${unique}`,class: {'fc-files': true}}, [
+            this.cvm.progress({key:`upp${unique}`,props:{percent:file.percentage,hideInfo:true}})
         ]);
     },
-    makeUploadBtn(){
+    makeUploadBtn(unique){
         return this.cvm.upload(this.propsData,[
-            this.cvm.make('div',{class:{'fc-upload-btn':true}},[
-                this.cvm.icon({props:{type:"camera", size:20}})
+            this.cvm.make('div',{key:`div5${unique}`,class:{'fc-upload-btn':true}},[
+                this.cvm.icon({key:`upi${unique}`,props:{type:"camera", size:20}})
             ])
         ]);
     },
-    makeRemoveIcon(src){
-        return this.cvm.icon({props:{type:'ios-trash-outline'},nativeOn:{'click':()=>{
+    makeRemoveIcon(src,key){
+        return this.cvm.icon({key:`uph${key}`,props:{type:'ios-trash-outline'},nativeOn:{'click':()=>{
             let {files} = this.handler.getParseValue();
             files.splice(files.indexOf(src),1);
         }}});
     },
-    makeHandleIcon(src){
-        return this.cvm.icon({props:{type:this.uploadOptions.handleIcon.toString()},nativeOn:{'click':()=>{
+    makeHandleIcon(src,key){
+        return this.cvm.icon({key:`uph${key}`,props:{type:this.uploadOptions.handleIcon.toString()},nativeOn:{'click':()=>{
             this.uploadOptions.onHandle(src);
         }}});
     }
@@ -243,31 +244,33 @@ const formRender = function ({vm,options,handlers,formData,validate,fCreateApi})
     this.fCreateApi = fCreateApi;
     this.cvm = cvm.instance(vm.$createElement);
     this.props = props.instance();
+    this.unique = uniqueId();
+    this.refName = `cForm${this.unique}`;
 };
 
 formRender.prototype = {
     parse(){
-        let propsData = this.props.props(Object.assign({},this.options.form,this.form)).ref('cForm').get(),
+        let unique = this.unique,propsData = this.props.props(Object.assign({},this.options.form,this.form)).ref(this.refName).key(unique).get(),
             vn = this.renderSort.map((field)=>{
-                let render = this.renders[field],{type} = render.handler.rule;
+                let render = this.renders[field],{key,rule:{type}} = render.handler;
                 if(type !== 'hidden')
-                    return this.makeFormItem(render.handler,render.parse());
+                    return this.makeFormItem(render.handler,render.parse(),`fItem${key}${unique}`);
             });
         if(false !== this.options.submitBtn)
-            vn.push(this.makeSubmitBtn());
+            vn.push(this.makeSubmitBtn(unique));
         return this.cvm.form(propsData,vn);
     },
-    makeFormItem({rule,unique},VNodeFn){
+    makeFormItem({rule,refName,unique},VNodeFn){
         let propsData = this.props.props({
             prop: rule.field,
             label: rule.title,
-            labelFor:rule.field,
+            labelFor:refName,
             rules: rule.validate,
         }).key(unique).get();
         return this.cvm.formItem(propsData,VNodeFn);
     },
-    makeSubmitBtn(){
-        return this.cvm.button({props:this.vm.buttonProps,on:{"click":()=>{
+    makeSubmitBtn(unique){
+        return this.cvm.button({key:`fbtn${unique}`,props:this.vm.buttonProps,on:{"click":()=>{
             this.fCreateApi.submit();
         }}},[this.cvm.span(this.options.submitBtn.innerText)]);
     },

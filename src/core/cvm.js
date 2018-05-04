@@ -6,10 +6,19 @@ const cvm = function(createElement = throwIfMissing('缺少参数:createElement'
 
 let _instance = null;
 
+let vm = null;
+
 cvm.instance = (createElement)=>{
     if(false === _instance instanceof cvm)
         _instance = new cvm(createElement);
     return _instance;
+};
+
+cvm.setVm = ($vm)=>{
+    vm = $vm;
+};
+cvm.clearVm = ()=>{
+    vm = null;
 };
 
 cvm.prototype = {
@@ -78,7 +87,10 @@ cvm.prototype = {
     },
     make(nodeName,data,VNodeFn){
         if(isString(data)) data = {domProps:{innerHTML:data}};
-        return this.$h(nodeName,data,this.getVNode(VNodeFn));
+        let Node = this.$h(nodeName,data,this.getVNode(VNodeFn));
+        if(vm !== null)
+            Node.context = vm;
+        return Node;
     },
     getVNode(VNode){
         return isFunction(VNode) ? VNode() : VNode;

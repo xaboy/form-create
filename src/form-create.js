@@ -1,6 +1,7 @@
 import {formRender} from "./core/form-render";
 import {deepExtend, isElement, isFunction} from "./core/util";
 import formHandler from "./core/form-handler"
+import cvm from "./core/cvm"
 
 //formCreate全局配置
 const createOptions = {
@@ -121,7 +122,10 @@ formCreateComponent.install = function(Vue,opt = {}){
     let options = deepExtend(deepExtend(Object.create(null),createOptions),opt);
     Vue.prototype.$formCreate = function(rules,opt = {}){
         if(isElement(opt)) opt = {el:opt};
-        let fComponent = new formCreateComponent(rules,deepExtend(options,opt)),
+        let fComponent = new formCreateComponent(
+            rules,
+            deepExtend(deepExtend(Object.create(null),options),opt)
+            ),
             $vm = fComponent.mount(Vue);
         return fComponent.fCreateApi;
     };
@@ -162,7 +166,8 @@ formCreateComponent.prototype = {
                     buttonProps:{}
                 }
             },
-            render(){
+            render:()=>{
+                cvm.setVm(fComponent.vm);
                 return fComponent.fRender.parse();
             },
             created(){
@@ -221,13 +226,16 @@ formCreateComponent.prototype = {
                 unWatch();
         });
     },
+    getFormRef(){
+        return this.vm.$refs[this.fRender.refName];
+    },
     api(){
         let fComponent = this;
         return {
             formData:()=>{
                 let data = {};
                 this.fields().map((field)=>{
-                    data[field] = this.handlers[field].getValue() || '';
+                    data[field] = this.handlers[field].getValue();
                 });
                 return data;
             },
@@ -236,7 +244,7 @@ formCreateComponent.prototype = {
                 if(handler === undefined)
                     console.error(`${field} 字段不存在!`);
                 else{
-                    return handler.getValue() || '';
+                    return handler.getValue();
                 }
             },
             changeField:(field,value)=>{
@@ -251,15 +259,15 @@ formCreateComponent.prototype = {
                 fComponent.removeField(field);
             },
             validate:(successFn,errorFn)=>{
-                this.vm.$refs.cForm.validate((valid)=>{
+                fComponent.getFormRef().validate((valid)=>{
                     valid === true ? (successFn && successFn()) : (errorFn && errorFn());
                 });
             },
             validateField:(field,callback)=>{
-                this.vm.$refs.cForm.validateField(field,callback);
+                fComponent.getFormRef().validateField(field,callback);
             },
             resetFields:()=>{
-                this.vm.$refs.cForm.resetFields();
+                fComponent.getFormRef().resetFields();
             },
             destroy:()=>{
                 this.vm.$el.remove();
@@ -281,7 +289,8 @@ formCreateComponent.prototype = {
                        fComponent.options.onSubmit && fComponent.options.onSubmit(formData);
                 });
             },
-            submitStatus:(props = {})=>{
+            submitStatus:(_props = {})=>{
+                let props = deepExtend(Object.create(null),_props);
                 this.vm.changeButtonProps(props);
             },
             btn:{

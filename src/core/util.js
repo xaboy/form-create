@@ -21,7 +21,7 @@ const isElement = (arg)=>typeof arg === 'object' && arg !== null && arg.nodeType
 const deepExtend = function (origin,target = {}) {
     let isArr = false;
     for (let key in target){
-        if(target.hasOwnProperty(key)) {
+        if(Object.prototype.hasOwnProperty.call(target,key)) {
             let clone = target[key];
             if((isArr = isArray(clone)) || isPlainObject(clone)){
                 let nst = origin[key] === undefined;
@@ -40,6 +40,11 @@ const deepExtend = function (origin,target = {}) {
     return origin;
 };
 
+const uniqueId = ((()=>{
+    let id = 0;
+    return ()=>id++;
+})());
+
 export {
     concat,
     assign,
@@ -51,5 +56,6 @@ export {
     isString,
     isArray,
     deepExtend,
-    isElement
+    isElement,
+    uniqueId
 }

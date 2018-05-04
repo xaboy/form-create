@@ -2,20 +2,21 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>form-create</title>
-    
-    <link href="https://cdn.bootcss.com/iview/2.9.2/styles/iview.css" rel="stylesheet">
+    <title>form-create实例</title>
+
+    <link href="https://cdn.bootcss.com/iview/2.13.0/styles/iview.css" rel="stylesheet">
     <script src="https://cdn.bootcss.com/vue/2.5.13/vue.min.js"></script>
-    <script src="https://cdn.bootcss.com/iview/2.9.2/iview.min.js"></script>
-    
-    <!--  <link rel="stylesheet" href="./node_modules/iview/dist/styles/iview.css">
+    <script src="https://cdn.bootcss.com/iview/2.13.0/iview.min.js"></script>
+
+    <!-- npm install 后可以使
+    <link rel="stylesheet" href="./node_modules/iview/dist/styles/iview.css">
     <script src="./node_modules/vue/dist/vue.min.js"></script>
-    <script src="./node_modules/iview/dist/iview.min.js"></script>  -->
+    <script src="./node_modules/iview/dist/iview.min.js"></script>-->
     
     <!--省市区三级联动json数据-->
     <script src="./district/province_city_area.js"></script>
     <script src="mock.js"></script>
-    <script src="./dist/form-create.js"></script>
+    <script src="./dist/form-create.min.js"></script>
 </head>
 <body>
 <div id="app">
@@ -27,10 +28,17 @@
         data:{
         },
         mounted:function(){
+            let root = document.getElementById('app'),that = this;
             $f = this.$formCreate(mock,{
+                el:root,
                 onSubmit:function (formData) {
                     console.log(formData);
-                    $f.submitStatus({loading:true});
+                    //提交状态
+                    $f.btn.loading();
+                    //点击状态
+//                    $f.btn.finish();
+                    //创建第二个表单
+                    $f2 = that.$formCreate(mock,root);
                 }
             });
             //动态添加表单元素
