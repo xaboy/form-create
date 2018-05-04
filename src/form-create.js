@@ -71,6 +71,8 @@ const createOptions = {
     }
 };
 
+const version = '1.1.5';
+
 const formCreateComponent = function (rules,options) {
     if(!this instanceof formCreateComponent)
         throwIfMissing('formCreateComponent is a constructor and should be called with the `new` keyword');
@@ -129,6 +131,7 @@ formCreateComponent.install = function(Vue,opt = {}){
             $vm = fComponent.mount(Vue);
         return fComponent.fCreateApi;
     };
+    Vue.prototype.$formCreate.version = version;
 };
 
 formCreateComponent.prototype = {

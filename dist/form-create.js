@@ -817,6 +817,8 @@ var createOptions = {
     }
 };
 
+var version = '1.1.5';
+
 var formCreateComponent = function formCreateComponent(rules, options) {
     if (!this instanceof formCreateComponent) throwIfMissing('formCreateComponent is a constructor and should be called with the `new` keyword');
     this.rules = Array.isArray(rules) ? rules : [];
@@ -858,6 +860,7 @@ formCreateComponent.install = function (Vue) {
             $vm = fComponent.mount(Vue);
         return fComponent.fCreateApi;
     };
+    Vue.prototype.$formCreate.version = version;
 };
 
 formCreateComponent.prototype = {
