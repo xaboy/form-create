@@ -233,7 +233,6 @@ const formRender = function ({vm,options,fieldList,handlers,formData,validate,fC
     this.options = options;
     this.handlers = handlers;
     this.renderSort = fieldList;
-    console.log(fieldList);
     this.renders = this.renderSort.reduce((initial,field)=>{
         initial[field] = handlers[field].render;
         return initial;

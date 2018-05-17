@@ -518,7 +518,6 @@ var formRender = function formRender(_ref) {
     this.options = options;
     this.handlers = handlers;
     this.renderSort = fieldList;
-    console.log(fieldList);
     this.renders = this.renderSort.reduce(function (initial, field) {
         initial[field] = handlers[field].render;
         return initial;
@@ -959,9 +958,9 @@ formCreateComponent.prototype = {
     },
     append: function append(rule, after, pre) {
         var _rule = (0, _util.deepExtend)(Object.create(null), this.checkRule(rule));
-        if (Object.keys(this.handlers).indexOf(_rule.field) !== -1) throw new Error(_rule.field + "\u5B57\u6BB5\u5DF2\u5B58\u5728");
-
         var handler = (0, _formHandler2.default)(this.vm, _rule, this.options);
+        if (Object.keys(this.handlers).indexOf(handler.rule.field) !== -1) throw new Error(_rule.field + "\u5B57\u6BB5\u5DF2\u5B58\u5728");
+
         this.fRender.setRender(handler, after, pre);
         this.setHandler(handler);
         this.vm.setField(handler.rule.field, handler.getParseValue());

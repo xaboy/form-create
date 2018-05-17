@@ -215,10 +215,10 @@ formCreateComponent.prototype = {
     },
     append(rule,after,pre){
         let _rule = deepExtend(Object.create(null),this.checkRule(rule));
-        if(Object.keys(this.handlers).indexOf(_rule.field) !== -1)
+        let handler = formHandler(this.vm,_rule,this.options);
+        if(Object.keys(this.handlers).indexOf(handler.rule.field) !== -1)
             throw new Error(`${_rule.field}字段已存在`);
 
-        let handler = formHandler(this.vm,_rule,this.options);
         this.fRender.setRender(handler,after,pre);
         this.setHandler(handler);
         this.vm.setField(handler.rule.field,handler.getParseValue());
