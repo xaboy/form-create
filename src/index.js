@@ -7,4 +7,4 @@ if(typeof window !== 'undefined'){
     }
 }
 
-export default formCreate
+module.exports.default = module.exports = formCreate;

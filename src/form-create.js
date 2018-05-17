@@ -311,4 +311,7 @@ formCreateComponent.prototype = {
     }
 };
 
-export default formCreateComponent;
+export default {
+    install:formCreateComponent.install,
+    default:formCreateComponent
+};

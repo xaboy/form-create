@@ -1,5 +1,15 @@
 /*! form-create v1.1 | github https://github.com/xaboy/form-builder.git */
-/******/ (function(modules) { // webpackBootstrap
+(function webpackUniversalModuleDefinition(root, factory) {
+	if(typeof exports === 'object' && typeof module === 'object')
+		module.exports = factory();
+	else if(typeof define === 'function' && define.amd)
+		define([], factory);
+	else {
+		var a = factory();
+		for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
+	}
+})(typeof self !== 'undefined' ? self : this, function() {
+return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
 /******/
@@ -705,10 +715,6 @@ exports.default = cvm;
 "use strict";
 
 
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
 var _formCreate = __webpack_require__(4);
 
 var _formCreate2 = _interopRequireDefault(_formCreate);
@@ -722,7 +728,7 @@ if (typeof window !== 'undefined') {
     }
 }
 
-exports.default = _formCreate2.default;
+module.exports.default = module.exports = _formCreate2.default;
 
 /***/ }),
 /* 4 */
@@ -1043,7 +1049,10 @@ formCreateComponent.prototype = {
     }
 };
 
-exports.default = formCreateComponent;
+exports.default = {
+    install: formCreateComponent.install,
+    default: formCreateComponent
+};
 
 /***/ }),
 /* 5 */
@@ -1501,3 +1510,4 @@ exports.default = formHandler;
 
 /***/ })
 /******/ ]);
+});
