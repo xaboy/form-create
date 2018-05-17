@@ -42,7 +42,14 @@ const createOptions = {
         //操作按钮的图标 ,设置为false将不显示
         handleIcon:'ios-eye-outline',
         //点击操作按钮事件
-        onHandle:(src)=>{},
+        onHandle:(src)=>{
+            methodVm.$Modal.info({
+                title:"查看图片",
+                render:(h)=>{
+                    return h('img',{attrs:{src},style:"width: 100%"});
+                }
+            });
+        },
         //是否可删除,设置为false是不显示删除按钮
         allowRemove:true
     },
@@ -71,6 +78,8 @@ const createOptions = {
     }
 };
 
+let methodVm;
+
 const version = '1.1.5';
 
 const formCreateComponent = function (rules,options) {
@@ -81,6 +90,7 @@ const formCreateComponent = function (rules,options) {
     this.fRender = {};
     this.formData ={};
     this.validate ={};
+    this.fieldList = [];
     options.el = !options.el
         ? window.document.body
         : (isElement(options.el)
@@ -120,6 +130,7 @@ formCreateComponent.createStyle = function () {
 
 
 formCreateComponent.install = function(Vue,opt = {}){
+    methodVm = new Vue;
     formCreateComponent.createStyle();
     let options = deepExtend(deepExtend(Object.create(null),createOptions),opt);
     Vue.prototype.$formCreate = function(rules,opt = {}){
@@ -150,7 +161,9 @@ formCreateComponent.prototype = {
         this.vm = vm;
         this.rules.filter((rule)=>rule.field !== undefined).map((rule)=> {
             rule = this.checkRule(rule);
-            this.setHandler(formHandler(this.vm,rule,this.options));
+            let handler = formHandler(this.vm,rule,this.options);
+            this.setHandler(handler);
+            this.fieldList.push(handler.rule.field);
         });
         this.fCreateApi = this.api();
     },
@@ -206,13 +219,13 @@ formCreateComponent.prototype = {
             throw new Error(`${_rule.field}字段已存在`);
 
         let handler = formHandler(this.vm,_rule,this.options);
-        this.fRender.setRender(_rule.field,handler.render,after,pre);
+        this.fRender.setRender(handler,after,pre);
         this.setHandler(handler);
         this.vm.setField(handler.rule.field,handler.getParseValue());
         this.addHandlerWatch(handler);
     },
     removeField(field){
-        if(!this.handlers[field])
+        if(this.handlers[field] === undefined)
             throw new Error(`${field}字段不存在`);
 
         this.vm.removeFormData(field);
@@ -238,11 +251,13 @@ formCreateComponent.prototype = {
             formData:()=>{
                 let data = {};
                 this.fields().map((field)=>{
+                    field = field.toString();
                     data[field] = this.handlers[field].getValue();
                 });
                 return data;
             },
             getValue:(field)=>{
+                field = field.toString();
                 let handler = this.handlers[field];
                 if(handler === undefined)
                     console.error(`${field} 字段不存在!`);
@@ -251,6 +266,7 @@ formCreateComponent.prototype = {
                 }
             },
             changeField:(field,value)=>{
+                field = field.toString();
                 let handler = this.handlers[field];
                 if(handler === undefined)
                     console.error(`${field} 字段不存在!`);
@@ -259,6 +275,7 @@ formCreateComponent.prototype = {
                 }
             },
             removeField:(field)=>{
+                field = field.toString();
                 fComponent.removeField(field);
             },
             validate:(successFn,errorFn)=>{
@@ -267,6 +284,7 @@ formCreateComponent.prototype = {
                 });
             },
             validateField:(field,callback)=>{
+                field = field.toString();
                 fComponent.getFormRef().validateField(field,callback);
             },
             resetFields:()=>{

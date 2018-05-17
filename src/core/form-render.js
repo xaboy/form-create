@@ -228,11 +228,12 @@ const getRender = function (type) {
     return renderList[type];
 };
 
-const formRender = function ({vm,options,handlers,formData,validate,fCreateApi}) {
+const formRender = function ({vm,options,fieldList,handlers,formData,validate,fCreateApi}) {
     this.vm = vm;
     this.options = options;
     this.handlers = handlers;
-    this.renderSort = Object.keys(handlers);
+    this.renderSort = fieldList;
+    console.log(fieldList);
     this.renders = this.renderSort.reduce((initial,field)=>{
         initial[field] = handlers[field].render;
         return initial;
@@ -278,12 +279,13 @@ formRender.prototype = {
         delete this.renders[field];
         this.renderSort.splice(this.renderSort.indexOf(field),1);
     },
-    setRender(field,render,after,pre){
-        this.renders[field] = render;
-        this.changeSort(field,after,pre);
+    setRender(handler,after,pre){
+        this.renders[handler.rule.field] = handler.render;
+        if(after !== undefined)
+            this.changeSort(handler.rule.field,after,pre);
     },
     changeSort(field,after,pre){
-        let index = this.renderSort.indexOf(after);
+        let index = this.renderSort.indexOf(after.toString());
         if(index !== -1)
             this.renderSort.splice(pre === false ? index+1 : index,0,field);
         else if (!pre)

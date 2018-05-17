@@ -508,6 +508,7 @@ var getRender = function getRender(type) {
 var formRender = function formRender(_ref) {
     var vm = _ref.vm,
         options = _ref.options,
+        fieldList = _ref.fieldList,
         handlers = _ref.handlers,
         formData = _ref.formData,
         validate = _ref.validate,
@@ -516,7 +517,8 @@ var formRender = function formRender(_ref) {
     this.vm = vm;
     this.options = options;
     this.handlers = handlers;
-    this.renderSort = Object.keys(handlers);
+    this.renderSort = fieldList;
+    console.log(fieldList);
     this.renders = this.renderSort.reduce(function (initial, field) {
         initial[field] = handlers[field].render;
         return initial;
@@ -572,12 +574,12 @@ formRender.prototype = {
         delete this.renders[field];
         this.renderSort.splice(this.renderSort.indexOf(field), 1);
     },
-    setRender: function setRender(field, render, after, pre) {
-        this.renders[field] = render;
-        this.changeSort(field, after, pre);
+    setRender: function setRender(handler, after, pre) {
+        this.renders[handler.rule.field] = handler.render;
+        if (after !== undefined) this.changeSort(handler.rule.field, after, pre);
     },
     changeSort: function changeSort(field, after, pre) {
-        var index = this.renderSort.indexOf(after);
+        var index = this.renderSort.indexOf(after.toString());
         if (index !== -1) this.renderSort.splice(pre === false ? index + 1 : index, 0, field);else if (!pre) this.renderSort.push(field);else this.renderSort.unshift(field);
     }
 };
@@ -794,7 +796,14 @@ var createOptions = {
         //操作按钮的图标 ,设置为false将不显示
         handleIcon: 'ios-eye-outline',
         //点击操作按钮事件
-        onHandle: function onHandle(src) {},
+        onHandle: function onHandle(src) {
+            methodVm.$Modal.info({
+                title: "查看图片",
+                render: function render(h) {
+                    return h('img', { attrs: { src: src }, style: "width: 100%" });
+                }
+            });
+        },
         //是否可删除,设置为false是不显示删除按钮
         allowRemove: true
     },
@@ -823,6 +832,8 @@ var createOptions = {
     }
 };
 
+var methodVm = void 0;
+
 var version = '1.1.5';
 
 var formCreateComponent = function formCreateComponent(rules, options) {
@@ -832,6 +843,7 @@ var formCreateComponent = function formCreateComponent(rules, options) {
     this.fRender = {};
     this.formData = {};
     this.validate = {};
+    this.fieldList = [];
     options.el = !options.el ? window.document.body : (0, _util.isElement)(options.el) ? options.el : document.querySelector(options.el);
     this.options = options;
 };
@@ -856,6 +868,7 @@ formCreateComponent.createStyle = function () {
 formCreateComponent.install = function (Vue) {
     var opt = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
+    methodVm = new Vue();
     formCreateComponent.createStyle();
     var options = (0, _util.deepExtend)((0, _util.deepExtend)(Object.create(null), createOptions), opt);
     Vue.prototype.$formCreate = function (rules) {
@@ -889,7 +902,9 @@ formCreateComponent.prototype = {
             return rule.field !== undefined;
         }).map(function (rule) {
             rule = _this.checkRule(rule);
-            _this.setHandler((0, _formHandler2.default)(_this.vm, rule, _this.options));
+            var handler = (0, _formHandler2.default)(_this.vm, rule, _this.options);
+            _this.setHandler(handler);
+            _this.fieldList.push(handler.rule.field);
         });
         this.fCreateApi = this.api();
     },
@@ -947,13 +962,13 @@ formCreateComponent.prototype = {
         if (Object.keys(this.handlers).indexOf(_rule.field) !== -1) throw new Error(_rule.field + "\u5B57\u6BB5\u5DF2\u5B58\u5728");
 
         var handler = (0, _formHandler2.default)(this.vm, _rule, this.options);
-        this.fRender.setRender(_rule.field, handler.render, after, pre);
+        this.fRender.setRender(handler, after, pre);
         this.setHandler(handler);
         this.vm.setField(handler.rule.field, handler.getParseValue());
         this.addHandlerWatch(handler);
     },
     removeField: function removeField(field) {
-        if (!this.handlers[field]) throw new Error(field + "\u5B57\u6BB5\u4E0D\u5B58\u5728");
+        if (this.handlers[field] === undefined) throw new Error(field + "\u5B57\u6BB5\u4E0D\u5B58\u5728");
 
         this.vm.removeFormData(field);
         delete this.handlers[field];
@@ -977,23 +992,27 @@ formCreateComponent.prototype = {
             formData: function formData() {
                 var data = {};
                 _this2.fields().map(function (field) {
+                    field = field.toString();
                     data[field] = _this2.handlers[field].getValue();
                 });
                 return data;
             },
             getValue: function getValue(field) {
+                field = field.toString();
                 var handler = _this2.handlers[field];
                 if (handler === undefined) console.error(field + " \u5B57\u6BB5\u4E0D\u5B58\u5728!");else {
                     return handler.getValue();
                 }
             },
             changeField: function changeField(field, value) {
+                field = field.toString();
                 var handler = _this2.handlers[field];
                 if (handler === undefined) console.error(field + " \u5B57\u6BB5\u4E0D\u5B58\u5728!");else {
                     handler.changeValue(value);
                 }
             },
             removeField: function removeField(field) {
+                field = field.toString();
                 fComponent.removeField(field);
             },
             validate: function validate(successFn, errorFn) {
@@ -1002,6 +1021,7 @@ formCreateComponent.prototype = {
                 });
             },
             validateField: function validateField(field, callback) {
+                field = field.toString();
                 fComponent.getFormRef().validateField(field, callback);
             },
             resetFields: function resetFields() {
@@ -1262,6 +1282,7 @@ var handler = function handler(vm, _ref) {
         _ref$slot = _ref.slot,
         slot = _ref$slot === undefined ? {} : _ref$slot;
 
+    field = field.toString();
     this.rule = {
         field: field, type: type, title: title, options: options, props: props, slot: slot,
         value: (0, _util.deepExtend)(Object.create(null), { value: value }).value,

@@ -319,9 +319,9 @@ window.mock = [
             "onFormatError":()=>{}, //文件格式验证失败时的钩子，返回字段为 file, fileList
             "onExceededSize":()=>{}, //文件超出指定大小限制时的钩子，返回字段为 file, fileList
             //操作按钮的图标 ,设置为false将不显示
-            handleIcon:'ionic',
+            handleIcon:'ios-eye-outline',
             //点击操作按钮事件
-            onHandle:(src)=>{},
+            // onHandle:(src)=>{},
             //是否可删除,设置为false是不显示删除按钮
             allowRemove:true,
         },

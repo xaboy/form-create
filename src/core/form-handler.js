@@ -2,6 +2,7 @@ import {deepExtend, isArray, isDate, uniqueId} from "./util";
 import {getRender} from "./form-render";
 
 let handler = function (vm,{field,type,title = '',options=[],props={},validate = [],event = {},value = '',slot = {}}) {
+    field = field.toString();
     this.rule = {
         field, type, title, options, props,slot,
         value:deepExtend(Object.create(null),{value}).value,
