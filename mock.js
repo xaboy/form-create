@@ -289,7 +289,7 @@ window.mock = [
         type: "Upload",
         field: "pic",
         title: "轮播图",
-        value: ['http://img1.touxiang.cn/uploads/20131030/30-075657_191.jpg','http://img1.touxiang.cn/uploads/20131030/30-075657_191.jpg'], //input值
+        value: ['http://img1.touxiang.cn/uploads/20131030/30-075657_191.jpg'], //input值
         props: {
             "type":"select", //上传控件的类型，可选值为 select（点击选择），drag（支持拖拽）
             "uploadType":"image", //上传文件类型，可选值为 image（图片上传），file（文件上传）
@@ -307,7 +307,7 @@ window.mock = [
             "accept":"", //接受上传的文件类型
             "format":[], //支持的文件类型，与 accept 不同的是，format 是识别文件的后缀名，accept 为 input 标签原生的 accept 属性，会在选择文件时过滤，可以两者结合使用
             "maxSize":undefined, //文件大小限制，单位 kb
-            "maxLength":1,
+            "maxLength":1, //上传文件最大数
             "beforeUpload":()=>{}, //上传文件之前的钩子，参数为上传的文件，若返回 false 或者 Promise 则停止上传
             "onProgress":()=>{}, //文件上传时的钩子，返回字段为 event, file, fileList
             "onSuccess":function () {
