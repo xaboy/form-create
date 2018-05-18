@@ -470,7 +470,7 @@ var uploadRender = renderFactory({
     makeRemoveIcon: function makeRemoveIcon(src, key) {
         var _this9 = this;
 
-        return this.cvm.icon({ key: 'uph' + key, props: { type: 'ios-trash-outline' }, nativeOn: { 'click': function click() {
+        return this.cvm.icon({ key: 'upri' + key, props: { type: 'ios-trash-outline' }, nativeOn: { 'click': function click() {
                     var _handler$getParseValu = _this9.handler.getParseValue(),
                         files = _handler$getParseValu.files;
 
@@ -480,7 +480,7 @@ var uploadRender = renderFactory({
     makeHandleIcon: function makeHandleIcon(src, key) {
         var _this10 = this;
 
-        return this.cvm.icon({ key: 'uph' + key, props: { type: this.uploadOptions.handleIcon.toString() }, nativeOn: { 'click': function click() {
+        return this.cvm.icon({ key: 'uphi' + key, props: { type: this.uploadOptions.handleIcon.toString() }, nativeOn: { 'click': function click() {
                     _this10.uploadOptions.onHandle(src);
                 } } });
     }

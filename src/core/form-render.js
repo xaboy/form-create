@@ -197,13 +197,13 @@ const uploadRender = renderFactory({
         ]);
     },
     makeRemoveIcon(src,key){
-        return this.cvm.icon({key:`uph${key}`,props:{type:'ios-trash-outline'},nativeOn:{'click':()=>{
+        return this.cvm.icon({key:`upri${key}`,props:{type:'ios-trash-outline'},nativeOn:{'click':()=>{
             let {files} = this.handler.getParseValue();
             files.splice(files.indexOf(src),1);
         }}});
     },
     makeHandleIcon(src,key){
-        return this.cvm.icon({key:`uph${key}`,props:{type:this.uploadOptions.handleIcon.toString()},nativeOn:{'click':()=>{
+        return this.cvm.icon({key:`uphi${key}`,props:{type:this.uploadOptions.handleIcon.toString()},nativeOn:{'click':()=>{
             this.uploadOptions.onHandle(src);
         }}});
     }
