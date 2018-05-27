@@ -145,6 +145,8 @@ new Vue({
 * **rate** 生成评分组件
 * **slider** 生成滑块组件
 
+>   详细参考[表单元素规则](https://github.com/xaboy/form-create#rules-表单元素规则)
+
 #### $f 实例方法
 
 * **formData()** 获取表单的value
