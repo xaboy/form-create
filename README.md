@@ -130,77 +130,77 @@ new Vue({
 
 #### $formCreate.maker 组件规则生成器
 
-* **hidden** 生成隐藏字段
-
-  * 举例 **(除hidden外,其他使用方式都相同)**
-
-    ```javascript
-    $formCreate.maker.hidden(field,value)
-    ```
-
-* **input** 生成input输入框
-
-  * 可用`props` ,`validate`, `event` 方法设置对应属性
-
-  * 举例
-
-    ```javascript
-    $formCreate.maker.input(title,field,value)
-    ```
-
-* **radio** 生成单选框
-
-  * 可用`props` ,`validate`, `event` ,`options` 方法设置对应属性
-
-* **checkbox** 生成复选框
-
-  -   可用`props` ,`validate`, `event` ,`options` 方法设置对应属性
-
-* **select** 生成select选择器
-
-  -   可用`props` ,`validate`, `event` ,`options` 方法设置对应属性
-
-* **switch** 生成switch开关
-
-  -   可用`props` ,`validate`, `event` ,`slot` 方法设置对应属性
-
-* **datepicker** 生成日期选择器组件,别名`date`
-
-  -   可用`props` ,`validate`, `event`  方法设置对应属性
-
-* **timepicker** 生成时间选择器组件,别名`time``
-
-  -   可用`props` ,`validate`, `event`  方法设置对应属性
-
-* **inputnumber** 生成数字输入框,别名`number``
-
-  -   可用`props` ,`validate`, `event`  方法设置对应属性
-
-* **colorpicker** 生成颜色选择器组件,别名`color`
-
-  -   可用`props` ,`validate`, `event`  方法设置对应属性
-
-* **cascader** 生成多级联动组件`
-
-  -   可用`props` ,`validate`, `event`  方法设置对应属性
-
-* **upload** 生成上传组件`
-
-  -   可用`props` ,`validate` 方法设置对应属性
-
-* **rate** 生成评分组件`
-
-  -   可用`props` ,`validate`, `event`  方法设置对应属性
-
-* **slider** 生成滑块组件`
-
-  -   可用`props` ,`validate`, `event`  方法设置对应属性
-
->   **详细参考[表单元素规则](#rules-表单元素规则)**
+>   **除hidden外,其他使用方式都相同,详细参考[表单元素规则](#rules-表单元素规则)**
 >
 >   **props,event,slot传入参数为对象,例({key:value,...})**
 >
 >   **validate,options参入参数为数组,例([options,options,..])**
+
+
+
+* **hidden** 生成隐藏字段
+
+>   无可用配置方法
+
+```javascript
+$formCreate.maker.hidden(field,value)
+```
+
+* **input** 生成input输入框
+
+>   可用`props` ,`validate`, `event` 方法配置对应属性
+
+```javascript
+$formCreate.maker.input(title,field,value)
+```
+
+* **radio** 生成单选框
+
+>   可用`props` ,`validate`, `event` ,`options` 方法配置对应属性
+
+* **checkbox** 生成复选框
+
+>   可用`props` ,`validate`, `event` ,`options` 方法配置对应属性
+
+* **select** 生成select选择器
+
+>   可用`props` ,`validate`, `event` ,`options` 方法配置对应属性
+
+* **switch** 生成switch开关
+
+>   可用`props` ,`validate`, `event` ,`slot` 方法配置对应属性
+
+* **datepicker** 生成日期选择器组件,别名`date`
+
+>   可用`props` ,`validate`, `event`  方法配置对应属性
+
+* **timepicker** 生成时间选择器组件,别名`time`
+
+>   可用`props` ,`validate`, `event`  方法配置对应属性
+
+* **inputnumber** 生成数字输入框,别名`number`
+
+>   可用`props` ,`validate`, `event`  方法配置对应属性
+
+* **colorpicker** 生成颜色选择器组件,别名`color`
+
+>   可用`props` ,`validate`, `event`  方法配置对应属性
+
+* **cascader** 生成多级联动组件`
+
+>   可用`props` ,`validate`, `event`  方法配置对应属性
+
+* **upload** 生成上传组件`
+
+>   可用`props` ,`validate` 方法配置对应属性
+
+* **rate** 生成评分组件`
+
+>   可用`props` ,`validate`, `event`  方法配置对应属性
+
+* **slider** 生成滑块组件`
+
+>   可用`props` ,`validate`, `event`  方法配置对应属性
 
 
 
@@ -315,6 +315,8 @@ hiddenRule:
 
 #### input 输入框
 
+[规则说明](https://xaboy.gitbooks.io/form-create/content/biao-dan-yuan-su/input.html)
+
 maker快速生成:
 
 ```javascript
@@ -393,6 +395,8 @@ inputRule :
 
 #### radio 单选框
 
+[规则说明](https://xaboy.gitbooks.io/form-create/content/biao-dan-yuan-su/radio.html)
+
 maker快速生成:
 
 ```javascript
@@ -438,6 +442,8 @@ radioRule :
 
 
 #### checkbox 复选框
+
+[规则说明](https://xaboy.gitbooks.io/form-create/content/biao-dan-yuan-su/checkbox.html)
 
 maker快速生成:
 
@@ -486,6 +492,8 @@ checkboxRule :
 
 
 #### select 选择器
+
+[规则说明](https://xaboy.gitbooks.io/form-create/content/biao-dan-yuan-su/select.html)
 
 maker快速生成:
 
@@ -549,6 +557,8 @@ selectRule :
 
 #### switch 开关
 
+[规则说明](https://xaboy.gitbooks.io/form-create/content/biao-dan-yuan-su/switch.html)
+
 maker快速生成:
 
 ```javascript
@@ -597,6 +607,8 @@ switchRule :
 
 
 #### DatePicker 日期选择器
+
+[规则说明](https://xaboy.gitbooks.io/form-create/content/biao-dan-yuan-su/datepicker.html)
 
 maker快速生成:
 
@@ -656,6 +668,8 @@ DatePickerRule :
 
 
 #### TimePicker 时间选择器
+
+[规则说明](https://xaboy.gitbooks.io/form-create/content/biao-dan-yuan-su/timepicker.html)
 
 maker快速生成:
 
@@ -717,6 +731,8 @@ TimePickerRule :
 
 ####  InputNumber 数字输入框
 
+[规则说明](https://xaboy.gitbooks.io/form-create/content/biao-dan-yuan-su/inputnumber.html)
+
 maker快速生成:
 
 ```javascript
@@ -771,6 +787,8 @@ InputNumberRule :
 
 #### ColorPicker 颜色选择器
 
+[规则说明](https://xaboy.gitbooks.io/form-create/content/biao-dan-yuan-su/colorpicker.html)
+
 maker快速生成:
 
 ```javascript
@@ -816,6 +834,8 @@ ColorPickerRule :
 
 
 #### Cascader 多级联动
+
+[规则说明](https://xaboy.gitbooks.io/form-create/content/biao-dan-yuan-su/cascader.html)
 
 maker快速生成:
 
@@ -877,6 +897,8 @@ CascaderRule:
 
 
 #### Upload 上传
+
+[规则说明](https://xaboy.gitbooks.io/form-create/content/biao-dan-yuan-su/upload.html)
 
 maker快速生成:
 
@@ -967,6 +989,8 @@ UploadRule :
 
 #### Slider 滑块
 
+[规则说明](https://xaboy.gitbooks.io/form-create/content/biao-dan-yuan-su/slider.html)
+
 maker快速生成:
 
 ```javascript
@@ -1012,6 +1036,8 @@ SliderRule :
 
 
 #### Rate 评分
+
+[规则说明](https://xaboy.gitbooks.io/form-create/content/biao-dan-yuan-su/rate.html)
 
 maker快速生成:
 
