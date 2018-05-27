@@ -962,20 +962,20 @@ exports.default = props;
 "use strict";
 
 
-var _formCeate = __webpack_require__(8);
+var _formCreate = __webpack_require__(8);
 
-var _formCeate2 = _interopRequireDefault(_formCeate);
+var _formCreate2 = _interopRequireDefault(_formCreate);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 if (typeof window !== 'undefined') {
-    window["formCreate"] = _formCeate2.default;
+    window["formCreate"] = _formCreate2.default;
     if (window.Vue && (window.iview || window.iView)) {
-        window.Vue.use(_formCeate2.default);
+        window.Vue.use(_formCreate2.default);
     }
 }
 
-module.exports.default = module.exports = _formCeate2.default;
+module.exports.default = module.exports = _formCreate2.default;
 
 /***/ }),
 /* 8 */
@@ -1004,7 +1004,7 @@ var _make = __webpack_require__(0);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var version = '1.2.1';
+var version = '1.2.2';
 
 var maker = (0, _common.getMaker)();
 
@@ -1856,7 +1856,6 @@ var render = (0, _render.renderFactory)({
             }
         })));
 
-        window.vm = this.vm;
         render.push(this.makeUploadBtn(unique, !this.uploadOptions.maxLength || this.uploadOptions.maxLength > this.vm.formData[rule.field].length));
         return [this.cvm.make('div', { key: "div4" + unique, class: { 'fc-upload': true } }, render)];
     },
