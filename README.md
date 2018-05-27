@@ -13,18 +13,27 @@
 </p>
 
 <p align="center">
-  <b>具有数据收集、校验和提交功能的表单生成器，包含复选框、单选框、输入框、下拉选择框等元素以及,省市区三级联动,时间选择,日期选择,颜色选择,文件/图片上传功能，支持事件扩展。</b>
+  <b>具有数据收集、校验和提交功能的表单生成器，包含复选框、单选框、输入框、下拉选择框等元素以及,省市区三级联动,时间选择,日期选择,颜色选择,滑块,评分,文件/图片上传功能，支持事件扩展。</b>
 </p>
 <br />
 
-## 1.1 版本重大更新
+## 1.2 版本重大更新
 
-- 内部重构
-- 新增 省市区三级联动组件
-- 新增 组件事件扩展
-- 优化 文件上传,时间选择等组件
+- 内部结构优化
+- 新增 规则生成器`$formCreate.maker`
+- 新增 滑块、评分组件
+- 优化 文件上传
+- 修复 上传组件无法验证等问题
 
 ## 更新说明
+
+#### 1.2.1 (2018-5-27)
+- 内部结构优化
+- 新增 规则生成器`$formCreate.maker`
+- 新增 滑块、评分组件
+- 优化 文件上传
+- 修复 上传组件无法验证等问题
+> 感谢 [wxxtqk](https://github.com/wxxtqk) | [williamBoss](https://github.com/williamBoss)
 
 #### 1.1.7 (2018-5-18)
 - 修复表单排序问题
@@ -49,7 +58,7 @@
 
 ### 本项目还在不断开发完善中,如有建议或问题请[在这里提出](https://github.com/xaboy/form-create/issues/new)
 
-## 示例 
+## 示例 [代码](https://github.com/xaboy/form-create/blob/master/mock.js) 
 
 ![https://raw.githubusercontent.com/xaboy/form-create/dev/images/sample110.jpg](https://raw.githubusercontent.com/xaboy/form-create/dev/images/sample110.jpg)
 
@@ -114,10 +123,27 @@ new Vue({
 ```
 
 
-#### $formCreate 参数
+#### $formCreate 表单生成器参数
 
-* **rules**  表单生成规则  [inputRule,selectRule,...]
+* **rules**  表单生成规则  [inputRule,selectRule,...],可使用`$formCreate.maker` 快速生成
 * **options** 初始化配置参数 (详细见底部 createOptions)
+
+#### $formCreate.maker 组件规则生成器
+
+* **hidden** 生成隐藏字段
+* **input** 生成input输入框
+* **radio** 生成单选框
+* **checkbox** 生成复选框
+* **select** 生成select选择器
+* **switch** 生成switch开关
+* **datepicker** 生成日期选择器组件,别名`date`
+* **timepicker** 生成时间选择器组件,别名`time`
+* **inputnumber** 生成数字输入框,别名`number`
+* **colorpicker** 生成颜色选择器组件,别名`color`
+* **cascader** 生成多级联动组件
+* **upload** 生成上传组件
+* **rate** 生成评分组件
+* **slider** 生成滑块组件
 
 #### $f 实例方法
 
@@ -209,6 +235,13 @@ new Vue({
 
 #### hidden 隐藏字段
 
+maker快速生成:
+
+```javascript
+$formCreate.maker.hidden('id','14');
+```
+
+原始:
 ```javascript
 hiddenRule:
 {
@@ -220,12 +253,25 @@ hiddenRule:
 }
 ```
 
+
 #### input 输入框
+
+maker快速生成:
+
+```javascript
+$formCreate.maker.input("商品名称","goods_name","iphone 7").props({
+     clearable:true,
+     placeholder: "请输入商品名称"
+}).validate([
+     { required: true, message: '请输入goods_name', trigger: 'blur' },
+]);
+```
+
+原始:
 
 ```javascript
 inputRule :
 {
-        
         type:"input",//必填! 
         //label名称
         title:"商品名称",//必填!
@@ -284,9 +330,20 @@ inputRule :
     }
 ```
 
-validate 表单验证规则，具体配置查看 : [https://github.com/yiminghe/async-validator](https://github.com/yiminghe/async-validator)
+
 
 #### radio 单选框
+
+maker快速生成:
+
+```javascript
+$formCreate.maker.radio("是否包邮","is_postage","0").options([
+     {value:"0",label:"不包邮",disabled:false},
+     {value:"1",label:"包邮",disabled:true},
+]);
+```
+
+原始:
 
 ```javascript
 radioRule :
@@ -319,12 +376,26 @@ radioRule :
     }
 ```
 
+
+
 #### checkbox 复选框
+
+maker快速生成:
+
+```javascript
+$formCreate.maker.checkbox("标签","label",["1","2","3"]).options([
+     {value:"1",label:"好用",disabled:true},
+     {value:"2",label:"方便",disabled:false},
+     {value:"3",label:"实用",disabled:false},
+     {value:"4",label:"有效",disabled:false},
+]);
+```
+
+原始:
 
 ```javascript
 checkboxRule :
 {
-        
         type:"checkbox",//必填!
         //label名称
         title:"标签",//必填!
@@ -353,12 +424,24 @@ checkboxRule :
     }
 ```
 
+
+
 #### select 选择器
+
+maker快速生成:
+
+```javascript
+$formCreate.maker.select("产品分类","cate_id",["104","105"]).options([
+     {"value": "104", "label": "生态蔬菜", "disabled": false},
+     {"value": "105", "label": "新鲜水果", "disabled": false},
+]);
+```
+
+原始:
 
 ```javascript
 selectRule :
 {
-        
         type: "select",//必填!
         field: "cate_id",//必填!
         title: "产品分类",//必填!
@@ -403,12 +486,24 @@ selectRule :
     }
 ```
 
+
+
 #### switch 开关
+
+maker快速生成:
+
+```javascript
+$formCreate.maker.switch("是否上架","is_show","1").options([
+     {"value": "104", "label": "生态蔬菜", "disabled": false},
+     {"value": "105", "label": "新鲜水果", "disabled": false},
+]).slot({open:"上架",close:"下架"}).props({"trueValue":"1","falseValue":"0"});
+```
+
+原始:
 
 ```javascript
 switchRule :
 {
-        
         type:"switch",//必填!
         //label名称
         title:"是否上架",//必填!
@@ -440,12 +535,25 @@ switchRule :
     }
 ```
 
+
+
 #### DatePicker 日期选择器
+
+maker快速生成:
+
+```javascript
+$formCreate.maker.date("活动日期","section_day",['2018-02-20', new Date()])
+  .props({
+    "type": "datetimerange",
+  	"placeholder":"请选择活动日期", 
+});
+```
+
+原始:
 
 ```javascript
 DatePickerRule :
 {
-        
         type: "DatePicker",//必填!
         field: "section_day",//必填!
         title: "活动日期",//必填!
@@ -486,12 +594,25 @@ DatePickerRule :
     }
 ```
 
+
+
 #### TimePicker 时间选择器
+
+maker快速生成:
+
+```javascript
+$formCreate.maker.time("活动时间","section_time",[])
+  .props({
+    "type": "timerange",
+  	"placeholder":"请选择活动时间", 
+});
+```
+
+原始:
 
 ```javascript
 TimePickerRule :
 {
-        
         type: "TimePicker",//必填!
         field: "section_time",//必填!
         title: "活动时间",//必填!
@@ -507,7 +628,7 @@ TimePickerRule :
             //时间选择器出现的位置，可选值为toptop-starttop-endbottombottom-startbottom-endleftleft-startleft-endrightright-startright-end
             "placement": "bottom-start", 
             //占位文本
-            "placeholder":"请选择获得时间", 
+            "placeholder":"请选择活动时间", 
             //是否显示底部控制栏，开启后，选择完日期，选择器不会主动关闭，需用户确认后才可关闭
             "confirm":false, 
             //尺寸，可选值为large、small、default或者不设置
@@ -533,12 +654,25 @@ TimePickerRule :
     }
 ```
 
+
+
 ####  InputNumber 数字输入框
+
+maker快速生成:
+
+```javascript
+$formCreate.maker.number("排序","sort",1)
+  .props({
+    "type": "timerange",
+  	"precision":0, 
+});
+```
+
+原始:
 
 ```javascript
 InputNumberRule :
 {
-        
         type: "InputNumber",//必填!
         field: "sort",//必填!
         title: "排序",//必填!
@@ -574,12 +708,24 @@ InputNumberRule :
     }
 ```
 
+
+
 #### ColorPicker 颜色选择器
+
+maker快速生成:
+
+```javascript
+$formCreate.maker.color("颜色","color",'#ff7271')
+  .props({
+    "format":"hex"
+});
+```
+
+原始:
 
 ```javascript
 ColorPickerRule :
 {
-
         type: "ColorPicker",//必填!
         field: "color",//必填!
         title: "颜色",//必填!
@@ -608,12 +754,25 @@ ColorPickerRule :
         validate:[],
     }
 ```
+
+
 #### Cascader 多级联动
+
+maker快速生成:
+
+```javascript
+$formCreate.maker.cascader("所在区域","address",['陕西省','西安市','新城区'])
+  .props({
+    data:window.province,
+  	placeholder:'请选择所在区域',
+});
+```
+
+原始:
 
 ```javascript
 CascaderRule:
 {
-        
         type:"cascader",//必填!
         title:"所在区域",//必填!
         field:"address",//必填!
@@ -654,15 +813,34 @@ CascaderRule:
         validate:[],
 
     }
-
 ```
 
+
+
 #### Upload 上传
+
+maker快速生成:
+
+```javascript
+$formCreate.maker.upload("轮播图","pic",['http://img1.touxiang.cn/uploads/20131030/30-075657_191.jpg','http://img1.touxiang.cn/uploads/20131030/30-075657_191.jpg'])
+  .props({
+    "action": "",
+    "maxLength": 1,
+    "multiple": false,
+    "type": "select",
+    "uploadType": "image",
+    "name": "file",
+    "onSuccess": function () {
+        return 'http://img1.touxiang.cn/uploads/20131030/30-075657_191.jpg';
+    }
+}).validate({required:true, type: 'array', min: 1, message: '请上传1张图片', trigger: 'change'});
+```
+
+原始:
 
 ```javascript
 UploadRule :
 {
-        
         type: "Upload",//必填!
         field: "pic",//必填!
         title: "轮播图",//必填!
@@ -726,14 +904,99 @@ UploadRule :
     }
 ```
 
-accept 文件类型： [https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#attr-accept](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#attr-accept)
+
+
+#### Slider 滑块
+
+maker快速生成:
+
+```javascript
+$formCreate.maker.slider('滑块','slider',[0,52]).props({
+        "min": 0,
+        "max": 100,
+        "showTip":"always",
+  		"range": true
+    });
+```
+
+原始:
+
+```javascript
+SliderRule :
+{
+     type:"slider",
+     field:"slider",
+     title:"滑块",
+      value:[0,50], //滑块选定的值。普通模式下，数据格式为数字，在双滑块模式下，数据格式为长度是2的数组，且每项都为数字
+     props:{
+          "min": 0, //最小值
+         "max": 100, //最大值
+         "step": 1, //步长，取值建议能被（max - min）整除
+         "disabled": false, //是否禁用滑块
+         "range": true, //是否开启双滑块模式
+         "showInput":false, //是否显示数字输入框，仅在单滑块模式下有效
+         "showStops":true, //是否显示间断点，建议在 step 不密集时使用
+          "showTip":"hover", //提示的显示控制，可选值为 hover（悬停，默认）、always（总是可见）、never（不可见）
+         "tipFormat":undefined, //Slider 会把当前值传给 tip-format，并在 Tooltip 中显示 tip-format 的返回值，若为 null，则隐藏 Tooltip
+         "inputSize":"small", //数字输入框的尺寸，可选值为large、small、default或者不填，仅在开启 show-input 时有效
+     },
+      event:{
+         //在松开滑动时触发，返回当前的选值，在滑动过程中不会触发
+         change:(value)=>{},
+         //滑动条数据变化时触发，返回当前的选值，在滑动过程中实时触发
+         input:(value)=>{},
+     },
+     validate:[]
+ }
+```
+
+
+
+#### Rate 评分
+
+maker快速生成:
+
+```javascript
+$formCreate.maker.rate('推荐级别','rate',2)
+        .props({
+            "count": 10,
+            "allowHalf": false
+        }).validate({required:true,type:'number',min:3, message: '请大于3颗星',trigger:'change'});
+```
+
+原始:
+
+```javascript
+SliderRule :
+{
+        type:"rate",
+        field:"rate",
+        title:"推荐级别",
+        value:3.5,
+        props:{
+            "count": 10, //star 总数
+            "allowHalf": true, //是否允许半选
+            "disabled": false, //是否只读，无法进行交互
+            "showText": true, //是否显示提示文字
+            "clearable": true, //是否可以取消选择
+        },
+        event:{
+            //评分改变时触发
+            change:(value)=>{},
+        },
+        validate:[
+            {required:true,type:'number',min:3, message: '请大于3颗星',trigger:'change'}
+        ]
+}
+```
+
+
 
 
 ## 全局配置 createOptions
 
 ```javascript
 {
-
     //插入节点,默认document.body
     el:null,
     //form配置
@@ -844,6 +1107,24 @@ accept 文件类型： [https://developer.mozilla.org/en-US/docs/Web/HTML/Elemen
 - **yyyy年M月d日**：2016年1月1日
 - **MM/dd/yy**：12/24/16
 - **H点m分s秒**：9点41分0秒
+
+
+
+
+##参考
+
+iview框架：[iview](https://github.com/iview/iview)
+
+validate 表单验证规则，具体配置查看：[async-validator](https://github.com/yiminghe/async-validator)
+
+accept 文件类型： [attr-accept](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#attr-accept)
+
+
+
+##感谢
+
+[时光弧线](https://github.com/shiguanghuxian) |  [wxxtqk](https://github.com/wxxtqk) | [williamBoss](https://github.com/williamBoss)
+
 
 
 

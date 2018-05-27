@@ -70,6 +70,12 @@ cvm.prototype = {
     upload(data,VNodeFn){
         return this.make('Upload',data,VNodeFn);
     },
+    rate(data,VNodeFn){
+        return this.make('Rate',data,VNodeFn);
+    },
+    slider(data,VNodeFn){
+        return this.make('Slider',data,VNodeFn);
+    },
     span(data,VNodeFn){
         return this.make('span',data,VNodeFn);
     },

@@ -127,5 +127,4 @@ props.prototype = {
     }
 };
 
-
 export default props
