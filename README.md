@@ -130,7 +130,7 @@ new Vue({
 
 #### $formCreate.maker 组件规则生成器
 
->   **除hidden外,其他使用方式都相同,详细参考[表单元素规则](#rules-表单元素规则)**
+>   **除hidden外,其他配置方式全部相同.详细参考[表单元素规则](#rules-表单元素规则)**
 >
 >   **props,event,slot传入参数为对象,例({key:value,...})**
 >
@@ -247,19 +247,17 @@ $formCreate.maker.input(title,field,value)
 * **append(rule,field = undefined)** 在field的字段之前输入指定表单元素,不传入field默认在最后一个
 
 ```javascript
-    $f.append({
-       type:"input",
-       title:"商品简介",
-       field:"goods_info",
-       value:"",
-       props: {
-           "type": "text",
-           "placeholder": "请输入商品简介",
-       },
-       validate:[
-           { required: true, message: '请输入商品简介', trigger: 'blur' },
-       ],
-    });
+    $f.append(maker.upload('产品主图','logo','http://img1.touxiang.cn/uploads/20131030/30-075657_191.jpg').props({
+                  "action": "",
+                  "maxLength": 1,
+                  "multiple": false,
+                  "type": "select",
+                  "uploadType": "image",
+                  "name": "file",
+                  "onSuccess": function () {
+                      return 'http://img1.touxiang.cn/uploads/20131030/30-075657_191.jpg';
+                  }
+              }).validate({required:true, type: 'array', min: 1, message: '请上传1张图片', trigger: 'change'}),'goods_name');
 ```
 
 * **submitStatus(props)** 修改表单提交按钮状态
