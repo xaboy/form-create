@@ -247,17 +247,20 @@ $formCreate.maker.input(title,field,value)
 * **append(rule,field = undefined)** 在field的字段之前输入指定表单元素,不传入field默认在最后一个
 
 ```javascript
-    $f.append(maker.upload('产品主图','logo','http://img1.touxiang.cn/uploads/20131030/30-075657_191.jpg').props({
-                  "action": "",
-                  "maxLength": 1,
-                  "multiple": false,
-                  "type": "select",
-                  "uploadType": "image",
-                  "name": "file",
-                  "onSuccess": function () {
-                      return 'http://img1.touxiang.cn/uploads/20131030/30-075657_191.jpg';
-                  }
-              }).validate({required:true, type: 'array', min: 1, message: '请上传1张图片', trigger: 'change'}),'goods_name');
+    $f.append($formCreate.maker.upload('产品主图','logo','http://img1.touxiang.cn/uploads/20131030/30-075657_191.jpg')
+        .props({
+              "action": "",
+              "maxLength": 1,
+              "multiple": false,
+              "type": "select",
+              "uploadType": "image",
+              "name": "file",
+              "onSuccess": function () {
+                  return 'http://img1.touxiang.cn/uploads/20131030/30-075657_191.jpg';
+              }
+        })
+        .validate({required:true, type: 'array', min: 1, message: '请上传1张图片', trigger: 'change'})
+    ,'goods_name');
 ```
 
 * **submitStatus(props)** 修改表单提交按钮状态
