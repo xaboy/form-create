@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>form-create实例</title>
+    <title>form-create示例</title>
 
     <link href="https://cdn.bootcss.com/iview/2.13.0/styles/iview.css" rel="stylesheet">
     <script src="https://cdn.bootcss.com/vue/2.5.13/vue.min.js"></script>
@@ -34,9 +34,9 @@
                 onSubmit:function (formData) {
                     console.log(formData);
                     alert(JSON.stringify(formData));
-                    //提交状态
+                    //按钮进入提交状态
                     $f.btn.loading();
-                    //点击状态
+                    //按钮进入可点击状态
 //                    $f.btn.finish();
                     //创建第二个表单
                     $f2 = that.$formCreate(mock,root);

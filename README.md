@@ -1197,7 +1197,7 @@ SliderRule :
 
 
 
-##参考
+## 参考
 
 iview框架：[iview](https://github.com/iview/iview)
 
@@ -1207,9 +1207,9 @@ accept 文件类型： [attr-accept](https://developer.mozilla.org/en-US/docs/We
 
 
 
-##感谢
+## 感谢
 
-[时光弧线](https://github.com/shiguanghuxian) |  [wxxtqk](https://github.com/wxxtqk) | [williamBoss](https://github.com/williamBoss)
+[时光弧线](https://github.com/shiguanghuxian)  |  [wxxtqk](https://github.com/wxxtqk)  |  [williamBoss](https://github.com/williamBoss)
 
 
 

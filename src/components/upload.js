@@ -84,7 +84,6 @@ const render = renderFactory({
                     return this.makeProgress(file,`${index}${unique}`);
                 }
             })];
-        window.vm = this.vm;
         render.push(this.makeUploadBtn(unique,(!this.uploadOptions.maxLength || this.uploadOptions.maxLength > this.vm.formData[rule.field].length)));
         return [this.cvm.make('div',{key:`div4${unique}`,class:{'fc-upload':true}},render)];
     },

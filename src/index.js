@@ -1,4 +1,4 @@
-import formCreate from './core/formCeate';
+import formCreate from './core/formCreate';
 
 if(typeof window !== 'undefined'){
     window["formCreate"] = formCreate;
