@@ -76,7 +76,7 @@ npm install
 ```
 
 ## 引入
-
+浏览器:
 ```html
 <!-- import Vue ^2.5.16-->
 <script src="node_modules/vue/dist/vue.min.js"></script>
@@ -94,12 +94,25 @@ npm install
 <!-- import formCreate -->
 <script src="dist/form-create.min.js"></script>
 ```
-
+NodeJs:
+```js
+//三级联动数据,不用可以不引入
+import 'form-create/district/province_city_area.js'
+//示例规则
+import 'form-create/mock.js'
+import Vue from 'vue';
+import iView from 'iview';
+import 'iview/dist/styles/iview.css';
+import formCreat from 'form-create'
+Vue.use(iView);
+Vue.use(formCreat)
+```
 **注意! iview版本为`2.13.0`,Vue版本为`2.5.*`**
 
 ## 使用
 
 ```javascript
+//示例规则
 let rules = window.mock;
 new Vue({
     mounted:function(){
@@ -111,7 +124,7 @@ new Vue({
                 //提交状态
                 $f.btn.loading();
                 //点击状态
-                //                    $f.btn.finish();
+                //$f.btn.finish();
                 //创建第二个表单
                 $f2 = that.$formCreate(mock,root);
             }
@@ -125,8 +138,8 @@ new Vue({
 
 #### $formCreate 表单生成器参数
 
-* **rules**  表单生成规则  [inputRule,selectRule,...],可使用`$formCreate.maker` 快速生成
-* **options** 初始化配置参数 (详细见底部 createOptions)
+* **rules**  表单生成规则:Array  [inputRule,selectRule,...],可使用`$formCreate.maker` 快速生成规则
+* **options** 初始化配置参数:Object ([详细见底部 createOptions](https://github.com/xaboy/form-create#全局配置-createoptions))
 
 #### $formCreate.maker 组件规则生成器
 
