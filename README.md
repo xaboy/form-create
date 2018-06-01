@@ -17,6 +17,10 @@
 </p>
 <br />
 
+### [中文文档](https://xaboy.gitbooks.io/form-create/content/kuai-su-shang-shou.html)
+
+### 本项目还在不断开发完善中,如有建议或问题请[在这里提出](https://github.com/xaboy/form-create/issues/new)
+
 ## 1.2 版本重大更新
 
 - 内部结构优化
@@ -53,10 +57,6 @@
 - 新增动态添加表单元素功能
 - 优化操作接口
 
-
-### [中文文档](https://xaboy.gitbooks.io/form-create/content/kuai-su-shang-shou.html)
-
-### 本项目还在不断开发完善中,如有建议或问题请[在这里提出](https://github.com/xaboy/form-create/issues/new)
 
 ## 示例 [代码](https://github.com/xaboy/form-create/blob/master/mock.js) 
 
