@@ -148,6 +148,8 @@ new Vue({
 >   **props,event,slot传入参数为对象,例({key:value,...})**
 >
 >   **validate,options参入参数为数组,例([options,options,..])**
+>
+>   `$formCreate.maker`指的是 vue内部的 `this.$formCreate.maker` 或者 `window.formCreate.maker`
 
 
 
