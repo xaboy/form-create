@@ -34,7 +34,7 @@
 ## 更新说明
 
 #### 1.2.3 (2018-6-13)
-- 新增 frame组件,可通过iframe扩展功能,例如:在已有素材库中选择图片,文件等,在图标库中选择图标等定制功能扩展
+- 新增 frame组件,可通过iframe扩展功能,例如:在已有素材库中选择图片,文件等,图标等定制功能扩展
 - 修改 Upload组件type为file时默认不可预览
 
 #### 1.2.2 (2018-5-28)
@@ -224,6 +224,7 @@ $formCreate.maker.input(title,field,value)
 * **destroy()** 销毁表单
 * **removeField(field)** 删除指定字段
 * **fields()** 获得表单所有字段名称
+* **closeModal()** 关闭frame组件的弹出框
 * **submit()** 表单验证通过后提交表单,触发onSubmit事件
 * **validate(successFn,errorFn)** 表单验证,如果验证通过执行successFn,未通过则执行errorFn
 * **validateField(field,callback)** 表单验证指定字段
