@@ -5,11 +5,13 @@ import makeFactory from "../factory/make";
 
 const handler = handlerFactory({
     verify(){
-        this.rule.props.defaultFileList = [];
-        this.rule.props.showUploadList = false;
-        this.rule.props.uploadType = !this.rule.props.uploadType
+        let props = this.rule.props;
+        props.defaultFileList = [];
+        props.showUploadList = false;
+        props.uploadType = !props.uploadType
             ? 'file'
-            : this.rule.props.uploadType;
+            : props.uploadType;
+        if(props.uploadType === 'file' && props.handleIcon === undefined) props.handleIcon = false;
         this.parseValue = [];
     },
     handle() {
@@ -124,12 +126,12 @@ const render = renderFactory({
         ] : []);
     },
     makeRemoveIcon(src,key,index){
-        return this.cvm.icon({key:`upri${key}`,props:{type:'ios-trash-outline'},nativeOn:{'click':()=>{
+        return this.cvm.icon({key:`upri${key}${index}`,props:{type:'ios-trash-outline'},nativeOn:{'click':()=>{
             this.handler.el.fileList.splice(index,1);
         }}});
     },
     makeHandleIcon(src,key,index){
-        return this.cvm.icon({key:`uphi${key}`,props:{type:this.uploadOptions.handleIcon.toString()},nativeOn:{'click':()=>{
+        return this.cvm.icon({key:`uphi${key}${index}`,props:{type:this.uploadOptions.handleIcon.toString()},nativeOn:{'click':()=>{
             this.uploadOptions.onHandle(src);
         }}});
     }

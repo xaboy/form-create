@@ -18,13 +18,13 @@ const render = function (vm, handler, options = {}) {
     this.options = options;
     this.vm = vm;
     this.cvm = cvm.instance(vm.$createElement);
+    this.event = handler.rule.event;
     this.init();
 };
 
 render.prototype = {
     props: props.instance(),
     init(){
-        this.event = this.handler.rule.event;
     },
     parse(){
         throw new Error('请实现parse方法');

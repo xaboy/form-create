@@ -13,11 +13,13 @@
 </p>
 
 <p align="center">
-  <b>具有数据收集、校验和提交功能的表单生成器，包含复选框、单选框、输入框、下拉选择框等元素以及,省市区三级联动,时间选择,日期选择,颜色选择,滑块,评分,文件/图片上传功能，支持事件扩展。</b>
+  <b>具有数据收集、校验和提交功能的表单生成器，包含复选框、单选框、输入框、下拉选择框等元素以及,省市区三级联动,时间选择,日期选择,颜色选择,滑块,评分,框架,文件/图片上传功能，支持事件扩展。</b>
 </p>
 <br />
 
 ### [中文文档](https://xaboy.gitbooks.io/form-create/content/kuai-su-shang-shou.html)
+
+### 如果本项目对您有用,请点个Star吧,送人玫瑰手留余香
 
 ### 本项目还在不断开发完善中,如有建议或问题请[在这里提出](https://github.com/xaboy/form-create/issues/new)
 
@@ -25,11 +27,19 @@
 
 - 内部结构优化
 - 新增 规则生成器`$formCreate.maker`
-- 新增 滑块、评分组件
+- 新增 滑块、评分组件、frame组件
 - 优化 文件上传组件
 - 修复 上传组件无法验证等问题
 
 ## 更新说明
+
+#### 1.2.3 (2018-6-13)
+- 新增 frame组件,可通过iframe扩展功能,例如:在已有素材库中选择图片,文件等,在图标库中选择图标等定制功能扩展
+- 修改 Upload组件type为file时默认不可预览
+
+#### 1.2.2 (2018-5-28)
+- 修复 Bug
+- 修复 显示问题
 
 #### 1.2.1 (2018-5-27)
 - 内部结构优化
@@ -38,24 +48,6 @@
 - 优化 文件上传组件
 - 修复 上传组件无法验证等问题
 > 感谢 [wxxtqk](https://github.com/wxxtqk) | [williamBoss](https://github.com/williamBoss)
-
-#### 1.1.7 (2018-5-18)
-- 修复表单排序问题
-- 添加上传图片组件默认预览事件
-
-#### 1.1.6 (2018-5-17)
-- 修复require加载问题
-- 支持cmd,amd加载
-
-#### 1.1.5 (2018-5-4)
-- 修复时间,日期组件值获取问题
-- 修复同时生成多个form表单冲突问题
-- 升级iview版本到2.13.0
-> 感谢 [时光弧线](https://github.com/shiguanghuxian)
-
-#### 1.1.4
-- 新增动态添加表单元素功能
-- 优化操作接口
 
 
 ## 示例 [代码](https://github.com/xaboy/form-create/blob/master/mock.js) 
@@ -79,17 +71,17 @@ npm install
 浏览器:
 ```html
 <!-- import Vue ^2.5.16-->
-<script src="node_modules/vue/dist/vue.min.js"></script>
+<script src="https://cdn.bootcss.com/vue/2.5.13/vue.min.js"></script>
 
 <!-- import iview ^2.13.0-->
-<link rel="stylesheet" href="node_modules/iview/dist/styles/iview.css">
-<script src="node_modules/iview/dist/iview.min.js"></script>
+<link rel="stylesheet" href="https://cdn.bootcss.com/iview/2.13.0/styles/iview.css">
+<script src="https://cdn.bootcss.com/iview/2.13.0/iview.min.js"></script>
 
 <!-- 省市区三级联动json数据 -->
-<script src="/district/province_city_area.js"></script>
+<script src="district/province_city_area.js"></script>
 
 <!-- 模拟数据 -->
-<script src="mock.js"></script>
+<script src="dome/mock.js"></script>
 
 <!-- import formCreate -->
 <script src="dist/form-create.min.js"></script>
@@ -217,6 +209,10 @@ $formCreate.maker.input(title,field,value)
 
 >   可用`props` ,`validate`, `event`  方法配置对应属性
 
+* **frame** 生成框架组件`
+
+>   可用`props` ,`validate`, `event`  方法配置对应属性
+
 
 
 #### $f 实例方法
@@ -316,7 +312,7 @@ maker快速生成:
 $formCreate.maker.hidden('id','14');
 ```
 
-原始:
+原始参数:
 ```javascript
 hiddenRule:
 {
@@ -344,7 +340,7 @@ $formCreate.maker.input("商品名称","goods_name","iphone 7").props({
 ]);
 ```
 
-原始:
+原始参数:
 
 ```javascript
 inputRule :
@@ -422,7 +418,7 @@ $formCreate.maker.radio("是否包邮","is_postage","0").options([
 ]);
 ```
 
-原始:
+原始参数:
 
 ```javascript
 radioRule :
@@ -472,7 +468,7 @@ $formCreate.maker.checkbox("标签","label",["1","2","3"]).options([
 ]);
 ```
 
-原始:
+原始参数:
 
 ```javascript
 checkboxRule :
@@ -520,7 +516,7 @@ $formCreate.maker.select("产品分类","cate_id",["104","105"]).options([
 ]);
 ```
 
-原始:
+原始参数:
 
 ```javascript
 selectRule :
@@ -584,7 +580,7 @@ $formCreate.maker.switch("是否上架","is_show","1").options([
 ]).slot({open:"上架",close:"下架"}).props({"trueValue":"1","falseValue":"0"});
 ```
 
-原始:
+原始参数:
 
 ```javascript
 switchRule :
@@ -636,7 +632,7 @@ $formCreate.maker.date("活动日期","section_day",['2018-02-20', new Date()])
 });
 ```
 
-原始:
+原始参数:
 
 ```javascript
 DatePickerRule :
@@ -697,7 +693,7 @@ $formCreate.maker.time("活动时间","section_time",[])
 });
 ```
 
-原始:
+原始参数:
 
 ```javascript
 TimePickerRule :
@@ -759,7 +755,7 @@ $formCreate.maker.number("排序","sort",1)
 });
 ```
 
-原始:
+原始参数:
 
 ```javascript
 InputNumberRule :
@@ -814,7 +810,7 @@ $formCreate.maker.color("颜色","color",'#ff7271')
 });
 ```
 
-原始:
+原始参数:
 
 ```javascript
 ColorPickerRule :
@@ -863,7 +859,7 @@ $formCreate.maker.cascader("所在区域","address",['陕西省','西安市','�
 });
 ```
 
-原始:
+原始参数:
 
 ```javascript
 CascaderRule:
@@ -933,7 +929,7 @@ $formCreate.maker.upload("轮播图","pic",['http://img1.touxiang.cn/uploads/201
 }).validate({required:true, type: 'array', min: 1, message: '请上传1张图片', trigger: 'change'});
 ```
 
-原始:
+原始参数:
 
 ```javascript
 UploadRule :
@@ -1018,7 +1014,7 @@ $formCreate.maker.slider('滑块','slider',[0,52]).props({
     });
 ```
 
-原始:
+原始参数:
 
 ```javascript
 SliderRule :
@@ -1065,10 +1061,10 @@ $formCreate.maker.rate('推荐级别','rate',2)
         }).validate({required:true,type:'number',min:3, message: '请大于3颗星',trigger:'change'});
 ```
 
-原始:
+原始参数:
 
 ```javascript
-SliderRule :
+RateRule :
 {
         type:"rate",
         field:"rate",
@@ -1092,6 +1088,55 @@ SliderRule :
 ```
 
 
+#### Frame 框架
+
+[规则说明](https://xaboy.gitbooks.io/form-create/content/biao-dan-yuan-su/frame.html)
+
+maker快速生成:
+
+```javascript
+maker.frame('素材','fodder',["http://img1.touxiang.cn/uploads/20131030/30-075657_191.jpg"]).props({
+        src:"iframe.html",
+        maxLength:2,
+        type:"image"
+    }).validate([
+        {required:true, type: 'array', min: 2, message: '请选择2张图片', trigger: 'change'}
+    ])
+```
+
+原始参数:
+
+```javascript
+FrameRule :
+{
+        type:"frame",
+        title:"素材",
+        field:"fodder",
+        value:["http://img1.touxiang.cn/uploads/20131030/30-075657_191.jpg"],
+        props:{
+            type:"image", //frame类型,有input,file,image
+            src:"iframe.html", //iframe地址
+            maxLength:2, //value的最大数量
+            icon:'folder', //打开弹出框的按钮图标
+            height:"220px", //弹出框高度
+            width:"350px", //弹出框宽度
+            spin:false, //是否显示加载动画
+            title:"请选择", //弹出框标题
+            handleIcon: true, //操作按钮的图标 ,设置为false将不显示,设置为true为默认的预览图标,类型为file时默认为false,image类型默认为true
+            allowRemove:true, //是否可删除,设置为false是不显示删除按钮
+            onHandle:undefined, //点击操作按钮事件,默认为图片预览
+            onRemove:()=>{return false;} //点击删除按钮事件,返回false将不删除
+        },
+        event:{
+            change:()=>{console.log('change')}, //value改变时触发
+            open:()=>{console.log('open')}, //打开弹出层回调
+            ok:()=>{console.log('ok')} //点击确定的回调
+        },
+        validate:[
+            {required:true, type: 'array', min: 5, message: '请选择5张图片', trigger: 'change'}
+        ],
+    }
+```
 
 
 ## 全局配置 createOptions

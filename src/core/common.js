@@ -12,7 +12,8 @@ import timePickerComponent from '../components/timePicker';
 import hiddenComponent from '../components/hidden';
 import uploadComponent from '../components/upload';
 import rateComponent from '../components/rate';
-import sliderComponent from '../components/slider';
+import sliderComponent from '../components/slider'
+import frameComponent from '../components/frame';
 
 
 const componentList = {
@@ -30,6 +31,7 @@ const componentList = {
     cascader: cascaderComponent,
     rate:rateComponent,
     slider:sliderComponent,
+    frame:frameComponent
 };
 
 
@@ -64,7 +66,7 @@ const getConfig = function (Vue) {
             handleIcon:'ios-eye-outline',
             onHandle:(src)=>{
                 vm.$Modal.info({
-                    title:"查看图片",
+                    title:"预览",
                     render:(h)=>{
                         return h('img',{attrs:{src},style:"width: 100%"});
                     }
@@ -94,18 +96,17 @@ const createHandler = function (vm, rule, createOptions) {
     return $h;
 };
 
-const formCreateStyle = '.form-create{padding-right:25px;}.fc-upload .fc-files{display: inline-block;width: 58px;height: 58px;text-align: center;line-height: 60px;border: 1px solid transparent;border-radius: 4px;overflow: hidden;background: #fff;position: relative;box-shadow: 0 1px 1px rgba(0,0,0,.2);margin-right: 4px;box-sizing: border-box;}' +
+const formCreateStyle = '.form-create{padding:25px;} .fc-files{display: inline-block;width: 58px;height: 58px;text-align: center;line-height: 60px;border: 1px solid transparent;border-radius: 4px;overflow: hidden;background: #fff;position: relative;box-shadow: 0 1px 1px rgba(0,0,0,.2);margin-right: 4px;box-sizing: border-box;}' +
     ' .fc-files>.ivu-icon{transform: translateY(20%);}'+
-    '.fc-upload .fc-files img{width:100%;height:100%;display:block;}' +
+    '.fc-files img{width:100%;height:100%;display:block;}' +
     '.fc-upload .ivu-upload{display: inline-block;}' +
-    '.fc-upload .ivu-upload .fc-upload-btn{ width: 58px;height: 58px;line-height: 58px;}' +
-    '.fc-upload .ivu-upload .fc-upload-btn i{font-size: 20px;}' +
+    '.fc-upload-btn i{font-size: 20px;}' +
     '.fc-upload .fc-upload-cover{ display: none; position: absolute; top: 0; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,.6); }' +
     '.fc-upload .fc-upload-cover i{ color: #fff; font-size: 20px; cursor: pointer; margin: 0 2px; }' +
-    '.fc-upload .fc-files:hover .fc-upload-cover{ display: block; }' +
+    '.fc-files:hover .fc-upload-cover{ display: block; }' +
     '.fc-upload .ivu-upload-list-file{ display: inline-block;float: left; }'+
     '.fc-upload .ivu-upload-list{ position: absolute;left: 0; }'+
-    '.fc-upload .ivu-upload-select .fc-upload-btn{ background: #fff;border: 1px dashed #dddee1;border-radius: 4px;text-align: center;cursor: pointer;position: relative;overflow: hidden;transition: border-color .2s ease; }';
+    '.fc-upload-btn{ width: 58px;height: 58px;line-height: 58px;display:inline-block;background: #fff;border: 1px dashed #dddee1;border-radius: 4px;text-align: center;cursor: pointer;position: relative;overflow: hidden;transition: border-color .2s ease; } .fc-spin-icon-load{animation: ani-fc-spin 1s linear infinite;} @-webkit-keyframes ani-fc-spin{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}50%{-webkit-transform:rotate(180deg);transform:rotate(180deg)}to{-webkit-transform:rotate(1turn);transform:rotate(1turn)}}@keyframes ani-fc-spin{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}50%{-webkit-transform:rotate(180deg);transform:rotate(180deg)}to{-webkit-transform:rotate(1turn);transform:rotate(1turn)}}';
 
 const getGlobalApi = function (fComponent) {
     return {
@@ -180,6 +181,7 @@ const getGlobalApi = function (fComponent) {
             let props = deepExtend(Object.create(null),_props);
             fComponent.vm.changeButtonProps(props);
         },
+        // vm:fComponent,
         btn:{
             loading:()=>{
                 fComponent.vm.changeButtonProps({loading:true});
@@ -187,6 +189,9 @@ const getGlobalApi = function (fComponent) {
             finish:()=>{
                 fComponent.vm.changeButtonProps({loading:false});
             }
+        },
+        closeModal:()=>{
+            fComponent.vm.$Modal.remove();
         }
     };
 };

@@ -118,7 +118,7 @@ window.mock = [
     //     },
     //     validate:[],
     // },
-    maker.checkbox('标签','label',["1","2","3"]).options([
+    maker.checkbox('标签','label','').options([
         {value:"1",label:"好用",disabled:true},
         {value:"2",label:"方便",disabled:false},
         {value:"3",label:"实用",disabled:false},
@@ -390,11 +390,11 @@ window.mock = [
             "maxLength": 4,
             "multiple": true,
             "type": "select",
-            "uploadType": "image",
+            "uploadType": "file",
             "name": "file",
             "onSuccess": function () {
                 return 'http://img1.touxiang.cn/uploads/20131030/30-075657_191.jpg';
-            },
+            }
         }).validate({required:true, type: 'array', min: 3, message: '请上传3张图片', trigger: 'change'}),
     // {
     //     type: "Upload",
@@ -464,12 +464,48 @@ window.mock = [
     //     },
     //     validate:[],
     // },
+    maker.frame('素材','fodder',["http://img1.touxiang.cn/uploads/20131030/30-075657_191.jpg"]).props({
+        src:"iframe.html",
+        maxLength:2,
+        type:"image"
+    }).validate([
+        {required:true, type: 'array', min: 2, message: '请选择2张图片', trigger: 'change'}
+    ])
+    // ,{
+    //     type:"frame",
+    //     title:"素材",
+    //     field:"fodder",
+    //     value:["http://img1.touxiang.cn/uploads/20131030/30-075657_191.jpg"],
+    //     props:{
+    //         type:"image", //frame类型,有input,file,image
+    //         src:"iframe.html", //iframe地址
+    //         maxLength:2, //value的最大数量
+    //         icon:'folder', //打开弹出框的按钮图标
+    //         height:"220px", //弹出框高度
+    //         width:"350px", //弹出框宽度
+    //         spin:false, //是否显示加载动画
+    //         title:"请选择", //弹出框标题
+    //         handleIcon: true, //操作按钮的图标 ,设置为false将不显示,设置为true为默认的预览图标,类型为file时默认为false,image类型默认为true
+    //         allowRemove:true, //是否可删除,设置为false是不显示删除按钮
+    //         onHandle:undefined, //点击操作按钮事件,默认为图片预览
+    //         onRemove:()=>{return false;} //点击删除按钮事件,返回false将不删除
+    //     },
+    //     event:{
+    //         change:()=>{console.log('change')}, //value改变时触发
+    //         open:()=>{console.log('open')}, //打开弹出层回调
+    //         ok:()=>{console.log('ok')} //点击确定的回调
+    //     },
+    //     validate:[
+    //         {required:true, type: 'array', min: 5, message: '请选择5张图片', trigger: 'change'}
+    //     ],
+    // }
 ];
 
 $r = maker.upload('产品主图','logo','http://img1.touxiang.cn/uploads/20131030/30-075657_191.jpg').props({
     "action": "",
     "maxLength": 1,
     "multiple": false,
+    "max":0,
     "type": "select",
     "uploadType": "image",
     "name": "file",

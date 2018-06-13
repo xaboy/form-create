@@ -376,14 +376,13 @@ var render = function render(vm, handler) {
     this.options = options;
     this.vm = vm;
     this.cvm = _cvm2.default.instance(vm.$createElement);
+    this.event = handler.rule.event;
     this.init();
 };
 
 render.prototype = {
     props: _props2.default.instance(),
-    init: function init() {
-        this.event = this.handler.rule.event;
-    },
+    init: function init() {},
     parse: function parse() {
         throw new Error('请实现parse方法');
     },
@@ -476,6 +475,10 @@ var _slider = __webpack_require__(22);
 
 var _slider2 = _interopRequireDefault(_slider);
 
+var _frame = __webpack_require__(23);
+
+var _frame2 = _interopRequireDefault(_frame);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var componentList = {
@@ -492,7 +495,8 @@ var componentList = {
     upload: _upload2.default,
     cascader: _cascader2.default,
     rate: _rate2.default,
-    slider: _slider2.default
+    slider: _slider2.default,
+    frame: _frame2.default
 };
 
 var getComponent = function getComponent(componentName) {
@@ -523,7 +527,7 @@ var getConfig = function getConfig(Vue) {
             handleIcon: 'ios-eye-outline',
             onHandle: function onHandle(src) {
                 vm.$Modal.info({
-                    title: "查看图片",
+                    title: "预览",
                     render: function render(h) {
                         return h('img', { attrs: { src: src }, style: "width: 100%" });
                     }
@@ -553,7 +557,7 @@ var createHandler = function createHandler(vm, rule, createOptions) {
     return $h;
 };
 
-var formCreateStyle = '.form-create{padding-right:25px;}.fc-upload .fc-files{display: inline-block;width: 58px;height: 58px;text-align: center;line-height: 60px;border: 1px solid transparent;border-radius: 4px;overflow: hidden;background: #fff;position: relative;box-shadow: 0 1px 1px rgba(0,0,0,.2);margin-right: 4px;box-sizing: border-box;}' + ' .fc-files>.ivu-icon{transform: translateY(20%);}' + '.fc-upload .fc-files img{width:100%;height:100%;display:block;}' + '.fc-upload .ivu-upload{display: inline-block;}' + '.fc-upload .ivu-upload .fc-upload-btn{ width: 58px;height: 58px;line-height: 58px;}' + '.fc-upload .ivu-upload .fc-upload-btn i{font-size: 20px;}' + '.fc-upload .fc-upload-cover{ display: none; position: absolute; top: 0; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,.6); }' + '.fc-upload .fc-upload-cover i{ color: #fff; font-size: 20px; cursor: pointer; margin: 0 2px; }' + '.fc-upload .fc-files:hover .fc-upload-cover{ display: block; }' + '.fc-upload .ivu-upload-list-file{ display: inline-block;float: left; }' + '.fc-upload .ivu-upload-list{ position: absolute;left: 0; }' + '.fc-upload .ivu-upload-select .fc-upload-btn{ background: #fff;border: 1px dashed #dddee1;border-radius: 4px;text-align: center;cursor: pointer;position: relative;overflow: hidden;transition: border-color .2s ease; }';
+var formCreateStyle = '.form-create{padding:25px;} .fc-files{display: inline-block;width: 58px;height: 58px;text-align: center;line-height: 60px;border: 1px solid transparent;border-radius: 4px;overflow: hidden;background: #fff;position: relative;box-shadow: 0 1px 1px rgba(0,0,0,.2);margin-right: 4px;box-sizing: border-box;}' + ' .fc-files>.ivu-icon{transform: translateY(20%);}' + '.fc-files img{width:100%;height:100%;display:block;}' + '.fc-upload .ivu-upload{display: inline-block;}' + '.fc-upload-btn i{font-size: 20px;}' + '.fc-upload .fc-upload-cover{ display: none; position: absolute; top: 0; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,.6); }' + '.fc-upload .fc-upload-cover i{ color: #fff; font-size: 20px; cursor: pointer; margin: 0 2px; }' + '.fc-files:hover .fc-upload-cover{ display: block; }' + '.fc-upload .ivu-upload-list-file{ display: inline-block;float: left; }' + '.fc-upload .ivu-upload-list{ position: absolute;left: 0; }' + '.fc-upload-btn{ width: 58px;height: 58px;line-height: 58px;display:inline-block;background: #fff;border: 1px dashed #dddee1;border-radius: 4px;text-align: center;cursor: pointer;position: relative;overflow: hidden;transition: border-color .2s ease; } .fc-spin-icon-load{animation: ani-fc-spin 1s linear infinite;} @-webkit-keyframes ani-fc-spin{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}50%{-webkit-transform:rotate(180deg);transform:rotate(180deg)}to{-webkit-transform:rotate(1turn);transform:rotate(1turn)}}@keyframes ani-fc-spin{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}50%{-webkit-transform:rotate(180deg);transform:rotate(180deg)}to{-webkit-transform:rotate(1turn);transform:rotate(1turn)}}';
 
 var getGlobalApi = function getGlobalApi(fComponent) {
     return {
@@ -624,6 +628,7 @@ var getGlobalApi = function getGlobalApi(fComponent) {
             var props = (0, _util.deepExtend)(Object.create(null), _props);
             fComponent.vm.changeButtonProps(props);
         },
+        // vm:fComponent,
         btn: {
             loading: function loading() {
                 fComponent.vm.changeButtonProps({ loading: true });
@@ -631,6 +636,9 @@ var getGlobalApi = function getGlobalApi(fComponent) {
             finish: function finish() {
                 fComponent.vm.changeButtonProps({ loading: false });
             }
+        },
+        closeModal: function closeModal() {
+            fComponent.vm.$Modal.remove();
         }
     };
 };
@@ -992,11 +1000,11 @@ var _util = __webpack_require__(1);
 
 var _common = __webpack_require__(4);
 
-var _form = __webpack_require__(23);
+var _form = __webpack_require__(24);
 
 var _form2 = _interopRequireDefault(_form);
 
-var _formCreateComponent = __webpack_require__(24);
+var _formCreateComponent = __webpack_require__(25);
 
 var _formCreateComponent2 = _interopRequireDefault(_formCreateComponent);
 
@@ -1004,7 +1012,7 @@ var _make = __webpack_require__(0);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var version = '1.2.2';
+var version = '1.2.3';
 
 var maker = (0, _common.getMaker)();
 
@@ -1765,9 +1773,11 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
 var handler = (0, _handler2.handlerFactory)({
     verify: function verify() {
-        this.rule.props.defaultFileList = [];
-        this.rule.props.showUploadList = false;
-        this.rule.props.uploadType = !this.rule.props.uploadType ? 'file' : this.rule.props.uploadType;
+        var props = this.rule.props;
+        props.defaultFileList = [];
+        props.showUploadList = false;
+        props.uploadType = !props.uploadType ? 'file' : props.uploadType;
+        if (props.uploadType === 'file' && props.handleIcon === undefined) props.handleIcon = false;
         this.parseValue = [];
     },
     handle: function handle() {
@@ -1892,14 +1902,14 @@ var render = (0, _render.renderFactory)({
     makeRemoveIcon: function makeRemoveIcon(src, key, index) {
         var _this6 = this;
 
-        return this.cvm.icon({ key: "upri" + key, props: { type: 'ios-trash-outline' }, nativeOn: { 'click': function click() {
+        return this.cvm.icon({ key: "upri" + key + index, props: { type: 'ios-trash-outline' }, nativeOn: { 'click': function click() {
                     _this6.handler.el.fileList.splice(index, 1);
                 } } });
     },
     makeHandleIcon: function makeHandleIcon(src, key, index) {
         var _this7 = this;
 
-        return this.cvm.icon({ key: "uphi" + key, props: { type: this.uploadOptions.handleIcon.toString() }, nativeOn: { 'click': function click() {
+        return this.cvm.icon({ key: "uphi" + key + index, props: { type: this.uploadOptions.handleIcon.toString() }, nativeOn: { 'click': function click() {
                     _this7.uploadOptions.onHandle(src);
                 } } });
     }
@@ -2027,6 +2037,242 @@ exports.make = make;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+exports.make = exports.render = exports.handler = undefined;
+
+var _handler = __webpack_require__(2);
+
+var _render = __webpack_require__(3);
+
+var _util = __webpack_require__(1);
+
+var _make = __webpack_require__(0);
+
+var _make2 = _interopRequireDefault(_make);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var handler = (0, _handler.handlerFactory)({
+    verify: function verify() {
+        var _this = this;
+
+        var props = this.rule.props;
+        if (!props.type) props.type = 'input';
+        if (!props.icon) props.icon = 'folder';
+        if (!props.width) props.width = '500px';
+        if (!props.height) props.height = '370px';
+        if (props.spin === undefined) props.spin = true;
+        if (!props.title) props.title = '请选择' + this.rule.title;
+        if (!props.maxLength) props.maxLength = 0;
+        props.multiple = !props.maxLength || props.maxLength > 1;
+        if (props.type === 'file' && props.handleIcon === undefined) props.handleIcon = false;else props.handleIcon = props.handleIcon === true || props.handleIcon === undefined ? 'ios-eye-outline' : props.handleIcon;
+        if (props.onHandle === undefined) props.onHandle = function (src) {
+            _this.vm.$Modal.info({
+                title: "预览",
+                render: function render(h) {
+                    return h('img', { attrs: { src: src }, style: "width: 100%" });
+                }
+            });
+        };
+        if (props.allowRemove === undefined) props.allowRemove = true;
+        if (props.onRemove === undefined) props.onRemove = function (src) {};
+    },
+    handle: function handle() {
+        var parseValue = void 0,
+            oldValue = this.rule.value,
+            isArr = (0, _util.isArray)(oldValue);
+        if (oldValue === '') parseValue = [];else if (!isArr) parseValue = [oldValue];else parseValue = oldValue;
+        this.changeParseValue(parseValue);
+    },
+    getValue: function getValue() {
+        return this.rule.props.multiple === true ? this.parseValue : this.parseValue[0] === undefined ? '' : this.parseValue[0];
+    }
+});
+
+var render = (0, _render.renderFactory)({
+    init: function init() {
+        var _this2 = this;
+
+        var field = this.handler.rule.field,
+            b = false;
+        this.vm.$watch("formData." + field, function () {
+            b === true && _this2.onChange();
+            b = true;
+        });
+        this._props = this.handler.rule.props;
+        this.issetIcon = this._props.handleIcon !== false || this._props.allowRemove === true;
+    },
+    parse: function parse() {
+        var type = this._props.type,
+            vNode = void 0;
+        if (type === 'image') vNode = this.makeGroup(this.makeImage());else if (type === 'file') vNode = this.makeGroup(this.makeFile());else vNode = this.makeInput();
+        return vNode;
+    },
+    makeInput: function makeInput(hidden) {
+        var _this3 = this;
+
+        var unique = this.handler.unique,
+            props = this.inputProps().props({
+            type: "text",
+            value: this.handler.parseValue,
+            icon: this._props.icon,
+            readonly: true
+        }).on('on-click', function () {
+            _this3.showModel();
+        }).key('ifit' + unique).style({ display: hidden === true ? 'none' : 'inline-block' }).get();
+        return [this.cvm.input(props)];
+    },
+    makeGroup: function makeGroup(render) {
+        var unique = this.handler.unique,
+            field = this.handler.rule.field;
+        return [this.cvm.make('div', { key: "ifgp1" + unique, class: { 'fc-upload': true }, ref: this.handler.refName, props: { value: this.vm.formData[field] } }, render), this.makeInput(true)];
+    },
+    makeImage: function makeImage() {
+        var _this4 = this;
+
+        var unique = this.handler.unique;
+        var vNode = this.handler.parseValue.map(function (src, index) {
+            return _this4.cvm.make('div', { key: "ifid1" + unique, class: { 'fc-files': true } }, [_this4.cvm.make('img', { key: "ifim" + unique, attrs: { src: src } }), _this4.makeIcons(src, unique, index)]);
+        });
+        vNode.push(this.makeBtn());
+        return vNode;
+    },
+    makeFile: function makeFile() {
+        var _this5 = this;
+
+        var unique = this.handler.unique;
+        var vNode = this.handler.parseValue.map(function (src, index) {
+            return _this5.cvm.make('div', { key: "iffd2" + unique, class: { 'fc-files': true } }, [_this5.cvm.icon({ key: "iff" + unique, props: { type: "document-text", size: 40 } }), _this5.makeIcons(src, unique, index)]);
+        });
+        vNode.push(this.makeBtn());
+        return vNode;
+    },
+    makeBtn: function makeBtn() {
+        var _this6 = this;
+
+        var props = this.handler.rule.props;
+        if (props.maxLength > 0 && this.handler.parseValue.length >= props.maxLength) return;
+        var unique = this.handler.unique;
+        return this.cvm.make('div', { key: "ifbd3" + unique, class: { 'fc-upload-btn': true }, on: { click: function click() {
+                    _this6.showModel();
+                } } }, [this.cvm.icon({ key: "ifbi" + unique, props: { type: this._props.icon, size: 20 } })]);
+    },
+    makeSpin: function makeSpin() {
+        if (true !== this._props.spin) return;
+        var unique = this.handler.unique;
+        return this.cvm.make('Spin', {
+            props: { fix: true },
+            key: 'ifsp' + unique,
+            class: {
+                'fc-spin': true
+            }
+        }, [this.cvm.icon({
+            props: {
+                type: 'load-c',
+                size: 18
+            },
+            class: {
+                'fc-spin-icon-load': true
+            },
+            key: 'ifspi' + unique
+        }), this.cvm.make('div', {
+            domProps: {
+                innerHTML: '加载中...'
+            },
+            key: 'ifspd' + unique
+        })]);
+    },
+    makeIcons: function makeIcons(src, key, index) {
+        var _this7 = this;
+
+        if (this.issetIcon === true) return this.cvm.make('div', { key: "ifis" + key, class: { 'fc-upload-cover': true } }, function () {
+            var icon = [];
+            if (_this7._props.handleIcon !== false) icon.push(_this7.makeHandleIcon(src, key, index));
+            if (_this7._props.allowRemove === true) icon.push(_this7.makeRemoveIcon(src, key, index));
+            return icon;
+        });
+    },
+    makeRemoveIcon: function makeRemoveIcon(src, key, index) {
+        var _this8 = this;
+
+        return this.cvm.icon({ key: "ifri" + key + index, props: { type: 'ios-trash-outline' }, nativeOn: { 'click': function click() {
+                    _this8._props.onRemove() !== false && _this8.handler.parseValue.splice(index, 1);
+                } } });
+    },
+    makeHandleIcon: function makeHandleIcon(src, key, index) {
+        var props = this._props;
+        return this.cvm.icon({ key: "ifhi" + key + index, props: { type: props.handleIcon.toString() }, nativeOn: { 'click': function click() {
+                    props.onHandle(src);
+                } } });
+    },
+    onOpen: function onOpen() {
+        var openFn = this.handler.rule.event['on-open'];
+        if (openFn) return openFn(this.handler.getValue());
+    },
+    onChange: function onChange() {
+        var onChange = this.handler.rule.event['on-change'];
+        if (onChange) return onChange(this.handler.getValue());
+    },
+    onOk: function onOk() {
+        var okFn = this.handler.rule.event['on-ok'];
+        if (okFn) return okFn(this.handler.getValue());
+    },
+    showModel: function showModel() {
+        var _this9 = this;
+
+        var isShow = false !== this.onOpen(),
+            _props = this._props,
+            width = _props.width,
+            height = _props.height,
+            src = _props.src,
+            title = _props.title;
+
+        isShow && this.vm.$Modal.info({
+            title: title,
+            render: function render() {
+                return [_this9.makeSpin(), _this9.cvm.make('iframe', {
+                    attrs: {
+                        src: src
+                    },
+                    style: {
+                        'height': height,
+                        'border': "0 none",
+                        'width': "100%"
+                    },
+                    on: {
+                        'load': function load() {
+                            _this9._props.spin === true && document.getElementsByClassName('fc-spin')[0].remove();
+                        }
+                    },
+                    key: "ifmd" + (0, _util.uniqueId)()
+                })];
+            },
+            onOk: function onOk() {
+                _this9.onOk();
+            },
+            width: width
+        });
+    }
+});
+
+var make = (0, _make2.default)('frame', ['props', 'event', 'validate']);
+
+var component = { handler: handler, render: render, make: make };
+
+exports.default = component;
+exports.handler = handler;
+exports.render = render;
+exports.make = make;
+
+/***/ }),
+/* 24 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
 
 var _cvm = __webpack_require__(5);
 
@@ -2122,7 +2368,7 @@ render.prototype = {
 exports.default = render;
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
