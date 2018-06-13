@@ -1268,6 +1268,7 @@ validate 表单验证规则，具体配置查看：[async-validator](https://git
 
 accept 文件类型： [attr-accept](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#attr-accept)
 
+iCon图标:[图标](https://www.iviewui.com/components/icon#示例)
 
 
 ## 感谢
