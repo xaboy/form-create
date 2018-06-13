@@ -12,11 +12,11 @@
   "files": [
     "README.md",
     "package.json",
-    "mock.js",
-    "index.html",
+    "LICENSE",
     "src",
     "dist",
-    "district"
+    "district",
+    "dome"
   ],
   "repository": {
     "type": "git",
