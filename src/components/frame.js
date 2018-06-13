@@ -18,18 +18,7 @@ const handler = handlerFactory({
             props.handleIcon = false;
         else
             props.handleIcon = props.handleIcon === true || props.handleIcon === undefined ? 'ios-eye-outline' : props.handleIcon;
-        if(props.onHandle === undefined)
-            props.onHandle = (src)=>{
-                this.vm.$Modal.info({
-                    title:"预览",
-                    render:(h)=>{
-                        return h('img',{attrs:{src},style:"width: 100%"});
-                    }
-                });
-            };
         if(props.allowRemove === undefined) props.allowRemove = true;
-        if(props.onRemove === undefined)
-            props.onRemove = (src)=>{};
     },
     handle(){
         let parseValue,oldValue = this.rule.value,isArr = isArray(oldValue);
@@ -160,29 +149,49 @@ const render = renderFactory({
     },
     makeRemoveIcon(src,key,index){
         return this.cvm.icon({key:`ifri${key}${index}`,props:{type:'ios-trash-outline'},nativeOn:{'click':()=>{
-            this._props.onRemove() !== false && this.handler.parseValue.splice(index,1);
+            this.onRemove(src) !== false && this.handler.parseValue.splice(index,1);
         }}});
     },
     makeHandleIcon(src,key,index){
         let props = this._props;
         return this.cvm.icon({key:`ifhi${key}${index}`,props:{type:props.handleIcon.toString()},nativeOn:{'click':()=>{
-            props.onHandle(src);
+            this.onHandle(src);
         }}});
     },
     onOpen(){
-        let openFn = this.handler.rule.event['on-open'];
-        if(openFn)
-            return openFn(this.handler.getValue());
+        let fn = this.handler.rule.event['on-open'];
+        if(fn)
+            return fn(this.handler.getValue());
     },
     onChange(){
-        let onChange = this.handler.rule.event['on-change'];
-        if(onChange)
-            return onChange(this.handler.getValue());
+        let fn = this.handler.rule.event['on-change'];
+        if(fn)
+            return fn(this.handler.getValue());
     },
     onOk(){
-        let okFn = this.handler.rule.event['on-ok'];
-        if(okFn)
-            return okFn(this.handler.getValue());
+        let fn = this.handler.rule.event['on-ok'];
+        if(fn)
+            return fn(this.handler.getValue());
+    },
+    onRemove(src){
+        let fn = this.handler.rule.event['on-remove'];
+        if(fn)
+            return fn(src,this.handler.getValue());
+    },
+    onHandle(src){
+        let fn = this.handler.rule.event['on-handle'];
+        if(fn)
+            return fn(src);
+        else
+            this.defaultOnHandle(src);
+    },
+    defaultOnHandle(src){
+        this.vm.$Modal.info({
+            title:"预览",
+            render:(h)=>{
+                return h('img',{attrs:{src},style:"width: 100%"});
+            }
+        });
     },
     showModel(){
         let isShow = false !== this.onOpen(),

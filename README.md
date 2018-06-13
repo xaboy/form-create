@@ -50,7 +50,7 @@
 > 感谢 [wxxtqk](https://github.com/wxxtqk) | [williamBoss](https://github.com/williamBoss)
 
 
-## 示例 [代码](https://github.com/xaboy/form-create/blob/master/mock.js) 
+## 示例 [代码](https://github.com/xaboy/form-create/blob/master/dome/mock.js) 
 
 ![https://raw.githubusercontent.com/xaboy/form-create/dev/images/sample110.jpg](https://raw.githubusercontent.com/xaboy/form-create/dev/images/sample110.jpg)
 
@@ -77,10 +77,10 @@ npm install
 <link rel="stylesheet" href="https://cdn.bootcss.com/iview/2.13.0/styles/iview.css">
 <script src="https://cdn.bootcss.com/iview/2.13.0/iview.min.js"></script>
 
-<!-- 省市区三级联动json数据 -->
+<!-- 省市区三级联动json数据,不使用三级联动不需要引入 -->
 <script src="district/province_city_area.js"></script>
 
-<!-- 模拟数据 -->
+<!-- 模拟数据,实际使用中不需要引入 -->
 <script src="dome/mock.js"></script>
 
 <!-- import formCreate -->
@@ -88,9 +88,9 @@ npm install
 ```
 NodeJs:
 ```js
-//三级联动数据,不用可以不引入
+//三级联动数据,不使用三级联动不需要引入
 import 'form-create/district/province_city_area.js'
-//示例规则
+//示例规则,实际使用中不需要引入
 import 'form-create/mock.js'
 import Vue from 'vue';
 import iView from 'iview';
@@ -131,7 +131,7 @@ new Vue({
 #### $formCreate 表单生成器参数
 
 * **rules**  表单生成规则:Array  [inputRule,selectRule,...],可使用`$formCreate.maker` 快速生成规则
-* **options** 初始化配置参数:Object ([详细见底部 createOptions](https://github.com/xaboy/form-create#全局配置-createoptions))
+* **options** 初始化配置参数:Object ([详细见底部 createOptions](#全局配置-createoptions))
 
 #### $formCreate.maker 组件规则生成器
 
@@ -1102,7 +1102,9 @@ maker.frame('素材','fodder',["http://img1.touxiang.cn/uploads/20131030/30-0756
         type:"image"
     }).validate([
         {required:true, type: 'array', min: 2, message: '请选择2张图片', trigger: 'change'}
-    ])
+    ]).event({
+              remove:()=>{return false;}
+})
 ```
 
 原始参数:
@@ -1125,13 +1127,13 @@ FrameRule :
             title:"请选择", //弹出框标题
             handleIcon: true, //操作按钮的图标 ,设置为false将不显示,设置为true为默认的预览图标,类型为file时默认为false,image类型默认为true
             allowRemove:true, //是否可删除,设置为false是不显示删除按钮
-            onHandle:undefined, //点击操作按钮事件,默认为图片预览
-            onRemove:()=>{return false;} //点击删除按钮事件,返回false将不删除
         },
         event:{
             change:()=>{console.log('change')}, //value改变时触发
             open:()=>{console.log('open')}, //打开弹出层回调
-            ok:()=>{console.log('ok')} //点击确定的回调
+            ok:()=>{console.log('ok')}, //点击确定时的回调
+            handle:undefined, //点击操作按钮事件,默认为图片预览
+            remove:()=>{return false;} //点击删除按钮事件,返回false将不删除
         },
         validate:[
             {required:true, type: 'array', min: 5, message: '请选择5张图片', trigger: 'change'}

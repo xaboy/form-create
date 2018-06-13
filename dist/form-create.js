@@ -2053,8 +2053,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var handler = (0, _handler.handlerFactory)({
     verify: function verify() {
-        var _this = this;
-
         var props = this.rule.props;
         if (!props.type) props.type = 'input';
         if (!props.icon) props.icon = 'folder';
@@ -2065,16 +2063,7 @@ var handler = (0, _handler.handlerFactory)({
         if (!props.maxLength) props.maxLength = 0;
         props.multiple = !props.maxLength || props.maxLength > 1;
         if (props.type === 'file' && props.handleIcon === undefined) props.handleIcon = false;else props.handleIcon = props.handleIcon === true || props.handleIcon === undefined ? 'ios-eye-outline' : props.handleIcon;
-        if (props.onHandle === undefined) props.onHandle = function (src) {
-            _this.vm.$Modal.info({
-                title: "预览",
-                render: function render(h) {
-                    return h('img', { attrs: { src: src }, style: "width: 100%" });
-                }
-            });
-        };
         if (props.allowRemove === undefined) props.allowRemove = true;
-        if (props.onRemove === undefined) props.onRemove = function (src) {};
     },
     handle: function handle() {
         var parseValue = void 0,
@@ -2090,12 +2079,12 @@ var handler = (0, _handler.handlerFactory)({
 
 var render = (0, _render.renderFactory)({
     init: function init() {
-        var _this2 = this;
+        var _this = this;
 
         var field = this.handler.rule.field,
             b = false;
         this.vm.$watch("formData." + field, function () {
-            b === true && _this2.onChange();
+            b === true && _this.onChange();
             b = true;
         });
         this._props = this.handler.rule.props;
@@ -2108,7 +2097,7 @@ var render = (0, _render.renderFactory)({
         return vNode;
     },
     makeInput: function makeInput(hidden) {
-        var _this3 = this;
+        var _this2 = this;
 
         var unique = this.handler.unique,
             props = this.inputProps().props({
@@ -2117,7 +2106,7 @@ var render = (0, _render.renderFactory)({
             icon: this._props.icon,
             readonly: true
         }).on('on-click', function () {
-            _this3.showModel();
+            _this2.showModel();
         }).key('ifit' + unique).style({ display: hidden === true ? 'none' : 'inline-block' }).get();
         return [this.cvm.input(props)];
     },
@@ -2127,33 +2116,33 @@ var render = (0, _render.renderFactory)({
         return [this.cvm.make('div', { key: "ifgp1" + unique, class: { 'fc-upload': true }, ref: this.handler.refName, props: { value: this.vm.formData[field] } }, render), this.makeInput(true)];
     },
     makeImage: function makeImage() {
-        var _this4 = this;
+        var _this3 = this;
 
         var unique = this.handler.unique;
         var vNode = this.handler.parseValue.map(function (src, index) {
-            return _this4.cvm.make('div', { key: "ifid1" + unique, class: { 'fc-files': true } }, [_this4.cvm.make('img', { key: "ifim" + unique, attrs: { src: src } }), _this4.makeIcons(src, unique, index)]);
+            return _this3.cvm.make('div', { key: "ifid1" + unique, class: { 'fc-files': true } }, [_this3.cvm.make('img', { key: "ifim" + unique, attrs: { src: src } }), _this3.makeIcons(src, unique, index)]);
         });
         vNode.push(this.makeBtn());
         return vNode;
     },
     makeFile: function makeFile() {
-        var _this5 = this;
+        var _this4 = this;
 
         var unique = this.handler.unique;
         var vNode = this.handler.parseValue.map(function (src, index) {
-            return _this5.cvm.make('div', { key: "iffd2" + unique, class: { 'fc-files': true } }, [_this5.cvm.icon({ key: "iff" + unique, props: { type: "document-text", size: 40 } }), _this5.makeIcons(src, unique, index)]);
+            return _this4.cvm.make('div', { key: "iffd2" + unique, class: { 'fc-files': true } }, [_this4.cvm.icon({ key: "iff" + unique, props: { type: "document-text", size: 40 } }), _this4.makeIcons(src, unique, index)]);
         });
         vNode.push(this.makeBtn());
         return vNode;
     },
     makeBtn: function makeBtn() {
-        var _this6 = this;
+        var _this5 = this;
 
         var props = this.handler.rule.props;
         if (props.maxLength > 0 && this.handler.parseValue.length >= props.maxLength) return;
         var unique = this.handler.unique;
         return this.cvm.make('div', { key: "ifbd3" + unique, class: { 'fc-upload-btn': true }, on: { click: function click() {
-                    _this6.showModel();
+                    _this5.showModel();
                 } } }, [this.cvm.icon({ key: "ifbi" + unique, props: { type: this._props.icon, size: 20 } })]);
     },
     makeSpin: function makeSpin() {
@@ -2182,39 +2171,57 @@ var render = (0, _render.renderFactory)({
         })]);
     },
     makeIcons: function makeIcons(src, key, index) {
-        var _this7 = this;
+        var _this6 = this;
 
         if (this.issetIcon === true) return this.cvm.make('div', { key: "ifis" + key, class: { 'fc-upload-cover': true } }, function () {
             var icon = [];
-            if (_this7._props.handleIcon !== false) icon.push(_this7.makeHandleIcon(src, key, index));
-            if (_this7._props.allowRemove === true) icon.push(_this7.makeRemoveIcon(src, key, index));
+            if (_this6._props.handleIcon !== false) icon.push(_this6.makeHandleIcon(src, key, index));
+            if (_this6._props.allowRemove === true) icon.push(_this6.makeRemoveIcon(src, key, index));
             return icon;
         });
     },
     makeRemoveIcon: function makeRemoveIcon(src, key, index) {
-        var _this8 = this;
+        var _this7 = this;
 
         return this.cvm.icon({ key: "ifri" + key + index, props: { type: 'ios-trash-outline' }, nativeOn: { 'click': function click() {
-                    _this8._props.onRemove() !== false && _this8.handler.parseValue.splice(index, 1);
+                    _this7.onRemove(src) !== false && _this7.handler.parseValue.splice(index, 1);
                 } } });
     },
     makeHandleIcon: function makeHandleIcon(src, key, index) {
+        var _this8 = this;
+
         var props = this._props;
         return this.cvm.icon({ key: "ifhi" + key + index, props: { type: props.handleIcon.toString() }, nativeOn: { 'click': function click() {
-                    props.onHandle(src);
+                    _this8.onHandle(src);
                 } } });
     },
     onOpen: function onOpen() {
-        var openFn = this.handler.rule.event['on-open'];
-        if (openFn) return openFn(this.handler.getValue());
+        var fn = this.handler.rule.event['on-open'];
+        if (fn) return fn(this.handler.getValue());
     },
     onChange: function onChange() {
-        var onChange = this.handler.rule.event['on-change'];
-        if (onChange) return onChange(this.handler.getValue());
+        var fn = this.handler.rule.event['on-change'];
+        if (fn) return fn(this.handler.getValue());
     },
     onOk: function onOk() {
-        var okFn = this.handler.rule.event['on-ok'];
-        if (okFn) return okFn(this.handler.getValue());
+        var fn = this.handler.rule.event['on-ok'];
+        if (fn) return fn(this.handler.getValue());
+    },
+    onRemove: function onRemove(src) {
+        var fn = this.handler.rule.event['on-remove'];
+        if (fn) return fn(src, this.handler.getValue());
+    },
+    onHandle: function onHandle(src) {
+        var fn = this.handler.rule.event['on-handle'];
+        if (fn) return fn(src);else this.defaultOnHandle(src);
+    },
+    defaultOnHandle: function defaultOnHandle(src) {
+        this.vm.$Modal.info({
+            title: "预览",
+            render: function render(h) {
+                return h('img', { attrs: { src: src }, style: "width: 100%" });
+            }
+        });
     },
     showModel: function showModel() {
         var _this9 = this;

@@ -470,7 +470,9 @@ window.mock = [
         type:"image"
     }).validate([
         {required:true, type: 'array', min: 2, message: '请选择2张图片', trigger: 'change'}
-    ])
+    ]).event({
+        remove:()=>{alert('不能删除');return false;}
+    })
     // ,{
     //     type:"frame",
     //     title:"素材",
@@ -493,7 +495,9 @@ window.mock = [
     //     event:{
     //         change:()=>{console.log('change')}, //value改变时触发
     //         open:()=>{console.log('open')}, //打开弹出层回调
-    //         ok:()=>{console.log('ok')} //点击确定的回调
+    //         ok:()=>{console.log('ok')}, //点击确定的回调
+    //         handle:undefined, //点击操作按钮事件,默认为图片预览
+    //         remove:()=>{return false;} //点击删除按钮事件,返回false将不删除
     //     },
     //     validate:[
     //         {required:true, type: 'array', min: 5, message: '请选择5张图片', trigger: 'change'}
