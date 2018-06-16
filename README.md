@@ -19,8 +19,8 @@
 
 ### [中文文档](https://xaboy.gitbooks.io/form-create/content/kuai-su-shang-shou.html)
 
-### 如果本项目对您有用,请点个Star吧,送人玫瑰手留余香
-
+### 如果对您有帮助，您可以点右上角 "Star" 支持一下 谢谢！
+ 
 ### 本项目还在不断开发完善中,如有建议或问题请[在这里提出](https://github.com/xaboy/form-create/issues/new)
 
 ## 1.2 版本重大更新
