@@ -22,75 +22,6 @@ cvm.clearVm = ()=>{
 };
 
 cvm.prototype = {
-    form(data,VNodeFn){
-        return this.make('i-form',data,VNodeFn);
-    },
-    formItem(data,VNodeFn){
-        return this.make('form-Item',data,VNodeFn);
-    },
-    input(data,VNodeFn){
-        return this.make('i-input',data,VNodeFn);
-    },
-    inputNumber(data,VNodeFn){
-        return this.make('Input-Number',data,VNodeFn);
-    },
-    radioGroup(data,VNodeFn){
-        return this.make('Radio-Group',data,VNodeFn);
-    },
-    radio(data,VNodeFn){
-        return this.make('Radio',data,VNodeFn);
-    },
-    checkboxGroup(data,VNodeFn){
-        return this.make('Checkbox-Group',data,VNodeFn);
-    },
-    checkbox(data,VNodeFn){
-        return this.make('Checkbox',data,VNodeFn);
-    },
-    select(data,VNodeFn){
-        return this.make('i-select',data,VNodeFn);
-    },
-    option(data,VNodeFn){
-        return this.make('i-option',data,VNodeFn);
-    },
-    switch(data,VNodeFn){
-        return this.make('i-switch',data,VNodeFn);
-    },
-    datePicker(data,VNodeFn){
-        return this.make('Date-Picker',data,VNodeFn);
-    },
-    timePicker(data,VNodeFn){
-        return this.make('Time-Picker',data,VNodeFn);
-    },
-    colorPicker(data,VNodeFn){
-        return this.make('Color-Picker',data,VNodeFn);
-    },
-    cascader(data,VNodeFn){
-        return this.make('Cascader',data,VNodeFn);
-    },
-    upload(data,VNodeFn){
-        return this.make('Upload',data,VNodeFn);
-    },
-    rate(data,VNodeFn){
-        return this.make('Rate',data,VNodeFn);
-    },
-    slider(data,VNodeFn){
-        return this.make('Slider',data,VNodeFn);
-    },
-    span(data,VNodeFn){
-        return this.make('span',data,VNodeFn);
-    },
-    icon(data,VNodeFn){
-        return this.make('Icon',data,VNodeFn);
-    },
-    button(data,VNodeFn){
-        return this.make('i-button',data,VNodeFn);
-    },
-    progress(data,VNodeFn){
-        return this.make('i-progress',data,VNodeFn);
-    },
-    modal(data,VNodeFn){
-        return this.make('Modal',data,VNodeFn);
-    },
     make(nodeName,data,VNodeFn){
         if(isString(data)) data = {domProps:{innerHTML:data}};
         let Node = this.$h(nodeName,data,this.getVNode(VNodeFn));
@@ -102,6 +33,15 @@ cvm.prototype = {
         return isFunction(VNode) ? VNode() : VNode;
     }
 };
+
+const nodes = {modal:'Modal',progress:'i-progress',button:'i-button',icon:'Icon',span:'span',slider:'Slider',rate:'Rate',upload:'Upload',cascader:'Cascader',colorPicker:'Color-Picker',timePicker:'Time-Picker',datePicker:'Date-Picker','switch':'i-switch',option:'i-option',select:'i-select',checkbox:'Checkbox',checkboxGroup:'Checkbox-Group',radio:'Radio',radioGroup:'Radio-Group',inputNumber:'Input-Number',input:'i-input',formItem:'Form-Item',form:'i-form'};
+
+Object.keys(nodes).forEach((k)=>{
+	cvm.prototype[k] = function (data,VNodeFn){
+		return this.make(nodes[k],data,VNodeFn);
+	}
+});
+
 
 
 export default cvm

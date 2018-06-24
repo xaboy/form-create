@@ -1,4 +1,4 @@
-import {deepExtend, isArray, uniqueId} from "../core/util";
+import {isArray, uniqueId} from "../core/util";
 
 const handlerFactory = function (prototypeExtend = {}) {
     let $h = function (vm, rule) {
@@ -10,61 +10,53 @@ const handlerFactory = function (prototypeExtend = {}) {
     return $h;
 };
 
-const handler = function (vm,{field,type,title = '',options=[],props={},validate = [],event = {},value = '',slot = {}}) {
+const handler = function (vm,{model,field,type,title = '',options=[],props={},validate = [],event = {},value = '',slot = {}}) {
     field = field.toString();
+    this.type = type;
+    this.model = model;
+    this.value = value;
     this.rule = {
-        field, type, title, options, props,slot,
-        value:deepExtend(Object.create(null),{value}).value,
+        title, options, props,slot,
         validate: isArray(validate) ? validate : [validate],
         event: Object.keys(event).reduce(function (initial,eventName) {
             initial[`on-${eventName}`] = event[eventName];
             return initial;
         },{}),
     };
+    this.field = field;
     this.vm = vm;
     this.unique = uniqueId();
     this.refName = field+''+this.unique;
     this.el = {};
-    this.verify();
-    this.handle();
+    this.init();
 };
 
 handler.prototype = {
-    handle(){
-        this.changeParseValue(this.rule.value);
-    },
-    verify(){
+	init(){
 
     },
-    getField(){
-        return this.rule.field;
+	toParseValue(value)
+	{
+		return value.toString();
+	},
+    toTrueValue(parseValue){
+	    return parseValue;
     },
-    getValidate(){
-        return this.rule.validate;
-    },
+	setValue(value){
+	    this.vm.changeTrueData(this.field,value);
+	},
     getValue(){
-        return this.parseValue;
+        return this.vm.getTrueDataValue(this.field);
     },
-    changeValue(value){
-        this.rule.value = value;
-        this.handle();
+    setParseValue(parseValue){
+        this.setValue(this.toTrueValue(parseValue));
     },
-    getRule(){
-        return this.rule;
-    },
-    getParseValue(){
-        return this.parseValue
-    },
-    changeParseValue(parseValue,b = true){
-        if(b === true)
-            this.vm.changeFormData(this.rule.field,parseValue);
-        this.parseValue = parseValue;
-    },
+	watchTrueValue(n){
+		this.vm.changeFormData(this.field,this.toParseValue(n.value));
+	},
     mounted(){
         this.el = this.vm.$refs[this.refName];
     }
 };
 
-export {
-    handlerFactory
-}
+export default handlerFactory;

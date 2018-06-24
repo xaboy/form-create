@@ -1,32 +1,26 @@
-import {handlerFactory} from "../factory/handler";
-import {renderFactory} from "../factory/render";
-import makeFactory from "../factory/make";
+import handlerFactory from "../factory/handler";
+import renderFactory from "../factory/render";
+import makerFactory from "../factory/make";
 
 const handler = handlerFactory({
-    handle() {
-        let parseValue = '';
-        this.rule.options.forEach((option) => {
-            option.value === this.rule.value && (parseValue = option.label);
-        });
-        this.changeParseValue(parseValue);
-    }, getValue() {
-        let parseValue = '';
-        this.rule.options.forEach((option) => {
-            option.label === this.parseValue && (parseValue = option.value);
-        });
-        return parseValue;
+    toParseValue(value) {
+	    value = value.toString();
+        return this.rule.options.filter((opt)=>opt.value.toString() === value).reduce((initial,opt)=>opt.label,'');
+    },
+    toTrueValue(parseValue) {
+	    parseValue = parseValue.toString();
+	    return this.rule.options.filter((opt)=>opt.label.toString() === parseValue).reduce((initial,opt)=>opt.value,'');
     }
 });
 
 const render =  renderFactory({
     parse(){
-        this.propsData = this.inputProps().get();
         let {unique,rule:{options}} = this.handler;
-        return [this.cvm.radioGroup(this.propsData,()=>options.map((option,index)=>this.cvm.radio({props:option,key:`ropt${index}${unique}`})))];
+        return [this.cvm.radioGroup(this.inputProps().get(),()=>options.map((option,index)=>this.cvm.radio({props:option,key:`ropt${index}${unique}`})))];
     }
 });
 
-const make = makeFactory('radio',['options','props','event','validate']);
+const make = makerFactory('radio',['options','props','event','validate']);
 
 const component = {handler,render,make};
 

@@ -31,14 +31,15 @@ render.prototype = {
                 let render = this.renders[field],{key,rule:{type}} = render.handler;
                 if(type !== 'hidden')
                     return this.makeFormItem(render.handler,render.parse(),`fItem${key}${unique}`);
+
             });
         if(false !== this.options.submitBtn)
             vn.push(this.makeSubmitBtn(unique));
         return this.cvm.form(propsData,vn);
     },
-    makeFormItem({rule,refName,unique},VNodeFn){
+    makeFormItem({rule,refName,unique,field},VNodeFn){
         let propsData = this.props.props({
-            prop: rule.field,
+            prop: field,
             label: rule.title,
             labelFor:refName,
             rules: rule.validate,
@@ -55,9 +56,9 @@ render.prototype = {
         this.renderSort.splice(this.renderSort.indexOf(field),1);
     },
     setRender(handler,after,pre){
-        this.renders[handler.rule.field] = handler.render;
+        this.renders[handler.field] = handler.render;
         if(after !== undefined)
-            this.changeSort(handler.rule.field,after,pre);
+            this.changeSort(handler.field,after,pre);
     },
     changeSort(field,after,pre){
         let index = this.renderSort.indexOf(after.toString());

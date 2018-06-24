@@ -1,23 +1,22 @@
-import {handlerFactory} from "../factory/handler";
-import {renderFactory} from "../factory/render";
-import makeFactory from "../factory/make";
+import handlerFactory from "../factory/handler";
+import renderFactory from "../factory/render";
+import makerFactory from "../factory/make";
 
 const handler = handlerFactory({
-    handle() {
-        let parseValue = parseFloat(this.rule.value);
+    toParseValue(value) {
+        let parseValue = parseFloat(value);
         if (Number.isNaN(parseValue)) parseValue = 0;
-        this.changeParseValue(parseValue);
+        return parseValue;
     }
 });
 
 const render =  renderFactory({
     parse(){
-        this.propsData = this.inputProps().get();
-        return [this.cvm.rate(this.propsData)];
+        return [this.cvm.rate(this.inputProps().get())];
     }
 });
 
-const make = makeFactory('rate',['props','event','validate']);
+const make = makerFactory('rate',['props','event','validate']);
 
 const component = {handler,render,make};
 

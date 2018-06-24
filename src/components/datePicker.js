@@ -1,39 +1,46 @@
-import {handlerFactory} from "../factory/handler";
-import {renderFactory} from "../factory/render";
+import handlerFactory from "../factory/handler";
+import renderFactory from "../factory/render";
 import {isArray} from "../core/util";
 import {timeStampToDate} from "../core/common";
-import makeFactory from "../factory/make";
+import makerFactory from "../factory/make";
 
 const handler = handlerFactory({
-    verify(){
-        this.rule.props.type = !this.rule.props.type
+    init(){
+        let props = this.rule.props;
+        props.type = !props.type
             ? 'date'
-            : this.rule.props.type;
+            : props.type;
+        if(props.startDate === undefined)
+	        props.startDate = timeStampToDate(props.startDate);
     },
-    handle() {
-        let parseValue = this.rule.value;
-        if (['daterange', 'datetimerange'].indexOf(this.rule.props.type) !== -1) {
-            isArray(parseValue) || (parseValue = ['', '']);
-            parseValue = parseValue.map((time) => !time ? '' : timeStampToDate(time));
-        } else {
-            isArray(parseValue) && (parseValue = parseValue[0]);
-            parseValue = !parseValue ? '' : timeStampToDate(parseValue);
-        }
-        this.changeParseValue(parseValue);
+    toParseValue(value){
+        let isArr = isArray(value),props = this.rule.props,parseValue;
+	    if (['daterange', 'datetimerange'].indexOf(props.type) !== -1) {
+	        if(isArr){
+		        parseValue = value.map((time) => !time ? '' : timeStampToDate(time));
+            }else{
+		        parseValue = ['', '']
+            }
+	    } else if('date' === props.type && props.multiple === true){
+		    parseValue = value.toString();
+	    }else{
+		    isArr && (parseValue = value[0]);
+		    parseValue = !parseValue ? '' : timeStampToDate(parseValue);
+	    }
+	    return parseValue;
     },
-    getValue() {
+    toTrueValue() {
         return this.el.publicStringValue;
     }
 });
 
 const render = renderFactory({
     parse(){
-        this.propsData = this.inputProps().get();
-        return [this.cvm.datePicker(this.propsData)];
+        return [this.cvm.datePicker(this.inputProps().get())];
     }
 });
 
-const make = makeFactory('datepicker',['props','event','validate']);
+const make = makerFactory('datepicker',['props','event','validate']);
 
 const component = {handler,render,make};
 

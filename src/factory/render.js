@@ -30,7 +30,7 @@ render.prototype = {
         throw new Error('请实现parse方法');
     },
     inputProps(){
-        let {refName,unique,rule:{props,field}} = this.handler;
+        let {refName,unique,field,rule:{props}} = this.handler;
         return this.props
             .props(Object.assign(props,{model:`formData.${field}`,value:this.vm.formData[field],elementId:refName}))
             .ref(refName).key(`fip${unique}`).on(this.event).on('input',(value)=>{
@@ -40,6 +40,4 @@ render.prototype = {
     }
 };
 
-export {
-    renderFactory
-}
+export default renderFactory;

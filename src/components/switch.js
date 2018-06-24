@@ -1,9 +1,9 @@
-import {handlerFactory} from "../factory/handler";
-import {renderFactory} from "../factory/render";
-import makeFactory from "../factory/make";
+import handlerFactory from "../factory/handler";
+import renderFactory from "../factory/render";
+import makerFactory from "../factory/make";
 
 const handler = handlerFactory({
-    verify(){
+    init(){
         if (this.rule.slot === undefined) this.rule.slot = {};
     }
 });
@@ -19,7 +19,7 @@ const render =  renderFactory({
     }
 });
 
-const make = makeFactory('switch',['slot','props','event','validate']);
+const make = makerFactory('switch',['slot','props','event','validate']);
 
 const component = {handler,render,make};
 

@@ -5,7 +5,7 @@
     <img src="https://img.shields.io/badge/License-MIT-yellow.svg" />
   </a>
   <a href="https://github.com/xaboy">
-    <img src="https://img.shields.io/badge/author-xaboy-blue.svg" />
+    <img src="https://img.shields.io/badge/Author-xaboy-blue.svg" />
   </a>
   <a href="https://www.npmjs.com/package/form-create">
     <img src="https://badge.fury.io/js/form-create.svg" alt="version" />
@@ -23,15 +23,22 @@
  
 ### 本项目还在不断开发完善中,如有建议或问题请[在这里提出](https://github.com/xaboy/form-create/issues/new)
 
-## 1.2 版本重大更新
+## 1.3 版本重大更新
 
-- 内部结构优化
-- 新增 规则生成器`$formCreate.maker`
-- 新增 滑块、评分组件、frame组件
-- 优化 文件上传组件
-- 修复 上传组件无法验证等问题
+- 优化和精简内部结构
+- 支持 双向数据绑定！！！
+- 支持 使用`window.formCreate`全局方法快速创建表单，也可以在Vue内部使用`this.$formCreate`
+- 新增 `option.mounted`事件 ，当组件加载完成后触发
+- 修复 一些BUG
 
 ## 更新说明
+
+#### 1.3.0 (2018-6-24)
+- 优化和精简内部结构
+- 支持 双向数据绑定！！！
+- 支持 使用`window.formCreate`全局方法快速创建表单，也可以在Vue内部使用`this.$formCreate`
+- 新增 `option.mounted`事件 ，当组件加载完成后触发
+- 修复 一些BUG
 
 #### 1.2.3 (2018-6-13)
 - 新增 frame组件,可通过iframe扩展功能,例如:在已有素材库中选择图片,文件等,图标等定制功能扩展

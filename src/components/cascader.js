@@ -1,26 +1,35 @@
-import {handlerFactory} from "../factory/handler";
-import {renderFactory} from "../factory/render";
+import handlerFactory from "../factory/handler";
+import renderFactory from "../factory/render";
 import {isArray} from "../core/util";
-import makeFactory from "../factory/make";
+import makerFactory from "../factory/make";
 
 const handler = handlerFactory({
-    verify(){
-        if(!this.rule.props.data) this.rule.props.data = [];
-        if(!isArray(this.rule.value)) this.rule.value = [];
+    init(){
+        let rule = this.rule;
+        if(!rule.props.data) rule.props.data = [];
+        if(!isArray(this.value)) this.value = [];
     },
-    getValue(){
-        return this.el.value;
+    toTrueValue(){
+        if(this.el.value === undefined)
+            return this.vm.getFormData(this.field);
+        else
+            return this.el.value;
+    },
+    toParseValue(value){
+	    if(isArray(value))
+	        return Array.from(value);
+	    else
+            return [];
     }
 });
 
 const render = renderFactory({
     parse(){
-        this.propsData = this.inputProps().get();
-        return [this.cvm.cascader(this.propsData)];
+        return [this.cvm.cascader(this.inputProps().get())];
     }
 });
 
-const make = makeFactory('cascader',['props','event','validate']);
+const make = makerFactory('cascader',['props','event','validate']);
 
 const component = {handler,render,make};
 

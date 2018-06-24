@@ -1,6 +1,6 @@
 import {isArray} from "../core/util";
 
-const makeFactory = function (type, attrs) {
+const makerFactory = function (type, attrs) {
     return function $m(title,field,value = '') {
         let rule = baseRule();
         rule.type = type;
@@ -54,7 +54,18 @@ make.prototype.getRule = function () {
     return this.rule;
 };
 
-export default makeFactory;
+make.prototype.setValue = function (value) {
+	this.rule.value = value;
+	return this;
+};
+
+make.prototype.model = function (model,field) {
+    this.rule.model = (v)=>{
+	    model[field] = v;
+    };
+};
+
+export default makerFactory;
 
 export {
     make

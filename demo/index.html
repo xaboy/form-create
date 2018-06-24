@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <title>form-create示例</title>
 
-    <link href="https://cdn.bootcss.com/iview/2.13.0/styles/iview.css" rel="stylesheet">
-    <script src="https://cdn.bootcss.com/vue/2.5.13/vue.min.js"></script>
-    <script src="https://cdn.bootcss.com/iview/2.13.0/iview.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/iview@2.14.3/dist/styles/iview.css" rel="stylesheet">
+    <script src="https://cdn.bootcss.com/vue/2.5.13/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/iview@2.14.3/dist/iview.js"></script>
 
     <!-- npm install 后可以使
     <link rel="stylesheet" href="./node_modules/iview/dist/styles/iview.css">
@@ -20,19 +20,35 @@
 </head>
 <body>
 <div id="app">
+    {{formData.test}}
 </div>
 <script>
-    Vue.use(formCreate);
+    Vue.use(formCreate,{
+    	upload:{
+		    beforeUpload:function (res) {
+                console.log(res);
+            }
+        }
+    });
     vm = new Vue({
         el:'#app',
         data:{
+        	formData:{}
+        },
+	    watch:{
+        	'formData.address':{
+        		handler:function (n) {
+			        console.log(n);
+		        },
+                deep:true
+            }
         },
         mounted:function(){
+	        window.formData = {};
             let root = document.getElementById('app'),that = this;
             $f = this.$formCreate(mock,{
                 el:root,
                 onSubmit:function (formData) {
-                    console.log(formData);
                     alert(JSON.stringify(formData));
                     //按钮进入提交状态
                     $f.btn.loading();
@@ -43,7 +59,11 @@
                 }
             });
             //动态添加表单元素
-            $f.append($r,'goods_name');
+            $f.append($r);
+	        //注入表单数据，双向数据绑定
+	        $f.model(formData);
+	        //$f.model(this.formData);
+	        console.log(formData);
         }
     });
 </script>

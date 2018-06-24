@@ -1,10 +1,10 @@
-import {handlerFactory} from "../factory/handler";
-import {renderFactory} from "../factory/render";
+import handlerFactory from "../factory/handler";
+import renderFactory from "../factory/render";
 import {isArray} from "../core/util";
-import makeFactory from "../factory/make";
+import makerFactory from "../factory/make";
 
 const handler = handlerFactory({
-    verify(){
+    init(){
         let props = this.rule.props;
         props.defaultFileList = [];
         props.showUploadList = false;
@@ -14,13 +14,15 @@ const handler = handlerFactory({
         if(props.uploadType === 'file' && props.handleIcon === undefined) props.handleIcon = false;
         this.parseValue = [];
     },
-    handle() {
-        let files = isArray(this.rule.value) ? this.rule.value : (
-            !this.rule.value ? [] : [this.rule.value]
+    toParseValue(value) {
+        let files = isArray(value)
+            ? value
+            : ((!value ? [] : [value])
         );
         this.parseValue.splice(0,this.parseValue.length);
         files.forEach((file)=>this.push(file));
-        this.rule.props.defaultFileList = this.parseValue;
+	    this.rule.props.defaultFileList = this.parseValue;
+        return this.parseValue;
     },
     mounted() {
         this.el = this.vm.$refs[this.refName];
@@ -31,20 +33,26 @@ const handler = handlerFactory({
             url : file,
             name : this.getFileName(file)
         });
-        this.changeParseValue(this.parseValue);
     },
-    getValue(){
-        let files = this.parseValue.map((file)=>file.url);
+    toTrueValue(parseValue){
+        if(!parseValue) return [];
+        let files = parseValue.map((file)=>file.url).filter((file)=>file !== undefined);
         return this.rule.props.maxLength <= 1
             ? (files[0] || '')
             : files;
     },
-    changeParseValue(parseValue,b = true){
-        if(b === true)
-            this.vm.changeFormData(this.rule.field,parseValue);
+    changeParseValue(parseValue){
         this.parseValue = parseValue;
-        this.el.fileList = parseValue;
+        this.vm.getTrueData(this.field).rule.props.defaultFileList = parseValue;
     },
+	watchTrueValue(n){
+		let b = true;
+		n.rule.props.defaultFileList.forEach((pic)=>{
+			b = b && (pic.percentage === undefined || pic.status === 'finished');
+		});
+		if(b)
+			this.vm.changeFormData(this.field,this.toParseValue(n.value));
+	},
     getFileName(pic){
         let res = pic.split('/'),
             file = res[res.length - 1],
@@ -57,7 +65,8 @@ const propsEventType = ['beforeUpload','onProgress','onPreview','onRemove','onFo
 
 const render = renderFactory({
     init(){
-        this.uploadOptions = Object.assign(Object.create(null),this.options.upload,this.handler.rule.props);
+        let handler = this.handler;
+	    this.uploadOptions = Object.assign(Object.create(null),this.options.upload,handler.rule.props);
         this.issetIcon = this.uploadOptions.allowRemove || this.uploadOptions.handleIcon;
         let events = propsEventType.reduce((initial,eventName)=>{
             initial[eventName] = (...arg)=>{
@@ -71,14 +80,30 @@ const render = renderFactory({
                 let url = this.uploadOptions.onSuccess.call(null,response, file, fileList);
                 if(url) {
                     file.url = url;
-                    file.name = this.handler.getFileName(url);
+                    file.name = handler.getFileName(url);
                 }
-                this.handler.changeParseValue(this.handler.el.fileList);
-        }).props(events).ref(this.handler.refName).key(`fip${this.handler.unique}`).get();
+        }).props(events).ref(handler.refName).key(`fip${handler.unique}`).get();
     },
+	defaultOnHandle(src){
+		this.vm.$Modal.info({
+			title:"预览",
+			render:(h)=>{
+				return h('img',{attrs:{src},style:"width: 100%"});
+			}
+		});
+	},
+	onHandle(src) {
+		let fn = this.uploadOptions.onHandle;
+		if (fn)
+			return fn(src);
+		else
+			this.defaultOnHandle(src);
+	},
     parse(){
-        let {rule,unique} = this.handler,
-            value = this.vm.formData[rule.field],
+	    let {rule,unique} = this.handler;
+	    this.uploadOptions = Object.assign(Object.create(null),this.options.upload,rule.props);
+	    if(this.uploadOptions.handleIcon === true) this.uploadOptions.handleIcon = 'ios-eye-outline';
+        let value = this.vm.formData[this.handler.field],
             render = [...value.map((file,index)=>{
                 if(file.status === undefined || file.status === 'finished'){
                     return this.makeUploadView(file.url,`${index}${unique}`,index)
@@ -86,13 +111,13 @@ const render = renderFactory({
                     return this.makeProgress(file,`${index}${unique}`);
                 }
             })];
-        render.push(this.makeUploadBtn(unique,(!this.uploadOptions.maxLength || this.uploadOptions.maxLength > this.vm.formData[rule.field].length)));
+        render.push(this.makeUploadBtn(unique,(!this.uploadOptions.maxLength || this.uploadOptions.maxLength > this.vm.formData[this.handler.field].length)));
         return [this.cvm.make('div',{key:`div4${unique}`,class:{'fc-upload':true}},render)];
     },
     makeUploadView(src,key,index){
         return this.cvm.make('div',{key:`div1${key}`,class:{'fc-files':true}},()=>{
             let container = [];
-            if(this.uploadOptions.uploadType === 'image'){
+            if(this.handler.rule.props.uploadType === 'image'){
                 container.push(this.cvm.make('img',{key:`img${key}`,attrs:{src}}));
             }else{
                 container.push(this.cvm.icon({key:`file${key}`,props:{type:"document-text", size:40}}))
@@ -128,16 +153,17 @@ const render = renderFactory({
     makeRemoveIcon(src,key,index){
         return this.cvm.icon({key:`upri${key}${index}`,props:{type:'ios-trash-outline'},nativeOn:{'click':()=>{
             this.handler.el.fileList.splice(index,1);
+            this.handler.changeParseValue(this.handler.el.fileList);
         }}});
     },
     makeHandleIcon(src,key,index){
         return this.cvm.icon({key:`uphi${key}${index}`,props:{type:this.uploadOptions.handleIcon.toString()},nativeOn:{'click':()=>{
-            this.uploadOptions.onHandle(src);
+            this.onHandle(src);
         }}});
     }
 });
 
-const make = makeFactory('upload',['props','validate']);
+const make = makerFactory('upload',['props','validate']);
 
 const component = {handler,render,make};
 

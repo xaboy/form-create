@@ -1,17 +1,16 @@
-import {handlerFactory} from "../factory/handler";
-import {renderFactory} from "../factory/render";
-import makeFactory from "../factory/make";
+import handlerFactory from "../factory/handler";
+import renderFactory from "../factory/render";
+import makerFactory from "../factory/make";
 
 const handler = handlerFactory({});
 
 const render = renderFactory({
     parse(){
-        this.propsData = this.inputProps().get();
-        return [this.cvm.colorPicker(this.propsData)];
+        return [this.cvm.colorPicker(this.inputProps().get())];
     }
 });
 
-const make = makeFactory('colorpicker',['props','event','validate']);
+const make = makerFactory('colorpicker',['props','event','validate']);
 
 const component = {handler,render,make};
 

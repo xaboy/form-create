@@ -30,7 +30,7 @@ props.prototype = {
             ref:undefined
         };
     },
-    class(classList = throwIfMissing('缺少参数:classList'),status = undefined){
+    class(classList = throwIfMissing('缺少参数:classList'),status){
         if(isArray(classList)){
             classList.map((cls)=>{
                 this._data.class[cls.toString()] = true
@@ -42,76 +42,8 @@ props.prototype = {
         }
         return this
     },
-    style(style = throwIfMissing('缺少参数:style'),value = undefined){
-        if(isPlainObject(style)){
-            this._data.style = assign({},this._data.style,style)
-        }else if(value !== undefined){
-            this._data.style[style.toString()] = value
-        }
-        return this
-    },
-    attrs(attrs = throwIfMissing('缺少参数:attrs'),value = ''){
-        if(isPlainObject(attrs)){
-            this._data.attrs = assign({},this._data.attrs,attrs)
-        }else{
-            this._data.attrs[attrs.toString()] = value
-        }
-        return this
-    },
-    props(props = throwIfMissing('缺少参数:props'),value = undefined){
-        if(isPlainObject(props)){
-            this._data.props = assign({},this._data.props,props)
-        }else{
-            this._data.props[props.toString()] = value
-        }
-        return this
-    },
-    domProps(domProps = throwIfMissing('缺少参数:domProps'),value = undefined){
-        if(isPlainObject(domProps)){
-            this._data.domProps = assign({},this._data.domProps,domProps)
-        }else{
-            this._data.domProps[domProps.toString()] = value
-        }
-        return this
-    },
-    on(onType = throwIfMissing('缺少参数:onType'),call = function(){}){
-        if(isPlainObject(onType)){
-            this._data.on = assign({},this._data.on,onType)
-        }else{
-            this._data.on[onType.toString()] = call
-        }
-        return this
-    },
-    nativeOn(onType = throwIfMissing('缺少参数:onType'),call = function(){}){
-        if(isPlainObject(onType)){
-            this._data.nativeOn = assign({},this._data.nativeOn,onType)
-        }else{
-            this._data.nativeOn[onType.toString()] = call
-        }
-        return this
-    },
     directives(directives = throwIfMissing('缺少参数:directives')){
         this._data.directives = concat.call(...this._data.directives,...directives);
-        return this
-    },
-    scopedSlots(scopedSlot = throwIfMissing('缺少参数:scopedSlot'),call = function(){}){
-        if(isPlainObject(scopedSlot)){
-            this._data.scopedSlots = assign({},this._data.scopedSlots,scopedSlot)
-        }else{
-            this._data.scopedSlots[scopedSlot.toString()] = call
-        }
-        return this
-    },
-    slot(slot){
-        this._data.slot = slot;
-        return this
-    },
-    key(key){
-        this._data.key = key;
-        return this
-    },
-    ref(ref){
-        this._data.ref = ref;
         return this
     },
     init(){
@@ -126,5 +58,26 @@ props.prototype = {
         return this._prev
     }
 };
+
+const keyList = ['ref','key','slot'];
+const objList = ['scopedSlots','nativeOn','on','domProps','props','attrs','style'];
+
+keyList.forEach(key=>{
+   props.prototype[key] = function (val) {
+       this._data[key] = val;
+       return this;
+   }
+});
+
+objList.forEach(key=>{
+    props.prototype[key] = function (obj = throwIfMissing('缺少参数:'+key),val) {
+	    if(isPlainObject(obj)){
+		    this._data[key] = assign({},this._data[key],obj)
+	    }else{
+		    this._data[key][obj.toString()] = val
+	    }
+	    return this
+    }
+});
 
 export default props

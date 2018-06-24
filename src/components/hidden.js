@@ -1,8 +1,12 @@
-import {handlerFactory} from "../factory/handler";
-import {renderFactory} from "../factory/render";
-import makeFactory from "../factory/make";
+import handlerFactory from "../factory/handler";
+import renderFactory from "../factory/render";
+import makerFactory from "../factory/make";
 
-const handler = handlerFactory({});
+const handler = handlerFactory({
+    init(){
+        this.rule.props = {};
+
+    }});
 
 const render = renderFactory({
     parse(){
@@ -11,7 +15,7 @@ const render = renderFactory({
 });
 
 const make = (function () {
-    let makeRule = makeFactory('hidden',[]);
+    let makeRule = makerFactory('hidden',[]);
     return makeRule.bind(makeRule,'');
 }());
 

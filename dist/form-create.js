@@ -1,4 +1,4 @@
-/*! form-create v1.2 | github https://github.com/xaboy/form-create | author xaboy */
+/*! form-create v1.3 | github https://github.com/xaboy/form-create | author xaboy */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -71,7 +71,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 7);
+/******/ 	return __webpack_require__(__webpack_require__.s = 8);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -88,7 +88,7 @@ exports.make = undefined;
 
 var _util = __webpack_require__(1);
 
-var makeFactory = function makeFactory(type, attrs) {
+var makerFactory = function makerFactory(type, attrs) {
     return function $m(title, field) {
         var value = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '';
 
@@ -145,7 +145,18 @@ make.prototype.getRule = function () {
     return this.rule;
 };
 
-exports.default = makeFactory;
+make.prototype.setValue = function (value) {
+    this.rule.value = value;
+    return this;
+};
+
+make.prototype.model = function (model, field) {
+    this.rule.model = function (v) {
+        model[field] = v;
+    };
+};
+
+exports.default = makerFactory;
 exports.make = make;
 
 /***/ }),
@@ -156,7 +167,7 @@ exports.make = make;
 
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+	value: true
 });
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -168,62 +179,81 @@ var assign = Object.assign;
 var toString = Object.prototype.toString;
 
 var throwIfMissing = function throwIfMissing() {
-    var errorMsg = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'Missing parameter';
-    throw new Error(errorMsg);
+	var errorMsg = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'Missing parameter';
+
+	throw new Error(errorMsg);
 };
 
 var isDate = function isDate(arg) {
-    return toString.call(arg) === '[object Date]';
+	return toString.call(arg) === '[object Date]';
 };
 
 var isPlainObject = function isPlainObject(arg) {
-    return toString.call(arg) === '[object Object]';
+	return toString.call(arg) === '[object Object]';
 };
 
 var isFunction = function isFunction(arg) {
-    return toString.call(arg) === '[object Function]';
+	return toString.call(arg) === '[object Function]';
 };
 
 var isString = function isString(arg) {
-    return toString.call(arg) === '[object String]';
+	return toString.call(arg) === '[object String]';
 };
 
 var isArray = Array.isArray;
 
 var isElement = function isElement(arg) {
-    return (typeof arg === 'undefined' ? 'undefined' : _typeof(arg)) === 'object' && arg !== null && arg.nodeType === 1 && !isPlainObject(arg);
+	return (typeof arg === 'undefined' ? 'undefined' : _typeof(arg)) === 'object' && arg !== null && arg.nodeType === 1 && !isPlainObject(arg);
 };
 
 var deepExtend = function deepExtend(origin) {
-    var target = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+	var target = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
-    var isArr = false;
-    for (var key in target) {
-        if (Object.prototype.hasOwnProperty.call(target, key)) {
-            var clone = target[key];
-            if ((isArr = isArray(clone)) || isPlainObject(clone)) {
-                var nst = origin[key] === undefined;
-                if (isArr) {
-                    isArr = false;
-                    nst && (origin[key] = []);
-                } else {
-                    nst && (origin[key] = {});
-                }
-                deepExtend(origin[key], clone);
-            } else {
-                origin[key] = clone;
-            }
-        }
-    }
-    return origin;
+	var isArr = false;
+	for (var key in target) {
+		if (Object.prototype.hasOwnProperty.call(target, key)) {
+			var clone = target[key];
+			if ((isArr = isArray(clone)) || isPlainObject(clone)) {
+				var nst = origin[key] === undefined;
+				if (isArr) {
+					isArr = false;
+					nst && (origin[key] = []);
+				} else {
+					nst && (origin[key] = {});
+				}
+				deepExtend(origin[key], clone);
+			} else {
+				origin[key] = clone;
+			}
+		}
+	}
+	return origin;
 };
 
 var uniqueId = function () {
-    var id = 0;
-    return function () {
-        return id++;
-    };
+	var id = 0;
+	return function () {
+		return id++;
+	};
 }();
+
+var dateFormat = function dateFormat(fmt) {
+	var date = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : new Date();
+
+	var o = {
+		"M+": date.getMonth() + 1,
+		"d+": date.getDate(),
+		"h+": date.getHours(),
+		"m+": date.getMinutes(),
+		"s+": date.getSeconds(),
+		"q+": Math.floor((date.getMonth() + 3) / 3),
+		"S": date.getMilliseconds()
+	};
+	if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (date.getFullYear() + "").substr(4 - RegExp.$1.length));
+	for (var k in o) {
+		if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, RegExp.$1.length == 1 ? o[k] : ("00" + o[k]).substr(("" + o[k]).length));
+	}return fmt;
+};
 
 exports.concat = concat;
 exports.assign = assign;
@@ -237,6 +267,7 @@ exports.isArray = isArray;
 exports.deepExtend = deepExtend;
 exports.isElement = isElement;
 exports.uniqueId = uniqueId;
+exports.dateFormat = dateFormat;
 
 /***/ }),
 /* 2 */
@@ -248,7 +279,6 @@ exports.uniqueId = uniqueId;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.handlerFactory = undefined;
 
 var _util = __webpack_require__(1);
 
@@ -265,7 +295,8 @@ var handlerFactory = function handlerFactory() {
 };
 
 var handler = function handler(vm, _ref) {
-    var field = _ref.field,
+    var model = _ref.model,
+        field = _ref.field,
         type = _ref.type,
         _ref$title = _ref.title,
         title = _ref$title === undefined ? '' : _ref$title,
@@ -283,59 +314,51 @@ var handler = function handler(vm, _ref) {
         slot = _ref$slot === undefined ? {} : _ref$slot;
 
     field = field.toString();
+    this.type = type;
+    this.model = model;
+    this.value = value;
     this.rule = {
-        field: field, type: type, title: title, options: options, props: props, slot: slot,
-        value: (0, _util.deepExtend)(Object.create(null), { value: value }).value,
+        title: title, options: options, props: props, slot: slot,
         validate: (0, _util.isArray)(validate) ? validate : [validate],
         event: Object.keys(event).reduce(function (initial, eventName) {
             initial['on-' + eventName] = event[eventName];
             return initial;
         }, {})
     };
+    this.field = field;
     this.vm = vm;
     this.unique = (0, _util.uniqueId)();
     this.refName = field + '' + this.unique;
     this.el = {};
-    this.verify();
-    this.handle();
+    this.init();
 };
 
 handler.prototype = {
-    handle: function handle() {
-        this.changeParseValue(this.rule.value);
+    init: function init() {},
+    toParseValue: function toParseValue(value) {
+        return value.toString();
     },
-    verify: function verify() {},
-    getField: function getField() {
-        return this.rule.field;
+    toTrueValue: function toTrueValue(parseValue) {
+        return parseValue;
     },
-    getValidate: function getValidate() {
-        return this.rule.validate;
+    setValue: function setValue(value) {
+        this.vm.changeTrueData(this.field, value);
     },
     getValue: function getValue() {
-        return this.parseValue;
+        return this.vm.getTrueDataValue(this.field);
     },
-    changeValue: function changeValue(value) {
-        this.rule.value = value;
-        this.handle();
+    setParseValue: function setParseValue(parseValue) {
+        this.setValue(this.toTrueValue(parseValue));
     },
-    getRule: function getRule() {
-        return this.rule;
-    },
-    getParseValue: function getParseValue() {
-        return this.parseValue;
-    },
-    changeParseValue: function changeParseValue(parseValue) {
-        var b = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
-
-        if (b === true) this.vm.changeFormData(this.rule.field, parseValue);
-        this.parseValue = parseValue;
+    watchTrueValue: function watchTrueValue(n) {
+        this.vm.changeFormData(this.field, this.toParseValue(n.value));
     },
     mounted: function mounted() {
         this.el = this.vm.$refs[this.refName];
     }
 };
 
-exports.handlerFactory = handlerFactory;
+exports.default = handlerFactory;
 
 /***/ }),
 /* 3 */
@@ -347,7 +370,6 @@ exports.handlerFactory = handlerFactory;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.renderFactory = undefined;
 
 var _cvm = __webpack_require__(5);
 
@@ -392,9 +414,8 @@ render.prototype = {
         var _handler = this.handler,
             refName = _handler.refName,
             unique = _handler.unique,
-            _handler$rule = _handler.rule,
-            props = _handler$rule.props,
-            field = _handler$rule.field;
+            field = _handler.field,
+            props = _handler.rule.props;
 
         return this.props.props(Object.assign(props, { model: 'formData.' + field, value: this.vm.formData[field], elementId: refName })).ref(refName).key('fip' + unique).on(this.event).on('input', function (value) {
             _this.vm.$emit('input', value);
@@ -403,7 +424,7 @@ render.prototype = {
     }
 };
 
-exports.renderFactory = renderFactory;
+exports.default = renderFactory;
 
 /***/ }),
 /* 4 */
@@ -419,51 +440,51 @@ exports.getMaker = exports.timeStampToDate = exports.getGlobalApi = exports.crea
 
 var _util = __webpack_require__(1);
 
-var _cascader = __webpack_require__(9);
+var _cascader = __webpack_require__(10);
 
 var _cascader2 = _interopRequireDefault(_cascader);
 
-var _checkbox = __webpack_require__(10);
+var _checkbox = __webpack_require__(11);
 
 var _checkbox2 = _interopRequireDefault(_checkbox);
 
-var _colorPicker = __webpack_require__(11);
+var _colorPicker = __webpack_require__(12);
 
 var _colorPicker2 = _interopRequireDefault(_colorPicker);
 
-var _datePicker = __webpack_require__(12);
+var _datePicker = __webpack_require__(13);
 
 var _datePicker2 = _interopRequireDefault(_datePicker);
 
-var _input = __webpack_require__(13);
+var _input = __webpack_require__(14);
 
 var _input2 = _interopRequireDefault(_input);
 
-var _inputNumber = __webpack_require__(14);
+var _inputNumber = __webpack_require__(15);
 
 var _inputNumber2 = _interopRequireDefault(_inputNumber);
 
-var _radio = __webpack_require__(15);
+var _radio = __webpack_require__(16);
 
 var _radio2 = _interopRequireDefault(_radio);
 
-var _select = __webpack_require__(16);
+var _select = __webpack_require__(17);
 
 var _select2 = _interopRequireDefault(_select);
 
-var _switch = __webpack_require__(17);
+var _switch = __webpack_require__(18);
 
 var _switch2 = _interopRequireDefault(_switch);
 
-var _timePicker = __webpack_require__(18);
+var _timePicker = __webpack_require__(19);
 
 var _timePicker2 = _interopRequireDefault(_timePicker);
 
-var _hidden = __webpack_require__(19);
+var _hidden = __webpack_require__(20);
 
 var _hidden2 = _interopRequireDefault(_hidden);
 
-var _upload = __webpack_require__(20);
+var _upload = __webpack_require__(7);
 
 var _upload2 = _interopRequireDefault(_upload);
 
@@ -504,8 +525,7 @@ var getComponent = function getComponent(componentName) {
     return componentList[componentName];
 };
 
-var getConfig = function getConfig(Vue) {
-    var vm = new Vue();
+var getConfig = function getConfig() {
     return {
         el: null,
         form: {
@@ -525,14 +545,6 @@ var getConfig = function getConfig(Vue) {
             onFormatError: function onFormatError(file, fileList) {},
             onExceededSize: function onExceededSize(file, fileList) {},
             handleIcon: 'ios-eye-outline',
-            onHandle: function onHandle(src) {
-                vm.$Modal.info({
-                    title: "预览",
-                    render: function render(h) {
-                        return h('img', { attrs: { src: src }, style: "width: 100%" });
-                    }
-                });
-            },
             allowRemove: true
         },
         onSubmit: function onSubmit(formData) {},
@@ -546,7 +558,8 @@ var getConfig = function getConfig(Vue) {
             icon: "ios-upload",
             innerText: "提交",
             loading: false
-        }
+        },
+        mounted: function mounted() {}
     };
 };
 
@@ -557,9 +570,10 @@ var createHandler = function createHandler(vm, rule, createOptions) {
     return $h;
 };
 
-var formCreateStyle = '.form-create{padding:25px;} .fc-files{display: inline-block;width: 58px;height: 58px;text-align: center;line-height: 60px;border: 1px solid transparent;border-radius: 4px;overflow: hidden;background: #fff;position: relative;box-shadow: 0 1px 1px rgba(0,0,0,.2);margin-right: 4px;box-sizing: border-box;}' + ' .fc-files>.ivu-icon{transform: translateY(20%);}' + '.fc-files img{width:100%;height:100%;display:block;}' + '.fc-upload .ivu-upload{display: inline-block;}' + '.fc-upload-btn i{font-size: 20px;}' + '.fc-upload .fc-upload-cover{ display: none; position: absolute; top: 0; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,.6); }' + '.fc-upload .fc-upload-cover i{ color: #fff; font-size: 20px; cursor: pointer; margin: 0 2px; }' + '.fc-files:hover .fc-upload-cover{ display: block; }' + '.fc-upload .ivu-upload-list-file{ display: inline-block;float: left; }' + '.fc-upload .ivu-upload-list{ position: absolute;left: 0; }' + '.fc-upload-btn{ width: 58px;height: 58px;line-height: 58px;display:inline-block;background: #fff;border: 1px dashed #dddee1;border-radius: 4px;text-align: center;cursor: pointer;position: relative;overflow: hidden;transition: border-color .2s ease; } .fc-spin-icon-load{animation: ani-fc-spin 1s linear infinite;} @-webkit-keyframes ani-fc-spin{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}50%{-webkit-transform:rotate(180deg);transform:rotate(180deg)}to{-webkit-transform:rotate(1turn);transform:rotate(1turn)}}@keyframes ani-fc-spin{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}50%{-webkit-transform:rotate(180deg);transform:rotate(180deg)}to{-webkit-transform:rotate(1turn);transform:rotate(1turn)}}';
+var formCreateStyle = '.form-create{padding:25px;} .fc-upload-btn,.fc-files{display: inline-block;width: 58px;height: 58px;text-align: center;line-height: 60px;border: 1px solid transparent;border-radius: 4px;overflow: hidden;background: #fff;position: relative;box-shadow: 0 1px 1px rgba(0,0,0,.2);margin-right: 4px;box-sizing: border-box;}' + ' .fc-files>.ivu-icon{transform: translateY(20%);}' + '.fc-files img{width:100%;height:100%;display:inline-block;vertical-align: top;}' + '.fc-upload .ivu-upload{display: inline-block;}' + '.fc-upload-btn{border: 1px dashed #dddee1;}' + '.fc-upload .fc-upload-cover{ display: none; position: absolute; top: 0; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,.6); }' + '.fc-upload .fc-upload-cover i{ color: #fff; font-size: 20px; cursor: pointer; margin: 0 2px; }' + '.fc-files:hover .fc-upload-cover{ display: block; }' + '.fc-upload .ivu-upload-list-file{ display: inline-block;float: left; }' + '.fc-upload .ivu-upload-list{ position: absolute;left: 0; }' + '.fc-spin-icon-load{animation: ani-fc-spin 1s linear infinite;} @-webkit-keyframes ani-fc-spin{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}50%{-webkit-transform:rotate(180deg);transform:rotate(180deg)}to{-webkit-transform:rotate(1turn);transform:rotate(1turn)}}@keyframes ani-fc-spin{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}50%{-webkit-transform:rotate(180deg);transform:rotate(180deg)}to{-webkit-transform:rotate(1turn);transform:rotate(1turn)}}';
 
 var getGlobalApi = function getGlobalApi(fComponent) {
+    var vm = fComponent.vm;
     return {
         formData: function formData() {
             var data = {};
@@ -580,14 +594,13 @@ var getGlobalApi = function getGlobalApi(fComponent) {
             field = field.toString();
             var handler = fComponent.handlers[field];
             if (handler === undefined) console.error(field + ' \u5B57\u6BB5\u4E0D\u5B58\u5728!');else {
-                if ((0, _util.isFunction)(value)) value(handler.getValue(), function change(changeValue) {
-                    handler.changeValue(changeValue);
-                });else handler.changeValue(value);
+                if ((0, _util.isFunction)(value)) value(vm.getTrueData(field), function change(changeValue) {
+                    handler.setValue(changeValue);
+                });else handler.setValue(value);
             }
         },
         removeField: function removeField(field) {
-            field = field.toString();
-            fComponent.removeField(field);
+            fComponent.removeField(field.toString());
         },
         validate: function validate(successFn, errorFn) {
             fComponent.getFormRef().validate(function (valid) {
@@ -595,15 +608,17 @@ var getGlobalApi = function getGlobalApi(fComponent) {
             });
         },
         validateField: function validateField(field, callback) {
-            field = field.toString();
-            fComponent.getFormRef().validateField(field, callback);
+            fComponent.getFormRef().validateField(field.toString(), callback);
         },
         resetFields: function resetFields() {
             fComponent.getFormRef().resetFields();
+            vm.$nextTick(function () {
+                fComponent.getFormRef().resetFields();
+            });
         },
         destroy: function destroy() {
-            fComponent.vm.$el.remove();
-            fComponent.vm.$destroy();
+            vm.$el.remove();
+            vm.$destroy();
         },
         fields: function fields() {
             return fComponent.fields();
@@ -622,23 +637,34 @@ var getGlobalApi = function getGlobalApi(fComponent) {
                 if ((0, _util.isFunction)(successFn)) successFn(formData);else fComponent.options.onSubmit && fComponent.options.onSubmit(formData);
             });
         },
+        model: function model(_model, fields) {
+            if (!fields) fields = this.fields();else if (!(0, _util.isArray)(fields)) fields = [fields];
+            fields.forEach(function (field) {
+                var handler = fComponent.handlers[field];
+                if (!handler) throw new Error(field + '\u5B57\u6BB5\u4E0D\u5B58\u5728');
+                handler.model = function (v) {
+                    _model[field] = v;
+                };
+                handler.model(handler.vm.getTrueData(field));
+            });
+        },
+
         submitStatus: function submitStatus() {
             var _props = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
             var props = (0, _util.deepExtend)(Object.create(null), _props);
-            fComponent.vm.changeButtonProps(props);
+            vm.changeButtonProps(props);
         },
-        // vm:fComponent,
         btn: {
             loading: function loading() {
-                fComponent.vm.changeButtonProps({ loading: true });
+                vm.changeButtonProps({ loading: true });
             },
             finish: function finish() {
-                fComponent.vm.changeButtonProps({ loading: false });
+                vm.changeButtonProps({ loading: false });
             }
         },
         closeModal: function closeModal() {
-            fComponent.vm.$Modal.remove();
+            vm.$Modal.remove();
         }
     };
 };
@@ -706,75 +732,6 @@ cvm.clearVm = function () {
 };
 
 cvm.prototype = {
-    form: function form(data, VNodeFn) {
-        return this.make('i-form', data, VNodeFn);
-    },
-    formItem: function formItem(data, VNodeFn) {
-        return this.make('form-Item', data, VNodeFn);
-    },
-    input: function input(data, VNodeFn) {
-        return this.make('i-input', data, VNodeFn);
-    },
-    inputNumber: function inputNumber(data, VNodeFn) {
-        return this.make('Input-Number', data, VNodeFn);
-    },
-    radioGroup: function radioGroup(data, VNodeFn) {
-        return this.make('Radio-Group', data, VNodeFn);
-    },
-    radio: function radio(data, VNodeFn) {
-        return this.make('Radio', data, VNodeFn);
-    },
-    checkboxGroup: function checkboxGroup(data, VNodeFn) {
-        return this.make('Checkbox-Group', data, VNodeFn);
-    },
-    checkbox: function checkbox(data, VNodeFn) {
-        return this.make('Checkbox', data, VNodeFn);
-    },
-    select: function select(data, VNodeFn) {
-        return this.make('i-select', data, VNodeFn);
-    },
-    option: function option(data, VNodeFn) {
-        return this.make('i-option', data, VNodeFn);
-    },
-    switch: function _switch(data, VNodeFn) {
-        return this.make('i-switch', data, VNodeFn);
-    },
-    datePicker: function datePicker(data, VNodeFn) {
-        return this.make('Date-Picker', data, VNodeFn);
-    },
-    timePicker: function timePicker(data, VNodeFn) {
-        return this.make('Time-Picker', data, VNodeFn);
-    },
-    colorPicker: function colorPicker(data, VNodeFn) {
-        return this.make('Color-Picker', data, VNodeFn);
-    },
-    cascader: function cascader(data, VNodeFn) {
-        return this.make('Cascader', data, VNodeFn);
-    },
-    upload: function upload(data, VNodeFn) {
-        return this.make('Upload', data, VNodeFn);
-    },
-    rate: function rate(data, VNodeFn) {
-        return this.make('Rate', data, VNodeFn);
-    },
-    slider: function slider(data, VNodeFn) {
-        return this.make('Slider', data, VNodeFn);
-    },
-    span: function span(data, VNodeFn) {
-        return this.make('span', data, VNodeFn);
-    },
-    icon: function icon(data, VNodeFn) {
-        return this.make('Icon', data, VNodeFn);
-    },
-    button: function button(data, VNodeFn) {
-        return this.make('i-button', data, VNodeFn);
-    },
-    progress: function progress(data, VNodeFn) {
-        return this.make('i-progress', data, VNodeFn);
-    },
-    modal: function modal(data, VNodeFn) {
-        return this.make('Modal', data, VNodeFn);
-    },
     make: function make(nodeName, data, VNodeFn) {
         if ((0, _util.isString)(data)) data = { domProps: { innerHTML: data } };
         var Node = this.$h(nodeName, data, this.getVNode(VNodeFn));
@@ -785,6 +742,14 @@ cvm.prototype = {
         return (0, _util.isFunction)(VNode) ? VNode() : VNode;
     }
 };
+
+var nodes = { modal: 'Modal', progress: 'i-progress', button: 'i-button', icon: 'Icon', span: 'span', slider: 'Slider', rate: 'Rate', upload: 'Upload', cascader: 'Cascader', colorPicker: 'Color-Picker', timePicker: 'Time-Picker', datePicker: 'Date-Picker', 'switch': 'i-switch', option: 'i-option', select: 'i-select', checkbox: 'Checkbox', checkboxGroup: 'Checkbox-Group', radio: 'Radio', radioGroup: 'Radio-Group', inputNumber: 'Input-Number', input: 'i-input', formItem: 'Form-Item', form: 'i-form' };
+
+Object.keys(nodes).forEach(function (k) {
+    cvm.prototype[k] = function (data, VNodeFn) {
+        return this.make(nodes[k], data, VNodeFn);
+    };
+});
 
 exports.default = cvm;
 
@@ -836,7 +801,7 @@ props.prototype = {
         var _this = this;
 
         var classList = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : (0, _util.throwIfMissing)('缺少参数:classList');
-        var status = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+        var status = arguments[1];
 
         if ((0, _util.isArray)(classList)) {
             classList.map(function (cls) {
@@ -849,103 +814,10 @@ props.prototype = {
         }
         return this;
     },
-    style: function style() {
-        var _style = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : (0, _util.throwIfMissing)('缺少参数:style');
-
-        var value = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
-
-        if ((0, _util.isPlainObject)(_style)) {
-            this._data.style = (0, _util.assign)({}, this._data.style, _style);
-        } else if (value !== undefined) {
-            this._data.style[_style.toString()] = value;
-        }
-        return this;
-    },
-    attrs: function attrs() {
-        var _attrs = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : (0, _util.throwIfMissing)('缺少参数:attrs');
-
-        var value = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
-
-        if ((0, _util.isPlainObject)(_attrs)) {
-            this._data.attrs = (0, _util.assign)({}, this._data.attrs, _attrs);
-        } else {
-            this._data.attrs[_attrs.toString()] = value;
-        }
-        return this;
-    },
-    props: function props() {
-        var _props = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : (0, _util.throwIfMissing)('缺少参数:props');
-
-        var value = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
-
-        if ((0, _util.isPlainObject)(_props)) {
-            this._data.props = (0, _util.assign)({}, this._data.props, _props);
-        } else {
-            this._data.props[_props.toString()] = value;
-        }
-        return this;
-    },
-    domProps: function domProps() {
-        var _domProps = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : (0, _util.throwIfMissing)('缺少参数:domProps');
-
-        var value = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
-
-        if ((0, _util.isPlainObject)(_domProps)) {
-            this._data.domProps = (0, _util.assign)({}, this._data.domProps, _domProps);
-        } else {
-            this._data.domProps[_domProps.toString()] = value;
-        }
-        return this;
-    },
-    on: function on() {
-        var onType = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : (0, _util.throwIfMissing)('缺少参数:onType');
-        var call = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
-
-        if ((0, _util.isPlainObject)(onType)) {
-            this._data.on = (0, _util.assign)({}, this._data.on, onType);
-        } else {
-            this._data.on[onType.toString()] = call;
-        }
-        return this;
-    },
-    nativeOn: function nativeOn() {
-        var onType = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : (0, _util.throwIfMissing)('缺少参数:onType');
-        var call = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
-
-        if ((0, _util.isPlainObject)(onType)) {
-            this._data.nativeOn = (0, _util.assign)({}, this._data.nativeOn, onType);
-        } else {
-            this._data.nativeOn[onType.toString()] = call;
-        }
-        return this;
-    },
     directives: function directives() {
         var _directives = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : (0, _util.throwIfMissing)('缺少参数:directives');
 
         this._data.directives = _util.concat.call.apply(_util.concat, _toConsumableArray(this._data.directives).concat(_toConsumableArray(_directives)));
-        return this;
-    },
-    scopedSlots: function scopedSlots() {
-        var scopedSlot = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : (0, _util.throwIfMissing)('缺少参数:scopedSlot');
-        var call = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
-
-        if ((0, _util.isPlainObject)(scopedSlot)) {
-            this._data.scopedSlots = (0, _util.assign)({}, this._data.scopedSlots, scopedSlot);
-        } else {
-            this._data.scopedSlots[scopedSlot.toString()] = call;
-        }
-        return this;
-    },
-    slot: function slot(_slot) {
-        this._data.slot = _slot;
-        return this;
-    },
-    key: function key(_key) {
-        this._data.key = _key;
-        return this;
-    },
-    ref: function ref(_ref) {
-        this._data.ref = _ref;
         return this;
     },
     init: function init() {
@@ -961,6 +833,30 @@ props.prototype = {
     }
 };
 
+var keyList = ['ref', 'key', 'slot'];
+var objList = ['scopedSlots', 'nativeOn', 'on', 'domProps', 'props', 'attrs', 'style'];
+
+keyList.forEach(function (key) {
+    props.prototype[key] = function (val) {
+        this._data[key] = val;
+        return this;
+    };
+});
+
+objList.forEach(function (key) {
+    props.prototype[key] = function () {
+        var obj = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : (0, _util.throwIfMissing)('缺少参数:' + key);
+        var val = arguments[1];
+
+        if ((0, _util.isPlainObject)(obj)) {
+            this._data[key] = (0, _util.assign)({}, this._data[key], obj);
+        } else {
+            this._data[key][obj.toString()] = val;
+        }
+        return this;
+    };
+});
+
 exports.default = props;
 
 /***/ }),
@@ -970,234 +866,6 @@ exports.default = props;
 "use strict";
 
 
-var _formCreate = __webpack_require__(8);
-
-var _formCreate2 = _interopRequireDefault(_formCreate);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-if (typeof window !== 'undefined') {
-    window["formCreate"] = _formCreate2.default;
-    if (window.Vue && (window.iview || window.iView)) {
-        window.Vue.use(_formCreate2.default);
-    }
-}
-
-module.exports.default = module.exports = _formCreate2.default;
-
-/***/ }),
-/* 8 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _util = __webpack_require__(1);
-
-var _common = __webpack_require__(4);
-
-var _form = __webpack_require__(24);
-
-var _form2 = _interopRequireDefault(_form);
-
-var _formCreateComponent = __webpack_require__(25);
-
-var _formCreateComponent2 = _interopRequireDefault(_formCreateComponent);
-
-var _make = __webpack_require__(0);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var version = '1.2.3';
-
-var maker = (0, _common.getMaker)();
-
-var formCreateStyleElId = 'form-create-style';
-
-var formCreate = function formCreate(rules, options) {
-    if (!this instanceof formCreate) throwIfMissing('formCreate is a constructor and should be called with the `new` keyword');
-    this.rules = Array.isArray(rules) ? rules : [];
-    this.handlers = {};
-    this.fRender = {};
-    this.formData = {};
-    this.validate = {};
-    this.fieldList = [];
-    options.el = !options.el ? window.document.body : (0, _util.isElement)(options.el) ? options.el : document.querySelector(options.el);
-    this.options = options;
-};
-
-formCreate.createStyle = function () {
-    if (document.getElementById(formCreateStyleElId) !== null) return;
-    var style = document.createElement('style');
-    style.id = formCreateStyleElId;
-    style.innerText = _common.formCreateStyle;
-    document.getElementsByTagName('head')[0].appendChild(style);
-};
-
-formCreate.install = function (Vue) {
-    var globalOptions = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-    formCreate.createStyle();
-    var options = (0, _util.deepExtend)((0, _util.deepExtend)(Object.create(null), (0, _common.getConfig)(Vue)), globalOptions);
-    Vue.prototype.$formCreate = function (rules) {
-        var _opt = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-        var opt = (0, _util.isElement)(_opt) ? { el: _opt } : _opt;
-        var fComponent = new formCreate(rules, (0, _util.deepExtend)((0, _util.deepExtend)(Object.create(null), options), opt)),
-            $vm = fComponent.create(Vue);
-        return fComponent.fCreateApi;
-    };
-    Vue.prototype.$formCreate.version = version;
-    Vue.prototype.$formCreate.maker = maker;
-};
-
-formCreate.prototype = {
-    checkRule: function checkRule(rule) {
-        rule.type = rule.type === undefined ? 'hidden' : rule.type.toLowerCase();
-        if (!rule.field) rule.field = '';
-        return rule;
-    },
-    setHandler: function setHandler(handler) {
-        var field = handler.rule.field;
-        this.handlers[field] = handler;
-        this.formData[field] = handler.getParseValue();
-        this.validate[field] = handler.getValidate();
-    },
-    init: function init(vm) {
-        var _this = this;
-
-        this.vm = vm;
-        this.rules.forEach(function (rule, index) {
-            if (rule instanceof _make.make) _this.rules[index] = rule.getRule();
-        });
-        this.rules.filter(function (rule) {
-            return rule.field !== undefined;
-        }).forEach(function (rule) {
-            rule = _this.checkRule(rule);
-            var handler = (0, _common.createHandler)(_this.vm, rule, _this.options);
-            if (_this.fieldList.indexOf(handler.rule.field) === -1) {
-                _this.setHandler(handler);
-                _this.fieldList.push(handler.rule.field);
-            } else {
-                console.error(handler.rule.field + " \u5B57\u6BB5\u5DF2\u5B58\u5728");
-            }
-        });
-        this.fCreateApi = (0, _common.getGlobalApi)(this);
-        vm.$set(vm, 'formData', this.formData);
-        vm.$set(vm, 'buttonProps', this.options.submitBtn);
-        this.fRender = new _form2.default(this);
-    },
-    create: function create(Vue) {
-        var $fCreate = Vue.extend(this.component()),
-            $vm = new $fCreate().$mount();
-        this.options.el.appendChild($vm.$el);
-        return $vm;
-    },
-    component: function component() {
-        return (0, _formCreateComponent2.default)(this);
-    },
-    append: function append(rule, after, pre) {
-        if (rule instanceof _make.make) rule = rule.getRule();
-        var _rule = (0, _util.deepExtend)(Object.create(null), this.checkRule(rule));
-        var handler = (0, _common.createHandler)(this.vm, _rule, this.options);
-        if (Object.keys(this.handlers).indexOf(handler.rule.field) !== -1) throw new Error(_rule.field + "\u5B57\u6BB5\u5DF2\u5B58\u5728");
-        this.fRender.setRender(handler, after, pre);
-        this.setHandler(handler);
-        this.vm.setField(handler.rule.field, handler.getParseValue());
-        this.addHandlerWatch(handler);
-        this.vm.$nextTick(function () {
-            handler.mounted();
-        });
-    },
-    removeField: function removeField(field) {
-        if (this.handlers[field] === undefined) throw new Error(field + "\u5B57\u6BB5\u4E0D\u5B58\u5728");
-        this.vm.removeFormData(field);
-        delete this.handlers[field];
-        delete this.validate[field];
-        this.fRender.removeRender(field);
-        delete this.formData[field];
-    },
-    addHandlerWatch: function addHandlerWatch(handler) {
-        var unWatch = this.vm.$watch("formData." + handler.rule.field, function (n, o) {
-            if (handler !== undefined) handler.changeParseValue(n, false);else unWatch();
-        });
-    },
-    getFormRef: function getFormRef() {
-        return this.vm.$refs[this.fRender.refName];
-    },
-    fields: function fields() {
-        return Object.keys(this.formData);
-    }
-};
-
-exports.default = {
-    install: formCreate.install,
-    default: formCreate,
-    maker: maker,
-    version: version
-};
-
-/***/ }),
-/* 9 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.make = exports.render = exports.handler = undefined;
-
-var _handler = __webpack_require__(2);
-
-var _render = __webpack_require__(3);
-
-var _util = __webpack_require__(1);
-
-var _make = __webpack_require__(0);
-
-var _make2 = _interopRequireDefault(_make);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var handler = (0, _handler.handlerFactory)({
-    verify: function verify() {
-        if (!this.rule.props.data) this.rule.props.data = [];
-        if (!(0, _util.isArray)(this.rule.value)) this.rule.value = [];
-    },
-    getValue: function getValue() {
-        return this.el.value;
-    }
-});
-
-var render = (0, _render.renderFactory)({
-    parse: function parse() {
-        this.propsData = this.inputProps().get();
-        return [this.cvm.cascader(this.propsData)];
-    }
-});
-
-var make = (0, _make2.default)('cascader', ['props', 'event', 'validate']);
-
-var component = { handler: handler, render: render, make: make };
-
-exports.default = component;
-exports.handler = handler;
-exports.render = render;
-exports.make = make;
-
-/***/ }),
-/* 10 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
@@ -1205,561 +873,11 @@ exports.make = exports.render = exports.handler = undefined;
 
 var _handler2 = __webpack_require__(2);
 
-var _render = __webpack_require__(3);
-
-var _util = __webpack_require__(1);
-
-var _make = __webpack_require__(0);
-
-var _make2 = _interopRequireDefault(_make);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var handler = (0, _handler2.handlerFactory)({
-    handle: function handle() {
-        var _this = this;
-
-        var parseValue = [];
-        if (false === (0, _util.isArray)(this.rule.value)) this.rule.value = [this.rule.value];
-        this.rule.value.forEach(function (val) {
-            _this.rule.options.forEach(function (option) {
-                option.value === val && parseValue.push(option.label);
-            });
-        });
-        this.changeParseValue(parseValue);
-    },
-    getValue: function getValue() {
-        var _this2 = this;
-
-        var parseValue = [];
-        this.parseValue.forEach(function (value) {
-            _this2.rule.options.forEach(function (option) {
-                option.label === value && parseValue.push(option.value);
-            });
-        });
-        parseValue = this.rule.options.length === 1 ? parseValue[0] === undefined ? '' : parseValue[0] : parseValue;
-        return parseValue;
-    }
-});
-
-var render = (0, _render.renderFactory)({
-    parse: function parse() {
-        var _this3 = this;
-
-        this.propsData = this.inputProps().get();
-        var _handler = this.handler,
-            unique = _handler.unique,
-            options = _handler.rule.options;
-
-        return [this.cvm.checkboxGroup(this.propsData, function () {
-            return options.map(function (option, index) {
-                return _this3.cvm.checkbox({ props: option, key: "copt" + index + unique });
-            });
-        })];
-    }
-});
-
-var make = (0, _make2.default)('checkbox', ['options', 'props', 'event', 'validate']);
-
-var component = { handler: handler, render: render, make: make };
-
-exports.default = component;
-exports.handler = handler;
-exports.render = render;
-exports.make = make;
-
-/***/ }),
-/* 11 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.make = exports.render = exports.handler = undefined;
-
-var _handler = __webpack_require__(2);
+var _handler3 = _interopRequireDefault(_handler2);
 
 var _render = __webpack_require__(3);
 
-var _make = __webpack_require__(0);
-
-var _make2 = _interopRequireDefault(_make);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var handler = (0, _handler.handlerFactory)({});
-
-var render = (0, _render.renderFactory)({
-    parse: function parse() {
-        this.propsData = this.inputProps().get();
-        return [this.cvm.colorPicker(this.propsData)];
-    }
-});
-
-var make = (0, _make2.default)('colorpicker', ['props', 'event', 'validate']);
-
-var component = { handler: handler, render: render, make: make };
-
-exports.default = component;
-exports.handler = handler;
-exports.render = render;
-exports.make = make;
-
-/***/ }),
-/* 12 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.make = exports.render = exports.handler = undefined;
-
-var _handler = __webpack_require__(2);
-
-var _render = __webpack_require__(3);
-
-var _util = __webpack_require__(1);
-
-var _common = __webpack_require__(4);
-
-var _make = __webpack_require__(0);
-
-var _make2 = _interopRequireDefault(_make);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var handler = (0, _handler.handlerFactory)({
-    verify: function verify() {
-        this.rule.props.type = !this.rule.props.type ? 'date' : this.rule.props.type;
-    },
-    handle: function handle() {
-        var parseValue = this.rule.value;
-        if (['daterange', 'datetimerange'].indexOf(this.rule.props.type) !== -1) {
-            (0, _util.isArray)(parseValue) || (parseValue = ['', '']);
-            parseValue = parseValue.map(function (time) {
-                return !time ? '' : (0, _common.timeStampToDate)(time);
-            });
-        } else {
-            (0, _util.isArray)(parseValue) && (parseValue = parseValue[0]);
-            parseValue = !parseValue ? '' : (0, _common.timeStampToDate)(parseValue);
-        }
-        this.changeParseValue(parseValue);
-    },
-    getValue: function getValue() {
-        return this.el.publicStringValue;
-    }
-});
-
-var render = (0, _render.renderFactory)({
-    parse: function parse() {
-        this.propsData = this.inputProps().get();
-        return [this.cvm.datePicker(this.propsData)];
-    }
-});
-
-var make = (0, _make2.default)('datepicker', ['props', 'event', 'validate']);
-
-var component = { handler: handler, render: render, make: make };
-
-exports.default = component;
-exports.handler = handler;
-exports.render = render;
-exports.make = make;
-
-/***/ }),
-/* 13 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.make = exports.render = exports.handler = undefined;
-
-var _handler = __webpack_require__(2);
-
-var _render = __webpack_require__(3);
-
-var _make = __webpack_require__(0);
-
-var _make2 = _interopRequireDefault(_make);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var handler = (0, _handler.handlerFactory)({});
-
-var render = (0, _render.renderFactory)({
-    parse: function parse() {
-        this.propsData = this.inputProps().get();
-        return [this.cvm.input(this.propsData)];
-    }
-});
-
-var make = (0, _make2.default)('input', ['props', 'event', 'validate', 'slot']);
-
-var component = { handler: handler, render: render, make: make };
-
-exports.default = component;
-exports.handler = handler;
-exports.render = render;
-exports.make = make;
-
-/***/ }),
-/* 14 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.make = exports.render = exports.handler = undefined;
-
-var _handler = __webpack_require__(2);
-
-var _render = __webpack_require__(3);
-
-var _make = __webpack_require__(0);
-
-var _make2 = _interopRequireDefault(_make);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var handler = (0, _handler.handlerFactory)({
-    handle: function handle() {
-        var parseValue = parseFloat(this.rule.value);
-        if (Number.isNaN(parseValue)) parseValue = '';
-        this.changeParseValue(parseValue);
-    }
-});
-
-var render = (0, _render.renderFactory)({
-    parse: function parse() {
-        this.propsData = this.inputProps().get();
-        return [this.cvm.inputNumber(this.propsData)];
-    }
-});
-
-var make = (0, _make2.default)('inputnumber', ['props', 'event', 'validate']);
-
-var component = { handler: handler, render: render, make: make };
-
-exports.default = component;
-exports.handler = handler;
-exports.render = render;
-exports.make = make;
-
-/***/ }),
-/* 15 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.make = exports.render = exports.handler = undefined;
-
-var _handler2 = __webpack_require__(2);
-
-var _render = __webpack_require__(3);
-
-var _make = __webpack_require__(0);
-
-var _make2 = _interopRequireDefault(_make);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var handler = (0, _handler2.handlerFactory)({
-    handle: function handle() {
-        var _this = this;
-
-        var parseValue = '';
-        this.rule.options.forEach(function (option) {
-            option.value === _this.rule.value && (parseValue = option.label);
-        });
-        this.changeParseValue(parseValue);
-    },
-    getValue: function getValue() {
-        var _this2 = this;
-
-        var parseValue = '';
-        this.rule.options.forEach(function (option) {
-            option.label === _this2.parseValue && (parseValue = option.value);
-        });
-        return parseValue;
-    }
-});
-
-var render = (0, _render.renderFactory)({
-    parse: function parse() {
-        var _this3 = this;
-
-        this.propsData = this.inputProps().get();
-        var _handler = this.handler,
-            unique = _handler.unique,
-            options = _handler.rule.options;
-
-        return [this.cvm.radioGroup(this.propsData, function () {
-            return options.map(function (option, index) {
-                return _this3.cvm.radio({ props: option, key: "ropt" + index + unique });
-            });
-        })];
-    }
-});
-
-var make = (0, _make2.default)('radio', ['options', 'props', 'event', 'validate']);
-
-var component = { handler: handler, render: render, make: make };
-
-exports.default = component;
-exports.handler = handler;
-exports.render = render;
-exports.make = make;
-
-/***/ }),
-/* 16 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.make = exports.render = exports.handler = undefined;
-
-var _handler2 = __webpack_require__(2);
-
-var _render = __webpack_require__(3);
-
-var _util = __webpack_require__(1);
-
-var _make = __webpack_require__(0);
-
-var _make2 = _interopRequireDefault(_make);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var handler = (0, _handler2.handlerFactory)({
-    handle: function handle() {
-        var isArr = (0, _util.isArray)(this.rule.value),
-            parseValue = void 0;
-        if (this.rule.props && this.rule.props.multiple === true) parseValue = isArr === true ? this.rule.value : [this.rule.value];else parseValue = isArr === true ? this.rule.value[0] : this.rule.value;
-        this.changeParseValue(parseValue);
-    }
-});
-
-var render = (0, _render.renderFactory)({
-    parse: function parse() {
-        var _this = this;
-
-        this.propsData = this.inputProps().get();
-        var _handler = this.handler,
-            unique = _handler.unique,
-            options = _handler.rule.options;
-
-        return [this.cvm.select(this.propsData, function () {
-            return options.map(function (option, index) {
-                return _this.cvm.option({ props: option, key: "sopt" + index + unique });
-            });
-        })];
-    }
-});
-
-var make = (0, _make2.default)('select', ['options', 'props', 'event', 'validate']);
-
-var component = { handler: handler, render: render, make: make };
-
-exports.default = component;
-exports.handler = handler;
-exports.render = render;
-exports.make = make;
-
-/***/ }),
-/* 17 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.make = exports.render = exports.handler = undefined;
-
-var _handler = __webpack_require__(2);
-
-var _render = __webpack_require__(3);
-
-var _make = __webpack_require__(0);
-
-var _make2 = _interopRequireDefault(_make);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var handler = (0, _handler.handlerFactory)({
-    verify: function verify() {
-        if (this.rule.slot === undefined) this.rule.slot = {};
-    }
-});
-
-var render = (0, _render.renderFactory)({
-    parse: function parse() {
-        var slot = this.handler.rule.slot;
-
-        this.propsData = this.inputProps().scopedSlots({
-            open: function open() {
-                return slot.open;
-            },
-            close: function close() {
-                return slot.close;
-            }
-        }).get();
-        return [this.cvm.switch(this.propsData)];
-    }
-});
-
-var make = (0, _make2.default)('switch', ['slot', 'props', 'event', 'validate']);
-
-var component = { handler: handler, render: render, make: make };
-
-exports.default = component;
-exports.handler = handler;
-exports.render = render;
-exports.make = make;
-
-/***/ }),
-/* 18 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.make = exports.render = exports.handler = undefined;
-
-var _handler = __webpack_require__(2);
-
-var _render = __webpack_require__(3);
-
-var _util = __webpack_require__(1);
-
-var _common = __webpack_require__(4);
-
-var _make = __webpack_require__(0);
-
-var _make2 = _interopRequireDefault(_make);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var handler = (0, _handler.handlerFactory)({
-    verify: function verify() {
-        this.rule.props.type = !this.rule.props.type ? 'time' : this.rule.props.type;
-    },
-    handle: function handle() {
-        var parseValue = this.rule.value;
-        if ('timerange' === this.rule.props.type) {
-            (0, _util.isArray)(parseValue) || (parseValue = ['', '']);
-            parseValue = parseValue.map(function (time) {
-                return !time ? '' : (0, _common.timeStampToDate)(time);
-            });
-        } else {
-            (0, _util.isArray)(parseValue) && (parseValue = parseValue[0]);
-            parseValue = !parseValue ? '' : (0, _common.timeStampToDate)(parseValue);
-        }
-        this.changeParseValue(parseValue);
-    },
-    getValue: function getValue() {
-        return this.el.publicStringValue;
-    }
-});
-
-var render = (0, _render.renderFactory)({
-    parse: function parse() {
-        this.propsData = this.inputProps().get();
-        return [this.cvm.timePicker(this.propsData)];
-    }
-});
-
-var make = (0, _make2.default)('timepicker', ['props', 'event', 'validate']);
-
-var component = { handler: handler, render: render, make: make };
-
-exports.default = component;
-exports.handler = handler;
-exports.render = render;
-exports.make = make;
-
-/***/ }),
-/* 19 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.make = exports.render = exports.handler = undefined;
-
-var _handler = __webpack_require__(2);
-
-var _render = __webpack_require__(3);
-
-var _make = __webpack_require__(0);
-
-var _make2 = _interopRequireDefault(_make);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var handler = (0, _handler.handlerFactory)({});
-
-var render = (0, _render.renderFactory)({
-    parse: function parse() {
-        return [];
-    }
-});
-
-var make = function () {
-    var makeRule = (0, _make2.default)('hidden', []);
-    return makeRule.bind(makeRule, '');
-}();
-
-var component = { handler: handler, render: render, make: make };
-
-exports.default = component;
-exports.handler = handler;
-exports.render = render;
-exports.make = make;
-
-/***/ }),
-/* 20 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.make = exports.render = exports.handler = undefined;
-
-var _handler2 = __webpack_require__(2);
-
-var _render = __webpack_require__(3);
+var _render2 = _interopRequireDefault(_render);
 
 var _util = __webpack_require__(1);
 
@@ -1771,8 +889,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
-var handler = (0, _handler2.handlerFactory)({
-    verify: function verify() {
+var handler = (0, _handler3.default)({
+    init: function init() {
         var props = this.rule.props;
         props.defaultFileList = [];
         props.showUploadList = false;
@@ -1780,15 +898,16 @@ var handler = (0, _handler2.handlerFactory)({
         if (props.uploadType === 'file' && props.handleIcon === undefined) props.handleIcon = false;
         this.parseValue = [];
     },
-    handle: function handle() {
+    toParseValue: function toParseValue(value) {
         var _this = this;
 
-        var files = (0, _util.isArray)(this.rule.value) ? this.rule.value : !this.rule.value ? [] : [this.rule.value];
+        var files = (0, _util.isArray)(value) ? value : !value ? [] : [value];
         this.parseValue.splice(0, this.parseValue.length);
         files.forEach(function (file) {
             return _this.push(file);
         });
         this.rule.props.defaultFileList = this.parseValue;
+        return this.parseValue;
     },
     mounted: function mounted() {
         this.el = this.vm.$refs[this.refName];
@@ -1799,20 +918,26 @@ var handler = (0, _handler2.handlerFactory)({
             url: file,
             name: this.getFileName(file)
         });
-        this.changeParseValue(this.parseValue);
     },
-    getValue: function getValue() {
-        var files = this.parseValue.map(function (file) {
+    toTrueValue: function toTrueValue(parseValue) {
+        if (!parseValue) return [];
+        var files = parseValue.map(function (file) {
             return file.url;
+        }).filter(function (file) {
+            return file !== undefined;
         });
         return this.rule.props.maxLength <= 1 ? files[0] || '' : files;
     },
     changeParseValue: function changeParseValue(parseValue) {
-        var b = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
-
-        if (b === true) this.vm.changeFormData(this.rule.field, parseValue);
         this.parseValue = parseValue;
-        this.el.fileList = parseValue;
+        this.vm.getTrueData(this.field).rule.props.defaultFileList = parseValue;
+    },
+    watchTrueValue: function watchTrueValue(n) {
+        var b = true;
+        n.rule.props.defaultFileList.forEach(function (pic) {
+            b = b && (pic.percentage === undefined || pic.status === 'finished');
+        });
+        if (b) this.vm.changeFormData(this.field, this.toParseValue(n.value));
     },
     getFileName: function getFileName(pic) {
         var res = pic.split('/'),
@@ -1824,11 +949,12 @@ var handler = (0, _handler2.handlerFactory)({
 
 var propsEventType = ['beforeUpload', 'onProgress', 'onPreview', 'onRemove', 'onFormatError', 'onExceededSize', 'onError'];
 
-var render = (0, _render.renderFactory)({
+var render = (0, _render2.default)({
     init: function init() {
         var _this2 = this;
 
-        this.uploadOptions = Object.assign(Object.create(null), this.options.upload, this.handler.rule.props);
+        var handler = this.handler;
+        this.uploadOptions = Object.assign(Object.create(null), this.options.upload, handler.rule.props);
         this.issetIcon = this.uploadOptions.allowRemove || this.uploadOptions.handleIcon;
         var events = propsEventType.reduce(function (initial, eventName) {
             initial[eventName] = function () {
@@ -1846,18 +972,32 @@ var render = (0, _render.renderFactory)({
             var url = _this2.uploadOptions.onSuccess.call(null, response, file, fileList);
             if (url) {
                 file.url = url;
-                file.name = _this2.handler.getFileName(url);
+                file.name = handler.getFileName(url);
             }
-            _this2.handler.changeParseValue(_this2.handler.el.fileList);
-        }).props(events).ref(this.handler.refName).key("fip" + this.handler.unique).get();
+        }).props(events).ref(handler.refName).key("fip" + handler.unique).get();
+    },
+    defaultOnHandle: function defaultOnHandle(src) {
+        this.vm.$Modal.info({
+            title: "预览",
+            render: function render(h) {
+                return h('img', { attrs: { src: src }, style: "width: 100%" });
+            }
+        });
+    },
+    onHandle: function onHandle(src) {
+        var fn = this.uploadOptions.onHandle;
+        if (fn) return fn(src);else this.defaultOnHandle(src);
     },
     parse: function parse() {
         var _this3 = this;
 
         var _handler = this.handler,
             rule = _handler.rule,
-            unique = _handler.unique,
-            value = this.vm.formData[rule.field],
+            unique = _handler.unique;
+
+        this.uploadOptions = Object.assign(Object.create(null), this.options.upload, rule.props);
+        if (this.uploadOptions.handleIcon === true) this.uploadOptions.handleIcon = 'ios-eye-outline';
+        var value = this.vm.formData[this.handler.field],
             render = [].concat(_toConsumableArray(value.map(function (file, index) {
             if (file.status === undefined || file.status === 'finished') {
                 return _this3.makeUploadView(file.url, "" + index + unique, index);
@@ -1865,8 +1005,7 @@ var render = (0, _render.renderFactory)({
                 return _this3.makeProgress(file, "" + index + unique);
             }
         })));
-
-        render.push(this.makeUploadBtn(unique, !this.uploadOptions.maxLength || this.uploadOptions.maxLength > this.vm.formData[rule.field].length));
+        render.push(this.makeUploadBtn(unique, !this.uploadOptions.maxLength || this.uploadOptions.maxLength > this.vm.formData[this.handler.field].length));
         return [this.cvm.make('div', { key: "div4" + unique, class: { 'fc-upload': true } }, render)];
     },
     makeUploadView: function makeUploadView(src, key, index) {
@@ -1874,7 +1013,7 @@ var render = (0, _render.renderFactory)({
 
         return this.cvm.make('div', { key: "div1" + key, class: { 'fc-files': true } }, function () {
             var container = [];
-            if (_this4.uploadOptions.uploadType === 'image') {
+            if (_this4.handler.rule.props.uploadType === 'image') {
                 container.push(_this4.cvm.make('img', { key: "img" + key, attrs: { src: src } }));
             } else {
                 container.push(_this4.cvm.icon({ key: "file" + key, props: { type: "document-text", size: 40 } }));
@@ -1904,18 +1043,887 @@ var render = (0, _render.renderFactory)({
 
         return this.cvm.icon({ key: "upri" + key + index, props: { type: 'ios-trash-outline' }, nativeOn: { 'click': function click() {
                     _this6.handler.el.fileList.splice(index, 1);
+                    _this6.handler.changeParseValue(_this6.handler.el.fileList);
                 } } });
     },
     makeHandleIcon: function makeHandleIcon(src, key, index) {
         var _this7 = this;
 
         return this.cvm.icon({ key: "uphi" + key + index, props: { type: this.uploadOptions.handleIcon.toString() }, nativeOn: { 'click': function click() {
-                    _this7.uploadOptions.onHandle(src);
+                    _this7.onHandle(src);
                 } } });
     }
 });
 
 var make = (0, _make2.default)('upload', ['props', 'validate']);
+
+var component = { handler: handler, render: render, make: make };
+
+exports.default = component;
+exports.handler = handler;
+exports.render = render;
+exports.make = make;
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _formCreate = __webpack_require__(9);
+
+var _formCreate2 = _interopRequireDefault(_formCreate);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+if (typeof window !== 'undefined') {
+    window["formCreate"] = _formCreate2.default;
+    if (window.Vue && (window.iview || window.iView)) {
+        window.Vue.use(_formCreate2.default);
+    }
+}
+
+module.exports.default = module.exports = _formCreate2.default;
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _util = __webpack_require__(1);
+
+var _common = __webpack_require__(4);
+
+var _form = __webpack_require__(24);
+
+var _form2 = _interopRequireDefault(_form);
+
+var _formCreateComponent = __webpack_require__(25);
+
+var _formCreateComponent2 = _interopRequireDefault(_formCreateComponent);
+
+var _make = __webpack_require__(0);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var version = '1.3.0';
+
+var maker = (0, _common.getMaker)();
+
+var formCreateStyleElId = 'form-create-style';
+
+var formCreate = function formCreate(rules, _options) {
+    if (!this instanceof formCreate) throwIfMissing('formCreate is a constructor and should be called with the `new` keyword');
+    var options = (0, _util.deepExtend)((0, _util.deepExtend)(Object.create(null), (0, _common.getConfig)()), _options);
+    this.rules = Array.isArray(rules) ? rules : [];
+    this.handlers = {};
+    this.fRender = {};
+    this.formData = {};
+    this.validate = {};
+    this.trueData = {};
+    this.fieldList = [];
+    options.el = !options.el ? window.document.body : (0, _util.isElement)(options.el) ? options.el : document.querySelector(options.el);
+    this.options = options;
+};
+
+formCreate.createStyle = function () {
+    if (document.getElementById(formCreateStyleElId) !== null) return;
+    var style = document.createElement('style');
+    style.id = formCreateStyleElId;
+    style.innerText = _common.formCreateStyle;
+    document.getElementsByTagName('head')[0].appendChild(style);
+};
+
+formCreate.create = function (rules) {
+    var _opt = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+    var v = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : window.Vue;
+
+    var opt = (0, _util.isElement)(_opt) ? { el: _opt } : _opt;
+    var fComponent = new formCreate(rules, (0, _util.deepExtend)(Object.create(null), opt)),
+        $vm = fComponent.create(v);
+    return fComponent.fCreateApi;
+};
+
+formCreate.install = function (Vue) {
+    var globalOptions = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+    formCreate.createStyle();
+    Vue.prototype.$formCreate = function (rules, opt) {
+        return formCreate.create(rules, (0, _util.deepExtend)((0, _util.deepExtend)(Object.create(null), opt), globalOptions), Vue);
+    };
+
+    Vue.prototype.$formCreate.version = version;
+    Vue.prototype.$formCreate.maker = maker;
+};
+
+formCreate.prototype = {
+    checkRule: function checkRule(rule) {
+        rule.type = rule.type === undefined ? 'hidden' : rule.type.toLowerCase();
+        if (!rule.field) rule.field = '';
+        return rule;
+    },
+    setHandler: function setHandler(handler) {
+        var rule = handler.rule,
+            field = handler.field;
+        this.handlers[field] = handler;
+        this.formData[field] = handler.toParseValue(handler.value);
+        this.validate[field] = rule.validate;
+        this.trueData[field] = {
+            value: handler.toTrueValue(this.formData[field]),
+            rule: handler.rule
+        };
+    },
+    init: function init(vm) {
+        var _this = this;
+
+        this.vm = vm;
+        this.rules.forEach(function (rule, index) {
+            if (rule instanceof _make.make) _this.rules[index] = rule.getRule();
+        });
+        this.rules.filter(function (rule) {
+            return rule.field !== undefined;
+        }).forEach(function (rule) {
+            rule = _this.checkRule(rule);
+            var handler = (0, _common.createHandler)(_this.vm, rule, _this.options);
+            if (_this.fieldList.indexOf(handler.field) === -1) {
+                _this.setHandler(handler);
+                _this.fieldList.push(handler.field);
+            } else {
+                console.error(handler.field + " \u5B57\u6BB5\u5DF2\u5B58\u5728");
+            }
+        });
+        this.fCreateApi = (0, _common.getGlobalApi)(this);
+        vm.$set(vm, 'formData', this.formData);
+        vm.$set(vm, 'trueData', this.trueData);
+        vm.$set(vm, 'buttonProps', this.options.submitBtn);
+        this.fRender = new _form2.default(this);
+    },
+    create: function create(Vue) {
+        var $fCreate = Vue.extend(this.component()),
+            $vm = new $fCreate().$mount();
+        this.options.el.appendChild($vm.$el);
+        return $vm;
+    },
+    component: function component() {
+        return (0, _formCreateComponent2.default)(this);
+    },
+    append: function append(rule, after, pre) {
+        if (rule instanceof _make.make) rule = rule.getRule();
+        var _rule = (0, _util.deepExtend)(Object.create(null), this.checkRule(rule));
+        var handler = (0, _common.createHandler)(this.vm, _rule, this.options);
+        if (Object.keys(this.handlers).indexOf(handler.field) !== -1) throw new Error(_rule.field + "\u5B57\u6BB5\u5DF2\u5B58\u5728");
+        this.vm.setField(handler.field);
+        this.fRender.setRender(handler, after || '', pre);
+        this.setHandler(handler);
+        this.addHandlerWatch(handler);
+        this.vm.$nextTick(function () {
+            handler.mounted();
+        });
+    },
+    removeField: function removeField(field) {
+        if (this.handlers[field] === undefined) throw new Error(field + "\u5B57\u6BB5\u4E0D\u5B58\u5728");
+        this.vm.removeFormData(field);
+        delete this.handlers[field];
+        delete this.validate[field];
+        this.fRender.removeRender(field);
+        delete this.formData[field];
+        delete this.trueData[field];
+    },
+    addHandlerWatch: function addHandlerWatch(handler) {
+        var _this2 = this;
+
+        var field = handler.field;
+        var unWatch = this.vm.$watch("formData." + field, function (n, o) {
+            if (handler !== undefined) {
+                handler.setParseValue(n);
+            } else unWatch();
+        }, { deep: true });
+        var unWatch2 = this.vm.$watch("trueData." + field, function (n, o) {
+            if (handler !== undefined) {
+                var json = JSON.stringify(n);
+                if (_this2.vm.jsonData[field] !== json) {
+                    _this2.vm.jsonData[field] = json;
+                    handler.model && handler.model(_this2.vm.getTrueData(field));
+                    handler.watchTrueValue(n);
+                }
+            } else unWatch2();
+        }, { deep: true });
+    },
+    getFormRef: function getFormRef() {
+        return this.vm.$refs[this.fRender.refName];
+    },
+    fields: function fields() {
+        return Object.keys(this.formData);
+    }
+};
+
+exports.default = {
+    install: formCreate.install,
+    default: formCreate,
+    create: formCreate.create,
+    maker: maker,
+    version: version
+};
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.make = exports.render = exports.handler = undefined;
+
+var _handler = __webpack_require__(2);
+
+var _handler2 = _interopRequireDefault(_handler);
+
+var _render = __webpack_require__(3);
+
+var _render2 = _interopRequireDefault(_render);
+
+var _util = __webpack_require__(1);
+
+var _make = __webpack_require__(0);
+
+var _make2 = _interopRequireDefault(_make);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var handler = (0, _handler2.default)({
+    init: function init() {
+        var rule = this.rule;
+        if (!rule.props.data) rule.props.data = [];
+        if (!(0, _util.isArray)(this.value)) this.value = [];
+    },
+    toTrueValue: function toTrueValue() {
+        if (this.el.value === undefined) return this.vm.getFormData(this.field);else return this.el.value;
+    },
+    toParseValue: function toParseValue(value) {
+        if ((0, _util.isArray)(value)) return Array.from(value);else return [];
+    }
+});
+
+var render = (0, _render2.default)({
+    parse: function parse() {
+        return [this.cvm.cascader(this.inputProps().get())];
+    }
+});
+
+var make = (0, _make2.default)('cascader', ['props', 'event', 'validate']);
+
+var component = { handler: handler, render: render, make: make };
+
+exports.default = component;
+exports.handler = handler;
+exports.render = render;
+exports.make = make;
+
+/***/ }),
+/* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.make = exports.render = exports.handler = undefined;
+
+var _handler2 = __webpack_require__(2);
+
+var _handler3 = _interopRequireDefault(_handler2);
+
+var _render = __webpack_require__(3);
+
+var _render2 = _interopRequireDefault(_render);
+
+var _util = __webpack_require__(1);
+
+var _make = __webpack_require__(0);
+
+var _make2 = _interopRequireDefault(_make);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var handler = (0, _handler3.default)({
+    toParseValue: function toParseValue(value) {
+        if (false === (0, _util.isArray)(value)) value = [value];
+        value = value.map(function (v) {
+            return v.toString();
+        });
+        return this.rule.options.filter(function (opt) {
+            return value.indexOf(opt.value) !== -1;
+        }).map(function (option) {
+            return option.label;
+        });
+    },
+    toTrueValue: function toTrueValue(parseValue) {
+        var value = this.rule.options.filter(function (opt) {
+            return parseValue.indexOf(opt.label) !== -1;
+        }).map(function (opt) {
+            return opt.value;
+        });
+        if (this.rule.options.length === 1) return value[0] === undefined ? '' : value[0];else return value;
+    }
+});
+
+var render = (0, _render2.default)({
+    parse: function parse() {
+        var _this = this;
+
+        var _handler = this.handler,
+            unique = _handler.unique,
+            options = _handler.rule.options;
+
+        return [this.cvm.checkboxGroup(this.inputProps().get(), function () {
+            return options.map(function (option, index) {
+                return _this.cvm.checkbox({ props: option, key: "copt" + index + unique });
+            });
+        })];
+    }
+});
+
+var make = (0, _make2.default)('checkbox', ['options', 'props', 'event', 'validate']);
+
+var component = { handler: handler, render: render, make: make };
+
+exports.default = component;
+exports.handler = handler;
+exports.render = render;
+exports.make = make;
+
+/***/ }),
+/* 12 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.make = exports.render = exports.handler = undefined;
+
+var _handler = __webpack_require__(2);
+
+var _handler2 = _interopRequireDefault(_handler);
+
+var _render = __webpack_require__(3);
+
+var _render2 = _interopRequireDefault(_render);
+
+var _make = __webpack_require__(0);
+
+var _make2 = _interopRequireDefault(_make);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var handler = (0, _handler2.default)({});
+
+var render = (0, _render2.default)({
+    parse: function parse() {
+        return [this.cvm.colorPicker(this.inputProps().get())];
+    }
+});
+
+var make = (0, _make2.default)('colorpicker', ['props', 'event', 'validate']);
+
+var component = { handler: handler, render: render, make: make };
+
+exports.default = component;
+exports.handler = handler;
+exports.render = render;
+exports.make = make;
+
+/***/ }),
+/* 13 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.make = exports.render = exports.handler = undefined;
+
+var _handler = __webpack_require__(2);
+
+var _handler2 = _interopRequireDefault(_handler);
+
+var _render = __webpack_require__(3);
+
+var _render2 = _interopRequireDefault(_render);
+
+var _util = __webpack_require__(1);
+
+var _common = __webpack_require__(4);
+
+var _make = __webpack_require__(0);
+
+var _make2 = _interopRequireDefault(_make);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var handler = (0, _handler2.default)({
+    init: function init() {
+        var props = this.rule.props;
+        props.type = !props.type ? 'date' : props.type;
+        if (props.startDate === undefined) props.startDate = (0, _common.timeStampToDate)(props.startDate);
+    },
+    toParseValue: function toParseValue(value) {
+        var isArr = (0, _util.isArray)(value),
+            props = this.rule.props,
+            parseValue = void 0;
+        if (['daterange', 'datetimerange'].indexOf(props.type) !== -1) {
+            if (isArr) {
+                parseValue = value.map(function (time) {
+                    return !time ? '' : (0, _common.timeStampToDate)(time);
+                });
+            } else {
+                parseValue = ['', ''];
+            }
+        } else if ('date' === props.type && props.multiple === true) {
+            parseValue = value.toString();
+        } else {
+            isArr && (parseValue = value[0]);
+            parseValue = !parseValue ? '' : (0, _common.timeStampToDate)(parseValue);
+        }
+        return parseValue;
+    },
+    toTrueValue: function toTrueValue() {
+        return this.el.publicStringValue;
+    }
+});
+
+var render = (0, _render2.default)({
+    parse: function parse() {
+        return [this.cvm.datePicker(this.inputProps().get())];
+    }
+});
+
+var make = (0, _make2.default)('datepicker', ['props', 'event', 'validate']);
+
+var component = { handler: handler, render: render, make: make };
+
+exports.default = component;
+exports.handler = handler;
+exports.render = render;
+exports.make = make;
+
+/***/ }),
+/* 14 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.make = exports.render = exports.handler = undefined;
+
+var _handler = __webpack_require__(2);
+
+var _handler2 = _interopRequireDefault(_handler);
+
+var _render = __webpack_require__(3);
+
+var _render2 = _interopRequireDefault(_render);
+
+var _make = __webpack_require__(0);
+
+var _make2 = _interopRequireDefault(_make);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var handler = (0, _handler2.default)({});
+
+var render = (0, _render2.default)({
+    parse: function parse() {
+        return [this.cvm.input(this.inputProps().get())];
+    }
+});
+
+var make = (0, _make2.default)('input', ['props', 'event', 'validate', 'slot']);
+
+var component = { handler: handler, render: render, make: make };
+
+exports.default = component;
+exports.handler = handler;
+exports.render = render;
+exports.make = make;
+
+/***/ }),
+/* 15 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.make = exports.render = exports.handler = undefined;
+
+var _handler = __webpack_require__(2);
+
+var _handler2 = _interopRequireDefault(_handler);
+
+var _render = __webpack_require__(3);
+
+var _render2 = _interopRequireDefault(_render);
+
+var _make = __webpack_require__(0);
+
+var _make2 = _interopRequireDefault(_make);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var handler = (0, _handler2.default)({
+    toParseValue: function toParseValue(value) {
+        var parseValue = parseFloat(value);
+        if (Number.isNaN(parseValue)) parseValue = '';
+        return parseValue;
+    }
+});
+
+var render = (0, _render2.default)({
+    parse: function parse() {
+        return [this.cvm.inputNumber(this.inputProps().get())];
+    }
+});
+
+var make = (0, _make2.default)('inputnumber', ['props', 'event', 'validate']);
+
+var component = { handler: handler, render: render, make: make };
+
+exports.default = component;
+exports.handler = handler;
+exports.render = render;
+exports.make = make;
+
+/***/ }),
+/* 16 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.make = exports.render = exports.handler = undefined;
+
+var _handler2 = __webpack_require__(2);
+
+var _handler3 = _interopRequireDefault(_handler2);
+
+var _render = __webpack_require__(3);
+
+var _render2 = _interopRequireDefault(_render);
+
+var _make = __webpack_require__(0);
+
+var _make2 = _interopRequireDefault(_make);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var handler = (0, _handler3.default)({
+    toParseValue: function toParseValue(value) {
+        value = value.toString();
+        return this.rule.options.filter(function (opt) {
+            return opt.value.toString() === value;
+        }).reduce(function (initial, opt) {
+            return opt.label;
+        }, '');
+    },
+    toTrueValue: function toTrueValue(parseValue) {
+        parseValue = parseValue.toString();
+        return this.rule.options.filter(function (opt) {
+            return opt.label.toString() === parseValue;
+        }).reduce(function (initial, opt) {
+            return opt.value;
+        }, '');
+    }
+});
+
+var render = (0, _render2.default)({
+    parse: function parse() {
+        var _this = this;
+
+        var _handler = this.handler,
+            unique = _handler.unique,
+            options = _handler.rule.options;
+
+        return [this.cvm.radioGroup(this.inputProps().get(), function () {
+            return options.map(function (option, index) {
+                return _this.cvm.radio({ props: option, key: "ropt" + index + unique });
+            });
+        })];
+    }
+});
+
+var make = (0, _make2.default)('radio', ['options', 'props', 'event', 'validate']);
+
+var component = { handler: handler, render: render, make: make };
+
+exports.default = component;
+exports.handler = handler;
+exports.render = render;
+exports.make = make;
+
+/***/ }),
+/* 17 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.make = exports.render = exports.handler = undefined;
+
+var _handler2 = __webpack_require__(2);
+
+var _handler3 = _interopRequireDefault(_handler2);
+
+var _render = __webpack_require__(3);
+
+var _render2 = _interopRequireDefault(_render);
+
+var _util = __webpack_require__(1);
+
+var _make = __webpack_require__(0);
+
+var _make2 = _interopRequireDefault(_make);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var handler = (0, _handler3.default)({
+    toParseValue: function toParseValue(value) {
+        var isArr = (0, _util.isArray)(value);
+        if (this.rule.props.multiple === true) return Array.from(isArr === true ? value : [value]);else return isArr === true ? value[0] || '' : value;
+    },
+    toTrueValue: function toTrueValue(parseValue) {
+        return (0, _util.isArray)(parseValue) ? Array.from(parseValue) : parseValue;
+    }
+});
+
+var render = (0, _render2.default)({
+    parse: function parse() {
+        var _this = this;
+
+        var _handler = this.handler,
+            unique = _handler.unique,
+            options = _handler.rule.options;
+
+        return [this.cvm.select(this.inputProps().get(), function () {
+            return options.map(function (option, index) {
+                return _this.cvm.option({ props: option, key: "sopt" + index + unique });
+            });
+        })];
+    }
+});
+
+var make = (0, _make2.default)('select', ['options', 'props', 'event', 'validate']);
+
+var component = { handler: handler, render: render, make: make };
+
+exports.default = component;
+exports.handler = handler;
+exports.render = render;
+exports.make = make;
+
+/***/ }),
+/* 18 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.make = exports.render = exports.handler = undefined;
+
+var _handler = __webpack_require__(2);
+
+var _handler2 = _interopRequireDefault(_handler);
+
+var _render = __webpack_require__(3);
+
+var _render2 = _interopRequireDefault(_render);
+
+var _make = __webpack_require__(0);
+
+var _make2 = _interopRequireDefault(_make);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var handler = (0, _handler2.default)({
+    init: function init() {
+        if (this.rule.slot === undefined) this.rule.slot = {};
+    }
+});
+
+var render = (0, _render2.default)({
+    parse: function parse() {
+        var slot = this.handler.rule.slot;
+
+        this.propsData = this.inputProps().scopedSlots({
+            open: function open() {
+                return slot.open;
+            },
+            close: function close() {
+                return slot.close;
+            }
+        }).get();
+        return [this.cvm.switch(this.propsData)];
+    }
+});
+
+var make = (0, _make2.default)('switch', ['slot', 'props', 'event', 'validate']);
+
+var component = { handler: handler, render: render, make: make };
+
+exports.default = component;
+exports.handler = handler;
+exports.render = render;
+exports.make = make;
+
+/***/ }),
+/* 19 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.make = exports.render = exports.handler = undefined;
+
+var _handler = __webpack_require__(2);
+
+var _handler2 = _interopRequireDefault(_handler);
+
+var _render = __webpack_require__(3);
+
+var _render2 = _interopRequireDefault(_render);
+
+var _util = __webpack_require__(1);
+
+var _common = __webpack_require__(4);
+
+var _make = __webpack_require__(0);
+
+var _make2 = _interopRequireDefault(_make);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var handler = (0, _handler2.default)({
+    init: function init() {
+        this.rule.props.type = !this.rule.props.type ? 'time' : this.rule.props.type;
+    },
+    toParseValue: function toParseValue(value) {
+        var _this = this;
+
+        var parseValue = void 0,
+            isArr = (0, _util.isArray)(value);
+        if ('timerange' === this.rule.props.type) {
+            if (isArr) {
+                parseValue = value.map(function (time) {
+                    return !time ? '' : _this.getTime((0, _common.timeStampToDate)(time));
+                });
+            } else {
+                parseValue = ['', ''];
+            }
+        } else {
+            isArr && (value = value[0]);
+            parseValue = !value ? '' : this.getTime((0, _common.timeStampToDate)(value));
+        }
+        return parseValue;
+    },
+    toTrueValue: function toTrueValue() {
+        return this.el.publicStringValue;
+    },
+    getTime: function getTime(date) {
+        return (0, _util.isDate)(date) ? (0, _util.dateFormat)('hh:mm:ss', date) : date;
+    }
+});
+
+var render = (0, _render2.default)({
+    parse: function parse() {
+        return [this.cvm.timePicker(this.inputProps().get())];
+    }
+});
+
+var make = (0, _make2.default)('timepicker', ['props', 'event', 'validate']);
+
+var component = { handler: handler, render: render, make: make };
+
+exports.default = component;
+exports.handler = handler;
+exports.render = render;
+exports.make = make;
+
+/***/ }),
+/* 20 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.make = exports.render = exports.handler = undefined;
+
+var _handler = __webpack_require__(2);
+
+var _handler2 = _interopRequireDefault(_handler);
+
+var _render = __webpack_require__(3);
+
+var _render2 = _interopRequireDefault(_render);
+
+var _make = __webpack_require__(0);
+
+var _make2 = _interopRequireDefault(_make);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var handler = (0, _handler2.default)({
+    init: function init() {
+        this.rule.props = {};
+    }
+});
+
+var render = (0, _render2.default)({
+    parse: function parse() {
+        return [];
+    }
+});
+
+var make = function () {
+    var makeRule = (0, _make2.default)('hidden', []);
+    return makeRule.bind(makeRule, '');
+}();
 
 var component = { handler: handler, render: render, make: make };
 
@@ -1938,7 +1946,11 @@ exports.make = exports.render = exports.handler = undefined;
 
 var _handler = __webpack_require__(2);
 
+var _handler2 = _interopRequireDefault(_handler);
+
 var _render = __webpack_require__(3);
+
+var _render2 = _interopRequireDefault(_render);
 
 var _make = __webpack_require__(0);
 
@@ -1946,18 +1958,17 @@ var _make2 = _interopRequireDefault(_make);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var handler = (0, _handler.handlerFactory)({
-    handle: function handle() {
-        var parseValue = parseFloat(this.rule.value);
+var handler = (0, _handler2.default)({
+    toParseValue: function toParseValue(value) {
+        var parseValue = parseFloat(value);
         if (Number.isNaN(parseValue)) parseValue = 0;
-        this.changeParseValue(parseValue);
+        return parseValue;
     }
 });
 
-var render = (0, _render.renderFactory)({
+var render = (0, _render2.default)({
     parse: function parse() {
-        this.propsData = this.inputProps().get();
-        return [this.cvm.rate(this.propsData)];
+        return [this.cvm.rate(this.inputProps().get())];
     }
 });
 
@@ -1984,7 +1995,11 @@ exports.make = exports.render = exports.handler = undefined;
 
 var _handler = __webpack_require__(2);
 
+var _handler2 = _interopRequireDefault(_handler);
+
 var _render = __webpack_require__(3);
+
+var _render2 = _interopRequireDefault(_render);
 
 var _util = __webpack_require__(1);
 
@@ -1994,27 +2009,27 @@ var _make2 = _interopRequireDefault(_make);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var handler = (0, _handler.handlerFactory)({
-    verify: function verify() {
-        this.rule.props.min = this.rule.props.min === undefined ? 0 : parseFloat(this.rule.props.min);
+var handler = (0, _handler2.default)({
+    init: function init() {
+        this.rule.props.min = this.rule.props.min === undefined ? 0 : parseFloat(this.rule.props.min) || 0;
     },
-    handle: function handle() {
-        var isArr = (0, _util.isArray)(this.rule.value),
-            min = this.rule.props.min,
+    toParseValue: function toParseValue(value) {
+        var isArr = (0, _util.isArray)(value),
+            props = this.rule.props,
+            min = props.min,
             parseValue = void 0;
-        if (this.rule.props.range === true) {
-            parseValue = isArr ? this.rule.value : [min, parseFloat(this.rule.value) || min];
+        if (props.range === true) {
+            parseValue = isArr ? value : [min, parseFloat(value) || min];
         } else {
-            parseValue = isArr ? parseFloat(this.rule.value[0]) || min : parseFloat(this.rule.value);
+            parseValue = isArr ? parseFloat(value[0]) || min : parseFloat(value);
         }
-        this.changeParseValue(parseValue);
+        return parseValue;
     }
 });
 
-var render = (0, _render.renderFactory)({
+var render = (0, _render2.default)({
     parse: function parse() {
-        this.propsData = this.inputProps().get();
-        return [this.cvm.slider(this.propsData)];
+        return [this.cvm.slider(this.inputProps().get())];
     }
 });
 
@@ -2041,7 +2056,11 @@ exports.make = exports.render = exports.handler = undefined;
 
 var _handler = __webpack_require__(2);
 
+var _handler2 = _interopRequireDefault(_handler);
+
 var _render = __webpack_require__(3);
+
+var _render2 = _interopRequireDefault(_render);
 
 var _util = __webpack_require__(1);
 
@@ -2049,10 +2068,12 @@ var _make = __webpack_require__(0);
 
 var _make2 = _interopRequireDefault(_make);
 
+var _upload = __webpack_require__(7);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var handler = (0, _handler.handlerFactory)({
-    verify: function verify() {
+var handler = (0, _handler2.default)({
+    init: function init() {
         var props = this.rule.props;
         if (!props.type) props.type = 'input';
         if (!props.icon) props.icon = 'folder';
@@ -2061,27 +2082,30 @@ var handler = (0, _handler.handlerFactory)({
         if (props.spin === undefined) props.spin = true;
         if (!props.title) props.title = '请选择' + this.rule.title;
         if (!props.maxLength) props.maxLength = 0;
-        props.multiple = !props.maxLength || props.maxLength > 1;
+        props.multiple = props.maxLength.toString() !== '1';
         if (props.type === 'file' && props.handleIcon === undefined) props.handleIcon = false;else props.handleIcon = props.handleIcon === true || props.handleIcon === undefined ? 'ios-eye-outline' : props.handleIcon;
         if (props.allowRemove === undefined) props.allowRemove = true;
     },
-    handle: function handle() {
+    toParseValue: function toParseValue(value) {
         var parseValue = void 0,
-            oldValue = this.rule.value,
+            oldValue = value,
             isArr = (0, _util.isArray)(oldValue);
         if (oldValue === '') parseValue = [];else if (!isArr) parseValue = [oldValue];else parseValue = oldValue;
-        this.changeParseValue(parseValue);
+        this.parseValue = parseValue;
+        return parseValue;
     },
-    getValue: function getValue() {
-        return this.rule.props.multiple === true ? this.parseValue : this.parseValue[0] === undefined ? '' : this.parseValue[0];
+    toTrueValue: function toTrueValue(parseValue) {
+        return this.rule.props.multiple === true ? parseValue : parseValue[0] === undefined ? '' : parseValue[0];
     }
 });
 
-var render = (0, _render.renderFactory)({
+var eventList = { onOpen: 'on-open', onChange: 'on-change', onOk: 'on-ok' };
+
+var render = (0, _render2.default)({
     init: function init() {
         var _this = this;
 
-        var field = this.handler.rule.field,
+        var field = this.handler.field,
             b = false;
         this.vm.$watch("formData." + field, function () {
             b === true && _this.onChange();
@@ -2102,7 +2126,7 @@ var render = (0, _render.renderFactory)({
         var unique = this.handler.unique,
             props = this.inputProps().props({
             type: "text",
-            value: this.handler.parseValue,
+            value: this.handler.parseValue.toString(),
             icon: this._props.icon,
             readonly: true
         }).on('on-click', function () {
@@ -2112,15 +2136,15 @@ var render = (0, _render.renderFactory)({
     },
     makeGroup: function makeGroup(render) {
         var unique = this.handler.unique,
-            field = this.handler.rule.field;
-        return [this.cvm.make('div', { key: "ifgp1" + unique, class: { 'fc-upload': true }, ref: this.handler.refName, props: { value: this.vm.formData[field] } }, render), this.makeInput(true)];
+            field = this.handler.field;
+        return [this.cvm.make('div', { key: "ifgp1" + unique, class: { 'fc-upload fc-frame': true }, ref: this.handler.refName, props: { value: this.vm.formData[field] } }, render), this.makeInput(true)];
     },
     makeImage: function makeImage() {
         var _this3 = this;
 
         var unique = this.handler.unique;
         var vNode = this.handler.parseValue.map(function (src, index) {
-            return _this3.cvm.make('div', { key: "ifid1" + unique, class: { 'fc-files': true } }, [_this3.cvm.make('img', { key: "ifim" + unique, attrs: { src: src } }), _this3.makeIcons(src, unique, index)]);
+            return _this3.cvm.make('div', { key: "ifid1" + unique + index, class: { 'fc-files': true } }, [_this3.cvm.make('img', { key: "ifim" + unique + index, attrs: { src: src } }), _this3.makeIcons(src, unique, index)]);
         });
         vNode.push(this.makeBtn());
         return vNode;
@@ -2130,7 +2154,7 @@ var render = (0, _render.renderFactory)({
 
         var unique = this.handler.unique;
         var vNode = this.handler.parseValue.map(function (src, index) {
-            return _this4.cvm.make('div', { key: "iffd2" + unique, class: { 'fc-files': true } }, [_this4.cvm.icon({ key: "iff" + unique, props: { type: "document-text", size: 40 } }), _this4.makeIcons(src, unique, index)]);
+            return _this4.cvm.make('div', { key: "iffd2" + unique + index, class: { 'fc-files': true } }, [_this4.cvm.icon({ key: "iff" + unique + index, props: { type: "document-text", size: 40 } }), _this4.makeIcons(src, unique, index)]);
         });
         vNode.push(this.makeBtn());
         return vNode;
@@ -2141,6 +2165,7 @@ var render = (0, _render.renderFactory)({
         var props = this.handler.rule.props;
         if (props.maxLength > 0 && this.handler.parseValue.length >= props.maxLength) return;
         var unique = this.handler.unique;
+        // return this.cvm.make('div',{key:`ifgp2${unique}`,class:{'ivu-upload ivu-upload-select':true}})
         return this.cvm.make('div', { key: "ifbd3" + unique, class: { 'fc-upload-btn': true }, on: { click: function click() {
                     _this5.showModel();
                 } } }, [this.cvm.icon({ key: "ifbi" + unique, props: { type: this._props.icon, size: 20 } })]);
@@ -2173,7 +2198,7 @@ var render = (0, _render.renderFactory)({
     makeIcons: function makeIcons(src, key, index) {
         var _this6 = this;
 
-        if (this.issetIcon === true) return this.cvm.make('div', { key: "ifis" + key, class: { 'fc-upload-cover': true } }, function () {
+        if (this.issetIcon === true) return this.cvm.make('div', { key: "ifis" + key + index, class: { 'fc-upload-cover': true } }, function () {
             var icon = [];
             if (_this6._props.handleIcon !== false) icon.push(_this6.makeHandleIcon(src, key, index));
             if (_this6._props.allowRemove === true) icon.push(_this6.makeRemoveIcon(src, key, index));
@@ -2195,18 +2220,6 @@ var render = (0, _render.renderFactory)({
                     _this8.onHandle(src);
                 } } });
     },
-    onOpen: function onOpen() {
-        var fn = this.handler.rule.event['on-open'];
-        if (fn) return fn(this.handler.getValue());
-    },
-    onChange: function onChange() {
-        var fn = this.handler.rule.event['on-change'];
-        if (fn) return fn(this.handler.getValue());
-    },
-    onOk: function onOk() {
-        var fn = this.handler.rule.event['on-ok'];
-        if (fn) return fn(this.handler.getValue());
-    },
     onRemove: function onRemove(src) {
         var fn = this.handler.rule.event['on-remove'];
         if (fn) return fn(src, this.handler.getValue());
@@ -2214,14 +2227,6 @@ var render = (0, _render.renderFactory)({
     onHandle: function onHandle(src) {
         var fn = this.handler.rule.event['on-handle'];
         if (fn) return fn(src);else this.defaultOnHandle(src);
-    },
-    defaultOnHandle: function defaultOnHandle(src) {
-        this.vm.$Modal.info({
-            title: "预览",
-            render: function render(h) {
-                return h('img', { attrs: { src: src }, style: "width: 100%" });
-            }
-        });
     },
     showModel: function showModel() {
         var _this9 = this;
@@ -2259,6 +2264,13 @@ var render = (0, _render.renderFactory)({
             width: width
         });
     }
+});
+render.prototype.defaultOnHandle = _upload.render.prototype.defaultOnHandle;
+Object.keys(eventList).forEach(function (k) {
+    render.prototype[k] = function () {
+        var fn = this.handler.rule.event['on-open'];
+        if (fn) return fn(this.handler.getValue());
+    };
 });
 
 var make = (0, _make2.default)('frame', ['props', 'event', 'validate']);
@@ -2341,10 +2353,11 @@ render.prototype = {
     makeFormItem: function makeFormItem(_ref2, VNodeFn) {
         var rule = _ref2.rule,
             refName = _ref2.refName,
-            unique = _ref2.unique;
+            unique = _ref2.unique,
+            field = _ref2.field;
 
         var propsData = this.props.props({
-            prop: rule.field,
+            prop: field,
             label: rule.title,
             labelFor: refName,
             rules: rule.validate
@@ -2363,8 +2376,8 @@ render.prototype = {
         this.renderSort.splice(this.renderSort.indexOf(field), 1);
     },
     setRender: function setRender(handler, after, pre) {
-        this.renders[handler.rule.field] = handler.render;
-        if (after !== undefined) this.changeSort(handler.rule.field, after, pre);
+        this.renders[handler.field] = handler.render;
+        if (after !== undefined) this.changeSort(handler.field, after, pre);
     },
     changeSort: function changeSort(field, after, pre) {
         var index = this.renderSort.indexOf(after.toString());
@@ -2392,7 +2405,9 @@ var formCreateComponent = function formCreateComponent(fComponent) {
         data: function data() {
             return {
                 formData: {},
-                buttonProps: {}
+                buttonProps: {},
+                trueData: {},
+                jsonData: {}
             };
         },
 
@@ -2407,21 +2422,40 @@ var formCreateComponent = function formCreateComponent(fComponent) {
             changeFormData: function changeFormData(field, value) {
                 this.$set(this.formData, field, value);
             },
+            changeTrueData: function changeTrueData(field, value) {
+                this.$set(this.trueData[field], 'value', value);
+            },
+            getTrueDataValue: function getTrueDataValue(field) {
+                return this.trueData[field].value;
+            },
+            getTrueData: function getTrueData(field) {
+                return this.trueData[field];
+            },
+            getFormData: function getFormData(field) {
+                return this.formData[field];
+            },
             removeFormData: function removeFormData(field) {
                 this.$delete(this.formData, field);
+                this.$delete(this.trueData, field);
             },
             changeButtonProps: function changeButtonProps(props) {
                 this.$set(this, 'buttonProps', Object.assign(this.buttonProps, props));
             },
-            setField: function setField(field, value) {
-                this.$set(this.formData, field, value);
+            setField: function setField(field) {
+                this.$set(this.formData, field, '');
+                this.$set(this.trueData, field, {});
             }
         },
         mounted: function mounted() {
+            var _this = this;
+
             Object.keys(this.formData).map(function (field) {
-                fComponent.addHandlerWatch(fComponent.handlers[field]);
-                fComponent.handlers[field].mounted();
+                var handler = fComponent.handlers[field];
+                handler.model && handler.model(_this.getTrueData(field));
+                fComponent.addHandlerWatch(handler);
+                handler.mounted();
             });
+            fComponent.options.mounted && fComponent.options.mounted();
         }
     };
 };

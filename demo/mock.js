@@ -1,9 +1,9 @@
 var maker = formCreate.maker;
 window.mock = [
     maker.hidden('id','14'),
-    maker.hidden('oid','15'),
+    // maker.hidden('oid','15'),
     maker.cascader('所在区域','address',['陕西省','西安市','新城区']).props({
-        data:window.province
+        data:window.province_city_area
     }),
     // {
     //     type:"cascader",
@@ -45,11 +45,13 @@ window.mock = [
     //     validate:[],
     //
     // },
-    maker.input('商品名称','goods_name').props({
+    maker.input('商品名称','goods_name','iphone').props({
         placeholder:'请输入商品名称'
     }).validate([
         { required: true, message: '请输入商品名称', trigger: 'blur' }
-    ]),
+    ]).event({
+        change:console.log
+    }),
     // {
     //     type:"input",
     //     title:"商品名称",//label名称
@@ -95,7 +97,7 @@ window.mock = [
     maker.radio('是否包邮','is_postage','0').options([
         {value:"0",label:"不包邮",disabled:false},
         {value:"1",label:"包邮",disabled:false},
-        {value:"1",label:"未知",disabled:true},
+        {value:"2",label:"未知",disabled:true},
     ]),
     // {
     //     type:"radio",
@@ -118,7 +120,7 @@ window.mock = [
     //     },
     //     validate:[],
     // },
-    maker.checkbox('标签','label','').options([
+    maker.checkbox('标签','label',["1"]).options([
         {value:"1",label:"好用",disabled:true},
         {value:"2",label:"方便",disabled:false},
         {value:"3",label:"实用",disabled:false},
@@ -178,7 +180,7 @@ window.mock = [
         {"value": "104", "label": "生态蔬菜", "disabled": false},
         {"value": "105", "label": "新鲜水果", "disabled": false},
     ]).props({
-        multiple:true
+        multiple:false
     }),
     // {
     //     type: "select",
@@ -215,7 +217,10 @@ window.mock = [
     //     validate:[],
     // },
     maker.date('活动日期','section_day',['2018-02-20', new Date()]).props({
-        "type": "datetimerange"
+        "type": "daterange",
+        // "multiple":true,
+	    "startDate":new Date(),
+        "showWeekNumbers":true
     }),
     // {
     //     type: "DatePicker",
@@ -244,7 +249,7 @@ window.mock = [
     //     },
     //     validate:[],
     // },
-    maker.time('活动时间','section_time').props({
+    maker.time('活动时间','section_time',['01:01:01', new Date()]).props({
         "type":"timerange",
         "placeholder":"请选择活动时间"
     }),
@@ -276,7 +281,9 @@ window.mock = [
     //     },
     //     validate:[],
     // },
-    maker.number('排序','sort',0),
+    maker.number('排序','sort',0).props({
+	    precision:2
+    }),
     // {
     //     type: "InputNumber",
     //     field: "sort",
@@ -390,7 +397,7 @@ window.mock = [
             "maxLength": 4,
             "multiple": true,
             "type": "select",
-            "uploadType": "file",
+            "uploadType": "image",
             "name": "file",
             "onSuccess": function () {
                 return 'http://img1.touxiang.cn/uploads/20131030/30-075657_191.jpg';
@@ -466,12 +473,13 @@ window.mock = [
     // },
     maker.frame('素材','fodder',["http://img1.touxiang.cn/uploads/20131030/30-075657_191.jpg"]).props({
         src:"iframe.html",
-        maxLength:2,
-        type:"image"
+        maxLength:0,
+        type:"file"
     }).validate([
         {required:true, type: 'array', min: 2, message: '请选择2张图片', trigger: 'change'}
     ]).event({
-        remove:()=>{alert('不能删除');return false;}
+        remove:()=>{alert('不能删除');return false;},
+        open:console.log
     })
     // ,{
     //     type:"frame",
@@ -563,3 +571,4 @@ $r = maker.upload('产品主图','logo','http://img1.touxiang.cn/uploads/2013103
 //         {required:true, type: 'array', min: 1, message: '请上传1张图片', trigger: 'change'}
 //     ]
 // };
+

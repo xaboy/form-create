@@ -1,44 +1,34 @@
-import {handlerFactory} from "../factory/handler";
-import {renderFactory} from "../factory/render";
+import handlerFactory from "../factory/handler";
+import renderFactory from "../factory/render";
 import {isArray} from "../core/util";
-import makeFactory from "../factory/make";
+import makerFactory from "../factory/make";
 
 const handler = handlerFactory({
-    handle() {
-        let parseValue = [];
-        if(false === isArray(this.rule.value))
-            this.rule.value = [this.rule.value];
-        this.rule.value.forEach((val) => {
-            this.rule.options.forEach((option) => {
-                option.value === val && (parseValue.push(option.label));
-            });
-        });
-        this.changeParseValue(parseValue);
-    }, getValue() {
-        let parseValue = [];
-            this.parseValue.forEach((value) => {
-                this.rule.options.forEach((option) => {
-                    option.label === value && (parseValue.push(option.value));
-                });
-            });
-            parseValue = this.rule.options.length === 1
-                ? parseValue[0] === undefined
-                    ? ''
-                    : parseValue[0]
-                : parseValue;
-        return parseValue;
+    toParseValue(value){
+	    if(false === isArray(value))
+		    value = [value];
+	    value = value.map((v)=>v.toString());
+        return this.rule.options.filter((opt)=>value.indexOf(opt.value) !== -1)
+            .map((option) =>option.label);
+    },
+    toTrueValue(parseValue){
+        let value = this.rule.options.filter((opt)=>parseValue.indexOf(opt.label) !== -1)
+            .map((opt)=>opt.value);
+        if(this.rule.options.length === 1)
+            return value[0] === undefined ? '' : value[0];
+        else
+            return value;
     }
 });
 
 const render =  renderFactory({
     parse(){
-        this.propsData = this.inputProps().get();
         let {unique,rule:{options}} = this.handler;
-        return [this.cvm.checkboxGroup(this.propsData,()=>options.map((option,index)=>this.cvm.checkbox({props:option,key:`copt${index}${unique}`})))];
+        return [this.cvm.checkboxGroup(this.inputProps().get(),()=>options.map((option,index)=>this.cvm.checkbox({props:option,key:`copt${index}${unique}`})))];
     }
 });
 
-const make = makeFactory('checkbox',['options','props','event','validate']);
+const make = makerFactory('checkbox',['options','props','event','validate']);
 
 const component = {handler,render,make};
 

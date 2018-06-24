@@ -1,10 +1,10 @@
-import {handlerFactory} from "../factory/handler";
-import {renderFactory} from "../factory/render";
+import handlerFactory from "../factory/handler";
+import renderFactory from "../factory/render";
 import {isArray, uniqueId} from "../core/util";
-import makeFactory from "../factory/make";
-
+import makerFactory from "../factory/make";
+import {render as uploadRender} from '../components/upload';
 const handler = handlerFactory({
-    verify(){
+    init(){
         let props = this.rule.props;
         if(!props.type) props.type = 'input';
         if(!props.icon) props.icon = 'folder';
@@ -13,35 +13,38 @@ const handler = handlerFactory({
         if(props.spin === undefined) props.spin = true;
         if(!props.title) props.title = '请选择'+this.rule.title;
         if(!props.maxLength) props.maxLength = 0;
-        props.multiple = !props.maxLength || props.maxLength > 1;
+	    props.multiple = props.maxLength.toString() !== '1';
         if(props.type === 'file' && props.handleIcon === undefined)
             props.handleIcon = false;
         else
             props.handleIcon = props.handleIcon === true || props.handleIcon === undefined ? 'ios-eye-outline' : props.handleIcon;
         if(props.allowRemove === undefined) props.allowRemove = true;
     },
-    handle(){
-        let parseValue,oldValue = this.rule.value,isArr = isArray(oldValue);
+    toParseValue(value){
+        let parseValue,oldValue = value,isArr = isArray(oldValue);
         if(oldValue==='')
             parseValue = [];
         else if (!isArr)
             parseValue = [oldValue];
         else
             parseValue = oldValue;
-        this.changeParseValue(parseValue);
+        this.parseValue = parseValue;
+        return parseValue;
     },
-    getValue(){
+    toTrueValue(parseValue){
         return this.rule.props.multiple === true
-            ? this.parseValue
-            : (this.parseValue[0] === undefined
+            ? parseValue
+            : (parseValue[0] === undefined
                 ? ''
-                : this.parseValue[0]);
+                : parseValue[0]);
     }
 });
 
+const eventList = {onOpen:'on-open',onChange:'on-change',onOk:'on-ok'};
+
 const render = renderFactory({
     init(){
-        let field = this.handler.rule.field,b = false;
+        let field = this.handler.field,b = false;
         this.vm.$watch(`formData.${field}`,()=>{
             b === true && this.onChange();
             b = true;
@@ -62,7 +65,7 @@ const render = renderFactory({
     makeInput(hidden){
         let unique = this.handler.unique, props = this.inputProps().props({
             type:"text",
-            value:this.handler.parseValue,
+            value:this.handler.parseValue.toString(),
             icon:this._props.icon,
             readonly:true,
         }).on('on-click',()=>{
@@ -71,16 +74,16 @@ const render = renderFactory({
         return [this.cvm.input(props)];
     },
     makeGroup(render){
-        let unique = this.handler.unique,field = this.handler.rule.field;
-        return [this.cvm.make('div',{key:`ifgp1${unique}`,class:{'fc-upload':true},ref:this.handler.refName,props:{value:this.vm.formData[field]}},render),
+        let unique = this.handler.unique,field = this.handler.field;
+        return [this.cvm.make('div',{key:`ifgp1${unique}`,class:{'fc-upload fc-frame':true},ref:this.handler.refName,props:{value:this.vm.formData[field]}},render),
             this.makeInput(true)
         ]
     },
     makeImage(){
         let unique = this.handler.unique;
         let vNode =  this.handler.parseValue.map((src,index)=>{
-            return this.cvm.make('div',{key:`ifid1${unique}`,class:{'fc-files':true}},[
-                this.cvm.make('img',{key:`ifim${unique}`,attrs:{src}}),
+            return this.cvm.make('div',{key:`ifid1${unique}${index}`,class:{'fc-files':true}},[
+                this.cvm.make('img',{key:`ifim${unique}${index}`,attrs:{src}}),
                 this.makeIcons(src,unique,index)
             ]);
         });
@@ -90,8 +93,8 @@ const render = renderFactory({
     makeFile(){
         let unique = this.handler.unique;
         let vNode =  this.handler.parseValue.map((src,index)=>{
-            return this.cvm.make('div',{key:`iffd2${unique}`,class:{'fc-files':true}},[
-                this.cvm.icon({key:`iff${unique}`,props:{type:"document-text", size:40}}),
+            return this.cvm.make('div',{key:`iffd2${unique}${index}`,class:{'fc-files':true}},[
+                this.cvm.icon({key:`iff${unique}${index}`,props:{type:"document-text", size:40}}),
                 this.makeIcons(src,unique,index)
             ]);
         });
@@ -102,6 +105,7 @@ const render = renderFactory({
         let props = this.handler.rule.props;
         if(props.maxLength > 0 && this.handler.parseValue.length >= props.maxLength) return ;
         let unique = this.handler.unique;
+	    // return this.cvm.make('div',{key:`ifgp2${unique}`,class:{'ivu-upload ivu-upload-select':true}})
         return this.cvm.make('div',{key:`ifbd3${unique}`,class:{'fc-upload-btn':true},on:{click:()=>{
             this.showModel();
         }}},[
@@ -138,7 +142,7 @@ const render = renderFactory({
     },
     makeIcons(src,key,index){
         if(this.issetIcon === true)
-            return this.cvm.make('div',{key:`ifis${key}`,class:{'fc-upload-cover':true}},()=>{
+            return this.cvm.make('div',{key:`ifis${key}${index}`,class:{'fc-upload-cover':true}},()=>{
                 let icon = [];
                 if(this._props.handleIcon !== false)
                     icon.push(this.makeHandleIcon(src,key,index));
@@ -158,21 +162,6 @@ const render = renderFactory({
             this.onHandle(src);
         }}});
     },
-    onOpen(){
-        let fn = this.handler.rule.event['on-open'];
-        if(fn)
-            return fn(this.handler.getValue());
-    },
-    onChange(){
-        let fn = this.handler.rule.event['on-change'];
-        if(fn)
-            return fn(this.handler.getValue());
-    },
-    onOk(){
-        let fn = this.handler.rule.event['on-ok'];
-        if(fn)
-            return fn(this.handler.getValue());
-    },
     onRemove(src){
         let fn = this.handler.rule.event['on-remove'];
         if(fn)
@@ -184,14 +173,6 @@ const render = renderFactory({
             return fn(src);
         else
             this.defaultOnHandle(src);
-    },
-    defaultOnHandle(src){
-        this.vm.$Modal.info({
-            title:"预览",
-            render:(h)=>{
-                return h('img',{attrs:{src},style:"width: 100%"});
-            }
-        });
     },
     showModel(){
         let isShow = false !== this.onOpen(),
@@ -224,8 +205,16 @@ const render = renderFactory({
         });
     }
 });
+render.prototype.defaultOnHandle = uploadRender.prototype.defaultOnHandle;
+Object.keys(eventList).forEach(k=>{
+	render.prototype[k] = function () {
+		let fn = this.handler.rule.event['on-open'];
+		if(fn)
+			return fn(this.handler.getValue());
+	}
+});
 
-const make = makeFactory('frame',['props','event','validate']);
+const make = makerFactory('frame',['props','event','validate']);
 
 const component = {handler,render,make};
 
