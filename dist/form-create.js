@@ -1501,7 +1501,7 @@ var handler = (0, _handler2.default)({
         } else if ('date' === props.type && props.multiple === true) {
             parseValue = value.toString();
         } else {
-            isArr && (parseValue = value[0]);
+            parseValue = isArr ? parseValue = value[0] || '' : value;
             parseValue = !parseValue ? '' : (0, _common.timeStampToDate)(parseValue);
         }
         return parseValue;

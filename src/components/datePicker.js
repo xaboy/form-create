@@ -24,7 +24,7 @@ const handler = handlerFactory({
 	    } else if('date' === props.type && props.multiple === true){
 		    parseValue = value.toString();
 	    }else{
-		    isArr && (parseValue = value[0]);
+		    parseValue = isArr ? (parseValue = value[0]|| '') : value;
 		    parseValue = !parseValue ? '' : timeStampToDate(parseValue);
 	    }
 	    return parseValue;
