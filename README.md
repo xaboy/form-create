@@ -22,6 +22,7 @@
 <br />
 
 ### [中文文档](https://xaboy.gitbooks.io/form-create/content/kuai-su-shang-shou.html)
+### [使用PHP快速生成现代化表单](https://github.com/xaboy/form-builder)
 
 ### 如果对您有帮助，您可以点右上角 "Star" 支持一下 谢谢！
  
