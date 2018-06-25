@@ -26,16 +26,16 @@
 ## 1.3 版本重大更新
 
 - 优化和精简内部结构
-- 支持 双向数据绑定！！！
-- 支持 使用`window.formCreate`全局方法快速创建表单，也可以在Vue内部使用`this.$formCreate`
-- 新增 `option.mounted`事件 ，当组件加载完成后触发
+- 支持 双向数据绑定!!!
+- 支持 全局方法快速创建表单
+- 新增 `option.mounted`事件，当组件加载完成后触发
 - 修复 一些BUG
 
 ## 更新说明
 
 #### 1.3.0 (2018-6-24)
 - 优化和精简内部结构
-- 支持 双向数据绑定！！！
+- 支持 双向数据绑定,可动态修改组件的值和配置参数。单独绑定`make.model(obj,field=''')`,批量绑定`$f.model(obj)`
 - 支持 使用`window.formCreate`全局方法快速创建表单，也可以在Vue内部使用`this.$formCreate`
 - 新增 `option.mounted`事件 ，当组件加载完成后触发
 - 修复 一些BUG
@@ -57,7 +57,7 @@
 > 感谢 [wxxtqk](https://github.com/wxxtqk) | [williamBoss](https://github.com/williamBoss)
 
 
-## 示例 [代码](https://github.com/xaboy/form-create/blob/master/dome/mock.js) 
+## 示例 [代码](https://github.com/xaboy/form-create/blob/master/demo/mock.js) 
 
 ![https://raw.githubusercontent.com/xaboy/form-create/dev/images/sample110.jpg](https://raw.githubusercontent.com/xaboy/form-create/dev/images/sample110.jpg)
 
@@ -77,10 +77,10 @@ npm install
 ## 引入
 浏览器:
 ```html
-<!-- import Vue ^2.5.16-->
+<!-- import Vue 2.5.16-->
 <script src="https://cdn.bootcss.com/vue/2.5.13/vue.min.js"></script>
 
-<!-- import iview ^2.13.0-->
+<!-- import iview 2.14.3-->
 <link rel="stylesheet" href="https://cdn.bootcss.com/iview/2.13.0/styles/iview.css">
 <script src="https://cdn.bootcss.com/iview/2.13.0/iview.min.js"></script>
 
@@ -88,7 +88,7 @@ npm install
 <script src="district/province_city_area.js"></script>
 
 <!-- 模拟数据,实际使用中不需要引入 -->
-<script src="dome/mock.js"></script>
+<script src="demo/mock.js"></script>
 
 <!-- import formCreate -->
 <script src="dist/form-create.min.js"></script>
@@ -106,7 +106,7 @@ import formCreat from 'form-create'
 Vue.use(iView);
 Vue.use(formCreat)
 ```
-**注意! iview版本为`2.13.0`,Vue版本为`2.5.*`**
+**注意! iview版本为`2.14.3`,Vue版本为`2.5.*`**
 
 ## 使用
 
@@ -114,6 +114,9 @@ Vue.use(formCreat)
 //示例规则
 let rules = window.mock;
 new Vue({
+    data:{
+        formData:{}	
+    },
     mounted:function(){
         let root = document.getElementById('app'),that = this;
         $f = this.$formCreate(mock,{
@@ -130,6 +133,9 @@ new Vue({
             });
         //动态添加表单元素
         $f.append($r,'goods_name');
+        //绑定表单数据到formData
+        $f.model(this.formData);
+        
     }
 })
 ```
@@ -146,7 +152,9 @@ new Vue({
 >
 >   **props,event,slot传入参数为对象,例({key:value,...})**
 >
->   **validate,options参入参数为数组,例([options,options,..])**
+>   **validate,options传入参数为数组,例([options,options,..])**
+>
+>   **model(obj,field = '') 将在组件绑定到obj.field ，field为空默认时为rule.field**
 >
 >   `$formCreate.maker`指的是 vue内部的 `this.$formCreate.maker` 或者 `window.formCreate.maker`
 
@@ -154,15 +162,11 @@ new Vue({
 
 * **hidden** 生成隐藏字段
 
->   无可用配置方法
-
 ```javascript
 $formCreate.maker.hidden(field,value)
 ```
 
 * **input** 生成input输入框
-
->   可用`props` ,`validate`, `event` 方法配置对应属性
 
 ```javascript
 $formCreate.maker.input(title,field,value)
@@ -170,62 +174,90 @@ $formCreate.maker.input(title,field,value)
 
 * **radio** 生成单选框
 
->   可用`props` ,`validate`, `event` ,`options` 方法配置对应属性
+```javascript
+$formCreate.maker.radio(title,field,value)
+```
 
 * **checkbox** 生成复选框
 
->   可用`props` ,`validate`, `event` ,`options` 方法配置对应属性
+```javascript
+$formCreate.maker.radio(title,field,value) //value为array类型
+```
 
 * **select** 生成select选择器
 
->   可用`props` ,`validate`, `event` ,`options` 方法配置对应属性
+```javascript
+$formCreate.maker.select(title,field,value) //多选是value为array类型
+```
 
 * **switch** 生成switch开关
 
->   可用`props` ,`validate`, `event` ,`slot` 方法配置对应属性
+```javascript
+$formCreate.maker.switch(title,field,value)
+```
 
 * **datepicker** 生成日期选择器组件,别名`date`
 
->   可用`props` ,`validate`, `event`  方法配置对应属性
+```javascript
+$formCreate.maker.date(title,field,value) //type为daterange或datetimerange时 value为array类型
+```
 
 * **timepicker** 生成时间选择器组件,别名`time`
 
->   可用`props` ,`validate`, `event`  方法配置对应属性
+```javascript
+$formCreate.maker.time(title,field,value) //type为timerange时 value为array类型
+```
 
 * **inputnumber** 生成数字输入框,别名`number`
 
->   可用`props` ,`validate`, `event`  方法配置对应属性
+```javascript
+$formCreate.maker.number(title,field,value)
+```
 
 * **colorpicker** 生成颜色选择器组件,别名`color`
 
->   可用`props` ,`validate`, `event`  方法配置对应属性
+```javascript
+$formCreate.maker.color(title,field,value)
+```
 
 * **cascader** 生成多级联动组件`
 
->   可用`props` ,`validate`, `event`  方法配置对应属性
+```javascript
+$formCreate.maker.cascader(title,field,value) //value为array类型
+```
 
 * **upload** 生成上传组件`
 
->   可用`props` ,`validate` 方法配置对应属性
+```javascript
+$formCreate.maker.upload(title,field,value)
+```
 
 * **rate** 生成评分组件`
 
->   可用`props` ,`validate`, `event`  方法配置对应属性
+```javascript
+$formCreate.maker.rate(title,field,value)
+```
 
 * **slider** 生成滑块组件`
 
->   可用`props` ,`validate`, `event`  方法配置对应属性
+```javascript
+$formCreate.maker.rate(title,field,value) //props range为true时 value为array类型
+```
 
 * **frame** 生成框架组件`
 
->   可用`props` ,`validate`, `event`  方法配置对应属性
-
+```javascript
+$formCreate.maker.frame(title,field,value)
+```
 
 
 #### $f 实例方法
 
 * **formData()** 获取表单的value
 * **getValue(field)** 获取指定字段的value
+* **model(obj)** 绑定表单组件到obj对象，支持双向数据绑定。结构`{field:{value,rule:{props,validate,options,slot,event}}}`
+>当修改后没有生效时 请尝试用`vm.$set`方法修改
+
 * **changeField(field,value)** 修改指定字段的value
 * **resetFields()** 重置表单
 * **destroy()** 销毁表单

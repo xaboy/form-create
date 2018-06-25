@@ -60,6 +60,7 @@ make.prototype.setValue = function (value) {
 };
 
 make.prototype.model = function (model,field) {
+    if(!field) field = this.rule.field;
     this.rule.model = (v)=>{
 	    model[field] = v;
     };
