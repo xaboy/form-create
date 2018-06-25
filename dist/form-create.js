@@ -1839,7 +1839,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var handler = (0, _handler2.default)({
     init: function init() {
-        this.rule.props.type = !this.rule.props.type ? 'time' : this.rule.props.type;
+        var props = this.rule.props;
+        if (!props.type) props.type = 'time';
+        if (props.confirm === undefined) props.confirm = true;
     },
     toParseValue: function toParseValue(value) {
         var _this = this;

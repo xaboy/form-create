@@ -6,9 +6,9 @@ import makerFactory from "../factory/make";
 
 const handler = handlerFactory({
     init(){
-        this.rule.props.type = !this.rule.props.type
-            ? 'time'
-            : this.rule.props.type;
+    	let props = this.rule.props;
+        if(!props.type) props.type = 'time';
+        if(props.confirm === undefined) props.confirm = true;
     },
     toParseValue(value){
         let parseValue,isArr = isArray(value);
