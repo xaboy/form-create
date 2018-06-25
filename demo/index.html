@@ -46,6 +46,7 @@
         mounted:function(){
 	        window.formData = {};
             let root = document.getElementById('app'),that = this;
+            //frame组件请在线上环境测试
             $f = this.$formCreate(mock,{
                 el:root,
                 onSubmit:function (formData) {
