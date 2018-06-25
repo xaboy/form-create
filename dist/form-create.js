@@ -911,7 +911,8 @@ var handler = (0, _handler3.default)({
         return this.parseValue;
     },
     mounted: function mounted() {
-        this.el = this.vm.$refs[this.refName];
+        this.el = this.vm.$refs[this.refName] || {};
+        if (this.el.fileList === undefined) this.el.fileList = [];
         this.changeParseValue(this.el.fileList);
     },
     push: function push(file) {
