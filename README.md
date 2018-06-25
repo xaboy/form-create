@@ -10,6 +10,10 @@
   <a href="https://www.npmjs.com/package/form-create">
     <img src="https://badge.fury.io/js/form-create.svg" alt="version" />
   </a>
+  <a href="https://www.npmjs.com/package/form-create">
+    <img src="https://img.shields.io/npm/dt/form-create.svg" alt="npm" />
+  </a>
+  <img src="http://img.badgesize.io/https://cdn.jsdelivr.net/gh/xaboy/form-create@1.3.0/dist/form-create.min.js?compression=gzip&amp;label=gzip%20size&amp;style=flat-square" alt="JS gzip size">
 </p>
 
 <p align="center">
