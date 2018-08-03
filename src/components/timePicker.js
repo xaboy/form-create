@@ -31,7 +31,11 @@ const handler = handlerFactory({
         return isDate(date)
             ? dateFormat('hh:mm:ss',date)
             : date;
-    }
+    },
+	mounted() {
+		this.el = this.vm.$refs[this.refName];
+		this.vm.changeTrueData(this.field,this.el.publicStringValue);
+	}
 });
 
 const render = renderFactory({

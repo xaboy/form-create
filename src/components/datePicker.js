@@ -31,7 +31,11 @@ const handler = handlerFactory({
     },
     toTrueValue() {
 	    return this.el.publicStringValue === undefined ? this.value : this.el.publicStringValue;
-    }
+    },
+	mounted() {
+		this.el = this.vm.$refs[this.refName];
+		this.vm.changeTrueData(this.field,this.el.publicStringValue);
+	}
 });
 
 const render = renderFactory({
