@@ -25,7 +25,7 @@ const handler = handlerFactory({
 	    return parseValue;
     },
     toTrueValue() {
-        return this.el.publicStringValue;
+        return this.el.publicStringValue === undefined ? this.value : this.el.publicStringValue;
     },
     getTime(date){
         return isDate(date)

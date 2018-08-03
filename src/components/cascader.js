@@ -10,16 +10,10 @@ const handler = handlerFactory({
         if(!isArray(this.value)) this.value = [];
     },
     toTrueValue(){
-        if(this.el.value === undefined)
-            return this.vm.getFormData(this.field);
-        else
-            return this.el.value;
+        return this.el.value === undefined ? this.vm.getFormData(this.field) : this.el.value;
     },
     toParseValue(value){
-	    if(isArray(value))
-	        return Array.from(value);
-	    else
-            return [];
+        return isArray(value) ? Array.from(value) : [];
     }
 });
 
