@@ -1115,7 +1115,7 @@ var _make = __webpack_require__(0);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var version = '1.3.0';
+var version = '1.3.2';
 
 var maker = (0, _common.getMaker)();
 
@@ -1314,6 +1314,10 @@ var handler = (0, _handler2.default)({
     },
     toParseValue: function toParseValue(value) {
         if ((0, _util.isArray)(value)) return Array.from(value);else return [];
+    },
+    mounted: function mounted() {
+        this.el = this.vm.$refs[this.refName];
+        this.vm.changeTrueData(this.field, this.el.value);
     }
 });
 
@@ -1507,7 +1511,11 @@ var handler = (0, _handler2.default)({
         return parseValue;
     },
     toTrueValue: function toTrueValue() {
-        return this.el.publicStringValue;
+        return this.el.publicStringValue === undefined ? this.value : this.el.publicStringValue;
+    },
+    mounted: function mounted() {
+        this.el = this.vm.$refs[this.refName];
+        this.vm.changeTrueData(this.field, this.el.publicStringValue);
     }
 });
 
@@ -1864,10 +1872,14 @@ var handler = (0, _handler2.default)({
         return parseValue;
     },
     toTrueValue: function toTrueValue() {
-        return this.el.publicStringValue;
+        return this.el.publicStringValue === undefined ? this.value : this.el.publicStringValue;
     },
     getTime: function getTime(date) {
         return (0, _util.isDate)(date) ? (0, _util.dateFormat)('hh:mm:ss', date) : date;
+    },
+    mounted: function mounted() {
+        this.el = this.vm.$refs[this.refName];
+        this.vm.changeTrueData(this.field, this.el.publicStringValue);
     }
 });
 

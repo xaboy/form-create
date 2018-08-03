@@ -4,7 +4,7 @@ import formRender from "../components/form";
 import formCreateComponent from "./formCreateComponent";
 import {make} from "../factory/make";
 
-const version = '1.3.1';
+const version = '1.3.2';
 
 const maker = getMaker();
 
