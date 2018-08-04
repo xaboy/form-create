@@ -17,7 +17,7 @@
 </p>
 
 <p align="center">
-  <b>具有数据收集、校验和提交功能的表单生成器，支持双向数据绑定和事件扩展，组件包含有复选框、单选框、输入框、下拉选择框等表单元素以及省市区三级联动,时间选择,日期选择,颜色选择,滑块,评分,框架,文件/图片上传等功能组件。</b>
+  <b>具有数据收集、校验和提交功能的表单生成器，支持双向数据绑定和事件扩展，组件包含有复选框、单选框、输入框、下拉选择框等表单元素以及省市区三级联动,时间选择,日期选择,颜色选择,滑块,评分,框架,树型,文件/图片上传等功能组件。</b>
 </p>
 <br />
 
@@ -39,6 +39,7 @@
 
 #### 1.3.3 (2018-8-4)
 - 新增 增加col规则,设置组件的布局
+- 新增 树型组件
 
 #### 1.3.2 (2018-8-3)
 - 修复 多级联动,时间,日期组件初始化值的BUG
@@ -373,7 +374,8 @@ $formCreate.maker.frame(title,field,value)
 * **labelWidth**	表单域标签的的宽度,类型Number,默认为150
 
 
-## rules 表单元素规则
+## rules 表单组件规则
+> 支持hidden、input、inputNumber、radio、rate、select、slider、switch、cascader、checkbox、colorPicker、datePicker、timePicker、frame、tree
 
 #### hidden 隐藏字段
 
@@ -1214,6 +1216,52 @@ FrameRule :
     }
 ```
 
+
+#### Tree 树形组件
+
+##### data属性数据结构
+* **id**	id**最终返回值,必填且唯一**,类型为：String,Number
+* **title**	标题,类型为：String,Element String
+* **expand**	是否展开直子节点,类型为：Boolean,默认为false
+* **disabled**	禁掉响应,类型为：Boolean,默认为false
+* **disableCheckbox**	禁掉 checkbox,类型为：Boolean,默认为false
+* **selected**	是否选中子节点,类型为：	Boolean,默认为false
+* **checked**	是否勾选(如果勾选，子节点也会全部勾选),类型为：Boolean,默认为false
+* **children**	子节点属性数组,类型为：	Array `[data,data,...]`
+
+
+maker快速生成:
+
+```javascript
+maker.tree('权限','rule',[]).props({
+        data:[], //数据结构参考上面
+        type:'checked'
+})
+```
+
+原始参数:
+
+```javascript
+TreeRule :
+{
+        type:"tree",
+        title:"权限",
+        field:"rule",
+        value:[],
+        props:{
+            data:[],//可嵌套的节点属性的数组，生成 tree 的数据
+            type:'checked',//类型 支持checked和selected
+            multiple:false, //是否支持多选,当`type=selected`并且`multiple=false`,值为String或Number类型，其他情况为Array类型
+            showCheckbox:true, //是否显示多选框
+            emptyText:'暂无数据' //没有数据时的提示
+        },
+        event:{
+            'select-change':()=>{console.log('select-change')}, //点击树节点时触发
+            'check-change':()=>{console.log('check-change')}, //点击复选框时触发
+            'toggle-expand':()=>{console.log('toggle-expand')}, //展开和收起子列表时触发
+        }
+    }
+```
 
 ## 全局配置 createOptions
 

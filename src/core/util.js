@@ -22,6 +22,14 @@ const isNumeric = (n)=>{
 	return n !== '' && !isNaN(parseFloat(n)) && isFinite(n);
 };
 
+const TA = (a)=>{
+	return isArray(a) ? a : [a];
+};
+
+const ATS = (a)=>{
+	return isArray(a) ? (a[0] || '') : a;
+};
+
 const isElement = (arg) => typeof arg === 'object' && arg !== null && arg.nodeType === 1 && !isPlainObject(arg);
 
 const deepExtend = function (origin, target = {}) {
@@ -86,5 +94,6 @@ export {
 	isElement,
 	uniqueId,
 	dateFormat,
-	isNumeric
+	isNumeric,
+	ATS,TA
 }

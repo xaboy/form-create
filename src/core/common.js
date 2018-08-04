@@ -14,6 +14,7 @@ import uploadComponent from '../components/upload';
 import rateComponent from '../components/rate';
 import sliderComponent from '../components/slider'
 import frameComponent from '../components/frame';
+import treeComponent from '../components/tree';
 
 const componentList = {
     hidden: hiddenComponent,
@@ -30,7 +31,8 @@ const componentList = {
     cascader: cascaderComponent,
     rate:rateComponent,
     slider:sliderComponent,
-    frame:frameComponent
+    frame:frameComponent,
+    tree:treeComponent
 };
 
 
