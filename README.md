@@ -56,7 +56,7 @@
 - 新增 `option.mounted`事件 ，当组件加载完成后触发
 - 修复 一些BUG
 
-## 示例 [代码](https://github.com/xaboy/form-create/blob/master/demo/mock.js) 
+## 示例 [代码](https://github.com/xaboy/form-create/blob/master/demo/index.html) | [规则](https://github.com/xaboy/form-create/blob/master/demo/mock.js) 
 
 ![https://raw.githubusercontent.com/xaboy/form-create/dev/images/sample110.jpg](https://raw.githubusercontent.com/xaboy/form-create/dev/images/sample110.jpg)
 
