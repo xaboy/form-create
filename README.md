@@ -33,13 +33,15 @@
 - 支持 双向数据绑定!!!
 - 支持 全局方法快速创建表单
 - 新增 `option.mounted`事件，当组件加载完成后触发
-- 修复 一些BUG
+- 新增 col局部规则
+- 新增 树型组件
 
 ## 更新说明 **建议保持在最新版本**
 
 #### 1.3.3 (2018-8-4)
 - 新增 增加col规则,设置组件的布局
 - 新增 树型组件
+- 新增 `$f.set`方法
 
 #### 1.3.2 (2018-8-3)
 - 修复 多级联动,时间,日期组件初始化值的BUG
@@ -53,23 +55,6 @@
 - 支持 使用`window.formCreate`全局方法快速创建表单，也可以在Vue内部使用`this.$formCreate`
 - 新增 `option.mounted`事件 ，当组件加载完成后触发
 - 修复 一些BUG
-
-#### 1.2.3 (2018-6-13)
-- 新增 frame组件,可通过iframe扩展功能,例如:在已有素材库中选择图片,文件等,图标等定制功能扩展
-- 修改 Upload组件type为file时默认不可预览
-
-#### 1.2.2 (2018-5-28)
-- 修复 Bug
-- 修复 显示问题
-
-#### 1.2.1 (2018-5-27)
-- 内部结构优化
-- 新增 规则生成器`$formCreate.maker`
-- 新增 滑块、评分组件
-- 优化 文件上传组件
-- 修复 上传组件无法验证等问题
-> 感谢 [wxxtqk](https://github.com/wxxtqk) | [williamBoss](https://github.com/williamBoss)
-
 
 ## 示例 [代码](https://github.com/xaboy/form-create/blob/master/demo/mock.js) 
 
@@ -269,8 +254,7 @@ $formCreate.maker.frame(title,field,value)
 
 * **formData()** 获取表单的value
 * **getValue(field)** 获取指定字段的value
-* **model(obj)** 绑定表单组件到obj对象，支持双向数据绑定。结构`{field:{value,rule:{props,validate,options,slot,event}}}`
->当修改后没有生效时 请尝试用`vm.$set`方法修改
+* **model(obj)** 绑定表单组件到obj对象，支持双向数据绑定。结构`{field:{value,rule:{props,validate,options,slot,event}}}` **当直接修改后没有生效时 请尝试用`set`方法修改**
 
 * **set(node,field,value)** 用于表单生成后,修改组件的规则,使用方法类似`Vue.$set`方法. 例如: `set(field.rule.col,'span',12)`;
 * **changeField(field,value)** 修改指定字段的value
@@ -373,9 +357,11 @@ $formCreate.maker.frame(title,field,value)
 * **lg**	≥1200px 响应式栅格，可为栅格数或一个包含其他属性的对象,类型Number,Object
 * **labelWidth**	表单域标签的的宽度,类型Number,默认为150
 
+详细参考:[iview布局](http://v2.iviewui.com/components/layout)
+
 
 ## rules 表单组件规则
-> 支持hidden、input、inputNumber、radio、rate、select、slider、switch、cascader、checkbox、colorPicker、datePicker、timePicker、frame、tree
+> 支持hidden、input、inputNumber、radio、rate、select、slider、switch、cascader、checkbox、colorPicker、datePicker、timePicker、frame、tree组件
 
 #### hidden 隐藏字段
 
@@ -424,6 +410,7 @@ inputRule :
         field:"goods_name",//必填!
         //input值
         value:"iphone 7",
+        //设置布局规则
         col:{
         	span:12,
         	labelWidth:150
@@ -1220,7 +1207,7 @@ FrameRule :
 #### Tree 树形组件
 
 ##### data属性数据结构
-* **id**	id**最终返回值,必填且唯一**,类型为：String,Number
+* **id**	**id为最终返回值,必填且唯一**,类型为：String,Number
 * **title**	标题,类型为：String,Element String
 * **expand**	是否展开直子节点,类型为：Boolean,默认为false
 * **disabled**	禁掉响应,类型为：Boolean,默认为false
