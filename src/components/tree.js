@@ -1,10 +1,10 @@
 import handlerFactory from "../factory/handler";
 import renderFactory from "../factory/render";
-import {isArray, TA, uniqueId} from "../core/util";
+import {deepExtend, isArray, TA} from "../core/util";
 import makerFactory from "../factory/make";
-import {render as uploadRender} from '../components/upload';
 const handler = handlerFactory({
 	init(){
+		this.rule.props = deepExtend(Object.create(null),this.rule.props);
 		let props = this.rule.props;
 		if(props.data === undefined) props.data = [];
 		if(props.type === undefined) props.type = 'checked';

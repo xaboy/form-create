@@ -396,11 +396,11 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _cvm = __webpack_require__(6);
+var _cvm = __webpack_require__(5);
 
 var _cvm2 = _interopRequireDefault(_cvm);
 
-var _props = __webpack_require__(7);
+var _props = __webpack_require__(6);
 
 var _props2 = _interopRequireDefault(_props);
 
@@ -509,7 +509,7 @@ var _hidden = __webpack_require__(20);
 
 var _hidden2 = _interopRequireDefault(_hidden);
 
-var _upload = __webpack_require__(5);
+var _upload = __webpack_require__(7);
 
 var _upload2 = _interopRequireDefault(_upload);
 
@@ -746,6 +746,169 @@ exports.getMaker = getMaker;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+
+var _util = __webpack_require__(1);
+
+var cvm = function cvm() {
+    var createElement = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : (0, _util.throwIfMissing)('缺少参数:createElement');
+
+    this.$h = createElement;
+};
+
+var _instance = null;
+
+var vm = null;
+
+cvm.instance = function (createElement) {
+    if (false === _instance instanceof cvm) _instance = new cvm(createElement);
+    return _instance;
+};
+
+cvm.setVm = function ($vm) {
+    vm = $vm;
+};
+cvm.clearVm = function () {
+    vm = null;
+};
+
+cvm.prototype = {
+    make: function make(nodeName, data, VNodeFn) {
+        if ((0, _util.isString)(data)) data = { domProps: { innerHTML: data } };
+        var Node = this.$h(nodeName, data, this.getVNode(VNodeFn));
+        if (vm !== null) Node.context = vm;
+        return Node;
+    },
+    getVNode: function getVNode(VNode) {
+        return (0, _util.isFunction)(VNode) ? VNode() : VNode;
+    }
+};
+
+var nodes = { modal: 'Modal', progress: 'i-progress', button: 'i-button', icon: 'Icon', span: 'span', slider: 'Slider', rate: 'Rate', upload: 'Upload', cascader: 'Cascader', colorPicker: 'Color-Picker', timePicker: 'Time-Picker', datePicker: 'Date-Picker', 'switch': 'i-switch', option: 'i-option', select: 'i-select', checkbox: 'Checkbox', checkboxGroup: 'Checkbox-Group', radio: 'Radio', radioGroup: 'Radio-Group', inputNumber: 'Input-Number', input: 'i-input', formItem: 'Form-Item', form: 'i-form', col: 'i-col', row: 'row', tree: 'Tree' };
+
+Object.keys(nodes).forEach(function (k) {
+    cvm.prototype[k] = function (data, VNodeFn) {
+        return this.make(nodes[k], data, VNodeFn);
+    };
+});
+
+exports.default = cvm;
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _util = __webpack_require__(1);
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
+var props = function props() {
+    this._data = this._initData();
+    this._prev = null;
+};
+
+var _instance = null;
+
+props.instance = function () {
+    if (false === _instance instanceof props) _instance = new props();
+    return _instance;
+};
+
+props.prototype = {
+    _initData: function _initData() {
+        return {
+            class: {},
+            style: {},
+            attrs: {},
+            props: {},
+            domProps: {},
+            on: {},
+            nativeOn: {},
+            directives: [],
+            scopedSlots: {},
+            slot: undefined,
+            key: undefined,
+            ref: undefined
+        };
+    },
+    class: function _class() {
+        var _this = this;
+
+        var classList = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : (0, _util.throwIfMissing)('缺少参数:classList');
+        var status = arguments[1];
+
+        if ((0, _util.isArray)(classList)) {
+            classList.map(function (cls) {
+                _this._data.class[cls.toString()] = true;
+            });
+        } else if ((0, _util.isPlainObject)(classList)) {
+            this._data.class = (0, _util.assign)({}, this._data.class, classList);
+        } else {
+            this._data.class[classList.toString()] = status === undefined ? true : status;
+        }
+        return this;
+    },
+    directives: function directives() {
+        var _directives = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : (0, _util.throwIfMissing)('缺少参数:directives');
+
+        this._data.directives = _util.concat.call.apply(_util.concat, _toConsumableArray(this._data.directives).concat(_toConsumableArray(_directives)));
+        return this;
+    },
+    init: function init() {
+        this._data = this._initData();
+    },
+    get: function get() {
+        this._prev = this._data;
+        this.init();
+        return this._prev;
+    },
+    getPrev: function getPrev() {
+        return this._prev;
+    }
+};
+
+var keyList = ['ref', 'key', 'slot'];
+var objList = ['scopedSlots', 'nativeOn', 'on', 'domProps', 'props', 'attrs', 'style'];
+
+keyList.forEach(function (key) {
+    props.prototype[key] = function (val) {
+        this._data[key] = val;
+        return this;
+    };
+});
+
+objList.forEach(function (key) {
+    props.prototype[key] = function () {
+        var obj = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : (0, _util.throwIfMissing)('缺少参数:' + key);
+        var val = arguments[1];
+
+        if ((0, _util.isPlainObject)(obj)) {
+            this._data[key] = (0, _util.assign)({}, this._data[key], obj);
+        } else {
+            this._data[key][obj.toString()] = val;
+        }
+        return this;
+    };
+});
+
+exports.default = props;
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
 exports.make = exports.render = exports.handler = undefined;
 
 var _handler2 = __webpack_require__(2);
@@ -940,169 +1103,6 @@ exports.default = component;
 exports.handler = handler;
 exports.render = render;
 exports.make = make;
-
-/***/ }),
-/* 6 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _util = __webpack_require__(1);
-
-var cvm = function cvm() {
-    var createElement = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : (0, _util.throwIfMissing)('缺少参数:createElement');
-
-    this.$h = createElement;
-};
-
-var _instance = null;
-
-var vm = null;
-
-cvm.instance = function (createElement) {
-    if (false === _instance instanceof cvm) _instance = new cvm(createElement);
-    return _instance;
-};
-
-cvm.setVm = function ($vm) {
-    vm = $vm;
-};
-cvm.clearVm = function () {
-    vm = null;
-};
-
-cvm.prototype = {
-    make: function make(nodeName, data, VNodeFn) {
-        if ((0, _util.isString)(data)) data = { domProps: { innerHTML: data } };
-        var Node = this.$h(nodeName, data, this.getVNode(VNodeFn));
-        if (vm !== null) Node.context = vm;
-        return Node;
-    },
-    getVNode: function getVNode(VNode) {
-        return (0, _util.isFunction)(VNode) ? VNode() : VNode;
-    }
-};
-
-var nodes = { modal: 'Modal', progress: 'i-progress', button: 'i-button', icon: 'Icon', span: 'span', slider: 'Slider', rate: 'Rate', upload: 'Upload', cascader: 'Cascader', colorPicker: 'Color-Picker', timePicker: 'Time-Picker', datePicker: 'Date-Picker', 'switch': 'i-switch', option: 'i-option', select: 'i-select', checkbox: 'Checkbox', checkboxGroup: 'Checkbox-Group', radio: 'Radio', radioGroup: 'Radio-Group', inputNumber: 'Input-Number', input: 'i-input', formItem: 'Form-Item', form: 'i-form', col: 'i-col', row: 'row', tree: 'Tree' };
-
-Object.keys(nodes).forEach(function (k) {
-    cvm.prototype[k] = function (data, VNodeFn) {
-        return this.make(nodes[k], data, VNodeFn);
-    };
-});
-
-exports.default = cvm;
-
-/***/ }),
-/* 7 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _util = __webpack_require__(1);
-
-function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
-
-var props = function props() {
-    this._data = this._initData();
-    this._prev = null;
-};
-
-var _instance = null;
-
-props.instance = function () {
-    if (false === _instance instanceof props) _instance = new props();
-    return _instance;
-};
-
-props.prototype = {
-    _initData: function _initData() {
-        return {
-            class: {},
-            style: {},
-            attrs: {},
-            props: {},
-            domProps: {},
-            on: {},
-            nativeOn: {},
-            directives: [],
-            scopedSlots: {},
-            slot: undefined,
-            key: undefined,
-            ref: undefined
-        };
-    },
-    class: function _class() {
-        var _this = this;
-
-        var classList = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : (0, _util.throwIfMissing)('缺少参数:classList');
-        var status = arguments[1];
-
-        if ((0, _util.isArray)(classList)) {
-            classList.map(function (cls) {
-                _this._data.class[cls.toString()] = true;
-            });
-        } else if ((0, _util.isPlainObject)(classList)) {
-            this._data.class = (0, _util.assign)({}, this._data.class, classList);
-        } else {
-            this._data.class[classList.toString()] = status === undefined ? true : status;
-        }
-        return this;
-    },
-    directives: function directives() {
-        var _directives = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : (0, _util.throwIfMissing)('缺少参数:directives');
-
-        this._data.directives = _util.concat.call.apply(_util.concat, _toConsumableArray(this._data.directives).concat(_toConsumableArray(_directives)));
-        return this;
-    },
-    init: function init() {
-        this._data = this._initData();
-    },
-    get: function get() {
-        this._prev = this._data;
-        this.init();
-        return this._prev;
-    },
-    getPrev: function getPrev() {
-        return this._prev;
-    }
-};
-
-var keyList = ['ref', 'key', 'slot'];
-var objList = ['scopedSlots', 'nativeOn', 'on', 'domProps', 'props', 'attrs', 'style'];
-
-keyList.forEach(function (key) {
-    props.prototype[key] = function (val) {
-        this._data[key] = val;
-        return this;
-    };
-});
-
-objList.forEach(function (key) {
-    props.prototype[key] = function () {
-        var obj = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : (0, _util.throwIfMissing)('缺少参数:' + key);
-        var val = arguments[1];
-
-        if ((0, _util.isPlainObject)(obj)) {
-            this._data[key] = (0, _util.assign)({}, this._data[key], obj);
-        } else {
-            this._data[key][obj.toString()] = val;
-        }
-        return this;
-    };
-});
-
-exports.default = props;
 
 /***/ }),
 /* 8 */
@@ -2119,7 +2119,7 @@ var _make = __webpack_require__(0);
 
 var _make2 = _interopRequireDefault(_make);
 
-var _upload = __webpack_require__(5);
+var _upload = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -2360,8 +2360,6 @@ var _make = __webpack_require__(0);
 
 var _make2 = _interopRequireDefault(_make);
 
-var _upload = __webpack_require__(5);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
@@ -2370,6 +2368,7 @@ var handler = (0, _handler3.default)({
 	init: function init() {
 		var _this = this;
 
+		this.rule.props = (0, _util.deepExtend)(Object.create(null), this.rule.props);
 		var props = this.rule.props;
 		if (props.data === undefined) props.data = [];
 		if (props.type === undefined) props.type = 'checked';
@@ -2497,11 +2496,11 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _cvm = __webpack_require__(6);
+var _cvm = __webpack_require__(5);
 
 var _cvm2 = _interopRequireDefault(_cvm);
 
-var _props = __webpack_require__(7);
+var _props = __webpack_require__(6);
 
 var _props2 = _interopRequireDefault(_props);
 
