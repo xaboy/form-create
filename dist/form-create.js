@@ -2460,8 +2460,8 @@ var render = (0, _render2.default)({
 		var _handler = this.handler,
 		    rule = _handler.rule,
 		    refName = _handler.refName,
-		    value = _handler.value,
 		    field = _handler.field,
+		    unique = _handler.unique,
 		    props = this.props.on(rule.event).on({
 			'on-select-change': function onSelectChange(v) {
 				_this4.vm.changeTrueData(field, _this4.handler.toValue());
@@ -2471,7 +2471,7 @@ var render = (0, _render2.default)({
 				_this4.vm.changeTrueData(field, _this4.handler.toValue());
 				rule.event['on-check-change'] && rule.event['on-check-change'](v);
 			}
-		}).props(rule.props).ref(refName);
+		}).props(rule.props).ref(refName).key("fip" + unique);
 
 		return [this.cvm.tree(props.get())];
 	}

@@ -94,7 +94,7 @@ const handler = handlerFactory({
 
 const render = renderFactory({
 	parse(){
-		let {rule,refName,value,field} = this.handler,props = this.props.on(rule.event).on({
+		let {rule,refName,field,unique} = this.handler,props = this.props.on(rule.event).on({
 			'on-select-change':(v)=>{
 				this.vm.changeTrueData(field,this.handler.toValue());
 				rule.event['on-select-change'] && rule.event['on-select-change'](v);
@@ -103,7 +103,7 @@ const render = renderFactory({
 				this.vm.changeTrueData(field,this.handler.toValue());
 				rule.event['on-check-change'] && rule.event['on-check-change'](v);
 			},
-		}).props(rule.props).ref(refName);
+		}).props(rule.props).ref(refName).key(`fip${unique}`);
 		return [this.cvm.tree(props.get())];
 	}
 });
