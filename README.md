@@ -37,7 +37,10 @@
 
 ## 更新说明 **建议保持在最新版本**
 
-#### 1.3.1 (2018-8-3)
+#### 1.3.3 (2018-8-4)
+- 新增 增加col规则,设置组件的布局
+
+#### 1.3.2 (2018-8-3)
 - 修复 多级联动,时间,日期组件初始化值的BUG
 
 #### 1.3.1 (2018-6-25)
@@ -160,7 +163,7 @@ new Vue({
 
 >   **除hidden外,其他配置方式全部相同.详细参考[表单元素规则](#rules-表单元素规则)**
 >
->   **props,event,slot传入参数为对象,例({key:value,...})**
+>   **props,event,slot,col传入参数为对象,例({key:value,...})**
 >
 >   **validate,options传入参数为数组,例([options,options,..])**
 >
@@ -268,6 +271,7 @@ $formCreate.maker.frame(title,field,value)
 * **model(obj)** 绑定表单组件到obj对象，支持双向数据绑定。结构`{field:{value,rule:{props,validate,options,slot,event}}}`
 >当修改后没有生效时 请尝试用`vm.$set`方法修改
 
+* **set(node,field,value)** 用于表单生成后,修改组件的规则,使用方法类似`Vue.$set`方法. 例如: `set(field.rule.col,'span',12)`;
 * **changeField(field,value)** 修改指定字段的value
 * **resetFields()** 重置表单
 * **destroy()** 销毁表单
@@ -352,6 +356,23 @@ $formCreate.maker.frame(title,field,value)
 * **btn.loading()** 让表单提交按钮进入loading状态 
 * **btn.finish()** 让表单提交按钮恢复正常状态 
 
+
+## col布局规则
+> 所有组件均支持col规则,配置方法`rule.col = {...}`;
+
+* **span**	栅格的占位格数，可选值为0~24的整数，为 0 时，相当于display:none,类型Number,String
+* **order**	栅格的顺序，在flex布局模式下有效,类型Number,String
+* **offset**	栅格左侧的间隔格数，间隔内不可以有栅格,类型Number,String
+* **push**	栅格向右移动格数,类型Number,String
+* **pull**	栅格向左移动格数,类型Number,String
+* **className**	自定义的class名称	String
+* **xs**	<768px 响应式栅格，可为栅格数或一个包含其他属性的对象`{ span: 5, offset: 1 }`,类型Number,Object
+* **sm**	≥768px 响应式栅格，可为栅格数或一个包含其他属性的对象,类型Number,Object
+* **md**	≥992px 响应式栅格，可为栅格数或一个包含其他属性的对象,类型Number,Object
+* **lg**	≥1200px 响应式栅格，可为栅格数或一个包含其他属性的对象,类型Number,Object
+* **labelWidth**	表单域标签的的宽度,类型Number,默认为150
+
+
 ## rules 表单元素规则
 
 #### hidden 隐藏字段
@@ -374,7 +395,6 @@ hiddenRule:
 }
 ```
 
-
 #### input 输入框
 
 [规则说明](https://xaboy.gitbooks.io/form-create/content/biao-dan-yuan-su/input.html)
@@ -387,7 +407,7 @@ $formCreate.maker.input("商品名称","goods_name","iphone 7").props({
      placeholder: "请输入商品名称"
 }).validate([
      { required: true, message: '请输入goods_name', trigger: 'blur' },
-]);
+]).col({span:12});
 ```
 
 原始参数:
@@ -402,6 +422,10 @@ inputRule :
         field:"goods_name",//必填!
         //input值
         value:"iphone 7",
+        col:{
+        	span:12,
+        	labelWidth:150
+        },
         props: {
             
             //输入框类型，可选值为 text、password、textarea、url、email、date
@@ -1210,6 +1234,19 @@ FrameRule :
         showMessage:true,
         //原生的 autocomplete 属性，可选值为 off 或 on
         autocomplete:'off',
+    },
+    //row布局配置
+    row:{
+    	//栅格间距，单位 px，左右平分
+        gutter:0,
+        //布局模式，可选值为flex或不选，在现代浏览器下有效
+        type:undefined,
+        //flex 布局下的垂直对齐方式，可选值为top、middle、bottom
+        align:undefined,
+        //flex 布局下的水平排列方式，可选值为start、end、center、space-around、space-between
+        justify:undefined,
+        //自定义的class名称
+        className:undefined
     },
     //文件上传全局配置
     upload:{

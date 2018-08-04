@@ -1,6 +1,6 @@
 {
   "name": "form-create",
-  "version": "1.3.2",
+  "version": "1.3.3",
   "description": "具有数据收集、校验和提交功能的表单生成器，支持双向数据绑定和事件扩展，组件包含有复选框、单选框、输入框、下拉选择框等表单元素以及省市区三级联动,时间选择,日期选择,颜色选择,滑块,评分,框架,文件/图片上传等功能组件。",
   "main": "dist/form-create.js",
   "module": "dist/form-create.js",

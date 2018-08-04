@@ -50,7 +50,7 @@ const formCreateComponent = function (fComponent) {
                 let handler = fComponent.handlers[field];
 	            handler.model && handler.model(this.getTrueData(field));
                 fComponent.addHandlerWatch(handler);
-	            handler.mounted();
+	            handler.mounted_();
             });
 	        fComponent.options.mounted && fComponent.options.mounted();
         }

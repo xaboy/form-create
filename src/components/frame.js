@@ -68,6 +68,7 @@ const render = renderFactory({
             value:this.handler.parseValue.toString(),
             icon:this._props.icon,
             readonly:true,
+	        clearable:true
         }).on('on-click',()=>{
             this.showModel();
         }).key('ifit'+unique).style({display:hidden === true ? 'none' : 'inline-block'}).get();

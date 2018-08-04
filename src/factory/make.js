@@ -18,12 +18,14 @@ const baseRule = ()=>{
         validate:[],
         options:[],
         slot:{},
+        col:{}
     };
 };
 
 
 const make = function (rule,attrs) {
     this.rule = rule;
+    attrs.push('col');
     attrs.forEach((attr)=>{
         this[attr] = attrHandlers[attr];
     });
@@ -31,7 +33,7 @@ const make = function (rule,attrs) {
 
 const attrHandlers = {};
 
-const objAttrs = ['props','event','slot'];
+const objAttrs = ['props','event','slot','col'];
 
 objAttrs.forEach((attr)=>{
     attrHandlers[attr] = function (opt) {

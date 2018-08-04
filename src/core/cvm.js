@@ -34,7 +34,7 @@ cvm.prototype = {
     }
 };
 
-const nodes = {modal:'Modal',progress:'i-progress',button:'i-button',icon:'Icon',span:'span',slider:'Slider',rate:'Rate',upload:'Upload',cascader:'Cascader',colorPicker:'Color-Picker',timePicker:'Time-Picker',datePicker:'Date-Picker','switch':'i-switch',option:'i-option',select:'i-select',checkbox:'Checkbox',checkboxGroup:'Checkbox-Group',radio:'Radio',radioGroup:'Radio-Group',inputNumber:'Input-Number',input:'i-input',formItem:'Form-Item',form:'i-form'};
+const nodes = {modal:'Modal',progress:'i-progress',button:'i-button',icon:'Icon',span:'span',slider:'Slider',rate:'Rate',upload:'Upload',cascader:'Cascader',colorPicker:'Color-Picker',timePicker:'Time-Picker',datePicker:'Date-Picker','switch':'i-switch',option:'i-option',select:'i-select',checkbox:'Checkbox',checkboxGroup:'Checkbox-Group',radio:'Radio',radioGroup:'Radio-Group',inputNumber:'Input-Number',input:'i-input',formItem:'Form-Item',form:'i-form',col:'i-col',row:'row'};
 
 Object.keys(nodes).forEach((k)=>{
 	cvm.prototype[k] = function (data,VNodeFn){

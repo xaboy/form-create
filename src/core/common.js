@@ -51,6 +51,13 @@ const getConfig = function () {
             showMessage:true,
             autocomplete:'off',
         },
+        row:{
+	        gutter:0,
+	        type:undefined,
+	        align:undefined,
+	        justify:undefined,
+	        className:undefined
+        },
         upload:{
             beforeUpload:()=>{},
             onProgress:(event, file, fileList)=>{},
@@ -200,6 +207,9 @@ const getGlobalApi = function (fComponent) {
         },
         closeModal:()=>{
             vm.$Modal.remove();
+        },
+        set:(node,field,value)=>{
+            vm.$set(node,field,value);
         }
     };
 };

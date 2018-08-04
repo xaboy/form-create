@@ -1,4 +1,4 @@
-import {isArray, uniqueId} from "../core/util";
+import {isArray, isNumeric, uniqueId} from "../core/util";
 
 const handlerFactory = function (prototypeExtend = {}) {
     let $h = function (vm, rule) {
@@ -10,13 +10,17 @@ const handlerFactory = function (prototypeExtend = {}) {
     return $h;
 };
 
-const handler = function (vm,{model,field,type,title = '',options=[],props={},validate = [],event = {},value = '',slot = {}}) {
+const handler = function (vm,{model,field,type,title = '',options=[],props={},validate = [],event = {},value = '',slot = {},col = {}}) {
     field = field.toString();
     this.type = type;
     this.model = model;
     this.value = value;
+    if(isNumeric(col)){
+    	col = {span:col};
+    }else if(col.span === undefined)
+    	col.span = 24;
     this.rule = {
-        title, options, props,slot,
+        title, options, props,slot,col,
         validate: isArray(validate) ? validate : [validate],
         event: Object.keys(event).reduce(function (initial,eventName) {
             initial[`on-${eventName}`] = event[eventName];
@@ -54,8 +58,12 @@ handler.prototype = {
 	watchTrueValue(n){
 		this.vm.changeFormData(this.field,this.toParseValue(n.value));
 	},
-    mounted(){
+	mounted(){
+
+	},
+	mounted_(){
         this.el = this.vm.$refs[this.refName];
+        this.mounted();
     }
 };
 

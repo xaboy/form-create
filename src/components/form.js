@@ -28,14 +28,15 @@ render.prototype = {
         cvm.setVm(vm);
         let unique = this.unique,propsData = this.props.props(Object.assign({},this.options.form,this.form)).ref(this.refName).class('form-create',true).key(unique).get(),
             vn = this.renderSort.map((field)=>{
-                let render = this.renders[field],{key,rule:{type}} = render.handler;
+                let render = this.renders[field],{key,type} = render.handler;
+
                 if(type !== 'hidden')
                     return this.makeFormItem(render.handler,render.parse(),`fItem${key}${unique}`);
 
             });
         if(false !== this.options.submitBtn)
             vn.push(this.makeSubmitBtn(unique));
-        return this.cvm.form(propsData,vn);
+        return this.cvm.form(propsData,[this.cvm.row({props:this.options.row||{}},vn)]);
     },
     makeFormItem({rule,refName,unique,field},VNodeFn){
         let propsData = this.props.props({
@@ -43,8 +44,10 @@ render.prototype = {
             label: rule.title,
             labelFor:refName,
             rules: rule.validate,
+	        labelWidth:rule.col.labelWidth,
+	        required:rule.props.required
         }).key(unique).get();
-        return this.cvm.formItem(propsData,VNodeFn);
+        return this.cvm.col({props:rule.col},[this.cvm.formItem(propsData,VNodeFn)]);
     },
     makeSubmitBtn(unique){
         return this.cvm.button({key:`fbtn${unique}`,props:this.vm.buttonProps,on:{"click":()=>{

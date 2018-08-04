@@ -18,6 +18,10 @@ const isString = (arg) => toString.call(arg) === '[object String]';
 
 const isArray = Array.isArray;
 
+const isNumeric = (n)=>{
+	return n !== '' && !isNaN(parseFloat(n)) && isFinite(n);
+};
+
 const isElement = (arg) => typeof arg === 'object' && arg !== null && arg.nodeType === 1 && !isPlainObject(arg);
 
 const deepExtend = function (origin, target = {}) {
@@ -67,6 +71,7 @@ const dateFormat = (fmt, date = new Date) => {
 	return fmt;
 };
 
+
 export {
 	concat,
 	assign,
@@ -80,5 +85,6 @@ export {
 	deepExtend,
 	isElement,
 	uniqueId,
-	dateFormat
+	dateFormat,
+	isNumeric
 }

@@ -25,7 +25,6 @@ const handler = handlerFactory({
         return this.parseValue;
     },
     mounted() {
-        this.el = this.vm.$refs[this.refName] || {};
         if(this.el.fileList === undefined) this.el.fileList = [];
         this.changeParseValue(this.el.fileList);
     },
