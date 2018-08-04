@@ -46,7 +46,8 @@ window.mock = [
     //
     // },
     maker.input('商品名称','goods_name','iphone').props({
-        placeholder:'请输入商品名称'
+        placeholder:'请输入商品名称',
+        width:300
     }).validate([
         { required: true, message: '请输入商品名称', trigger: 'blur' }
     ]).event({
@@ -98,7 +99,7 @@ window.mock = [
         {value:"0",label:"不包邮",disabled:false},
         {value:"1",label:"包邮",disabled:false},
         {value:"2",label:"未知",disabled:true},
-    ]),
+    ]).props({required:true}).col({span:8}),
     // {
     //     type:"radio",
     //     title:"是否包邮",//label名称
@@ -125,7 +126,7 @@ window.mock = [
         {value:"2",label:"方便",disabled:false},
         {value:"3",label:"实用",disabled:false},
         {value:"4",label:"有效",disabled:false},
-    ]),
+    ]).col({span:8}),
     // {
     //     type:"checkbox",
     //     title:"标签",//label名称
@@ -154,7 +155,8 @@ window.mock = [
     }).props({
         "trueValue":"1",
         "falseValue":"0",
-    }),
+	    required:true,
+    }).col({span:8,labelWidth:100}),
     // {
     //     type:"switch",
     //     title:"是否上架",//label名称
@@ -221,7 +223,7 @@ window.mock = [
         // "multiple":true,
 	    "startDate":new Date(),
         "showWeekNumbers":true
-    }),
+    }).col({span:12}),
     // {
     //     type: "DatePicker",
     //     field: "section_day",
@@ -252,7 +254,7 @@ window.mock = [
     maker.time('活动时间','section_time',['01:01:01', new Date()]).props({
         "type":"timerange",
         "placeholder":"请选择活动时间"
-    }),
+    }).col({span:12}),
     // {
     //     type: "TimePicker",
     //     field: "section_time",
@@ -283,7 +285,7 @@ window.mock = [
     // },
     maker.number('排序','sort',0).props({
 	    precision:2
-    }),
+    }).col({span:12}),
     // {
     //     type: "InputNumber",
     //     field: "sort",
@@ -313,7 +315,7 @@ window.mock = [
         "format":"hex"
     }).props({
         "hue": true
-    }),
+    }).col({span:12}),
     // {
     //     type: "ColorPicker",
     //     field: "color",
@@ -339,7 +341,9 @@ window.mock = [
         .props({
             "count": 10,
             "allowHalf": false
-        }).validate({required:true,type:'number',min:3, message: '请大于3颗星',trigger:'change'}),
+        })
+	    .validate({required:true,type:'number',min:3, message: '请大于3颗星',trigger:'change'})
+	    .col({span:12}),
     // {
     //     type:"rate",
     //     field:"rate",
@@ -365,7 +369,7 @@ window.mock = [
         "max": 100,
         "range": true,
         "showTip":"always"
-    }),
+    }).col({span:12}),
     // {
     //     type:"slider",
     //     field:"slider",
@@ -480,7 +484,7 @@ window.mock = [
     ]).event({
         remove:()=>{alert('不能删除');return false;},
         open:console.log
-    })
+    }),
     // ,{
     //     type:"frame",
     //     title:"素材",
@@ -510,7 +514,56 @@ window.mock = [
     //     validate:[
     //         {required:true, type: 'array', min: 5, message: '请选择5张图片', trigger: 'change'}
     //     ],
-    // }
+    // },
+	maker.tree('权限','tree',[]).props({
+        type:'checked',
+		multiple:true,
+		showCheckbox:true,
+		emptyText:'暂无数据',
+		data:[
+			{
+				title: 'parent 1',
+				expand: true,
+				selected: false,
+				id:1,
+				children: [
+					{
+						title: 'parent 1-1',
+						expand: true,
+						id:2,
+						children: [
+							{
+								title: 'leaf 1-1-1',
+								disabled: true,
+								id:11
+							},
+							{
+								title: 'leaf 1-1-2',
+                                selected:true,
+								id:12
+							}
+						]
+					},
+					{
+						title: 'parent 1-2',
+						expand: true,
+						id:3,
+						children: [
+							{
+								title: 'leaf 1-2-1',
+								checked: true,
+								id:13,
+							},
+							{
+								title: 'leaf 1-2-1',
+								id:14,
+							}
+						]
+					}
+				]
+			}
+		],
+	})
 ];
 
 $r = maker.upload('产品主图','logo','http://img1.touxiang.cn/uploads/20131030/30-075657_191.jpg').props({

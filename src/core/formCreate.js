@@ -117,7 +117,7 @@ formCreate.prototype = {
         this.setHandler(handler);
         this.addHandlerWatch(handler);
         this.vm.$nextTick(()=>{
-            handler.mounted();
+            handler.mounted_();
         });
     },
     removeField(field){

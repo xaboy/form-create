@@ -62,8 +62,8 @@ handler.prototype = {
 
 	},
 	mounted_(){
-        this.el = this.vm.$refs[this.refName];
-        this.mounted();
+		this.el = this.vm.$refs[this.refName];
+		this.mounted();
     }
 };
 

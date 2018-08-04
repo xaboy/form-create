@@ -60,7 +60,6 @@ const handler = handlerFactory({
 		let value = (this.el.getSelectedNodes === undefined
 			? parseValue
 			: this.toValue());
-		console.log(this.isMultiple(),value);
 		return !this.isMultiple() ? value : (value[0] || '');
 	},
 	selectedNodeToValue(nodes){
