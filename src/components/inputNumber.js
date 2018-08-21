@@ -5,7 +5,7 @@ import makerFactory from "../factory/make";
 const handler = handlerFactory({
     toParseValue(value) {
         let parseValue = parseFloat(value);
-        if (Number.isNaN(parseValue)) parseValue = '';
+        if (Number.isNaN(parseValue)) parseValue = 0;
         return parseValue;
     }
 });

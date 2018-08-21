@@ -209,7 +209,7 @@ const render = renderFactory({
 render.prototype.defaultOnHandle = uploadRender.prototype.defaultOnHandle;
 Object.keys(eventList).forEach(k=>{
 	render.prototype[k] = function () {
-		let fn = this.handler.rule.event['on-open'];
+		let fn = this.handler.rule.event[eventList[k]];
 		if(fn)
 			return fn(this.handler.getValue());
 	}

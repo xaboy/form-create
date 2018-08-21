@@ -123,23 +123,24 @@ formCreate.prototype = {
     removeField(field){
         if(this.handlers[field] === undefined)
             throw new Error(`${field}字段不存在`);
+        this.handlers[field].watch.map((unWatch)=>unWatch());
         this.vm.removeFormData(field);
         delete this.handlers[field];
         delete this.validate[field];
         this.fRender.removeRender(field);
         delete this.formData[field];
-	    delete this.trueData[field];
+        delete this.trueData[field];
     },
     addHandlerWatch(handler){
     	let field = handler.field;
 	    let unWatch = this.vm.$watch(`formData.${field}`,(n,o)=>{
-		    if(handler !== undefined){
+		    if(this.handlers[field] !== undefined){
 			    handler.setParseValue(n);
 		    }else
 			    unWatch();
 	    },{deep:true});
 	    let unWatch2 = this.vm.$watch(`trueData.${field}`,(n,o)=>{
-		    if(handler !== undefined){
+		    if(this.handlers[field] !== undefined){
 		    	let json = JSON.stringify(n);
 		    	if(this.vm.jsonData[field] !== json){
 				    this.vm.jsonData[field] = json;
@@ -149,6 +150,7 @@ formCreate.prototype = {
 		    }else
 			    unWatch2();
 	    },{deep:true});
+        handler.watch = [unWatch,unWatch2];
     },
     getFormRef(){
         return this.vm.$refs[this.fRender.refName];

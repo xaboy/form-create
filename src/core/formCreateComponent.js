@@ -36,6 +36,7 @@ const formCreateComponent = function (fComponent) {
             removeFormData(field){
                 this.$delete(this.formData,field);
 	            this.$delete(this.trueData,field);
+	            this.$delete(this.jsonData,field);
             },
             changeButtonProps(props){
                 this.$set(this,'buttonProps',Object.assign(this.buttonProps,props));

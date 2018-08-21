@@ -1270,6 +1270,9 @@ formCreate.prototype = {
     },
     removeField: function removeField(field) {
         if (this.handlers[field] === undefined) throw new Error(field + "\u5B57\u6BB5\u4E0D\u5B58\u5728");
+        this.handlers[field].watch.map(function (unWatch) {
+            return unWatch();
+        });
         this.vm.removeFormData(field);
         delete this.handlers[field];
         delete this.validate[field];
@@ -1282,12 +1285,12 @@ formCreate.prototype = {
 
         var field = handler.field;
         var unWatch = this.vm.$watch("formData." + field, function (n, o) {
-            if (handler !== undefined) {
+            if (_this2.handlers[field] !== undefined) {
                 handler.setParseValue(n);
             } else unWatch();
         }, { deep: true });
         var unWatch2 = this.vm.$watch("trueData." + field, function (n, o) {
-            if (handler !== undefined) {
+            if (_this2.handlers[field] !== undefined) {
                 var json = JSON.stringify(n);
                 if (_this2.vm.jsonData[field] !== json) {
                     _this2.vm.jsonData[field] = json;
@@ -1296,6 +1299,7 @@ formCreate.prototype = {
                 }
             } else unWatch2();
         }, { deep: true });
+        handler.watch = [unWatch, unWatch2];
     },
     getFormRef: function getFormRef() {
         return this.vm.$refs[this.fRender.refName];
@@ -1642,7 +1646,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var handler = (0, _handler2.default)({
     toParseValue: function toParseValue(value) {
         var parseValue = parseFloat(value);
-        if (Number.isNaN(parseValue)) parseValue = '';
+        if (Number.isNaN(parseValue)) parseValue = 0;
         return parseValue;
     }
 });
@@ -2320,7 +2324,7 @@ var render = (0, _render2.default)({
 render.prototype.defaultOnHandle = _upload.render.prototype.defaultOnHandle;
 Object.keys(eventList).forEach(function (k) {
     render.prototype[k] = function () {
-        var fn = this.handler.rule.event['on-open'];
+        var fn = this.handler.rule.event[eventList[k]];
         if (fn) return fn(this.handler.getValue());
     };
 });
@@ -2643,6 +2647,7 @@ var formCreateComponent = function formCreateComponent(fComponent) {
             removeFormData: function removeFormData(field) {
                 this.$delete(this.formData, field);
                 this.$delete(this.trueData, field);
+                this.$delete(this.jsonData, field);
             },
             changeButtonProps: function changeButtonProps(props) {
                 this.$set(this, 'buttonProps', Object.assign(this.buttonProps, props));

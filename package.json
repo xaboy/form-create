@@ -7,7 +7,8 @@
   "unpkg": "dist/form-create.js",
   "jsdelivr": "dist/form-create.js",
   "scripts": {
-    "test": "echo \"Error:no test specified\" && exit 1"
+    "test": "echo \"Error:no test specified\" && exit 1",
+    "package": "webpack"
   },
   "files": [
     "README.md",
@@ -46,6 +47,5 @@
     "webpack": "^3.11.0",
     "webpack-cli": "^2.0.14"
   },
-  "dependencies": {
-  }
+  "dependencies": {}
 }
