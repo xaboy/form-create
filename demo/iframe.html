@@ -27,7 +27,10 @@
 <button onclick="onUnload()">立即修改</button>
 
 <script>
-	var value = parent.$f.getValue('fodder'),images = Array.from(self.document.getElementsByTagName('img'));
+	//获取frame字段值
+	var value = parent.$f.getValue('fodder'),
+		images = Array.from(self.document.getElementsByTagName('img'));
+	//选中对应的图片
     images.forEach(function (image) {
 		if(value.indexOf(image.src) !== -1){
 			image.parentNode.classList.add('on');
@@ -47,11 +50,13 @@
     }
 
     document.getElementById('closeBtn').addEventListener('click',function(){
+        //手动关闭frame弹出框
         parent.$f.closeModal();
     });
 
 	window.onunload = onUnload;
 
+	//当页面关闭时更新frame字段的值
 	function onUnload() {
         var list = [];
         images.forEach(function (image) {
