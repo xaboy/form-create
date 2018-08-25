@@ -212,12 +212,30 @@ const getGlobalApi = function (fComponent) {
             let props = deepExtend(Object.create(null),_props);
             vm.changeButtonProps(props);
         },
+        resetStatus:(_props = {})=>{
+            let props = deepExtend(Object.create(null),_props);
+            vm.changeResetProps(props);
+        },
         btn:{
-            loading:()=>{
-                vm.changeButtonProps({loading:true});
+            loading:(loading = true)=>{
+                vm.changeButtonProps({loading:loading});
             },
-            finish:()=>{
-                vm.changeButtonProps({loading:false});
+            finish:function(){
+                this.loading(false);
+            },
+            disabled:(disabled=true)=>{
+                vm.changeButtonProps({disabled:disabled});
+            }
+        },
+        resetBtn:{
+            loading:(loading = true)=>{
+                vm.changeResetProps({loading:loading});
+            },
+            finish:function(){
+                this.loading(false);
+            },
+            disabled:(disabled=true)=>{
+                vm.changeResetProps({disabled:disabled});
             }
         },
         closeModal:()=>{

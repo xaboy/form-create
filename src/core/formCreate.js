@@ -99,6 +99,7 @@ formCreate.prototype = {
         vm.$set(vm,'formData',this.formData);
 	    vm.$set(vm,'trueData',this.trueData);
         vm.$set(vm,'buttonProps',this.options.submitBtn);
+        vm.$set(vm,'resetProps',this.options.resetBtn);
         this.fRender = new formRender(this);
     },
     create(Vue){

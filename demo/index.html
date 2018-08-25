@@ -55,6 +55,8 @@
                     alert(JSON.stringify(formData));
                     //按钮进入提交状态
                     $f.btn.loading();
+                    //重置按钮禁用
+                    $f.resetBtn.disabled();
                     //按钮进入可点击状态
 //                    $f.btn.finish();
                     //创建第二个表单

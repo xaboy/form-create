@@ -347,12 +347,22 @@ $formCreate.maker.frame(title,field,value)
         //按钮文字提示
         innerText:"提交",
         //设置按钮为加载中状态
-        loading:false
+        loading:false,
+        //是否显示
+        show:true
     })
 ```
 
-* **btn.loading()** 让表单提交按钮进入loading状态 
+* **btn.loading(loading = true)** 让表单提交按钮进入loading状态 
 * **btn.finish()** 让表单提交按钮恢复正常状态 
+* **btn.disabled(disabled = true)** 设置提交按钮禁用状态
+
+
+
+* **resetStatus(props)** 修改表单重置按钮状态 **配置与提交按钮相同**
+* **resetBtn.loading(loading = true)** 让重置按钮进入loading状态 
+* **resetBtn.finish()** 让表单提交按钮恢复正常状态 
+* **resetBtn.disabled(disabled = true)** 设置重置按钮禁用状态
 
 
 ## col栅格布局规则

@@ -7,6 +7,7 @@ const formCreateComponent = function (fComponent) {
             return {
                 formData:{},
                 buttonProps:{},
+                resetProps:{},
                 trueData:{},
                 jsonData:{}
             }
@@ -40,6 +41,9 @@ const formCreateComponent = function (fComponent) {
             },
             changeButtonProps(props){
                 this.$set(this,'buttonProps',Object.assign(this.buttonProps,props));
+            },
+            changeResetProps(props){
+                this.$set(this,'resetProps',Object.assign(this.resetProps,props));
             },
 	        setField(field){
 		        this.$set(this.formData,field,'');
