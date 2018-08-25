@@ -31,6 +31,7 @@ const handler = handlerFactory({
 	toParseValue(value){
 		value = [...new Set(TA(value))];
 		this.choose(value);
+        this.parseValue = value;
 		return value;
 	},
 	choose(value){
@@ -57,9 +58,10 @@ const handler = handlerFactory({
 		return (!this.rule.props.multiple) && this.rule.props.type === 'selected';
 	},
 	toTrueValue(parseValue){
-		let value = (this.el.getSelectedNodes === undefined
-			? parseValue
-			: this.toValue());
+		// let value = (this.el.getSelectedNodes === undefined
+		// 	? parseValue
+		// 	: this.toValue());
+		let value = parseValue;
 		return !this.isMultiple() ? value : (value[0] || '');
 	},
 	selectedNodeToValue(nodes){
@@ -103,8 +105,16 @@ const render = renderFactory({
 				this.vm.changeTrueData(field,this.handler.toValue());
 				rule.event['on-check-change'] && rule.event['on-check-change'](v);
 			},
-		}).props(rule.props).ref(refName).key(`fip${unique}`);
-		return [this.cvm.tree(props.get())];
+		}).props(rule.props).ref(refName).key(`fip${unique}`).get();
+
+        let inputProps = this.inputProps().props({
+            type:"text",
+            value:this.handler.parseValue.toString(),
+            disable:true
+        }).key('fipit'+unique).style({display:'none'}).ref(`${refName}it`).get();
+
+
+		return [this.cvm.tree(props),this.cvm.input(inputProps)];
 	}
 });
 
