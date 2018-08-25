@@ -71,7 +71,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 8);
+/******/ 	return __webpack_require__(__webpack_require__.s = 9);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -203,6 +203,10 @@ var isString = function isString(arg) {
 	return toString.call(arg) === '[object String]';
 };
 
+var isBool = function isBool(arg) {
+	return toString.call(arg) === '[object Boolean]';
+};
+
 var isArray = Array.isArray;
 
 var isNumeric = function isNumeric(n) {
@@ -284,6 +288,7 @@ exports.isElement = isElement;
 exports.uniqueId = uniqueId;
 exports.dateFormat = dateFormat;
 exports.isNumeric = isNumeric;
+exports.isBool = isBool;
 exports.ATS = ATS;
 exports.TA = TA;
 
@@ -465,47 +470,47 @@ exports.getMaker = exports.timeStampToDate = exports.getGlobalApi = exports.crea
 
 var _util = __webpack_require__(1);
 
-var _cascader = __webpack_require__(10);
+var _cascader = __webpack_require__(11);
 
 var _cascader2 = _interopRequireDefault(_cascader);
 
-var _checkbox = __webpack_require__(11);
+var _checkbox = __webpack_require__(12);
 
 var _checkbox2 = _interopRequireDefault(_checkbox);
 
-var _colorPicker = __webpack_require__(12);
+var _colorPicker = __webpack_require__(13);
 
 var _colorPicker2 = _interopRequireDefault(_colorPicker);
 
-var _datePicker = __webpack_require__(13);
+var _datePicker = __webpack_require__(14);
 
 var _datePicker2 = _interopRequireDefault(_datePicker);
 
-var _input = __webpack_require__(14);
+var _input = __webpack_require__(15);
 
 var _input2 = _interopRequireDefault(_input);
 
-var _inputNumber = __webpack_require__(15);
+var _inputNumber = __webpack_require__(16);
 
 var _inputNumber2 = _interopRequireDefault(_inputNumber);
 
-var _radio = __webpack_require__(16);
+var _radio = __webpack_require__(17);
 
 var _radio2 = _interopRequireDefault(_radio);
 
-var _select = __webpack_require__(17);
+var _select = __webpack_require__(18);
 
 var _select2 = _interopRequireDefault(_select);
 
-var _switch = __webpack_require__(18);
+var _switch = __webpack_require__(19);
 
 var _switch2 = _interopRequireDefault(_switch);
 
-var _timePicker = __webpack_require__(19);
+var _timePicker = __webpack_require__(20);
 
 var _timePicker2 = _interopRequireDefault(_timePicker);
 
-var _hidden = __webpack_require__(20);
+var _hidden = __webpack_require__(21);
 
 var _hidden2 = _interopRequireDefault(_hidden);
 
@@ -513,19 +518,19 @@ var _upload = __webpack_require__(7);
 
 var _upload2 = _interopRequireDefault(_upload);
 
-var _rate = __webpack_require__(21);
+var _rate = __webpack_require__(22);
 
 var _rate2 = _interopRequireDefault(_rate);
 
-var _slider = __webpack_require__(22);
+var _slider = __webpack_require__(23);
 
 var _slider2 = _interopRequireDefault(_slider);
 
-var _frame = __webpack_require__(23);
+var _frame = __webpack_require__(24);
 
 var _frame2 = _interopRequireDefault(_frame);
 
-var _tree = __webpack_require__(24);
+var _tree = __webpack_require__(25);
 
 var _tree2 = _interopRequireDefault(_tree);
 
@@ -594,7 +599,20 @@ var getConfig = function getConfig() {
             disabled: false,
             icon: "ios-upload",
             innerText: "提交",
-            loading: false
+            loading: false,
+            show: true
+        },
+        resetBtn: {
+            type: "ghost",
+            size: "large",
+            shape: undefined,
+            long: true,
+            htmlType: "button",
+            disabled: false,
+            icon: "refresh",
+            innerText: "重置",
+            loading: false,
+            show: false
         },
         mounted: function mounted() {}
     };
@@ -692,12 +710,40 @@ var getGlobalApi = function getGlobalApi(fComponent) {
             var props = (0, _util.deepExtend)(Object.create(null), _props);
             vm.changeButtonProps(props);
         },
+        resetStatus: function resetStatus() {
+            var _props = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+            var props = (0, _util.deepExtend)(Object.create(null), _props);
+            vm.changeResetProps(props);
+        },
         btn: {
             loading: function loading() {
-                vm.changeButtonProps({ loading: true });
+                var _loading = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+
+                vm.changeButtonProps({ loading: _loading });
             },
             finish: function finish() {
-                vm.changeButtonProps({ loading: false });
+                this.loading(false);
+            },
+            disabled: function disabled() {
+                var _disabled = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+
+                vm.changeButtonProps({ disabled: _disabled });
+            }
+        },
+        resetBtn: {
+            loading: function loading() {
+                var _loading2 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+
+                vm.changeResetProps({ loading: _loading2 });
+            },
+            finish: function finish() {
+                this.loading(false);
+            },
+            disabled: function disabled() {
+                var _disabled2 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+
+                vm.changeResetProps({ disabled: _disabled2 });
             }
         },
         closeModal: function closeModal() {
@@ -1017,19 +1063,28 @@ var render = (0, _render2.default)({
         }).props(events).ref(handler.refName).key("fip" + handler.unique).get();
     },
     defaultOnHandle: function defaultOnHandle(src) {
-        this.vm.$Modal.info({
-            title: "预览",
-            render: function render(h) {
-                return h('img', { attrs: { src: src }, style: "width: 100%" });
-            }
-        });
+        var _this3 = this;
+
+        console.log(src);
+        this.vm.$Modal.remove();
+        setTimeout(function () {
+            _this3.vm.$Modal.info({
+                title: "预览",
+                render: function render(h) {
+                    return h('img', { attrs: { src: src }, style: "width: 100%", key: 'ifmd' + (0, _util.uniqueId)() });
+                },
+                showCancel: true,
+                closable: true,
+                scrollable: true
+            });
+        }, 301);
     },
     onHandle: function onHandle(src) {
         var fn = this.uploadOptions.onHandle;
         if (fn) return fn(src);else this.defaultOnHandle(src);
     },
     parse: function parse() {
-        var _this3 = this;
+        var _this4 = this;
 
         var _handler = this.handler,
             rule = _handler.rule,
@@ -1040,35 +1095,35 @@ var render = (0, _render2.default)({
         var value = this.vm.formData[this.handler.field],
             render = [].concat(_toConsumableArray(value.map(function (file, index) {
             if (file.status === undefined || file.status === 'finished') {
-                return _this3.makeUploadView(file.url, "" + index + unique, index);
+                return _this4.makeUploadView(file.url, "" + index + unique, index);
             } else if (file.showProgress) {
-                return _this3.makeProgress(file, "" + index + unique);
+                return _this4.makeProgress(file, "" + index + unique);
             }
         })));
         render.push(this.makeUploadBtn(unique, !this.uploadOptions.maxLength || this.uploadOptions.maxLength > this.vm.formData[this.handler.field].length));
         return [this.cvm.make('div', { key: "div4" + unique, class: { 'fc-upload': true } }, render)];
     },
     makeUploadView: function makeUploadView(src, key, index) {
-        var _this4 = this;
+        var _this5 = this;
 
         return this.cvm.make('div', { key: "div1" + key, class: { 'fc-files': true } }, function () {
             var container = [];
-            if (_this4.handler.rule.props.uploadType === 'image') {
-                container.push(_this4.cvm.make('img', { key: "img" + key, attrs: { src: src } }));
+            if (_this5.handler.rule.props.uploadType === 'image') {
+                container.push(_this5.cvm.make('img', { key: "img" + key, attrs: { src: src } }));
             } else {
-                container.push(_this4.cvm.icon({ key: "file" + key, props: { type: "document-text", size: 40 } }));
+                container.push(_this5.cvm.icon({ key: "file" + key, props: { type: "document-text", size: 40 } }));
             }
-            if (_this4.issetIcon) container.push(_this4.makeIcons(src, key, index));
+            if (_this5.issetIcon) container.push(_this5.makeIcons(src, key, index));
             return container;
         });
     },
     makeIcons: function makeIcons(src, key, index) {
-        var _this5 = this;
+        var _this6 = this;
 
         return this.cvm.make('div', { key: "div2" + key, class: { 'fc-upload-cover': true } }, function () {
             var icon = [];
-            if (!!_this5.uploadOptions.handleIcon) icon.push(_this5.makeHandleIcon(src, key, index));
-            if (_this5.uploadOptions.allowRemove === true) icon.push(_this5.makeRemoveIcon(src, key, index));
+            if (!!_this6.uploadOptions.handleIcon) icon.push(_this6.makeHandleIcon(src, key, index));
+            if (_this6.uploadOptions.allowRemove === true) icon.push(_this6.makeRemoveIcon(src, key, index));
             return icon;
         });
     },
@@ -1079,18 +1134,18 @@ var render = (0, _render2.default)({
         return this.cvm.upload(this.propsData, isShow === true ? [this.cvm.make('div', { key: "div5" + unique, class: { 'fc-upload-btn': true } }, [this.cvm.icon({ key: "upi" + unique, props: { type: "camera", size: 20 } })])] : []);
     },
     makeRemoveIcon: function makeRemoveIcon(src, key, index) {
-        var _this6 = this;
+        var _this7 = this;
 
         return this.cvm.icon({ key: "upri" + key + index, props: { type: 'ios-trash-outline' }, nativeOn: { 'click': function click() {
-                    _this6.handler.el.fileList.splice(index, 1);
-                    _this6.handler.changeParseValue(_this6.handler.el.fileList);
+                    _this7.handler.el.fileList.splice(index, 1);
+                    _this7.handler.changeParseValue(_this7.handler.el.fileList);
                 } } });
     },
     makeHandleIcon: function makeHandleIcon(src, key, index) {
-        var _this7 = this;
+        var _this8 = this;
 
         return this.cvm.icon({ key: "uphi" + key + index, props: { type: this.uploadOptions.handleIcon.toString() }, nativeOn: { 'click': function click() {
-                    _this7.onHandle(src);
+                    _this8.onHandle(src);
                 } } });
     }
 });
@@ -1111,7 +1166,52 @@ exports.make = make;
 "use strict";
 
 
-var _formCreate = __webpack_require__(9);
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+var formCreateName = 'FormCreate';
+
+var $FormCreate = function $FormCreate() {
+    return {
+        name: formCreateName,
+        template: '<div class="fc-component"></div>',
+        props: {
+            rule: {
+                type: Array,
+                required: true
+            },
+            option: {
+                type: Object,
+                default: function _default() {
+                    return {};
+                },
+                required: false
+            },
+            value: Object
+        },
+        data: function data() {
+            return {
+                api: {}
+            };
+        },
+        mounted: function mounted() {
+            this.api = this.$formCreate(this.rule, Object.assign(this.option, { el: this.$el }));
+            if (this.value !== undefined) this.api.model(this.value);
+        }
+    };
+};
+
+exports.$FormCreate = $FormCreate;
+exports.formCreateName = formCreateName;
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _formCreate = __webpack_require__(10);
 
 var _formCreate2 = _interopRequireDefault(_formCreate);
 
@@ -1127,7 +1227,7 @@ if (typeof window !== 'undefined') {
 module.exports.default = module.exports = _formCreate2.default;
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1141,15 +1241,17 @@ var _util = __webpack_require__(1);
 
 var _common = __webpack_require__(4);
 
-var _form = __webpack_require__(25);
+var _form = __webpack_require__(26);
 
 var _form2 = _interopRequireDefault(_form);
 
-var _formCreateComponent = __webpack_require__(26);
+var _formCreateComponent = __webpack_require__(27);
 
 var _formCreateComponent2 = _interopRequireDefault(_formCreateComponent);
 
 var _make = __webpack_require__(0);
+
+var _component = __webpack_require__(8);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1187,6 +1289,8 @@ formCreate.create = function (rules) {
     var v = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : window.Vue;
 
     var opt = (0, _util.isElement)(_opt) ? { el: _opt } : _opt;
+    if ((0, _util.isBool)(opt.sumbitBtn)) opt.sumbitBtn = { show: opt.sumbitBtn };
+    if ((0, _util.isBool)(opt.resetBtn)) opt.resetBtn = { show: opt.resetBtn };
     var fComponent = new formCreate(rules, (0, _util.deepExtend)(Object.create(null), opt)),
         $vm = fComponent.create(v);
     return fComponent.fCreateApi;
@@ -1202,6 +1306,7 @@ formCreate.install = function (Vue) {
 
     Vue.prototype.$formCreate.version = version;
     Vue.prototype.$formCreate.maker = maker;
+    Vue.component(_component.formCreateName, (0, _component.$FormCreate)());
 };
 
 formCreate.prototype = {
@@ -1244,6 +1349,7 @@ formCreate.prototype = {
         vm.$set(vm, 'formData', this.formData);
         vm.$set(vm, 'trueData', this.trueData);
         vm.$set(vm, 'buttonProps', this.options.submitBtn);
+        vm.$set(vm, 'resetProps', this.options.resetBtn);
         this.fRender = new _form2.default(this);
     },
     create: function create(Vue) {
@@ -1318,7 +1424,7 @@ exports.default = {
 };
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1378,7 +1484,7 @@ exports.render = render;
 exports.make = make;
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1453,7 +1559,7 @@ exports.render = render;
 exports.make = make;
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1496,7 +1602,7 @@ exports.render = render;
 exports.make = make;
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1575,7 +1681,7 @@ exports.render = render;
 exports.make = make;
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1618,7 +1724,7 @@ exports.render = render;
 exports.make = make;
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1667,7 +1773,7 @@ exports.render = render;
 exports.make = make;
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1737,7 +1843,7 @@ exports.render = render;
 exports.make = make;
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1800,7 +1906,7 @@ exports.render = render;
 exports.make = make;
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1857,7 +1963,7 @@ exports.render = render;
 exports.make = make;
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1938,7 +2044,7 @@ exports.render = render;
 exports.make = make;
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1988,7 +2094,7 @@ exports.render = render;
 exports.make = make;
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2037,7 +2143,7 @@ exports.render = render;
 exports.make = make;
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2098,7 +2204,7 @@ exports.render = render;
 exports.make = make;
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2154,7 +2260,7 @@ var handler = (0, _handler2.default)({
     }
 });
 
-var eventList = { onOpen: 'on-open', onChange: 'on-change', onOk: 'on-ok' };
+var eventList = { onOpen: 'on-open', onChange: 'on-change', onCancel: 'on-cancel', onOk: 'on-ok' };
 
 var render = (0, _render2.default)({
     init: function init() {
@@ -2221,7 +2327,6 @@ var render = (0, _render2.default)({
         var props = this.handler.rule.props;
         if (props.maxLength > 0 && this.handler.parseValue.length >= props.maxLength) return;
         var unique = this.handler.unique;
-        // return this.cvm.make('div',{key:`ifgp2${unique}`,class:{'ivu-upload ivu-upload-select':true}})
         return this.cvm.make('div', { key: "ifbd3" + unique, class: { 'fc-upload-btn': true }, on: { click: function click() {
                     _this5.showModel();
                 } } }, [this.cvm.icon({ key: "ifbi" + unique, props: { type: this._props.icon, size: 20 } })]);
@@ -2294,31 +2399,41 @@ var render = (0, _render2.default)({
             src = _props.src,
             title = _props.title;
 
-        isShow && this.vm.$Modal.info({
-            title: title,
-            render: function render() {
-                return [_this9.makeSpin(), _this9.cvm.make('iframe', {
-                    attrs: {
-                        src: src
-                    },
-                    style: {
-                        'height': height,
-                        'border': "0 none",
-                        'width': "100%"
-                    },
-                    on: {
-                        'load': function load() {
-                            _this9._props.spin === true && document.getElementsByClassName('fc-spin')[0].remove();
-                        }
-                    },
-                    key: "ifmd" + (0, _util.uniqueId)()
-                })];
-            },
-            onOk: function onOk() {
-                _this9.onOk();
-            },
-            width: width
-        });
+        if (!isShow) return;
+        this.vm.$Modal.remove();
+        setTimeout(function () {
+            _this9.vm.$Modal.confirm({
+                title: title,
+                render: function render() {
+                    return [_this9.makeSpin(), _this9.cvm.make('iframe', {
+                        attrs: {
+                            src: src
+                        },
+                        style: {
+                            'height': height,
+                            'border': "0 none",
+                            'width': "100%"
+                        },
+                        on: {
+                            'load': function load() {
+                                _this9._props.spin === true && document.getElementsByClassName('fc-spin')[0] && document.getElementsByClassName('fc-spin')[0].remove();
+                            }
+                        },
+                        key: 'ifmd' + (0, _util.uniqueId)()
+                    })];
+                },
+                onOk: function onOk() {
+                    return _this9.onOk();
+                },
+                onCancel: function onCancel() {
+                    return _this9.onCancel();
+                },
+                showCancel: true,
+                closable: true,
+                scrollable: true,
+                width: width
+            });
+        }, 301);
     }
 });
 render.prototype.defaultOnHandle = _upload.render.prototype.defaultOnHandle;
@@ -2339,7 +2454,7 @@ exports.render = render;
 exports.make = make;
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2398,6 +2513,7 @@ var handler = (0, _handler3.default)({
 	toParseValue: function toParseValue(value) {
 		value = [].concat(_toConsumableArray(new Set((0, _util.TA)(value))));
 		this.choose(value);
+		this.parseValue = value;
 		return value;
 	},
 	choose: function choose(value) {
@@ -2426,7 +2542,10 @@ var handler = (0, _handler3.default)({
 		return !this.rule.props.multiple && this.rule.props.type === 'selected';
 	},
 	toTrueValue: function toTrueValue(parseValue) {
-		var value = this.el.getSelectedNodes === undefined ? parseValue : this.toValue();
+		// let value = (this.el.getSelectedNodes === undefined
+		// 	? parseValue
+		// 	: this.toValue());
+		var value = parseValue;
 		return !this.isMultiple() ? value : value[0] || '';
 	},
 	selectedNodeToValue: function selectedNodeToValue(nodes) {
@@ -2474,9 +2593,16 @@ var render = (0, _render2.default)({
 				_this4.vm.changeTrueData(field, _this4.handler.toValue());
 				rule.event['on-check-change'] && rule.event['on-check-change'](v);
 			}
-		}).props(rule.props).ref(refName).key("fip" + unique);
+		}).props(rule.props).ref(refName).key("fip" + unique).get();
 
-		return [this.cvm.tree(props.get())];
+
+		var inputProps = this.inputProps().props({
+			type: "text",
+			value: this.handler.parseValue.toString(),
+			disable: true
+		}).key('fipit' + unique).style({ display: 'none' }).ref(refName + "it").get();
+
+		return [this.cvm.tree(props), this.cvm.input(inputProps)];
 	}
 });
 
@@ -2490,7 +2616,7 @@ exports.render = render;
 exports.make = make;
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2555,7 +2681,7 @@ render.prototype = {
 
             if (type !== 'hidden') return _this.makeFormItem(render.handler, render.parse(), 'fItem' + key + unique);
         });
-        if (false !== this.options.submitBtn) vn.push(this.makeSubmitBtn(unique));
+        if (false !== this.options.submitBtn) vn.push(this.makeFormBtn(unique));
         return this.cvm.form(propsData, [this.cvm.row({ props: this.options.row || {} }, vn)]);
     },
     makeFormItem: function makeFormItem(_ref2, VNodeFn) {
@@ -2574,12 +2700,28 @@ render.prototype = {
         }).key(unique).get();
         return this.cvm.col({ props: rule.col }, [this.cvm.formItem(propsData, VNodeFn)]);
     },
-    makeSubmitBtn: function makeSubmitBtn(unique) {
+    makeFormBtn: function makeFormBtn(unique) {
+        var btn = [],
+            submitBtnShow = false !== this.options.submitBtn && false !== this.options.submitBtn.show,
+            resetBtnShow = false !== this.options.resetBtn && false !== this.options.resetBtn.show;
+        if (submitBtnShow) btn.push(this.makeSubmitBtn(unique, resetBtnShow ? 19 : 24));
+        if (resetBtnShow) btn.push(this.makeResetBtn(unique, 4));
+
+        return this.cvm.col({ props: { span: 24 } }, btn);
+    },
+    makeResetBtn: function makeResetBtn(unique, span) {
         var _this2 = this;
 
-        return this.cvm.button({ key: 'fbtn' + unique, props: this.vm.buttonProps, on: { "click": function click() {
-                    _this2.fCreateApi.submit();
-                } } }, [this.cvm.span(this.options.submitBtn.innerText)]);
+        return this.cvm.col({ props: { span: span, push: 1 } }, [this.cvm.button({ key: 'frsbtn' + unique, props: this.options.resetBtn, on: { "click": function click() {
+                    _this2.fCreateApi.resetFields();
+                } } }, [this.cvm.span(this.options.resetBtn.innerText)])]);
+    },
+    makeSubmitBtn: function makeSubmitBtn(unique, span) {
+        var _this3 = this;
+
+        return this.cvm.col({ props: { span: span } }, [this.cvm.button({ key: 'fbtn' + unique, props: this.vm.buttonProps, on: { "click": function click() {
+                    _this3.fCreateApi.submit();
+                } } }, [this.cvm.span(this.options.submitBtn.innerText)])]);
     },
     removeRender: function removeRender(field) {
         delete this.renders[field];
@@ -2598,7 +2740,7 @@ render.prototype = {
 exports.default = render;
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2607,15 +2749,17 @@ exports.default = render;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-var formCreateName = 'form-create';
+
+var _component = __webpack_require__(8);
 
 var formCreateComponent = function formCreateComponent(fComponent) {
     return {
-        name: formCreateName,
+        name: _component.formCreateName + 'Core',
         data: function data() {
             return {
                 formData: {},
                 buttonProps: {},
+                resetProps: {},
                 trueData: {},
                 jsonData: {}
             };
@@ -2651,6 +2795,9 @@ var formCreateComponent = function formCreateComponent(fComponent) {
             },
             changeButtonProps: function changeButtonProps(props) {
                 this.$set(this, 'buttonProps', Object.assign(this.buttonProps, props));
+            },
+            changeResetProps: function changeResetProps(props) {
+                this.$set(this, 'resetProps', Object.assign(this.resetProps, props));
             },
             setField: function setField(field) {
                 this.$set(this.formData, field, '');

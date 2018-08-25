@@ -1,4 +1,4 @@
-import {deepExtend, isElement, isBool} from "./util";
+import {deepExtend, isElement, isBool,isFunction} from "./util";
 import {formCreateStyle, getConfig, createHandler, getGlobalApi, getMaker} from "./common";
 import formRender from "../components/form";
 import formCreateComponent from "./formCreateComponent";
@@ -83,10 +83,10 @@ formCreate.prototype = {
     init(vm){
         this.vm = vm;
         this.rules.forEach((rule,index)=>{
-            if(rule instanceof make)
+            if(isFunction(rule.getRule))
                 this.rules[index] = rule.getRule();
         });
-        this.rules.filter(rule=>rule.field !== undefined).forEach((rule)=> {
+        this.rules.filter(rule=>rule.type !== undefined && rule.field !== undefined).forEach((rule)=> {
             rule = this.checkRule(rule);
             let handler = createHandler(this.vm,rule,this.options);
             if(this.fieldList.indexOf(handler.field) === -1){
