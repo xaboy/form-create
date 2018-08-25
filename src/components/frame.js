@@ -40,7 +40,7 @@ const handler = handlerFactory({
     }
 });
 
-const eventList = {onOpen:'on-open',onChange:'on-change',onOk:'on-ok'};
+const eventList = {onOpen:'on-open',onChange:'on-change',onCancel:'on-cancel',onOk:'on-ok'};
 
 const render = renderFactory({
     init(){
@@ -203,7 +203,10 @@ const render = renderFactory({
                         key:'ifmd'+uniqueId()
                     })],
                 onOk:()=>{
-                    this.onOk();
+                    return this.onOk();
+                },
+                onCancel:()=>{
+                    return this.onCancel();
                 },
                 showCancel:true,
                 closable:true,

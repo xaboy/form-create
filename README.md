@@ -42,8 +42,9 @@
 #### 1.3.4 (2018-8-25)
 
 - 新增 打包命令`build`和调试命令`dev`
-- 修复 frame,tree,inputNumber组件BUG
+- 修复 frame,tree,inputNumber组件,弹出框BUG
 - 新增 表单重置按钮,默认不显示.([详细见底部 createOptions](#全局配置-createoptions))
+- 新增 frame组件关闭事件`cancel`
 
 #### 1.3.3 (2018-8-4)
 
@@ -1219,6 +1220,7 @@ FrameRule :
             ok:()=>{console.log('ok')}, //点击确定时的回调
             handle:undefined, //点击操作按钮事件,默认为图片预览
             remove:()=>{return false;} //点击删除按钮事件,返回false将不删除
+            cancel:()=>{console.log('cancel')} //弹出框关闭按钮点击事件
         },
         validate:[
             {required:true, type: 'array', min: 5, message: '请选择5张图片', trigger: 'change'}
