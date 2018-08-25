@@ -1,6 +1,6 @@
 import handlerFactory from "../factory/handler";
 import renderFactory from "../factory/render";
-import {isArray} from "../core/util";
+import {isArray, uniqueId} from "../core/util";
 import makerFactory from "../factory/make";
 
 const handler = handlerFactory({
@@ -85,11 +85,14 @@ const render = renderFactory({
         }).props(events).ref(handler.refName).key(`fip${handler.unique}`).get();
     },
 	defaultOnHandle(src){
+        console.log(src);
 		this.vm.$Modal.info({
 			title:"预览",
 			render:(h)=>{
-				return h('img',{attrs:{src},style:"width: 100%"});
-			}
+				return h('img',{attrs:{src},style:"width: 100%",key:'ifmd'+uniqueId()});
+			},
+            showCancel:true,
+            closable:true,
 		});
 	},
 	onHandle(src) {

@@ -107,6 +107,7 @@ const render = renderFactory({
         if(props.maxLength > 0 && this.handler.parseValue.length >= props.maxLength) return ;
         let unique = this.handler.unique;
         return this.cvm.make('div',{key:`ifbd3${unique}`,class:{'fc-upload-btn':true},on:{click:()=>{
+            console.log(1);
             this.showModel();
         }}},[
             this.cvm.icon({key:`ifbi${unique}`,props:{type:this._props.icon, size:20}})
@@ -196,7 +197,7 @@ const render = renderFactory({
                             && document.getElementsByClassName('fc-spin')[0].remove();
                         }
                     },
-                    key:`ifmd`+uniqueId()
+                    key:'ifmd'+uniqueId()
             })],
             onOk:()=>{
                 this.onOk();

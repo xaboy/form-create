@@ -10,6 +10,8 @@ const handlerFactory = function (prototypeExtend = {}) {
     return $h;
 };
 
+
+
 const handler = function (vm,{model,field,type,title = '',options=[],props={},validate = [],event = {},value = '',slot = {},col = {}}) {
     field = field.toString();
     this.type = type;
