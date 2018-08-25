@@ -106,7 +106,6 @@ const render = renderFactory({
         let props = this.handler.rule.props;
         if(props.maxLength > 0 && this.handler.parseValue.length >= props.maxLength) return ;
         let unique = this.handler.unique;
-	    // return this.cvm.make('div',{key:`ifgp2${unique}`,class:{'ivu-upload ivu-upload-select':true}})
         return this.cvm.make('div',{key:`ifbd3${unique}`,class:{'fc-upload-btn':true},on:{click:()=>{
             this.showModel();
         }}},[
@@ -202,6 +201,8 @@ const render = renderFactory({
             onOk:()=>{
                 this.onOk();
             },
+            showCancel:true,
+            closable:true,
             width : width
         });
     }
