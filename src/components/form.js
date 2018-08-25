@@ -35,7 +35,7 @@ render.prototype = {
 
             });
         if(false !== this.options.submitBtn)
-            vn.push(this.makeSubmitBtn(unique));
+            vn.push(this.makeFormBtn(unique));
         return this.cvm.form(propsData,[this.cvm.row({props:this.options.row||{}},vn)]);
     },
     makeFormItem({rule,refName,unique,field},VNodeFn){
@@ -49,10 +49,30 @@ render.prototype = {
         }).key(unique).get();
         return this.cvm.col({props:rule.col},[this.cvm.formItem(propsData,VNodeFn)]);
     },
-    makeSubmitBtn(unique){
-        return this.cvm.button({key:`fbtn${unique}`,props:this.vm.buttonProps,on:{"click":()=>{
-            this.fCreateApi.submit();
-        }}},[this.cvm.span(this.options.submitBtn.innerText)]);
+    makeFormBtn(unique){
+        let btn = [],
+            submitBtnShow = false !== this.options.submitBtn && false !== this.options.submitBtn.show,
+            resetBtnShow = false !== this.options.resetBtn && false !== this.options.resetBtn.show;
+        if(submitBtnShow)
+            btn.push(this.makeSubmitBtn(unique,resetBtnShow ? 19 : 24));
+        if(resetBtnShow)
+            btn.push(this.makeResetBtn(unique,4));
+
+        return this.cvm.col({props:{span:24}},btn);
+    },
+    makeResetBtn(unique,span){
+        return this.cvm.col({props:{span:span,push:1}},[
+            this.cvm.button({key:`frsbtn${unique}`,props:this.options.resetBtn,on:{"click":()=>{
+                this.fCreateApi.resetFields();
+            }}},[this.cvm.span(this.options.resetBtn.innerText)])
+        ]);
+    },
+    makeSubmitBtn(unique,span){
+        return  this.cvm.col({props:{span:span}},[
+            this.cvm.button({key:`fbtn${unique}`,props:this.vm.buttonProps,on:{"click":()=>{
+                this.fCreateApi.submit();
+            }}},[this.cvm.span(this.options.submitBtn.innerText)])
+        ]);
     },
     removeRender(field){
         delete this.renders[field];

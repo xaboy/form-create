@@ -1,4 +1,4 @@
-import {deepExtend, isElement} from "./util";
+import {deepExtend, isElement, isBool} from "./util";
 import {formCreateStyle, getConfig, createHandler, getGlobalApi, getMaker} from "./common";
 import formRender from "../components/form";
 import formCreateComponent from "./formCreateComponent";
@@ -40,6 +40,10 @@ formCreate.createStyle = function () {
 
 formCreate.create = function(rules,_opt = {},v = window.Vue){
 	let opt = isElement(_opt) ? {el:_opt} : _opt;
+	if(isBool(opt.sumbitBtn))
+        opt.sumbitBtn = {show:opt.sumbitBtn};
+    if(isBool(opt.resetBtn))
+        opt.resetBtn = {show:opt.resetBtn};
 	let fComponent = new formCreate(
 		rules,
 		deepExtend(Object.create(null),opt)

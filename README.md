@@ -24,7 +24,7 @@
 ### [中文文档](https://xaboy.gitbooks.io/form-create/content/kuai-su-shang-shou.html)
 
 ### 如果对您有帮助，您可以点右上角 "Star" 支持一下 谢谢！
- 
+
 ### 本项目还在不断开发完善中,如有建议或问题请[在这里提出](https://github.com/xaboy/form-create/issues/new)
 
 ### 本项目QQ讨论群[28963712](https://jq.qq.com/?_wv=1027&k=54aKUVw)
@@ -39,7 +39,14 @@
 
 ## 更新说明 **建议保持在最新版本**
 
+#### 1.3.4 (2018-8-25)
+
+- 新增 打包命令`build`和调试命令`dev`
+- 修复 frame,tree,inputNumber组件BUG
+- 新增 表单重置按钮,默认不显示.([详细见底部 createOptions](#全局配置-createoptions))
+
 #### 1.3.3 (2018-8-4)
+
 - 新增 增加col栅格布局规则,设置组件的布局
 - 新增 树型组件
 - 新增 `$f.set`方法
@@ -352,16 +359,16 @@ $formCreate.maker.frame(title,field,value)
 > 所有组件均支持col栅格布局规则,配置方法`rule.col = {...}`;
 
 * **span**	栅格的占位格数，可选值为0~24的整数，为 0 时，相当于display:none,类型Number,String
-* **order**	栅格的顺序，在flex布局模式下有效,类型Number,String
-* **offset**	栅格左侧的间隔格数，间隔内不可以有栅格,类型Number,String
-* **push**	栅格向右移动格数,类型Number,String
-* **pull**	栅格向左移动格数,类型Number,String
-* **className**	自定义的class名称	String
-* **xs**	<768px 响应式栅格，可为栅格数或一个包含其他属性的对象`{ span: 5, offset: 1 }`,类型Number,Object
-* **sm**	≥768px 响应式栅格，可为栅格数或一个包含其他属性的对象,类型Number,Object
-* **md**	≥992px 响应式栅格，可为栅格数或一个包含其他属性的对象,类型Number,Object
-* **lg**	≥1200px 响应式栅格，可为栅格数或一个包含其他属性的对象,类型Number,Object
-* **labelWidth**	表单域标签的的宽度,类型Number,默认为150
+	 **order**	栅格的顺序，在flex布局模式下有效,类型Number,String
+	 **offset**	栅格左侧的间隔格数，间隔内不可以有栅格,类型Number,String
+	 **push**	栅格向右移动格数,类型Number,String
+	 **pull**	栅格向左移动格数,类型Number,String
+	 **className**	自定义的class名称	String
+	 **xs**	<768px 响应式栅格，可为栅格数或一个包含其他属性的对象`{ span: 5, offset: 1 }`,类型Number,Object
+	 **sm**	≥768px 响应式栅格，可为栅格数或一个包含其他属性的对象,类型Number,Object
+	 **md**	≥992px 响应式栅格，可为栅格数或一个包含其他属性的对象,类型Number,Object
+	 **lg**	≥1200px 响应式栅格，可为栅格数或一个包含其他属性的对象,类型Number,Object
+	 **labelWidth**	表单域标签的的宽度,类型Number,默认为150
 
 详细参考:[iview布局](http://v2.iviewui.com/components/layout)
 
@@ -1214,13 +1221,13 @@ FrameRule :
 
 ##### data属性数据结构
 * **id**	**id为最终返回值,必填且唯一**,类型为：String,Number
-* **title**	标题,类型为：String,Element String
-* **expand**	是否展开直子节点,类型为：Boolean,默认为false
-* **disabled**	禁掉响应,类型为：Boolean,默认为false
-* **disableCheckbox**	禁掉 checkbox,类型为：Boolean,默认为false
-* **selected**	是否选中子节点,类型为：	Boolean,默认为false
-* **checked**	是否勾选(如果勾选，子节点也会全部勾选),类型为：Boolean,默认为false
-* **children**	子节点属性数组,类型为：	Array `[data,data,...]`
+	 **title**	标题,类型为：String,Element String
+	 **expand**	是否展开直子节点,类型为：Boolean,默认为false
+	 **disabled**	禁掉响应,类型为：Boolean,默认为false
+	 **disableCheckbox**	禁掉 checkbox,类型为：Boolean,默认为false
+	 **selected**	是否选中子节点,类型为：	Boolean,默认为false
+	 **checked**	是否勾选(如果勾选，子节点也会全部勾选),类型为：Boolean,默认为false
+	 **children**	子节点属性数组,类型为：	Array `[data,data,...]`
 
 
 maker快速生成:
@@ -1321,7 +1328,7 @@ TreeRule :
     //表单提交事件
     onSubmit:(formData)=>{},
     
-    //提交按钮配置,设置为false时不显示按钮
+    //提交按钮配置,设置submitBtn=false或submitBtn.show=false时不显示按钮
     submitBtn:{
     
         //按钮类型，可选值为primary、ghost、dashed、text、info、success、warning、error或者不设置
@@ -1342,6 +1349,22 @@ TreeRule :
         innerText:"提交",
         //设置按钮为加载中状态
         loading:false,
+        //默认显示
+        show:true
+    },
+    //重置按钮默认配置,设置resetBtn=true或resetBtn.show=true时显示
+    resetBtn:{
+        type:"ghost",
+        size:"large",
+        shape:undefined,
+        long:true,
+        htmlType:"button",
+        disabled:false,
+        icon:"refresh",
+        innerText:"重置",
+        loading:false,
+        //默认不显示
+        show:false
     }
 }
 ```

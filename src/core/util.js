@@ -16,6 +16,8 @@ const isFunction = (arg) => toString.call(arg) === '[object Function]';
 
 const isString = (arg) => toString.call(arg) === '[object String]';
 
+const isBool = (arg) => toString.call(arg) === '[object Boolean]';
+
 const isArray = Array.isArray;
 
 const isNumeric = (n)=>{
@@ -95,5 +97,6 @@ export {
 	uniqueId,
 	dateFormat,
 	isNumeric,
+    isBool,
 	ATS,TA
 }

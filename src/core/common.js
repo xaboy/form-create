@@ -83,7 +83,20 @@ const getConfig = function () {
             disabled:false,
             icon:"ios-upload",
             innerText:"提交",
-            loading:false
+            loading:false,
+            show:true
+        },
+        resetBtn:{
+            type:"ghost",
+            size:"large",
+            shape:undefined,
+            long:true,
+            htmlType:"button",
+            disabled:false,
+            icon:"refresh",
+            innerText:"重置",
+            loading:false,
+            show:false
         },
         mounted:()=>{}
     };
