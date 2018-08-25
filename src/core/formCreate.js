@@ -3,6 +3,7 @@ import {formCreateStyle, getConfig, createHandler, getGlobalApi, getMaker} from 
 import formRender from "../components/form";
 import formCreateComponent from "./formCreateComponent";
 import {make} from "../factory/make";
+import {formCreateName,$FormCreate} from './component';
 
 const version = '1.3.3';
 
@@ -60,7 +61,7 @@ formCreate.install = function(Vue,globalOptions = {}){
 
     Vue.prototype.$formCreate.version = version;
     Vue.prototype.$formCreate.maker = maker;
-
+    Vue.component(formCreateName,$FormCreate());
 };
 
 formCreate.prototype = {

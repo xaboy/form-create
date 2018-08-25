@@ -1,8 +1,8 @@
-const formCreateName = 'form-create';
+import {formCreateName} from './component';
 
 const formCreateComponent = function (fComponent) {
     return {
-        name:formCreateName,
+        name:`${formCreateName}Core`,
         data() {
             return {
                 formData:{},

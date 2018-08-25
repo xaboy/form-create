@@ -368,7 +368,7 @@ window.mock = [
         "min": 0,
         "max": 100,
         "range": true,
-        "showTip":"always"
+        "showTip":"hover"
     }).col({span:12}),
     // {
     //     type:"slider",

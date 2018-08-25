@@ -19,7 +19,16 @@
     <script src="mock.js"></script>
 </head>
 <body>
-<div id="app"></div>
+<div id="app1">
+    <h2>组件模式生成</h2>
+    <form-create ref="fc" v-model="formData" :rule="rule" :option="option"></form-create>
+</div>
+<div id="app2">
+    <h2 onclick="vm.create()" style="cursor: pointer;">点击使用构造方法生成</h2>
+</div>
+<div id="app3">
+    <h2 onclick="create2()" style="cursor: pointer;">点击使用全局方法生成</h2>
+</div>
 <script>
     Vue.use(formCreate,{
     	upload:{
@@ -28,49 +37,122 @@
             }
         }
     });
-    vm = new Vue({
-        el:'#app',
+
+    //组件模式
+    new Vue({
+        el:'#app1',
         data:{
-        	formData:{}
-        },
-	    watch:{
-        	'formData.address':{
-        		handler:function (n) {
-			        console.log(n);
-		        },
-                deep:true
-            }
-        },
-        mounted:function(){
-	        window.formData = {};
-            let root = document.getElementById('app'),that = this;
-            //frame组件请在线上环境测试
-            $f = this.$formCreate(mock,{
-                //表单插入的父级元素
-                el:root,
+            formData:{},
+            rule:mock,
+            option:{
                 //显示表单重置按钮
                 resetBtn:true,
                 //表单提交事件
                 onSubmit:function (formData) {
                     alert(JSON.stringify(formData));
                     //按钮进入提交状态
-                    $f.btn.loading();
+                    $f_1.btn.loading();
                     //重置按钮禁用
-                    $f.resetBtn.disabled();
+                    $f_1.resetBtn.disabled();
                     //按钮进入可点击状态
 //                    $f.btn.finish();
                     //创建第二个表单
-                    $f2 = that.$formCreate(mock,root);
+                    $f_1 = that.$formCreate(mock,root);
                 }
-            });
-            //动态添加表单元素
-            $f.append($r);
-	        //注入表单数据，双向数据绑定
-	        $f.model(formData);
-	        //$f.model(this.formData);
-	        console.log(formData);
+            }
+        },
+        watch:{
+            'formData.address':{
+                handler:function (n) {
+                    console.log(n);
+                },
+                deep:true
+            }
+        },
+        mounted:function () {
+            $f_1 = this.$refs.fc.api;
         }
     });
+    var _m1 = false;
+    //$formCreate构造方法生成
+    vm = new Vue({
+        el:'#app2',
+        data:{
+            formData:{},
+        },
+        watch:{
+            'formData.address':{
+                handler:function (n) {
+                    console.log(n);
+                },
+                deep:true
+            }
+        },
+        methods:{
+            create:function () {
+                if(_m1) return ;
+                _m1 = true;
+                //var root = document.getElementById('app2');
+                var root = this.$el;
+                //frame,upload组件请在线上环境测试
+                $f_2 = this.$formCreate(mock,{
+                    //表单插入的父级元素
+                    el:root,
+                    //显示表单重置按钮
+                    resetBtn:true,
+                    //表单提交事件
+                    onSubmit:function (formData) {
+                        alert(JSON.stringify(formData));
+                        //按钮进入提交状态
+                        $f_2.btn.loading();
+                        //重置按钮禁用
+                        $f_2.resetBtn.disabled();
+                        //按钮进入可点击状态
+//                    $f_2.btn.finish();
+                        //创建第二个表单
+                        $f2 = that.$formCreate(mock,root);
+                    },
+                    mounted:function () {
+                        _m1 = false;
+                    }
+                });
+                //动态添加表单元素
+                $f_2.append($r);
+                //注入表单数据，双向数据绑定
+                $f_2.model(this.formData);
+                console.log(this.formData);
+            }
+        },
+        mounted:function(){
+//           this.create();
+        }
+    });
+
+    var _m2 = false;
+    function create2() {
+        if(_m2)return ;
+        _m2 = true;
+        //全局方法生成
+        $f_3 = formCreate.create(mock,{
+            //表单插入的父级元素
+            el:document.getElementById('app3'),
+            //显示表单重置按钮
+            resetBtn:true,
+            //表单提交事件
+            onSubmit:function (formData) {
+                alert(JSON.stringify(formData));
+                //按钮进入提交状态
+                $f_3.btn.loading();
+                //重置按钮禁用
+                $f_3.resetBtn.disabled();
+                //按钮进入可点击状态
+//            $f_3.btn.finish();
+            },
+            mounted:function () {
+                _m2 = false;
+            }
+        });
+    }
 </script>
 </body>
 </html>
