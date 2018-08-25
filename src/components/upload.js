@@ -86,14 +86,18 @@ const render = renderFactory({
     },
 	defaultOnHandle(src){
         console.log(src);
-		this.vm.$Modal.info({
-			title:"预览",
-			render:(h)=>{
-				return h('img',{attrs:{src},style:"width: 100%",key:'ifmd'+uniqueId()});
-			},
-            showCancel:true,
-            closable:true,
-		});
+        this.vm.$Modal.remove();
+        setTimeout(()=>{
+            this.vm.$Modal.info({
+                title:"预览",
+                render:(h)=>{
+                    return h('img',{attrs:{src},style:"width: 100%",key:'ifmd'+uniqueId()});
+                },
+                showCancel:true,
+                closable:true,
+                scrollable:true
+            });
+        },301);
 	},
 	onHandle(src) {
 		let fn = this.uploadOptions.onHandle;

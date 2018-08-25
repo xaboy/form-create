@@ -107,7 +107,6 @@ const render = renderFactory({
         if(props.maxLength > 0 && this.handler.parseValue.length >= props.maxLength) return ;
         let unique = this.handler.unique;
         return this.cvm.make('div',{key:`ifbd3${unique}`,class:{'fc-upload-btn':true},on:{click:()=>{
-            console.log(1);
             this.showModel();
         }}},[
             this.cvm.icon({key:`ifbi${unique}`,props:{type:this._props.icon, size:20}})
@@ -178,34 +177,40 @@ const render = renderFactory({
     showModel(){
         let isShow = false !== this.onOpen(),
             {width,height,src,title} = this._props;
-        isShow && this.vm.$Modal.info({
-            title:title,
-            render:()=>[
-                this.makeSpin()
-                ,this.cvm.make('iframe',{
-                    attrs:{
-                        src:src
-                    },
-                    style:{
-                        'height' : height,
-                        'border' : "0 none",
-                        'width' : "100%",
-                    },
-                    on:{
-                        'load':()=>{
-                            this._props.spin === true
-                            && document.getElementsByClassName('fc-spin')[0].remove();
-                        }
-                    },
-                    key:'ifmd'+uniqueId()
-            })],
-            onOk:()=>{
-                this.onOk();
-            },
-            showCancel:true,
-            closable:true,
-            width : width
-        });
+        if(!isShow) return ;
+        this.vm.$Modal.remove();
+        setTimeout(()=>{
+            this.vm.$Modal.confirm({
+                title:title,
+                render:()=>[
+                    this.makeSpin()
+                    ,this.cvm.make('iframe',{
+                        attrs:{
+                            src:src
+                        },
+                        style:{
+                            'height' : height,
+                            'border' : "0 none",
+                            'width' : "100%",
+                        },
+                        on:{
+                            'load':()=>{
+                                this._props.spin === true
+                                && document.getElementsByClassName('fc-spin')[0]
+                                && document.getElementsByClassName('fc-spin')[0].remove();
+                            }
+                        },
+                        key:'ifmd'+uniqueId()
+                    })],
+                onOk:()=>{
+                    this.onOk();
+                },
+                showCancel:true,
+                closable:true,
+                scrollable:true,
+                width : width
+            });
+        },301);
     }
 });
 render.prototype.defaultOnHandle = uploadRender.prototype.defaultOnHandle;
