@@ -1,5 +1,6 @@
 import cvm from '../core/cvm';
 import props from '../core/props';
+import {uniqueId} from '../core/util';
 
 const renderFactory = function (prototypeExtend) {
     let $r = function (vm,handler,options) {
@@ -25,9 +26,18 @@ const render = function (vm, handler, options = {}) {
 render.prototype = {
     props: props.instance(),
     init(){
+        this.handler.rule = Object.assign(this.handler.rule,{ref:this.handler.refName,key:'fco' + uniqueId()});
     },
     parse(){
-        throw new Error('请实现parse方法');
+        let {type,rule,childrenHandlers} = this.handler;
+        return [this.cvm.make(type,Object.assign({},rule),()=> {
+            let vn = [];
+            if(childrenHandlers.length > 0)
+                vn = childrenHandlers.map((handler)=>{
+                    return this.parse.call(handler.render);
+                });
+            return vn;
+        })];
     },
     inputProps(){
         let {refName,unique,field,rule:{props}} = this.handler;

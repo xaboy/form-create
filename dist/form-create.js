@@ -82,94 +82,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.make = undefined;
-
-var _util = __webpack_require__(1);
-
-var makerFactory = function makerFactory(type, attrs) {
-    return function $m(title, field) {
-        var value = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '';
-
-        var rule = baseRule();
-        rule.type = type;
-        rule.title = title;
-        rule.field = field;
-        rule.value = value;
-        return new make(rule, attrs);
-    };
-};
-
-var baseRule = function baseRule() {
-    return {
-        props: {},
-        event: {},
-        validate: [],
-        options: [],
-        slot: {},
-        col: {}
-    };
-};
-
-var make = function make(rule, attrs) {
-    var _this = this;
-
-    this.rule = rule;
-    attrs.push('col');
-    attrs.forEach(function (attr) {
-        _this[attr] = attrHandlers[attr];
-    });
-};
-
-var attrHandlers = {};
-
-var objAttrs = ['props', 'event', 'slot', 'col'];
-
-objAttrs.forEach(function (attr) {
-    attrHandlers[attr] = function (opt) {
-        this.rule[attr] = Object.assign(this.rule[attr], opt);
-        return this;
-    };
-});
-
-var arrAttrs = ['validate', 'options'];
-
-arrAttrs.forEach(function (attr) {
-    attrHandlers[attr] = function (opt) {
-        if (!(0, _util.isArray)(opt)) opt = [opt];
-        this.rule[attr] = this.rule[attr].concat(opt);
-        return this;
-    };
-});
-
-make.prototype.getRule = function () {
-    return this.rule;
-};
-
-make.prototype.setValue = function (value) {
-    this.rule.value = value;
-    return this;
-};
-
-make.prototype.model = function (model, field) {
-    if (!field) field = this.rule.field;
-    this.rule.model = function (v) {
-        model[field] = v;
-    };
-};
-
-exports.default = makerFactory;
-exports.make = make;
-
-/***/ }),
-/* 1 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
 	value: true
 });
 
@@ -208,6 +120,10 @@ var isBool = function isBool(arg) {
 };
 
 var isArray = Array.isArray;
+
+var toLine = function toLine(name) {
+	return name.replace(/([A-Z])/g, '-$1').toLowerCase();
+};
 
 var isNumeric = function isNumeric(n) {
 	return n !== '' && !isNaN(parseFloat(n)) && isFinite(n);
@@ -249,12 +165,11 @@ var deepExtend = function deepExtend(origin) {
 	return origin;
 };
 
-var uniqueId = function () {
-	var id = 0;
-	return function () {
-		return id++;
-	};
-}();
+var id = 0;
+
+var uniqueId = function uniqueId() {
+	return ++id;
+};
 
 var dateFormat = function dateFormat(fmt) {
 	var date = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : new Date();
@@ -291,9 +206,10 @@ exports.isNumeric = isNumeric;
 exports.isBool = isBool;
 exports.ATS = ATS;
 exports.TA = TA;
+exports.toLine = toLine;
 
 /***/ }),
-/* 2 */
+/* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -303,7 +219,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _util = __webpack_require__(1);
+var _util = __webpack_require__(0);
 
 var handlerFactory = function handlerFactory() {
     var prototypeExtend = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
@@ -317,26 +233,20 @@ var handlerFactory = function handlerFactory() {
     return $h;
 };
 
-var handler = function handler(vm, _ref) {
-    var model = _ref.model,
-        field = _ref.field,
-        type = _ref.type,
-        _ref$title = _ref.title,
-        title = _ref$title === undefined ? '' : _ref$title,
-        _ref$options = _ref.options,
-        options = _ref$options === undefined ? [] : _ref$options,
-        _ref$props = _ref.props,
-        props = _ref$props === undefined ? {} : _ref$props,
-        _ref$validate = _ref.validate,
-        validate = _ref$validate === undefined ? [] : _ref$validate,
-        _ref$event = _ref.event,
-        event = _ref$event === undefined ? {} : _ref$event,
-        _ref$value = _ref.value,
-        value = _ref$value === undefined ? '' : _ref$value,
-        _ref$slot = _ref.slot,
-        slot = _ref$slot === undefined ? {} : _ref$slot,
-        _ref$col = _ref.col,
-        col = _ref$col === undefined ? {} : _ref$col;
+var handler = function handler(vm, rule) {
+    var model = rule.model,
+        field = rule.field,
+        type = rule.type,
+        _rule$validate = rule.validate,
+        validate = _rule$validate === undefined ? [] : _rule$validate,
+        _rule$event = rule.event,
+        event = _rule$event === undefined ? {} : _rule$event,
+        _rule$value = rule.value,
+        value = _rule$value === undefined ? '' : _rule$value,
+        _rule$col = rule.col,
+        col = _rule$col === undefined ? {} : _rule$col,
+        _rule$emit = rule.emit,
+        emit = _rule$emit === undefined ? [] : _rule$emit;
 
     field = field.toString();
     this.type = type;
@@ -345,14 +255,24 @@ var handler = function handler(vm, _ref) {
     if ((0, _util.isNumeric)(col)) {
         col = { span: col };
     } else if (col.span === undefined) col.span = 24;
-    this.rule = {
-        title: title, options: options, props: props, slot: slot, col: col,
-        validate: (0, _util.isArray)(validate) ? validate : [validate],
-        event: Object.keys(event).reduce(function (initial, eventName) {
-            initial['on-' + eventName] = event[eventName];
-            return initial;
-        }, {})
-    };
+    rule.event = Object.keys(event).reduce(function (initial, eventName) {
+        initial['on-' + eventName] = event[eventName];
+        return initial;
+    }, {});
+
+    emit.forEach(function (eventName) {
+        rule.event['on-' + eventName] = function () {
+            for (var _len = arguments.length, arg = Array(_len), _key = 0; _key < _len; _key++) {
+                arg[_key] = arguments[_key];
+            }
+
+            vm.$emit.apply(vm, [(0, _util.toLine)(field + '-' + eventName).replace('_', '-')].concat(arg));
+        };
+    });
+
+    rule.validate = (0, _util.isArray)(validate) ? validate : [validate];
+    rule.col = col;
+    this.rule = rule;
     this.field = field;
     this.vm = vm;
     this.unique = (0, _util.uniqueId)();
@@ -391,7 +311,7 @@ handler.prototype = {
 exports.default = handlerFactory;
 
 /***/ }),
-/* 3 */
+/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -401,13 +321,15 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _cvm = __webpack_require__(5);
+var _cvm = __webpack_require__(6);
 
 var _cvm2 = _interopRequireDefault(_cvm);
 
-var _props = __webpack_require__(6);
+var _props = __webpack_require__(4);
 
 var _props2 = _interopRequireDefault(_props);
+
+var _util = __webpack_require__(0);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -434,22 +356,37 @@ var render = function render(vm, handler) {
 
 render.prototype = {
     props: _props2.default.instance(),
-    init: function init() {},
-    parse: function parse() {
-        throw new Error('请实现parse方法');
+    init: function init() {
+        this.handler.rule = Object.assign(this.handler.rule, { ref: this.handler.refName, key: 'fco' + (0, _util.uniqueId)() });
     },
-    inputProps: function inputProps() {
+    parse: function parse() {
         var _this = this;
 
         var _handler = this.handler,
-            refName = _handler.refName,
-            unique = _handler.unique,
-            field = _handler.field,
-            props = _handler.rule.props;
+            type = _handler.type,
+            rule = _handler.rule,
+            childrenHandlers = _handler.childrenHandlers;
+
+        return [this.cvm.make(type, Object.assign({}, rule), function () {
+            var vn = [];
+            if (childrenHandlers.length > 0) vn = childrenHandlers.map(function (handler) {
+                return _this.parse.call(handler.render);
+            });
+            return vn;
+        })];
+    },
+    inputProps: function inputProps() {
+        var _this2 = this;
+
+        var _handler2 = this.handler,
+            refName = _handler2.refName,
+            unique = _handler2.unique,
+            field = _handler2.field,
+            props = _handler2.rule.props;
 
         return this.props.props(Object.assign(props, { model: 'formData.' + field, value: this.vm.formData[field], elementId: refName })).ref(refName).key('fip' + unique).on(this.event).on('input', function (value) {
-            _this.vm.$emit('input', value);
-            _this.vm.$set(_this.vm.formData, field, value);
+            _this2.vm.$emit('input', value);
+            _this2.vm.$set(_this2.vm.formData, field, value);
         });
     }
 };
@@ -457,7 +394,7 @@ render.prototype = {
 exports.default = renderFactory;
 
 /***/ }),
-/* 4 */
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -466,9 +403,21 @@ exports.default = renderFactory;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.getMaker = exports.timeStampToDate = exports.getGlobalApi = exports.createHandler = exports.formCreateStyle = exports.getConfig = exports.getComponent = undefined;
+exports.getMaker = exports.timeStampToDate = exports.getGlobalApi = exports.formCreateStyle = exports.getConfig = exports.getComponent = undefined;
 
-var _util = __webpack_require__(1);
+var _util = __webpack_require__(0);
+
+var _creator = __webpack_require__(10);
+
+var _creator2 = _interopRequireDefault(_creator);
+
+var _handler = __webpack_require__(1);
+
+var _handler2 = _interopRequireDefault(_handler);
+
+var _render = __webpack_require__(2);
+
+var _render2 = _interopRequireDefault(_render);
 
 var _cascader = __webpack_require__(11);
 
@@ -555,9 +504,22 @@ var componentList = {
     tree: _tree2.default
 };
 
-var getComponent = function getComponent(componentName) {
-    if (componentList[componentName] === undefined) throw new Error(componentName + ' \u8868\u5355\u7C7B\u578B\u4E0D\u5B58\u5728');
-    return componentList[componentName];
+var getComponent = function getComponent(vm, rule, createOptions) {
+    var component = void 0,
+        name = rule.type.toLowerCase();
+    if (componentList[name] === undefined) {
+        component = {
+            handler: (0, _handler2.default)({}),
+            render: (0, _render2.default)({}),
+            noValue: true
+        };
+    } else {
+        component = componentList[name];
+    }
+    var $h = new component.handler(vm, rule);
+    $h.render = new component.render(vm, $h, createOptions);
+    $h.noValue = component.noValue;
+    return $h;
 };
 
 var getConfig = function getConfig() {
@@ -616,13 +578,6 @@ var getConfig = function getConfig() {
         },
         mounted: function mounted() {}
     };
-};
-
-var createHandler = function createHandler(vm, rule, createOptions) {
-    var component = getComponent(rule.type),
-        $h = new component.handler(vm, rule);
-    $h.render = new component.render(vm, $h, createOptions);
-    return $h;
 };
 
 var formCreateStyle = '.form-create{padding:25px;} .fc-upload-btn,.fc-files{display: inline-block;width: 58px;height: 58px;text-align: center;line-height: 60px;border: 1px solid transparent;border-radius: 4px;overflow: hidden;background: #fff;position: relative;box-shadow: 0 1px 1px rgba(0,0,0,.2);margin-right: 4px;box-sizing: border-box;}' + ' .fc-files>.ivu-icon{transform: translateY(20%);}' + '.fc-files img{width:100%;height:100%;display:inline-block;vertical-align: top;}' + '.fc-upload .ivu-upload{display: inline-block;}' + '.fc-upload-btn{border: 1px dashed #dddee1;}' + '.fc-upload .fc-upload-cover{ display: none; position: absolute; top: 0; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,.6); }' + '.fc-upload .fc-upload-cover i{ color: #fff; font-size: 20px; cursor: pointer; margin: 0 2px; }' + '.fc-files:hover .fc-upload-cover{ display: block; }' + '.fc-upload .ivu-upload-list-file{ display: inline-block;float: left; }' + '.fc-upload .ivu-upload-list{ position: absolute;left: 0; }' + '.fc-spin-icon-load{animation: ani-fc-spin 1s linear infinite;} @-webkit-keyframes ani-fc-spin{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}50%{-webkit-transform:rotate(180deg);transform:rotate(180deg)}to{-webkit-transform:rotate(1turn);transform:rotate(1turn)}}@keyframes ani-fc-spin{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}50%{-webkit-transform:rotate(180deg);transform:rotate(180deg)}to{-webkit-transform:rotate(1turn);transform:rotate(1turn)}}';
@@ -763,27 +718,36 @@ var timeStampToDate = function timeStampToDate(timeStamp) {
 };
 
 var getMaker = function getMaker() {
-    var maker = Object.keys(componentList).reduce(function (initial, name) {
-        initial[name] = componentList[name].make;
-        return initial;
-    }, {});
-    maker.number = componentList.inputnumber.make;
-    maker.time = componentList.timepicker.make;
-    maker.date = componentList.datepicker.make;
-    maker.color = componentList.colorpicker.make;
+    var maker = {};
+    Object.keys(componentList).forEach(function (name) {
+        maker[name] = (0, _creator2.default)(name);
+    });
+    maker.hidden = function () {
+        var make = (0, _creator2.default)('hidden');
+        return make.bind(make, '');
+    }();
+    maker.create = function (type) {
+        var field = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'mp' + (0, _util.uniqueId)();
+
+        var make = (0, _creator2.default)(type, ['props', 'event', 'validate', 'slot']);
+        return make('', field);
+    };
+    maker.number = maker.inputnumber;
+    maker.time = maker.timepicker;
+    maker.date = maker.datepicker;
+    maker.color = maker.colorpicker;
     return maker;
 };
 
 exports.getComponent = getComponent;
 exports.getConfig = getConfig;
 exports.formCreateStyle = formCreateStyle;
-exports.createHandler = createHandler;
 exports.getGlobalApi = getGlobalApi;
 exports.timeStampToDate = timeStampToDate;
 exports.getMaker = getMaker;
 
 /***/ }),
-/* 5 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -793,64 +757,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _util = __webpack_require__(1);
-
-var cvm = function cvm() {
-    var createElement = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : (0, _util.throwIfMissing)('缺少参数:createElement');
-
-    this.$h = createElement;
-};
-
-var _instance = null;
-
-var vm = null;
-
-cvm.instance = function (createElement) {
-    if (false === _instance instanceof cvm) _instance = new cvm(createElement);
-    return _instance;
-};
-
-cvm.setVm = function ($vm) {
-    vm = $vm;
-};
-cvm.clearVm = function () {
-    vm = null;
-};
-
-cvm.prototype = {
-    make: function make(nodeName, data, VNodeFn) {
-        if ((0, _util.isString)(data)) data = { domProps: { innerHTML: data } };
-        var Node = this.$h(nodeName, data, this.getVNode(VNodeFn));
-        if (vm !== null) Node.context = vm;
-        return Node;
-    },
-    getVNode: function getVNode(VNode) {
-        return (0, _util.isFunction)(VNode) ? VNode() : VNode;
-    }
-};
-
-var nodes = { modal: 'Modal', progress: 'i-progress', button: 'i-button', icon: 'Icon', span: 'span', slider: 'Slider', rate: 'Rate', upload: 'Upload', cascader: 'Cascader', colorPicker: 'Color-Picker', timePicker: 'Time-Picker', datePicker: 'Date-Picker', 'switch': 'i-switch', option: 'i-option', select: 'i-select', checkbox: 'Checkbox', checkboxGroup: 'Checkbox-Group', radio: 'Radio', radioGroup: 'Radio-Group', inputNumber: 'Input-Number', input: 'i-input', formItem: 'Form-Item', form: 'i-form', col: 'i-col', row: 'row', tree: 'Tree' };
-
-Object.keys(nodes).forEach(function (k) {
-    cvm.prototype[k] = function (data, VNodeFn) {
-        return this.make(nodes[k], data, VNodeFn);
-    };
-});
-
-exports.default = cvm;
-
-/***/ }),
-/* 6 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _util = __webpack_require__(1);
+var _util = __webpack_require__(0);
 
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
@@ -935,7 +842,7 @@ objList.forEach(function (key) {
         var val = arguments[1];
 
         if ((0, _util.isPlainObject)(obj)) {
-            this._data[key] = (0, _util.assign)({}, this._data[key], obj);
+            this._data[key] = (0, _util.assign)(this._data[key], obj);
         } else {
             this._data[key][obj.toString()] = val;
         }
@@ -944,6 +851,300 @@ objList.forEach(function (key) {
 });
 
 exports.default = props;
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.formCreate = undefined;
+
+var _util = __webpack_require__(0);
+
+var _common = __webpack_require__(3);
+
+var _form = __webpack_require__(26);
+
+var _form2 = _interopRequireDefault(_form);
+
+var _formCreateComponent = __webpack_require__(27);
+
+var _formCreateComponent2 = _interopRequireDefault(_formCreateComponent);
+
+var _component = __webpack_require__(8);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var version = '1.4.0';
+
+var maker = (0, _common.getMaker)();
+
+var formCreateStyleElId = 'form-create-style';
+
+var formCreate = function formCreate(rules, _options) {
+    var _this = this;
+
+    if (!this instanceof formCreate) throwIfMissing('formCreate is a constructor and should be called with the `new` keyword');
+
+    if ((0, _util.isBool)(_options.sumbitBtn)) _options.sumbitBtn = { show: _options.sumbitBtn };
+    if ((0, _util.isBool)(_options.resetBtn)) _options.resetBtn = { show: _options.resetBtn };
+
+    var options = (0, _util.deepExtend)((0, _util.deepExtend)(Object.create(null), (0, _common.getConfig)()), _options);
+    this.rules = Array.isArray(rules) ? rules : [];
+    this.handlers = {};
+    this.fRender = {};
+    this.formData = {};
+    this.validate = {};
+    this.trueData = {};
+    this.fieldList = [];
+    options.el = !options.el ? window.document.body : (0, _util.isElement)(options.el) ? options.el : document.querySelector(options.el);
+    this.options = options;
+    this.rules.forEach(function (rule, index) {
+        if ((0, _util.isFunction)(rule.getRule)) _this.rules[index] = rule.getRule();
+    });
+};
+
+formCreate.createStyle = function () {
+    if (document.getElementById(formCreateStyleElId) !== null) return;
+    var style = document.createElement('style');
+    style.id = formCreateStyleElId;
+    style.innerText = _common.formCreateStyle;
+    document.getElementsByTagName('head')[0].appendChild(style);
+};
+
+formCreate.create = function (rules) {
+    var _opt = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+    var _vue = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : window.Vue;
+
+    var opt = (0, _util.isElement)(_opt) ? { el: _opt } : _opt;
+
+    var fComponent = new formCreate(rules, (0, _util.deepExtend)(Object.create(null), opt)),
+        $vm = fComponent.create(_vue);
+    return fComponent.fCreateApi;
+};
+
+formCreate.install = function (Vue) {
+    var globalOptions = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+    formCreate.createStyle();
+    Vue.prototype.$formCreate = function (rules, opt) {
+        return formCreate.create(rules, (0, _util.deepExtend)((0, _util.deepExtend)(Object.create(null), opt), globalOptions), Vue);
+    };
+
+    Vue.prototype.$formCreate.version = version;
+    Vue.prototype.$formCreate.maker = maker;
+    Vue.component(_component.formCreateName, (0, _component.$FormCreate)());
+};
+
+formCreate.prototype = {
+    setHandler: function setHandler(handler) {
+        var rule = handler.rule,
+            field = handler.field;
+        this.handlers[field] = handler;
+        if (handler.noValue === true) return;
+        this.formData[field] = handler.toParseValue(handler.value);
+        this.validate[field] = rule.validate;
+        this.trueData[field] = {
+            value: handler.toTrueValue(this.formData[field]),
+            rule: handler.rule
+        };
+    },
+    notField: function notField(field) {
+        return this.fieldList.indexOf(field) === -1;
+    },
+    createHandler: function createHandler() {
+        var _this2 = this;
+
+        this.rules.filter(function (rule) {
+            return rule.type !== undefined || rule.field !== undefined;
+        }).forEach(function (rule) {
+            rule.field = rule.field === undefined ? '' : rule.field;
+            if (_this2.notField(rule.field.toString())) {
+                var handler = (0, _common.getComponent)(_this2.vm, rule, _this2.options);
+                _this2.createChildren(handler);
+                _this2.setHandler(handler);
+                _this2.fieldList.push(handler.field);
+            } else {
+                console.error(rule.field + " \u5B57\u6BB5\u5DF2\u5B58\u5728");
+            }
+        });
+    },
+    createChildren: function createChildren(handler) {
+        var _this3 = this;
+
+        handler.childrenHandlers = [];
+        if ((0, _util.isArray)(handler.rule.children) && handler.rule.children.length > 0) {
+            handler.rule.children.map(function (rule) {
+                if ((0, _util.isFunction)(rule.getRule)) rule = rule.getRule();
+                rule.field = rule.field === undefined ? '' : rule.field;
+                if (_this3.notField(rule.field.toString())) {
+                    var _handler = (0, _common.getComponent)(_this3.vm, rule, _this3.options);
+                    _this3.createChildren(_handler);
+                    handler.childrenHandlers.push(_handler);
+                } else {
+                    console.error(rule.field + " \u5B57\u6BB5\u5DF2\u5B58\u5728");
+                }
+            });
+        }
+    },
+    init: function init(vm) {
+        this.vm = vm;
+        this.createHandler();
+        this.fCreateApi = (0, _common.getGlobalApi)(this);
+        vm.$set(vm, 'formData', this.formData);
+        vm.$set(vm, 'trueData', this.trueData);
+        vm.$set(vm, 'buttonProps', this.options.submitBtn);
+        vm.$set(vm, 'resetProps', this.options.resetBtn);
+        this.fRender = new _form2.default(this);
+    },
+    create: function create(Vue) {
+        var $fCreate = Vue.extend(this.component()),
+            $vm = new $fCreate().$mount();
+        this.options.el.appendChild($vm.$el);
+        return $vm;
+    },
+    mounted: function mounted(vm) {
+        var _this4 = this;
+
+        Object.keys(vm.formData).map(function (field) {
+            var handler = _this4.handlers[field];
+            handler.model && handler.model(vm.getTrueData(field));
+            _this4.addHandlerWatch(handler);
+            handler.mounted_();
+        });
+        this.options.mounted && this.options.mounted();
+        this.vm = vm;
+    },
+    component: function component() {
+        return (0, _formCreateComponent2.default)(this);
+    },
+    append: function append(rule, after, pre) {
+        if ((0, _util.isFunction)(rule.getRule)) rule = rule.getRule();
+        var _rule = (0, _util.deepExtend)(Object.create(null), rule);
+        if (Object.keys(this.handlers).indexOf(rule.field.toString()) !== -1) throw new Error(_rule.field + "\u5B57\u6BB5\u5DF2\u5B58\u5728");
+        var handler = (0, _common.getComponent)(this.vm, _rule, this.options);
+        this.createChildren(handler);
+        this.vm.setField(handler.field);
+        this.fRender.setRender(handler, after || '', pre);
+        this.setHandler(handler);
+        this.addHandlerWatch(handler);
+        this.vm.$nextTick(function () {
+            handler.mounted_();
+        });
+    },
+    removeField: function removeField(field) {
+        if (this.handlers[field] === undefined) throw new Error(field + "\u5B57\u6BB5\u4E0D\u5B58\u5728");
+        this.handlers[field].watch.map(function (unWatch) {
+            return unWatch();
+        });
+        this.vm.removeFormData(field);
+        delete this.handlers[field];
+        delete this.validate[field];
+        this.fRender.removeRender(field);
+        delete this.formData[field];
+        delete this.trueData[field];
+    },
+    addHandlerWatch: function addHandlerWatch(handler) {
+        var _this5 = this;
+
+        if (handler.noValue === true) return;
+        var field = handler.field;
+        var unWatch = this.vm.$watch("formData." + field, function (n, o) {
+            if (_this5.handlers[field] !== undefined) {
+                handler.setParseValue(n);
+            } else unWatch();
+        }, { deep: true });
+        var unWatch2 = this.vm.$watch("trueData." + field, function (n, o) {
+            if (_this5.handlers[field] !== undefined) {
+                var json = JSON.stringify(n);
+                if (_this5.vm.jsonData[field] !== json) {
+                    _this5.vm.jsonData[field] = json;
+                    handler.model && handler.model(_this5.vm.getTrueData(field));
+                    handler.watchTrueValue(n);
+                }
+            } else unWatch2();
+        }, { deep: true });
+        handler.watch = [unWatch, unWatch2];
+    },
+    getFormRef: function getFormRef() {
+        return this.vm.$refs[this.fRender.refName];
+    },
+    fields: function fields() {
+        return Object.keys(this.formData);
+    }
+};
+
+exports.default = {
+    install: formCreate.install,
+    default: formCreate,
+    create: formCreate.create,
+    maker: maker,
+    version: version
+};
+exports.formCreate = formCreate;
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _util = __webpack_require__(0);
+
+var cvm = function cvm() {
+    var createElement = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : (0, _util.throwIfMissing)('缺少参数:createElement');
+
+    this.$h = createElement;
+};
+
+var _instance = null;
+
+var vm = null;
+
+cvm.instance = function (createElement) {
+    if (false === _instance instanceof cvm) _instance = new cvm(createElement);
+    return _instance;
+};
+
+cvm.setVm = function ($vm) {
+    vm = $vm;
+};
+cvm.clearVm = function () {
+    vm = null;
+};
+
+cvm.prototype = {
+    make: function make(nodeName, data, VNodeFn) {
+        if ((0, _util.isString)(data)) data = { domProps: { innerHTML: data } };
+        var Node = this.$h(nodeName, data, this.getVNode(VNodeFn));
+        if (vm !== null) Node.context = vm;
+        return Node;
+    },
+    getVNode: function getVNode(VNode) {
+        return (0, _util.isFunction)(VNode) ? VNode() : VNode || [];
+    }
+};
+
+var nodes = { modal: 'Modal', progress: 'i-progress', button: 'i-button', icon: 'Icon', span: 'span', slider: 'Slider', rate: 'Rate', upload: 'Upload', cascader: 'Cascader', colorPicker: 'Color-Picker', timePicker: 'Time-Picker', datePicker: 'Date-Picker', 'switch': 'i-switch', option: 'i-option', select: 'i-select', checkbox: 'Checkbox', checkboxGroup: 'Checkbox-Group', radio: 'Radio', radioGroup: 'Radio-Group', inputNumber: 'Input-Number', input: 'i-input', formItem: 'Form-Item', form: 'i-form', col: 'i-col', row: 'row', tree: 'Tree' };
+
+Object.keys(nodes).forEach(function (k) {
+    cvm.prototype[k] = function (data, VNodeFn) {
+        return this.make(nodes[k], data, VNodeFn);
+    };
+});
+
+exports.default = cvm;
 
 /***/ }),
 /* 7 */
@@ -955,21 +1156,16 @@ exports.default = props;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.make = exports.render = exports.handler = undefined;
 
-var _handler2 = __webpack_require__(2);
+var _handler2 = __webpack_require__(1);
 
 var _handler3 = _interopRequireDefault(_handler2);
 
-var _render = __webpack_require__(3);
+var _render = __webpack_require__(2);
 
 var _render2 = _interopRequireDefault(_render);
 
-var _util = __webpack_require__(1);
-
-var _make = __webpack_require__(0);
-
-var _make2 = _interopRequireDefault(_make);
+var _util = __webpack_require__(0);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1065,7 +1261,6 @@ var render = (0, _render2.default)({
     defaultOnHandle: function defaultOnHandle(src) {
         var _this3 = this;
 
-        console.log(src);
         this.vm.$Modal.remove();
         setTimeout(function () {
             _this3.vm.$Modal.info({
@@ -1150,14 +1345,7 @@ var render = (0, _render2.default)({
     }
 });
 
-var make = (0, _make2.default)('upload', ['props', 'validate']);
-
-var component = { handler: handler, render: render, make: make };
-
-exports.default = component;
-exports.handler = handler;
-exports.render = render;
-exports.make = make;
+exports.default = { handler: handler, render: render };
 
 /***/ }),
 /* 8 */
@@ -1169,12 +1357,19 @@ exports.make = make;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+exports.formCreateName = exports.$FormCreate = undefined;
+
+var _formCreate = __webpack_require__(5);
+
 var formCreateName = 'FormCreate';
 
 var $FormCreate = function $FormCreate() {
     return {
         name: formCreateName,
-        template: '<div class="fc-component"></div>',
+        render: function render() {
+            return this.fComponent.fRender.parse(this.fComponent.vm);
+        },
+
         props: {
             rule: {
                 type: Array,
@@ -1191,12 +1386,56 @@ var $FormCreate = function $FormCreate() {
         },
         data: function data() {
             return {
+                formData: {},
+                buttonProps: {},
+                resetProps: {},
+                trueData: {},
+                jsonData: {},
                 api: {}
             };
         },
+        methods: {
+            changeFormData: function changeFormData(field, value) {
+                this.$set(this.formData, field, value);
+            },
+            changeTrueData: function changeTrueData(field, value) {
+                this.$set(this.trueData[field], 'value', value);
+            },
+            getTrueDataValue: function getTrueDataValue(field) {
+                return this.trueData[field].value;
+            },
+            getTrueData: function getTrueData(field) {
+                return this.trueData[field];
+            },
+            getFormData: function getFormData(field) {
+                return this.formData[field];
+            },
+            removeFormData: function removeFormData(field) {
+                this.$delete(this.formData, field);
+                this.$delete(this.trueData, field);
+                this.$delete(this.jsonData, field);
+            },
+            changeButtonProps: function changeButtonProps(props) {
+                this.$set(this, 'buttonProps', Object.assign(this.buttonProps, props));
+            },
+            changeResetProps: function changeResetProps(props) {
+                this.$set(this, 'resetProps', Object.assign(this.resetProps, props));
+            },
+            setField: function setField(field) {
+                this.$set(this.formData, field, '');
+                this.$set(this.trueData, field, {});
+            }
+        },
+        created: function created() {
+            this.fComponent = new _formCreate.formCreate(this.rule, this.option);
+            this.fComponent.init(this);
+        },
         mounted: function mounted() {
-            this.api = this.$formCreate(this.rule, Object.assign(this.option, { el: this.$el }));
-            if (this.value !== undefined) this.api.model(this.value);
+            this.fComponent.mounted(this);
+            this.api = this.fComponent.fCreateApi;
+            this.$formData = {};
+            // if(this.value !== undefined)
+            this.api.model(this.$formData);
         }
     };
 };
@@ -1211,7 +1450,7 @@ exports.formCreateName = formCreateName;
 "use strict";
 
 
-var _formCreate = __webpack_require__(10);
+var _formCreate = __webpack_require__(5);
 
 var _formCreate2 = _interopRequireDefault(_formCreate);
 
@@ -1236,192 +1475,81 @@ module.exports.default = module.exports = _formCreate2.default;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+exports.creator = undefined;
 
-var _util = __webpack_require__(1);
+var _util = __webpack_require__(0);
 
-var _common = __webpack_require__(4);
+var _props = __webpack_require__(4);
 
-var _form = __webpack_require__(26);
-
-var _form2 = _interopRequireDefault(_form);
-
-var _formCreateComponent = __webpack_require__(27);
-
-var _formCreateComponent2 = _interopRequireDefault(_formCreateComponent);
-
-var _make = __webpack_require__(0);
-
-var _component = __webpack_require__(8);
+var _props2 = _interopRequireDefault(_props);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var version = '1.3.3';
+var creatorFactory = function creatorFactory(type) {
+    return function $m(title, field) {
+        var value = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '';
 
-var maker = (0, _common.getMaker)();
-
-var formCreateStyleElId = 'form-create-style';
-
-var formCreate = function formCreate(rules, _options) {
-    if (!this instanceof formCreate) throwIfMissing('formCreate is a constructor and should be called with the `new` keyword');
-    var options = (0, _util.deepExtend)((0, _util.deepExtend)(Object.create(null), (0, _common.getConfig)()), _options);
-    this.rules = Array.isArray(rules) ? rules : [];
-    this.handlers = {};
-    this.fRender = {};
-    this.formData = {};
-    this.validate = {};
-    this.trueData = {};
-    this.fieldList = [];
-    options.el = !options.el ? window.document.body : (0, _util.isElement)(options.el) ? options.el : document.querySelector(options.el);
-    this.options = options;
-};
-
-formCreate.createStyle = function () {
-    if (document.getElementById(formCreateStyleElId) !== null) return;
-    var style = document.createElement('style');
-    style.id = formCreateStyleElId;
-    style.innerText = _common.formCreateStyle;
-    document.getElementsByTagName('head')[0].appendChild(style);
-};
-
-formCreate.create = function (rules) {
-    var _opt = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-    var v = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : window.Vue;
-
-    var opt = (0, _util.isElement)(_opt) ? { el: _opt } : _opt;
-    if ((0, _util.isBool)(opt.sumbitBtn)) opt.sumbitBtn = { show: opt.sumbitBtn };
-    if ((0, _util.isBool)(opt.resetBtn)) opt.resetBtn = { show: opt.resetBtn };
-    var fComponent = new formCreate(rules, (0, _util.deepExtend)(Object.create(null), opt)),
-        $vm = fComponent.create(v);
-    return fComponent.fCreateApi;
-};
-
-formCreate.install = function (Vue) {
-    var globalOptions = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-    formCreate.createStyle();
-    Vue.prototype.$formCreate = function (rules, opt) {
-        return formCreate.create(rules, (0, _util.deepExtend)((0, _util.deepExtend)(Object.create(null), opt), globalOptions), Vue);
+        return new creator(Object.assign(baseRule(), { type: type, title: title, field: field, value: value }));
     };
-
-    Vue.prototype.$formCreate.version = version;
-    Vue.prototype.$formCreate.maker = maker;
-    Vue.component(_component.formCreateName, (0, _component.$FormCreate)());
 };
 
-formCreate.prototype = {
-    checkRule: function checkRule(rule) {
-        rule.type = rule.type === undefined ? 'hidden' : rule.type.toLowerCase();
-        if (!rule.field) rule.field = '';
-        return rule;
-    },
-    setHandler: function setHandler(handler) {
-        var rule = handler.rule,
-            field = handler.field;
-        this.handlers[field] = handler;
-        this.formData[field] = handler.toParseValue(handler.value);
-        this.validate[field] = rule.validate;
-        this.trueData[field] = {
-            value: handler.toTrueValue(this.formData[field]),
-            rule: handler.rule
-        };
-    },
-    init: function init(vm) {
-        var _this = this;
-
-        this.vm = vm;
-        this.rules.forEach(function (rule, index) {
-            if (rule instanceof _make.make) _this.rules[index] = rule.getRule();
-        });
-        this.rules.filter(function (rule) {
-            return rule.field !== undefined;
-        }).forEach(function (rule) {
-            rule = _this.checkRule(rule);
-            var handler = (0, _common.createHandler)(_this.vm, rule, _this.options);
-            if (_this.fieldList.indexOf(handler.field) === -1) {
-                _this.setHandler(handler);
-                _this.fieldList.push(handler.field);
-            } else {
-                console.error(handler.field + " \u5B57\u6BB5\u5DF2\u5B58\u5728");
-            }
-        });
-        this.fCreateApi = (0, _common.getGlobalApi)(this);
-        vm.$set(vm, 'formData', this.formData);
-        vm.$set(vm, 'trueData', this.trueData);
-        vm.$set(vm, 'buttonProps', this.options.submitBtn);
-        vm.$set(vm, 'resetProps', this.options.resetBtn);
-        this.fRender = new _form2.default(this);
-    },
-    create: function create(Vue) {
-        var $fCreate = Vue.extend(this.component()),
-            $vm = new $fCreate().$mount();
-        this.options.el.appendChild($vm.$el);
-        return $vm;
-    },
-    component: function component() {
-        return (0, _formCreateComponent2.default)(this);
-    },
-    append: function append(rule, after, pre) {
-        if (rule instanceof _make.make) rule = rule.getRule();
-        var _rule = (0, _util.deepExtend)(Object.create(null), this.checkRule(rule));
-        var handler = (0, _common.createHandler)(this.vm, _rule, this.options);
-        if (Object.keys(this.handlers).indexOf(handler.field) !== -1) throw new Error(_rule.field + "\u5B57\u6BB5\u5DF2\u5B58\u5728");
-        this.vm.setField(handler.field);
-        this.fRender.setRender(handler, after || '', pre);
-        this.setHandler(handler);
-        this.addHandlerWatch(handler);
-        this.vm.$nextTick(function () {
-            handler.mounted_();
-        });
-    },
-    removeField: function removeField(field) {
-        if (this.handlers[field] === undefined) throw new Error(field + "\u5B57\u6BB5\u4E0D\u5B58\u5728");
-        this.handlers[field].watch.map(function (unWatch) {
-            return unWatch();
-        });
-        this.vm.removeFormData(field);
-        delete this.handlers[field];
-        delete this.validate[field];
-        this.fRender.removeRender(field);
-        delete this.formData[field];
-        delete this.trueData[field];
-    },
-    addHandlerWatch: function addHandlerWatch(handler) {
-        var _this2 = this;
-
-        var field = handler.field;
-        var unWatch = this.vm.$watch("formData." + field, function (n, o) {
-            if (_this2.handlers[field] !== undefined) {
-                handler.setParseValue(n);
-            } else unWatch();
-        }, { deep: true });
-        var unWatch2 = this.vm.$watch("trueData." + field, function (n, o) {
-            if (_this2.handlers[field] !== undefined) {
-                var json = JSON.stringify(n);
-                if (_this2.vm.jsonData[field] !== json) {
-                    _this2.vm.jsonData[field] = json;
-                    handler.model && handler.model(_this2.vm.getTrueData(field));
-                    handler.watchTrueValue(n);
-                }
-            } else unWatch2();
-        }, { deep: true });
-        handler.watch = [unWatch, unWatch2];
-    },
-    getFormRef: function getFormRef() {
-        return this.vm.$refs[this.fRender.refName];
-    },
-    fields: function fields() {
-        return Object.keys(this.formData);
-    }
+var baseRule = function baseRule() {
+    return {
+        event: {},
+        validate: [],
+        options: [],
+        col: {},
+        children: [],
+        emit: []
+    };
 };
 
-exports.default = {
-    install: formCreate.install,
-    default: formCreate,
-    create: formCreate.create,
-    maker: maker,
-    version: version
+var creator = function creator(rule) {
+    _props2.default.call(this);
+    this.rule = rule;
 };
+
+creator.prototype = _props2.default.prototype;
+
+creator.constructor = creator;
+
+var objAttrs = ['event', 'col'];
+
+objAttrs.forEach(function (attr) {
+    creator.prototype[attr] = function (opt) {
+        this.rule[attr] = Object.assign(this.rule[attr], opt);
+        return this;
+    };
+});
+
+var arrAttrs = ['validate', 'options', 'children', 'emit'];
+
+arrAttrs.forEach(function (attr) {
+    creator.prototype[attr] = function (opt) {
+        if (!(0, _util.isArray)(opt)) opt = [opt];
+        this.rule[attr] = this.rule[attr].concat(opt);
+        return this;
+    };
+});
+
+creator.prototype.getRule = function () {
+    return Object.assign(this.rule, this.get());
+};
+
+creator.prototype.setValue = function (value) {
+    this.rule.value = value;
+    return this;
+};
+
+creator.prototype.model = function (model, field) {
+    if (!field) field = this.rule.field;
+    this.rule.model = function (v) {
+        model[field] = v;
+    };
+};
+
+exports.default = creatorFactory;
+exports.creator = creator;
 
 /***/ }),
 /* 11 */
@@ -1433,21 +1561,16 @@ exports.default = {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.make = exports.render = exports.handler = undefined;
 
-var _handler = __webpack_require__(2);
+var _handler = __webpack_require__(1);
 
 var _handler2 = _interopRequireDefault(_handler);
 
-var _render = __webpack_require__(3);
+var _render = __webpack_require__(2);
 
 var _render2 = _interopRequireDefault(_render);
 
-var _util = __webpack_require__(1);
-
-var _make = __webpack_require__(0);
-
-var _make2 = _interopRequireDefault(_make);
+var _util = __webpack_require__(0);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1474,14 +1597,7 @@ var render = (0, _render2.default)({
     }
 });
 
-var make = (0, _make2.default)('cascader', ['props', 'event', 'validate']);
-
-var component = { handler: handler, render: render, make: make };
-
-exports.default = component;
-exports.handler = handler;
-exports.render = render;
-exports.make = make;
+exports.default = { handler: handler, render: render };
 
 /***/ }),
 /* 12 */
@@ -1493,21 +1609,16 @@ exports.make = make;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.make = exports.render = exports.handler = undefined;
 
-var _handler2 = __webpack_require__(2);
+var _handler2 = __webpack_require__(1);
 
 var _handler3 = _interopRequireDefault(_handler2);
 
-var _render = __webpack_require__(3);
+var _render = __webpack_require__(2);
 
 var _render2 = _interopRequireDefault(_render);
 
-var _util = __webpack_require__(1);
-
-var _make = __webpack_require__(0);
-
-var _make2 = _interopRequireDefault(_make);
+var _util = __webpack_require__(0);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1549,14 +1660,7 @@ var render = (0, _render2.default)({
     }
 });
 
-var make = (0, _make2.default)('checkbox', ['options', 'props', 'event', 'validate']);
-
-var component = { handler: handler, render: render, make: make };
-
-exports.default = component;
-exports.handler = handler;
-exports.render = render;
-exports.make = make;
+exports.default = { handler: handler, render: render };
 
 /***/ }),
 /* 13 */
@@ -1568,19 +1672,14 @@ exports.make = make;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.make = exports.render = exports.handler = undefined;
 
-var _handler = __webpack_require__(2);
+var _handler = __webpack_require__(1);
 
 var _handler2 = _interopRequireDefault(_handler);
 
-var _render = __webpack_require__(3);
+var _render = __webpack_require__(2);
 
 var _render2 = _interopRequireDefault(_render);
-
-var _make = __webpack_require__(0);
-
-var _make2 = _interopRequireDefault(_make);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1592,14 +1691,7 @@ var render = (0, _render2.default)({
     }
 });
 
-var make = (0, _make2.default)('colorpicker', ['props', 'event', 'validate']);
-
-var component = { handler: handler, render: render, make: make };
-
-exports.default = component;
-exports.handler = handler;
-exports.render = render;
-exports.make = make;
+exports.default = { handler: handler, render: render };
 
 /***/ }),
 /* 14 */
@@ -1611,23 +1703,18 @@ exports.make = make;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.make = exports.render = exports.handler = undefined;
 
-var _handler = __webpack_require__(2);
+var _handler = __webpack_require__(1);
 
 var _handler2 = _interopRequireDefault(_handler);
 
-var _render = __webpack_require__(3);
+var _render = __webpack_require__(2);
 
 var _render2 = _interopRequireDefault(_render);
 
-var _util = __webpack_require__(1);
+var _util = __webpack_require__(0);
 
-var _common = __webpack_require__(4);
-
-var _make = __webpack_require__(0);
-
-var _make2 = _interopRequireDefault(_make);
+var _common = __webpack_require__(3);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1652,7 +1739,7 @@ var handler = (0, _handler2.default)({
         } else if ('date' === props.type && props.multiple === true) {
             parseValue = value.toString();
         } else {
-            parseValue = isArr ? parseValue = value[0] || '' : value;
+            parseValue = isArr ? value[0] || '' : value;
             parseValue = !parseValue ? '' : (0, _common.timeStampToDate)(parseValue);
         }
         return parseValue;
@@ -1671,14 +1758,7 @@ var render = (0, _render2.default)({
     }
 });
 
-var make = (0, _make2.default)('datepicker', ['props', 'event', 'validate']);
-
-var component = { handler: handler, render: render, make: make };
-
-exports.default = component;
-exports.handler = handler;
-exports.render = render;
-exports.make = make;
+exports.default = { handler: handler, render: render };
 
 /***/ }),
 /* 15 */
@@ -1690,19 +1770,14 @@ exports.make = make;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.make = exports.render = exports.handler = undefined;
 
-var _handler = __webpack_require__(2);
+var _handler = __webpack_require__(1);
 
 var _handler2 = _interopRequireDefault(_handler);
 
-var _render = __webpack_require__(3);
+var _render = __webpack_require__(2);
 
 var _render2 = _interopRequireDefault(_render);
-
-var _make = __webpack_require__(0);
-
-var _make2 = _interopRequireDefault(_make);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1714,14 +1789,7 @@ var render = (0, _render2.default)({
     }
 });
 
-var make = (0, _make2.default)('input', ['props', 'event', 'validate', 'slot']);
-
-var component = { handler: handler, render: render, make: make };
-
-exports.default = component;
-exports.handler = handler;
-exports.render = render;
-exports.make = make;
+exports.default = { handler: handler, render: render };
 
 /***/ }),
 /* 16 */
@@ -1733,19 +1801,14 @@ exports.make = make;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.make = exports.render = exports.handler = undefined;
 
-var _handler = __webpack_require__(2);
+var _handler = __webpack_require__(1);
 
 var _handler2 = _interopRequireDefault(_handler);
 
-var _render = __webpack_require__(3);
+var _render = __webpack_require__(2);
 
 var _render2 = _interopRequireDefault(_render);
-
-var _make = __webpack_require__(0);
-
-var _make2 = _interopRequireDefault(_make);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1763,14 +1826,7 @@ var render = (0, _render2.default)({
     }
 });
 
-var make = (0, _make2.default)('inputnumber', ['props', 'event', 'validate']);
-
-var component = { handler: handler, render: render, make: make };
-
-exports.default = component;
-exports.handler = handler;
-exports.render = render;
-exports.make = make;
+exports.default = { handler: handler, render: render };
 
 /***/ }),
 /* 17 */
@@ -1782,19 +1838,14 @@ exports.make = make;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.make = exports.render = exports.handler = undefined;
 
-var _handler2 = __webpack_require__(2);
+var _handler2 = __webpack_require__(1);
 
 var _handler3 = _interopRequireDefault(_handler2);
 
-var _render = __webpack_require__(3);
+var _render = __webpack_require__(2);
 
 var _render2 = _interopRequireDefault(_render);
-
-var _make = __webpack_require__(0);
-
-var _make2 = _interopRequireDefault(_make);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1833,14 +1884,7 @@ var render = (0, _render2.default)({
     }
 });
 
-var make = (0, _make2.default)('radio', ['options', 'props', 'event', 'validate']);
-
-var component = { handler: handler, render: render, make: make };
-
-exports.default = component;
-exports.handler = handler;
-exports.render = render;
-exports.make = make;
+exports.default = { handler: handler, render: render };
 
 /***/ }),
 /* 18 */
@@ -1852,21 +1896,16 @@ exports.make = make;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.make = exports.render = exports.handler = undefined;
 
-var _handler2 = __webpack_require__(2);
+var _handler2 = __webpack_require__(1);
 
 var _handler3 = _interopRequireDefault(_handler2);
 
-var _render = __webpack_require__(3);
+var _render = __webpack_require__(2);
 
 var _render2 = _interopRequireDefault(_render);
 
-var _util = __webpack_require__(1);
-
-var _make = __webpack_require__(0);
-
-var _make2 = _interopRequireDefault(_make);
+var _util = __webpack_require__(0);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1896,14 +1935,7 @@ var render = (0, _render2.default)({
     }
 });
 
-var make = (0, _make2.default)('select', ['options', 'props', 'event', 'validate']);
-
-var component = { handler: handler, render: render, make: make };
-
-exports.default = component;
-exports.handler = handler;
-exports.render = render;
-exports.make = make;
+exports.default = { handler: handler, render: render };
 
 /***/ }),
 /* 19 */
@@ -1915,19 +1947,14 @@ exports.make = make;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.make = exports.render = exports.handler = undefined;
 
-var _handler = __webpack_require__(2);
+var _handler = __webpack_require__(1);
 
 var _handler2 = _interopRequireDefault(_handler);
 
-var _render = __webpack_require__(3);
+var _render = __webpack_require__(2);
 
 var _render2 = _interopRequireDefault(_render);
-
-var _make = __webpack_require__(0);
-
-var _make2 = _interopRequireDefault(_make);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1953,14 +1980,7 @@ var render = (0, _render2.default)({
     }
 });
 
-var make = (0, _make2.default)('switch', ['slot', 'props', 'event', 'validate']);
-
-var component = { handler: handler, render: render, make: make };
-
-exports.default = component;
-exports.handler = handler;
-exports.render = render;
-exports.make = make;
+exports.default = { handler: handler, render: render };
 
 /***/ }),
 /* 20 */
@@ -1972,23 +1992,18 @@ exports.make = make;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.make = exports.render = exports.handler = undefined;
 
-var _handler = __webpack_require__(2);
+var _handler = __webpack_require__(1);
 
 var _handler2 = _interopRequireDefault(_handler);
 
-var _render = __webpack_require__(3);
+var _render = __webpack_require__(2);
 
 var _render2 = _interopRequireDefault(_render);
 
-var _util = __webpack_require__(1);
+var _util = __webpack_require__(0);
 
-var _common = __webpack_require__(4);
-
-var _make = __webpack_require__(0);
-
-var _make2 = _interopRequireDefault(_make);
+var _common = __webpack_require__(3);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -2034,14 +2049,7 @@ var render = (0, _render2.default)({
     }
 });
 
-var make = (0, _make2.default)('timepicker', ['props', 'event', 'validate']);
-
-var component = { handler: handler, render: render, make: make };
-
-exports.default = component;
-exports.handler = handler;
-exports.render = render;
-exports.make = make;
+exports.default = { handler: handler, render: render };
 
 /***/ }),
 /* 21 */
@@ -2053,19 +2061,14 @@ exports.make = make;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.make = exports.render = exports.handler = undefined;
 
-var _handler = __webpack_require__(2);
+var _handler = __webpack_require__(1);
 
 var _handler2 = _interopRequireDefault(_handler);
 
-var _render = __webpack_require__(3);
+var _render = __webpack_require__(2);
 
 var _render2 = _interopRequireDefault(_render);
-
-var _make = __webpack_require__(0);
-
-var _make2 = _interopRequireDefault(_make);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -2081,17 +2084,7 @@ var render = (0, _render2.default)({
     }
 });
 
-var make = function () {
-    var makeRule = (0, _make2.default)('hidden', []);
-    return makeRule.bind(makeRule, '');
-}();
-
-var component = { handler: handler, render: render, make: make };
-
-exports.default = component;
-exports.handler = handler;
-exports.render = render;
-exports.make = make;
+exports.default = { handler: handler, render: render };
 
 /***/ }),
 /* 22 */
@@ -2103,19 +2096,14 @@ exports.make = make;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.make = exports.render = exports.handler = undefined;
 
-var _handler = __webpack_require__(2);
+var _handler = __webpack_require__(1);
 
 var _handler2 = _interopRequireDefault(_handler);
 
-var _render = __webpack_require__(3);
+var _render = __webpack_require__(2);
 
 var _render2 = _interopRequireDefault(_render);
-
-var _make = __webpack_require__(0);
-
-var _make2 = _interopRequireDefault(_make);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -2133,14 +2121,7 @@ var render = (0, _render2.default)({
     }
 });
 
-var make = (0, _make2.default)('rate', ['props', 'event', 'validate']);
-
-var component = { handler: handler, render: render, make: make };
-
-exports.default = component;
-exports.handler = handler;
-exports.render = render;
-exports.make = make;
+exports.default = { handler: handler, render: render };
 
 /***/ }),
 /* 23 */
@@ -2152,21 +2133,16 @@ exports.make = make;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.make = exports.render = exports.handler = undefined;
 
-var _handler = __webpack_require__(2);
+var _handler = __webpack_require__(1);
 
 var _handler2 = _interopRequireDefault(_handler);
 
-var _render = __webpack_require__(3);
+var _render = __webpack_require__(2);
 
 var _render2 = _interopRequireDefault(_render);
 
-var _util = __webpack_require__(1);
-
-var _make = __webpack_require__(0);
-
-var _make2 = _interopRequireDefault(_make);
+var _util = __webpack_require__(0);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -2194,14 +2170,7 @@ var render = (0, _render2.default)({
     }
 });
 
-var make = (0, _make2.default)('slider', ['props', 'event', 'validate']);
-
-var component = { handler: handler, render: render, make: make };
-
-exports.default = component;
-exports.handler = handler;
-exports.render = render;
-exports.make = make;
+exports.default = { handler: handler, render: render };
 
 /***/ }),
 /* 24 */
@@ -2213,23 +2182,20 @@ exports.make = make;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.make = exports.render = exports.handler = undefined;
 
-var _handler = __webpack_require__(2);
+var _handler = __webpack_require__(1);
 
 var _handler2 = _interopRequireDefault(_handler);
 
-var _render = __webpack_require__(3);
+var _render = __webpack_require__(2);
 
 var _render2 = _interopRequireDefault(_render);
 
-var _util = __webpack_require__(1);
-
-var _make = __webpack_require__(0);
-
-var _make2 = _interopRequireDefault(_make);
+var _util = __webpack_require__(0);
 
 var _upload = __webpack_require__(7);
+
+var _upload2 = _interopRequireDefault(_upload);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -2436,7 +2402,7 @@ var render = (0, _render2.default)({
         }, 301);
     }
 });
-render.prototype.defaultOnHandle = _upload.render.prototype.defaultOnHandle;
+render.prototype.defaultOnHandle = _upload2.default.render.prototype.defaultOnHandle;
 Object.keys(eventList).forEach(function (k) {
     render.prototype[k] = function () {
         var fn = this.handler.rule.event[eventList[k]];
@@ -2444,14 +2410,7 @@ Object.keys(eventList).forEach(function (k) {
     };
 });
 
-var make = (0, _make2.default)('frame', ['props', 'event', 'validate']);
-
-var component = { handler: handler, render: render, make: make };
-
-exports.default = component;
-exports.handler = handler;
-exports.render = render;
-exports.make = make;
+exports.default = { handler: handler, render: render };
 
 /***/ }),
 /* 25 */
@@ -2463,21 +2422,16 @@ exports.make = make;
 Object.defineProperty(exports, "__esModule", {
 	value: true
 });
-exports.make = exports.render = exports.handler = undefined;
 
-var _handler2 = __webpack_require__(2);
+var _handler2 = __webpack_require__(1);
 
 var _handler3 = _interopRequireDefault(_handler2);
 
-var _render = __webpack_require__(3);
+var _render = __webpack_require__(2);
 
 var _render2 = _interopRequireDefault(_render);
 
-var _util = __webpack_require__(1);
-
-var _make = __webpack_require__(0);
-
-var _make2 = _interopRequireDefault(_make);
+var _util = __webpack_require__(0);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -2487,7 +2441,6 @@ var handler = (0, _handler3.default)({
 	init: function init() {
 		var _this = this;
 
-		this.rule.props = (0, _util.deepExtend)(Object.create(null), this.rule.props);
 		var props = this.rule.props;
 		if (props.data === undefined) props.data = [];
 		if (props.type === undefined) props.type = 'checked';
@@ -2606,14 +2559,7 @@ var render = (0, _render2.default)({
 	}
 });
 
-var make = (0, _make2.default)('tree', ['props', 'event']);
-
-var component = { handler: handler, render: render, make: make };
-
-exports.default = component;
-exports.handler = handler;
-exports.render = render;
-exports.make = make;
+exports.default = { handler: handler, render: render };
 
 /***/ }),
 /* 26 */
@@ -2626,15 +2572,15 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _cvm = __webpack_require__(5);
+var _cvm = __webpack_require__(6);
 
 var _cvm2 = _interopRequireDefault(_cvm);
 
-var _props = __webpack_require__(6);
+var _props = __webpack_require__(4);
 
 var _props2 = _interopRequireDefault(_props);
 
-var _util = __webpack_require__(1);
+var _util = __webpack_require__(0);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -2679,9 +2625,10 @@ render.prototype = {
                 key = _render$handler.key,
                 type = _render$handler.type;
 
-            if (type !== 'hidden') return _this.makeFormItem(render.handler, render.parse(), 'fItem' + key + unique);
+            if (type === 'hidden') return;
+            return _this.makeFormItem(render.handler, render.parse(), 'fItem' + key + unique);
         });
-        if (false !== this.options.submitBtn) vn.push(this.makeFormBtn(unique));
+        if (vn.length > 0) vn.push(this.makeFormBtn(unique));
         return this.cvm.form(propsData, [this.cvm.row({ props: this.options.row || {} }, vn)]);
     },
     makeFormItem: function makeFormItem(_ref2, VNodeFn) {
@@ -2702,8 +2649,8 @@ render.prototype = {
     },
     makeFormBtn: function makeFormBtn(unique) {
         var btn = [],
-            submitBtnShow = false !== this.options.submitBtn && false !== this.options.submitBtn.show,
-            resetBtnShow = false !== this.options.resetBtn && false !== this.options.resetBtn.show;
+            submitBtnShow = false !== this.vm.buttonProps && false !== this.vm.buttonProps.show,
+            resetBtnShow = false !== this.vm.resetProps && false !== this.vm.resetProps.show;
         if (submitBtnShow) btn.push(this.makeSubmitBtn(unique, resetBtnShow ? 19 : 24));
         if (resetBtnShow) btn.push(this.makeResetBtn(unique, 4));
 
@@ -2712,16 +2659,16 @@ render.prototype = {
     makeResetBtn: function makeResetBtn(unique, span) {
         var _this2 = this;
 
-        return this.cvm.col({ props: { span: span, push: 1 } }, [this.cvm.button({ key: 'frsbtn' + unique, props: this.options.resetBtn, on: { "click": function click() {
+        return this.cvm.col({ props: { span: span, push: 1 } }, [this.cvm.button({ key: 'frsbtn' + unique, props: this.vm.resetProps, on: { "click": function click() {
                     _this2.fCreateApi.resetFields();
-                } } }, [this.cvm.span(this.options.resetBtn.innerText)])]);
+                } } }, [this.cvm.span(this.vm.resetProps.innerText)])]);
     },
     makeSubmitBtn: function makeSubmitBtn(unique, span) {
         var _this3 = this;
 
         return this.cvm.col({ props: { span: span } }, [this.cvm.button({ key: 'fbtn' + unique, props: this.vm.buttonProps, on: { "click": function click() {
                     _this3.fCreateApi.submit();
-                } } }, [this.cvm.span(this.options.submitBtn.innerText)])]);
+                } } }, [this.cvm.span(this.vm.buttonProps.innerText)])]);
     },
     removeRender: function removeRender(field) {
         delete this.renders[field];
@@ -2805,15 +2752,7 @@ var formCreateComponent = function formCreateComponent(fComponent) {
             }
         },
         mounted: function mounted() {
-            var _this = this;
-
-            Object.keys(this.formData).map(function (field) {
-                var handler = fComponent.handlers[field];
-                handler.model && handler.model(_this.getTrueData(field));
-                fComponent.addHandlerWatch(handler);
-                handler.mounted_();
-            });
-            fComponent.options.mounted && fComponent.options.mounted();
+            fComponent.mounted(this);
         }
     };
 };

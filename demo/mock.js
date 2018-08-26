@@ -1,5 +1,7 @@
 var maker = formCreate.maker;
-window.mock = [
+function mock() {
+
+return [
     maker.hidden('id','14'),
     // maker.hidden('oid','15'),
     maker.cascader('所在区域','address',['陕西省','西安市','新城区']).props({
@@ -52,7 +54,7 @@ window.mock = [
         { required: true, message: '请输入商品名称', trigger: 'blur' }
     ]).event({
         change:console.log
-    }),
+    }).emit(['change']),
     // {
     //     type:"input",
     //     title:"商品名称",//label名称
@@ -178,6 +180,32 @@ window.mock = [
     //     },
     //     validate:[],
     // },
+    maker.create('i-button').props({
+        type:"primary",
+        size:"large",
+        shape:undefined,
+        long:true,
+        htmlType:"button",
+        disabled:false,
+        icon:"ios-upload",
+        loading:false,
+        show:true
+    })
+    .on({
+        "click":()=>{console.log('click');},
+    }).col({span:12,labelWidth:1}).children([
+        maker.create('span').domProps({
+            innerHTML:'测试自定义按钮'
+        })
+    ]),
+    maker.create('Tooltip').props({
+        content:"这里是提示文字",
+    }).col({span:11,labelWidth:1,push:1}).children([
+        maker.create('span').domProps({
+            innerHTML:'当鼠标经过这段文字时，会显示一个气泡框'
+        })
+    ]),
+
     maker.select("产品分类","cate_id",["104","105"]).options([
         {"value": "104", "label": "生态蔬菜", "disabled": false},
         {"value": "105", "label": "新鲜水果", "disabled": false},
@@ -565,6 +593,7 @@ window.mock = [
 		],
 	})
 ];
+}
 
 $r = maker.upload('产品主图','logo','http://img1.touxiang.cn/uploads/20131030/30-075657_191.jpg').props({
     "action": "",

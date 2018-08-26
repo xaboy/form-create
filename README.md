@@ -29,22 +29,26 @@
 
 ### 本项目QQ讨论群[28963712](https://jq.qq.com/?_wv=1027&k=54aKUVw)
 
-## 1.3 版本重大更新
+## 1.4 版本重大更新
 
-- 优化和精简内部结构
-- 支持 双向数据绑定!!!
-- 支持 全局方法快速创建表单`window.formCreate.create()`
-- 新增 col栅格布局规则
-- 新增 树型组件
+- 新增 使用标签模式生成 `<form-create>`
+- 优化 maker规则生成器
+- 新增 **生成任意标签组件** `maker.create(componentName)
+- 新增 标签模式下支持emit触发事件
 
 ## 更新说明 **建议保持在最新版本**
 
-#### 1.3.4 (2018-8-25)
+#### 1.4.0 (2018-8-26)
 
 - 新增 打包命令`build`和调试命令`dev`
 - 修复 frame,tree,inputNumber组件,弹出框BUG
 - 新增 表单重置按钮,默认不显示.([详细见底部 createOptions](#全局配置-createoptions))
 - 新增 frame组件关闭事件`cancel`
+- 优化 maker规则生成器
+- 新增 使用标签模式生成
+- 新增 **生成任意标签组件** `maker.create(componentName)` ([点击查看iviewUI需要加`i-`前缀的组件列表](#iviewUI需要加`i-`前缀的组件列表))
+- 新增 表单重置按钮
+- 新增 标签模式下支持emit触发事件
 
 #### 1.3.3 (2018-8-4)
 
@@ -114,7 +118,15 @@ import formCreat from 'form-create'
 Vue.use(iView);
 Vue.use(formCreat)
 ```
-**注意! iview版本为`2.14.3`,Vue版本为`2.5.*`**
+**注意! iview版本为`2.14.3`,Vue版本为`2.5`**
+
+# 查看示例
+
+```shell
+npm run dev
+```
+
+
 
 ## 使用
 
@@ -147,6 +159,52 @@ new Vue({
     }
 })
 ```
+
+#组件模式下使用
+
+```html
+<form-create ref="fc" v-model="formData" :rule="rule" :option="option"></form-create>
+```
+
+```javascript
+    new Vue({
+        el:'#app1',
+        data:{
+            formData:{},
+            rule:mock,
+            option:{
+                //显示表单重置按钮
+                resetBtn:true,
+                //表单提交事件
+                onSubmit:function (formData) {
+                    alert(JSON.stringify(formData));
+                    //按钮进入提交状态
+                    $f.btn.loading();
+                    //重置按钮禁用
+                    $f.resetBtn.disabled();
+                    //按钮进入可点击状态
+//                    $f.btn.finish();
+                    //创建第二个表单
+                    $f = that.$formCreate(mock,root);
+                }
+            }
+        },
+        watch:{
+            'formData.address':{
+                handler:function (n) {
+                    console.log(n);
+                },
+                deep:true
+            }
+        },
+        mounted:function () {
+            $f = this.$refs.fc.api;
+        }
+    });
+```
+
+
+
 
 
 #### $formCreate 表单生成器参数
@@ -385,7 +443,58 @@ $formCreate.maker.frame(title,field,value)
 
 
 ## rules 表单组件规则
-> 支持hidden、input、inputNumber、radio、rate、select、slider、switch、cascader、checkbox、colorPicker、datePicker、timePicker、frame、tree组件
+> 内置hidden、input、inputNumber、radio、rate、select、slider、switch、cascader、checkbox、colorPicker、datePicker、timePicker、frame、tree组件
+
+
+
+#### 自动定义组件生成
+
+**[配置参数查考](https://cn.vuejs.org/v2/guide/render-function.html#%E6%B7%B1%E5%85%A5-data-%E5%AF%B9%E8%B1%A1)**
+
+maker快速生成:
+
+```javascript
+maker.create('i-button').props({
+        type:"primary",
+        size:"large",
+    }).on({
+        "click":()=>{console.log(1);},
+    }).col({span:8,labelWidth:1}).children([
+        maker.create('span').domProps({
+            innerHTML:'测试按钮'
+        })
+    ]),
+```
+
+原始参数:
+
+```javascript
+{
+    type:'i-button',
+    props:{
+        type:"primary",
+        size:"large",
+    },
+    on:{
+      "click":()=>{console.log(1);}  
+    },
+    col:{
+        span:8,
+        labelWidth:1
+    }
+    children:[
+       {
+            type:'span',
+            domProps:{
+                innerHTML:'测试按钮'
+            }
+        }
+    ]
+    
+}
+```
+
+
 
 #### hidden 隐藏字段
 
@@ -1418,6 +1527,23 @@ TreeRule :
 - **yyyy年M月d日**：2016年1月1日
 - **MM/dd/yy**：12/24/16
 - **H点m分s秒**：9点41分0秒
+
+
+
+## iviewUI需要加`i-`前缀的组件列表
+
+- Button: `i-button`
+- Col: `i-col`
+- Table: `i-table`
+- Input: `i-input`
+- Form: `i-form`
+- Menu: `i-menu`
+- Select: `i-select`
+- Option: `i-option`
+- Progress: `i-progress`
+
+- Switch: `i-switch`
+- Circle: `i-circle`
 
 
 

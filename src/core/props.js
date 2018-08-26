@@ -72,7 +72,7 @@ keyList.forEach(key=>{
 objList.forEach(key=>{
     props.prototype[key] = function (obj = throwIfMissing('缺少参数:'+key),val) {
 	    if(isPlainObject(obj)){
-		    this._data[key] = assign({},this._data[key],obj)
+		    this._data[key] = assign(this._data[key],obj)
 	    }else{
 		    this._data[key][obj.toString()] = val
 	    }

@@ -2,7 +2,6 @@ import handlerFactory from "../factory/handler";
 import renderFactory from "../factory/render";
 import {isArray} from "../core/util";
 import {timeStampToDate} from "../core/common";
-import makerFactory from "../factory/make";
 
 const handler = handlerFactory({
     init(){
@@ -24,7 +23,7 @@ const handler = handlerFactory({
 	    } else if('date' === props.type && props.multiple === true){
 		    parseValue = value.toString();
 	    }else{
-		    parseValue = isArr ? (parseValue = value[0]|| '') : value;
+		    parseValue = isArr ? (value[0]|| '') : value;
 		    parseValue = !parseValue ? '' : timeStampToDate(parseValue);
 	    }
 	    return parseValue;
@@ -43,12 +42,4 @@ const render = renderFactory({
     }
 });
 
-const make = makerFactory('datepicker',['props','event','validate']);
-
-const component = {handler,render,make};
-
-export default component;
-
-export {
-    handler,render,make
-}
+export default {handler,render};

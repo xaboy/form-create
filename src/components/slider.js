@@ -1,7 +1,6 @@
 import handlerFactory from "../factory/handler";
 import renderFactory from "../factory/render";
 import {isArray} from "../core/util";
-import makerFactory from "../factory/make";
 
 const handler = handlerFactory({
     init() {
@@ -26,12 +25,4 @@ const render =  renderFactory({
     }
 });
 
-const make = makerFactory('slider',['props','event','validate']);
-
-const component = {handler,render,make};
-
-export default component;
-
-export {
-    handler,render,make
-}
+export default {handler,render};

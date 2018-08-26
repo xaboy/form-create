@@ -1,8 +1,7 @@
 import handlerFactory from "../factory/handler";
 import renderFactory from "../factory/render";
 import {isArray, uniqueId} from "../core/util";
-import makerFactory from "../factory/make";
-import {render as uploadRender} from '../components/upload';
+import upload from '../components/upload';
 const handler = handlerFactory({
     init(){
         let props = this.rule.props;
@@ -216,7 +215,7 @@ const render = renderFactory({
         },301);
     }
 });
-render.prototype.defaultOnHandle = uploadRender.prototype.defaultOnHandle;
+render.prototype.defaultOnHandle = upload.render.prototype.defaultOnHandle;
 Object.keys(eventList).forEach(k=>{
 	render.prototype[k] = function () {
 		let fn = this.handler.rule.event[eventList[k]];
@@ -225,12 +224,4 @@ Object.keys(eventList).forEach(k=>{
 	}
 });
 
-const make = makerFactory('frame',['props','event','validate']);
-
-const component = {handler,render,make};
-
-export default component;
-
-export {
-    handler,render,make
-}
+export default {handler,render};

@@ -1,7 +1,6 @@
 import handlerFactory from "../factory/handler";
 import renderFactory from "../factory/render";
 import {isArray, uniqueId} from "../core/util";
-import makerFactory from "../factory/make";
 
 const handler = handlerFactory({
     init(){
@@ -85,7 +84,6 @@ const render = renderFactory({
         }).props(events).ref(handler.refName).key(`fip${handler.unique}`).get();
     },
 	defaultOnHandle(src){
-        console.log(src);
         this.vm.$Modal.remove();
         setTimeout(()=>{
             this.vm.$Modal.info({
@@ -170,12 +168,4 @@ const render = renderFactory({
     }
 });
 
-const make = makerFactory('upload',['props','validate']);
-
-const component = {handler,render,make};
-
-export default component;
-
-export {
-    handler,render,make
-}
+export default {handler,render};

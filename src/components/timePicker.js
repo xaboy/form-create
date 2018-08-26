@@ -2,7 +2,6 @@ import handlerFactory from "../factory/handler";
 import renderFactory from "../factory/render";
 import {dateFormat, isArray, isDate} from "../core/util";
 import {timeStampToDate} from "../core/common";
-import makerFactory from "../factory/make";
 
 const handler = handlerFactory({
     init(){
@@ -43,12 +42,4 @@ const render = renderFactory({
     }
 });
 
-const make = makerFactory('timepicker',['props','event','validate']);
-
-const component = {handler,render,make};
-
-export default component;
-
-export {
-    handler,render,make
-}
+export default {handler,render};

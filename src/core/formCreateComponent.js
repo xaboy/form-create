@@ -51,13 +51,7 @@ const formCreateComponent = function (fComponent) {
             },
         },
         mounted(){
-            Object.keys(this.formData).map((field)=>{
-                let handler = fComponent.handlers[field];
-	            handler.model && handler.model(this.getTrueData(field));
-                fComponent.addHandlerWatch(handler);
-	            handler.mounted_();
-            });
-	        fComponent.options.mounted && fComponent.options.mounted();
+            fComponent.mounted(this);
         }
     }
 };

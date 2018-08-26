@@ -30,7 +30,7 @@ cvm.prototype = {
         return Node;
     },
     getVNode(VNode){
-        return isFunction(VNode) ? VNode() : VNode;
+        return isFunction(VNode) ? VNode() : (VNode||[]);
     }
 };
 

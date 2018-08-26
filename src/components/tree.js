@@ -1,10 +1,9 @@
 import handlerFactory from "../factory/handler";
 import renderFactory from "../factory/render";
-import {deepExtend, isArray, TA} from "../core/util";
-import makerFactory from "../factory/make";
+import {isArray, TA} from "../core/util";
+
 const handler = handlerFactory({
 	init(){
-		this.rule.props = deepExtend(Object.create(null),this.rule.props);
 		let props = this.rule.props;
 		if(props.data === undefined) props.data = [];
 		if(props.type === undefined) props.type = 'checked';
@@ -113,17 +112,8 @@ const render = renderFactory({
             disable:true
         }).key('fipit'+unique).style({display:'none'}).ref(`${refName}it`).get();
 
-
 		return [this.cvm.tree(props),this.cvm.input(inputProps)];
 	}
 });
 
-const make = makerFactory('tree',['props','event']);
-
-const component = {handler,render,make};
-
-export default component;
-
-export {
-	handler,render,make
-}
+export default {handler,render};

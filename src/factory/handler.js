@@ -1,4 +1,4 @@
-import {isArray, isNumeric, uniqueId} from "../core/util";
+import {isArray, isNumeric, uniqueId,toLine} from "../core/util";
 
 const handlerFactory = function (prototypeExtend = {}) {
     let $h = function (vm, rule) {
@@ -12,7 +12,8 @@ const handlerFactory = function (prototypeExtend = {}) {
 
 
 
-const handler = function (vm,{model,field,type,title = '',options=[],props={},validate = [],event = {},value = '',slot = {},col = {}}) {
+const handler = function (vm,rule) {
+    let {model,field,type,validate = [],event = {},value = '',col = {},emit = []} = rule;
     field = field.toString();
     this.type = type;
     this.model = model;
@@ -21,14 +22,20 @@ const handler = function (vm,{model,field,type,title = '',options=[],props={},va
     	col = {span:col};
     }else if(col.span === undefined)
     	col.span = 24;
-    this.rule = {
-        title, options, props,slot,col,
-        validate: isArray(validate) ? validate : [validate],
-        event: Object.keys(event).reduce(function (initial,eventName) {
-            initial[`on-${eventName}`] = event[eventName];
-            return initial;
-        },{}),
-    };
+    rule.event = Object.keys(event).reduce(function (initial,eventName) {
+        initial[`on-${eventName}`] = event[eventName];
+        return initial;
+    },{});
+
+    emit.forEach((eventName)=>{
+        rule.event[`on-${eventName}`] = (...arg)=>{
+            vm.$emit(toLine(`${field}-${eventName}`).replace('_','-'),...arg);
+        };
+    });
+
+    rule.validate = isArray(validate) ? validate : [validate];
+    rule.col = col;
+    this.rule = rule;
     this.field = field;
     this.vm = vm;
     this.unique = uniqueId();

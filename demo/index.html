@@ -21,7 +21,7 @@
 <body>
 <div id="app1">
     <h2>组件模式生成</h2>
-    <form-create ref="fc" v-model="formData" :rule="rule" :option="option"></form-create>
+    <form-create ref="fc" :rule="rule" :option="option" @goods-name-change="change"></form-create>
 </div>
 <div id="app2">
     <h2 onclick="vm.create()" style="cursor: pointer;">点击使用构造方法生成</h2>
@@ -39,11 +39,11 @@
     });
 
     //组件模式
-    new Vue({
+    _vm = new Vue({
         el:'#app1',
         data:{
             formData:{},
-            rule:mock,
+            rule:mock(),
             option:{
                 //显示表单重置按钮
                 resetBtn:true,
@@ -51,13 +51,13 @@
                 onSubmit:function (formData) {
                     alert(JSON.stringify(formData));
                     //按钮进入提交状态
-                    $f_1.btn.loading();
+                    $f.btn.loading();
                     //重置按钮禁用
-                    $f_1.resetBtn.disabled();
+                    $f.resetBtn.disabled();
                     //按钮进入可点击状态
 //                    $f.btn.finish();
                     //创建第二个表单
-                    $f_1 = that.$formCreate(mock,root);
+                    $f = that.$formCreate(mock,root);
                 }
             }
         },
@@ -69,8 +69,14 @@
                 deep:true
             }
         },
+        methods:{
+            change:function (...arg) {
+                console.log(arg);
+            }
+        },
         mounted:function () {
-            $f_1 = this.$refs.fc.api;
+            this.formData = this.$refs.fc.$formData;
+            $f = this.$refs.fc.api;
         }
     });
     var _m1 = false;
@@ -95,7 +101,7 @@
                 //var root = document.getElementById('app2');
                 var root = this.$el;
                 //frame,upload组件请在线上环境测试
-                $f_2 = this.$formCreate(mock,{
+                $f_2 = this.$formCreate(mock(),{
                     //表单插入的父级元素
                     el:root,
                     //显示表单重置按钮
@@ -133,7 +139,7 @@
         if(_m2)return ;
         _m2 = true;
         //全局方法生成
-        $f_3 = formCreate.create(mock,{
+        $f_3 = formCreate.create(mock(),{
             //表单插入的父级元素
             el:document.getElementById('app3'),
             //显示表单重置按钮

@@ -1,8 +1,12 @@
+import {formCreate} from './formCreate';
+
 const formCreateName = 'FormCreate';
 
 const $FormCreate = ()=>({
     name:formCreateName,
-    template:'<div class="fc-component"></div>',
+    render(){
+        return this.fComponent.fRender.parse(this.fComponent.vm);
+    },
     props:{
         rule:{
             type: Array,
@@ -19,13 +23,56 @@ const $FormCreate = ()=>({
     },
     data:()=>{
         return {
+            formData:{},
+            buttonProps:{},
+            resetProps:{},
+            trueData:{},
+            jsonData:{},
             api:{}
         }
     },
-    mounted:function(){
-        this.api = this.$formCreate(this.rule,Object.assign(this.option,{el:this.$el}));
-        if(this.value !== undefined)
-            this.api.model(this.value);
+    methods:{
+        changeFormData(field,value){
+            this.$set(this.formData,field,value);
+        },
+        changeTrueData(field,value){
+            this.$set(this.trueData[field],'value',value);
+        },
+        getTrueDataValue(field){
+            return this.trueData[field].value;
+        },
+        getTrueData(field){
+            return this.trueData[field];
+        },
+        getFormData(field){
+            return this.formData[field];
+        },
+        removeFormData(field){
+            this.$delete(this.formData,field);
+            this.$delete(this.trueData,field);
+            this.$delete(this.jsonData,field);
+        },
+        changeButtonProps(props){
+            this.$set(this,'buttonProps',Object.assign(this.buttonProps,props));
+        },
+        changeResetProps(props){
+            this.$set(this,'resetProps',Object.assign(this.resetProps,props));
+        },
+        setField(field){
+            this.$set(this.formData,field,'');
+            this.$set(this.trueData,field,{});
+        },
+    },
+    created(){
+        this.fComponent = new formCreate(this.rule,this.option);
+        this.fComponent.init(this);
+    },
+    mounted(){
+        this.fComponent.mounted(this);
+        this.api = this.fComponent.fCreateApi;
+        this.$formData = {};
+        // if(this.value !== undefined)
+        this.api.model(this.$formData);
     }
 });
 

@@ -30,11 +30,11 @@ render.prototype = {
             vn = this.renderSort.map((field)=>{
                 let render = this.renders[field],{key,type} = render.handler;
 
-                if(type !== 'hidden')
-                    return this.makeFormItem(render.handler,render.parse(),`fItem${key}${unique}`);
+                if(type === 'hidden') return ;
+                return this.makeFormItem(render.handler,render.parse(),`fItem${key}${unique}`);
 
             });
-        if(false !== this.options.submitBtn)
+        if(vn.length > 0)
             vn.push(this.makeFormBtn(unique));
         return this.cvm.form(propsData,[this.cvm.row({props:this.options.row||{}},vn)]);
     },
@@ -51,8 +51,8 @@ render.prototype = {
     },
     makeFormBtn(unique){
         let btn = [],
-            submitBtnShow = false !== this.options.submitBtn && false !== this.options.submitBtn.show,
-            resetBtnShow = false !== this.options.resetBtn && false !== this.options.resetBtn.show;
+            submitBtnShow = false !== this.vm.buttonProps && false !== this.vm.buttonProps.show,
+            resetBtnShow = false !== this.vm.resetProps && false !== this.vm.resetProps.show;
         if(submitBtnShow)
             btn.push(this.makeSubmitBtn(unique,resetBtnShow ? 19 : 24));
         if(resetBtnShow)
@@ -62,16 +62,16 @@ render.prototype = {
     },
     makeResetBtn(unique,span){
         return this.cvm.col({props:{span:span,push:1}},[
-            this.cvm.button({key:`frsbtn${unique}`,props:this.options.resetBtn,on:{"click":()=>{
+            this.cvm.button({key:`frsbtn${unique}`,props:this.vm.resetProps,on:{"click":()=>{
                 this.fCreateApi.resetFields();
-            }}},[this.cvm.span(this.options.resetBtn.innerText)])
+            }}},[this.cvm.span(this.vm.resetProps.innerText)])
         ]);
     },
     makeSubmitBtn(unique,span){
         return  this.cvm.col({props:{span:span}},[
             this.cvm.button({key:`fbtn${unique}`,props:this.vm.buttonProps,on:{"click":()=>{
                 this.fCreateApi.submit();
-            }}},[this.cvm.span(this.options.submitBtn.innerText)])
+            }}},[this.cvm.span(this.vm.buttonProps.innerText)])
         ]);
     },
     removeRender(field){

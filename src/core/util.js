@@ -20,6 +20,8 @@ const isBool = (arg) => toString.call(arg) === '[object Boolean]';
 
 const isArray = Array.isArray;
 
+const toLine = (name) => name.replace(/([A-Z])/g, '-$1').toLowerCase();
+
 const isNumeric = (n)=>{
 	return n !== '' && !isNaN(parseFloat(n)) && isFinite(n);
 };
@@ -56,10 +58,9 @@ const deepExtend = function (origin, target = {}) {
 	return origin;
 };
 
-const uniqueId = ((() => {
-	let id = 0;
-	return () => id++;
-})());
+let id = 0;
+
+const uniqueId = () => ++id;
 
 const dateFormat = (fmt, date = new Date) => {
 	let o = {
@@ -98,5 +99,5 @@ export {
 	dateFormat,
 	isNumeric,
     isBool,
-	ATS,TA
+	ATS,TA,toLine
 }

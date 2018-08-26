@@ -1,4 +1,7 @@
-import {deepExtend, isFunction, isDate, isArray} from "./util";
+import {deepExtend, isFunction, isDate, isArray,uniqueId} from "./util";
+import creatorFactory from '../factory/creator';
+import handlerFactory from '../factory/handler';
+import renderFactory from '../factory/render';
 import cascaderComponent from '../components/cascader';
 import checkboxComponent from '../components/checkbox';
 import colorPickerComponent from '../components/colorPicker';
@@ -36,10 +39,21 @@ const componentList = {
 };
 
 
-const getComponent = function (componentName) {
-    if(componentList[componentName] === undefined)
-        throw new Error(`${componentName} 表单类型不存在`);
-    return componentList[componentName];
+const getComponent = function (vm, rule, createOptions) {
+    let component,name = rule.type.toLowerCase();
+    if(componentList[name] === undefined){
+        component = {
+            handler:handlerFactory({}),
+            render:renderFactory({}),
+            noValue: true
+        };
+    }else{
+        component = componentList[name];
+    }
+    let $h = new component.handler(vm,rule);
+    $h.render = new component.render(vm,$h,createOptions);
+    $h.noValue = component.noValue;
+    return $h;
 };
 
 
@@ -100,13 +114,6 @@ const getConfig = function () {
         },
         mounted:()=>{}
     };
-};
-
-const createHandler = function (vm, rule, createOptions) {
-    let component = getComponent(rule.type),
-        $h = new component.handler(vm,rule);
-    $h.render = new component.render(vm,$h,createOptions);
-    return $h;
 };
 
 const formCreateStyle = '.form-create{padding:25px;} .fc-upload-btn,.fc-files{display: inline-block;width: 58px;height: 58px;text-align: center;line-height: 60px;border: 1px solid transparent;border-radius: 4px;overflow: hidden;background: #fff;position: relative;box-shadow: 0 1px 1px rgba(0,0,0,.2);margin-right: 4px;box-sizing: border-box;}' +
@@ -257,17 +264,25 @@ const timeStampToDate =(timeStamp)=>{
 };
 
 const getMaker = function () {
-    let maker =  Object.keys(componentList).reduce((initial,name)=>{
-        initial[name] = componentList[name].make;
-        return initial;
-    },{});
-    maker.number = componentList.inputnumber.make;
-    maker.time = componentList.timepicker.make;
-    maker.date = componentList.datepicker.make;
-    maker.color = componentList.colorpicker.make;
+    let maker = {};
+    Object.keys(componentList).forEach((name)=>{
+        maker[name] = creatorFactory(name);
+    });
+    maker.hidden = (function () {
+        let make = creatorFactory('hidden');
+        return make.bind(make,'');
+    }());
+    maker.create = function (type,field='mp' + uniqueId()) {
+        let make = creatorFactory(type,['props','event','validate','slot']);
+        return make('',field);
+    };
+    maker.number = maker.inputnumber;
+    maker.time = maker.timepicker;
+    maker.date = maker.datepicker;
+    maker.color = maker.colorpicker;
     return maker;
 };
 
 export {
-    getComponent,getConfig,formCreateStyle,createHandler,getGlobalApi,timeStampToDate,getMaker
+    getComponent,getConfig,formCreateStyle,getGlobalApi,timeStampToDate,getMaker
 }
