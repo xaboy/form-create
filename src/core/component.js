@@ -28,7 +28,8 @@ const $FormCreate = ()=>({
             resetProps:{},
             trueData:{},
             jsonData:{},
-            api:{}
+            $f:{},
+            $model:{},
         }
     },
     methods:{
@@ -69,10 +70,9 @@ const $FormCreate = ()=>({
     },
     mounted(){
         this.fComponent.mounted(this);
-        this.api = this.fComponent.fCreateApi;
-        this.$formData = {};
+        this.$f = this.fComponent.fCreateApi;
         // if(this.value !== undefined)
-        this.api.model(this.$formData);
+        this.$f.model(this.$model);
     }
 });
 
