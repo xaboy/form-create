@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="./node_modules/iview/dist/styles/iview.css">
     <script src="./node_modules/vue/dist/vue.min.js"></script>
     <script src="./node_modules/iview/dist/iview.min.js"></script>-->
-    
+
     <!--省市区三级联动json数据-->
     <script src="../district/province_city_area.js"></script>
     <script src="../dist/form-create.js"></script>
@@ -76,7 +76,7 @@
         },
         mounted:function () {
             this.formData = this.$refs.fc.$formData;
-            $f = this.$refs.fc.api;
+            $f = this.$refs.fc.$f;
         }
     });
     var _m1 = false;

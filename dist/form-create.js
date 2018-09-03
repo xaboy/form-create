@@ -1391,7 +1391,8 @@ var $FormCreate = function $FormCreate() {
                 resetProps: {},
                 trueData: {},
                 jsonData: {},
-                api: {}
+                $f: {},
+                model: {}
             };
         },
         methods: {
@@ -1432,10 +1433,11 @@ var $FormCreate = function $FormCreate() {
         },
         mounted: function mounted() {
             this.fComponent.mounted(this);
-            this.api = this.fComponent.fCreateApi;
-            this.$formData = {};
-            // if(this.value !== undefined)
-            this.api.model(this.$formData);
+            this.$f = this.fComponent.fCreateApi;
+            var model = {};
+            this.$f.model(model);
+            this.$set(this, 'model', model);
+            this.$set(this.$f, 'model', model);
         }
     };
 };
