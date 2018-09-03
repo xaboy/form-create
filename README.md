@@ -69,7 +69,7 @@
 - 新增 `option.mounted`事件 ，当组件加载完成后触发
 - 修复 一些BUG
 
-## 示例 [代码](https://github.com/xaboy/form-create/blob/master/demo/index.html) | [规则](https://github.com/xaboy/form-create/blob/master/demo/mock.js) 
+## 示例 [代码](https://github.com/xaboy/form-create/blob/master/demo/index.html) | [规则](https://github.com/xaboy/form-create/blob/master/demo/mock.js)
 
 ![https://raw.githubusercontent.com/xaboy/form-create/dev/images/sample110.jpg](https://raw.githubusercontent.com/xaboy/form-create/dev/images/sample110.jpg)
 
@@ -135,7 +135,7 @@ npm run dev
 let rules = window.mock;
 new Vue({
     data:{
-        formData:{}	
+        formData:{}
     },
     mounted:function(){
         let root = document.getElementById('app'),that = this;
@@ -155,7 +155,7 @@ new Vue({
         $f.append($r,'goods_name');
         //绑定表单数据到formData
         $f.model(this.formData);
-        
+
     }
 })
 ```
@@ -198,7 +198,7 @@ new Vue({
             }
         },
         mounted:function () {
-            $f = this.$refs.fc.api;
+            $f = this.$refs.fc.$f;
         }
     });
 ```
@@ -412,15 +412,15 @@ $formCreate.maker.frame(title,field,value)
     })
 ```
 
-* **btn.loading(loading = true)** 让表单提交按钮进入loading状态 
-* **btn.finish()** 让表单提交按钮恢复正常状态 
+* **btn.loading(loading = true)** 让表单提交按钮进入loading状态
+* **btn.finish()** 让表单提交按钮恢复正常状态
 * **btn.disabled(disabled = true)** 设置提交按钮禁用状态
 
 
 
 * **resetStatus(props)** 修改表单重置按钮状态 **配置与提交按钮相同**
-* **resetBtn.loading(loading = true)** 让重置按钮进入loading状态 
-* **resetBtn.finish()** 让表单提交按钮恢复正常状态 
+* **resetBtn.loading(loading = true)** 让重置按钮进入loading状态
+* **resetBtn.finish()** 让表单提交按钮恢复正常状态
 * **resetBtn.disabled(disabled = true)** 设置重置按钮禁用状态
 
 
@@ -476,7 +476,7 @@ maker.create('i-button').props({
         size:"large",
     },
     on:{
-      "click":()=>{console.log(1);}  
+      "click":()=>{console.log(1);}
     },
     col:{
         span:8,
@@ -490,7 +490,7 @@ maker.create('i-button').props({
             }
         }
     ]
-    
+
 }
 ```
 
@@ -536,7 +536,7 @@ $formCreate.maker.input("商品名称","goods_name","iphone 7").props({
 ```javascript
 inputRule :
 {
-        type:"input",//必填! 
+        type:"input",//必填!
         //label名称
         title:"商品名称",//必填!
         //字段名称
@@ -549,27 +549,27 @@ inputRule :
         	labelWidth:150
         },
         props: {
-            
+
             //输入框类型，可选值为 text、password、textarea、url、email、date
             "type": "text", //必填!
             //是否显示清空按钮
-            "clearable":false, 
+            "clearable":false,
             //设置输入框为禁用状态
-            "disabled": false, 
+            "disabled": false,
             //设置输入框为只读
             "readonly": false,
             //文本域默认行数，仅在 textarea 类型下有效
-            "rows": 4, 
+            "rows": 4,
             //自适应内容高度，仅在 textarea 类型下有效，可传入对象，如 { minRows: 2, maxRows: 6 }
-            "autosize": false, 
+            "autosize": false,
             //将用户的输入转换为 Number 类型
-            "number": false, 
+            "number": false,
             //自动获取焦点
-            "autofocus": false, 
+            "autofocus": false,
             //原生的自动完成功能，可选值为 off 和 on
-            "autocomplete": "off", 
+            "autocomplete": "off",
             //占位文本
-            "placeholder": "请输入商品名称", 
+            "placeholder": "请输入商品名称",
             //输入框尺寸，可选值为large、small、default或者不设置
             "size": "default",
             //原生的 spellcheck 属性
@@ -633,11 +633,11 @@ radioRule :
         ],//必填!
         props: {
         	//可选值为 button 或不填，为 button 时使用按钮样式
-            "type":undefined, 
+            "type":undefined,
             //单选框的尺寸，可选值为 large、small、default 或者不设置
-            "size":"default", 
+            "size":"default",
             //是否垂直排列，按钮样式下无效
-            "vertical":false, 
+            "vertical":false,
         },
         event:{
             //在选项状态发生改变时触发，返回当前状态。通过修改外部的数据改变时不会触发
@@ -687,7 +687,7 @@ checkboxRule :
         ],//必填!
         props: {
         	//多选框组的尺寸，可选值为 large、small、default 或者不设置
-            "size":"default", 
+            "size":"default",
         },
         event:{
             //只在单独使用时有效。在选项状态发生改变时触发，通过修改外部的数据改变时不会触发
@@ -729,27 +729,27 @@ selectRule :
         ],//必填!
         props: {
        	 	//是否支持多选
-            "multiple": true, 
+            "multiple": true,
             //是否可以清空选项，只在单选时有效
             "clearable": false,
             //是否支持搜索
-            "filterable": true, 
-            
+            "filterable": true,
+
             // 暂不支持远程搜索
             // "remote": false, //是否使用远程搜索
             // "remote-method":Function, //远程搜索的方法
             // "loading": false, //当前是否正在远程搜索
             // "loading-text": "加载中", //远程搜索中的文字提示
             //选择框大小，可选值为large、small、default或者不填
-            "size":"default", 
+            "size":"default",
             //选择框默认文字
-            "placeholder": "请选择", 
+            "placeholder": "请选择",
              //当下拉列表为空时显示的内容
             "not-found-text": "无匹配数据",
             //弹窗的展开方向，可选值为 bottom 和 top
-            "placement": "bottom", 
+            "placement": "bottom",
             //是否禁用
-            "disabled": false, 
+            "disabled": false,
         },
         event:{
             //选中的Option变化时触发，返回 value
@@ -790,19 +790,19 @@ switchRule :
         value:"1",
         props: {
         	//开关的尺寸，可选值为large、small、default或者不写。建议开关如果使用了2个汉字的文字，使用 large。
-            "size":"default", 
+            "size":"default",
             //禁用开关
             "disabled":false,
             //选中时的值，当使用类似 1 和 0 来判断是否选中时会很有用
-            "trueValue":"1", 
+            "trueValue":"1",
             //没有选中时的值，当使用类似 1 和 0 来判断是否选中时会很有用
-            "falseValue":"0", 
+            "falseValue":"0",
         },
         slot: {
         	//自定义显示打开时的内容
-            open:"上架", 
+            open:"上架",
             //自定义显示关闭时的内容
-            close:"下架", 
+            close:"下架",
         },
         event:{
             //开关变化时触发，返回当前的状态 0 | 1
@@ -824,7 +824,7 @@ maker快速生成:
 $formCreate.maker.date("活动日期","section_day",['2018-02-20', new Date()])
   .props({
     "type": "datetimerange",
-  	"placeholder":"请选择活动日期", 
+  	"placeholder":"请选择活动日期",
 });
 ```
 
@@ -837,29 +837,29 @@ DatePickerRule :
         field: "section_day",//必填!
         title: "活动日期",//必填!
         //input值, type为daterange,datetimerange value为数组 [start_value,end_value]
-        value: ['2018-02-20', new Date()], 
+        value: ['2018-02-20', new Date()],
         props: {
-            
+
             //显示类型，可选值为 date、daterange、datetime、datetimerange、year、month
             "type": "datetimerange",//必填!
             //展示的日期格式
-            "format": "yyyy-MM-dd HH:mm:ss", 
+            "format": "yyyy-MM-dd HH:mm:ss",
             //日期选择器出现的位置，可选值为toptop-starttop-endbottombottom-startbottom-endleftleft-startleft-endrightright-startright-end
-            "placement": "bottom-start", 
+            "placement": "bottom-start",
             //占位文本
-            "placeholder":"请选择获得时间", 
+            "placeholder":"请选择获得时间",
             //是否显示底部控制栏，开启后，选择完日期，选择器不会主动关闭，需用户确认后才可关闭
-            "confirm":false, 
+            "confirm":false,
             //尺寸，可选值为large、small、default或者不设置
-            "size":"default", 
+            "size":"default",
             //是否禁用选择器
-            "disabled":false, 
+            "disabled":false,
             //是否显示清除按钮
-            "clearable":true, 
+            "clearable":true,
             //完全只读，开启后不会弹出选择器
-            "readonly":false, 
+            "readonly":false,
             //文本框是否可以输入
-            "editable":false, 
+            "editable":false,
         },
         event:{
             //日期发生变化时触发,已经格式化后的日期，比如 2016-01-01
@@ -885,7 +885,7 @@ maker快速生成:
 $formCreate.maker.time("活动时间","section_time",[])
   .props({
     "type": "timerange",
-  	"placeholder":"请选择活动时间", 
+  	"placeholder":"请选择活动时间",
 });
 ```
 
@@ -898,30 +898,30 @@ TimePickerRule :
         field: "section_time",//必填!
         title: "活动时间",//必填!
         //input值, type为timerange value为数组 [start_value,end_value]
-        value: [], 
+        value: [],
         props: {
             //显示类型，可选值为 time、timerange
             "type": "timerange", //必填!
             //展示的时间格式
-            "format": "HH:mm:ss", 
+            "format": "HH:mm:ss",
             //下拉列表的时间间隔，数组的三项分别对应小时、分钟、秒。例如设置为 [1, 15] 时，分钟会显示：00、15、30、45。
-            "steps": [], 
+            "steps": [],
             //时间选择器出现的位置，可选值为toptop-starttop-endbottombottom-startbottom-endleftleft-startleft-endrightright-startright-end
-            "placement": "bottom-start", 
+            "placement": "bottom-start",
             //占位文本
-            "placeholder":"请选择活动时间", 
+            "placeholder":"请选择活动时间",
             //是否显示底部控制栏，开启后，选择完日期，选择器不会主动关闭，需用户确认后才可关闭
-            "confirm":false, 
+            "confirm":false,
             //尺寸，可选值为large、small、default或者不设置
             "size":"default",
             //是否禁用选择器
-            "disabled":false, 
+            "disabled":false,
             //是否显示清除按钮
-            "clearable":true, 
+            "clearable":true,
             //完全只读，开启后不会弹出选择器
-            "readonly":false, 
+            "readonly":false,
             //文本框是否可以输入
-            "editable":false, 
+            "editable":false,
         },
         event:{
             //时间发生变化时触发 已经格式化后的时间，比如 09:41:00
@@ -947,7 +947,7 @@ maker快速生成:
 $formCreate.maker.number("排序","sort",1)
   .props({
     "type": "timerange",
-  	"precision":0, 
+  	"precision":0,
 });
 ```
 
@@ -963,21 +963,21 @@ InputNumberRule :
         value: 1,
         props: {
         	//最大值
-            "max": undefined, 
+            "max": undefined,
             //最小值
-            "min": undefined, 
+            "min": undefined,
             //每次改变的步伐，可以是小数
-            "step": 1, 
+            "step": 1,
             //输入框尺寸，可选值为large、small、default或者不填
-            "size":"default", 
+            "size":"default",
             //设置禁用状态
-            "disabled":false, 
+            "disabled":false,
             //是否设置为只读
-            "readonly":false, 
+            "readonly":false,
             //是否可编辑
-            "editable":true, 
+            "editable":true,
             //数值精度
-            "precision":0, 
+            "precision":0,
         },
         event:{
             //数值改变时的回调，返回当前值
@@ -1015,20 +1015,20 @@ ColorPickerRule :
         field: "color",//必填!
         title: "颜色",//必填!
         //input值
-        value: '#ff7271', 
+        value: '#ff7271',
         props: {
         	//是否支持透明度选择
-            "alpha": false, 
+            "alpha": false,
             //是否支持色彩选择
-            "hue": true, 
+            "hue": true,
             //是否显示推荐的颜色预设
-            "recommend": false, 
+            "recommend": false,
             //尺寸，可选值为large、small、default或者不设置
-            "size":"default", 
+            "size":"default",
             //自定义颜色预设
-            "colors":[], 
+            "colors":[],
             //颜色的格式，可选值为 hsl、hsv、hex、rgb,开启 alpha 时为 rgb，其它为 hex
-            "format":"hex", 
+            "format":"hex",
         },
         event:{
             //当绑定值变化时触发，返回当前值
@@ -1141,48 +1141,48 @@ UploadRule :
             //上传文件类型，可选值为 image（图片上传），file（文件上传）
             "uploadType":"image", //必填!
             //上传的地址
-            "action": "", //必填! 
+            "action": "", //必填!
             //上传的文件字段名
-            "name":"", 
+            "name":"",
             //上传时附带的额外参数
-            "data":{}, 
+            "data":{},
             //设置上传的请求头部
-            "headers": {}, 
+            "headers": {},
             //是否支持多选文件
             "multiple": true,
             //支持发送 cookie 凭证信息
-            "withCredentials":false, 
+            "withCredentials":false,
 
             //不支持
             // "showUploadList":false, //是否显示已上传文件列表
             // "defaultFileList":[], // 默认已上传的文件列表
-			
+
             //接受上传的文件类型
             "accept":"",
             //支持的文件类型，与 accept 不同的是，format 是识别文件的后缀名，accept 为 input 标签原生的 accept 属性，会在选择文件时过滤，可以两者结合使用
-            "format":[], 
+            "format":[],
             //文件大小限制，单位 kb
-            "maxSize":undefined, 
+            "maxSize":undefined,
             //可上传文件数量
             "maxLength":1,
             //上传文件之前的钩子，参数为上传的文件，若返回 false 或者 Promise 则停止上传
-            "beforeUpload":()=>{}, 
+            "beforeUpload":()=>{},
             //文件上传时的钩子，返回字段为 event, file, fileList
-            "onProgress":()=>{}, 
+            "onProgress":()=>{},
             //文件上传成功时的钩子，返回字段为 response, file, fileList,若需有把文件添加到文件列表中,在函数值返回即可
             "onSuccess":function () {
                 return 'http://img1.touxiang.cn/uploads/20131030/30-075657_191.jpg';
             }, //必填!
             //文件上传失败时的钩子，返回字段为 error, file, fileList
-            "onError":(error, file, fileList)=>{}, 
+            "onError":(error, file, fileList)=>{},
             //点击已上传的文件链接时的钩子，返回字段为 file， 可以通过 file.response 拿到服务端返回数据
-            "onPreview":()=>{}, 
+            "onPreview":()=>{},
             //文件列表移除文件时的钩子，返回字段为 file, fileList
-            "onRemove":()=>{}, 
+            "onRemove":()=>{},
             //文件格式验证失败时的钩子，返回字段为 file, fileList
-            "onFormatError":()=>{}, 
+            "onFormatError":()=>{},
             //文件超出指定大小限制时的钩子，返回字段为 file, fileList
-            "onExceededSize":()=>{}, 
+            "onExceededSize":()=>{},
             //辅助操作按钮的图标 ,设置为false将不显示
             handleIcon:'ionic',
             //点击辅助操作按钮事件
@@ -1392,7 +1392,7 @@ TreeRule :
     el:null,
     //form配置
     form:{
-    
+
         //是否开启行内表单模式
         inline:false,
         //表单域标签的位置，可选值为 left、right、top
@@ -1419,7 +1419,7 @@ TreeRule :
     },
     //文件上传全局配置
     upload:{
-    
+
         //上传文件之前的钩子，参数为上传的文件，若返回 false 或者 Promise 则停止上传
         beforeUpload:()=>{},
         //文件上传时的钩子，返回字段为 event, file, fileList
@@ -1445,13 +1445,13 @@ TreeRule :
         //是否可删除,设置为false是不显示删除按钮
         allowRemove:true,
     },
-    
+
     //表单提交事件
     onSubmit:(formData)=>{},
-    
+
     //提交按钮配置,设置submitBtn=false或submitBtn.show=false时不显示按钮
     submitBtn:{
-    
+
         //按钮类型，可选值为primary、ghost、dashed、text、info、success、warning、error或者不设置
         type:"primary",
         //按钮大小，可选值为large、small、default或者不设置
