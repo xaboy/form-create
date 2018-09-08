@@ -38,6 +38,11 @@
 
 ## 更新说明 **建议保持在最新版本**
 
+#### 1.4.1 (2018-9-8)
+
+* 新增  `watch`方法.已键值对的方式双向数据绑定的表单数据
+* 修改  `model`方法. 修改为 `form = $f.model()`无需再传入对象
+
 #### 1.4.0 (2018-8-26)
 
 - 新增 打包命令`build`和调试命令`dev`
@@ -163,7 +168,7 @@ new Vue({
 #组件模式下使用
 
 ```html
-<form-create ref="fc" v-model="formData" :rule="rule" :option="option"></form-create>
+<form-create ref="fc" :rule="rule" :option="option"></form-create>
 ```
 
 ```javascript

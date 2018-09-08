@@ -44,7 +44,7 @@ const eventList = {onOpen:'on-open',onChange:'on-change',onCancel:'on-cancel',on
 const render = renderFactory({
     init(){
         let field = this.handler.field,b = false;
-        this.vm.$watch(`formData.${field}`,()=>{
+        this.vm.$watch(`cptData.${field}`,()=>{
             b === true && this.onChange();
             b = true;
         });
@@ -75,7 +75,7 @@ const render = renderFactory({
     },
     makeGroup(render){
         let unique = this.handler.unique,field = this.handler.field;
-        return [this.cvm.make('div',{key:`ifgp1${unique}`,class:{'fc-upload fc-frame':true},ref:this.handler.refName,props:{value:this.vm.formData[field]}},render),
+        return [this.cvm.make('div',{key:`ifgp1${unique}`,class:{'fc-upload fc-frame':true},ref:this.handler.refName,props:{value:this.vm.cptData[field]}},render),
             this.makeInput(true)
         ]
     },

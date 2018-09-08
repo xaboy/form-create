@@ -199,7 +199,8 @@ const getGlobalApi = function (fComponent) {
                     fComponent.options.onSubmit && fComponent.options.onSubmit(formData);
             });
         },
-        model(model,fields){
+        model(fields){
+            let model = {};
             if(!fields)
                 fields = this.fields();
             else if(!isArray(fields))
@@ -213,7 +214,28 @@ const getGlobalApi = function (fComponent) {
                 };
 	            handler.model(handler.vm.getTrueData(field));
             });
-
+            return model;
+        },
+        watch(fields){
+            let bind = {},vm = fComponent.vm;
+            if(!fields)
+                fields = this.fields();
+            else if(!isArray(fields))
+                fields = [fields];
+            fields.forEach((field)=>{
+                bind[field] = vm.trueData[field].value;
+                Object.defineProperty(bind,field,{
+                    get:()=>{
+                        return vm.trueData[field].value;
+                    },
+                    set:(value)=>{
+                        vm.$set(vm.trueData[field],'value',value);
+                    },
+                    enumerable:true,
+                    configurable:true
+                })
+            });
+            return bind;
         },
         submitStatus:(_props = {})=>{
             let props = deepExtend(Object.create(null),_props);
@@ -283,6 +305,51 @@ const getMaker = function () {
     return maker;
 };
 
+const componentCommon = {
+    data:()=>{
+        return {
+            cptData:{},
+            buttonProps:{},
+            resetProps:{},
+            trueData:{},
+            jsonData:{},
+            $f:{},
+        }
+    },
+    methods:{
+        changeFormData(field,value){
+            this.$set(this.cptData,field,value);
+        },
+        changeTrueData(field,value){
+            this.$set(this.trueData[field],'value',value);
+        },
+        getTrueDataValue(field){
+            return this.trueData[field].value;
+        },
+        getTrueData(field){
+            return this.trueData[field];
+        },
+        getFormData(field){
+            return this.cptData[field];
+        },
+        removeFormData(field){
+            this.$delete(this.cptData,field);
+            this.$delete(this.trueData,field);
+            this.$delete(this.jsonData,field);
+        },
+        changeButtonProps(props){
+            this.$set(this,'buttonProps',Object.assign(this.buttonProps,props));
+        },
+        changeResetProps(props){
+            this.$set(this,'resetProps',Object.assign(this.resetProps,props));
+        },
+        setField(field){
+            this.$set(this.cptData,field,'');
+            this.$set(this.trueData,field,{});
+        }
+    }
+};
+
 export {
-    getComponent,getConfig,formCreateStyle,getGlobalApi,timeStampToDate,getMaker
+    getComponent,getConfig,formCreateStyle,getGlobalApi,timeStampToDate,getMaker,componentCommon
 }

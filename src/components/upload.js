@@ -108,7 +108,7 @@ const render = renderFactory({
 	    let {rule,unique} = this.handler;
 	    this.uploadOptions = Object.assign(Object.create(null),this.options.upload,rule.props);
 	    if(this.uploadOptions.handleIcon === true) this.uploadOptions.handleIcon = 'ios-eye-outline';
-        let value = this.vm.formData[this.handler.field],
+        let value = this.vm.cptData[this.handler.field],
             render = [...value.map((file,index)=>{
                 if(file.status === undefined || file.status === 'finished'){
                     return this.makeUploadView(file.url,`${index}${unique}`,index)
@@ -116,7 +116,7 @@ const render = renderFactory({
                     return this.makeProgress(file,`${index}${unique}`);
                 }
             })];
-        render.push(this.makeUploadBtn(unique,(!this.uploadOptions.maxLength || this.uploadOptions.maxLength > this.vm.formData[this.handler.field].length)));
+        render.push(this.makeUploadBtn(unique,(!this.uploadOptions.maxLength || this.uploadOptions.maxLength > this.vm.cptData[this.handler.field].length)));
         return [this.cvm.make('div',{key:`div4${unique}`,class:{'fc-upload':true}},render)];
     },
     makeUploadView(src,key,index){

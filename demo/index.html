@@ -75,8 +75,11 @@
             }
         },
         mounted:function () {
-            this.formData = this.$refs.fc.$formData;
             $f = this.$refs.fc.$f;
+            this.formData = $f.model();
+
+            //动态添加表单元素
+            $f.append($r);
         }
     });
     var _m1 = false;
@@ -125,7 +128,7 @@
                 //动态添加表单元素
                 $f_2.append($r);
                 //注入表单数据，双向数据绑定
-                $f_2.model(this.formData);
+                this.formData = $f_2.model();
                 console.log(this.formData);
             }
         },

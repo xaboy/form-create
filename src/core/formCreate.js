@@ -4,7 +4,7 @@ import formRender from "../components/form";
 import formCreateComponent from "./formCreateComponent";
 import {formCreateName,$FormCreate} from './component';
 
-const version = '1.4.0';
+const version = '1.4.1';
 
 const maker = getMaker();
 
@@ -121,7 +121,7 @@ formCreate.prototype = {
         this.vm = vm;
         this.createHandler();
         this.fCreateApi = getGlobalApi(this);
-        vm.$set(vm,'formData',this.formData);
+        vm.$set(vm,'cptData',this.formData);
         vm.$set(vm,'trueData',this.trueData);
         vm.$set(vm,'buttonProps',this.options.submitBtn);
         vm.$set(vm,'resetProps',this.options.resetBtn);
@@ -133,7 +133,7 @@ formCreate.prototype = {
         return $vm;
     },
     mounted(vm){
-        Object.keys(vm.formData).map((field)=>{
+        Object.keys(vm.cptData).map((field)=>{
             let handler = this.handlers[field];
             handler.model && handler.model(vm.getTrueData(field));
             this.addHandlerWatch(handler);
@@ -175,7 +175,7 @@ formCreate.prototype = {
     addHandlerWatch(handler){
         if(handler.noValue === true) return ;
     	let field = handler.field;
-	    let unWatch = this.vm.$watch(`formData.${field}`,(n,o)=>{
+	    let unWatch = this.vm.$watch(`cptData.${field}`,(n,o)=>{
 		    if(this.handlers[field] !== undefined){
 			    handler.setParseValue(n);
 		    }else

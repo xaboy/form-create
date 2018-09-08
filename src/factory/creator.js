@@ -22,6 +22,9 @@ const baseRule = ()=>{
 const creator = function (rule) {
     props.call(this);
     this.rule = rule;
+    this.get = function () {
+        return this._data;
+    }
 };
 
 creator.prototype = props.prototype;

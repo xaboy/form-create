@@ -1,4 +1,5 @@
 import {formCreate} from './formCreate';
+import {componentCommon} from './common';
 
 const formCreateName = 'FormCreate';
 
@@ -21,49 +22,8 @@ const $FormCreate = ()=>({
         },
         value:Object
     },
-    data:()=>{
-        return {
-            formData:{},
-            buttonProps:{},
-            resetProps:{},
-            trueData:{},
-            jsonData:{},
-            $f:{},
-            model:{},
-        }
-    },
-    methods:{
-        changeFormData(field,value){
-            this.$set(this.formData,field,value);
-        },
-        changeTrueData(field,value){
-            this.$set(this.trueData[field],'value',value);
-        },
-        getTrueDataValue(field){
-            return this.trueData[field].value;
-        },
-        getTrueData(field){
-            return this.trueData[field];
-        },
-        getFormData(field){
-            return this.formData[field];
-        },
-        removeFormData(field){
-            this.$delete(this.formData,field);
-            this.$delete(this.trueData,field);
-            this.$delete(this.jsonData,field);
-        },
-        changeButtonProps(props){
-            this.$set(this,'buttonProps',Object.assign(this.buttonProps,props));
-        },
-        changeResetProps(props){
-            this.$set(this,'resetProps',Object.assign(this.resetProps,props));
-        },
-        setField(field){
-            this.$set(this.formData,field,'');
-            this.$set(this.trueData,field,{});
-        },
-    },
+    data:componentCommon.data,
+    methods:componentCommon.methods,
     created(){
         this.fComponent = new formCreate(this.rule,this.option);
         this.fComponent.init(this);
@@ -71,10 +31,6 @@ const $FormCreate = ()=>({
     mounted(){
         this.fComponent.mounted(this);
         this.$f = this.fComponent.fCreateApi;
-        let model = {};
-        this.$f.model(model);
-        this.$set(this,'model',model);
-        this.$set(this.$f,'model',model);
     }
 });
 
