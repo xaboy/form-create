@@ -21,11 +21,11 @@
 </p>
 <br />
 
-### [中文文档](https://xaboy.gitbooks.io/form-create/content/kuai-su-shang-shou.html)
+### [新版中文文档!](https://www.kancloud.cn/xaboy/form-create/749554)
 
 ### 如果对您有帮助，您可以点右上角 "Star" 支持一下 谢谢！
 
-### 本项目还在不断开发完善中,如有建议或问题请[在这里提出](https://github.com/xaboy/form-create/issues/new)
+### 本项目还在不断开发完善中,如有`任何`建议或问题请[在这里提出](https://github.com/xaboy/form-create/issues/new)
 
 ### 本项目QQ讨论群[28963712](https://jq.qq.com/?_wv=1027&k=54aKUVw)
 
