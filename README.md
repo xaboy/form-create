@@ -56,25 +56,6 @@
 - 新增 表单重置按钮
 - 新增 标签模式下支持emit触发事件
 
-#### 1.3.3 (2018-8-4)
-
-- 新增 增加col栅格布局规则,设置组件的布局
-- 新增 树型组件
-- 新增 `$f.set`方法
-
-#### 1.3.2 (2018-8-3)
-- 修复 多级联动,时间,日期组件初始化值的BUG
-
-#### 1.3.1 (2018-6-25)
-- 修复 无法获取时间组件值的bug
-
-#### 1.3.0 (2018-6-24)
-- 优化和精简内部结构
-- 支持 双向数据绑定,可动态修改组件的值和配置参数。单独绑定`make.model(obj,field=''')`,批量绑定`$f.model(obj)`
-- 支持 使用`window.formCreate`全局方法快速创建表单，也可以在Vue内部使用`this.$formCreate`
-- 新增 `option.mounted`事件 ，当组件加载完成后触发
-- 修复 一些BUG
-
 ## 示例 [代码](https://github.com/xaboy/form-create/blob/master/demo/index.html) | [规则](https://github.com/xaboy/form-create/blob/master/demo/mock.js)
 
 ![https://raw.githubusercontent.com/xaboy/form-create/dev/images/sample110.jpg](https://raw.githubusercontent.com/xaboy/form-create/dev/images/sample110.jpg)
@@ -330,14 +311,20 @@ $formCreate.maker.frame(title,field,value)
 
 #### $f 实例方法
 
+**1.4.1版本之后 model方法无需传参, 使用方法 `form = $f.model()`.之前版本`$f.model(form = {})`**
+
+
+
 * **formData()** 获取表单的value
 * **getValue(field)** 获取指定字段的value
 * **model(obj)** 绑定表单组件到obj对象，支持双向数据绑定。结构`{field:{value,rule:{props,validate,options,slot,event}}}` **当直接修改没有生效时 请使用`set`方法修改**
-
+* **bind()** 获取双向数据绑定的表单value | **`1.4.1版本`**
 * **set(node,field,value)** 用于表单生成后,修改组件的规则,使用方法类似`Vue.$set`方法. 例如: `set(field.rule.col,'span',12)`;
 * **changeField(field,value)** 修改指定字段的value
 * **resetFields()** 重置表单
 * **destroy()** 销毁表单
+* **hidden(fields,hidden = true)** 隐藏或显示指定组件 | **`1.4.1版本`**
+* **visibility(fields,visibility = true)** 隐藏或显示指定组件 | **`1.4.1版本`**
 * **removeField(field)** 删除指定字段
 * **fields()** 获得表单所有字段名称
 * **closeModal()** 关闭frame组件的弹出框
@@ -433,17 +420,17 @@ $formCreate.maker.frame(title,field,value)
 ## col栅格布局规则
 > 所有组件均支持col栅格布局规则,配置方法`rule.col = {...}`;
 
-* **span**	栅格的占位格数，可选值为0~24的整数，为 0 时，相当于display:none,类型Number,String
-	 **order**	栅格的顺序，在flex布局模式下有效,类型Number,String
-	 **offset**	栅格左侧的间隔格数，间隔内不可以有栅格,类型Number,String
-	 **push**	栅格向右移动格数,类型Number,String
-	 **pull**	栅格向左移动格数,类型Number,String
-	 **className**	自定义的class名称	String
-	 **xs**	<768px 响应式栅格，可为栅格数或一个包含其他属性的对象`{ span: 5, offset: 1 }`,类型Number,Object
-	 **sm**	≥768px 响应式栅格，可为栅格数或一个包含其他属性的对象,类型Number,Object
-	 **md**	≥992px 响应式栅格，可为栅格数或一个包含其他属性的对象,类型Number,Object
-	 **lg**	≥1200px 响应式栅格，可为栅格数或一个包含其他属性的对象,类型Number,Object
-	 **labelWidth**	表单域标签的的宽度,类型Number,默认为150
+* **span**	栅格的占位格数，可选值为0~24的整数，为 0 时，相当于display:none,类型Number,String	
+* **order**	栅格的顺序，在flex布局模式下有效,类型Number,String
+*  **offset**	栅格左侧的间隔格数，间隔内不可以有栅格,类型Number,String
+*  **push**	栅格向右移动格数,类型Number,String
+*  **pull**	栅格向左移动格数,类型Number,String
+*  **className**	自定义的class名称	String
+*  **xs**	<768px 响应式栅格，可为栅格数或一个包含其他属性的对象`{ span: 5, offset: 1 }`,类型Number,Object
+*  **sm**	≥768px 响应式栅格，可为栅格数或一个包含其他属性的对象,类型Number,Object
+*  **md**	≥992px 响应式栅格，可为栅格数或一个包含其他属性的对象,类型Number,Object
+*  **lg**	≥1200px 响应式栅格，可为栅格数或一个包含其他属性的对象,类型Number,Object
+*  **labelWidth**	表单域标签的的宽度,类型Number,默认为150
 
 详细参考:[iview布局](http://v2.iviewui.com/components/layout)
 
