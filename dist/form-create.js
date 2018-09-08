@@ -255,6 +255,8 @@ var handler = function handler(vm, rule) {
     if ((0, _util.isNumeric)(col)) {
         col = { span: col };
     } else if (col.span === undefined) col.span = 24;
+    if (rule.props.hidden === undefined) rule.props.hidden = false;
+    if (rule.props.visibility === undefined) rule.props.visibility = false;
     rule.event = Object.keys(event).reduce(function (initial, eventName) {
         initial['on-' + eventName] = event[eventName];
         return initial;
@@ -384,9 +386,9 @@ render.prototype = {
             field = _handler2.field,
             props = _handler2.rule.props;
 
-        return this.props.props(Object.assign(props, { model: 'formData.' + field, value: this.vm.formData[field], elementId: refName })).ref(refName).key('fip' + unique).on(this.event).on('input', function (value) {
+        return this.props.props(Object.assign(props, { model: 'cptData.' + field, value: this.vm.cptData[field], elementId: refName })).ref(refName).key('fip' + unique).on(this.event).on('input', function (value) {
             _this2.vm.$emit('input', value);
-            _this2.vm.$set(_this2.vm.formData, field, value);
+            _this2.vm.$set(_this2.vm.cptData, field, value);
         });
     }
 };
@@ -403,7 +405,7 @@ exports.default = renderFactory;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.getMaker = exports.timeStampToDate = exports.getGlobalApi = exports.formCreateStyle = exports.getConfig = exports.getComponent = undefined;
+exports.componentCommon = exports.getMaker = exports.timeStampToDate = exports.getGlobalApi = exports.formCreateStyle = exports.getConfig = exports.getComponent = undefined;
 
 var _util = __webpack_require__(0);
 
@@ -459,9 +461,9 @@ var _timePicker = __webpack_require__(20);
 
 var _timePicker2 = _interopRequireDefault(_timePicker);
 
-var _hidden = __webpack_require__(21);
+var _hidden2 = __webpack_require__(21);
 
-var _hidden2 = _interopRequireDefault(_hidden);
+var _hidden3 = _interopRequireDefault(_hidden2);
 
 var _upload = __webpack_require__(7);
 
@@ -486,7 +488,7 @@ var _tree2 = _interopRequireDefault(_tree);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var componentList = {
-    hidden: _hidden2.default,
+    hidden: _hidden3.default,
     input: _input2.default,
     radio: _radio2.default,
     checkbox: _checkbox2.default,
@@ -647,16 +649,55 @@ var getGlobalApi = function getGlobalApi(fComponent) {
                 if ((0, _util.isFunction)(successFn)) successFn(formData);else fComponent.options.onSubmit && fComponent.options.onSubmit(formData);
             });
         },
-        model: function model(_model, fields) {
+        hidden: function hidden(fields) {
+            var _hidden = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+
+            var vm = fComponent.vm;
+            if (!fields) fields = this.fields();else if (!(0, _util.isArray)(fields)) fields = [fields];
+            fields.forEach(function (field) {
+                vm.$set(vm.trueData[field].rule.props, 'hidden', !!_hidden);
+            });
+        },
+        visibility: function visibility(fields) {
+            var _visibility = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+
+            var vm = fComponent.vm;
+            if (!fields) fields = this.fields();else if (!(0, _util.isArray)(fields)) fields = [fields];
+            fields.forEach(function (field) {
+                vm.$set(vm.trueData[field].rule.props, 'visibility', !!_visibility);
+            });
+        },
+        model: function model(fields) {
+            var model = {};
             if (!fields) fields = this.fields();else if (!(0, _util.isArray)(fields)) fields = [fields];
             fields.forEach(function (field) {
                 var handler = fComponent.handlers[field];
                 if (!handler) throw new Error(field + '\u5B57\u6BB5\u4E0D\u5B58\u5728');
                 handler.model = function (v) {
-                    _model[field] = v;
+                    model[field] = v;
                 };
                 handler.model(handler.vm.getTrueData(field));
             });
+            return model;
+        },
+        bind: function bind(fields) {
+            var bind = {},
+                vm = fComponent.vm;
+            if (!fields) fields = this.fields();else if (!(0, _util.isArray)(fields)) fields = [fields];
+            fields.forEach(function (field) {
+                bind[field] = vm.trueData[field].value;
+                Object.defineProperty(bind, field, {
+                    get: function get() {
+                        return vm.trueData[field].value;
+                    },
+                    set: function set(value) {
+                        vm.$set(vm.trueData[field], 'value', value);
+                    },
+                    enumerable: true,
+                    configurable: true
+                });
+            });
+            return bind;
         },
 
         submitStatus: function submitStatus() {
@@ -739,12 +780,58 @@ var getMaker = function getMaker() {
     return maker;
 };
 
+var componentCommon = {
+    data: function data() {
+        return {
+            cptData: {},
+            buttonProps: {},
+            resetProps: {},
+            trueData: {},
+            jsonData: {},
+            $f: {}
+        };
+    },
+    methods: {
+        changeFormData: function changeFormData(field, value) {
+            this.$set(this.cptData, field, value);
+        },
+        changeTrueData: function changeTrueData(field, value) {
+            this.$set(this.trueData[field], 'value', value);
+        },
+        getTrueDataValue: function getTrueDataValue(field) {
+            return this.trueData[field].value;
+        },
+        getTrueData: function getTrueData(field) {
+            return this.trueData[field];
+        },
+        getFormData: function getFormData(field) {
+            return this.cptData[field];
+        },
+        removeFormData: function removeFormData(field) {
+            this.$delete(this.cptData, field);
+            this.$delete(this.trueData, field);
+            this.$delete(this.jsonData, field);
+        },
+        changeButtonProps: function changeButtonProps(props) {
+            this.$set(this, 'buttonProps', Object.assign(this.buttonProps, props));
+        },
+        changeResetProps: function changeResetProps(props) {
+            this.$set(this, 'resetProps', Object.assign(this.resetProps, props));
+        },
+        setField: function setField(field) {
+            this.$set(this.cptData, field, '');
+            this.$set(this.trueData, field, {});
+        }
+    }
+};
+
 exports.getComponent = getComponent;
 exports.getConfig = getConfig;
 exports.formCreateStyle = formCreateStyle;
 exports.getGlobalApi = getGlobalApi;
 exports.timeStampToDate = timeStampToDate;
 exports.getMaker = getMaker;
+exports.componentCommon = componentCommon;
 
 /***/ }),
 /* 4 */
@@ -880,7 +967,7 @@ var _component = __webpack_require__(8);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var version = '1.4.0';
+var version = '1.4.1';
 
 var maker = (0, _common.getMaker)();
 
@@ -997,7 +1084,7 @@ formCreate.prototype = {
         this.vm = vm;
         this.createHandler();
         this.fCreateApi = (0, _common.getGlobalApi)(this);
-        vm.$set(vm, 'formData', this.formData);
+        vm.$set(vm, 'cptData', this.formData);
         vm.$set(vm, 'trueData', this.trueData);
         vm.$set(vm, 'buttonProps', this.options.submitBtn);
         vm.$set(vm, 'resetProps', this.options.resetBtn);
@@ -1012,7 +1099,7 @@ formCreate.prototype = {
     mounted: function mounted(vm) {
         var _this4 = this;
 
-        Object.keys(vm.formData).map(function (field) {
+        Object.keys(vm.cptData).map(function (field) {
             var handler = _this4.handlers[field];
             handler.model && handler.model(vm.getTrueData(field));
             _this4.addHandlerWatch(handler);
@@ -1055,7 +1142,7 @@ formCreate.prototype = {
 
         if (handler.noValue === true) return;
         var field = handler.field;
-        var unWatch = this.vm.$watch("formData." + field, function (n, o) {
+        var unWatch = this.vm.$watch("cptData." + field, function (n, o) {
             if (_this5.handlers[field] !== undefined) {
                 handler.setParseValue(n);
             } else unWatch();
@@ -1287,7 +1374,7 @@ var render = (0, _render2.default)({
 
         this.uploadOptions = Object.assign(Object.create(null), this.options.upload, rule.props);
         if (this.uploadOptions.handleIcon === true) this.uploadOptions.handleIcon = 'ios-eye-outline';
-        var value = this.vm.formData[this.handler.field],
+        var value = this.vm.cptData[this.handler.field],
             render = [].concat(_toConsumableArray(value.map(function (file, index) {
             if (file.status === undefined || file.status === 'finished') {
                 return _this4.makeUploadView(file.url, "" + index + unique, index);
@@ -1295,7 +1382,7 @@ var render = (0, _render2.default)({
                 return _this4.makeProgress(file, "" + index + unique);
             }
         })));
-        render.push(this.makeUploadBtn(unique, !this.uploadOptions.maxLength || this.uploadOptions.maxLength > this.vm.formData[this.handler.field].length));
+        render.push(this.makeUploadBtn(unique, !this.uploadOptions.maxLength || this.uploadOptions.maxLength > this.vm.cptData[this.handler.field].length));
         return [this.cvm.make('div', { key: "div4" + unique, class: { 'fc-upload': true } }, render)];
     },
     makeUploadView: function makeUploadView(src, key, index) {
@@ -1361,6 +1448,8 @@ exports.formCreateName = exports.$FormCreate = undefined;
 
 var _formCreate = __webpack_require__(5);
 
+var _common = __webpack_require__(3);
+
 var formCreateName = 'FormCreate';
 
 var $FormCreate = function $FormCreate() {
@@ -1384,49 +1473,8 @@ var $FormCreate = function $FormCreate() {
             },
             value: Object
         },
-        data: function data() {
-            return {
-                formData: {},
-                buttonProps: {},
-                resetProps: {},
-                trueData: {},
-                jsonData: {},
-                $f: {},
-                model: {}
-            };
-        },
-        methods: {
-            changeFormData: function changeFormData(field, value) {
-                this.$set(this.formData, field, value);
-            },
-            changeTrueData: function changeTrueData(field, value) {
-                this.$set(this.trueData[field], 'value', value);
-            },
-            getTrueDataValue: function getTrueDataValue(field) {
-                return this.trueData[field].value;
-            },
-            getTrueData: function getTrueData(field) {
-                return this.trueData[field];
-            },
-            getFormData: function getFormData(field) {
-                return this.formData[field];
-            },
-            removeFormData: function removeFormData(field) {
-                this.$delete(this.formData, field);
-                this.$delete(this.trueData, field);
-                this.$delete(this.jsonData, field);
-            },
-            changeButtonProps: function changeButtonProps(props) {
-                this.$set(this, 'buttonProps', Object.assign(this.buttonProps, props));
-            },
-            changeResetProps: function changeResetProps(props) {
-                this.$set(this, 'resetProps', Object.assign(this.resetProps, props));
-            },
-            setField: function setField(field) {
-                this.$set(this.formData, field, '');
-                this.$set(this.trueData, field, {});
-            }
-        },
+        data: _common.componentCommon.data,
+        methods: _common.componentCommon.methods,
         created: function created() {
             this.fComponent = new _formCreate.formCreate(this.rule, this.option);
             this.fComponent.init(this);
@@ -1434,10 +1482,6 @@ var $FormCreate = function $FormCreate() {
         mounted: function mounted() {
             this.fComponent.mounted(this);
             this.$f = this.fComponent.fCreateApi;
-            var model = {};
-            this.$f.model(model);
-            this.$set(this, 'model', model);
-            this.$set(this.$f, 'model', model);
         }
     };
 };
@@ -1509,6 +1553,10 @@ var baseRule = function baseRule() {
 var creator = function creator(rule) {
     _props2.default.call(this);
     this.rule = rule;
+    this.get = function () {
+        return this._data;
+    };
+    this.props({ hidden: false, visibility: false });
 };
 
 creator.prototype = _props2.default.prototype;
@@ -2236,7 +2284,7 @@ var render = (0, _render2.default)({
 
         var field = this.handler.field,
             b = false;
-        this.vm.$watch("formData." + field, function () {
+        this.vm.$watch("cptData." + field, function () {
             b === true && _this.onChange();
             b = true;
         });
@@ -2267,7 +2315,7 @@ var render = (0, _render2.default)({
     makeGroup: function makeGroup(render) {
         var unique = this.handler.unique,
             field = this.handler.field;
-        return [this.cvm.make('div', { key: "ifgp1" + unique, class: { 'fc-upload fc-frame': true }, ref: this.handler.refName, props: { value: this.vm.formData[field] } }, render), this.makeInput(true)];
+        return [this.cvm.make('div', { key: "ifgp1" + unique, class: { 'fc-upload fc-frame': true }, ref: this.handler.refName, props: { value: this.vm.cptData[field] } }, render), this.makeInput(true)];
     },
     makeImage: function makeImage() {
         var _this3 = this;
@@ -2647,7 +2695,10 @@ render.prototype = {
             labelWidth: rule.col.labelWidth,
             required: rule.props.required
         }).key(unique).get();
-        return this.cvm.col({ props: rule.col }, [this.cvm.formItem(propsData, VNodeFn)]);
+        return this.cvm.col({ props: rule.col, style: {
+                display: rule.props.hidden === true ? 'none' : 'block',
+                visibility: rule.props.visibility === true ? 'hidden' : 'visible'
+            } }, [this.cvm.formItem(propsData, VNodeFn)]);
     },
     makeFormBtn: function makeFormBtn(unique) {
         var btn = [],
@@ -2701,60 +2752,22 @@ Object.defineProperty(exports, "__esModule", {
 
 var _component = __webpack_require__(8);
 
+var _common = __webpack_require__(3);
+
 var formCreateComponent = function formCreateComponent(fComponent) {
     return {
-        name: _component.formCreateName + 'Core',
-        data: function data() {
-            return {
-                formData: {},
-                buttonProps: {},
-                resetProps: {},
-                trueData: {},
-                jsonData: {}
-            };
-        },
-
+        name: _component.formCreateName + "Core",
+        data: _common.componentCommon.data,
         render: function render() {
             return fComponent.fRender.parse(fComponent.vm);
         },
+        methods: _common.componentCommon.methods,
         created: function created() {
             fComponent.init(this);
         },
-
-        methods: {
-            changeFormData: function changeFormData(field, value) {
-                this.$set(this.formData, field, value);
-            },
-            changeTrueData: function changeTrueData(field, value) {
-                this.$set(this.trueData[field], 'value', value);
-            },
-            getTrueDataValue: function getTrueDataValue(field) {
-                return this.trueData[field].value;
-            },
-            getTrueData: function getTrueData(field) {
-                return this.trueData[field];
-            },
-            getFormData: function getFormData(field) {
-                return this.formData[field];
-            },
-            removeFormData: function removeFormData(field) {
-                this.$delete(this.formData, field);
-                this.$delete(this.trueData, field);
-                this.$delete(this.jsonData, field);
-            },
-            changeButtonProps: function changeButtonProps(props) {
-                this.$set(this, 'buttonProps', Object.assign(this.buttonProps, props));
-            },
-            changeResetProps: function changeResetProps(props) {
-                this.$set(this, 'resetProps', Object.assign(this.resetProps, props));
-            },
-            setField: function setField(field) {
-                this.$set(this.formData, field, '');
-                this.$set(this.trueData, field, {});
-            }
-        },
         mounted: function mounted() {
             fComponent.mounted(this);
+            this.$f = fComponent.fCreateApi;
         }
     };
 };
