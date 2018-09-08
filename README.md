@@ -38,7 +38,7 @@
 
 ## 更新说明 **建议保持在最新版本**
 
-#### 1.4.1 (2018-9-8)
+#### 1.4.2 (2018-9-8)
 
 * 新增  `bind`方法.以键值对的方式获取双向数据绑定的表单数据
 * 修改  `model`方法. 修改为 `form = $f.model()`无需再传入对象
@@ -420,7 +420,7 @@ $formCreate.maker.frame(title,field,value)
 ## col栅格布局规则
 > 所有组件均支持col栅格布局规则,配置方法`rule.col = {...}`;
 
-* **span**	栅格的占位格数，可选值为0~24的整数，为 0 时，相当于display:none,类型Number,String	
+* **span**	栅格的占位格数，可选值为0~24的整数，为 0 时，相当于display:none,类型Number,String
 * **order**	栅格的顺序，在flex布局模式下有效,类型Number,String
 *  **offset**	栅格左侧的间隔格数，间隔内不可以有栅格,类型Number,String
 *  **push**	栅格向右移动格数,类型Number,String
