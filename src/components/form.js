@@ -47,7 +47,10 @@ render.prototype = {
 	        labelWidth:rule.col.labelWidth,
 	        required:rule.props.required
         }).key(unique).get();
-        return this.cvm.col({props:rule.col},[this.cvm.formItem(propsData,VNodeFn)]);
+            return this.cvm.col({props:rule.col,style:{
+                    display:rule.props.hidden === true ? 'none' : 'block',
+                    visibility:rule.props.visibility === true ? 'hidden' : 'visible'
+                }},[this.cvm.formItem(propsData,VNodeFn)]);
     },
     makeFormBtn(unique){
         let btn = [],

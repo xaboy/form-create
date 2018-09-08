@@ -5,7 +5,8 @@ return [
     maker.hidden('id','14'),
     // maker.hidden('oid','15'),
     maker.cascader('所在区域','address',['陕西省','西安市','新城区']).props({
-        data:window.province_city_area
+        data:window.province_city_area,
+        hidden:false
     }),
     // {
     //     type:"cascader",

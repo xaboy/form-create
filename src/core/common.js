@@ -199,6 +199,26 @@ const getGlobalApi = function (fComponent) {
                     fComponent.options.onSubmit && fComponent.options.onSubmit(formData);
             });
         },
+        hidden(fields,hidden = true) {
+            var vm = fComponent.vm;
+            if(!fields)
+                fields = this.fields();
+            else if(!isArray(fields))
+                fields = [fields];
+            fields.forEach((field)=>{
+                vm.$set(vm.trueData[field].rule.props,'hidden',!!hidden);
+            })
+        },
+        visibility(fields,visibility = true) {
+            var vm = fComponent.vm;
+            if(!fields)
+                fields = this.fields();
+            else if(!isArray(fields))
+                fields = [fields];
+            fields.forEach((field)=>{
+                vm.$set(vm.trueData[field].rule.props,'visibility',!!visibility);
+            })
+        },
         model(fields){
             let model = {};
             if(!fields)
@@ -216,7 +236,7 @@ const getGlobalApi = function (fComponent) {
             });
             return model;
         },
-        watch(fields){
+        bind(fields){
             let bind = {},vm = fComponent.vm;
             if(!fields)
                 fields = this.fields();

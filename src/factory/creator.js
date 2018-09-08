@@ -24,7 +24,8 @@ const creator = function (rule) {
     this.rule = rule;
     this.get = function () {
         return this._data;
-    }
+    };
+    this.props({hidden:false,visibility:false});
 };
 
 creator.prototype = props.prototype;
