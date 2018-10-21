@@ -71,7 +71,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 9);
+/******/ 	return __webpack_require__(__webpack_require__.s = 10);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -255,8 +255,8 @@ var handler = function handler(vm, rule) {
     if ((0, _util.isNumeric)(col)) {
         col = { span: col };
     } else if (col.span === undefined) col.span = 24;
-    if (rule.props.hidden === undefined) rule.props.hidden = false;
-    if (rule.props.visibility === undefined) rule.props.visibility = false;
+    if (rule.props && rule.props.hidden === undefined) rule.props.hidden = false;
+    if (rule.props && rule.props.visibility === undefined) rule.props.visibility = false;
     rule.event = Object.keys(event).reduce(function (initial, eventName) {
         initial['on-' + eventName] = event[eventName];
         return initial;
@@ -369,6 +369,9 @@ render.prototype = {
             rule = _handler.rule,
             childrenHandlers = _handler.childrenHandlers;
 
+        if (rule.type === '__tmp') {
+            return [this.vm.constructor.super.compile(rule.template, {}).render.call(rule._vm || this.vm)];
+        }
         return [this.cvm.make(type, Object.assign({}, rule), function () {
             var vn = [];
             if (childrenHandlers.length > 0) vn = childrenHandlers.map(function (handler) {
@@ -405,13 +408,9 @@ exports.default = renderFactory;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.componentCommon = exports.getMaker = exports.timeStampToDate = exports.getGlobalApi = exports.formCreateStyle = exports.getConfig = exports.getComponent = undefined;
+exports._init = exports.componentCommon = exports.getMaker = exports.timeStampToDate = exports.getGlobalApi = exports.formCreateStyle = exports.getConfig = exports.getComponent = undefined;
 
 var _util = __webpack_require__(0);
-
-var _creator = __webpack_require__(10);
-
-var _creator2 = _interopRequireDefault(_creator);
 
 var _handler = __webpack_require__(1);
 
@@ -421,107 +420,32 @@ var _render = __webpack_require__(2);
 
 var _render2 = _interopRequireDefault(_render);
 
-var _cascader = __webpack_require__(11);
+var _componentList = __webpack_require__(7);
 
-var _cascader2 = _interopRequireDefault(_cascader);
+var _componentList2 = _interopRequireDefault(_componentList);
 
-var _checkbox = __webpack_require__(12);
+var _maker = __webpack_require__(26);
 
-var _checkbox2 = _interopRequireDefault(_checkbox);
-
-var _colorPicker = __webpack_require__(13);
-
-var _colorPicker2 = _interopRequireDefault(_colorPicker);
-
-var _datePicker = __webpack_require__(14);
-
-var _datePicker2 = _interopRequireDefault(_datePicker);
-
-var _input = __webpack_require__(15);
-
-var _input2 = _interopRequireDefault(_input);
-
-var _inputNumber = __webpack_require__(16);
-
-var _inputNumber2 = _interopRequireDefault(_inputNumber);
-
-var _radio = __webpack_require__(17);
-
-var _radio2 = _interopRequireDefault(_radio);
-
-var _select = __webpack_require__(18);
-
-var _select2 = _interopRequireDefault(_select);
-
-var _switch = __webpack_require__(19);
-
-var _switch2 = _interopRequireDefault(_switch);
-
-var _timePicker = __webpack_require__(20);
-
-var _timePicker2 = _interopRequireDefault(_timePicker);
-
-var _hidden2 = __webpack_require__(21);
-
-var _hidden3 = _interopRequireDefault(_hidden2);
-
-var _upload = __webpack_require__(7);
-
-var _upload2 = _interopRequireDefault(_upload);
-
-var _rate = __webpack_require__(22);
-
-var _rate2 = _interopRequireDefault(_rate);
-
-var _slider = __webpack_require__(23);
-
-var _slider2 = _interopRequireDefault(_slider);
-
-var _frame = __webpack_require__(24);
-
-var _frame2 = _interopRequireDefault(_frame);
-
-var _tree = __webpack_require__(25);
-
-var _tree2 = _interopRequireDefault(_tree);
+var _maker2 = _interopRequireDefault(_maker);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var componentList = {
-    hidden: _hidden3.default,
-    input: _input2.default,
-    radio: _radio2.default,
-    checkbox: _checkbox2.default,
-    switch: _switch2.default,
-    select: _select2.default,
-    datepicker: _datePicker2.default,
-    timepicker: _timePicker2.default,
-    inputnumber: _inputNumber2.default,
-    colorpicker: _colorPicker2.default,
-    upload: _upload2.default,
-    cascader: _cascader2.default,
-    rate: _rate2.default,
-    slider: _slider2.default,
-    frame: _frame2.default,
-    tree: _tree2.default
-};
-
 var getComponent = function getComponent(vm, rule, createOptions) {
-    var component = void 0,
-        name = rule.type.toLowerCase();
-    if (componentList[name] === undefined) {
-        component = {
-            handler: (0, _handler2.default)({}),
-            render: (0, _render2.default)({}),
-            noValue: true
-        };
-    } else {
-        component = componentList[name];
-    }
+    var name = rule.type.toLowerCase(),
+        component = _componentList2.default[name] === undefined ? getUdfComponent() : _componentList2.default[name];
+
     var $h = new component.handler(vm, rule);
     $h.render = new component.render(vm, $h, createOptions);
     $h.noValue = component.noValue;
     return $h;
+};
+
+var getUdfComponent = function getUdfComponent() {
+    return {
+        handler: (0, _handler2.default)({}),
+        render: (0, _render2.default)({}),
+        noValue: true
+    };
 };
 
 var getConfig = function getConfig() {
@@ -759,25 +683,7 @@ var timeStampToDate = function timeStampToDate(timeStamp) {
 };
 
 var getMaker = function getMaker() {
-    var maker = {};
-    Object.keys(componentList).forEach(function (name) {
-        maker[name] = (0, _creator2.default)(name);
-    });
-    maker.hidden = function () {
-        var make = (0, _creator2.default)('hidden');
-        return make.bind(make, '');
-    }();
-    maker.create = function (type) {
-        var field = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'mp' + (0, _util.uniqueId)();
-
-        var make = (0, _creator2.default)(type, ['props', 'event', 'validate', 'slot']);
-        return make('', field);
-    };
-    maker.number = maker.inputnumber;
-    maker.time = maker.timepicker;
-    maker.date = maker.datepicker;
-    maker.color = maker.colorpicker;
-    return maker;
+    return _maker2.default;
 };
 
 var componentCommon = {
@@ -825,6 +731,22 @@ var componentCommon = {
     }
 };
 
+var _init = function _init() {
+    if (!Object.assign) {
+        Object.assign = function (target) {
+            for (var i = 1; i < arguments.length; i++) {
+                var source = arguments[i];
+
+                for (var key in source) {
+                    if (Object.prototype.hasOwnProperty.call(source, key)) {
+                        target[key] = source[key];
+                    }
+                }
+            }
+        };
+    }
+};
+
 exports.getComponent = getComponent;
 exports.getConfig = getConfig;
 exports.formCreateStyle = formCreateStyle;
@@ -832,6 +754,7 @@ exports.getGlobalApi = getGlobalApi;
 exports.timeStampToDate = timeStampToDate;
 exports.getMaker = getMaker;
 exports.componentCommon = componentCommon;
+exports._init = _init;
 
 /***/ }),
 /* 4 */
@@ -955,23 +878,25 @@ var _util = __webpack_require__(0);
 
 var _common = __webpack_require__(3);
 
-var _form = __webpack_require__(26);
+var _form = __webpack_require__(28);
 
 var _form2 = _interopRequireDefault(_form);
 
-var _formCreateComponent = __webpack_require__(27);
+var _formCreateComponent = __webpack_require__(29);
 
 var _formCreateComponent2 = _interopRequireDefault(_formCreateComponent);
 
-var _component = __webpack_require__(8);
+var _component = __webpack_require__(9);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var version = '1.4.1';
+var version = '1.4.3';
 
 var maker = (0, _common.getMaker)();
 
 var formCreateStyleElId = 'form-create-style';
+
+(0, _common._init)();
 
 var formCreate = function formCreate(rules, _options) {
     var _this = this;
@@ -1244,6 +1169,104 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
+var _hidden = __webpack_require__(11);
+
+var _hidden2 = _interopRequireDefault(_hidden);
+
+var _input = __webpack_require__(12);
+
+var _input2 = _interopRequireDefault(_input);
+
+var _radio = __webpack_require__(13);
+
+var _radio2 = _interopRequireDefault(_radio);
+
+var _checkbox = __webpack_require__(14);
+
+var _checkbox2 = _interopRequireDefault(_checkbox);
+
+var _switch = __webpack_require__(15);
+
+var _switch2 = _interopRequireDefault(_switch);
+
+var _select = __webpack_require__(16);
+
+var _select2 = _interopRequireDefault(_select);
+
+var _datePicker = __webpack_require__(17);
+
+var _datePicker2 = _interopRequireDefault(_datePicker);
+
+var _timePicker = __webpack_require__(18);
+
+var _timePicker2 = _interopRequireDefault(_timePicker);
+
+var _inputNumber = __webpack_require__(19);
+
+var _inputNumber2 = _interopRequireDefault(_inputNumber);
+
+var _colorPicker = __webpack_require__(20);
+
+var _colorPicker2 = _interopRequireDefault(_colorPicker);
+
+var _upload = __webpack_require__(8);
+
+var _upload2 = _interopRequireDefault(_upload);
+
+var _cascader = __webpack_require__(21);
+
+var _cascader2 = _interopRequireDefault(_cascader);
+
+var _rate = __webpack_require__(22);
+
+var _rate2 = _interopRequireDefault(_rate);
+
+var _slider = __webpack_require__(23);
+
+var _slider2 = _interopRequireDefault(_slider);
+
+var _frame = __webpack_require__(24);
+
+var _frame2 = _interopRequireDefault(_frame);
+
+var _tree = __webpack_require__(25);
+
+var _tree2 = _interopRequireDefault(_tree);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var componentList = {
+    hidden: _hidden2.default,
+    input: _input2.default,
+    radio: _radio2.default,
+    checkbox: _checkbox2.default,
+    switch: _switch2.default,
+    select: _select2.default,
+    datepicker: _datePicker2.default,
+    timepicker: _timePicker2.default,
+    inputnumber: _inputNumber2.default,
+    colorpicker: _colorPicker2.default,
+    upload: _upload2.default,
+    cascader: _cascader2.default,
+    rate: _rate2.default,
+    slider: _slider2.default,
+    frame: _frame2.default,
+    tree: _tree2.default
+};
+
+exports.default = componentList;
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
 var _handler2 = __webpack_require__(1);
 
 var _handler3 = _interopRequireDefault(_handler2);
@@ -1435,7 +1458,7 @@ var render = (0, _render2.default)({
 exports.default = { handler: handler, render: render };
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1490,7 +1513,7 @@ exports.$FormCreate = $FormCreate;
 exports.formCreateName = formCreateName;
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1512,96 +1535,6 @@ if (typeof window !== 'undefined') {
 module.exports.default = module.exports = _formCreate2.default;
 
 /***/ }),
-/* 10 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.creator = undefined;
-
-var _util = __webpack_require__(0);
-
-var _props = __webpack_require__(4);
-
-var _props2 = _interopRequireDefault(_props);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var creatorFactory = function creatorFactory(type) {
-    return function $m(title, field) {
-        var value = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '';
-
-        return new creator(Object.assign(baseRule(), { type: type, title: title, field: field, value: value }));
-    };
-};
-
-var baseRule = function baseRule() {
-    return {
-        event: {},
-        validate: [],
-        options: [],
-        col: {},
-        children: [],
-        emit: []
-    };
-};
-
-var creator = function creator(rule) {
-    _props2.default.call(this);
-    this.rule = rule;
-    this.get = function () {
-        return this._data;
-    };
-    this.props({ hidden: false, visibility: false });
-};
-
-creator.prototype = _props2.default.prototype;
-
-creator.constructor = creator;
-
-var objAttrs = ['event', 'col'];
-
-objAttrs.forEach(function (attr) {
-    creator.prototype[attr] = function (opt) {
-        this.rule[attr] = Object.assign(this.rule[attr], opt);
-        return this;
-    };
-});
-
-var arrAttrs = ['validate', 'options', 'children', 'emit'];
-
-arrAttrs.forEach(function (attr) {
-    creator.prototype[attr] = function (opt) {
-        if (!(0, _util.isArray)(opt)) opt = [opt];
-        this.rule[attr] = this.rule[attr].concat(opt);
-        return this;
-    };
-});
-
-creator.prototype.getRule = function () {
-    return Object.assign(this.rule, this.get());
-};
-
-creator.prototype.setValue = function (value) {
-    this.rule.value = value;
-    return this;
-};
-
-creator.prototype.model = function (model, field) {
-    if (!field) field = this.rule.field;
-    this.rule.model = function (v) {
-        model[field] = v;
-    };
-};
-
-exports.default = creatorFactory;
-exports.creator = creator;
-
-/***/ }),
 /* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -1620,30 +1553,17 @@ var _render = __webpack_require__(2);
 
 var _render2 = _interopRequireDefault(_render);
 
-var _util = __webpack_require__(0);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var handler = (0, _handler2.default)({
     init: function init() {
-        var rule = this.rule;
-        if (!rule.props.data) rule.props.data = [];
-        if (!(0, _util.isArray)(this.value)) this.value = [];
-    },
-    toTrueValue: function toTrueValue() {
-        return this.el.value === undefined ? this.vm.getFormData(this.field) : this.el.value;
-    },
-    toParseValue: function toParseValue(value) {
-        return (0, _util.isArray)(value) ? Array.from(value) : [];
-    },
-    mounted: function mounted() {
-        this.vm.changeTrueData(this.field, this.el.value);
+        this.rule.props = {};
     }
 });
 
 var render = (0, _render2.default)({
     parse: function parse() {
-        return [this.cvm.cascader(this.inputProps().get())];
+        return [];
     }
 });
 
@@ -1651,6 +1571,95 @@ exports.default = { handler: handler, render: render };
 
 /***/ }),
 /* 12 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _handler = __webpack_require__(1);
+
+var _handler2 = _interopRequireDefault(_handler);
+
+var _render = __webpack_require__(2);
+
+var _render2 = _interopRequireDefault(_render);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var handler = (0, _handler2.default)({});
+
+var render = (0, _render2.default)({
+    parse: function parse() {
+        return [this.cvm.input(this.inputProps().get())];
+    }
+});
+
+exports.default = { handler: handler, render: render };
+
+/***/ }),
+/* 13 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _handler2 = __webpack_require__(1);
+
+var _handler3 = _interopRequireDefault(_handler2);
+
+var _render = __webpack_require__(2);
+
+var _render2 = _interopRequireDefault(_render);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var handler = (0, _handler3.default)({
+    toParseValue: function toParseValue(value) {
+        value = value.toString();
+        return this.rule.options.filter(function (opt) {
+            return opt.value.toString() === value;
+        }).reduce(function (initial, opt) {
+            return opt.label;
+        }, '');
+    },
+    toTrueValue: function toTrueValue(parseValue) {
+        parseValue = parseValue.toString();
+        return this.rule.options.filter(function (opt) {
+            return opt.label.toString() === parseValue;
+        }).reduce(function (initial, opt) {
+            return opt.value;
+        }, '');
+    }
+});
+
+var render = (0, _render2.default)({
+    parse: function parse() {
+        var _this = this;
+
+        var _handler = this.handler,
+            unique = _handler.unique,
+            options = _handler.rule.options;
+
+        return [this.cvm.radioGroup(this.inputProps().get(), function () {
+            return options.map(function (option, index) {
+                return _this.cvm.radio({ props: option, key: "ropt" + index + unique });
+            });
+        })];
+    }
+});
+
+exports.default = { handler: handler, render: render };
+
+/***/ }),
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1713,7 +1722,7 @@ var render = (0, _render2.default)({
 exports.default = { handler: handler, render: render };
 
 /***/ }),
-/* 13 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1733,18 +1742,83 @@ var _render2 = _interopRequireDefault(_render);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var handler = (0, _handler2.default)({});
+var handler = (0, _handler2.default)({
+    init: function init() {
+        if (this.rule.slot === undefined) this.rule.slot = {};
+    }
+});
 
 var render = (0, _render2.default)({
     parse: function parse() {
-        return [this.cvm.colorPicker(this.inputProps().get())];
+        var slot = this.handler.rule.slot;
+
+        this.propsData = this.inputProps().scopedSlots({
+            open: function open() {
+                return slot.open;
+            },
+            close: function close() {
+                return slot.close;
+            }
+        }).get();
+        return [this.cvm.switch(this.propsData)];
     }
 });
 
 exports.default = { handler: handler, render: render };
 
 /***/ }),
-/* 14 */
+/* 16 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _handler2 = __webpack_require__(1);
+
+var _handler3 = _interopRequireDefault(_handler2);
+
+var _render = __webpack_require__(2);
+
+var _render2 = _interopRequireDefault(_render);
+
+var _util = __webpack_require__(0);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var handler = (0, _handler3.default)({
+    toParseValue: function toParseValue(value) {
+        var isArr = (0, _util.isArray)(value);
+        if (this.rule.props.multiple === true) return Array.from(isArr === true ? value : [value]);else return isArr === true ? value[0] || '' : value;
+    },
+    toTrueValue: function toTrueValue(parseValue) {
+        return (0, _util.isArray)(parseValue) ? Array.from(parseValue) : parseValue;
+    }
+});
+
+var render = (0, _render2.default)({
+    parse: function parse() {
+        var _this = this;
+
+        var _handler = this.handler,
+            unique = _handler.unique,
+            options = _handler.rule.options;
+
+        return [this.cvm.select(this.inputProps().get(), function () {
+            return options.map(function (option, index) {
+                return _this.cvm.option({ props: option, key: "sopt" + index + unique });
+            });
+        })];
+    }
+});
+
+exports.default = { handler: handler, render: render };
+
+/***/ }),
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1811,229 +1885,7 @@ var render = (0, _render2.default)({
 exports.default = { handler: handler, render: render };
 
 /***/ }),
-/* 15 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _handler = __webpack_require__(1);
-
-var _handler2 = _interopRequireDefault(_handler);
-
-var _render = __webpack_require__(2);
-
-var _render2 = _interopRequireDefault(_render);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var handler = (0, _handler2.default)({});
-
-var render = (0, _render2.default)({
-    parse: function parse() {
-        return [this.cvm.input(this.inputProps().get())];
-    }
-});
-
-exports.default = { handler: handler, render: render };
-
-/***/ }),
-/* 16 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _handler = __webpack_require__(1);
-
-var _handler2 = _interopRequireDefault(_handler);
-
-var _render = __webpack_require__(2);
-
-var _render2 = _interopRequireDefault(_render);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var handler = (0, _handler2.default)({
-    toParseValue: function toParseValue(value) {
-        var parseValue = parseFloat(value);
-        if (Number.isNaN(parseValue)) parseValue = 0;
-        return parseValue;
-    }
-});
-
-var render = (0, _render2.default)({
-    parse: function parse() {
-        return [this.cvm.inputNumber(this.inputProps().get())];
-    }
-});
-
-exports.default = { handler: handler, render: render };
-
-/***/ }),
-/* 17 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _handler2 = __webpack_require__(1);
-
-var _handler3 = _interopRequireDefault(_handler2);
-
-var _render = __webpack_require__(2);
-
-var _render2 = _interopRequireDefault(_render);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var handler = (0, _handler3.default)({
-    toParseValue: function toParseValue(value) {
-        value = value.toString();
-        return this.rule.options.filter(function (opt) {
-            return opt.value.toString() === value;
-        }).reduce(function (initial, opt) {
-            return opt.label;
-        }, '');
-    },
-    toTrueValue: function toTrueValue(parseValue) {
-        parseValue = parseValue.toString();
-        return this.rule.options.filter(function (opt) {
-            return opt.label.toString() === parseValue;
-        }).reduce(function (initial, opt) {
-            return opt.value;
-        }, '');
-    }
-});
-
-var render = (0, _render2.default)({
-    parse: function parse() {
-        var _this = this;
-
-        var _handler = this.handler,
-            unique = _handler.unique,
-            options = _handler.rule.options;
-
-        return [this.cvm.radioGroup(this.inputProps().get(), function () {
-            return options.map(function (option, index) {
-                return _this.cvm.radio({ props: option, key: "ropt" + index + unique });
-            });
-        })];
-    }
-});
-
-exports.default = { handler: handler, render: render };
-
-/***/ }),
 /* 18 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _handler2 = __webpack_require__(1);
-
-var _handler3 = _interopRequireDefault(_handler2);
-
-var _render = __webpack_require__(2);
-
-var _render2 = _interopRequireDefault(_render);
-
-var _util = __webpack_require__(0);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var handler = (0, _handler3.default)({
-    toParseValue: function toParseValue(value) {
-        var isArr = (0, _util.isArray)(value);
-        if (this.rule.props.multiple === true) return Array.from(isArr === true ? value : [value]);else return isArr === true ? value[0] || '' : value;
-    },
-    toTrueValue: function toTrueValue(parseValue) {
-        return (0, _util.isArray)(parseValue) ? Array.from(parseValue) : parseValue;
-    }
-});
-
-var render = (0, _render2.default)({
-    parse: function parse() {
-        var _this = this;
-
-        var _handler = this.handler,
-            unique = _handler.unique,
-            options = _handler.rule.options;
-
-        return [this.cvm.select(this.inputProps().get(), function () {
-            return options.map(function (option, index) {
-                return _this.cvm.option({ props: option, key: "sopt" + index + unique });
-            });
-        })];
-    }
-});
-
-exports.default = { handler: handler, render: render };
-
-/***/ }),
-/* 19 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _handler = __webpack_require__(1);
-
-var _handler2 = _interopRequireDefault(_handler);
-
-var _render = __webpack_require__(2);
-
-var _render2 = _interopRequireDefault(_render);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var handler = (0, _handler2.default)({
-    init: function init() {
-        if (this.rule.slot === undefined) this.rule.slot = {};
-    }
-});
-
-var render = (0, _render2.default)({
-    parse: function parse() {
-        var slot = this.handler.rule.slot;
-
-        this.propsData = this.inputProps().scopedSlots({
-            open: function open() {
-                return slot.open;
-            },
-            close: function close() {
-                return slot.close;
-            }
-        }).get();
-        return [this.cvm.switch(this.propsData)];
-    }
-});
-
-exports.default = { handler: handler, render: render };
-
-/***/ }),
-/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2102,7 +1954,7 @@ var render = (0, _render2.default)({
 exports.default = { handler: handler, render: render };
 
 /***/ }),
-/* 21 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2123,14 +1975,95 @@ var _render2 = _interopRequireDefault(_render);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var handler = (0, _handler2.default)({
-    init: function init() {
-        this.rule.props = {};
+    toParseValue: function toParseValue(value) {
+        var parseValue = parseFloat(value);
+        if (Number.isNaN(parseValue)) parseValue = 0;
+        return parseValue;
     }
 });
 
 var render = (0, _render2.default)({
     parse: function parse() {
-        return [];
+        return [this.cvm.inputNumber(this.inputProps().get())];
+    }
+});
+
+exports.default = { handler: handler, render: render };
+
+/***/ }),
+/* 20 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _handler = __webpack_require__(1);
+
+var _handler2 = _interopRequireDefault(_handler);
+
+var _render = __webpack_require__(2);
+
+var _render2 = _interopRequireDefault(_render);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var handler = (0, _handler2.default)({});
+
+var render = (0, _render2.default)({
+    parse: function parse() {
+        return [this.cvm.colorPicker(this.inputProps().get())];
+    }
+});
+
+exports.default = { handler: handler, render: render };
+
+/***/ }),
+/* 21 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _handler = __webpack_require__(1);
+
+var _handler2 = _interopRequireDefault(_handler);
+
+var _render = __webpack_require__(2);
+
+var _render2 = _interopRequireDefault(_render);
+
+var _util = __webpack_require__(0);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var handler = (0, _handler2.default)({
+    init: function init() {
+        var rule = this.rule;
+        if (!rule.props.data) rule.props.data = [];
+        if (!(0, _util.isArray)(this.value)) this.value = [];
+    },
+    toTrueValue: function toTrueValue() {
+        return this.el.value === undefined ? this.vm.getFormData(this.field) : this.el.value;
+    },
+    toParseValue: function toParseValue(value) {
+        return (0, _util.isArray)(value) ? Array.from(value) : [];
+    },
+    mounted: function mounted() {
+        this.vm.changeTrueData(this.field, this.el.value);
+    }
+});
+
+var render = (0, _render2.default)({
+    parse: function parse() {
+        return [this.cvm.cascader(this.inputProps().get())];
     }
 });
 
@@ -2243,7 +2176,7 @@ var _render2 = _interopRequireDefault(_render);
 
 var _util = __webpack_require__(0);
 
-var _upload = __webpack_require__(7);
+var _upload = __webpack_require__(8);
 
 var _upload2 = _interopRequireDefault(_upload);
 
@@ -2622,6 +2555,166 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
+var _creator = __webpack_require__(27);
+
+var _creator2 = _interopRequireDefault(_creator);
+
+var _componentList = __webpack_require__(7);
+
+var _componentList2 = _interopRequireDefault(_componentList);
+
+var _util = __webpack_require__(0);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var maker = function () {
+    var _m = {};
+    Object.keys(_componentList2.default).forEach(function (name) {
+        _m[name] = (0, _creator2.default)(name);
+    });
+
+    _m.number = _m.inputnumber;
+    _m.time = _m.timepicker;
+    _m.date = _m.datepicker;
+    _m.color = _m.colorpicker;
+
+    var commonMaker = (0, _creator2.default)('');
+
+    Object.assign(_m, {
+        hidden: function () {
+            var make = (0, _creator2.default)('hidden');
+            return make.bind(make, '');
+        }(),
+        create: function create(type) {
+            var field = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '__mp' + (0, _util.uniqueId)();
+
+            var make = commonMaker('', field);
+            make.rule.type = type;
+            return make;
+        },
+        createTmp: function createTmp(template, vm) {
+            var field = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '__mp' + (0, _util.uniqueId)();
+
+            var make = commonMaker('', field);
+            make.rule.type = '__tmp';
+            make.rule.template = template;
+            make.rule._vm = vm;
+            return make;
+        },
+
+        number: _m.inputnumber,
+        time: _m.timepicker,
+        date: _m.datepicker,
+        color: _m.colorpicker
+    });
+
+    return _m;
+}();
+
+exports.default = maker;
+
+/***/ }),
+/* 27 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.creator = undefined;
+
+var _util = __webpack_require__(0);
+
+var _props = __webpack_require__(4);
+
+var _props2 = _interopRequireDefault(_props);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var creatorFactory = function creatorFactory(type) {
+    return function $m(title, field) {
+        var value = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '';
+
+        return new creator(Object.assign(baseRule(), { type: type, title: title, field: field, value: value }));
+    };
+};
+
+var baseRule = function baseRule() {
+    return {
+        event: {},
+        validate: [],
+        options: [],
+        col: {},
+        children: [],
+        emit: [],
+        template: null
+    };
+};
+
+var creator = function creator(rule) {
+    _props2.default.call(this);
+    this.rule = rule;
+    this.get = function () {
+        return this._data;
+    };
+    this.props({ hidden: false, visibility: false });
+};
+
+creator.prototype = _props2.default.prototype;
+
+creator.constructor = creator;
+
+var objAttrs = ['event', 'col'];
+
+objAttrs.forEach(function (attr) {
+    creator.prototype[attr] = function (opt) {
+        this.rule[attr] = Object.assign(this.rule[attr], opt);
+        return this;
+    };
+});
+
+var arrAttrs = ['validate', 'options', 'children', 'emit'];
+
+arrAttrs.forEach(function (attr) {
+    creator.prototype[attr] = function (opt) {
+        if (!(0, _util.isArray)(opt)) opt = [opt];
+        this.rule[attr] = this.rule[attr].concat(opt);
+        return this;
+    };
+});
+
+creator.prototype.getRule = function () {
+    return Object.assign(this.rule, this.get());
+};
+
+creator.prototype.setValue = function (value) {
+    this.rule.value = value;
+    return this;
+};
+
+creator.prototype.model = function (model, field) {
+    if (!field) field = this.rule.field;
+    this.rule.model = function (v) {
+        model[field] = v;
+    };
+};
+
+exports.default = creatorFactory;
+exports.creator = creator;
+
+/***/ }),
+/* 28 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
 var _cvm = __webpack_require__(6);
 
 var _cvm2 = _interopRequireDefault(_cvm);
@@ -2740,7 +2833,7 @@ render.prototype = {
 exports.default = render;
 
 /***/ }),
-/* 27 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2750,7 +2843,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _component = __webpack_require__(8);
+var _component = __webpack_require__(9);
 
 var _common = __webpack_require__(3);
 

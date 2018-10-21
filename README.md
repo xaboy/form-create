@@ -35,13 +35,14 @@
 - 优化 maker规则生成器
 - 新增 **生成任意标签组件** `maker.create(componentName)
 - 新增 标签模式下支持emit触发事件
+- 新增 使用 **template 快速生成自定义组件** `maker.createTmp(template,vm)`
 
 ## 更新说明 **建议保持在最新版本**
 
 #### 1.4.3 (2018-10-21)
 
 * 修复 ie 兼容性问题,hidden 组件bug
-* 新增使用 template 快速生成自定义组件 `maker.createTmp(template,vm)`
+* 新增 使用 template 快速生成自定义组件 `maker.createTmp(template,vm)`
 
 
 #### 1.4.2 (2018-9-8)
@@ -120,7 +121,7 @@ npm run dev
 ```
 OR
 
-**双击打开 demo/index.html**
+** 双击打开 demo/index.html **
 
 
 
