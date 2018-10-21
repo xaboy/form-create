@@ -1,5 +1,5 @@
 import {deepExtend, isElement, isBool,isFunction,isArray} from "./util";
-import {formCreateStyle, getConfig, getComponent, getGlobalApi, getMaker} from "./common";
+import {formCreateStyle, getConfig, getComponent, getGlobalApi, getMaker,_init} from "./common";
 import formRender from "../components/form";
 import formCreateComponent from "./formCreateComponent";
 import {formCreateName,$FormCreate} from './component';
@@ -9,6 +9,9 @@ const version = '1.4.2';
 const maker = getMaker();
 
 const formCreateStyleElId = 'form-create-style';
+
+_init();
+
 
 const formCreate = function (rules,_options) {
     if(!this instanceof formCreate)

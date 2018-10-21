@@ -112,6 +112,9 @@ Vue.use(formCreat)
 ```shell
 npm run dev
 ```
+OR
+
+**双击打开 demo/index.html**
 
 
 

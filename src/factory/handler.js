@@ -22,8 +22,8 @@ const handler = function (vm,rule) {
     	col = {span:col};
     }else if(col.span === undefined)
     	col.span = 24;
-    if(rule.props.hidden === undefined) rule.props.hidden = false;
-    if(rule.props.visibility === undefined) rule.props.visibility = false;
+    if(rule.props && rule.props.hidden === undefined) rule.props.hidden = false;
+    if(rule.props && rule.props.visibility === undefined) rule.props.visibility = false;
     rule.event = Object.keys(event).reduce(function (initial,eventName) {
         initial[`on-${eventName}`] = event[eventName];
         return initial;
