@@ -431,16 +431,16 @@ $formCreate.maker.frame(title,field,value)
 > 所有组件均支持col栅格布局规则,配置方法`rule.col = {...}`;
 
 * **span**	栅格的占位格数，可选值为0~24的整数，为 0 时，相当于display:none,类型Number,String
-	 **order**	栅格的顺序，在flex布局模式下有效,类型Number,String
-	  **offset**	栅格左侧的间隔格数，间隔内不可以有栅格,类型Number,String
-	  **push**	栅格向右移动格数,类型Number,String
-	  **pull**	栅格向左移动格数,类型Number,String
-	  **className**	自定义的class名称	String
-	  **xs**	<768px 响应式栅格，可为栅格数或一个包含其他属性的对象`{ span: 5, offset: 1 }`,类型Number,Object
-	  **sm**	≥768px 响应式栅格，可为栅格数或一个包含其他属性的对象,类型Number,Object
-	  **md**	≥992px 响应式栅格，可为栅格数或一个包含其他属性的对象,类型Number,Object
-	  **lg**	≥1200px 响应式栅格，可为栅格数或一个包含其他属性的对象,类型Number,Object
-	  **labelWidth**	表单域标签的的宽度,类型Number,默认为150
+* **order**	栅格的顺序，在flex布局模式下有效,类型Number,String
+* **offset**	栅格左侧的间隔格数，间隔内不可以有栅格,类型Number,String
+* **push**	栅格向右移动格数,类型Number,String
+*  **pull**	栅格向左移动格数,类型Number,String
+* **className**	自定义的class名称	String
+* **xs**	<768px 响应式栅格，可为栅格数或一个包含其他属性的对象`{ span: 5, offset: 1 }`,类型Number,Object
+* **sm**	≥768px 响应式栅格，可为栅格数或一个包含其他属性的对象,类型Number,Object
+* **md**	≥992px 响应式栅格，可为栅格数或一个包含其他属性的对象,类型Number,Object
+* **lg**	≥1200px 响应式栅格，可为栅格数或一个包含其他属性的对象,类型Number,Object
+* **labelWidth**	表单域标签的的宽度,类型Number,默认为150
 
 详细参考:[iview布局](http://v2.iviewui.com/components/layout)
 
