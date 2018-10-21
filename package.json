@@ -16,6 +16,7 @@
   "files": [
     "README.md",
     "package.json",
+    ".babelrc",
     "LICENSE",
     "src",
     "dist",
