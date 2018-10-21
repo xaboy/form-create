@@ -38,6 +38,12 @@
 
 ## 更新说明 **建议保持在最新版本**
 
+#### 1.4.3 (2018-10-21)
+
+* 修复 ie 兼容性问题,hidden 组件bug
+* 新增使用 template 快速生成自定义组件 `maker.createTmp(template,vm)`
+
+
 #### 1.4.2 (2018-9-8)
 
 * 新增  `bind`方法.以键值对的方式获取双向数据绑定的表单数据
@@ -490,7 +496,23 @@ maker.create('i-button').props({
 }
 ```
 
+#### template 生成自定义组件
 
+maker快速生成:
+
+```javascript
+maker.createTmp('<i-button @click="onClick" long>字符串测试{{test}}-{{num}}</i-button>', new Vue({
+    data:{
+        test:'createTmp渲染',
+        num:0
+    },
+    methods:{
+        onClick:function(){
+            this.num++;
+        }
+    }
+})).col({labelWidth:1})
+```
 
 #### hidden 隐藏字段
 

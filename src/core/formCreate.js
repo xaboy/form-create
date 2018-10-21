@@ -4,7 +4,7 @@ import formRender from "../components/form";
 import formCreateComponent from "./formCreateComponent";
 import {formCreateName,$FormCreate} from './component';
 
-const version = '1.4.2';
+const version = '1.4.3';
 
 const maker = getMaker();
 

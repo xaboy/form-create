@@ -1,60 +1,28 @@
 import {deepExtend, isFunction, isDate, isArray,uniqueId} from "./util";
-import creatorFactory from '../factory/creator';
 import handlerFactory from '../factory/handler';
 import renderFactory from '../factory/render';
-import cascaderComponent from '../components/cascader';
-import checkboxComponent from '../components/checkbox';
-import colorPickerComponent from '../components/colorPicker';
-import datePickerComponent from '../components/datePicker';
-import inputComponent from '../components/input';
-import inputNumberComponent from '../components/inputNumber';
-import radioComponent from '../components/radio';
-import selectComponent from '../components/select';
-import switchComponent from '../components/switch';
-import timePickerComponent from '../components/timePicker';
-import hiddenComponent from '../components/hidden';
-import uploadComponent from '../components/upload';
-import rateComponent from '../components/rate';
-import sliderComponent from '../components/slider'
-import frameComponent from '../components/frame';
-import treeComponent from '../components/tree';
+import componentList from './componentList';
+import maker from "./maker";
 
-const componentList = {
-    hidden: hiddenComponent,
-    input: inputComponent,
-    radio: radioComponent,
-    checkbox: checkboxComponent,
-    switch: switchComponent,
-    select: selectComponent,
-    datepicker: datePickerComponent,
-    timepicker: timePickerComponent,
-    inputnumber: inputNumberComponent,
-    colorpicker: colorPickerComponent,
-    upload: uploadComponent,
-    cascader: cascaderComponent,
-    rate:rateComponent,
-    slider:sliderComponent,
-    frame:frameComponent,
-    tree:treeComponent
-};
+
 
 
 const getComponent = function (vm, rule, createOptions) {
-    let component,name = rule.type.toLowerCase();
-    if(componentList[name] === undefined){
-        component = {
-            handler:handlerFactory({}),
-            render:renderFactory({}),
-            noValue: true
-        };
-    }else{
-        component = componentList[name];
-    }
+    let name = rule.type.toLowerCase(),component = componentList[name] === undefined
+        ? getUdfComponent()
+        : componentList[name];
+
     let $h = new component.handler(vm,rule);
     $h.render = new component.render(vm,$h,createOptions);
     $h.noValue = component.noValue;
     return $h;
 };
+
+const getUdfComponent = ()=>({
+    handler:handlerFactory({}),
+    render:renderFactory({}),
+    noValue: true
+});
 
 
 const getConfig = function () {
@@ -306,23 +274,7 @@ const timeStampToDate =(timeStamp)=>{
 };
 
 const getMaker = function () {
-    let maker = {};
-    Object.keys(componentList).forEach((name)=>{
-        maker[name] = creatorFactory(name);
-    });
-    maker.hidden = (function () {
-        let make = creatorFactory('hidden');
-        return make.bind(make,'');
-    }());
-    maker.create = function (type,field='mp' + uniqueId()) {
-        let make = creatorFactory(type,['props','event','validate','slot']);
-        return make('',field);
-    };
-    maker.number = maker.inputnumber;
-    maker.time = maker.timepicker;
-    maker.date = maker.datepicker;
-    maker.color = maker.colorpicker;
-    return maker;
+    return maker
 };
 
 const componentCommon = {

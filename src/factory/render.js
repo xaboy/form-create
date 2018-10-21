@@ -30,6 +30,9 @@ render.prototype = {
     },
     parse(){
         let {type,rule,childrenHandlers} = this.handler;
+        if(rule.type === '__tmp'){
+            return [this.vm.constructor.super.compile(rule.template,{}).render.call(rule._vm || this.vm)];
+        }
         return [this.cvm.make(type,Object.assign({},rule),()=> {
             let vn = [];
             if(childrenHandlers.length > 0)

@@ -16,6 +16,7 @@ const baseRule = ()=>{
         col:{},
         children:[],
         emit:[],
+        template:null
     };
 };
 

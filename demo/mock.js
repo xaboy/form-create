@@ -181,6 +181,18 @@ return [
     //     },
     //     validate:[],
     // },
+    maker.createTmp('<i-button @click="onClick" long>{{button}}字符串测试{{test}}-{{num}}</i-button>', new Vue({
+        data:{
+            test:'createTmp渲染',
+            button:'<i-button />',
+            num:0
+        },
+        methods:{
+            onClick:function(){
+                this.num++;
+            }
+        }
+    })).col({labelWidth:1}),
     maker.create('i-button').props({
         type:"primary",
         size:"large",
