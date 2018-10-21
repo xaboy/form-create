@@ -121,7 +121,7 @@ npm run dev
 ```
 OR
 
-** 双击打开 demo/index.html **
+**双击打开 demo/index.html**
 
 
 
