@@ -1,4 +1,4 @@
-/*! form-create v1.3 | github https://github.com/xaboy/form-create | author xaboy */
+/*! form-create v1.4 | github https://github.com/xaboy/form-create | author xaboy */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();

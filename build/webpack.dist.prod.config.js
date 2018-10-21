@@ -23,7 +23,7 @@ module.exports = {
                 beautify: false
             }
         }),
-        new webpack.BannerPlugin('form-create v1.3 | github https://github.com/xaboy/form-create | author xaboy')
+        new webpack.BannerPlugin('form-create v1.4 | github https://github.com/xaboy/form-create | author xaboy')
     ],
     resolve: {
         alias: {
