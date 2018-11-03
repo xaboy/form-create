@@ -128,6 +128,7 @@ formCreate.prototype = {
         vm.$set(vm,'trueData',this.trueData);
         vm.$set(vm,'buttonProps',this.options.submitBtn);
         vm.$set(vm,'resetProps',this.options.resetBtn);
+        vm.$set(vm,'rules',this.rules);
         this.fRender = new formRender(this);
     },
     create(Vue){
@@ -184,7 +185,7 @@ formCreate.prototype = {
 		    }else
 			    unWatch();
 	    },{deep:true});
-	    let unWatch2 = this.vm.$watch(`trueData.${field}`,(n,o)=>{
+	    let unWatch2 = this.vm.$watch(`trueData.${field}.value`,(n,o)=>{
 		    if(this.handlers[field] !== undefined){
 		    	let json = JSON.stringify(n);
 		    	if(this.vm.jsonData[field] !== json){

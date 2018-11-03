@@ -98,6 +98,10 @@ return [
     //         { required: true, message: '请输入商品名称', trigger: 'blur' },
     //     ],
     // },
+    maker.input('商品简介','goods_info','').props({
+        type:'textarea',
+        autosize:{minRows:5,maxRows:9}
+    }),
     maker.radio('是否包邮','is_postage','0').options([
         {value:"0",label:"不包邮",disabled:false},
         {value:"1",label:"包邮",disabled:false},
@@ -381,7 +385,8 @@ return [
     maker.rate('推荐级别','rate',2)
         .props({
             "count": 10,
-            "allowHalf": false
+            "allowHalf": false,
+            "disabled":false
         })
 	    .validate({required:true,type:'number',min:3, message: '请大于3颗星',trigger:'change'})
 	    .col({span:12}),

@@ -88,6 +88,7 @@
         el:'#app2',
         data:{
             formData:{},
+            rule:mock()
         },
         watch:{
             'formData.address':{
@@ -104,7 +105,7 @@
                 //var root = document.getElementById('app2');
                 var root = this.$el;
                 //frame,upload组件请在线上环境测试
-                $f_2 = this.$formCreate(mock(),{
+                $f_2 = this.$formCreate(this.rule,{
                     //表单插入的父级元素
                     el:root,
                     //显示表单重置按钮

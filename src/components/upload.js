@@ -46,7 +46,7 @@ const handler = handlerFactory({
     },
 	watchTrueValue(n){
 		let b = true;
-		n.rule.props.defaultFileList.forEach((pic)=>{
+		this.rule.props.defaultFileList.forEach((pic)=>{
 			b = b && (pic.percentage === undefined || pic.status === 'finished');
 		});
 		if(b)

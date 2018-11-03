@@ -280,6 +280,7 @@ const getMaker = function () {
 const componentCommon = {
     data:()=>{
         return {
+            rules:{},
             cptData:{},
             buttonProps:{},
             resetProps:{},
