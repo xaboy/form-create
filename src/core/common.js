@@ -99,7 +99,7 @@ const formCreateStyle = '.form-create{padding:25px;} .fc-upload-btn,.fc-files{di
 const getGlobalApi = function (fComponent) {
     let vm = fComponent.vm;
     return {
-        core:fComponent,
+        // core:fComponent,
         formData:()=>{
             let data = {};
             fComponent.fields().map((field)=>{

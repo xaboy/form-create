@@ -26,7 +26,6 @@ const render = function ({vm,options,fieldList,handlers,formData,validate,fCreat
 
 render.prototype = {
     parse(vm){
-        console.log(1);
         cvm.setVm(vm);
         if(!vm.isShow) return ;
         let unique = this.unique,propsData = this.props.props(Object.assign({},this.options.form,this.form)).ref(this.refName).class('form-create',true).key(unique).get(),
