@@ -29,6 +29,8 @@
 
 ### 本项目QQ讨论群[28963712](https://jq.qq.com/?_wv=1027&k=54aKUVw)
 
+### 正在兼容 iview3 中,如有遇到 bug 请及时[在这里提出](https://github.com/xaboy/form-create/issues/new) 谢谢
+
 ## 1.4 版本重大更新
 
 - 新增 使用标签模式生成 `<form-create>`
