@@ -69,7 +69,7 @@ const getConfig = function () {
             show:true
         },
         resetBtn:{
-            type:"ghost",
+            // type:"ghost",
             size:"large",
             shape:undefined,
             long:true,
