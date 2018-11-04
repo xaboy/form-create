@@ -31,6 +31,11 @@ const $FormCreate = ()=>({
     mounted(){
         this.fComponent.mounted(this);
         this.$f = this.fComponent.fCreateApi;
+        this.init();
+
+        this.$watch('rule',n=>{
+            this.fComponent.reload(n);
+        })
     }
 });
 

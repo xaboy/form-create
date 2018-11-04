@@ -22,14 +22,7 @@ const formCreate = function (rules,_options) {
     if(isBool(_options.resetBtn))
         _options.resetBtn = {show:_options.resetBtn};
 
-	let options = deepExtend(deepExtend(Object.create(null),getConfig()),_options);
-    this.rules = Array.isArray(rules) ? rules : [];
-    this.handlers = {};
-    this.fRender = {};
-    this.formData ={};
-    this.validate ={};
-	this.trueData = {};
-    this.fieldList = [];
+    let options = deepExtend(deepExtend(Object.create(null),getConfig()),_options);
     options.el = !options.el
         ? window.document.body
         : (isElement(options.el)
@@ -37,10 +30,8 @@ const formCreate = function (rules,_options) {
                 : document.querySelector(options.el)
         );
     this.options = options;
-    this.rules.forEach((rule,index)=>{
-        if(isFunction(rule.getRule))
-            this.rules[index] = rule.getRule();
-    });
+
+    this.initCreate(rules)
 };
 
 formCreate.createStyle = function () {
@@ -120,6 +111,21 @@ formCreate.prototype = {
             });
         }
     },
+    initCreate(rules){
+
+        this.rules = Array.isArray(rules) ? rules : [];
+        this.handlers = {};
+        this.fRender = {};
+        this.formData ={};
+        this.validate ={};
+        this.trueData = {};
+        this.fieldList = [];
+
+        this.rules.forEach((rule,index)=>{
+            if(isFunction(rule.getRule))
+                this.rules[index] = rule.getRule();
+        });
+    },
     init(vm){
         this.vm = vm;
         this.createHandler();
@@ -152,15 +158,15 @@ formCreate.prototype = {
     append(rule,after,pre){
         if(isFunction(rule.getRule))
             rule = rule.getRule();
-        let _rule = deepExtend(Object.create(null),rule);
         if(Object.keys(this.handlers).indexOf(rule.field.toString()) !== -1)
-            throw new Error(`${_rule.field}字段已存在`);
-        let handler = getComponent(this.vm,_rule,this.options);
+            throw new Error(`${rule.field}字段已存在`);
+        let handler = getComponent(this.vm,rule,this.options);
         this.createChildren(handler);
 	    this.vm.setField(handler.field);
         this.fRender.setRender(handler,after || '',pre);
         this.setHandler(handler);
         this.addHandlerWatch(handler);
+        // this.rules.push(rule)
         this.vm.$nextTick(()=>{
             handler.mounted_();
         });
@@ -192,11 +198,23 @@ formCreate.prototype = {
 				    this.vm.jsonData[field] = json;
 				    handler.model && handler.model(this.vm.getTrueData(field));
 				    handler.watchTrueValue(n);
+				    handler.rule.value = n
 			    }
 		    }else
 			    unWatch2();
 	    },{deep:true});
         handler.watch = [unWatch,unWatch2];
+
+    },
+    reload(rules = this.rules){
+        this.vm.unWatch();
+        this.vm.isShow = false;
+        this.initCreate(rules);
+        this.init(this.vm);
+        this.fRender.parse(this.vm);
+        this.vm.$nextTick(()=>{
+            this.vm.isShow = true;
+        })
     },
     getFormRef(){
         return this.vm.$refs[this.fRender.refName];

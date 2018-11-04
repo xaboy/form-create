@@ -50,7 +50,7 @@ const handler = handlerFactory({
 			b = b && (pic.percentage === undefined || pic.status === 'finished');
 		});
 		if(b)
-			this.vm.changeFormData(this.field,this.toParseValue(n.value));
+			this.vm.changeFormData(this.field,this.toParseValue(n));
 	},
     getFileName(pic){
         let res = pic.split('/'),

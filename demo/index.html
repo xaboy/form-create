@@ -142,8 +142,9 @@
     function create2() {
         if(_m2)return ;
         _m2 = true;
+        _rule = mock();
         //全局方法生成
-        $f_3 = formCreate.create(mock(),{
+        $f_3 = formCreate.create(_rule,{
             //表单插入的父级元素
             el:document.getElementById('app3'),
             //显示表单重置按钮

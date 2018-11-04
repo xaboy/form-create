@@ -99,6 +99,7 @@ const formCreateStyle = '.form-create{padding:25px;} .fc-upload-btn,.fc-files{di
 const getGlobalApi = function (fComponent) {
     let vm = fComponent.vm;
     return {
+        core:fComponent,
         formData:()=>{
             let data = {};
             fComponent.fields().map((field)=>{
@@ -260,6 +261,9 @@ const getGlobalApi = function (fComponent) {
         },
         set:(node,field,value)=>{
             vm.$set(node,field,value);
+        },
+        reload:(rules)=>{
+            fComponent.reload(rules)
         }
     };
 };
@@ -287,6 +291,8 @@ const componentCommon = {
             trueData:{},
             jsonData:{},
             $f:{},
+            isShow:true,
+            watchs:[]
         }
     },
     methods:{
@@ -319,6 +325,17 @@ const componentCommon = {
         setField(field){
             this.$set(this.cptData,field,'');
             this.$set(this.trueData,field,{});
+        },
+        init(){
+            this.rules.forEach((rule,index)=>{
+                this.watchs.push(this.$watch(`rules.${index}.value`,n=>{
+                    this.$set(this.trueData[rule.field],'value',n);
+                }));
+            });
+        },
+        unWatch(){
+            this.watchs.forEach(unWatch=>unWatch());
+            this.watchs = [];
         }
     }
 };
