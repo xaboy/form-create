@@ -26,16 +26,13 @@ const $FormCreate = ()=>({
     methods:componentCommon.methods,
     created(){
         this.fComponent = new formCreate(this.rule,this.option);
+        this.fComponent._type='rule';
         this.fComponent.init(this);
     },
     mounted(){
         this.fComponent.mounted(this);
         this.$f = this.fComponent.fCreateApi;
         this.init();
-
-        this.$watch('rule',n=>{
-            this.fComponent.reload(n);
-        })
     }
 });
 

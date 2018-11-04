@@ -327,11 +327,15 @@ const componentCommon = {
             this.$set(this.trueData,field,{});
         },
         init(){
-            this.rules.forEach((rule,index)=>{
-                this.watchs.push(this.$watch(`rules.${index}.value`,n=>{
+            const type = this.fComponent._type;
+            this[type].forEach((rule,index)=>{
+                this.watchs.push(this.$watch(`${type}.${index}.value`,n=>{
                     this.$set(this.trueData[rule.field],'value',n);
                 }));
             });
+            this.$watch(type,n=>{
+                this.fComponent.reload(n);
+            })
         },
         unWatch(){
             this.watchs.forEach(unWatch=>unWatch());

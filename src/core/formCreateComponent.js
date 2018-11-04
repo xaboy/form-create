@@ -11,16 +11,13 @@ const formCreateComponent = function (fComponent) {
         methods:componentCommon.methods,
         created(){
             this.fComponent = fComponent;
+            this.fComponent._type='rules';
             fComponent.init(this);
         },
         mounted(){
             fComponent.mounted(this);
             this.$f = fComponent.fCreateApi;
             this.init();
-
-            this.$watch('rules',n=>{
-                this.fComponent.reload(n);
-            })
         }
     }
 };

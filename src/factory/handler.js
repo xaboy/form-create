@@ -51,7 +51,7 @@ handler.prototype = {
 	init(){
 
     },
-	toParseValue(value)
+	toParseValue(value = '')
 	{
 		return value.toString();
 	},

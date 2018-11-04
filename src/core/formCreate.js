@@ -112,7 +112,6 @@ formCreate.prototype = {
         }
     },
     initCreate(rules){
-
         this.rules = Array.isArray(rules) ? rules : [];
         this.handlers = {};
         this.fRender = {};
@@ -166,7 +165,6 @@ formCreate.prototype = {
         this.fRender.setRender(handler,after || '',pre);
         this.setHandler(handler);
         this.addHandlerWatch(handler);
-        // this.rules.push(rule)
         this.vm.$nextTick(()=>{
             handler.mounted_();
         });
@@ -174,7 +172,7 @@ formCreate.prototype = {
     removeField(field){
         if(this.handlers[field] === undefined)
             throw new Error(`${field}字段不存在`);
-        this.handlers[field].watch.map((unWatch)=>unWatch());
+        this.handlers[field].watch && this.handlers[field].watch.forEach((unWatch)=>unWatch());
         this.vm.removeFormData(field);
         delete this.handlers[field];
         delete this.validate[field];
@@ -208,12 +206,15 @@ formCreate.prototype = {
     },
     reload(rules = this.rules){
         this.vm.unWatch();
+        Object.keys(this.handlers).forEach(field=>this.removeField(field));
         this.vm.isShow = false;
         this.initCreate(rules);
         this.init(this.vm);
         this.fRender.parse(this.vm);
+        this.vm.init();
         this.vm.$nextTick(()=>{
             this.vm.isShow = true;
+            setTimeout(()=>this.mounted(this.vm))
         })
     },
     getFormRef(){
