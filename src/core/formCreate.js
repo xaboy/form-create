@@ -4,7 +4,7 @@ import formRender from "../components/form";
 import formCreateComponent from "./formCreateComponent";
 import {formCreateName,$FormCreate} from './component';
 
-const version = '1.4.3';
+const version = '1.4.4';
 
 const maker = getMaker();
 
@@ -190,6 +190,7 @@ formCreate.prototype = {
 			    unWatch();
 	    },{deep:true});
 	    let unWatch2 = this.vm.$watch(`trueData.${field}.value`,(n,o)=>{
+	        if(n === undefined) return ;
 		    if(this.handlers[field] !== undefined){
 		    	let json = JSON.stringify(n);
 		    	if(this.vm.jsonData[field] !== json){
