@@ -346,6 +346,7 @@ $formCreate.maker.frame(title,field,value)
 * **fields()** 获得表单所有字段名称
 * **closeModal()** 关闭frame组件的弹出框
 * **submit()** 表单验证通过后提交表单,触发onSubmit事件
+* **reload(newRules)** 根据新的表单规则重新渲染表单
 * **validate(successFn,errorFn)** 表单验证,如果验证通过执行successFn,未通过则执行errorFn
 * **validateField(field,callback)** 表单验证指定字段
 ```javascript
