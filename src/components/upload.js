@@ -1,6 +1,7 @@
 import handlerFactory from "../factory/handler";
 import renderFactory from "../factory/render";
 import {isArray, uniqueId} from "../core/util";
+import {iviewConfig} from "../core/common";
 
 const handler = handlerFactory({
     init(){
@@ -125,7 +126,7 @@ const render = renderFactory({
             if(this.handler.rule.props.uploadType === 'image'){
                 container.push(this.cvm.make('img',{key:`img${key}`,attrs:{src}}));
             }else{
-                container.push(this.cvm.icon({key:`file${key}`,props:{type:"document-text", size:40}}))
+                container.push(this.cvm.icon({key:`file${key}`,props:{type:iviewConfig.fileIcon, size:40}}))
             }
             if(this.issetIcon)
                 container.push(this.makeIcons(src,key,index));
@@ -151,7 +152,7 @@ const render = renderFactory({
         return this.cvm.upload(this.propsData,
             isShow === true ?[
             this.cvm.make('div',{key:`div5${unique}`,class:{'fc-upload-btn':true}},[
-                this.cvm.icon({key:`upi${unique}`,props:{type:"camera", size:20}})
+                this.cvm.icon({key:`upi${unique}`,props:{type:this.handler.rule.props.uploadType === 'file' ? iviewConfig.fileUpIcon : iviewConfig.imgUpIcon, size:20}})
             ])
         ] : []);
     },
