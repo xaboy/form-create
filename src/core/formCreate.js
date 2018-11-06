@@ -4,7 +4,7 @@ import formRender from "../components/form";
 import formCreateComponent from "./formCreateComponent";
 import {formCreateName,$FormCreate} from './component';
 
-const version = '1.4.4';
+const version = '1.4.5';
 
 const maker = getMaker();
 
@@ -142,14 +142,16 @@ formCreate.prototype = {
         return $vm;
     },
     mounted(vm){
-        Object.keys(vm.cptData).map((field)=>{
-            let handler = this.handlers[field];
-            handler.model && handler.model(vm.getTrueData(field));
-            this.addHandlerWatch(handler);
-            handler.mounted_();
-        });
-        this.options.mounted && this.options.mounted();
         this.vm = vm;
+        vm.$nextTick(()=>{
+            Object.keys(vm.cptData).map((field)=>{
+                let handler = this.handlers[field];
+                handler.model && handler.model(vm.getTrueData(field));
+                this.addHandlerWatch(handler);
+                handler.mounted_();
+            });
+            this.options.mounted && this.options.mounted();
+        });
     },
     component(){
         return formCreateComponent(this);

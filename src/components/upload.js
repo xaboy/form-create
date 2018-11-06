@@ -25,8 +25,8 @@ const handler = handlerFactory({
         return this.parseValue;
     },
     mounted() {
-        if(this.el.fileList === undefined) this.el.fileList = [];
-        this.changeParseValue(this.el.fileList);
+        this.el.fileList = this.parseValue;
+        this.changeParseValue(this.parseValue);
     },
     push(file){
         this.parseValue.push({
@@ -43,6 +43,7 @@ const handler = handlerFactory({
     },
     changeParseValue(parseValue){
         this.parseValue = parseValue;
+        this.vm.changeFormData(this.field,parseValue);
         this.vm.getTrueData(this.field).rule.props.defaultFileList = parseValue;
     },
 	watchTrueValue(n){
@@ -158,6 +159,7 @@ const render = renderFactory({
     },
     makeRemoveIcon(src,key,index){
         return this.cvm.icon({key:`upri${key}${index}`,props:{type:'ios-trash-outline'},nativeOn:{'click':()=>{
+
             this.handler.el.fileList.splice(index,1);
             this.handler.changeParseValue(this.handler.el.fileList);
         }}});
