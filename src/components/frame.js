@@ -2,11 +2,12 @@ import handlerFactory from "../factory/handler";
 import renderFactory from "../factory/render";
 import {isArray, uniqueId} from "../core/util";
 import upload from '../components/upload';
+import {iviewConfig} from "../core/common";
 const handler = handlerFactory({
     init(){
         let props = this.rule.props;
         if(!props.type) props.type = 'input';
-        if(!props.icon) props.icon = 'folder';
+        if(!props.icon) props.icon = iviewConfig.fileUpIcon;
         if(!props.width) props.width = '500px';
         if(!props.height) props.height = '370px';
         if(props.spin === undefined) props.spin = true;
@@ -94,7 +95,7 @@ const render = renderFactory({
         let unique = this.handler.unique;
         let vNode =  this.handler.parseValue.map((src,index)=>{
             return this.cvm.make('div',{key:`iffd2${unique}${index}`,class:{'fc-files':true}},[
-                this.cvm.icon({key:`iff${unique}${index}`,props:{type:"document-text", size:40}}),
+                this.cvm.icon({key:`iff${unique}${index}`,props:{type:iviewConfig.fileIcon, size:40}}),
                 this.makeIcons(src,unique,index)
             ]);
         });

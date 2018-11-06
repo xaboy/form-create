@@ -4,8 +4,28 @@ import renderFactory from '../factory/render';
 import componentList from './componentList';
 import maker from "./maker";
 
-
-
+const iviewConfig = (function () {
+    const iview2 ={
+        _v:2,
+        resetBtnType:'ghost',
+        resetBtnIcon:'refresh',
+        submitBtnIcon:'ios-upload',
+        fileIcon:'document-text',
+        fileUpIcon:'folder',
+        imgUpIcon:'camera',
+    };
+    const iview3 ={
+        _v:3,
+        resetBtnType:'default',
+        resetBtnIcon:'md-refresh',
+        submitBtnIcon:'ios-share',
+        fileIcon:'md-document',
+        fileUpIcon:'ios-folder-open',
+        imgUpIcon:'md-images',
+    };
+    if(typeof iview === 'undefined') return iview2;
+    return iview.version.split('.')[0] == 3 ? iview3 : iview2;
+}());
 
 const getComponent = function (vm, rule, createOptions) {
     let name = rule.type.toLowerCase(),component = componentList[name] === undefined
@@ -63,19 +83,19 @@ const getConfig = function () {
             long:true,
             htmlType:"button",
             disabled:false,
-            icon:"ios-upload",
+            icon:iviewConfig.submitBtnIcon,
             innerText:"提交",
             loading:false,
             show:true
         },
         resetBtn:{
-            type:"ghost",
+            type:iviewConfig.resetBtnType,
             size:"large",
             shape:undefined,
             long:true,
             htmlType:"button",
             disabled:false,
-            icon:"refresh",
+            icon:iviewConfig.resetBtnIcon,
             innerText:"重置",
             loading:false,
             show:false
@@ -84,8 +104,8 @@ const getConfig = function () {
     };
 };
 
-const formCreateStyle = '.form-create{padding:25px;} .fc-upload-btn,.fc-files{display: inline-block;width: 58px;height: 58px;text-align: center;line-height: 60px;border: 1px solid transparent;border-radius: 4px;overflow: hidden;background: #fff;position: relative;box-shadow: 0 1px 1px rgba(0,0,0,.2);margin-right: 4px;box-sizing: border-box;}' +
-    ' .fc-files>.ivu-icon{transform: translateY(20%);}'+
+const formCreateStyle = '.form-create{padding:25px;} .fc-upload-btn,.fc-files{display: inline-block;width: 58px;height: 58px;text-align: center;line-height: 58px;border: 1px solid transparent;border-radius: 4px;overflow: hidden;background: #fff;position: relative;box-shadow: 0 1px 1px rgba(0,0,0,.2);margin-right: 4px;box-sizing: border-box;}' +
+    ' .fc-files>.ivu-icon{vertical-align: middle;}'+
     '.fc-files img{width:100%;height:100%;display:inline-block;vertical-align: top;}' +
     '.fc-upload .ivu-upload{display: inline-block;}' +
     '.fc-upload-btn{border: 1px dashed #dddee1;}' +
@@ -363,5 +383,5 @@ const _init = function(){
 }
 
 export {
-    getComponent,getConfig,formCreateStyle,getGlobalApi,timeStampToDate,getMaker,componentCommon,_init
+    getComponent,getConfig,formCreateStyle,getGlobalApi,timeStampToDate,getMaker,componentCommon,_init,iviewConfig
 }

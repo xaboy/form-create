@@ -1,6 +1,7 @@
 import handlerFactory from "../factory/handler";
 import renderFactory from "../factory/render";
 import {isArray, uniqueId} from "../core/util";
+import {iviewConfig} from "../core/common";
 
 const handler = handlerFactory({
     init(){
@@ -24,8 +25,8 @@ const handler = handlerFactory({
         return this.parseValue;
     },
     mounted() {
-        if(this.el.fileList === undefined) this.el.fileList = [];
-        this.changeParseValue(this.el.fileList);
+        this.el.fileList = this.parseValue;
+        this.changeParseValue(this.parseValue);
     },
     push(file){
         this.parseValue.push({
@@ -42,6 +43,7 @@ const handler = handlerFactory({
     },
     changeParseValue(parseValue){
         this.parseValue = parseValue;
+        this.vm.changeFormData(this.field,parseValue);
         this.vm.getTrueData(this.field).rule.props.defaultFileList = parseValue;
     },
 	watchTrueValue(n){
@@ -125,7 +127,7 @@ const render = renderFactory({
             if(this.handler.rule.props.uploadType === 'image'){
                 container.push(this.cvm.make('img',{key:`img${key}`,attrs:{src}}));
             }else{
-                container.push(this.cvm.icon({key:`file${key}`,props:{type:"document-text", size:40}}))
+                container.push(this.cvm.icon({key:`file${key}`,props:{type:iviewConfig.fileIcon, size:40}}))
             }
             if(this.issetIcon)
                 container.push(this.makeIcons(src,key,index));
@@ -151,12 +153,13 @@ const render = renderFactory({
         return this.cvm.upload(this.propsData,
             isShow === true ?[
             this.cvm.make('div',{key:`div5${unique}`,class:{'fc-upload-btn':true}},[
-                this.cvm.icon({key:`upi${unique}`,props:{type:"camera", size:20}})
+                this.cvm.icon({key:`upi${unique}`,props:{type:this.handler.rule.props.uploadType === 'file' ? iviewConfig.fileUpIcon : iviewConfig.imgUpIcon, size:20}})
             ])
         ] : []);
     },
     makeRemoveIcon(src,key,index){
         return this.cvm.icon({key:`upri${key}${index}`,props:{type:'ios-trash-outline'},nativeOn:{'click':()=>{
+
             this.handler.el.fileList.splice(index,1);
             this.handler.changeParseValue(this.handler.el.fileList);
         }}});
