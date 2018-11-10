@@ -20,6 +20,7 @@
   <b>具有数据收集、校验和提交功能的表单生成器，支持双向数据绑定和事件扩展，组件包含有复选框、单选框、输入框、下拉选择框等表单元素以及省市区三级联动,时间选择,日期选择,颜色选择,滑块,评分,框架,树型,文件/图片上传等功能组件。</b>
 </p>
 <br />
+> 1.4.5版本已支持iview3
 
 ### [新版中文文档!](https://www.kancloud.cn/xaboy/form-create/749554)
 
@@ -29,8 +30,6 @@
 
 ### 本项目QQ讨论群[28963712](https://jq.qq.com/?_wv=1027&k=54aKUVw)
 
-### 正在兼容 iview3 中,如有遇到 bug 请及时[在这里提出](https://github.com/xaboy/form-create/issues/new) 谢谢
-
 ## 1.4 版本重大更新
 
 - 新增 使用标签模式生成 `<form-create>`
@@ -38,8 +37,16 @@
 - 新增 **生成任意标签组件** `maker.create(componentName)
 - 新增 标签模式下支持emit触发事件
 - 新增 使用 **template 快速生成自定义组件** `maker.createTmp(template,vm)`
+- 支持 `iview>=3.1.4`版本
+
 
 ## 更新说明 **建议保持在最新版本**
+
+#### 1.4.5 (2018-11-6)
+* 优化 上传组件图标显示
+* 修复 上传组件图片无法删除
+* 新增 `options.mounted` 表单创建成功后的回调函数
+* 支持 `iview>=3.1.4`版本
 
 #### 1.4.4 (2018-11-4)
 
@@ -79,11 +86,11 @@
 
 ## 安装
 
-```c
+```shell
 npm install form-create
 ```
 OR
-```c
+```shell
 git clone https://github.com/xaboy/form-create.git
 cd form-create
 npm install
@@ -121,7 +128,7 @@ import formCreat from 'form-create'
 Vue.use(iView);
 Vue.use(formCreat)
 ```
-**注意! iview版本为`2.14.3`,Vue版本为`2.5`**
+
 
 # 查看示例
 
@@ -130,7 +137,7 @@ npm run dev
 ```
 OR
 
-**双击打开 demo/index.html**
+`双击打开 demo/index.html`
 
 
 
@@ -348,7 +355,7 @@ $formCreate.maker.frame(title,field,value)
 * **fields()** 获得表单所有字段名称
 * **closeModal()** 关闭frame组件的弹出框
 * **submit()** 表单验证通过后提交表单,触发onSubmit事件
-* **reload(newRules)** 根据新的表单规则重新渲染表单
+* **reload(newRules)** 根据新的表单规则重新渲染表单 | **`1.4.4版本`**
 * **validate(successFn,errorFn)** 表单验证,如果验证通过执行successFn,未通过则执行errorFn
 * **validateField(field,callback)** 表单验证指定字段
 ```javascript
@@ -441,16 +448,16 @@ $formCreate.maker.frame(title,field,value)
 > 所有组件均支持col栅格布局规则,配置方法`rule.col = {...}`;
 
 * **span**	栅格的占位格数，可选值为0~24的整数，为 0 时，相当于display:none,类型Number,String
-* **order**	栅格的顺序，在flex布局模式下有效,类型Number,String
-* **offset**	栅格左侧的间隔格数，间隔内不可以有栅格,类型Number,String
-* **push**	栅格向右移动格数,类型Number,String
-*  **pull**	栅格向左移动格数,类型Number,String
-* **className**	自定义的class名称	String
-* **xs**	<768px 响应式栅格，可为栅格数或一个包含其他属性的对象`{ span: 5, offset: 1 }`,类型Number,Object
-* **sm**	≥768px 响应式栅格，可为栅格数或一个包含其他属性的对象,类型Number,Object
-* **md**	≥992px 响应式栅格，可为栅格数或一个包含其他属性的对象,类型Number,Object
-* **lg**	≥1200px 响应式栅格，可为栅格数或一个包含其他属性的对象,类型Number,Object
-* **labelWidth**	表单域标签的的宽度,类型Number,默认为150
+	 **order**	栅格的顺序，在flex布局模式下有效,类型Number,String
+	 **offset**	栅格左侧的间隔格数，间隔内不可以有栅格,类型Number,String
+	 **push**	栅格向右移动格数,类型Number,String
+	  **pull**	栅格向左移动格数,类型Number,String
+	 **className**	自定义的class名称	String
+	 **xs**	<768px 响应式栅格，可为栅格数或一个包含其他属性的对象`{ span: 5, offset: 1 }`,类型Number,Object
+	 **sm**	≥768px 响应式栅格，可为栅格数或一个包含其他属性的对象,类型Number,Object
+	 **md**	≥992px 响应式栅格，可为栅格数或一个包含其他属性的对象,类型Number,Object
+	 **lg**	≥1200px 响应式栅格，可为栅格数或一个包含其他属性的对象,类型Number,Object
+	 **labelWidth**	表单域标签的的宽度,类型Number,默认为150
 
 详细参考:[iview布局](http://v2.iviewui.com/components/layout)
 
@@ -1371,13 +1378,13 @@ FrameRule :
 
 ##### data属性数据结构
 * **id**	**id为最终返回值,必填且唯一**,类型为：String,Number
-	 **title**	标题,类型为：String,Element String
-	 **expand**	是否展开直子节点,类型为：Boolean,默认为false
-	 **disabled**	禁掉响应,类型为：Boolean,默认为false
-	 **disableCheckbox**	禁掉 checkbox,类型为：Boolean,默认为false
-	 **selected**	是否选中子节点,类型为：	Boolean,默认为false
-	 **checked**	是否勾选(如果勾选，子节点也会全部勾选),类型为：Boolean,默认为false
-	 **children**	子节点属性数组,类型为：	Array `[data,data,...]`
+* **title**	标题,类型为：String,Element String
+* **expand**	是否展开直子节点,类型为：Boolean,默认为false
+*  **disabled**	禁掉响应,类型为：Boolean,默认为false
+*  **disableCheckbox**	禁掉 checkbox,类型为：Boolean,默认为false
+*  **selected**	是否选中子节点,类型为：	Boolean,默认为false
+*  **checked**	是否勾选(如果勾选，子节点也会全部勾选),类型为：Boolean,默认为false
+*  **children**	子节点属性数组,类型为：	Array `[data,data,...]`
 
 
 maker快速生成:
@@ -1474,7 +1481,8 @@ TreeRule :
         //是否可删除,设置为false是不显示删除按钮
         allowRemove:true,
     },
-
+    //表单创建成功后回调函数
+    mounted:()=>{},
     //表单提交事件
     onSubmit:(formData)=>{},
 
@@ -1585,7 +1593,7 @@ validate 表单验证规则，具体配置查看：[async-validator](https://git
 
 accept 文件类型： [attr-accept](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#attr-accept)
 
-iCon图标:[图标](https://www.iviewui.com/components/icon#示例)
+icon图标:[图标](https://www.iviewui.com/components/icon#示例)
 
 form-builder [使用PHP快速生成现代化表单](https://github.com/xaboy/form-builder)
 
@@ -1593,18 +1601,6 @@ form-builder [使用PHP快速生成现代化表单](https://github.com/xaboy/for
 ## 感谢
 
 [时光弧线](https://github.com/shiguanghuxian)  |  [wxxtqk](https://github.com/wxxtqk)  |  [williamBoss](https://github.com/williamBoss)
-
-
-
-## 捐赠
-
-感谢您对本项目的认可,您的认可是我最大的动力
-
-
-
-![https://raw.githubusercontent.com/xaboy/form-create/master/images/exceptional.jpg](https://raw.githubusercontent.com/xaboy/form-create/master/images/exceptional.jpg)
-
-
 
 
 ## 联系

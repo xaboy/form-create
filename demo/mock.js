@@ -450,6 +450,7 @@ return [
             "uploadType": "image",
             "name": "file",
             "onSuccess": function () {
+                console.log('upload success');
                 return 'http://img1.touxiang.cn/uploads/20131030/30-075657_191.jpg';
             }
         }).validate({required:true, type: 'array', min: 3, message: '请上传3张图片', trigger: 'change'}),

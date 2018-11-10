@@ -413,7 +413,7 @@ exports.default = renderFactory;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports._init = exports.componentCommon = exports.getMaker = exports.timeStampToDate = exports.getGlobalApi = exports.formCreateStyle = exports.getConfig = exports.getComponent = undefined;
+exports.iviewConfig = exports._init = exports.componentCommon = exports.getMaker = exports.timeStampToDate = exports.getGlobalApi = exports.formCreateStyle = exports.getConfig = exports.getComponent = undefined;
 
 var _util = __webpack_require__(0);
 
@@ -434,6 +434,29 @@ var _maker = __webpack_require__(26);
 var _maker2 = _interopRequireDefault(_maker);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var iviewConfig = function () {
+    var iview2 = {
+        _v: 2,
+        resetBtnType: 'ghost',
+        resetBtnIcon: 'refresh',
+        submitBtnIcon: 'ios-upload',
+        fileIcon: 'document-text',
+        fileUpIcon: 'folder',
+        imgUpIcon: 'camera'
+    };
+    var iview3 = {
+        _v: 3,
+        resetBtnType: 'default',
+        resetBtnIcon: 'md-refresh',
+        submitBtnIcon: 'ios-share',
+        fileIcon: 'md-document',
+        fileUpIcon: 'ios-folder-open',
+        imgUpIcon: 'md-images'
+    };
+    if (typeof iview === 'undefined') return iview2;
+    return iview.version.split('.')[0] == 3 ? iview3 : iview2;
+}();
 
 var getComponent = function getComponent(vm, rule, createOptions) {
     var name = rule.type.toLowerCase(),
@@ -490,19 +513,19 @@ var getConfig = function getConfig() {
             long: true,
             htmlType: "button",
             disabled: false,
-            icon: "ios-upload",
+            icon: iviewConfig.submitBtnIcon,
             innerText: "提交",
             loading: false,
             show: true
         },
         resetBtn: {
-            type: "ghost",
+            type: iviewConfig.resetBtnType,
             size: "large",
             shape: undefined,
             long: true,
             htmlType: "button",
             disabled: false,
-            icon: "refresh",
+            icon: iviewConfig.resetBtnIcon,
             innerText: "重置",
             loading: false,
             show: false
@@ -511,7 +534,7 @@ var getConfig = function getConfig() {
     };
 };
 
-var formCreateStyle = '.form-create{padding:25px;} .fc-upload-btn,.fc-files{display: inline-block;width: 58px;height: 58px;text-align: center;line-height: 60px;border: 1px solid transparent;border-radius: 4px;overflow: hidden;background: #fff;position: relative;box-shadow: 0 1px 1px rgba(0,0,0,.2);margin-right: 4px;box-sizing: border-box;}' + ' .fc-files>.ivu-icon{transform: translateY(20%);}' + '.fc-files img{width:100%;height:100%;display:inline-block;vertical-align: top;}' + '.fc-upload .ivu-upload{display: inline-block;}' + '.fc-upload-btn{border: 1px dashed #dddee1;}' + '.fc-upload .fc-upload-cover{ display: none; position: absolute; top: 0; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,.6); }' + '.fc-upload .fc-upload-cover i{ color: #fff; font-size: 20px; cursor: pointer; margin: 0 2px; }' + '.fc-files:hover .fc-upload-cover{ display: block; }' + '.fc-upload .ivu-upload-list-file{ display: inline-block;float: left; }' + '.fc-upload .ivu-upload-list{ position: absolute;left: 0; }' + '.fc-spin-icon-load{animation: ani-fc-spin 1s linear infinite;} @-webkit-keyframes ani-fc-spin{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}50%{-webkit-transform:rotate(180deg);transform:rotate(180deg)}to{-webkit-transform:rotate(1turn);transform:rotate(1turn)}}@keyframes ani-fc-spin{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}50%{-webkit-transform:rotate(180deg);transform:rotate(180deg)}to{-webkit-transform:rotate(1turn);transform:rotate(1turn)}}';
+var formCreateStyle = '.form-create{padding:25px;} .fc-upload-btn,.fc-files{display: inline-block;width: 58px;height: 58px;text-align: center;line-height: 58px;border: 1px solid transparent;border-radius: 4px;overflow: hidden;background: #fff;position: relative;box-shadow: 0 1px 1px rgba(0,0,0,.2);margin-right: 4px;box-sizing: border-box;}' + ' .fc-files>.ivu-icon{vertical-align: middle;}' + '.fc-files img{width:100%;height:100%;display:inline-block;vertical-align: top;}' + '.fc-upload .ivu-upload{display: inline-block;}' + '.fc-upload-btn{border: 1px dashed #dddee1;}' + '.fc-upload .fc-upload-cover{ display: none; position: absolute; top: 0; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,.6); }' + '.fc-upload .fc-upload-cover i{ color: #fff; font-size: 20px; cursor: pointer; margin: 0 2px; }' + '.fc-files:hover .fc-upload-cover{ display: block; }' + '.fc-upload .ivu-upload-list-file{ display: inline-block;float: left; }' + '.fc-upload .ivu-upload-list{ position: absolute;left: 0; }' + '.fc-spin-icon-load{animation: ani-fc-spin 1s linear infinite;} @-webkit-keyframes ani-fc-spin{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}50%{-webkit-transform:rotate(180deg);transform:rotate(180deg)}to{-webkit-transform:rotate(1turn);transform:rotate(1turn)}}@keyframes ani-fc-spin{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}50%{-webkit-transform:rotate(180deg);transform:rotate(180deg)}to{-webkit-transform:rotate(1turn);transform:rotate(1turn)}}';
 
 var getGlobalApi = function getGlobalApi(fComponent) {
     var vm = fComponent.vm;
@@ -788,6 +811,7 @@ exports.timeStampToDate = timeStampToDate;
 exports.getMaker = getMaker;
 exports.componentCommon = componentCommon;
 exports._init = _init;
+exports.iviewConfig = iviewConfig;
 
 /***/ }),
 /* 4 */
@@ -923,7 +947,7 @@ var _component = __webpack_require__(9);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var version = '1.4.4';
+var version = '1.4.5';
 
 var maker = (0, _common.getMaker)();
 
@@ -1063,14 +1087,16 @@ formCreate.prototype = {
     mounted: function mounted(vm) {
         var _this4 = this;
 
-        Object.keys(vm.cptData).map(function (field) {
-            var handler = _this4.handlers[field];
-            handler.model && handler.model(vm.getTrueData(field));
-            _this4.addHandlerWatch(handler);
-            handler.mounted_();
-        });
-        this.options.mounted && this.options.mounted();
         this.vm = vm;
+        vm.$nextTick(function () {
+            Object.keys(vm.cptData).map(function (field) {
+                var handler = _this4.handlers[field];
+                handler.model && handler.model(vm.getTrueData(field));
+                _this4.addHandlerWatch(handler);
+                handler.mounted_();
+            });
+            _this4.options.mounted && _this4.options.mounted();
+        });
     },
     component: function component() {
         return (0, _formCreateComponent2.default)(this);
@@ -1338,6 +1364,8 @@ var _render2 = _interopRequireDefault(_render);
 
 var _util = __webpack_require__(0);
 
+var _common = __webpack_require__(3);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
@@ -1363,8 +1391,8 @@ var handler = (0, _handler3.default)({
         return this.parseValue;
     },
     mounted: function mounted() {
-        if (this.el.fileList === undefined) this.el.fileList = [];
-        this.changeParseValue(this.el.fileList);
+        this.el.fileList = this.parseValue;
+        this.changeParseValue(this.parseValue);
     },
     push: function push(file) {
         this.parseValue.push({
@@ -1383,6 +1411,7 @@ var handler = (0, _handler3.default)({
     },
     changeParseValue: function changeParseValue(parseValue) {
         this.parseValue = parseValue;
+        this.vm.changeFormData(this.field, parseValue);
         this.vm.getTrueData(this.field).rule.props.defaultFileList = parseValue;
     },
     watchTrueValue: function watchTrueValue(n) {
@@ -1424,8 +1453,11 @@ var render = (0, _render2.default)({
         this.propsData = this.props.props(this.uploadOptions).props('onSuccess', function (response, file, fileList) {
             var url = _this2.uploadOptions.onSuccess.call(null, response, file, fileList);
             if (url) {
-                file.url = url;
-                file.name = handler.getFileName(url);
+                fileList.push({
+                    url: url,
+                    name: handler.getFileName(url)
+                });
+                _this2.handler.changeParseValue(_this2.handler.el.fileList);
             }
         }).props(events).ref(handler.refName).key("fip" + handler.unique).get();
     },
@@ -1477,7 +1509,7 @@ var render = (0, _render2.default)({
             if (_this5.handler.rule.props.uploadType === 'image') {
                 container.push(_this5.cvm.make('img', { key: "img" + key, attrs: { src: src } }));
             } else {
-                container.push(_this5.cvm.icon({ key: "file" + key, props: { type: "document-text", size: 40 } }));
+                container.push(_this5.cvm.icon({ key: "file" + key, props: { type: _common.iviewConfig.fileIcon, size: 40 } }));
             }
             if (_this5.issetIcon) container.push(_this5.makeIcons(src, key, index));
             return container;
@@ -1497,12 +1529,13 @@ var render = (0, _render2.default)({
         return this.cvm.make('div', { key: "div3" + unique, class: { 'fc-files': true } }, [this.cvm.progress({ key: "upp" + unique, props: { percent: file.percentage, hideInfo: true } })]);
     },
     makeUploadBtn: function makeUploadBtn(unique, isShow) {
-        return this.cvm.upload(this.propsData, isShow === true ? [this.cvm.make('div', { key: "div5" + unique, class: { 'fc-upload-btn': true } }, [this.cvm.icon({ key: "upi" + unique, props: { type: "camera", size: 20 } })])] : []);
+        return this.cvm.upload(this.propsData, isShow === true ? [this.cvm.make('div', { key: "div5" + unique, class: { 'fc-upload-btn': true } }, [this.cvm.icon({ key: "upi" + unique, props: { type: this.handler.rule.props.uploadType === 'file' ? _common.iviewConfig.fileUpIcon : _common.iviewConfig.imgUpIcon, size: 20 } })])] : []);
     },
     makeRemoveIcon: function makeRemoveIcon(src, key, index) {
         var _this7 = this;
 
         return this.cvm.icon({ key: "upri" + key + index, props: { type: 'ios-trash-outline' }, nativeOn: { 'click': function click() {
+
                     _this7.handler.el.fileList.splice(index, 1);
                     _this7.handler.changeParseValue(_this7.handler.el.fileList);
                 } } });
@@ -2249,13 +2282,15 @@ var _upload = __webpack_require__(8);
 
 var _upload2 = _interopRequireDefault(_upload);
 
+var _common = __webpack_require__(3);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var handler = (0, _handler2.default)({
     init: function init() {
         var props = this.rule.props;
         if (!props.type) props.type = 'input';
-        if (!props.icon) props.icon = 'folder';
+        if (!props.icon) props.icon = _common.iviewConfig.fileUpIcon;
         if (!props.width) props.width = '500px';
         if (!props.height) props.height = '370px';
         if (props.spin === undefined) props.spin = true;
@@ -2334,7 +2369,7 @@ var render = (0, _render2.default)({
 
         var unique = this.handler.unique;
         var vNode = this.handler.parseValue.map(function (src, index) {
-            return _this4.cvm.make('div', { key: "iffd2" + unique + index, class: { 'fc-files': true } }, [_this4.cvm.icon({ key: "iff" + unique + index, props: { type: "document-text", size: 40 } }), _this4.makeIcons(src, unique, index)]);
+            return _this4.cvm.make('div', { key: "iffd2" + unique + index, class: { 'fc-files': true } }, [_this4.cvm.icon({ key: "iff" + unique + index, props: { type: _common.iviewConfig.fileIcon, size: 40 } }), _this4.makeIcons(src, unique, index)]);
         });
         vNode.push(this.makeBtn());
         return vNode;

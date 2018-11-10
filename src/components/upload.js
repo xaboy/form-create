@@ -80,8 +80,11 @@ const render = renderFactory({
             .props('onSuccess',(response, file, fileList)=>{
                 let url = this.uploadOptions.onSuccess.call(null,response, file, fileList);
                 if(url) {
-                    file.url = url;
-                    file.name = handler.getFileName(url);
+                    fileList.push({
+                        url,
+                        name:handler.getFileName(url)
+                    });
+                    this.handler.changeParseValue(this.handler.el.fileList);
                 }
         }).props(events).ref(handler.refName).key(`fip${handler.unique}`).get();
     },
