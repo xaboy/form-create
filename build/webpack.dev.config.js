@@ -8,7 +8,9 @@ module.exports = {
     },
     output: {//输出文件
         filename: 'dist/form-create.js',
-        libraryTarget:'umd'
+        library: 'formCreate',
+        libraryTarget:'umd',
+        umdNamedDefine: true
     },
     module: {
         loaders: [{

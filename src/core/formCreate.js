@@ -12,7 +12,6 @@ const formCreateStyleElId = 'form-create-style';
 
 _init();
 
-
 const formCreate = function (rules,_options) {
     if(!this instanceof formCreate)
         throwIfMissing('formCreate is a constructor and should be called with the `new` keyword');
@@ -34,7 +33,10 @@ const formCreate = function (rules,_options) {
     this.initCreate(rules)
 };
 
-formCreate.createStyle = function () {
+formCreate.maker = maker;
+formCreate.version = version;
+
+const createStyle = function () {
     if (document.getElementById(formCreateStyleElId) !== null) return;
     let style = document.createElement('style');
     style.id = formCreateStyleElId;
@@ -54,7 +56,7 @@ formCreate.create = function(rules,_opt = {},_vue = window.Vue){
 };
 
 formCreate.install = function(Vue,globalOptions = {}){
-    formCreate.createStyle();
+    createStyle();
 	Vue.prototype.$formCreate = function (rules,opt) {
         return formCreate.create(rules,deepExtend(deepExtend(Object.create(null),opt),globalOptions),Vue)
 	};
@@ -228,14 +230,4 @@ formCreate.prototype = {
     }
 };
 
-export default {
-    install:formCreate.install,
-    default:formCreate,
-    create:formCreate.create,
-    maker,
-    version
-};
-
-export {
-    formCreate
-}
+export default formCreate;

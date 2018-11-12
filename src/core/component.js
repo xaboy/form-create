@@ -1,4 +1,4 @@
-import {formCreate} from './formCreate';
+import formCreate from './formCreate';
 import {componentCommon} from './common';
 
 const formCreateName = 'FormCreate';

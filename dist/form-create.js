@@ -3,11 +3,11 @@
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
 	else if(typeof define === 'function' && define.amd)
-		define([], factory);
-	else {
-		var a = factory();
-		for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
-	}
+		define("formCreate", [], factory);
+	else if(typeof exports === 'object')
+		exports["formCreate"] = factory();
+	else
+		root["formCreate"] = factory();
 })(typeof self !== 'undefined' ? self : this, function() {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
@@ -929,7 +929,6 @@ exports.default = props;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.formCreate = undefined;
 
 var _util = __webpack_require__(0);
 
@@ -968,7 +967,10 @@ var formCreate = function formCreate(rules, _options) {
     this.initCreate(rules);
 };
 
-formCreate.createStyle = function () {
+formCreate.maker = maker;
+formCreate.version = version;
+
+var createStyle = function createStyle() {
     if (document.getElementById(formCreateStyleElId) !== null) return;
     var style = document.createElement('style');
     style.id = formCreateStyleElId;
@@ -991,7 +993,7 @@ formCreate.create = function (rules) {
 formCreate.install = function (Vue) {
     var globalOptions = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
-    formCreate.createStyle();
+    createStyle();
     Vue.prototype.$formCreate = function (rules, opt) {
         return formCreate.create(rules, (0, _util.deepExtend)((0, _util.deepExtend)(Object.create(null), opt), globalOptions), Vue);
     };
@@ -1179,14 +1181,7 @@ formCreate.prototype = {
     }
 };
 
-exports.default = {
-    install: formCreate.install,
-    default: formCreate,
-    create: formCreate.create,
-    maker: maker,
-    version: version
-};
-exports.formCreate = formCreate;
+exports.default = formCreate;
 
 /***/ }),
 /* 6 */
@@ -1565,7 +1560,11 @@ exports.formCreateName = exports.$FormCreate = undefined;
 
 var _formCreate = __webpack_require__(5);
 
+var _formCreate2 = _interopRequireDefault(_formCreate);
+
 var _common = __webpack_require__(3);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var formCreateName = 'FormCreate';
 
@@ -1593,7 +1592,7 @@ var $FormCreate = function $FormCreate() {
         data: _common.componentCommon.data,
         methods: _common.componentCommon.methods,
         created: function created() {
-            this.fComponent = new _formCreate.formCreate(this.rule, this.option);
+            this.fComponent = new _formCreate2.default(this.rule, this.option);
             this.fComponent._type = 'rule';
             this.fComponent.init(this);
         },
@@ -1621,11 +1620,8 @@ var _formCreate2 = _interopRequireDefault(_formCreate);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-if (typeof window !== 'undefined') {
-    window["formCreate"] = _formCreate2.default;
-    if (window.Vue && (window.iview || window.iView)) {
-        window.Vue.use(_formCreate2.default);
-    }
+if (typeof window !== 'undefined' && window.Vue) {
+    window.Vue.use(_formCreate2.default);
 }
 
 module.exports.default = module.exports = _formCreate2.default;
