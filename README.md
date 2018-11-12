@@ -48,7 +48,7 @@
 - 支持 `iview>=3.1.4`版本
 
 
-## 更新说明 
+## 更新说明
 
 > 建议保持在最新版本
 
@@ -169,7 +169,7 @@ new Vue({
 })
 ```
 
-#组件模式下使用
+# 组件模式下使用
 
 ```html
 <form-create ref="fc" :rule="rule" :option="option"></form-create>
