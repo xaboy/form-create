@@ -947,7 +947,7 @@ var _component = __webpack_require__(9);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var version = '1.4.5';
+var version = '1.4.6';
 
 var maker = (0, _common.getMaker)();
 
@@ -960,8 +960,7 @@ var formCreate = function formCreate(rules, _options) {
 
     if ((0, _util.isBool)(_options.sumbitBtn)) _options.sumbitBtn = { show: _options.sumbitBtn };
     if ((0, _util.isBool)(_options.resetBtn)) _options.resetBtn = { show: _options.resetBtn };
-
-    var options = (0, _util.deepExtend)((0, _util.deepExtend)(Object.create(null), (0, _common.getConfig)()), _options);
+    var options = (0, _util.deepExtend)((0, _common.getConfig)(), _options);
     options.el = !options.el ? window.document.body : (0, _util.isElement)(options.el) ? options.el : document.querySelector(options.el);
     this.options = options;
 
@@ -986,17 +985,17 @@ formCreate.create = function (rules) {
 
     var opt = (0, _util.isElement)(_opt) ? { el: _opt } : _opt;
 
-    var fComponent = new formCreate(rules, (0, _util.deepExtend)(Object.create(null), opt)),
+    var fComponent = new formCreate(rules, opt),
         $vm = fComponent.create(_vue);
     return fComponent.fCreateApi;
 };
 
 formCreate.install = function (Vue) {
-    var globalOptions = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
     createStyle();
-    Vue.prototype.$formCreate = function (rules, opt) {
-        return formCreate.create(rules, (0, _util.deepExtend)((0, _util.deepExtend)(Object.create(null), opt), globalOptions), Vue);
+    Vue.prototype.$formCreate = function (rules) {
+        var opt = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+        return formCreate.create(rules, opt, Vue);
     };
 
     Vue.prototype.$formCreate.version = version;
@@ -1434,18 +1433,13 @@ var render = (0, _render2.default)({
         var handler = this.handler;
         this.uploadOptions = Object.assign(Object.create(null), this.options.upload, handler.rule.props);
         this.issetIcon = this.uploadOptions.allowRemove || this.uploadOptions.handleIcon;
-        var events = propsEventType.reduce(function (initial, eventName) {
-            initial[eventName] = function () {
-                var _uploadOptions$eventN;
-
-                for (var _len = arguments.length, arg = Array(_len), _key = 0; _key < _len; _key++) {
-                    arg[_key] = arguments[_key];
-                }
-
-                if (_this2.uploadOptions[eventName]) return (_uploadOptions$eventN = _this2.uploadOptions[eventName]).call.apply(_uploadOptions$eventN, [null].concat(arg));
-            };
-            return initial;
-        }, {});
+        // let events = propsEventType.reduce((initial,eventName)=>{
+        //     initial[eventName] = (...arg)=>{
+        //         if(this.uploadOptions[eventName])
+        //             return this.uploadOptions[eventName].call(null,...arg);
+        //     };
+        //     return initial;
+        // },{});
         this.propsData = this.props.props(this.uploadOptions).props('onSuccess', function (response, file, fileList) {
             var url = _this2.uploadOptions.onSuccess.call(null, response, file, fileList);
             if (url) {
@@ -1455,7 +1449,7 @@ var render = (0, _render2.default)({
                 });
                 _this2.handler.changeParseValue(_this2.handler.el.fileList);
             }
-        }).props(events).ref(handler.refName).key("fip" + handler.unique).get();
+        }).ref(handler.refName).key("fip" + handler.unique).get();
     },
     defaultOnHandle: function defaultOnHandle(src) {
         var _this3 = this;
@@ -1534,6 +1528,7 @@ var render = (0, _render2.default)({
 
                     _this7.handler.el.fileList.splice(index, 1);
                     _this7.handler.changeParseValue(_this7.handler.el.fileList);
+                    _this7.propsData.props.onRemove && _this7.propsData.props.onRemove(_this7.handler.el.fileList);
                 } } });
     },
     makeHandleIcon: function makeHandleIcon(src, key, index) {
