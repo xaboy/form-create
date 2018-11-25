@@ -24,7 +24,7 @@ const iviewConfig = (function () {
         imgUpIcon:'md-images',
     };
     if(typeof iview === 'undefined') return iview2;
-    return iview.version.split('.')[0] == 3 ? iview3 : iview2;
+    return (iview.version && iview.version.split('.')[0] == 3) ? iview3 : iview2;
 }());
 
 const getComponent = function (vm, rule, createOptions) {

@@ -36,12 +36,13 @@ const handler = function (vm,rule) {
     });
 
     rule.validate = isArray(validate) ? validate : [validate];
+    if(!isArray(rule.options)) rule.options = [];
     rule.col = col;
     rule.props = props;
     this.rule = rule;
     this.field = field;
     this.vm = vm;
-    this.unique = uniqueId();
+    this.unique = 'fc_'+uniqueId();
     this.refName = field+''+this.unique;
     this.el = {};
     this.init();

@@ -3,12 +3,10 @@ import renderFactory from "../factory/render";
 
 const handler = handlerFactory({
     toParseValue(value) {
-	    value = value.toString();
-        return this.rule.options.filter((opt)=>opt.value.toString() === value).reduce((initial,opt)=>opt.label,'');
+        return this.rule.options.filter((opt)=>opt.value === value).reduce((initial,opt)=>opt.label,'');
     },
     toTrueValue(parseValue) {
-	    parseValue = parseValue.toString();
-	    return this.rule.options.filter((opt)=>opt.label.toString() === parseValue).reduce((initial,opt)=>opt.value,'');
+	    return this.rule.options.filter((opt)=>opt.label === parseValue).reduce((initial,opt)=>opt.value,'');
     }
 });
 

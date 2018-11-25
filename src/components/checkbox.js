@@ -4,9 +4,10 @@ import {isArray} from "../core/util";
 
 const handler = handlerFactory({
     toParseValue(value){
-	    if(false === isArray(value))
+        if(!value)
+            value = [];
+	    else if(!isArray(value))
 		    value = [value];
-	    value = value.map((v)=>v.toString());
         return this.rule.options.filter((opt)=>value.indexOf(opt.value) !== -1)
             .map((option) =>option.label);
     },

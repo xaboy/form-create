@@ -45,7 +45,7 @@ render.prototype = {
     inputProps(){
         let {refName,unique,field,rule:{props}} = this.handler;
         return this.props
-            .props(Object.assign(props,{model:`cptData.${field}`,value:this.vm.cptData[field],elementId:refName}))
+            .props(Object.assign(props,{model:`cptData.${field}`,value:this.vm.cptData[field],elementId:unique}))
             .ref(refName).key(`fip${unique}`).on(this.event).on('input',(value)=>{
                 this.vm.$emit('input',value);
                 this.vm.$set(this.vm.cptData,field,value);

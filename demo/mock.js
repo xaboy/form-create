@@ -49,8 +49,7 @@ return [
     //
     // },
     maker.input('商品名称','goods_name','iphone').props({
-        placeholder:'请输入商品名称',
-        width:300
+        placeholder:'请输入商品名称'
     }).validate([
         { required: true, message: '请输入商品名称', trigger: 'blur' }
     ]).event({
@@ -102,10 +101,10 @@ return [
         type:'textarea',
         autosize:{minRows:5,maxRows:9}
     }),
-    maker.radio('是否包邮','is_postage','0').options([
-        {value:"0",label:"不包邮",disabled:false},
-        {value:"1",label:"包邮",disabled:false},
-        {value:"2",label:"未知",disabled:true},
+    maker.radio('是否包邮','is_postage',0).options([
+        {value:0,label:"不包邮",disabled:false},
+        {value:1,label:"包邮",disabled:false},
+        {value:2,label:"未知",disabled:true},
     ]).props({required:true}).col({span:8}),
     // {
     //     type:"radio",
@@ -128,11 +127,11 @@ return [
     //     },
     //     validate:[],
     // },
-    maker.checkbox('标签','label',["1"]).options([
-        {value:"1",label:"好用",disabled:true},
-        {value:"2",label:"方便",disabled:false},
-        {value:"3",label:"实用",disabled:false},
-        {value:"4",label:"有效",disabled:false},
+    maker.checkbox('标签','label',[1]).options([
+        {value:1,label:"好用",disabled:true},
+        {value:2,label:"方便",disabled:false},
+        {value:3,label:"实用",disabled:false},
+        {value:4,label:"有效",disabled:false},
     ]).col({span:8}),
     // {
     //     type:"checkbox",
@@ -210,14 +209,14 @@ return [
     })
     .on({
         "click":()=>{console.log('click');},
-    }).col({span:12,labelWidth:1}).children([
+    }).col({span:12}).children([
         maker.create('span').domProps({
             innerHTML:'测试自定义按钮'
         })
     ]),
     maker.create('Tooltip').props({
         content:"这里是提示文字",
-    }).col({span:11,labelWidth:1,push:1}).children([
+    }).col({span:11,push:1}).children([
         maker.create('span').domProps({
             innerHTML:'当鼠标经过这段文字时，会显示一个气泡框'
         })

@@ -23,7 +23,6 @@ const render = function ({vm,options,fieldList,handlers,formData,validate,fCreat
     this.unique = uniqueId();
     this.refName = `cForm${this.unique}`;
 };
-
 render.prototype = {
     parse(vm){
         cvm.setVm(vm);
@@ -40,11 +39,11 @@ render.prototype = {
             vn.push(this.makeFormBtn(unique));
         return this.cvm.form(propsData,[this.cvm.row({props:this.options.row||{}},vn)]);
     },
-    makeFormItem({rule,refName,unique,field},VNodeFn){
+    makeFormItem({rule,unique,field},VNodeFn){
         let propsData = this.props.props({
             prop: field,
             label: rule.title,
-            labelFor:refName,
+            labelFor:unique,
             rules: rule.validate,
 	        labelWidth:rule.col.labelWidth,
 	        required:rule.props.required

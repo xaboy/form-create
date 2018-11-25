@@ -23,6 +23,7 @@ const maker = (()=>{
         create(type,field='__mp' + uniqueId()) {
             let make = commonMaker('',field);
             make.rule.type = type;
+            make.col({labelWidth:1});
             return make;
         },
         createTmp(template,vm,field='__mp' + uniqueId()) {
@@ -30,6 +31,7 @@ const maker = (()=>{
             make.rule.type = '__tmp';
             make.rule.template = template;
             make.rule._vm = vm;
+            make.col({labelWidth:1});
             return make;
         },
         number : _m.inputnumber,

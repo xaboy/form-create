@@ -11,7 +11,8 @@ const $FormCreate = ()=>({
     props:{
         rule:{
             type: Array,
-            required: true
+            required: true,
+            default:[]
         },
         option:{
             type: Object,
@@ -28,6 +29,7 @@ const $FormCreate = ()=>({
         this.fComponent = new formCreate(this.rule,this.option);
         this.fComponent._type='rule';
         this.fComponent.init(this);
+        console.time()
     },
     mounted(){
         this.fComponent.mounted(this);

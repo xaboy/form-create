@@ -7,6 +7,7 @@ const handler = handlerFactory({
         this.rule.props.min = this.rule.props.min === undefined
             ? 0
             : parseFloat(this.rule.props.min) || 0;
+        if(this.rule.value) this.rule.value = 0
     },
     toParseValue(value) {
         let isArr = isArray(value),props = this.rule.props,min = props.min,parseValue;

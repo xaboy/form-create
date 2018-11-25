@@ -58,7 +58,10 @@
 //                    $f.btn.finish();
                     //创建第二个表单
                     $f = that.$formCreate(mock,root);
-                }
+                },
+	            mounted(){
+                    console.timeEnd()
+	            }
             }
         },
         watch:{

@@ -55,7 +55,7 @@ const handler = handlerFactory({
 			this.vm.changeFormData(this.field,this.toParseValue(n));
 	},
     getFileName(pic){
-        let res = pic.split('/'),
+        let res = String(pic).split('/'),
             file = res[res.length - 1],
             index = file.indexOf('.');
         return index === -1 ? file : file.substr(0,index);

@@ -13,6 +13,7 @@ const formCreateComponent = function (fComponent) {
             this.fComponent = fComponent;
             this.fComponent._type='rules';
             fComponent.init(this);
+            console.time()
         },
         mounted(){
             fComponent.mounted(this);
