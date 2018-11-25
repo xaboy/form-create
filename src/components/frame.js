@@ -195,9 +195,10 @@ const render = renderFactory({
                         },
                         on:{
                             'load':()=>{
-                                this._props.spin === true
-                                && document.getElementsByClassName('fc-spin')[0]
-                                && document.getElementsByClassName('fc-spin')[0].remove();
+                                if(this._props.spin === true){
+                                    let spin = document.getElementsByClassName('fc-spin')[0];
+                                    spin && spin.parentNode.removeChild(spin);
+                                }
                             }
                         },
                         key:'ifmd'+uniqueId()

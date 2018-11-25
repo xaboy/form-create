@@ -169,7 +169,7 @@ const getGlobalApi = function (fComponent) {
             })
         },
         destroy:()=>{
-            vm.$el.remove();
+            vm.$el.parentNode.removeChild(vm.$el);
             vm.$destroy();
         },
         fields:()=>fComponent.fields(),
