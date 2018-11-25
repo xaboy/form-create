@@ -451,7 +451,8 @@ return [
             "onSuccess": function () {
                 console.log('upload success');
                 return 'http://img1.touxiang.cn/uploads/20131030/30-075657_191.jpg';
-            }
+            },
+            "onRemove":()=>console.log('removed'),
         }).validate({required:true, type: 'array', min: 3, message: '请上传3张图片', trigger: 'change'}),
     // {
     //     type: "Upload",

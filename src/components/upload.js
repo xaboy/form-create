@@ -165,6 +165,7 @@ const render = renderFactory({
 
             this.handler.el.fileList.splice(index,1);
             this.handler.changeParseValue(this.handler.el.fileList);
+            this.propsData.props.onRemove && this.propsData.props.onRemove(this.handler.el.fileList);
         }}});
     },
     makeHandleIcon(src,key,index){

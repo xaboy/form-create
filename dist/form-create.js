@@ -275,12 +275,13 @@ var handler = function handler(vm, rule) {
     });
 
     rule.validate = (0, _util.isArray)(validate) ? validate : [validate];
+    if (!(0, _util.isArray)(rule.options)) rule.options = [];
     rule.col = col;
     rule.props = props;
     this.rule = rule;
     this.field = field;
     this.vm = vm;
-    this.unique = (0, _util.uniqueId)();
+    this.unique = 'fc_' + (0, _util.uniqueId)();
     this.refName = field + '' + this.unique;
     this.el = {};
     this.init();
@@ -394,7 +395,7 @@ render.prototype = {
             field = _handler2.field,
             props = _handler2.rule.props;
 
-        return this.props.props(Object.assign(props, { model: 'cptData.' + field, value: this.vm.cptData[field], elementId: refName })).ref(refName).key('fip' + unique).on(this.event).on('input', function (value) {
+        return this.props.props(Object.assign(props, { model: 'cptData.' + field, value: this.vm.cptData[field], elementId: unique })).ref(refName).key('fip' + unique).on(this.event).on('input', function (value) {
             _this2.vm.$emit('input', value);
             _this2.vm.$set(_this2.vm.cptData, field, value);
         });
@@ -455,7 +456,7 @@ var iviewConfig = function () {
         imgUpIcon: 'md-images'
     };
     if (typeof iview === 'undefined') return iview2;
-    return iview.version.split('.')[0] == 3 ? iview3 : iview2;
+    return iview.version && iview.version.split('.')[0] == 3 ? iview3 : iview2;
 }();
 
 var getComponent = function getComponent(vm, rule, createOptions) {
@@ -582,7 +583,7 @@ var getGlobalApi = function getGlobalApi(fComponent) {
             });
         },
         destroy: function destroy() {
-            vm.$el.remove();
+            vm.$el.parentNode.removeChild(vm.$el);
             vm.$destroy();
         },
         fields: function fields() {
@@ -1417,7 +1418,7 @@ var handler = (0, _handler3.default)({
         if (b) this.vm.changeFormData(this.field, this.toParseValue(n));
     },
     getFileName: function getFileName(pic) {
-        var res = pic.split('/'),
+        var res = String(pic).split('/'),
             file = res[res.length - 1],
             index = file.indexOf('.');
         return index === -1 ? file : file.substr(0, index);
@@ -1578,7 +1579,8 @@ var $FormCreate = function $FormCreate() {
         props: {
             rule: {
                 type: Array,
-                required: true
+                required: true,
+                default: []
             },
             option: {
                 type: Object,
@@ -1721,17 +1723,15 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var handler = (0, _handler3.default)({
     toParseValue: function toParseValue(value) {
-        value = value.toString();
         return this.rule.options.filter(function (opt) {
-            return opt.value.toString() === value;
+            return opt.value === value;
         }).reduce(function (initial, opt) {
             return opt.label;
         }, '');
     },
     toTrueValue: function toTrueValue(parseValue) {
-        parseValue = parseValue.toString();
         return this.rule.options.filter(function (opt) {
-            return opt.label.toString() === parseValue;
+            return opt.label === parseValue;
         }).reduce(function (initial, opt) {
             return opt.value;
         }, '');
@@ -1781,10 +1781,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var handler = (0, _handler3.default)({
     toParseValue: function toParseValue(value) {
-        if (false === (0, _util.isArray)(value)) value = [value];
-        value = value.map(function (v) {
-            return v.toString();
-        });
+        if (!value) value = [];else if (!(0, _util.isArray)(value)) value = [value];
         return this.rule.options.filter(function (opt) {
             return value.indexOf(opt.value) !== -1;
         }).map(function (option) {
@@ -2147,12 +2144,14 @@ var handler = (0, _handler2.default)({
         var rule = this.rule;
         if (!rule.props.data) rule.props.data = [];
         if (!(0, _util.isArray)(this.value)) this.value = [];
+        Object.freeze(rule.props.data);
     },
-    toTrueValue: function toTrueValue() {
-        return this.el.value === undefined ? this.vm.getFormData(this.field) : this.el.value;
-    },
+
+    // toTrueValue(n){
+    //     // return this.el.value === undefined ? this.vm.getFormData(this.field) : this.el.value;
+    // },
     toParseValue: function toParseValue(value) {
-        return (0, _util.isArray)(value) ? Array.from(value) : [];
+        return (0, _util.isArray)(value) ? value : [];
     },
     mounted: function mounted() {
         this.vm.changeTrueData(this.field, this.el.value);
@@ -2230,6 +2229,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var handler = (0, _handler2.default)({
     init: function init() {
         this.rule.props.min = this.rule.props.min === undefined ? 0 : parseFloat(this.rule.props.min) || 0;
+        if (this.rule.value) this.rule.value = 0;
     },
     toParseValue: function toParseValue(value) {
         var isArr = (0, _util.isArray)(value),
@@ -2465,7 +2465,10 @@ var render = (0, _render2.default)({
                         },
                         on: {
                             'load': function load() {
-                                _this9._props.spin === true && document.getElementsByClassName('fc-spin')[0] && document.getElementsByClassName('fc-spin')[0].remove();
+                                if (_this9._props.spin === true) {
+                                    var spin = document.getElementsByClassName('fc-spin')[0];
+                                    spin && spin.parentNode.removeChild(spin);
+                                }
                             }
                         },
                         key: 'ifmd' + (0, _util.uniqueId)()
@@ -2690,6 +2693,7 @@ var maker = function () {
 
             var make = commonMaker('', field);
             make.rule.type = type;
+            make.col({ labelWidth: 1 });
             return make;
         },
         createTmp: function createTmp(template, vm) {
@@ -2699,6 +2703,7 @@ var maker = function () {
             make.rule.type = '__tmp';
             make.rule.template = template;
             make.rule._vm = vm;
+            make.col({ labelWidth: 1 });
             return make;
         },
 
@@ -2855,7 +2860,6 @@ var render = function render(_ref) {
     this.unique = (0, _util.uniqueId)();
     this.refName = 'cForm' + this.unique;
 };
-
 render.prototype = {
     parse: function parse(vm) {
         var _this = this;
@@ -2878,14 +2882,13 @@ render.prototype = {
     },
     makeFormItem: function makeFormItem(_ref2, VNodeFn) {
         var rule = _ref2.rule,
-            refName = _ref2.refName,
             unique = _ref2.unique,
             field = _ref2.field;
 
         var propsData = this.props.props({
             prop: field,
             label: rule.title,
-            labelFor: refName,
+            labelFor: unique,
             rules: rule.validate,
             labelWidth: rule.col.labelWidth,
             required: rule.props.required
