@@ -30,13 +30,6 @@
     <h2 onclick="create2()" style="cursor: pointer;">点击使用全局方法生成</h2>
 </div>
 <script>
-    Vue.use(formCreate,{
-    	upload:{
-		    beforeUpload:function (res) {
-                console.log(res);
-            }
-        }
-    });
 
     //组件模式
     _vm = new Vue({
@@ -47,6 +40,12 @@
             option:{
                 //显示表单重置按钮
                 resetBtn:true,
+				//
+                upload:{
+                    'beforeUpload':function (res) {
+                        console.log(res);
+                    }
+                },
                 //表单提交事件
                 onSubmit:function (formData) {
                     alert(JSON.stringify(formData));

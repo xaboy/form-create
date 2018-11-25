@@ -69,13 +69,13 @@ const render = renderFactory({
         let handler = this.handler;
 	    this.uploadOptions = Object.assign(Object.create(null),this.options.upload,handler.rule.props);
         this.issetIcon = this.uploadOptions.allowRemove || this.uploadOptions.handleIcon;
-        let events = propsEventType.reduce((initial,eventName)=>{
-            initial[eventName] = (...arg)=>{
-                if(this.uploadOptions[eventName])
-                    return this.uploadOptions[eventName].call(null,...arg);
-            };
-            return initial;
-        },{});
+        // let events = propsEventType.reduce((initial,eventName)=>{
+        //     initial[eventName] = (...arg)=>{
+        //         if(this.uploadOptions[eventName])
+        //             return this.uploadOptions[eventName].call(null,...arg);
+        //     };
+        //     return initial;
+        // },{});
         this.propsData = this.props.props(this.uploadOptions)
             .props('onSuccess',(response, file, fileList)=>{
                 let url = this.uploadOptions.onSuccess.call(null,response, file, fileList);
@@ -86,7 +86,7 @@ const render = renderFactory({
                     });
                     this.handler.changeParseValue(this.handler.el.fileList);
                 }
-        }).props(events).ref(handler.refName).key(`fip${handler.unique}`).get();
+        }).ref(handler.refName).key(`fip${handler.unique}`).get();
     },
 	defaultOnHandle(src){
         this.vm.$Modal.remove();

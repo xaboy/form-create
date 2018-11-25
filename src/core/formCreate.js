@@ -20,8 +20,7 @@ const formCreate = function (rules,_options) {
         _options.sumbitBtn = {show:_options.sumbitBtn};
     if(isBool(_options.resetBtn))
         _options.resetBtn = {show:_options.resetBtn};
-
-    let options = deepExtend(deepExtend(Object.create(null),getConfig()),_options);
+    let options = deepExtend(getConfig(),_options);
     options.el = !options.el
         ? window.document.body
         : (isElement(options.el)
@@ -47,18 +46,15 @@ const createStyle = function () {
 formCreate.create = function(rules,_opt = {},_vue = window.Vue){
 	let opt = isElement(_opt) ? {el:_opt} : _opt;
 
-	let fComponent = new formCreate(
-		rules,
-		deepExtend(Object.create(null),opt)
-		),
+	let fComponent = new formCreate(rules, opt),
 		$vm = fComponent.create(_vue);
 	return fComponent.fCreateApi;
 };
 
-formCreate.install = function(Vue,globalOptions = {}){
+formCreate.install = function(Vue){
     createStyle();
-	Vue.prototype.$formCreate = function (rules,opt) {
-        return formCreate.create(rules,deepExtend(deepExtend(Object.create(null),opt),globalOptions),Vue)
+	Vue.prototype.$formCreate = function (rules,opt = {}) {
+        return formCreate.create(rules,opt,Vue)
 	};
 
     Vue.prototype.$formCreate.version = version;
