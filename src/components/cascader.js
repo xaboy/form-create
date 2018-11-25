@@ -7,12 +7,13 @@ const handler = handlerFactory({
         let rule = this.rule;
         if(!rule.props.data) rule.props.data = [];
         if(!isArray(this.value)) this.value = [];
+        Object.freeze(rule.props.data)
     },
-    toTrueValue(){
-	    return this.el.value === undefined ? this.vm.getFormData(this.field) : this.el.value;
-    },
+    // toTrueValue(n){
+    //     // return this.el.value === undefined ? this.vm.getFormData(this.field) : this.el.value;
+    // },
     toParseValue(value){
-	    return isArray(value) ? Array.from(value) : [];
+	    return isArray(value) ? value : [];
     },
 	mounted() {
 		this.vm.changeTrueData(this.field,this.el.value);
