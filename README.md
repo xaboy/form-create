@@ -73,6 +73,7 @@
 * 新增 **标签模式下生成规则发生变化时表单自动刷新**
 * 修复 `npm run dev`命令无法有时打开 Demo
 
+
 ## 示例 [在线预览](https://jsrun.net/NQhKp/edit)
 
 ![https://raw.githubusercontent.com/xaboy/form-create/dev/images/sample110.jpg](https://raw.githubusercontent.com/xaboy/form-create/dev/images/sample110.jpg)
