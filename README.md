@@ -29,11 +29,17 @@
 > 1.4.5 版本已支持 iview3
 
 
+
+
 ### 计划
-- 内部结构重构 + 优化
+- 内部结构重构
+- 性能优化
 - 支持 ElementUi
 
 **期待就点个赞吧 亲!**
+
+
+
 
 
 ### [开始使用](http://fc.gd8.top/749554) | [原说明文档](https://github.com/xaboy/form-create/wiki/%E8%AF%B4%E6%98%8E%E6%96%87%E6%A1%A3)
