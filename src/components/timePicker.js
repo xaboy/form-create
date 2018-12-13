@@ -1,45 +1,56 @@
-import handlerFactory from "../factory/handler";
-import renderFactory from "../factory/render";
-import {dateFormat, isArray, isDate} from "../core/util";
+import Handler from "../factory/handler";
+import Render from "../factory/render";
+import {dateFormat, isDate} from "../core/util";
 import {timeStampToDate} from "../core/common";
+import {creatorTypeFactory} from "../factory/creator";
 
-const handler = handlerFactory({
-    init(){
-    	let props = this.rule.props;
-        if(!props.type) props.type = 'time';
-        if(props.confirm === undefined) props.confirm = true;
-    },
-    toParseValue(value){
-        let parseValue,isArr = isArray(value);
-	    if ('timerange' === this.rule.props.type) {
-	        if(isArr){
-		        parseValue = value.map((time) => !time ? '' : this.getTime(timeStampToDate(time)));
-            }else{
-		        parseValue = ['', ''];
-            }
-	    } else {
-		    isArr && (value = value[0]);
-		    parseValue = !value ? '' : this.getTime(timeStampToDate(value));
-	    }
-	    return parseValue;
-    },
-    toTrueValue() {
-        return this.el.publicStringValue === undefined ? this.value : this.el.publicStringValue;
-    },
-    getTime(date){
-        return isDate(date)
-            ? dateFormat('hh:mm:ss',date)
-            : date;
-    },
-	mounted() {
-		this.vm.changeTrueData(this.field,this.el.publicStringValue);
-	}
-});
+const name = 'timePicker';
 
-const render = renderFactory({
-    parse(){
-        return [this.cvm.timePicker(this.inputProps().get())];
+export function getTime(date) {
+    return isDate(date)
+        ? dateFormat('hh:mm:ss', date)
+        : date;
+}
+
+class handler extends Handler {
+
+    init() {
+        let props = this.rule.props;
+        if (!props.type) props.type = 'time';
+        if (props.confirm === undefined) props.confirm = true;
     }
-});
 
-export default {handler,render};
+    toParseValue(value) {
+        let parseValue, isArr = Array.isArray(value);
+        if ('timerange' === this.rule.props.type) {
+            if (isArr) {
+                parseValue = value.map((time) => !time ? '' : getTime(timeStampToDate(time)));
+            } else {
+                parseValue = ['', ''];
+            }
+        } else {
+            isArr && (value = value[0]);
+            parseValue = !value ? '' : getTime(timeStampToDate(value));
+        }
+        return parseValue;
+    }
+
+    mounted() {
+        super.mounted();
+        this.rule.value = this.el.publicStringValue;
+        this.vm.changeFormData(this.field, this.toParseValue(this.el.publicStringValue));
+    }
+}
+
+class render extends Render {
+    parse() {
+        return [this.vNode.timePicker(this.inputProps().key(this.handler.key).get())];
+    }
+}
+
+const maker = {
+    time: creatorTypeFactory(name, 'time'),
+    timeRange: creatorTypeFactory(name, 'timerange')
+};
+
+export default {handler, render, maker, name};

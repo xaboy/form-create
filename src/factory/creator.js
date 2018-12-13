@@ -1,14 +1,7 @@
-import {isArray} from "../core/util";
-import props from '../core/props';
+import {extend, isFunction, isPlainObject} from "../core/util";
+import VData from "./vData";
 
-const creatorFactory = function (type) {
-    return function $m(title,field,value = '') {
-        return new creator(Object.assign(baseRule(),{type,title,field,value}));
-    }
-};
-
-
-const baseRule = ()=>{
+export function baseRule(){
     return {
         event:{},
         validate:[],
@@ -17,27 +10,58 @@ const baseRule = ()=>{
         children:[],
         emit:[],
         template:null
-    };
-};
+    }
+}
 
-const creator = function (rule) {
-    props.call(this);
-    this.rule = rule;
-    this.get = function () {
+export function creatorFactory(name) {
+    return (title,field,value,props = {})=>new Creator(name,title,field,value,props)
+}
+
+export function creatorTypeFactory(name,type,typeName ='type') {
+    return (title,field,value,props = {})=>{
+        const maker = new Creator(name,title,field,value,props);
+        if(isFunction(type))
+            type(maker);
+        else
+            maker.props(typeName, type);
+        return maker
+    }
+}
+
+export default class Creator extends VData{
+    constructor(type,title,field,value,props = {}){
+        super();
+
+        this.rule = extend(baseRule(),{type,title,field,value});
+        this.props({hidden:false,visibility:false});
+        if(isPlainObject(props))
+            this.props(props);
+    }
+
+    type(type){
+        this.props('type',type);
+        return this
+    }
+
+    get(){
         return this._data;
-    };
-    this.props({hidden:false,visibility:false});
-};
+    }
 
-creator.prototype = props.prototype;
+    getRule() {
+        return extend(this.rule,this.get());
+    }
 
-creator.constructor = creator;
+    setValue(value) {
+        this.rule.value = value;
+        return this
+    }
+}
 
 const objAttrs = ['event','col'];
 
 objAttrs.forEach((attr)=>{
-    creator.prototype[attr] = function (opt) {
-       this.rule[attr] = Object.assign(this.rule[attr],opt);
+    Creator.prototype[attr] = function (opt) {
+       this.rule[attr] = extend(this.rule[attr],opt);
        return this;
    }
 });
@@ -45,31 +69,9 @@ objAttrs.forEach((attr)=>{
 const arrAttrs = ['validate','options','children','emit'];
 
 arrAttrs.forEach((attr)=>{
-    creator.prototype[attr] = function (opt) {
-        if(!isArray(opt)) opt = [opt];
+    Creator.prototype[attr] = function (opt) {
+        if(!Array.isArray(opt)) opt = [opt];
         this.rule[attr] = this.rule[attr].concat(opt);
         return this;
     }
 });
-
-creator.prototype.getRule = function () {
-    return Object.assign(this.rule,this.get());
-};
-
-creator.prototype.setValue = function (value) {
-	this.rule.value = value;
-	return this;
-};
-
-creator.prototype.model = function (model,field) {
-    if(!field) field = this.rule.field;
-    this.rule.model = (v)=>{
-	    model[field] = v;
-    };
-};
-
-export default creatorFactory;
-
-export {
-    creator
-}

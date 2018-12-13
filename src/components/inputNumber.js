@@ -1,18 +1,28 @@
-import handlerFactory from "../factory/handler";
-import renderFactory from "../factory/render";
+import Handler from "../factory/handler";
+import Render from "../factory/render";
+import {creatorFactory} from "../factory/creator";
 
-const handler = handlerFactory({
+const name = "inputNumber";
+
+class handler extends Handler {
     toParseValue(value) {
+        console.log(value);
         let parseValue = parseFloat(value);
         if (Number.isNaN(parseValue)) parseValue = 0;
-        return parseValue;
+        return parseValue
     }
-});
 
-const render =  renderFactory({
-    parse(){
-        return [this.cvm.inputNumber(this.inputProps().get())];
+}
+
+
+class render extends Render {
+    parse() {
+        return [this.vNode.inputNumber(this.inputProps().get())]
     }
-});
+}
 
-export default {handler,render};
+const maker = {
+    number: creatorFactory(name)
+};
+
+export default {handler, render, name, maker}

@@ -1,56 +1,82 @@
-import cvm from '../core/cvm';
-import props from '../core/props';
-import {uniqueId} from '../core/util';
+import {extend, isFunction, uniqueId} from '../core/util';
+import VNode from "./vNode";
+import VData from "./vData";
 
-const renderFactory = function (prototypeExtend) {
-    let $r = function (vm,handler,options) {
-        render.call(this,vm,handler,options);
-    };
-    $r.prototype = Object.create(render.prototype);
-    Object.assign($r.prototype, prototypeExtend);
-    $r.prototype.constructor = $r;
-    return $r;
-};
+export default class Render {
 
+    constructor(vm, handler, options = {}) {
+        this.vm = vm;
+        this.handler = handler;
+        this.options = options;
+        this.vNode = new VNode(vm);
+        this.vData = new VData;
+        this.cache = null;
+        this.$tickEvent = [];
 
+        this.init();
+    }
 
-const render = function (vm, handler, options = {}) {
-    this.handler = handler;
-    this.options = options;
-    this.vm = vm;
-    this.cvm = cvm.instance(vm.$createElement);
-    this.event = handler.rule.event;
-    this.init();
-};
+    init() {
 
-render.prototype = {
-    props: props.instance(),
-    init(){
-        this.handler.rule = Object.assign(this.handler.rule,{ref:this.handler.refName,key:'fco' + uniqueId()});
-    },
-    parse(){
-        let {type,rule,childrenHandlers} = this.handler;
-        if(rule.type === '__tmp'){
-            return [this.vm.constructor.super.compile(rule.template,{}).render.call(rule._vm || this.vm)];
+    }
+
+    cacheParse() {
+        if (!(this.cache && this.handler.rule.type !== '__tmp')) {
+            this.cache = this.parse();
         }
-        return [this.cvm.make(type,Object.assign({},rule),()=> {
-            let vn = [];
-            if(childrenHandlers.length > 0)
-                vn = childrenHandlers.map((handler)=>{
-                    return this.parse.call(handler.render);
-                });
-            return vn;
-        })];
-    },
-    inputProps(){
-        let {refName,unique,field,rule:{props}} = this.handler;
-        return this.props
-            .props(Object.assign(props,{model:`cptData.${field}`,value:this.vm.cptData[field],elementId:unique}))
-            .ref(refName).key(`fip${unique}`).on(this.event).on('input',(value)=>{
-                this.vm.$emit('input',value);
-                this.vm.$set(this.vm.cptData,field,value);
+        let eventList = [...this.$tickEvent];
+        this.$tickEvent = [];
+        this.vm.$nextTick(() => {
+            eventList.forEach(event => event());
+        });
+        return this.cache
+    }
+
+    sync(event) {
+        if (isFunction(event))
+            this.$tickEvent.push(event);
+        this.clearCache();
+        this.vm.sync();
+    }
+
+    clearCache() {
+        this.cache = null;
+        if (this.handler.childrenHandlers.length > 0)
+            this.handler.childrenHandlers.forEach(handler => handler.render.clearCache());
+    }
+
+    parse() {
+        let {type, rule, childrenHandlers, refName, key} = this.handler;
+        if (rule.type === '__tmp') {
+            let vn = this.vm.constructor.super.compile(rule.template, {}).render.call(rule._vm || this.vm);
+            extend(vn.data, rule);
+            vn.key = key;
+            return [vn];
+        } else {
+            rule.ref = refName;
+            let vn = this.vNode.make(type, extend({}, rule), () => {
+                let vn = [];
+                if (childrenHandlers.length > 0)
+                    vn = childrenHandlers.map((handler) => handler.render.cacheParse());
+                return vn;
+            });
+            vn.key = key;
+            return [vn];
+        }
+
+    }
+
+    inputProps() {
+        let {refName, unique, key, field, rule: {props, event}} = this.handler;
+        return this.vData
+            .props(extend(props, {value: this.vm.cptData[field], elementId: unique}))
+            .ref(refName).key(key + '' + uniqueId()).on(event).on('input', (value) => {
+                this.onInput(value)
             });
     }
-};
 
-export default renderFactory;
+    onInput(value) {
+        this.vm.$set(this.vm.cptData, this.handler.field, value);
+    }
+
+}

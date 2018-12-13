@@ -1,29 +1,29 @@
-import handlerFactory from "../factory/handler";
-import renderFactory from "../factory/render";
-import {isArray} from "../core/util";
+import Handler from "../factory/handler";
+import Render from "../factory/render";
 
-const handler = handlerFactory({
-    init(){
+const name = 'cascader';
+
+class handler extends Handler {
+    init() {
         let rule = this.rule;
-        if(!rule.props.data) rule.props.data = [];
-        if(!isArray(this.value)) this.value = [];
-        Object.freeze(rule.props.data)
-    },
-    // toTrueValue(n){
-    //     // return this.el.value === undefined ? this.vm.getFormData(this.field) : this.el.value;
-    // },
-    toParseValue(value){
-	    return isArray(value) ? value : [];
-    },
-	mounted() {
-		this.vm.changeTrueData(this.field,this.el.value);
-	}
-});
-
-const render = renderFactory({
-    parse(){
-        return [this.cvm.cascader(this.inputProps().get())];
+        if (!rule.props.data) rule.props.data = [];
+        if (!Array.isArray(this.rule.value)) this.rule.value = [];
     }
-});
 
-export default {handler,render};
+    toParseValue(value) {
+        return Array.isArray(value) ? value : []
+    }
+
+    mounted() {
+        super.mounted();
+        this.vm.changeFormData(this.field, this.toParseValue(this.el.value));
+    }
+}
+
+class render extends Render {
+    parse() {
+        return [this.vNode.cascader(this.inputProps().get())]
+    }
+}
+
+export default {handler, render, name};

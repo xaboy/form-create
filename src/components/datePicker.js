@@ -1,45 +1,59 @@
-import handlerFactory from "../factory/handler";
-import renderFactory from "../factory/render";
-import {isArray} from "../core/util";
+import Handler from "../factory/handler";
+import Render from "../factory/render";
 import {timeStampToDate} from "../core/common";
+import {creatorTypeFactory} from "../factory/creator";
+import {toString} from "../core/util";
 
-const handler = handlerFactory({
-    init(){
+const name = "datePicker";
+
+class handler extends Handler {
+    init() {
         let props = this.rule.props;
         props.type = !props.type
             ? 'date'
-            : props.type;
-        if(props.startDate === undefined)
-	        props.startDate = timeStampToDate(props.startDate);
-    },
-    toParseValue(value){
-        let isArr = isArray(value),props = this.rule.props,parseValue;
-	    if (['daterange', 'datetimerange'].indexOf(props.type) !== -1) {
-	        if(isArr){
-		        parseValue = value.map((time) => !time ? '' : timeStampToDate(time));
-            }else{
-		        parseValue = ['', '']
-            }
-	    } else if('date' === props.type && props.multiple === true){
-		    parseValue = value.toString();
-	    }else{
-		    parseValue = isArr ? (value[0]|| '') : value;
-		    parseValue = !parseValue ? '' : timeStampToDate(parseValue);
-	    }
-	    return parseValue;
-    },
-    toTrueValue() {
-	    return this.el.publicStringValue === undefined ? this.value : this.el.publicStringValue;
-    },
-	mounted() {
-		this.vm.changeTrueData(this.field,this.el.publicStringValue);
-	}
-});
-
-const render = renderFactory({
-    parse(){
-        return [this.cvm.datePicker(this.inputProps().get())];
+            : toString(props.type).toLowerCase();
+        if (props.startDate === undefined)
+            props.startDate = timeStampToDate(props.startDate);
     }
-});
 
-export default {handler,render};
+    toParseValue(value) {
+        let isArr = Array.isArray(value), props = this.rule.props, parseValue;
+        if (['daterange', 'datetimerange'].indexOf(props.type) !== -1) {
+            if (isArr) {
+                parseValue = value.map((time) => !time ? '' : timeStampToDate(time));
+            } else {
+                parseValue = ['', '']
+            }
+        } else if ('date' === props.type && props.multiple === true) {
+            parseValue = toString(value);
+        } else {
+            parseValue = isArr ? (value[0] || '') : value;
+            parseValue = !parseValue ? '' : timeStampToDate(parseValue);
+        }
+        console.log(parseValue, value);
+        return parseValue;
+    }
+
+    toTrueValue() {
+        return this.el.publicStringValue;
+    }
+
+    mounted() {
+        super.mounted();
+        this.rule.value = this.el.publicStringValue;
+        this.vm.changeFormData(this.field, this.toParseValue(this.el.publicStringValue));
+    }
+}
+
+class render extends Render {
+    parse() {
+        return [this.vNode.datePicker(this.inputProps().key(this.handler.key).get())];
+    }
+}
+
+const maker = ['date', 'dateRange', 'dateTime', 'dateTimeRange', 'year', 'month'].reduce((initial, type) => {
+    initial[type] = creatorTypeFactory(name, type.toLowerCase());
+    return initial
+}, {});
+
+export default {handler, render, name, maker};

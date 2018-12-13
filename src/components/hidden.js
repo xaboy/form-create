@@ -1,17 +1,21 @@
-import handlerFactory from "../factory/handler";
-import renderFactory from "../factory/render";
+import Handler from "../factory/handler";
+import Render from "../factory/render";
+import {creatorFactory} from "../factory/creator";
 
-const handler = handlerFactory({
-    init(){
-        this.rule.props = {};
+const name = "hidden";
 
-    }});
+class handler extends Handler {
 
-const render = renderFactory({
-    parse(){
+}
+
+class render extends Render {
+    parse() {
         return [];
     }
-});
+}
 
+const maker = {
+    [name]: (field, value) => creatorFactory(name)('', field, value)
+};
 
-export default {handler,render};
+export default {handler, render, name, maker};

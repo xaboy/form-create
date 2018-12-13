@@ -1,12 +1,25 @@
-import handlerFactory from "../factory/handler";
-import renderFactory from "../factory/render";
+import Handler from "../factory/handler";
+import Render from "../factory/render";
+import {creatorFactory} from "../factory/creator";
 
-const handler = handlerFactory({});
+const name = "colorPicker";
 
-const render = renderFactory({
-    parse(){
-        return [this.cvm.colorPicker(this.inputProps().get())];
+class handler extends Handler {
+
+    watchParseValue(n) {
+        super.watchParseValue(n);
+        this.render.sync();
     }
-});
+}
 
-export default {handler,render};
+class render extends Render {
+    parse() {
+        return [this.vNode.colorPicker(this.inputProps().key(this.handler.key).get())];
+    }
+}
+
+const maker = {
+    color: creatorFactory(name)
+};
+
+export default {handler, render, name, maker};

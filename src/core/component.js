@@ -12,7 +12,9 @@ const $FormCreate = ()=>({
         rule:{
             type: Array,
             required: true,
-            default:[]
+            default:()=>{
+                return {}
+            }
         },
         option:{
             type: Object,
@@ -33,6 +35,9 @@ const $FormCreate = ()=>({
     mounted(){
         this.fComponent.mounted(this);
         this.$f = this.fComponent.fCreateApi;
+        this.$watch('rule', n => {
+            this.fComponent.reload(n);
+        });
         this.init();
     }
 });

@@ -1,25 +1,32 @@
-import handlerFactory from "../factory/handler";
-import renderFactory from "../factory/render";
-import {isArray} from "../core/util";
+import Handler from "../factory/handler";
+import Render from "../factory/render";
+import {creatorTypeFactory} from "../factory/creator";
 
-const handler = handlerFactory({
-    toParseValue(value){
-	    let isArr = isArray(value);
-	    if(this.rule.props.multiple === true)
-	        return Array.from(isArr === true ? value : [value]);
-	    else
-	        return isArr === true ? (value[0] || '') : value;
-    },
-    toTrueValue(parseValue){
-        return isArray(parseValue) ? Array.from(parseValue) : parseValue;
+const name = "select";
+
+class handler extends Handler {
+    toParseValue(value) {
+        let isArr = Array.isArray(value);
+        if (this.rule.props.multiple === true)
+            return isArr === true ? value : [value];
+        else
+            return isArr === true ? (value[0] || '') : value;
     }
-});
+}
 
-const render =  renderFactory({
-    parse(){
-        let {unique,rule:{options}} = this.handler;
-        return [this.cvm.select(this.inputProps().get(),()=>options.map((option,index)=>this.cvm.option({props:option,key:`sopt${index}${unique}`})))];
+class render extends Render {
+    parse() {
+        let {unique, rule: {options}} = this.handler;
+        return [this.vNode.select(this.inputProps().get(), () => options.map((option, index) => this.vNode.option({
+            props: option,
+            key: `sopt${index}${unique}`
+        })))];
     }
-});
+}
 
-export default {handler,render};
+const maker = {
+    selectMultiple: creatorTypeFactory(name, true, 'multiple'),
+    selectOne: creatorTypeFactory(name, false, 'multiple'),
+};
+
+export default {handler, render, name, maker};

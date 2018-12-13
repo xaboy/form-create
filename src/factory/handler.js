@@ -1,83 +1,129 @@
-import {isArray, isNumeric, uniqueId,toLine} from "../core/util";
-
-const handlerFactory = function (prototypeExtend = {}) {
-    let $h = function (vm, rule) {
-        handler.call(this,vm,rule);
-    };
-    $h.prototype = Object.create(handler.prototype);
-    Object.assign($h.prototype, prototypeExtend);
-    $h.prototype.constructor = $h;
-    return $h;
-};
+import {isNumeric, uniqueId, toLine, isUndef, extend, toString, deepExtend} from "../core/util";
 
 
+export default class Handler {
 
-const handler = function (vm,rule) {
-    let {model,field,type,validate = [],event = {},value = '',col = {},emit = [],props = {}} = rule;
-    field = field.toString();
-    this.type = type;
-    this.model = model;
-    this.value = value;
-    if(isNumeric(col)){
-    	col = {span:col};
-    }else if(col.span === undefined)
-    	col.span = 24;
-    if(props && props.hidden === undefined) props.hidden = false;
-    if(props && props.visibility === undefined) props.visibility = false;
-    rule.event = Object.keys(event).reduce(function (initial,eventName) {
-        initial[`on-${eventName}`] = event[eventName];
-        return initial;
-    },{});
+    constructor(vm, _rule = {}) {
+        const rule = parseRule(_rule, vm);
 
-    emit.forEach((eventName)=>{
-        rule.event[`on-${eventName}`] = (...arg)=>{
-            vm.$emit(toLine(`${field}-${eventName}`).replace('_','-'),...arg);
+        this.rule = rule;
+        this.type = rule.type;
+        this.field = rule.field;
+        this.vm = vm;
+
+        const id = uniqueId();
+        this.id = id;
+        this.unique = 'fc_' + id;
+        this.refName = '__' + this.field + id;
+        this.key = 'key_' + id;
+        this.el = {};
+        this.init();
+        this.childrenHandlers = [];
+
+        this.parseValue = this.toParseValue(this.rule.value);
+    }
+
+    init() {
+
+    }
+
+    toParseValue(value) {
+        return value;
+    }
+
+    toTrueValue(parseValue) {
+        return parseValue;
+    }
+
+    setTrueValue(value) {
+        this.vm.changeTrueData(this.field, value);
+    }
+
+    getValue() {
+        return this.vm.getTrueDataValue(this.field);
+    }
+
+    setParseValue(parseValue) {
+        this.setTrueValue(this.toTrueValue(parseValue));
+    }
+
+    watchTrueValue(n) {
+        this.vm.changeFormData(this.field, this.toParseValue(n));
+    }
+
+    watchParseValue(n) {
+    }
+
+    mounted() {
+        this.el = this.vm.$refs[this.refName];
+        this.defaultValue = this.toTrueValue(this.vm.$refs['fItem' + this.refName]
+            ? this.vm.$refs['fItem' + this.refName].initialValue : deepExtend({}, {value: this.rule.value}).value);
+    }
+}
+
+export function parseRule(rule, vm) {
+    let {validate = [], event = {}, col = {}, emit = [], props = {}, options = [], title = '', value = '', field = ''} = rule;
+    rule.col = parseCol(col);
+    rule.props = parseProps(props);
+    rule.emitEvent = parseEmit(field, emit, vm);
+    rule.event = extend(parseEvent(event), rule.emitEvent);
+    rule.validate = parseArray(validate);
+    rule.options = parseArray(options);
+    rule.title = title;
+    rule.value = value;
+    rule.field = field;
+
+    if (Object.keys(rule.emitEvent).length > 0)
+        extend(rule.on, rule.emitEvent);
+
+    return rule
+}
+
+export function parseArray(validate) {
+    return Array.isArray(validate) ? validate : []
+}
+
+export function parseEmit(field, emit, vm) {
+    let event = {};
+
+    if (!Array.isArray(emit)) return event;
+
+    emit.forEach((eventName) => {
+        event[`on-${eventName}`] = event[`${eventName}`] = (...arg) => {
+            vm.$emit(toLine(`${field}-${eventName}`).replace('_', '-'), ...arg);
         };
     });
 
-    rule.validate = isArray(validate) ? validate : [validate];
-    if(!isArray(rule.options)) rule.options = [];
-    rule.col = col;
-    rule.props = props;
-    this.rule = rule;
-    this.field = field;
-    this.vm = vm;
-    this.unique = 'fc_'+uniqueId();
-    this.refName = field+''+this.unique;
-    this.el = {};
-    this.init();
-};
+    return event
+}
 
-handler.prototype = {
-	init(){
+export function parseEvent(event) {
+    Object.keys(event).forEach(function (eventName) {
+        const _name = toString(eventName).indexOf('on-') === 0 ? eventName : `on-${eventName}`;
 
-    },
-	toParseValue(value = '')
-	{
-		return value.toString();
-	},
-    toTrueValue(parseValue){
-	    return parseValue;
-    },
-	setValue(value){
-	    this.vm.changeTrueData(this.field,value);
-	},
-    getValue(){
-        return this.vm.getTrueDataValue(this.field);
-    },
-    setParseValue(parseValue){
-        this.setValue(this.toTrueValue(parseValue));
-    },
-	watchTrueValue(n){
-		this.vm.changeFormData(this.field,this.toParseValue(n));
-	},
-	mounted(){
+        if (_name !== eventName) {
+            event[_name] = event[eventName];
+            // delete event[eventName];
+        }
+    });
 
-	},
-	mounted_(){
-		this.el = this.vm.$refs[this.refName];
-		this.mounted();
-    }
-};
+    return event
+}
 
-export default handlerFactory;
+export function parseProps(props) {
+    if (isUndef(props.hidden))
+        props.hidden = false;
+    if (isUndef(props.visibility))
+        props.visibility = false;
+
+    return props
+}
+
+export function parseCol(col) {
+    if (isNumeric(col)) {
+        return {span: col};
+    } else if (col.span === undefined)
+        col.span = 24;
+
+    return col
+}

@@ -1,25 +1,26 @@
 import {formCreateName} from './component';
 import {componentCommon} from "./common";
 
-const formCreateComponent = function (fComponent) {
+export default function formCreateComponent(fComponent) {
     return {
-        name:`${formCreateName}Core`,
-        data:componentCommon.data,
-        render:()=>{
+        name: `${formCreateName}Core`,
+        data: componentCommon.data,
+        render: () => {
             return fComponent.fRender.parse(fComponent.vm);
         },
-        methods:componentCommon.methods,
-        created(){
+        methods: componentCommon.methods,
+        created() {
             this.fComponent = fComponent;
-            this.fComponent._type='rules';
+            this.fComponent._type = 'rules';
             fComponent.init(this);
         },
-        mounted(){
+        mounted() {
             fComponent.mounted(this);
             this.$f = fComponent.fCreateApi;
             this.init();
+            this.$watch('rules', n => {
+                this.fComponent.reload(n);
+            })
         }
     }
 };
-
-export default formCreateComponent;
