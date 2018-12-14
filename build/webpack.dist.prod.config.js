@@ -1,5 +1,7 @@
 const webpack = require('webpack');
-const UglifyjsWebpackPlugin = require('uglifyjs-webpack-plugin');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const CompressionPlugin = require('compression-webpack-plugin');
+
 module.exports = {
     entry: __dirname + '/../src/index.js',
     output: {//输出文件
@@ -18,9 +20,16 @@ module.exports = {
     },
     plugins: [
         new webpack.optimize.ModuleConcatenationPlugin(),
-        new UglifyjsWebpackPlugin({
+        new UglifyJsPlugin({
             parallel: true,
             sourceMap: true
+        }),
+        new CompressionPlugin({
+            asset: '[path].gz[query]',
+            algorithm: 'gzip',
+            test: /\.(js|css)$/,
+            threshold: 10240,
+            minRatio: 0.8
         }),
         new webpack.BannerPlugin('form-create v1.4 | github https://github.com/xaboy/form-create | author xaboy')
     ],
