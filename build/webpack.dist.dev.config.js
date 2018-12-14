@@ -16,6 +16,7 @@ module.exports = {
         }]
     },
     plugins: [
+        new webpack.optimize.ModuleConcatenationPlugin(),
         new webpack.BannerPlugin('form-create v1.4 | github https://github.com/xaboy/form-create | author xaboy')
     ],
     resolve: {

@@ -20,7 +20,7 @@ export function defVData() {
 export default class VData {
 
     constructor() {
-        this._data = defVData();
+        this.init();
     }
 
     class(classList, status = true) {
@@ -48,7 +48,7 @@ export default class VData {
     }
 
     init() {
-        this.constructor();
+        this._data = defVData();
         return this
     }
 

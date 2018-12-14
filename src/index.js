@@ -1,6 +1,6 @@
 import formCreate from './core/formCreate';
 
-if(typeof window !== 'undefined' && window.Vue){
+if (typeof window !== 'undefined' && window.Vue) {
     window.Vue.use(formCreate);
 }
 
