@@ -1,4 +1,5 @@
 const webpack = require('webpack');
+const UglifyjsWebpackPlugin = require('uglifyjs-webpack-plugin');
 module.exports = {
     entry: __dirname + '/../src/index.js',
     output: {//输出文件
@@ -17,14 +18,9 @@ module.exports = {
     },
     plugins: [
         new webpack.optimize.ModuleConcatenationPlugin(),
-        new webpack.optimize.UglifyJsPlugin({
-            compress: {
-                warnings: false
-            },
-            output:{
-                comments:false,
-                beautify: false
-            }
+        new UglifyjsWebpackPlugin({
+            parallel: true,
+            sourceMap: true
         }),
         new webpack.BannerPlugin('form-create v1.4 | github https://github.com/xaboy/form-create | author xaboy')
     ],

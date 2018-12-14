@@ -29,13 +29,13 @@
     "url": "https://github.com/xaboy/form-create.git"
   },
   "keywords": [
-    "form",
-    "form generate",
-    "form builder",
     "form-create",
-    "form init",
-    "create form",
-    "easy form"
+    "vue.js",
+    "iview",
+    "form",
+    "form-generate",
+    "form-builder",
+    "components"
   ],
   "author": "xaboy",
   "license": "MIT",
@@ -43,16 +43,37 @@
     "url": "https://github.com/xaboy/form-create/issues"
   },
   "homepage": "https://github.com/xaboy/form-create#readme",
+  "peerDependencies": {
+    "vue": "^2.5.2"
+  },
   "devDependencies": {
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.2",
-    "babel-preset-es2015": "^6.24.1",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-preset-env": "^1.7.0",
+    "babel-runtime": "^6.26.0",
     "html-webpack-plugin": "^3.2.0",
     "iview": "^3.1.4",
+    "uglifyjs-webpack-plugin": "^1.3.0",
     "vue": "^2.5.13",
     "webpack": "^3.11.0",
     "webpack-cli": "^2.0.14",
     "webpack-dev-server": "^2.11.2"
   },
-  "dependencies": {}
+  "dependencies": {},
+  "engines": {
+    "node": ">=8.9.1",
+    "npm": ">=5.5.1",
+    "yarn": ">=1.3.2"
+  },
+  "browserslist": [
+    "last 3 Chrome versions",
+    "last 3 Firefox versions",
+    "Safari >= 10",
+    "Explorer >= 11",
+    "Edge >= 12",
+    "iOS >= 10",
+    "Android >= 6"
+  ]
 }
