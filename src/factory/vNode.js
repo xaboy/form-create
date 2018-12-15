@@ -59,7 +59,8 @@ const nodes = {
     form: 'i-form',
     col: 'i-col',
     row: 'row',
-    tree: 'Tree'
+    tree: 'Tree',
+    AutoComplete: 'AutoComplete',
 };
 
 Object.keys(nodes).forEach((k) => {

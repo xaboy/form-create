@@ -23,7 +23,7 @@
     ]
   ],
   "plugins": [
-    "transform-object-rest-spread",
-    "transform-runtime"
+//    "transform-object-rest-spread",
+//    "transform-runtime"
   ]
 }

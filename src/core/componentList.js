@@ -14,6 +14,7 @@ import rateComponent from "../components/rate";
 import sliderComponent from "../components/slider";
 import frameComponent from "../components/frame";
 import treeComponent from "../components/tree";
+import autoCompleteComponent from "../components/autoComplete";
 
 
 const componentList = {
@@ -29,10 +30,11 @@ const componentList = {
     colorpicker: colorPickerComponent,
     upload: uploadComponent,
     cascader: cascaderComponent,
-    rate:rateComponent,
-    slider:sliderComponent,
-    frame:frameComponent,
-    tree:treeComponent
+    rate: rateComponent,
+    slider: sliderComponent,
+    frame: frameComponent,
+    tree: treeComponent,
+    autocomplete: autoCompleteComponent,
 };
 
 export default componentList

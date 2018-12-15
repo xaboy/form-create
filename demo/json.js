@@ -14,7 +14,7 @@ function jsonMock() {
             value: ['陕西省', '西安市', '新城区'],
             props: {
                 //可选项的数据源，格式参照示例说明
-                data: window.province_city_area || [],
+                data: window.province_city || [],
                 //选择后展示的函数，用于自定义显示格式
                 renderFormat: label => label.join(' / '),
                 //是否禁用选择器
@@ -60,6 +60,22 @@ function jsonMock() {
                 "spellcheck": false, //原生的 spellcheck 属性
                 "required": false,
             },
+        },
+        {
+            type: "autoComplete",
+            title: "自动完成",
+            field: "auto",
+            value: "xaboy",
+            props: {
+                data: [
+                    'xaboy',
+                    'xian',
+                    'github'
+                ],
+                filterMethod: (value, option) => {
+                    return option.toUpperCase().indexOf(value.toUpperCase()) !== -1
+                }
+            }
         },
         {
             type: "radio",

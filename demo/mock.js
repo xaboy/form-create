@@ -2,11 +2,11 @@ var maker = formCreate.maker;
 
 //使用maker 生成器生成
 function mock() {
-
-    return [
+    let mock;
+    return mock = [
         maker.hidden('id', '14'),
         maker.cascader('所在区域', 'address', ['陕西省', '西安市', '新城区']).props({
-            data: window.province_city_area || [],
+            data: window.province_city || [],
             hidden: false
         }),
         maker.input('商品名称', 'goods_name', 'iphone').props({
@@ -17,6 +17,16 @@ function mock() {
         ]).event({
             change: console.log
         }).emit(['change']),
+        maker.auto('自动完成', 'auto', 'xaboy').props({
+            data: [
+                'xaboy',
+                'xian',
+                'github'
+            ],
+            filterMethod: (value, option) => {
+                return option.toUpperCase().indexOf(value.toUpperCase()) !== -1
+            }
+        }),
         maker.input('商品简介', 'goods_info', '').props({
             type: 'textarea',
             autosize: {minRows: 5, maxRows: 9}

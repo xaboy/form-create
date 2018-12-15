@@ -190,7 +190,6 @@ export default class FormCreate {
             throw new Error(`${field}字段不存在`);
         let watch = this.handlers[field].watch;
 
-        // this.trueData[field] && (this.trueData[field].rule.props.hidden = true);
         delete this.handlers[field];
         delete this.validate[field];
         watch && watch.forEach((unWatch) => unWatch());
@@ -198,8 +197,6 @@ export default class FormCreate {
         this.fRender.removeRender(field);
         delete this.formData[field];
         delete this.trueData[field];
-        // render.cache = null;
-        // this.vm.refresh();
     }
 
     addHandlerWatch(handler) {
