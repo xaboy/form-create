@@ -145,7 +145,7 @@ class render extends Render {
                 }
             }
         }, [
-            this.vNode.icon({key: `ifbi${unique}`, props: {type: this._props.icon, size: 20}})
+            this.vNode.icon({key: `ifbi3${unique}`, props: {type: this._props.icon, size: 20}})
         ])
     }
 

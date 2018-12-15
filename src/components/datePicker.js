@@ -30,7 +30,6 @@ class handler extends Handler {
             parseValue = isArr ? (value[0] || '') : value;
             parseValue = !parseValue ? '' : timeStampToDate(parseValue);
         }
-        console.log(parseValue, value);
         return parseValue;
     }
 

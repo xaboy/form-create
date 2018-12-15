@@ -129,7 +129,6 @@ export const formCreateStyle = '.form-create{padding:25px;} .fc-upload-btn,.fc-f
 export function getGlobalApi(fComponent) {
     let vm = fComponent.vm;
     return {
-        // core:fComponent,
         formData: () => {
             return Object.keys(vm.trueData).reduce((initial, key) => {
                 initial[key] = vm.trueData[key].value;
@@ -172,7 +171,9 @@ export function getGlobalApi(fComponent) {
             });
         },
         validateField: (field, callback) => {
-            fComponent.getFormRef().validateField(toString(field), callback);
+            if (fComponent.notField(field))
+                throw new Error(`${field}字段不存在`);
+            fComponent.getFormRef().validateField(field, callback);
         },
         resetFields: function () {
             let handlers = fComponent.handlers;
@@ -298,7 +299,7 @@ export function getGlobalApi(fComponent) {
             vm.sync();
         },
         onSuccess(fn) {
-            this.setOption({onSubmit: fn});
+            this.options({onSubmit: fn});
         },
         sync: (field, callback) => {
             if (fComponent.handlers[field])

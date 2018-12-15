@@ -890,7 +890,6 @@ function getGlobalApi(fComponent) {
 
     var vm = fComponent.vm;
     return {
-        // core:fComponent,
         formData: function formData() {
             _newArrowCheck(this, _this2);
 
@@ -944,7 +943,8 @@ function getGlobalApi(fComponent) {
         validateField: function validateField(field, callback) {
             _newArrowCheck(this, _this2);
 
-            fComponent.getFormRef().validateField((0, _util.toString)(field), callback);
+            if (fComponent.notField(field)) throw new Error(String(field) + '\u5B57\u6BB5\u4E0D\u5B58\u5728');
+            fComponent.getFormRef().validateField(field, callback);
         }.bind(this),
         resetFields: function resetFields() {
             var _this3 = this;
@@ -1133,7 +1133,7 @@ function getGlobalApi(fComponent) {
             vm.sync();
         }.bind(this),
         onSuccess: function onSuccess(fn) {
-            this.setOption({ onSubmit: fn });
+            this.options({ onSubmit: fn });
         },
 
         sync: function sync(field, callback) {
@@ -1455,10 +1455,7 @@ var FormCreate = function () {
 
         _classCallCheck(this, FormCreate);
 
-        console.log('constructor');
-        console.log(options);
         this.options = margeGlobal(options);
-        console.log(this.options);
         this.rules = Array.isArray(rules) ? rules : [];
         // this.rules.forEach((rule, index) => {
         //     if (isFunction(rule.getRule))
@@ -1576,11 +1573,9 @@ var FormCreate = function () {
                     _newArrowCheck(this, _this4);
 
                     var handler = this.handlers[field];
-                    console.log(vm.cptData[field] !== undefined, field);
                     if (vm.cptData[field] !== undefined) this.addHandlerWatch(handler);
                     handler.mounted();
                 }.bind(this));
-                console.log(this.options);
                 this.options.mounted && this.options.mounted(this.fCreateApi);
             }.bind(this));
         }
@@ -1674,7 +1669,6 @@ var FormCreate = function () {
             var bind = (0, _util.debounce)(function (n, o) {
                 _newArrowCheck(this, _this7);
 
-                console.trace('---------------chage---------------');
                 if (this.handlers[field] !== undefined) {
                     this.$tick(function () {
                         _newArrowCheck(this, _this7);
@@ -1748,7 +1742,6 @@ var FormCreate = function () {
     }, {
         key: "install",
         value: function install(Vue) {
-            console.trace('install');
             Vue.prototype.$formCreate = function (rules) {
                 var opt = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
@@ -1768,6 +1761,7 @@ exports.default = FormCreate;
 
 
 FormCreate.maker = _maker2.default;
+FormCreate.version = version;
 
 /***/ }),
 /* 7 */
@@ -2069,7 +2063,6 @@ var handler = function (_Handler) {
         value: function mounted() {
             _get(handler.prototype.__proto__ || Object.getPrototypeOf(handler.prototype), "mounted", this).call(this);
             // this.el.fileList = this.parseValue;
-            console.log(this.el);
             this.changeParseValue(this.el.fileList);
         }
     }, {
@@ -3094,7 +3087,6 @@ var handler = function (_Handler) {
                 parseValue = isArr ? value[0] || '' : value;
                 parseValue = !parseValue ? '' : (0, _common.timeStampToDate)(parseValue);
             }
-            console.log(parseValue, value);
             return parseValue;
         }
     }, {
@@ -3311,7 +3303,6 @@ var handler = function (_Handler) {
     _createClass(handler, [{
         key: "toParseValue",
         value: function toParseValue(value) {
-            console.log(value);
             var parseValue = parseFloat(value);
             if (Number.isNaN(parseValue)) parseValue = 0;
             return parseValue;
@@ -3910,7 +3901,7 @@ var render = function (_Render) {
                         this.showModel();
                     }.bind(this)
                 }
-            }, [this.vNode.icon({ key: "ifbi" + String(unique), props: { type: this._props.icon, size: 20 } })]);
+            }, [this.vNode.icon({ key: "ifbi3" + String(unique), props: { type: this._props.icon, size: 20 } })]);
         }
     }, {
         key: "makeSpin",
@@ -4526,7 +4517,6 @@ var Form = function () {
 
             this.vNode.setVm(vm);
             if (!vm.isShow) return;
-            console.log('parse----------------');
             if (this.cacheUnique !== vm.unique) {
                 this.renderSort.map(function (field) {
                     _newArrowCheck(this, _this2);

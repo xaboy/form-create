@@ -45,7 +45,6 @@ class handler extends Handler {
     mounted() {
         super.mounted();
         // this.el.fileList = this.parseValue;
-        console.log(this.el);
         this.changeParseValue(this.el.fileList);
     }
 

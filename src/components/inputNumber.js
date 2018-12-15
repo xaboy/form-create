@@ -6,7 +6,6 @@ const name = "inputNumber";
 
 class handler extends Handler {
     toParseValue(value) {
-        console.log(value);
         let parseValue = parseFloat(value);
         if (Number.isNaN(parseValue)) parseValue = 0;
         return parseValue

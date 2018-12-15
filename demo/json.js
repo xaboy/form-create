@@ -317,7 +317,7 @@ function jsonMock() {
                 type: "image", //frame类型,有input,file,image
                 src: "iframe.html", //iframe地址
                 maxLength: 2, //value的最大数量
-                icon: 'folder', //打开弹出框的按钮图标
+                icon: undefined, //打开弹出框的按钮图标
                 height: "220px", //弹出框高度
                 width: "350px", //弹出框宽度
                 spin: false, //是否显示加载动画

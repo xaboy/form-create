@@ -43,10 +43,7 @@ export function initStyle() {
 export default class FormCreate {
 
     constructor(rules, options = {}) {
-        console.log('constructor');
-        console.log(options);
         this.options = margeGlobal(options);
-        console.log(this.options);
         this.rules = Array.isArray(rules) ? rules : [];
         // this.rules.forEach((rule, index) => {
         //     if (isFunction(rule.getRule))
@@ -71,7 +68,6 @@ export default class FormCreate {
     };
 
     static install(Vue) {
-        console.trace('install');
         Vue.prototype.$formCreate = function (rules, opt = {}) {
             return FormCreate.create(rules, opt, Vue)
         };
@@ -155,12 +151,10 @@ export default class FormCreate {
         vm.$nextTick(() => {
             Object.keys(this.handlers).map((field) => {
                 let handler = this.handlers[field];
-                console.log(vm.cptData[field] !== undefined, field);
                 if (vm.cptData[field] !== undefined)
                     this.addHandlerWatch(handler);
                 handler.mounted();
             });
-            console.log(this.options);
             this.options.mounted && this.options.mounted(this.fCreateApi);
         });
     }
@@ -232,7 +226,6 @@ export default class FormCreate {
         handler.watch = [unWatch, unWatch2];
 
         const bind = debounce((n, o) => {
-            console.trace('---------------chage---------------');
             if (this.handlers[field] !== undefined) {
                 this.$tick(() => handler.render.sync());
             } else
@@ -274,3 +267,4 @@ export default class FormCreate {
 }
 
 FormCreate.maker = maker;
+FormCreate.version = version;

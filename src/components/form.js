@@ -38,7 +38,6 @@ export default class Form {
         this.vNode.setVm(vm);
         if (!vm.isShow)
             return;
-        console.log('parse----------------');
         if (this.cacheUnique !== vm.unique) {
             this.renderSort.map((field) => {
                 this.renders[field].clearCache();
