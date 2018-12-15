@@ -1,4 +1,4 @@
-/*! form-create v1.4 | github https://github.com/xaboy/form-create | author xaboy */
+/*! form-create v1.5 | github https://github.com/xaboy/form-create | author xaboy */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -165,8 +165,15 @@ var Handler = function () {
     }, {
         key: 'mounted',
         value: function mounted() {
+            var _this = this;
+
             this.el = this.vm.$refs[this.refName];
             this.defaultValue = this.toTrueValue(this.vm.$refs['fItem' + this.refName] ? this.vm.$refs['fItem' + this.refName].initialValue : (0, _util.deepExtend)({}, { value: this.rule.value }).value);
+            if (this.childrenHandlers.length > 0) this.childrenHandlers.forEach(function (handler) {
+                _newArrowCheck(this, _this);
+
+                return handler.mounted();
+            }.bind(this));
         }
     }]);
 
@@ -216,21 +223,21 @@ function parseArray(validate) {
 }
 
 function parseEmit(field, emit, vm) {
-    var _this = this;
+    var _this2 = this;
 
     var event = {};
 
     if (!Array.isArray(emit)) return event;
 
     emit.forEach(function (eventName) {
-        _newArrowCheck(this, _this);
+        _newArrowCheck(this, _this2);
 
         event['on-' + String(eventName)] = event['' + String(eventName)] = function () {
             for (var _len = arguments.length, arg = Array(_len), _key = 0; _key < _len; _key++) {
                 arg[_key] = arguments[_key];
             }
 
-            _newArrowCheck(this, _this);
+            _newArrowCheck(this, _this2);
 
             vm.$emit.apply(vm, [(0, _util.toLine)(String(field) + '-' + String(eventName)).replace('_', '-')].concat(arg));
         }.bind(this);
@@ -1457,17 +1464,15 @@ var FormCreate = function () {
 
         this.options = margeGlobal(options);
         this.rules = Array.isArray(rules) ? rules : [];
-        // this.rules.forEach((rule, index) => {
-        //     if (isFunction(rule.getRule))
-        //         this.rules[index] = rule.getRule();
-        //
-        // });
+
         this.handlers = {};
         this.fRender = {};
         this.formData = {};
         this.validate = {};
         this.trueData = {};
         this.fieldList = [];
+        this.switchMaker = (0, _util.isUndef)(options.switchMaker) ? true : Boolean(options.switchMaker);
+
         initStyle();
     }
 
@@ -1516,10 +1521,11 @@ var FormCreate = function () {
         value: function createHandler() {
             var _this2 = this;
 
-            this.rules.forEach(function (rule) {
+            this.rules.forEach(function (rule, index) {
                 _newArrowCheck(this, _this2);
 
                 rule = getRule(rule);
+                if (this.switchMaker) this.rules[index] = rule;
                 rule.field = rule.field === undefined ? '' : (0, _util.toString)(rule.field);
                 if (this.notField(rule.field)) {
                     var handler = (0, _common.getComponent)(this.vm, rule, this.options);
@@ -1537,10 +1543,11 @@ var FormCreate = function () {
             var _this3 = this;
 
             if (Array.isArray(handler.rule.children) && handler.rule.children.length > 0) {
-                handler.rule.children.map(function (rule) {
+                handler.rule.children.map(function (rule, index) {
                     _newArrowCheck(this, _this3);
 
                     rule = getRule(rule);
+                    if (this.switchMaker) handler.rule.children[index] = rule;
                     rule.field = rule.field === undefined ? '' : (0, _util.toString)(rule.field);
                     if (this.notField(rule.field)) {
                         var _handler = (0, _common.getComponent)(this.vm, rule, this.options);
@@ -2149,6 +2156,7 @@ var render = function (_Render) {
         key: "onSuccess",
         value: function onSuccess(response, file, fileList) {
             var url = this.uploadOptions.onSuccess.call(null, response, file, fileList);
+            console.log(url);
             if (!(0, _util.isUndef)(url)) {
                 fileList.push({
                     url: url,
@@ -4725,7 +4733,7 @@ var maker = function () {
         create: function create(type) {
             var field = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'tmp' + (0, _util.uniqueId)();
 
-            var make = (0, _creator.creatorFactory)('')('', field);
+            var make = commonMaker('', field);
             make.rule.type = type;
             make.col({ labelWidth: 1 });
             return make;
@@ -4741,6 +4749,7 @@ var maker = function () {
             return make;
         }
     });
+    _m.template = _m.createTmp;
 
     return _m;
 }.bind(undefined)();

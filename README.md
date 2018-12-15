@@ -18,27 +18,25 @@
   <a href="https://www.npmjs.com/package/form-create">
     <img src="https://img.shields.io/npm/dt/form-create.svg" alt="npm" />
   </a>
-  <img src="http://img.badgesize.io/https://cdn.jsdelivr.net/gh/xaboy/form-create@1.3.0/dist/form-create.min.js?compression=gzip&amp;label=gzip%20size&amp;style=flat-square" alt="JS gzip size">
+  <img src="http://img.badgesize.io/https://cdn.jsdelivr.net/gh/xaboy/form-create/dist/form-create.min.js?compression=gzip&amp;label=gzip%20size&amp;style=flat-square" alt="JS gzip size">
 </p>
 
 <p align="center">
-  <b>具有数据收集、校验和提交功能的表单生成器，支持双向数据绑定和事件扩展，组件包含有复选框、单选框、输入框、下拉选择框等表单元素以及省市区三级联动,时间选择,日期选择,颜色选择,滑块,评分,框架,树型,文件/图片上传等功能组件。</b>
+  <b>具有动态渲染、数据收集、校验的表单生成器，支持双向数据绑定、事件扩展以及自定义组件，内置组件包含有省市区三级联动、时间选择、日期选择等17种功能组件。</b>
 </p>
 <br />
 
-> 1.4.5 版本已支持 iview3
+>  \>=1.4.5 版本已支持 iview3
 
 
 
 
-### 计划
-- 内部结构重构
-- 性能优化
-- 支持 ElementUi
+### 计划 (2018-11-30)
+- [x] 内部结构重构 `1.5.0版本`
 
-**期待就点个赞吧 亲!**
+- [x] 性能优化`1.5.0版本`
 
-
+- [ ] 支持 ElementUi
 
 
 
@@ -50,47 +48,47 @@
 
 ### 本项目QQ讨论群[28963712](https://jq.qq.com/?_wv=1027&k=54aKUVw)
 
-## 1.4 版本重大更新
 
-- 新增 使用标签模式生成 `<form-create>`
-- 优化 maker规则生成器
-- 新增 **生成任意标签组件** `maker.create(componentName)
-- 新增 标签模式下支持emit触发事件
-- 新增 使用 **template 快速生成自定义组件** `maker.createTmp(template,vm)`
-- 支持 `iview>=3.1.4`版本
+
+## 1.5版本更新说明
+
+- 优化 **内部重构**
+- 优化 内置组件缓存功能,**按需重新渲染**
+- 优化 **性能优化**,优化内部结构,优化内部事件机制,**性能秒杀之前所有版本**
+- 增强 **maker 生成器功能**,可直接根据具体type 生成,例如`datePicker`组件的`.date`、`.dateRange`等
+- 新增 `options`、`onSuccess` 方法,重新修改 options 配置
+- 新增 `sync(field)`**手动刷新**指定组件、和`reflash`方法**手动全局刷新**
+- 新增 `autoComplete`  **自动生成组件**
+- 增强 自定义组件
 
 
 ## 更新说明
 
 > 建议保持在最新版本
 
-#### 1.4.6 (2018-11-25)
+#### 1.5.0 (2018-12-15)
 
-* 修复 upload 组件 onRemove 不触发bug
-* 修复 ie 下兼容性问题
-* 修复 checkbox,radio 组件不能选中 bug
-* 修复 滑块组件不传值时默认 NAN bug
-
-#### 1.4.5 (2018-11-12)
-
-* 优化 上传组件图标显示
-* 修复 上传组件图片无法删除
-* 新增 `options.mounted` 表单创建成功后的回调函数
-* 支持 `iview>=3.1.4`版本
-
-#### 1.4.4 (2018-11-4)
-
-* 优化 内部功能优化,参数优化
-* 新增 使用 **reload 更新生成规则** `$f.reload(newRules)`
-* 新增 **标签模式下生成规则发生变化时表单自动刷新**
-* 修复 `npm run dev`命令无法有时打开 Demo
+* 优化 **内部重构**
+* 优化 内置组件缓存功能,**按需重新渲染**
+* 优化 **性能优化**,优化内部结构,优化内部事件机制,**性能秒杀之前所有版本**
+* 增强 **maker 生成器功能**,可直接根据具体type 生成,例如`datePicker`组件的`.date`、`.dateRange`等
+* 新增 `options`、`onSuccess` 方法,重新修改 options 配置
+* 新增 `sync(field)`**手动刷新**指定组件、和`reflash`方法**手动全局刷新**
+* 新增 `autoComplete`  **自动生成组件**
+* 增强 自定义组件
+* 新增 `createTmp `的别名`template`
+* 修复 自定义组件获取 `$el` 
+* 修复 `upload` 组件上传失败后会显示新图片
+* 新增 `options.mounted`增加参数`$f`
+* 修复 `checkbox`  和`radio`组件首屏加载时选中 bug
+* 新增 `options.switchMaker=ture`参数,是否将规则中的 maker 生成器自动转换为对象
 
 
 ## 示例 [在线预览](https://jsrun.net/NQhKp/edit)
 
 ![https://raw.githubusercontent.com/xaboy/form-create/dev/images/sample110.jpg](https://raw.githubusercontent.com/xaboy/form-create/dev/images/sample110.jpg)
 
-## Demo
+## 在线实例
 
 使用 maker 生成器生成: [demo](https://jsrun.net/NQhKp/edit)
 
@@ -98,19 +96,17 @@
 
 各组件生成: [demo](https://jsrun.net/user/xaboy)
 
+
+
 ## 安装
 
 ```shell
 npm install form-create
 ```
-OR
-```shell
-git clone https://github.com/xaboy/form-create.git
-cd form-create
-npm install
-```
+
 
 ## 引入
+
 浏览器:
 ```html
 <!-- import Vue 2.5.16-->
@@ -156,7 +152,9 @@ OR
 
 
 
-## 使用
+
+
+## 生成
 
 ```javascript
 //示例规则
@@ -188,7 +186,9 @@ new Vue({
 })
 ```
 
-# 组件模式下使用
+
+
+# 组件模式
 
 ```html
 <form-create ref="fc" :rule="rule" :option="option"></form-create>

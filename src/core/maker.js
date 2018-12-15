@@ -22,7 +22,7 @@ const maker = (() => {
 
     extend(_m, {
         create(type, field = 'tmp' + uniqueId()) {
-            let make = creatorFactory('')('', field);
+            let make = commonMaker('', field);
             make.rule.type = type;
             make.col({labelWidth: 1});
             return make;
@@ -36,6 +36,7 @@ const maker = (() => {
             return make;
         }
     });
+    _m.template = _m.createTmp;
 
     return _m;
 })();

@@ -20,7 +20,7 @@ module.exports = {
         }]
     },
     plugins: [
-        new webpack.BannerPlugin('form-create v1.4 | github https://github.com/xaboy/form-create | author xaboy'),
+        new webpack.BannerPlugin('form-create v1.5 | github https://github.com/xaboy/form-create | author xaboy'),
         new HtmlWebpackPlugin({
             template: path.resolve(__dirname, '../demo/index.html'),
             filename: path.resolve(__dirname, '../demo/index.html'),

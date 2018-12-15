@@ -136,7 +136,7 @@ function mock() {
 
         maker.upload('轮播图', 'pic', ['http://img1.touxiang.cn/uploads/20131030/30-075657_191.jpg'])
             .props({
-                "action": "",
+                "action": "http://127.0.0.1:8000/index/index/upload",
                 "maxLength": 4,
                 "multiple": true,
                 "type": "select",

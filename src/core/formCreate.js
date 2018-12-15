@@ -1,4 +1,4 @@
-import {debounce, deepExtend, isBool, isElement, isFunction, toString} from "../core/util";
+import {debounce, deepExtend, isBool, isElement, isFunction, isUndef, toString} from "../core/util";
 import {formCreateStyle, getComponent, getConfig, getGlobalApi} from "../core/common";
 import formRender from "../components/form";
 import formCreateComponent from "../core/formCreateComponent";
@@ -45,17 +45,15 @@ export default class FormCreate {
     constructor(rules, options = {}) {
         this.options = margeGlobal(options);
         this.rules = Array.isArray(rules) ? rules : [];
-        // this.rules.forEach((rule, index) => {
-        //     if (isFunction(rule.getRule))
-        //         this.rules[index] = rule.getRule();
-        //
-        // });
+
         this.handlers = {};
         this.fRender = {};
         this.formData = {};
         this.validate = {};
         this.trueData = {};
         this.fieldList = [];
+        this.switchMaker = isUndef(options.switchMaker) ? true : Boolean(options.switchMaker);
+
         initStyle();
     }
 
@@ -109,8 +107,10 @@ export default class FormCreate {
     }
 
     createHandler() {
-        this.rules.forEach((rule) => {
+        this.rules.forEach((rule, index) => {
             rule = getRule(rule);
+            if (this.switchMaker)
+                this.rules[index] = rule;
             rule.field = rule.field === undefined ? '' : toString(rule.field);
             if (this.notField(rule.field)) {
                 let handler = getComponent(this.vm, rule, this.options);
@@ -126,8 +126,10 @@ export default class FormCreate {
 
     createChildren(handler) {
         if (Array.isArray(handler.rule.children) && handler.rule.children.length > 0) {
-            handler.rule.children.map((rule) => {
+            handler.rule.children.map((rule, index) => {
                 rule = getRule(rule);
+                if (this.switchMaker)
+                    handler.rule.children[index] = rule;
                 rule.field = rule.field === undefined ? '' : toString(rule.field);
                 if (this.notField(rule.field)) {
                     let _handler = getComponent(this.vm, rule, this.options);

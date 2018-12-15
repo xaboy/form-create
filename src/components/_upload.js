@@ -44,8 +44,6 @@ class handler extends Handler {
 
     mounted() {
         super.mounted();
-        // this.el.fileList = this.parseValue;
-        this.rule.props.defaultFileList = this.parseValue;
         this.changeParseValue(this.el.fileList);
     }
 
@@ -67,21 +65,24 @@ class handler extends Handler {
     changeParseValue(parseValue) {
         this.parseValue = parseValue;
         this.vm.changeFormData(this.field, parseValue);
+        // this.vm.getTrueData(this.field).rule.props.defaultFileList = parseValue;
     }
 
     // watchParseValue(n){
-    //
+    //     super.watchParseValue(n);
+    //     this.render.sync();
     // }
 
     watchTrueValue(n) {
+        console.log('watchTrueValue', n);
         let b = true;
         this.rule.props.defaultFileList.forEach((pic) => {
             b = b && (pic.percentage === undefined || pic.status === 'finished');
         });
-        if (b)
+        if (b) {
             super.watchTrueValue(n);
+        }
     }
-
 
 }
 
@@ -99,21 +100,13 @@ class render extends Render {
 
     onSuccess(response, file, fileList) {
         let url = this.uploadOptions.onSuccess.call(null, response, file, fileList);
-
         if (!isUndef(url)) {
-            file.url = url;
-            file.showProgress = false;
-
-            // fileList.push({
-            //     url,
-            //     name: getFileName(url)
-            // });
-            // this.handler.changeParseValue(this.handler.el.fileList);
-
-        } else {
-            let index = fileList.indexOf(file);
-            if (index !== -1)
-                fileList.splice(index, 1);
+            fileList.push({
+                url,
+                name: getFileName(url)
+            });
+            this.handler.changeParseValue(this.handler.el.fileList);
+            this.sync();
         }
     }
 
@@ -141,6 +134,7 @@ class render extends Render {
     }
 
     parse() {
+        console.log('parse');
         let {unique} = this.handler;
         this.init();
         if (this.uploadOptions.handleIcon === true) this.uploadOptions.handleIcon = 'ios-eye-outline';
@@ -148,12 +142,12 @@ class render extends Render {
             render = [...value.map((file, index) => {
                 if (file.showProgress) {
                     return this.makeProgress(file, `uppg${index}${unique}`);
-                } else if (file.status === undefined || file.status === 'finished') {
+                }else if (file.status === undefined || (file.status === 'finished' && isUndef(file.response))) {
                     return this.makeUploadView(file.url, `upview${index}${unique}`, index)
                 }
             })];
         render.push(this.makeUploadBtn(unique, (!this.uploadOptions.maxLength || this.uploadOptions.maxLength > this.vm.cptData[this.handler.field].length)));
-        return [this.vNode.make('div', {key: `div4${unique}`, class: {'fc-upload': true}}, render)];
+        return [this.vNode.make('div', {key: `updiv4${unique}`, class: {'fc-upload': true}}, render)];
     }
 
     cacheParse() {
@@ -186,8 +180,8 @@ class render extends Render {
     }
 
     makeProgress(file, unique) {
-        return this.vNode.make('div', {key: `div3${unique}`, class: {'fc-files': true}}, [
-            this.vNode.progress({key: `upp${unique}`, props: {percent: file.percentage, hideInfo: true}})
+        return this.vNode.make('div', {key: `updiv3${unique}`, class: {'fc-files': true}}, [
+            this.vNode.progress({key: `uppg${unique}`, props: {percent: file.percentage, hideInfo: true}})
         ]);
     }
 
