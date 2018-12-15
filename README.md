@@ -39,8 +39,9 @@
 - [ ] 支持 ElementUi
 
 
+## 文档
 
-### [开始使用](http://fc.gd8.top/749554) | [原说明文档](https://github.com/xaboy/form-create/wiki/%E8%AF%B4%E6%98%8E%E6%96%87%E6%A1%A3)
+### [开始使用|Doc](http://fc.gd8.top/749554)
 
 ### 如果对您有帮助，您可以点右上角 "Star" 支持一下 谢谢！
 
@@ -85,20 +86,14 @@
 * 新增 配置参数`options.iframeHelper=false`是否开启 `iframe`组件 **子页面助手函数**`${field}_change` ,**快速修改该组件的 value**.**跨域无效**
 
 
+## 在线示例
+
+[使用生成器生成](https://jsrun.net/NQhKp/edit) | [使用 json 生成](https://jsrun.net/NQhKp/edit) | [各种示例](https://jsrun.net/user/xaboy)
 
 
 ## 图例 [在线预览](https://jsrun.net/NQhKp/edit)
 
 ![https://raw.githubusercontent.com/xaboy/form-create/dev/images/sample110.jpg](https://raw.githubusercontent.com/xaboy/form-create/dev/images/sample110.jpg)
-
-## 在线实例
-
-使用 maker 生成器生成: [demo](https://jsrun.net/NQhKp/edit)
-
-使用 json 生成: [demo](https://jsrun.net/NQhKp/edit)
-
-各组件生成: [demo](https://jsrun.net/user/xaboy)
-
 
 
 ## 安装
