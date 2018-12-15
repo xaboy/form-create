@@ -51,8 +51,12 @@
 
 ## 文档
 
-### [开始使用|Doc](http://fc.gd8.top/749554)
+#### [开始使用|Doc](http://fc.gd8.top/749554)
 
+
+## 谁在使用 form-create
+
+- [CRMEB客户管理+电商管理系统](http://demo25.crmeb.net)账号：demo 密码：crmeb.com
 
 
 ## 1.5版本更新说明
@@ -239,7 +243,9 @@ new Vue({
 
 ## 参考
 
-iview框架: [iview](https://github.com/iview/iview)
+vue框架: [Vue](https://github.com/vuejs/vue)
+
+iviewUI框架: [iview](https://github.com/iview/iview)
 
 validate 表单验证规则，具体配置查看: [async-validator](https://github.com/yiminghe/async-validator)
 
@@ -248,7 +254,6 @@ accept 文件类型:  [attr-accept](https://developer.mozilla.org/en-US/docs/Web
 icon图标: [图标](https://www.iviewui.com/components/icon#示例)
 
 form-builder: [使用PHP快速生成现代化表单](https://github.com/xaboy/form-builder)
-
 
 
 ## 感谢
