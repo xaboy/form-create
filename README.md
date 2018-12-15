@@ -77,7 +77,7 @@
 * 新增 `autoComplete`  **自动生成组件**
 * 增强 自定义组件
 * 新增 `createTmp `的别名`template`
-* 修复 自定义组件获取 `$el` 
+* 修复 自定义组件获取 `$el`
 * 修复 `upload` 组件上传失败后会显示新图片
 * 新增 `options.mounted`增加参数`$f`
 * 修复 `checkbox`  和`radio`组件首屏加载时选中 bug
@@ -87,7 +87,7 @@
 
 
 
-## 示例 [在线预览](https://jsrun.net/NQhKp/edit)
+## 图例 [在线预览](https://jsrun.net/NQhKp/edit)
 
 ![https://raw.githubusercontent.com/xaboy/form-create/dev/images/sample110.jpg](https://raw.githubusercontent.com/xaboy/form-create/dev/images/sample110.jpg)
 
