@@ -2070,6 +2070,7 @@ var handler = function (_Handler) {
         value: function mounted() {
             _get(handler.prototype.__proto__ || Object.getPrototypeOf(handler.prototype), "mounted", this).call(this);
             // this.el.fileList = this.parseValue;
+            this.rule.props.defaultFileList = this.parseValue;
             this.changeParseValue(this.el.fileList);
         }
     }, {
@@ -2102,7 +2103,6 @@ var handler = function (_Handler) {
         value: function changeParseValue(parseValue) {
             this.parseValue = parseValue;
             this.vm.changeFormData(this.field, parseValue);
-            this.vm.getTrueData(this.field).rule.props.defaultFileList = parseValue;
         }
 
         // watchParseValue(n){
@@ -2156,14 +2156,19 @@ var render = function (_Render) {
         key: "onSuccess",
         value: function onSuccess(response, file, fileList) {
             var url = this.uploadOptions.onSuccess.call(null, response, file, fileList);
-            console.log(url);
+
             if (!(0, _util.isUndef)(url)) {
-                fileList.push({
-                    url: url,
-                    name: getFileName(url)
-                });
-                this.handler.changeParseValue(this.handler.el.fileList);
-                this.sync();
+                file.url = url;
+                file.showProgress = false;
+
+                // fileList.push({
+                //     url,
+                //     name: getFileName(url)
+                // });
+                // this.handler.changeParseValue(this.handler.el.fileList);
+            } else {
+                var index = fileList.indexOf(file);
+                if (index !== -1) fileList.splice(index, 1);
             }
         }
     }, {
@@ -2207,14 +2212,19 @@ var render = function (_Render) {
                 render = [].concat(_toConsumableArray(value.map(function (file, index) {
                 _newArrowCheck(this, _this8);
 
-                if (file.status === undefined || file.status === 'finished') {
-                    return this.makeUploadView(file.url, "" + String(index) + String(unique), index);
-                } else if (file.showProgress) {
-                    return this.makeProgress(file, "" + String(index) + String(unique));
+                if (file.showProgress) {
+                    return this.makeProgress(file, "uppg" + String(index) + String(unique));
+                } else if (file.status === undefined || file.status === 'finished') {
+                    return this.makeUploadView(file.url, "upview" + String(index) + String(unique), index);
                 }
             }.bind(this))));
             render.push(this.makeUploadBtn(unique, !this.uploadOptions.maxLength || this.uploadOptions.maxLength > this.vm.cptData[this.handler.field].length));
             return [this.vNode.make('div', { key: "div4" + String(unique), class: { 'fc-upload': true } }, render)];
+        }
+    }, {
+        key: "cacheParse",
+        value: function cacheParse() {
+            return this.parse();
         }
     }, {
         key: "makeUploadView",
