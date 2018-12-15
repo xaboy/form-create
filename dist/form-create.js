@@ -4585,7 +4585,7 @@ var Form = function () {
                 props: rule.col, 'class': {
                     '__fc_h': rule.props.hidden === true,
                     '__fc_v': rule.props.visibility === true
-                }, key: String(fItemUnique) + "col"
+                }, key: String(fItemUnique) + "col1"
             }, [this.vNode.formItem(propsData, VNodeFn)]);
         }
     }, {
@@ -4597,14 +4597,14 @@ var Form = function () {
             if (submitBtnShow) btn.push(this.makeSubmitBtn(unique, resetBtnShow ? 19 : 24));
             if (resetBtnShow) btn.push(this.makeResetBtn(unique, 4));
 
-            return this.vNode.col({ props: { span: 24 } }, btn);
+            return this.vNode.col({ props: { span: 24 }, key: String(this.unique) + "col2" }, btn);
         }
     }, {
         key: "makeResetBtn",
         value: function makeResetBtn(unique, span) {
             var _this3 = this;
 
-            return this.vNode.col({ props: { span: span, push: 1 } }, [this.vNode.button({
+            return this.vNode.col({ props: { span: span, push: 1 }, key: String(this.unique) + "col3" }, [this.vNode.button({
                 key: "frsbtn" + String(unique), props: this.vm.resetProps, on: {
                     "click": function click() {
                         _newArrowCheck(this, _this3);
@@ -4619,7 +4619,7 @@ var Form = function () {
         value: function makeSubmitBtn(unique, span) {
             var _this4 = this;
 
-            return this.vNode.col({ props: { span: span } }, [this.vNode.button({
+            return this.vNode.col({ props: { span: span }, key: String(this.unique) + "col4" }, [this.vNode.button({
                 key: "fbtn" + String(unique), props: this.vm.buttonProps, on: {
                     "click": function click() {
                         _newArrowCheck(this, _this4);

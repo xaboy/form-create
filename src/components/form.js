@@ -71,7 +71,7 @@ export default class Form {
             props: rule.col, 'class': {
                 '__fc_h': rule.props.hidden === true,
                 '__fc_v': rule.props.visibility === true
-            }, key: `${fItemUnique}col`
+            }, key: `${fItemUnique}col1`
         }, [this.vNode.formItem(propsData, VNodeFn)]);
     }
 
@@ -84,11 +84,11 @@ export default class Form {
         if (resetBtnShow)
             btn.push(this.makeResetBtn(unique, 4));
 
-        return this.vNode.col({props: {span: 24}}, btn);
+        return this.vNode.col({props: {span: 24},key: `${this.unique}col2`}, btn);
     }
 
     makeResetBtn(unique, span) {
-        return this.vNode.col({props: {span: span, push: 1}}, [
+        return this.vNode.col({props: {span: span, push: 1},key: `${this.unique}col3`}, [
             this.vNode.button({
                 key: `frsbtn${unique}`, props: this.vm.resetProps, on: {
                     "click": () => {
@@ -100,7 +100,7 @@ export default class Form {
     }
 
     makeSubmitBtn(unique, span) {
-        return this.vNode.col({props: {span: span}}, [
+        return this.vNode.col({props: {span: span},key: `${this.unique}col4`}, [
             this.vNode.button({
                 key: `fbtn${unique}`, props: this.vm.buttonProps, on: {
                     "click": () => {
