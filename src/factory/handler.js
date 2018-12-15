@@ -17,8 +17,9 @@ export default class Handler {
         this.refName = '__' + this.field + id;
         this.key = 'key_' + id;
         this.el = {};
-        this.init();
         this.childrenHandlers = [];
+
+        this.init();
 
         this.parseValue = this.toParseValue(this.rule.value);
     }
@@ -62,7 +63,7 @@ export default class Handler {
 }
 
 export function parseRule(rule, vm) {
-    let {validate = [], event = {}, col = {}, emit = [], props = {}, options = [], title = '', value = '', field = ''} = rule;
+    let {validate = [], event = {}, col = {}, emit = [], props = {}, on = {}, options = [], title = '', value = '', field = ''} = rule;
     rule.col = parseCol(col);
     rule.props = parseProps(props);
     rule.emitEvent = parseEmit(field, emit, vm);
@@ -74,8 +75,8 @@ export function parseRule(rule, vm) {
     rule.field = field;
 
     if (Object.keys(rule.emitEvent).length > 0)
-        extend(rule.on, rule.emitEvent);
-
+        extend(on, rule.emitEvent);
+    rule.on = on;
     return rule
 }
 

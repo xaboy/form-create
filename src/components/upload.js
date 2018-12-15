@@ -136,7 +136,6 @@ class render extends Render {
     parse() {
         let {unique} = this.handler;
         this.init();
-        console.log(this.uploadOptions);
         if (this.uploadOptions.handleIcon === true) this.uploadOptions.handleIcon = 'ios-eye-outline';
         let value = this.vm.cptData[this.handler.field],
             render = [...value.map((file, index) => {

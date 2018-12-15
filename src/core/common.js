@@ -27,7 +27,7 @@ export const iviewConfig = (function () {
 }());
 
 export function getComponent(vm, rule, createOptions) {
-    let name = rule.type.toLowerCase(), component = componentList[name] === undefined
+    let name = toString(rule.type).toLowerCase(), component = componentList[name] === undefined
         ? getUdfComponent()
         : componentList[name];
 

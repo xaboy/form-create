@@ -20,7 +20,8 @@
     <!--省市区三级联动json数据-->
     <script src="../district/province_city_area.js"></script>
     <script src="../dist/form-create.js"></script>
-    <script src="mock.js"></script>
+	<script src="mock.js"></script>
+	<script src="json.js"></script>
 </head>
 <body>
 <div id="app1">
@@ -40,6 +41,7 @@
         el:'#app1',
         data:{
             formData:{},
+            // rule:jsonMock(),
             rule:mock(),
             option:{
                 //显示表单重置按钮

@@ -1,26 +1,26 @@
 import {extend, isFunction, isPlainObject} from "../core/util";
 import VData from "./vData";
 
-export function baseRule(){
+export function baseRule() {
     return {
-        event:{},
-        validate:[],
-        options:[],
-        col:{},
-        children:[],
-        emit:[],
-        template:null
+        event: {},
+        validate: [],
+        options: [],
+        col: {},
+        children: [],
+        emit: [],
+        template: null
     }
 }
 
 export function creatorFactory(name) {
-    return (title,field,value,props = {})=>new Creator(name,title,field,value,props)
+    return (title, field, value, props = {}) => new Creator(name, title, field, value, props)
 }
 
-export function creatorTypeFactory(name,type,typeName ='type') {
-    return (title,field,value,props = {})=>{
-        const maker = new Creator(name,title,field,value,props);
-        if(isFunction(type))
+export function creatorTypeFactory(name, type, typeName = 'type') {
+    return (title, field, value, props = {}) => {
+        const maker = new Creator(name, title, field, value, props);
+        if (isFunction(type))
             type(maker);
         else
             maker.props(typeName, type);
@@ -28,27 +28,27 @@ export function creatorTypeFactory(name,type,typeName ='type') {
     }
 }
 
-export default class Creator extends VData{
-    constructor(type,title,field,value,props = {}){
+export default class Creator extends VData {
+    constructor(type, title, field, value, props = {}) {
         super();
 
-        this.rule = extend(baseRule(),{type,title,field,value});
-        this.props({hidden:false,visibility:false});
-        if(isPlainObject(props))
+        this.rule = extend(baseRule(), {type, title, field, value});
+        this.props({hidden: false, visibility: false});
+        if (isPlainObject(props))
             this.props(props);
     }
 
-    type(type){
-        this.props('type',type);
+    type(type) {
+        this.props('type', type);
         return this
     }
 
-    get(){
+    get() {
         return this._data;
     }
 
     getRule() {
-        return extend(this.rule,this.get());
+        return extend(this.rule, this.get());
     }
 
     setValue(value) {
@@ -57,20 +57,20 @@ export default class Creator extends VData{
     }
 }
 
-const objAttrs = ['event','col'];
+const objAttrs = ['event', 'col'];
 
-objAttrs.forEach((attr)=>{
+objAttrs.forEach((attr) => {
     Creator.prototype[attr] = function (opt) {
-       this.rule[attr] = extend(this.rule[attr],opt);
-       return this;
-   }
+        this.rule[attr] = extend(this.rule[attr], opt);
+        return this;
+    }
 });
 
-const arrAttrs = ['validate','options','children','emit'];
+const arrAttrs = ['validate', 'options', 'children', 'emit'];
 
-arrAttrs.forEach((attr)=>{
+arrAttrs.forEach((attr) => {
     Creator.prototype[attr] = function (opt) {
-        if(!Array.isArray(opt)) opt = [opt];
+        if (!Array.isArray(opt)) opt = [opt];
         this.rule[attr] = this.rule[attr].concat(opt);
         return this;
     }

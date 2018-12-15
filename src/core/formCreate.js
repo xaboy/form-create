@@ -25,17 +25,11 @@ export function margeGlobal(_options) {
     return options
 }
 
-export function parseRules(rules) {
-    let parse = {};
-    rules.filter(rule => rule.type !== undefined).forEach((rule) => {
-        if (isFunction(rule.getRule))
-            rule = rule.getRule();
-
-        if (!rule.field) rule.field = '';
-        parse[toString(rule.field)] = rule;
-    });
-
-    return parse
+export function getRule(rule) {
+    if (isFunction(rule.getRule))
+        return rule.getRule();
+    else
+        return rule;
 }
 
 export function initStyle() {
@@ -54,10 +48,11 @@ export default class FormCreate {
         this.options = margeGlobal(options);
         console.log(this.options);
         this.rules = Array.isArray(rules) ? rules : [];
-        this.rules.forEach((rule, index) => {
-            if (isFunction(rule.getRule))
-                this.rules[index] = rule.getRule();
-        });
+        // this.rules.forEach((rule, index) => {
+        //     if (isFunction(rule.getRule))
+        //         this.rules[index] = rule.getRule();
+        //
+        // });
         this.handlers = {};
         this.fRender = {};
         this.formData = {};
@@ -119,7 +114,8 @@ export default class FormCreate {
 
     createHandler() {
         this.rules.forEach((rule) => {
-            // rule.field = rule.field === undefined ? '' : toString(rule.field);
+            rule = getRule(rule);
+            rule.field = rule.field === undefined ? '' : toString(rule.field);
             if (this.notField(rule.field)) {
                 let handler = getComponent(this.vm, rule, this.options);
                 this.createChildren(handler);
@@ -135,8 +131,7 @@ export default class FormCreate {
     createChildren(handler) {
         if (Array.isArray(handler.rule.children) && handler.rule.children.length > 0) {
             handler.rule.children.map((rule) => {
-                if (isFunction(rule.getRule))
-                    rule = rule.getRule();
+                rule = getRule(rule);
                 rule.field = rule.field === undefined ? '' : toString(rule.field);
                 if (this.notField(rule.field)) {
                     let _handler = getComponent(this.vm, rule, this.options);
