@@ -39,7 +39,7 @@
   "bugs": {
     "url": "https://github.com/xaboy/form-create/issues"
   },
-  "homepage": "https://github.com/xaboy/form-create#readme",
+  "homepage": "fc.gd8.top",
   "peerDependencies": {
     "vue": "^2.5.2"
   },

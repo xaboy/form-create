@@ -1154,8 +1154,8 @@ function getGlobalApi(fComponent) {
             _newArrowCheck(this, _this9);
 
             vm.refresh();
-        }.bind(this),
-        vm: fComponent
+        }.bind(this)
+        // vm: fComponent,
     };
 }
 
@@ -1249,19 +1249,17 @@ var componentCommon = exports.componentCommon = {
             this.unique += 1;
         },
         sync: function sync() {
-            var _this12 = this;
+            // if (!this._sync)
+            //     this._sync = debounce(() => {
+            //         this.$nextTick(() => {
+            //             this.fComponent.fRender.cacheUnique = this.unique + 1;
+            //             this.unique += 1;
+            //         });
+            //     }, 50);
+            // this._sync();
 
-            if (!this._sync) this._sync = (0, _util.debounce)(function () {
-                _newArrowCheck(this, _this12);
-
-                this.$nextTick(function () {
-                    _newArrowCheck(this, _this12);
-
-                    this.fComponent.fRender.cacheUnique = this.unique + 1;
-                    this.unique += 1;
-                }.bind(this));
-            }.bind(this), 100);
-            this._sync();
+            this.fComponent.fRender.cacheUnique = this.unique + 1;
+            this.unique += 1;
         }
     }
 };
@@ -1640,7 +1638,7 @@ var FormCreate = function () {
             if (handler.noValue === true) return;
             var field = handler.field;
 
-            var unWatch = this.vm.$watch("cptData." + String(field), (0, _util.debounce)(function (n, o) {
+            var unWatch = this.vm.$watch("cptData." + String(field), function (n, o) {
                 _newArrowCheck(this, _this7);
 
                 if (this.handlers[field] !== undefined) {
@@ -1652,9 +1650,9 @@ var FormCreate = function () {
                         handler.watchParseValue(n);
                     }
                 } else unWatch();
-            }.bind(this), 50), { deep: true });
+            }.bind(this), { deep: true });
 
-            var unWatch2 = this.vm.$watch("trueData." + String(field) + ".value", (0, _util.debounce)(function (n, o) {
+            var unWatch2 = this.vm.$watch("trueData." + String(field) + ".value", function (n, o) {
                 _newArrowCheck(this, _this7);
 
                 if (n === undefined) return;
@@ -1671,7 +1669,7 @@ var FormCreate = function () {
                         }.bind(this));
                     }
                 } else unWatch2();
-            }.bind(this), 50), { deep: true });
+            }.bind(this), { deep: true });
 
             handler.watch = [unWatch, unWatch2];
 

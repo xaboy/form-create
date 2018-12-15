@@ -312,7 +312,7 @@ export function getGlobalApi(fComponent) {
         refresh: () => {
             vm.refresh();
         },
-        vm: fComponent
+        // vm: fComponent,
     };
 }
 
@@ -394,14 +394,17 @@ export const componentCommon = {
             this.unique += 1;
         },
         sync() {
-            if (!this._sync)
-                this._sync = debounce(() => {
-                    this.$nextTick(() => {
-                        this.fComponent.fRender.cacheUnique = this.unique + 1;
-                        this.unique += 1;
-                    });
-                }, 100);
-            this._sync();
+            // if (!this._sync)
+            //     this._sync = debounce(() => {
+            //         this.$nextTick(() => {
+            //             this.fComponent.fRender.cacheUnique = this.unique + 1;
+            //             this.unique += 1;
+            //         });
+            //     }, 50);
+            // this._sync();
+
+            this.fComponent.fRender.cacheUnique = this.unique + 1;
+            this.unique += 1;
         }
     }
 };
