@@ -69,7 +69,7 @@ class render extends Render {
         let field = this.handler.field;
         this.vm.$watch(`cptData.${field}`, () => {
             this.onChange();
-        },{deep:true});
+        }, {deep: true});
         this._props = this.handler.rule.props;
         this.issetIcon = this._props.handleIcon !== false || this._props.allowRemove === true;
     }
@@ -248,10 +248,17 @@ class render extends Render {
                             'width': "100%",
                         },
                         on: {
-                            'load': () => {
+                            'load': (e) => {
                                 if (this._props.spin === true) {
                                     let spin = document.getElementsByClassName('fc-spin')[0];
                                     spin && spin.parentNode.removeChild(spin);
+                                }
+                                try {
+                                    if(this.options.iframeHelper === true)
+                                        e.path[0].contentWindow[`${this.handler.field}_change`] = (val) => {
+                                            this.handler.setParseValue(val);
+                                        };
+                                } catch (e) {
                                 }
                             }
                         },

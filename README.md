@@ -81,7 +81,10 @@
 * 修复 `upload` 组件上传失败后会显示新图片
 * 新增 `options.mounted`增加参数`$f`
 * 修复 `checkbox`  和`radio`组件首屏加载时选中 bug
-* 新增 `options.switchMaker=ture`参数,是否将规则中的 maker 生成器自动转换为对象
+* 新增  配置参数`options.switchMaker=ture`是否将规则中的 maker 生成器自动转换为对象
+* 新增 配置参数`options.iframeHelper=false`是否开启 `iframe`组件 **子页面助手函数**`${field}_change` ,**快速修改该组件的 value**.**跨域无效**
+
+
 
 
 ## 示例 [在线预览](https://jsrun.net/NQhKp/edit)
@@ -139,6 +142,7 @@ import 'form-create/mock.js'
 Vue.use(iview)
 Vue.use(formCreat)
 ```
+
 
 
 # 查看示例
@@ -247,9 +251,11 @@ icon图标: [图标](https://www.iviewui.com/components/icon#示例)
 form-builder: [使用PHP快速生成现代化表单](https://github.com/xaboy/form-builder)
 
 
+
 ## 感谢
 
 [时光弧线](https://github.com/shiguanghuxian)  |  [wxxtqk](https://github.com/wxxtqk)  |  [williamBoss](https://github.com/williamBoss) | 讨论群里的大佬们
+
 
 
 ## 联系

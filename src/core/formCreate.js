@@ -52,7 +52,7 @@ export default class FormCreate {
         this.validate = {};
         this.trueData = {};
         this.fieldList = [];
-        this.switchMaker = isUndef(options.switchMaker) ? true : Boolean(options.switchMaker);
+        this.switchMaker = this.options.switchMaker;
 
         initStyle();
     }

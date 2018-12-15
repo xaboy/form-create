@@ -49,6 +49,8 @@ export function getUdfComponent() {
 export function getConfig() {
     return {
         el: null,
+        iframeHelper: false,
+        switchMaker: true,
         form: {
             inline: false,
             labelPosition: 'right',

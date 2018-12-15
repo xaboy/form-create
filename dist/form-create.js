@@ -814,6 +814,8 @@ function getConfig() {
 
     return {
         el: null,
+        iframeHelper: false,
+        switchMaker: true,
         form: {
             inline: false,
             labelPosition: 'right',
@@ -1471,7 +1473,7 @@ var FormCreate = function () {
         this.validate = {};
         this.trueData = {};
         this.fieldList = [];
-        this.switchMaker = (0, _util.isUndef)(options.switchMaker) ? true : Boolean(options.switchMaker);
+        this.switchMaker = this.options.switchMaker;
 
         initStyle();
     }
@@ -4040,13 +4042,20 @@ var render = function (_Render) {
                                 'width': "100%"
                             },
                             on: {
-                                'load': function load() {
+                                'load': function load(e) {
                                     _newArrowCheck(this, _this11);
 
                                     if (this._props.spin === true) {
                                         var spin = document.getElementsByClassName('fc-spin')[0];
                                         spin && spin.parentNode.removeChild(spin);
                                     }
+                                    try {
+                                        if (this.options.iframeHelper === true) e.path[0].contentWindow[String(this.handler.field) + "_change"] = function (val) {
+                                            _newArrowCheck(this, _this11);
+
+                                            this.handler.setParseValue(val);
+                                        }.bind(this);
+                                    } catch (e) {}
                                 }.bind(this)
                             },
                             key: 'ifmd' + (0, _util.uniqueId)()
