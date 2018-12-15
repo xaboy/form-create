@@ -27,6 +27,9 @@
 <br />
 
 >  \>=1.4.5 版本已支持 iview3
+> 如果对您有帮助，您可以点右上角 "Star" 支持一下 谢谢！
+> 本项目还在不断开发完善中,如有`任何`建议或问题请[在这里提出](https://github.com/xaboy/form-create/issues/new)
+> 本项目QQ讨论群[28963712](https://jq.qq.com/?_wv=1027&k=54aKUVw)
 
 
 
@@ -38,16 +41,7 @@
 
 - [ ] 支持 ElementUi
 
-
-### 如果对您有帮助，您可以点右上角 "Star" 支持一下 谢谢！
-
-### 本项目还在不断开发完善中,如有`任何`建议或问题请[在这里提出](https://github.com/xaboy/form-create/issues/new)
-
-### 本项目QQ讨论群[28963712](https://jq.qq.com/?_wv=1027&k=54aKUVw)
-
-
 :rocket::rocket::rocket:
-
 
 ## 文档
 
@@ -59,16 +53,12 @@
 - [CRMEB客户管理+电商管理系统](http://demo25.crmeb.net)账号：demo 密码：crmeb.com
 
 
-## 1.5版本更新说明
+## 1.5 版本重大更新
 
 - 优化 **内部重构**
 - 优化 内置组件缓存功能,**按需重新渲染**
 - 优化 **性能优化**,优化内部结构,优化内部事件机制,**性能秒杀之前所有版本**
 - 增强 **maker 生成器功能**,可直接根据具体type 生成,例如`datePicker`组件的`.date`、`.dateRange`等
-- 新增 `options`、`onSuccess` 方法,重新修改 options 配置
-- 新增 `sync(field)`**手动刷新**指定组件、和`reflash`方法**手动全局刷新**
-- 新增 `autoComplete`  **自动生成组件**
-- 增强 自定义组件
 
 
 ## 更新说明
@@ -148,7 +138,7 @@ Vue.use(formCreat)
 
 
 
-# 查看示例
+## 查看示例
 
 ```shell
 npm run dev
@@ -195,7 +185,7 @@ new Vue({
 
 
 
-# 组件模式
+## 组件模式
 
 ```html
 <form-create ref="fc" :rule="rule" :option="option"></form-create>
