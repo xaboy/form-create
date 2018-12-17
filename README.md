@@ -50,7 +50,7 @@
 #### [开始使用|Go](http://fc.gd8.top/749554)
 
 
-## form-create 的用户
+## 案例
 
 - [CRMEB客户管理+电商管理系统](http://demo25.crmeb.net)账号：demo 密码：crmeb.com
 
