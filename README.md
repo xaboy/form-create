@@ -66,6 +66,12 @@
 
 > 建议保持在最新版本
 
+#### 1.5.1 (2018-12-17)
+* 修复 意外添加字段的 bug
+* 修复 maker 生成器`directives`方法 bug
+* 新增 upload 组件`props.maxLength`参数默认为0
+* 增强 maker 生成,新增方法`uploadFile`,`uploadImage`,`uploadFileOne`,`uploadImageOne`
+
 #### 1.5.0 (2018-12-15)
 
 * 优化 **内部重构**

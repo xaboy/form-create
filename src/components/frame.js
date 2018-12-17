@@ -254,7 +254,7 @@ class render extends Render {
                                     spin && spin.parentNode.removeChild(spin);
                                 }
                                 try {
-                                    if(this.options.iframeHelper === true)
+                                    if (this.options.iframeHelper === true)
                                         e.path[0].contentWindow[`${this.handler.field}_change`] = (val) => {
                                             this.handler.setParseValue(val);
                                         };
@@ -301,5 +301,9 @@ const maker = Object.keys(types).reduce((initial, key) => {
     initial[key] = creatorTypeFactory(name, m => m.props({type: types[key][0], maxLength: types[key][1]}));
     return initial
 }, {});
+
+maker.frameInput = maker.frameInputs;
+maker.frameFile = maker.frameFiles;
+maker.frameImage = maker.frameImages;
 
 export default {handler, render, name, maker};

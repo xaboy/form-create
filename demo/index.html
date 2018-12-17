@@ -67,9 +67,9 @@
                     $f = that.$formCreate(mock,root);
                 },
 	            mounted($f){
-		            var $b = $f.model();
+		            var $m = $f.model();
 
-                    $b.goods_name.value += " now";
+                    $m.goods_name.value += " now";
 	            }
             },
 	        f:{}
@@ -88,7 +88,8 @@
             }
         },
         mounted:function () {
-            var $f = this.$refs.fc.$f;
+            //实际开发中记得加 var
+            $f = this.$refs.fc.$f;
             this.formData = $f.model();
             //动态添加表单元素
             $f.append($r,'pic');
