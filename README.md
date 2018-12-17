@@ -10,13 +10,12 @@
 [![github](https://img.shields.io/badge/Author-xaboy-blue.svg)](https://github.com/xaboy)
 [![version](https://badge.fury.io/js/form-create.svg)](https://www.npmjs.com/package/form-create)
 [![npm](https://img.shields.io/npm/dt/form-create.svg)](https://www.npmjs.com/package/form-create)
-[![JS gzip size](http://img.badgesize.io/https://cdn.jsdelivr.net/gh/xaboy/form-create/dist/form-create.min.js?compression=gzip&amp;label=gzip%20size&amp;style=flat-square)]()
 [![document](https://img.shields.io/badge/Doc-welcome-red.svg)](http://fc.gd8.top)
+[![JS gzip size](http://img.badgesize.io/https://cdn.jsdelivr.net/gh/xaboy/form-create/dist/form-create.min.js?compression=gzip&amp;label=gzip%20size&amp;style=flat-square)]()
 
 
 **具有动态渲染、数据收集、校验和提交功能的表单生成器，支持双向数据绑定、事件扩展以及自定义组件，可快速生成包含有省市区三级联动、时间选择、日期选择等17种功能组件。[文档](http://fc.gd8.top)**
 
-<br />
 
 >  已支持 iview3
 >
@@ -38,15 +37,20 @@
 
 :rocket::rocket::rocket:
 
+
+<br />
+
 ## 文档
 
-#### [开始使用|Go](http://fc.gd8.top)
+**[开始使用|Doc](http://fc.gd8.top)**
 
+<br />
 
 ## 案例
 
 - [CRMEB客户管理+电商管理系统](http://demo25.crmeb.net)账号：demo 密码：crmeb.com
 
+<br />
 
 ## 1.5 版本重大更新
 
@@ -113,14 +117,12 @@ npm install form-create
 <link rel="stylesheet" href="https://cdn.bootcss.com/iview/2.13.0/styles/iview.css">
 <script src="https://cdn.bootcss.com/iview/2.13.0/iview.min.js"></script>
 
-<!-- 省市区三级联动json数据,不使用三级联动不需要引入 -->
-<script src="district/province_city_area.js"></script>
-
-<!-- 模拟数据,实际使用中不需要引入 -->
-<script src="demo/mock.js"></script>
-
 <!-- import formCreate -->
-<script src="dist/form-create.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/form-create/dist/form-create.min.js"></script>
+
+<!-- 省市区三级联动json数据,不使用三级联动不需要引入 -->
+<script src="https://cdn.jsdelivr.net/npm/form-create/district/province_city_area.js"></script>
+
 ```
 NodeJs:
 ```js
@@ -131,8 +133,7 @@ import 'iview/dist/styles/iview.css'
 import formCreat from 'form-create'
 //三级联动数据,不使用三级联动不需要引入
 import 'form-create/district/province_city_area.js'
-//示例规则,实际使用中不需要引入
-import 'form-create/mock.js'
+
 Vue.use(iview)
 Vue.use(formCreat)
 ```

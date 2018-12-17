@@ -1044,27 +1044,26 @@ function getGlobalApi(fComponent) {
             var _this8 = this;
 
             var bind = {},
+                properties = {},
                 vm = fComponent.vm;
             if (!fields) fields = this.fields();else if (!Array.isArray(fields)) fields = [fields];
             fields.forEach(function (field) {
                 _newArrowCheck(this, _this8);
 
-                bind[field] = vm.trueData[field].value;
-                Object.defineProperty(bind, field, {
+                var rule = vm.trueData[field];
+                properties[field] = {
                     get: function get() {
-                        _newArrowCheck(this, _this8);
-
-                        return vm.trueData[field].value;
-                    }.bind(this),
+                        return rule.value;
+                    },
                     set: function set(value) {
-                        _newArrowCheck(this, _this8);
+                        rule.value = value;
+                    },
 
-                        vm.$set(vm.trueData[field], 'value', value);
-                    }.bind(this),
                     enumerable: true,
                     configurable: true
-                });
+                };
             }.bind(this));
+            Object.defineProperties(bind, properties);
             return bind;
         },
 
@@ -1187,7 +1186,7 @@ var componentCommon = exports.componentCommon = {
     }.bind(undefined),
     methods: {
         changeFormData: function changeFormData(field, value) {
-            this.$set(this.cptData, field, value);
+            if (Object.keys(this.cptData).indexOf(field) !== -1) this.$set(this.cptData, field, value);
         },
         changeTrueData: function changeTrueData(field, value) {
             this.$set(this.trueData[field], 'value', value);
@@ -1337,7 +1336,7 @@ var VData = function () {
         value: function directives(_directives) {
             if ((0, _util.isUndef)(_directives)) return this;
 
-            this._data.directives = this._data.directives.call((0, _util.toArray)(_directives));
+            this._data.directives = this._data.directives.concat((0, _util.toArray)(_directives));
 
             return this;
         }
@@ -1431,7 +1430,7 @@ function _newArrowCheck(innerThis, boundThis) { if (innerThis !== boundThis) { t
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var version = '1.5.0';
+var version = '1.5.1';
 
 var formCreateStyleElId = 'form-create-style';
 
@@ -1661,7 +1660,7 @@ var FormCreate = function () {
                     if (this.vm.jsonData[field] !== json) {
                         this.vm.jsonData[field] = json;
                         handler.watchTrueValue(n);
-                        this.vm.changeFormData(handler.toParseValue(n));
+                        this.vm.changeFormData(field, handler.toParseValue(n));
                         this.vm.$nextTick(function () {
                             _newArrowCheck(this, _this7);
 
@@ -2046,6 +2045,8 @@ var handler = function (_Handler) {
             props.defaultFileList = [];
             props.showUploadList = false;
             props.uploadType = !props.uploadType ? 'file' : props.uploadType;
+            if (props.maxLength === undefined) props.maxLength = 0;
+            if (props.action === undefined) props.action = '';
             if (props.uploadType === 'file' && props.handleIcon === undefined) props.handleIcon = false;
             this.parseValue = [];
             this.rule.value = parseValue(this.rule.value);
@@ -2312,10 +2313,26 @@ var render = function (_Render) {
     return render;
 }(_render2.default);
 
-var maker = {
-    image: (0, _creator.creatorTypeFactory)(name, 'image', 'uploadType'),
-    file: (0, _creator.creatorTypeFactory)(name, 'file', 'uploadType')
+var types = {
+    image: ['image', 0],
+    file: ['file', 0],
+    uploadFileOne: ['file', 1],
+    uploadImageOne: ['image', 1]
 };
+
+var maker = Object.keys(types).reduce(function (initial, key) {
+    _newArrowCheck(undefined, undefined);
+
+    initial[key] = (0, _creator.creatorTypeFactory)(name, function (m) {
+        _newArrowCheck(undefined, undefined);
+
+        return m.props({ uploadType: types[key][0], maxLength: types[key][1] });
+    }.bind(undefined));
+    return initial;
+}.bind(undefined), {});
+
+maker.uploadImage = maker.image;
+maker.uploadFile = maker.file;
 
 exports.default = { handler: handler, render: render, maker: maker, name: name };
 
@@ -4110,6 +4127,10 @@ var maker = Object.keys(types).reduce(function (initial, key) {
     }.bind(undefined));
     return initial;
 }.bind(undefined), {});
+
+maker.frameInput = maker.frameInputs;
+maker.frameFile = maker.frameFiles;
+maker.frameImage = maker.frameImages;
 
 exports.default = { handler: handler, render: render, name: name, maker: maker };
 
