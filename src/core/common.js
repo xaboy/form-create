@@ -239,24 +239,25 @@ export function getGlobalApi(fComponent) {
             return model;
         },
         bind(fields) {
-            let bind = {}, vm = fComponent.vm;
+            let bind = {}, properties = {}, vm = fComponent.vm;
             if (!fields)
                 fields = this.fields();
             else if (!Array.isArray(fields))
                 fields = [fields];
             fields.forEach((field) => {
-                bind[field] = vm.trueData[field].value;
-                Object.defineProperty(bind, field, {
-                    get: () => {
-                        return vm.trueData[field].value;
+                const rule = vm.trueData[field];
+                properties[field] = {
+                    get() {
+                        return rule.value;
                     },
-                    set: (value) => {
-                        vm.$set(vm.trueData[field], 'value', value);
+                    set(value) {
+                        rule.value = value;
                     },
                     enumerable: true,
                     configurable: true
-                })
+                };
             });
+            Object.defineProperties(bind, properties);
             return bind;
         },
         submitStatus: (props = {}) => {
@@ -343,7 +344,8 @@ export const componentCommon = {
     },
     methods: {
         changeFormData(field, value) {
-            this.$set(this.cptData, field, value);
+            if (Object.keys(this.cptData).indexOf(field) !== -1)
+                this.$set(this.cptData, field, value);
         },
         changeTrueData(field, value) {
             this.$set(this.trueData[field], 'value', value);

@@ -42,7 +42,7 @@ export default class VData {
     directives(directives) {
         if (isUndef(directives)) return this;
 
-        this._data.directives = this._data.directives.call(toArray(directives));
+        this._data.directives = this._data.directives.concat(toArray(directives));
 
         return this
     }

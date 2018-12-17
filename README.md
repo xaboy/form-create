@@ -3,9 +3,9 @@
         <img width="200" src="http://file.lotkk.com/form-create.png">
     </a>
 </p>
-<h1 align="center">form-create</h1>
+# form-create
 
-<p align="center">
+<p>
   <a href="https://github.com/xaboy/form-create/blob/master/LICENSE">
     <img src="https://img.shields.io/badge/License-MIT-yellow.svg" />
   </a>
@@ -21,9 +21,7 @@
   <img src="http://img.badgesize.io/https://cdn.jsdelivr.net/gh/xaboy/form-create/dist/form-create.min.js?compression=gzip&amp;label=gzip%20size&amp;style=flat-square" alt="JS gzip size">
 </p>
 
-<p align="center">
-  <b>具有动态渲染、数据收集、校验的表单生成器，支持双向数据绑定、事件扩展以及自定义组件，内置组件包含有省市区三级联动、时间选择、日期选择等17种功能组件。</b>
-</p>
+**具有动态渲染、数据收集、校验和提交功能的表单生成器，支持双向数据绑定、事件扩展以及自定义组件，内置组件包含有省市区三级联动、时间选择、日期选择等17种功能组件。**
 <br />
 
 >  \>=1.4.5 版本已支持 iview3

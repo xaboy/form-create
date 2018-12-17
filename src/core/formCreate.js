@@ -5,7 +5,7 @@ import formCreateComponent from "../core/formCreateComponent";
 import {$FormCreate, formCreateName} from "../core/component";
 import maker from "./maker";
 
-const version = '1.5.0';
+const version = '1.5.1';
 
 const formCreateStyleElId = 'form-create-style';
 
@@ -199,7 +199,7 @@ export default class FormCreate {
         if (handler.noValue === true) return;
         let field = handler.field;
 
-        let unWatch = this.vm.$watch(`cptData.${field}`,(n, o) => {
+        let unWatch = this.vm.$watch(`cptData.${field}`, (n, o) => {
             if (this.handlers[field] !== undefined) {
                 let trueValue = handler.toTrueValue(n), json = JSON.stringify(trueValue);
                 if (this.vm.jsonData[field] !== json) {
@@ -218,7 +218,7 @@ export default class FormCreate {
                 if (this.vm.jsonData[field] !== json) {
                     this.vm.jsonData[field] = json;
                     handler.watchTrueValue(n);
-                    this.vm.changeFormData(handler.toParseValue(n));
+                    this.vm.changeFormData(field, handler.toParseValue(n));
                     this.vm.$nextTick(() => handler.render.sync());
                 }
             } else
