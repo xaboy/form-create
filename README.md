@@ -50,7 +50,7 @@
 
 - [CRMEB客户管理+电商管理系统](http://demo25.crmeb.net)账号：demo 密码：crmeb.com
 
-- [深入使用 maker 自定义组件](https://github.com/HeyMrLin/fc-demo)
+- [深入使用 maker 自定义组件案例](https://github.com/HeyMrLin/fc-demo)
 
 <br />
 
