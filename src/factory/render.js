@@ -49,6 +49,7 @@ export default class Render {
         let {type, rule, childrenHandlers, refName, key} = this.handler;
         if (rule.type === '__tmp') {
             let vn = this.vm.constructor.super.compile(rule.template, {}).render.call(rule._vm || this.vm);
+            if(vn.data === undefined) vn.data = {};
             extend(vn.data, rule);
             vn.key = key;
             return [vn];

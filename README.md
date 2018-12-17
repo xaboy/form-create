@@ -50,6 +50,8 @@
 
 - [CRMEB客户管理+电商管理系统](http://demo25.crmeb.net)账号：demo 密码：crmeb.com
 
+- [深入使用 maker 自定义组件](https://github.com/HeyMrLin/fc-demo)
+
 <br />
 
 ## 1.5 版本重大更新
@@ -69,6 +71,7 @@
 * 修复 maker 生成器`directives`方法 bug
 * 新增 upload 组件`props.maxLength`参数默认为0
 * 增强 maker 生成,新增方法`uploadFile`,`uploadImage`,`uploadFileOne`,`uploadImageOne`
+* 优化 `upload`,`frame` 组件样式
 
 #### 1.5.0 (2018-12-15)
 
@@ -250,7 +253,7 @@ form-builder: [使用PHP快速生成现代化表单](https://github.com/xaboy/fo
 
 ## 感谢
 
-[时光弧线](https://github.com/shiguanghuxian)  |  [wxxtqk](https://github.com/wxxtqk)  |  [williamBoss](https://github.com/williamBoss) | 讨论群里的大佬们
+[时光弧线](https://github.com/shiguanghuxian)  |  [wxxtqk](https://github.com/wxxtqk)  |  [williamBoss](https://github.com/williamBoss) | [HeyMrLin](https://github.com/HeyMrLin) | 讨论群里的大佬们
 
 
 

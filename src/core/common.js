@@ -196,7 +196,7 @@ export function getGlobalApi(fComponent) {
         prepend: (rule, after) => {
             fComponent.append(rule, after, true);
         },
-        submit: function (successFn, failFn) {
+        submit(successFn, failFn) {
             this.validate(() => {
                 let formData = this.formData();
                 if (isFunction(successFn))
