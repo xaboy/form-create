@@ -50,7 +50,7 @@
 
 - [CRMEB客户管理+电商管理系统](https://gitee.com/ZhongBangKeJi/CRMEB) ([演示站](http://demo25.crmeb.net) 账号：demo 密码：crmeb.com)
 
-- [深入使用 maker 自定义组件案例](https://github.com/HeyMrLin/fc-demo)
+- [深入使用 自定义组件 案例](https://github.com/HeyMrLin/fc-demo) ([演示站](http://jeekweb.pro/form-create-demo))
 
 <br />
 
