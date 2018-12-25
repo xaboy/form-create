@@ -1,9 +1,10 @@
 import Handler from "../factory/handler";
 import Render from "../factory/render";
-import {uniqueId} from "../core/util";
+import {errMsg, uniqueId} from "../core/util";
 import upload from '../components/upload';
 import {iviewConfig} from "../core/common";
 import {creatorTypeFactory} from "../factory/creator";
+import iview from 'iview';
 
 const name = "frame";
 
@@ -228,6 +229,11 @@ class render extends Render {
             this.defaultOnHandle(src);
     }
 
+    valid(field) {
+        if (field !== this.handler.field)
+            throw new Error('无效的表单字段' + errMsg());
+    }
+
     showModel() {
         let isShow = false !== this.onOpen(),
             {width, height, src, title} = this._props;
@@ -254,10 +260,31 @@ class render extends Render {
                                     spin && spin.parentNode.removeChild(spin);
                                 }
                                 try {
-                                    if (this.options.iframeHelper === true)
-                                        e.path[0].contentWindow[`${this.handler.field}_change`] = (val) => {
+                                    if (this.options.iframeHelper === true) {
+                                        let iframe = e.path[0].contentWindow;
+
+                                        iframe[`${this.handler.field}_change`] = (val) => {
                                             this.handler.setParseValue(val);
                                         };
+
+
+                                        iframe[`form_create_helper`] = {
+                                            close: (field) => {
+                                                this.valid(field);
+                                                iview.Modal.remove()
+                                            },
+                                            set: (field, value) => {
+                                                this.valid(field);
+                                                iframe[`${field}_change`](value)
+
+                                            },
+                                            get: (field) => {
+                                                this.valid(field);
+                                                return this.handler.rule.value;
+                                            }
+                                        };
+
+                                    }
                                 } catch (e) {
                                 }
                             }

@@ -29,7 +29,23 @@ module.exports = {
     ],
     resolve: {
         alias: {
-            'vue': 'vue/dist/vue.js'
+            'vue': 'vue/dist/vue.js',
+            'iview': 'iview'
         }
-    }
+    },
+    externals: {
+        vue: {
+            root: 'Vue',
+            commonjs: 'vue',
+            commonjs2: 'vue',
+            amd: 'vue'
+        },
+        iview: {
+            root: 'iview',
+            commonjs: 'iview',
+            commonjs2: 'iview',
+            amd: 'iview'
+        }
+    },
+
 };

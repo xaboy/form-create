@@ -2,6 +2,7 @@ import {deepExtend, isFunction, isDate, toString, extend, debounce, errMsg} from
 import Handler from '../factory/handler';
 import Render from '../factory/render';
 import componentList from './componentList';
+import iview from 'iview';
 
 export const iviewConfig = (function () {
     const iview2 = {

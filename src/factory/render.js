@@ -1,6 +1,7 @@
 import {extend, isFunction, uniqueId} from '../core/util';
 import VNode from "./vNode";
 import VData from "./vData";
+import Vue from 'vue';
 
 export default class Render {
 
@@ -48,7 +49,7 @@ export default class Render {
     parse() {
         let {type, rule, childrenHandlers, refName, key} = this.handler;
         if (rule.type === '__tmp') {
-            let vn = this.vm.constructor.super.compile(rule.template, {}).render.call(rule._vm || this.vm);
+            let vn = Vue.compile(rule.template, {}).render.call(rule._vm || this.vm);
             if(vn.data === undefined) vn.data = {};
             extend(vn.data, rule);
             vn.key = key;

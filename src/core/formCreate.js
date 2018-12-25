@@ -4,7 +4,7 @@ import formRender from "../components/form";
 import formCreateComponent from "../core/formCreateComponent";
 import {$FormCreate, formCreateName} from "../core/component";
 import maker from "./maker";
-
+import Vue from 'vue';
 const version = '1.5.1';
 
 const formCreateStyleElId = 'form-create-style';
@@ -58,7 +58,7 @@ export default class FormCreate {
     }
 
 
-    static create(rules, _opt = {}, _vue = window.Vue) {
+    static create(rules, _opt = {}, _vue = Vue) {
         let opt = isElement(_opt) ? {el: _opt} : _opt;
         let fComponent = new FormCreate(rules, opt),
             $vm = fComponent.create(_vue);

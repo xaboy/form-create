@@ -189,7 +189,7 @@ class render extends Render {
 
     makeProgress(file, unique) {
         return this.vNode.make('div', {key: `div3${unique}`, class: {'fc-files': true}}, [
-            this.vNode.progress({key: `upp${unique}`, props: {percent: file.percentage, hideInfo: true}})
+            this.vNode.progress({key: `upp${unique}`, props: {percent: file.percentage, hideInfo: true},style:{width:'90%'}})
         ]);
     }
 

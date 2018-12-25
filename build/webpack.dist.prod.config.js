@@ -37,5 +37,19 @@ module.exports = {
         alias: {
             'vue': 'vue/dist/vue.js'
         }
-    }
+    },
+    externals: {
+        vue: {
+            root: 'Vue',
+            commonjs: 'vue',
+            commonjs2: 'vue',
+            amd: 'vue'
+        },
+        iview: {
+            root: 'iview',
+            commonjs: 'iview',
+            commonjs2: 'iview',
+            amd: 'iview'
+        }
+    },
 };

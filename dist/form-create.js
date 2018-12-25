@@ -1,14 +1,14 @@
 /*! form-create v1.5 | github https://github.com/xaboy/form-create | author xaboy */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory();
+		module.exports = factory(require("vue"), require("iview"));
 	else if(typeof define === 'function' && define.amd)
-		define("formCreate", [], factory);
+		define("formCreate", ["vue", "iview"], factory);
 	else if(typeof exports === 'object')
-		exports["formCreate"] = factory();
+		exports["formCreate"] = factory(require("vue"), require("iview"));
 	else
-		root["formCreate"] = factory();
-})(typeof self !== 'undefined' ? self : this, function() {
+		root["formCreate"] = factory(root["Vue"], root["iview"]);
+})(typeof self !== 'undefined' ? self : this, function(__WEBPACK_EXTERNAL_MODULE_8__, __WEBPACK_EXTERNAL_MODULE_11__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -71,7 +71,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 11);
+/******/ 	return __webpack_require__(__webpack_require__.s = 13);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -299,6 +299,10 @@ var _vData = __webpack_require__(5);
 
 var _vData2 = _interopRequireDefault(_vData);
 
+var _vue = __webpack_require__(8);
+
+var _vue2 = _interopRequireDefault(_vue);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _newArrowCheck(innerThis, boundThis) { if (innerThis !== boundThis) { throw new TypeError("Cannot instantiate an arrow function"); } }
@@ -380,7 +384,7 @@ var Render = function () {
                 key = _handler.key;
 
             if (rule.type === '__tmp') {
-                var vn = this.vm.constructor.super.compile(rule.template, {}).render.call(rule._vm || this.vm);
+                var vn = _vue2.default.compile(rule.template, {}).render.call(rule._vm || this.vm);
                 if (vn.data === undefined) vn.data = {};
                 (0, _util.extend)(vn.data, rule);
                 vn.key = key;
@@ -465,6 +469,7 @@ exports.isElement = isElement;
 exports.deepExtend = deepExtend;
 exports.uniqueId = uniqueId;
 exports.dateFormat = dateFormat;
+exports.errMsg = errMsg;
 
 function _newArrowCheck(innerThis, boundThis) { if (innerThis !== boundThis) { throw new TypeError("Cannot instantiate an arrow function"); } }
 
@@ -593,6 +598,11 @@ function dateFormat(fmt) {
     for (var k in o) {
         if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, RegExp.$1.length == 1 ? o[k] : ("00" + o[k]).substr(("" + o[k]).length));
     }return fmt;
+}
+
+function errMsg() {
+
+    return '\n\x67\x69\x74\x68\x75\x62\x3a\x68\x74\x74\x70' + '\x73\x3a\x2f\x2f\x67\x69\x74\x68\x75\x62\x2e\x63\x6f' + '\x6d\x2f\x78\x61\x62\x6f\x79\x2f\x66\x6f\x72\x6d\x2d' + '\x63\x72\x65\x61\x74\x65\n\x64\x6f\x63\x75\x6d\x65' + '\x6e\x74\x3a\x68\x74\x74\x70\x3a\x2f\x2f\x77\x77\x77' + '\x2e\x66\x6f\x72\x6d\x2d\x63\x72\x65\x61\x74\x65\x2e' + '\x63\x6f\x6d';
 }
 
 /***/ }),
@@ -763,9 +773,13 @@ var _render = __webpack_require__(1);
 
 var _render2 = _interopRequireDefault(_render);
 
-var _componentList = __webpack_require__(8);
+var _componentList = __webpack_require__(9);
 
 var _componentList2 = _interopRequireDefault(_componentList);
+
+var _iview = __webpack_require__(11);
+
+var _iview2 = _interopRequireDefault(_iview);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -790,8 +804,8 @@ var iviewConfig = exports.iviewConfig = function () {
         fileUpIcon: 'ios-folder-open',
         imgUpIcon: 'md-images'
     };
-    if (typeof iview === 'undefined') return iview2;
-    return iview.version && iview.version.split('.')[0] == 3 ? iview3 : iview2;
+    if (typeof _iview2.default === 'undefined') return iview2;
+    return _iview2.default.version && _iview2.default.version.split('.')[0] == 3 ? iview3 : iview2;
 }();
 
 function getComponent(vm, rule, createOptions) {
@@ -917,7 +931,7 @@ function getGlobalApi(fComponent) {
 
             field = (0, _util.toString)(field);
             var handler = fComponent.handlers[field];
-            if (handler === undefined) console.error(String(field) + ' \u5B57\u6BB5\u4E0D\u5B58\u5728!');else {
+            if (handler === undefined) throw new Error(String(field) + ' \u5B57\u6BB5\u4E0D\u5B58\u5728!' + (0, _util.errMsg)());else {
                 return handler.getValue();
             }
         }.bind(this),
@@ -926,7 +940,7 @@ function getGlobalApi(fComponent) {
 
             field = (0, _util.toString)(field);
             var handler = fComponent.handlers[field];
-            if (handler === undefined) console.error(String(field) + ' \u5B57\u6BB5\u4E0D\u5B58\u5728!');else {
+            if (handler === undefined) throw new Error(String(field) + ' \u5B57\u6BB5\u4E0D\u5B58\u5728!' + (0, _util.errMsg)());else {
                 if ((0, _util.isFunction)(value)) value(vm.getTrueData(field), function (changeValue) {
                     _newArrowCheck(this, _this2);
 
@@ -955,7 +969,7 @@ function getGlobalApi(fComponent) {
         validateField: function validateField(field, callback) {
             _newArrowCheck(this, _this2);
 
-            if (fComponent.notField(field)) throw new Error(String(field) + '\u5B57\u6BB5\u4E0D\u5B58\u5728');
+            if (fComponent.notField(field)) throw new Error(String(field) + '\u5B57\u6BB5\u4E0D\u5B58\u5728' + (0, _util.errMsg)());
             fComponent.getFormRef().validateField(field, callback);
         }.bind(this),
         resetFields: function resetFields() {
@@ -1038,7 +1052,7 @@ function getGlobalApi(fComponent) {
                 _newArrowCheck(this, _this7);
 
                 var handler = fComponent.handlers[field];
-                if (!handler) throw new Error(String(field) + '\u5B57\u6BB5\u4E0D\u5B58\u5728');
+                if (!handler) throw new Error(String(field) + '\u5B57\u6BB5\u4E0D\u5B58\u5728' + (0, _util.errMsg)());
                 model[field] = handler.vm.getTrueData(field);
             }.bind(this));
             return model;
@@ -1150,7 +1164,7 @@ function getGlobalApi(fComponent) {
         sync: function sync(field, callback) {
             _newArrowCheck(this, _this9);
 
-            if (fComponent.handlers[field]) fComponent.handlers[field].render.sync(callback);else throw new Error(String(field) + '\u5B57\u6BB5\u4E0D\u5B58\u5728');
+            if (fComponent.handlers[field]) fComponent.handlers[field].render.sync(callback);else throw new Error(String(field) + '\u5B57\u6BB5\u4E0D\u5B58\u5728' + (0, _util.errMsg)());
         }.bind(this),
         refresh: function refresh() {
             _newArrowCheck(this, _this9);
@@ -1413,19 +1427,23 @@ var _util = __webpack_require__(2);
 
 var _common = __webpack_require__(4);
 
-var _form = __webpack_require__(28);
+var _form = __webpack_require__(30);
 
 var _form2 = _interopRequireDefault(_form);
 
-var _formCreateComponent = __webpack_require__(29);
+var _formCreateComponent = __webpack_require__(31);
 
 var _formCreateComponent2 = _interopRequireDefault(_formCreateComponent);
 
-var _component = __webpack_require__(10);
+var _component = __webpack_require__(12);
 
-var _maker = __webpack_require__(30);
+var _maker = __webpack_require__(32);
 
 var _maker2 = _interopRequireDefault(_maker);
+
+var _vue2 = __webpack_require__(8);
+
+var _vue3 = _interopRequireDefault(_vue2);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1535,7 +1553,7 @@ var FormCreate = function () {
                     this.setHandler(handler);
                     this.fieldList.push(handler.field);
                 } else {
-                    console.error(String(rule.field) + " \u5B57\u6BB5\u5DF2\u5B58\u5728");
+                    console.error(String(rule.field) + " \u5B57\u6BB5\u5DF2\u5B58\u5728" + (0, _util.errMsg)());
                 }
             }.bind(this));
         }
@@ -1556,7 +1574,7 @@ var FormCreate = function () {
                         this.createChildren(_handler);
                         handler.childrenHandlers.push(_handler);
                     } else {
-                        console.error(String(rule.field) + " \u5B57\u6BB5\u5DF2\u5B58\u5728");
+                        console.error(String(rule.field) + " \u5B57\u6BB5\u5DF2\u5B58\u5728" + (0, _util.errMsg)());
                     }
                 }.bind(this));
             }
@@ -1599,7 +1617,7 @@ var FormCreate = function () {
             var _this5 = this;
 
             if ((0, _util.isFunction)(rule.getRule)) rule = rule.getRule();
-            if (Object.keys(this.handlers).indexOf((0, _util.toString)(rule.field)) !== -1) throw new Error(String(rule.field) + "\u5B57\u6BB5\u5DF2\u5B58\u5728");
+            if (Object.keys(this.handlers).indexOf((0, _util.toString)(rule.field)) !== -1) throw new Error(String(rule.field) + "\u5B57\u6BB5\u5DF2\u5B58\u5728" + (0, _util.errMsg)());
             var handler = (0, _common.getComponent)(this.vm, rule, this.options);
             this.createChildren(handler);
             this.vm.setField(handler.field);
@@ -1617,7 +1635,7 @@ var FormCreate = function () {
         value: function removeField(field) {
             var _this6 = this;
 
-            if (this.handlers[field] === undefined) throw new Error(String(field) + "\u5B57\u6BB5\u4E0D\u5B58\u5728");
+            if (this.handlers[field] === undefined) throw new Error(String(field) + "\u5B57\u6BB5\u4E0D\u5B58\u5728" + (0, _util.errMsg)());
             var watch = this.handlers[field].watch;
 
             delete this.handlers[field];
@@ -1740,7 +1758,7 @@ var FormCreate = function () {
         value: function create(rules) {
             var _opt = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
-            var _vue = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : window.Vue;
+            var _vue = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : _vue3.default;
 
             var opt = (0, _util.isElement)(_opt) ? { el: _opt } : _opt;
             var fComponent = new FormCreate(rules, opt),
@@ -1873,6 +1891,12 @@ Object.keys(nodes).forEach(function (k) {
 
 /***/ }),
 /* 8 */
+/***/ (function(module, exports) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE_8__;
+
+/***/ }),
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1882,71 +1906,71 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _hidden = __webpack_require__(12);
+var _hidden = __webpack_require__(14);
 
 var _hidden2 = _interopRequireDefault(_hidden);
 
-var _input = __webpack_require__(13);
+var _input = __webpack_require__(15);
 
 var _input2 = _interopRequireDefault(_input);
 
-var _radio = __webpack_require__(14);
+var _radio = __webpack_require__(16);
 
 var _radio2 = _interopRequireDefault(_radio);
 
-var _checkbox = __webpack_require__(15);
+var _checkbox = __webpack_require__(17);
 
 var _checkbox2 = _interopRequireDefault(_checkbox);
 
-var _switch = __webpack_require__(16);
+var _switch = __webpack_require__(18);
 
 var _switch2 = _interopRequireDefault(_switch);
 
-var _select = __webpack_require__(17);
+var _select = __webpack_require__(19);
 
 var _select2 = _interopRequireDefault(_select);
 
-var _datePicker = __webpack_require__(18);
+var _datePicker = __webpack_require__(20);
 
 var _datePicker2 = _interopRequireDefault(_datePicker);
 
-var _timePicker = __webpack_require__(19);
+var _timePicker = __webpack_require__(21);
 
 var _timePicker2 = _interopRequireDefault(_timePicker);
 
-var _inputNumber = __webpack_require__(20);
+var _inputNumber = __webpack_require__(22);
 
 var _inputNumber2 = _interopRequireDefault(_inputNumber);
 
-var _colorPicker = __webpack_require__(21);
+var _colorPicker = __webpack_require__(23);
 
 var _colorPicker2 = _interopRequireDefault(_colorPicker);
 
-var _upload = __webpack_require__(9);
+var _upload = __webpack_require__(10);
 
 var _upload2 = _interopRequireDefault(_upload);
 
-var _cascader = __webpack_require__(22);
+var _cascader = __webpack_require__(24);
 
 var _cascader2 = _interopRequireDefault(_cascader);
 
-var _rate = __webpack_require__(23);
+var _rate = __webpack_require__(25);
 
 var _rate2 = _interopRequireDefault(_rate);
 
-var _slider = __webpack_require__(24);
+var _slider = __webpack_require__(26);
 
 var _slider2 = _interopRequireDefault(_slider);
 
-var _frame = __webpack_require__(25);
+var _frame = __webpack_require__(27);
 
 var _frame2 = _interopRequireDefault(_frame);
 
-var _tree = __webpack_require__(26);
+var _tree = __webpack_require__(28);
 
 var _tree2 = _interopRequireDefault(_tree);
 
-var _autoComplete = __webpack_require__(27);
+var _autoComplete = __webpack_require__(29);
 
 var _autoComplete2 = _interopRequireDefault(_autoComplete);
 
@@ -1975,7 +1999,7 @@ var componentList = {
 exports.default = componentList;
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2264,7 +2288,7 @@ var render = function (_Render) {
     }, {
         key: "makeProgress",
         value: function makeProgress(file, unique) {
-            return this.vNode.make('div', { key: "div3" + String(unique), class: { 'fc-files': true } }, [this.vNode.progress({ key: "upp" + String(unique), props: { percent: file.percentage, hideInfo: true } })]);
+            return this.vNode.make('div', { key: "div3" + String(unique), class: { 'fc-files': true } }, [this.vNode.progress({ key: "upp" + String(unique), props: { percent: file.percentage, hideInfo: true }, style: { width: '90%' } })]);
         }
     }, {
         key: "makeUploadBtn",
@@ -2339,7 +2363,13 @@ maker.uploadFile = maker.file;
 exports.default = { handler: handler, render: render, maker: maker, name: name };
 
 /***/ }),
-/* 10 */
+/* 11 */
+/***/ (function(module, exports) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE_11__;
+
+/***/ }),
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2418,7 +2448,7 @@ exports.$FormCreate = $FormCreate;
 exports.formCreateName = formCreateName;
 
 /***/ }),
-/* 11 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2431,13 +2461,18 @@ var _formCreate2 = _interopRequireDefault(_formCreate);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 if (typeof window !== 'undefined' && window.Vue) {
-    window.Vue.use(_formCreate2.default);
-}
+  window.Vue.use(_formCreate2.default);
+} /**
+   *
+   * JS表单生成器
+   * Author: xaboy
+   * Github: https://github.com/xaboy/form-create
+   */
 
 module.exports.default = module.exports = _formCreate2.default;
 
 /***/ }),
-/* 12 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2513,7 +2548,7 @@ var maker = _defineProperty({}, name, function (field, value) {
 exports.default = { handler: handler, render: render, name: name, maker: maker };
 
 /***/ }),
-/* 13 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2607,7 +2642,7 @@ maker.idate = (0, _creator.creatorTypeFactory)(name, 'date');
 exports.default = { render: render, handler: handler, name: name, maker: maker };
 
 /***/ }),
-/* 14 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2727,7 +2762,7 @@ var render = function (_Render) {
 exports.default = { handler: handler, render: render, name: name };
 
 /***/ }),
-/* 15 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2857,7 +2892,7 @@ var render = function (_Render) {
 exports.default = { handler: handler, render: render, name: name };
 
 /***/ }),
-/* 16 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2946,7 +2981,7 @@ var render = function (_Render) {
 exports.default = { handler: handler, render: render, name: name };
 
 /***/ }),
-/* 17 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3044,7 +3079,7 @@ var maker = {
 exports.default = { handler: handler, render: render, name: name, maker: maker };
 
 /***/ }),
-/* 18 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3172,7 +3207,7 @@ var maker = ['date', 'dateRange', 'dateTime', 'dateTimeRange', 'year', 'month'].
 exports.default = { handler: handler, render: render, name: name, maker: maker };
 
 /***/ }),
-/* 19 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3296,7 +3331,7 @@ var maker = {
 exports.default = { handler: handler, render: render, maker: maker, name: name };
 
 /***/ }),
-/* 20 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3375,7 +3410,7 @@ var maker = {
 exports.default = { handler: handler, render: render, name: name, maker: maker };
 
 /***/ }),
-/* 21 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3455,7 +3490,7 @@ var maker = {
 exports.default = { handler: handler, render: render, name: name, maker: maker };
 
 /***/ }),
-/* 22 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3541,7 +3576,7 @@ var render = function (_Render) {
 exports.default = { handler: handler, render: render, name: name };
 
 /***/ }),
-/* 23 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3614,7 +3649,7 @@ var render = function (_Render) {
 exports.default = { handler: handler, render: render, name: name };
 
 /***/ }),
-/* 24 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3723,7 +3758,7 @@ var maker = {
 exports.default = { handler: handler, render: render, name: name, maker: maker };
 
 /***/ }),
-/* 25 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3749,13 +3784,17 @@ var _render2 = _interopRequireDefault(_render);
 
 var _util = __webpack_require__(2);
 
-var _upload = __webpack_require__(9);
+var _upload = __webpack_require__(10);
 
 var _upload2 = _interopRequireDefault(_upload);
 
 var _common = __webpack_require__(4);
 
 var _creator = __webpack_require__(3);
+
+var _iview = __webpack_require__(11);
+
+var _iview2 = _interopRequireDefault(_iview);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -4028,6 +4067,11 @@ var render = function (_Render) {
             if (fn) return fn(src);else this.defaultOnHandle(src);
         }
     }, {
+        key: "valid",
+        value: function valid(field) {
+            if (field !== this.handler.field) throw new Error('无效的表单字段' + (0, _util.errMsg)());
+        }
+    }, {
         key: "showModel",
         value: function showModel() {
             var _this11 = this;
@@ -4067,11 +4111,36 @@ var render = function (_Render) {
                                         spin && spin.parentNode.removeChild(spin);
                                     }
                                     try {
-                                        if (this.options.iframeHelper === true) e.path[0].contentWindow[String(this.handler.field) + "_change"] = function (val) {
-                                            _newArrowCheck(this, _this11);
+                                        if (this.options.iframeHelper === true) {
+                                            var iframe = e.path[0].contentWindow;
 
-                                            this.handler.setParseValue(val);
-                                        }.bind(this);
+                                            iframe[String(this.handler.field) + "_change"] = function (val) {
+                                                _newArrowCheck(this, _this11);
+
+                                                this.handler.setParseValue(val);
+                                            }.bind(this);
+
+                                            iframe["form_create_helper"] = {
+                                                close: function close(field) {
+                                                    _newArrowCheck(this, _this11);
+
+                                                    this.valid(field);
+                                                    _iview2.default.Modal.remove();
+                                                }.bind(this),
+                                                set: function set(field, value) {
+                                                    _newArrowCheck(this, _this11);
+
+                                                    this.valid(field);
+                                                    iframe[String(field) + "_change"](value);
+                                                }.bind(this),
+                                                get: function get(field) {
+                                                    _newArrowCheck(this, _this11);
+
+                                                    this.valid(field);
+                                                    return this.handler.rule.value;
+                                                }.bind(this)
+                                            };
+                                        }
                                     } catch (e) {}
                                 }.bind(this)
                             },
@@ -4137,7 +4206,7 @@ maker.frameImage = maker.frameImages;
 exports.default = { handler: handler, render: render, name: name, maker: maker };
 
 /***/ }),
-/* 26 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4403,7 +4472,7 @@ var maker = Object.keys(types).reduce(function (initial, key) {
 exports.default = { handler: handler, render: render, name: name, maker: maker };
 
 /***/ }),
-/* 27 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4482,7 +4551,7 @@ var maker = {
 exports.default = { handler: handler, render: render, name: name, maker: maker };
 
 /***/ }),
-/* 28 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4678,7 +4747,7 @@ var Form = function () {
 exports.default = Form;
 
 /***/ }),
-/* 29 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4689,7 +4758,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = formCreateComponent;
 
-var _component = __webpack_require__(10);
+var _component = __webpack_require__(12);
 
 var _common = __webpack_require__(4);
 
@@ -4728,7 +4797,7 @@ function formCreateComponent(fComponent) {
 };
 
 /***/ }),
-/* 30 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4740,7 +4809,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _creator = __webpack_require__(3);
 
-var _componentList = __webpack_require__(8);
+var _componentList = __webpack_require__(9);
 
 var _componentList2 = _interopRequireDefault(_componentList);
 
