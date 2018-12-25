@@ -1,3 +1,9 @@
+import Vue from 'vue';
+
+export function $nt(fn) {
+    Vue.nextTick(fn);
+}
+
 export const _toString = Object.prototype.toString;
 
 export function toRawType(value) {

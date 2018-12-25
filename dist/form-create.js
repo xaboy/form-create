@@ -8,7 +8,7 @@
 		exports["formCreate"] = factory(require("vue"), require("iview"));
 	else
 		root["formCreate"] = factory(root["Vue"], root["iview"]);
-})(typeof self !== 'undefined' ? self : this, function(__WEBPACK_EXTERNAL_MODULE_8__, __WEBPACK_EXTERNAL_MODULE_11__) {
+})(typeof self !== 'undefined' ? self : this, function(__WEBPACK_EXTERNAL_MODULE_5__, __WEBPACK_EXTERNAL_MODULE_11__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -291,15 +291,15 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _util = __webpack_require__(2);
 
-var _vNode = __webpack_require__(7);
+var _vNode = __webpack_require__(8);
 
 var _vNode2 = _interopRequireDefault(_vNode);
 
-var _vData = __webpack_require__(5);
+var _vData = __webpack_require__(6);
 
 var _vData2 = _interopRequireDefault(_vData);
 
-var _vue = __webpack_require__(8);
+var _vue = __webpack_require__(5);
 
 var _vue2 = _interopRequireDefault(_vue);
 
@@ -341,7 +341,7 @@ var Render = function () {
             }
             var eventList = [].concat(_toConsumableArray(this.$tickEvent));
             this.$tickEvent = [];
-            this.vm.$nextTick(function () {
+            (0, _util.$nt)(function () {
                 _newArrowCheck(this, _this);
 
                 eventList.forEach(function (event) {
@@ -448,9 +448,11 @@ exports.default = Render;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+exports._toString = undefined;
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
+exports.$nt = $nt;
 exports.toRawType = toRawType;
 exports.isUndef = isUndef;
 exports.toString = toString;
@@ -471,7 +473,17 @@ exports.uniqueId = uniqueId;
 exports.dateFormat = dateFormat;
 exports.errMsg = errMsg;
 
+var _vue = __webpack_require__(5);
+
+var _vue2 = _interopRequireDefault(_vue);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function _newArrowCheck(innerThis, boundThis) { if (innerThis !== boundThis) { throw new TypeError("Cannot instantiate an arrow function"); } }
+
+function $nt(fn) {
+    _vue2.default.nextTick(fn);
+}
 
 var _toString = exports._toString = Object.prototype.toString;
 
@@ -624,7 +636,7 @@ exports.creatorTypeFactory = creatorTypeFactory;
 
 var _util = __webpack_require__(2);
 
-var _vData = __webpack_require__(5);
+var _vData = __webpack_require__(6);
 
 var _vData2 = _interopRequireDefault(_vData);
 
@@ -1282,6 +1294,12 @@ var componentCommon = exports.componentCommon = {
 
 /***/ }),
 /* 5 */
+/***/ (function(module, exports) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE_5__;
+
+/***/ }),
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1407,7 +1425,7 @@ objList.forEach(function (key) {
 }.bind(undefined));
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1441,7 +1459,7 @@ var _maker = __webpack_require__(32);
 
 var _maker2 = _interopRequireDefault(_maker);
 
-var _vue2 = __webpack_require__(8);
+var _vue2 = __webpack_require__(5);
 
 var _vue3 = _interopRequireDefault(_vue2);
 
@@ -1514,7 +1532,7 @@ var FormCreate = function () {
             this.$tick = (0, _util.debounce)(function (fn) {
                 _newArrowCheck(this, _this);
 
-                return vm.$nextTick(fn);
+                return (0, _util.$nt)(fn);
             }.bind(this), 100);
         }
     }, {
@@ -1593,7 +1611,7 @@ var FormCreate = function () {
             var _this4 = this;
 
             this.vm = vm;
-            vm.$nextTick(function () {
+            (0, _util.$nt)(function () {
                 _newArrowCheck(this, _this4);
 
                 Object.keys(this.handlers).map(function (field) {
@@ -1681,7 +1699,7 @@ var FormCreate = function () {
                     if (this.vm.jsonData[field] !== json) {
                         this.vm.jsonData[field] = json;
                         handler.watchTrueValue(n);
-                        this.vm.$nextTick(function () {
+                        (0, _util.$nt)(function () {
                             _newArrowCheck(this, _this7);
 
                             return handler.render.sync();
@@ -1730,7 +1748,7 @@ var FormCreate = function () {
                 this.constructor(rules, this.options);
                 this.init(this.vm);
                 this.vm.init();
-                this.vm.$nextTick(function () {
+                (0, _util.$nt)(function () {
                     _newArrowCheck(this, _this8);
 
                     this.vm.isShow = true;
@@ -1790,7 +1808,7 @@ FormCreate.maker = _maker2.default;
 FormCreate.version = version;
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1888,12 +1906,6 @@ Object.keys(nodes).forEach(function (k) {
         return this.make(nodes[k], data, VNodeFn);
     };
 }.bind(undefined));
-
-/***/ }),
-/* 8 */
-/***/ (function(module, exports) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE_8__;
 
 /***/ }),
 /* 9 */
@@ -2380,7 +2392,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.formCreateName = exports.$FormCreate = undefined;
 
-var _formCreate = __webpack_require__(6);
+var _formCreate = __webpack_require__(7);
 
 var _formCreate2 = _interopRequireDefault(_formCreate);
 
@@ -2454,7 +2466,7 @@ exports.formCreateName = formCreateName;
 "use strict";
 
 
-var _formCreate = __webpack_require__(6);
+var _formCreate = __webpack_require__(7);
 
 var _formCreate2 = _interopRequireDefault(_formCreate);
 
@@ -4568,11 +4580,11 @@ exports.preventDefault = preventDefault;
 
 var _util = __webpack_require__(2);
 
-var _vNode = __webpack_require__(7);
+var _vNode = __webpack_require__(8);
 
 var _vNode2 = _interopRequireDefault(_vNode);
 
-var _vData = __webpack_require__(5);
+var _vData = __webpack_require__(6);
 
 var _vData2 = _interopRequireDefault(_vData);
 

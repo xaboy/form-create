@@ -1,4 +1,4 @@
-import {extend, isFunction, uniqueId} from '../core/util';
+import {$nt, extend, isFunction, uniqueId} from '../core/util';
 import VNode from "./vNode";
 import VData from "./vData";
 import Vue from 'vue';
@@ -27,7 +27,7 @@ export default class Render {
         }
         let eventList = [...this.$tickEvent];
         this.$tickEvent = [];
-        this.vm.$nextTick(() => {
+        $nt(() => {
             eventList.forEach(event => event());
         });
         return this.cache

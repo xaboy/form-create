@@ -1,4 +1,4 @@
-import {debounce, deepExtend, errMsg, isBool, isElement, isFunction, isUndef, toString} from "../core/util";
+import {$nt, debounce, deepExtend, errMsg, isBool, isElement, isFunction, isUndef, toString} from "../core/util";
 import {formCreateStyle, getComponent, getConfig, getGlobalApi} from "../core/common";
 import formRender from "../components/form";
 import formCreateComponent from "../core/formCreateComponent";
@@ -86,7 +86,7 @@ export default class FormCreate {
         vm.$set(vm, 'rules', this.rules);
         this.fRender = new formRender(this);
 
-        this.$tick = debounce((fn) => vm.$nextTick(fn), 100);
+        this.$tick = debounce((fn) => $nt(fn), 100);
     }
 
 
@@ -150,7 +150,7 @@ export default class FormCreate {
 
     mounted(vm) {
         this.vm = vm;
-        vm.$nextTick(() => {
+        $nt(() => {
             Object.keys(this.handlers).map((field) => {
                 let handler = this.handlers[field];
                 if (vm.cptData[field] !== undefined)
@@ -218,7 +218,7 @@ export default class FormCreate {
                 if (this.vm.jsonData[field] !== json) {
                     this.vm.jsonData[field] = json;
                     handler.watchTrueValue(n);
-                    this.vm.$nextTick(() => handler.render.sync());
+                    $nt(() => handler.render.sync());
                 }
             } else
                 unWatch2();
@@ -250,7 +250,7 @@ export default class FormCreate {
             this.constructor(rules, this.options);
             this.init(this.vm);
             this.vm.init();
-            this.vm.$nextTick(() => {
+            $nt(() => {
                 this.vm.isShow = true;
                 setTimeout(() => this.mounted(this.vm))
             });
