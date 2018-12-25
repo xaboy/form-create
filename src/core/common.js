@@ -1,4 +1,4 @@
-import {deepExtend, isFunction, isDate, toString, extend, debounce} from "./util";
+import {deepExtend, isFunction, isDate, toString, extend, debounce, errMsg} from "./util";
 import Handler from '../factory/handler';
 import Render from '../factory/render';
 import componentList from './componentList';
@@ -142,7 +142,7 @@ export function getGlobalApi(fComponent) {
             field = toString(field);
             let handler = fComponent.handlers[field];
             if (handler === undefined)
-                console.error(`${field} 字段不存在!`);
+                throw new Error(`${field} 字段不存在!`+errMsg());
             else {
                 return handler.getValue();
             }
@@ -151,7 +151,7 @@ export function getGlobalApi(fComponent) {
             field = toString(field);
             let handler = fComponent.handlers[field];
             if (handler === undefined)
-                console.error(`${field} 字段不存在!`);
+                throw new Error(`${field} 字段不存在!`+errMsg());
             else {
                 if (isFunction(value))
                     value(vm.getTrueData(field), (changeValue) => {
@@ -175,7 +175,7 @@ export function getGlobalApi(fComponent) {
         },
         validateField: (field, callback) => {
             if (fComponent.notField(field))
-                throw new Error(`${field}字段不存在`);
+                throw new Error(`${field}字段不存在`+errMsg());
             fComponent.getFormRef().validateField(field, callback);
         },
         resetFields: function () {
@@ -234,7 +234,7 @@ export function getGlobalApi(fComponent) {
             fields.forEach((field) => {
                 let handler = fComponent.handlers[field];
                 if (!handler)
-                    throw new Error(`${field}字段不存在`);
+                    throw new Error(`${field}字段不存在`+errMsg());
                 model[field] = handler.vm.getTrueData(field);
             });
             return model;
@@ -309,7 +309,7 @@ export function getGlobalApi(fComponent) {
             if (fComponent.handlers[field])
                 fComponent.handlers[field].render.sync(callback);
             else
-                throw new Error(`${field}字段不存在`);
+                throw new Error(`${field}字段不存在`+errMsg());
         },
         refresh: () => {
             vm.refresh();

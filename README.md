@@ -11,7 +11,7 @@
 [![version](https://badge.fury.io/js/form-create.svg)](https://www.npmjs.com/package/form-create)
 [![npm](https://img.shields.io/npm/dt/form-create.svg)](https://www.npmjs.com/package/form-create)
 [![document](https://img.shields.io/badge/Doc-welcome-red.svg)](http://www.form-create.com)
-[![JS gzip size](http://img.badgesize.io/https://cdn.jsdelivr.net/gh/xaboy/form-create/dist/form-create.min.js?compression=gzip&amp;label=gzip%20size&amp;style=flat-square)]()
+[![JS gzip size](http://img.badgesize.io/https://cdn.jsdelivr.net/gh/xaboy/form-create/dist/form-create.min.js?compression=gzip&amp;label=gzip%20size&amp;style=flat-square)](https://www.npmjs.com/package/form-create)
 
 
 **具有动态渲染、数据收集、校验和提交功能的表单生成器，支持双向数据绑定、事件扩展以及自定义组件，可快速生成包含有省市区三级联动、时间选择、日期选择等17种功能组件。[文档](http://www.form-create.com)**

@@ -1,4 +1,4 @@
-import {debounce, deepExtend, isBool, isElement, isFunction, isUndef, toString} from "../core/util";
+import {debounce, deepExtend, errMsg, isBool, isElement, isFunction, isUndef, toString} from "../core/util";
 import {formCreateStyle, getComponent, getConfig, getGlobalApi} from "../core/common";
 import formRender from "../components/form";
 import formCreateComponent from "../core/formCreateComponent";
@@ -118,7 +118,7 @@ export default class FormCreate {
                 this.setHandler(handler);
                 this.fieldList.push(handler.field);
             } else {
-                console.error(`${rule.field} 字段已存在`);
+                console.error(`${rule.field} 字段已存在`+errMsg());
             }
 
         });
@@ -136,7 +136,7 @@ export default class FormCreate {
                     this.createChildren(_handler);
                     handler.childrenHandlers.push(_handler);
                 } else {
-                    console.error(`${rule.field} 字段已存在`);
+                    console.error(`${rule.field} 字段已存在`+errMsg());
                 }
             });
         }
@@ -169,7 +169,7 @@ export default class FormCreate {
         if (isFunction(rule.getRule))
             rule = rule.getRule();
         if (Object.keys(this.handlers).indexOf(toString(rule.field)) !== -1)
-            throw new Error(`${rule.field}字段已存在`);
+            throw new Error(`${rule.field}字段已存在`+errMsg());
         let handler = getComponent(this.vm, rule, this.options);
         this.createChildren(handler);
         this.vm.setField(handler.field);
@@ -183,7 +183,7 @@ export default class FormCreate {
 
     removeField(field) {
         if (this.handlers[field] === undefined)
-            throw new Error(`${field}字段不存在`);
+            throw new Error(`${field}字段不存在`+errMsg());
         let watch = this.handlers[field].watch;
 
         delete this.handlers[field];
@@ -218,7 +218,6 @@ export default class FormCreate {
                 if (this.vm.jsonData[field] !== json) {
                     this.vm.jsonData[field] = json;
                     handler.watchTrueValue(n);
-                    this.vm.changeFormData(field, handler.toParseValue(n));
                     this.vm.$nextTick(() => handler.render.sync());
                 }
             } else

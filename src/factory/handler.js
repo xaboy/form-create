@@ -37,6 +37,7 @@ export default class Handler {
     }
 
     setTrueValue(value) {
+        this.rule.value = value;
         this.vm.changeTrueData(this.field, value);
     }
 
@@ -49,6 +50,7 @@ export default class Handler {
     }
 
     watchTrueValue(n) {
+        this.rule.value = n;
         this.vm.changeFormData(this.field, this.toParseValue(n));
     }
 

@@ -142,6 +142,7 @@ var Handler = function () {
     }, {
         key: 'setTrueValue',
         value: function setTrueValue(value) {
+            this.rule.value = value;
             this.vm.changeTrueData(this.field, value);
         }
     }, {
@@ -157,6 +158,7 @@ var Handler = function () {
     }, {
         key: 'watchTrueValue',
         value: function watchTrueValue(n) {
+            this.rule.value = n;
             this.vm.changeFormData(this.field, this.toParseValue(n));
         }
     }, {
@@ -1661,7 +1663,6 @@ var FormCreate = function () {
                     if (this.vm.jsonData[field] !== json) {
                         this.vm.jsonData[field] = json;
                         handler.watchTrueValue(n);
-                        this.vm.changeFormData(field, handler.toParseValue(n));
                         this.vm.$nextTick(function () {
                             _newArrowCheck(this, _this7);
 
