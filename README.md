@@ -1,8 +1,9 @@
 <p align="center">
-    <a href="https://github.com/xaboy/form-create">
+    <a href="http://www.form-create.com">
         <img width="200" src="http://file.lotkk.com/form-create.png">
     </a>
 </p>
+
 
 # form-create
 
@@ -35,8 +36,6 @@
 
 - [ ] 支持 ElementUi
 
-:rocket::rocket::rocket:
-
 
 
 ![http://file.lotkk.com/demo-live.gif](http://file.lotkk.com/demo-live.gif)
@@ -47,17 +46,13 @@
 
 **[document](http://www.form-create.com)**
 
-<br />
+
 
 ## 案例
 
 - [CRMEB客户管理+电商管理系统](https://gitee.com/ZhongBangKeJi/CRMEB) ([演示站](http://demo25.crmeb.net) 账号：demo 密码：crmeb.com)
 
 - [深入使用 自定义组件 案例](https://github.com/HeyMrLin/fc-demo) ([演示站](http://jeekweb.pro/form-create-demo))
-
-<br />
-
-
 
 
 
