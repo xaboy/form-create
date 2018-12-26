@@ -38,7 +38,10 @@
 :rocket::rocket::rocket:
 
 
-<br />
+
+![http://file.lotkk.com/demo-live.gif](http://file.lotkk.com/demo-live.gif)
+
+
 
 ## 文档
 
@@ -62,12 +65,6 @@
 ## 在线示例
 
 [使用生成器生成](https://jsrun.net/NQhKp/edit) | [使用 json 生成](https://jsrun.net/NQhKp/edit) | [各种示例](https://jsrun.net/user/xaboy)
-
-
-
-
-
-![http://file.lotkk.com/demo-live.gif](http://file.lotkk.com/demo-live.gif)
 
 
 
