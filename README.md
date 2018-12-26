@@ -119,9 +119,7 @@ Vue.use(formCreat)
 ```shell
 npm run dev
 ```
-OR
-
-`双击打开 demo/index.html`
+或双击打开 `demo/index.html`
 
 
 
@@ -141,8 +139,8 @@ OR
         data:{
             formData:{},
             rule:[
-        		formCreate.maker.input('商品名称','goods_name'),
-            	formCreate.maker.date('创建时间','created_at')
+				formCreate.maker.input('商品名称','goods_name'),
+				formCreate.maker.date('创建时间','created_at')
         	],
             option:{
                 //显示表单重置按钮
