@@ -15,8 +15,8 @@ function mock() {
         }).validate([
             {required: true, message: '请输入商品名称', trigger: 'blur'}
         ]).event({
-            change: console.log
-        }).emit(['change']),
+        //    change: console.log
+        }).emit(['change']).emitPrefix('GoodsName'),
         maker.auto('自动完成', 'auto', 'xaboy').props({
             data: [
                 'xaboy',

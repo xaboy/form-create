@@ -9,7 +9,8 @@ export function baseRule() {
         col: {},
         children: [],
         emit: [],
-        template: null
+        template: null,
+        emitPrefix: null
     }
 }
 
@@ -54,6 +55,11 @@ export default class Creator extends VData {
     setValue(value) {
         this.rule.value = value;
         return this
+    }
+
+    emitPrefix(prefix) {
+        this.rule.emitPrefix = prefix;
+        return this;
     }
 }
 

@@ -59,7 +59,10 @@ export function isBool(arg) {
 }
 
 export function toLine(name) {
-    return name.replace(/([A-Z])/g, '-$1').toLowerCase()
+    let line = name.replace(/([A-Z])/g, '-$1').toLowerCase();
+    if(line.indexOf('-') === 0)
+        line = line.substr(1);
+    return line;
 }
 
 export function isNumeric(n) {

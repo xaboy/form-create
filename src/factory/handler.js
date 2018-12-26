@@ -1,4 +1,4 @@
-import {isNumeric, uniqueId, toLine, isUndef, extend, toString, deepExtend} from "../core/util";
+import {isNumeric, uniqueId, toLine, isUndef, extend, toString, deepExtend, errMsg} from "../core/util";
 
 
 export default class Handler {
@@ -70,13 +70,16 @@ export function parseRule(rule, vm) {
     let {validate = [], event = {}, col = {}, emit = [], props = {}, on = {}, options = [], title = '', value = '', field = ''} = rule;
     rule.col = parseCol(col);
     rule.props = parseProps(props);
-    rule.emitEvent = parseEmit(field, emit, vm);
+    rule.emitEvent = parseEmit(field, rule.emitPrefix, emit, vm);
     rule.event = extend(parseEvent(event), rule.emitEvent);
     rule.validate = parseArray(validate);
     rule.options = parseArray(options);
     rule.title = title;
     rule.value = value;
     rule.field = field;
+
+    if (!field)
+        console.error('规则的 field 字段不能空' + errMsg());
 
     if (Object.keys(rule.emitEvent).length > 0)
         extend(on, rule.emitEvent);
@@ -88,14 +91,23 @@ export function parseArray(validate) {
     return Array.isArray(validate) ? validate : []
 }
 
-export function parseEmit(field, emit, vm) {
+export function parseEmit(field, emitPrefix, emit, vm) {
     let event = {};
 
     if (!Array.isArray(emit)) return event;
 
     emit.forEach((eventName) => {
+
+        const fieldKey = toLine(`${field}-${eventName}`).replace('_', '-');
+
+        const emitKey = emitPrefix ? (`${emitPrefix}-`).toLowerCase() + toLine(eventName) : emitPrefix;
+
         event[`on-${eventName}`] = event[`${eventName}`] = (...arg) => {
-            vm.$emit(toLine(`${field}-${eventName}`).replace('_', '-'), ...arg);
+
+            vm.$emit(fieldKey, ...arg);
+
+            if (emitKey)
+                vm.$emit(emitKey, ...arg);
         };
     });
 
