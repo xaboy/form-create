@@ -115,18 +115,6 @@ Vue.use(formCreat)
 ```
 
 
-
-## 查看示例
-
-```shell
-npm run dev
-```
-或双击打开 `demo/index.html`
-
-
-
-
-
 ## 使用
 
 使用  `<form-create></form-create>` 标签创建表单
@@ -143,7 +131,7 @@ npm run dev
             rule:[
                 formCreate.maker.input('商品名称','goods_name'),
                 formCreate.maker.date('创建时间','created_at')
-        	],
+            ],
             option:{
                 //显示表单重置按钮
                 resetBtn:true,
@@ -167,6 +155,14 @@ npm run dev
     });
 ```
 
+
+
+## 查看示例
+
+```shell
+npm run dev
+```
+或双击打开 `demo/index.html`
 
 
 
