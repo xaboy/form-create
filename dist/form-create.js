@@ -919,7 +919,8 @@ function getConfig() {
             icon: iviewConfig.submitBtnIcon,
             innerText: "提交",
             loading: false,
-            show: true
+            show: true,
+            col: undefined
         },
         resetBtn: {
             type: iviewConfig.resetBtnType,
@@ -931,7 +932,8 @@ function getConfig() {
             icon: iviewConfig.resetBtnIcon,
             innerText: "重置",
             loading: false,
-            show: false
+            show: false,
+            col: undefined
         },
         mounted: function mounted() {
             _newArrowCheck(this, _this);
@@ -4726,7 +4728,8 @@ var Form = function () {
         value: function makeResetBtn(unique, span) {
             var _this3 = this;
 
-            return this.vNode.col({ props: { span: span, push: 1 }, key: String(this.unique) + "col3" }, [this.vNode.button({
+            var props = (0, _util.isUndef)(this.options.resetBtn.col) ? { span: span, push: 1 } : this.options.resetBtn.col;
+            return this.vNode.col({ props: props, key: String(this.unique) + "col3" }, [this.vNode.button({
                 key: "frsbtn" + String(unique), props: this.vm.resetProps, on: {
                     "click": function click() {
                         _newArrowCheck(this, _this3);
@@ -4741,7 +4744,8 @@ var Form = function () {
         value: function makeSubmitBtn(unique, span) {
             var _this4 = this;
 
-            return this.vNode.col({ props: { span: span }, key: String(this.unique) + "col4" }, [this.vNode.button({
+            var props = (0, _util.isUndef)(this.options.submitBtn.col) ? { span: span } : this.options.submitBtn.col;
+            return this.vNode.col({ props: props, key: String(this.unique) + "col4" }, [this.vNode.button({
                 key: "fbtn" + String(unique), props: this.vm.buttonProps, on: {
                     "click": function click() {
                         _newArrowCheck(this, _this4);

@@ -1,4 +1,4 @@
-import {deepExtend, extend, toString, uniqueId} from "../core/util";
+import {deepExtend, extend, isUndef, toString, uniqueId} from "../core/util";
 import VNode from "../factory/vNode";
 import VData from "../factory/vData";
 
@@ -88,7 +88,8 @@ export default class Form {
     }
 
     makeResetBtn(unique, span) {
-        return this.vNode.col({props: {span: span, push: 1}, key: `${this.unique}col3`}, [
+        const props = isUndef(this.options.resetBtn.col) ? {span: span, push: 1} : this.options.resetBtn.col;
+        return this.vNode.col({props: props, key: `${this.unique}col3`}, [
             this.vNode.button({
                 key: `frsbtn${unique}`, props: this.vm.resetProps, on: {
                     "click": () => {
@@ -100,7 +101,8 @@ export default class Form {
     }
 
     makeSubmitBtn(unique, span) {
-        return this.vNode.col({props: {span: span}, key: `${this.unique}col4`}, [
+        const props = isUndef(this.options.submitBtn.col) ? {span: span} : this.options.submitBtn.col;
+        return this.vNode.col({props: props, key: `${this.unique}col4`}, [
             this.vNode.button({
                 key: `fbtn${unique}`, props: this.vm.buttonProps, on: {
                     "click": () => {
