@@ -28,7 +28,7 @@
 <body>
 <div id="app1">
     <h2>组件模式生成</h2>
-    <form-create ref="fc" :rule="rule" :option="option" @goods-name-change="change" @goods-name2-click="change" @xaboy-change="change"></form-create>
+    <form-create ref="fc" v-model="fApi" :rule="rule" :option="option" @goods-name-change="change" @goods-name2-click="change" @xaboy-change="change"></form-create>
 </div>
 <div id="app2">
     <h2 onclick="vm.create()" style="cursor: pointer;">点击使用构造方法生成</h2>
@@ -42,7 +42,7 @@
     _vm = new Vue({
         el:'#app1',
         data:{
-            formData:{},
+            formModel:{},
             // rule:jsonMock(),
             rule:mock(),
             option:{
@@ -69,11 +69,10 @@
                 },
 	            mounted($f){
 		            var $m = $f.model();
-
                     $m.goods_name.value += " now";
 	            }
             },
-	        f:{}
+            fApi:{}
         },
         watch:{
             'formData.address':{
@@ -89,11 +88,11 @@
             }
         },
         mounted:function () {
+            console.log(this.fApi);
             //实际开发中记得加 var
-            $f = this.$refs.fc.$f;
-            this.formData = $f.model();
+            this.formModel = this.fApi.model();
             //动态添加表单元素
-            $f.append($r,'pic');
+            this.fApi.append($r,'pic');
         }
     });
     var _m1 = false;

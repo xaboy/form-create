@@ -1632,6 +1632,8 @@ var FormCreate = function () {
         value: function mounted(vm) {
             var _this4 = this;
 
+            var first = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+
             this.vm = vm;
             (0, _util.$nt)(function () {
                 _newArrowCheck(this, _this4);
@@ -1643,7 +1645,7 @@ var FormCreate = function () {
                     if (vm.cptData[field] !== undefined) this.addHandlerWatch(handler);
                     handler.mounted();
                 }.bind(this));
-                this.options.mounted && this.options.mounted(this.fCreateApi);
+                if (first) this.options.mounted && this.options.mounted(this.fCreateApi);
             }.bind(this));
         }
     }, {
@@ -1776,7 +1778,7 @@ var FormCreate = function () {
                     setTimeout(function () {
                         _newArrowCheck(this, _this8);
 
-                        return this.mounted(this.vm);
+                        return this.mounted(this.vm, false);
                     }.bind(this));
                 }.bind(this));
             }
@@ -2461,6 +2463,7 @@ var $FormCreate = function () {
             this.fComponent = new _formCreate2.default(this.rule, this.option);
             this.fComponent._type = 'rule';
             this.fComponent.init(this);
+            this.$emit('input', this.fComponent.fCreateApi);
         },
         mounted: function mounted() {
             var _this = this;
@@ -2471,7 +2474,9 @@ var $FormCreate = function () {
                 _newArrowCheck(this, _this);
 
                 this.fComponent.reload(n);
+                this.$emit('input', this.$f);
             }.bind(this));
+            this.$emit('input', this.$f);
             this.init();
         }
     };

@@ -148,7 +148,7 @@ export default class FormCreate {
         return $vm;
     }
 
-    mounted(vm) {
+    mounted(vm,first = true) {
         this.vm = vm;
         $nt(() => {
             Object.keys(this.handlers).map((field) => {
@@ -157,7 +157,8 @@ export default class FormCreate {
                     this.addHandlerWatch(handler);
                 handler.mounted();
             });
-            this.options.mounted && this.options.mounted(this.fCreateApi);
+            if(first)
+                this.options.mounted && this.options.mounted(this.fCreateApi);
         });
     }
 
@@ -251,7 +252,7 @@ export default class FormCreate {
             this.vm.init();
             $nt(() => {
                 this.vm.isShow = true;
-                setTimeout(() => this.mounted(this.vm))
+                setTimeout(() => this.mounted(this.vm,false))
             });
         }
         return this.vm.$f = this.fCreateApi;
