@@ -120,6 +120,7 @@ var Handler = function () {
         this.key = 'key_' + id;
         this.el = {};
         this.childrenHandlers = [];
+        this.watch = [];
 
         this.init();
 
@@ -207,13 +208,15 @@ function parseRule(rule, vm) {
 
     rule.col = parseCol(col);
     rule.props = parseProps(props);
-    rule.emitEvent = parseEmit(field, emit, vm);
+    rule.emitEvent = parseEmit(field, rule.emitPrefix, emit, vm);
     rule.event = (0, _util.extend)(parseEvent(event), rule.emitEvent);
     rule.validate = parseArray(validate);
     rule.options = parseArray(options);
     rule.title = title;
     rule.value = value;
     rule.field = field;
+
+    if (!field) console.error('规则的 field 字段不能空' + (0, _util.errMsg)());
 
     if (Object.keys(rule.emitEvent).length > 0) (0, _util.extend)(on, rule.emitEvent);
     rule.on = on;
@@ -224,7 +227,7 @@ function parseArray(validate) {
     return Array.isArray(validate) ? validate : [];
 }
 
-function parseEmit(field, emit, vm) {
+function parseEmit(field, emitPrefix, emit, vm) {
     var _this2 = this;
 
     var event = {};
@@ -234,6 +237,10 @@ function parseEmit(field, emit, vm) {
     emit.forEach(function (eventName) {
         _newArrowCheck(this, _this2);
 
+        var fieldKey = (0, _util.toLine)(String(field) + '-' + String(eventName)).replace('_', '-');
+
+        var emitKey = emitPrefix ? (String(emitPrefix) + '-').toLowerCase() + (0, _util.toLine)(eventName) : emitPrefix;
+
         event['on-' + String(eventName)] = event['' + String(eventName)] = function () {
             for (var _len = arguments.length, arg = Array(_len), _key = 0; _key < _len; _key++) {
                 arg[_key] = arguments[_key];
@@ -241,7 +248,8 @@ function parseEmit(field, emit, vm) {
 
             _newArrowCheck(this, _this2);
 
-            vm.$emit.apply(vm, [(0, _util.toLine)(String(field) + '-' + String(eventName)).replace('_', '-')].concat(arg));
+            vm.$emit.apply(vm, [fieldKey].concat(arg));
+            if (emitKey && fieldKey !== emitKey) vm.$emit.apply(vm, [emitKey].concat(arg));
         }.bind(this);
     }.bind(this));
 
@@ -545,7 +553,9 @@ function isBool(arg) {
 }
 
 function toLine(name) {
-    return name.replace(/([A-Z])/g, '-$1').toLowerCase();
+    var line = name.replace(/([A-Z])/g, '-$1').toLowerCase();
+    if (line.indexOf('-') === 0) line = line.substr(1);
+    return line;
 }
 
 function isNumeric(n) {
@@ -658,7 +668,8 @@ function baseRule() {
         col: {},
         children: [],
         emit: [],
-        template: null
+        template: null,
+        emitPrefix: null
     };
 }
 
@@ -728,6 +739,12 @@ var Creator = function (_VData) {
             this.rule.value = value;
             return this;
         }
+    }, {
+        key: "emitPrefix",
+        value: function emitPrefix(prefix) {
+            this.rule.emitPrefix = prefix;
+            return this;
+        }
     }]);
 
     return Creator;
@@ -769,7 +786,7 @@ arrAttrs.forEach(function (attr) {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.componentCommon = exports.getGlobalApi = exports.formCreateStyle = exports.iviewConfig = undefined;
+exports.componentCommon = exports.getGlobalApi = exports.formCreateStyle = exports.iviewConfig = exports.iview3 = exports.iview2 = undefined;
 exports.getComponent = getComponent;
 exports.getUdfComponent = getUdfComponent;
 exports.getConfig = getConfig;
@@ -797,25 +814,27 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _newArrowCheck(innerThis, boundThis) { if (innerThis !== boundThis) { throw new TypeError("Cannot instantiate an arrow function"); } }
 
+var iview2 = exports.iview2 = {
+    _v: 2,
+    resetBtnType: 'ghost',
+    resetBtnIcon: 'refresh',
+    submitBtnIcon: 'ios-upload',
+    fileIcon: 'document-text',
+    fileUpIcon: 'folder',
+    imgUpIcon: 'camera'
+};
+
+var iview3 = exports.iview3 = {
+    _v: 3,
+    resetBtnType: 'default',
+    resetBtnIcon: 'md-refresh',
+    submitBtnIcon: 'ios-share',
+    fileIcon: 'md-document',
+    fileUpIcon: 'ios-folder-open',
+    imgUpIcon: 'md-images'
+};
+
 var iviewConfig = exports.iviewConfig = function () {
-    var iview2 = {
-        _v: 2,
-        resetBtnType: 'ghost',
-        resetBtnIcon: 'refresh',
-        submitBtnIcon: 'ios-upload',
-        fileIcon: 'document-text',
-        fileUpIcon: 'folder',
-        imgUpIcon: 'camera'
-    };
-    var iview3 = {
-        _v: 3,
-        resetBtnType: 'default',
-        resetBtnIcon: 'md-refresh',
-        submitBtnIcon: 'ios-share',
-        fileIcon: 'md-document',
-        fileUpIcon: 'ios-folder-open',
-        imgUpIcon: 'md-images'
-    };
     if (typeof _iview2.default === 'undefined') return iview2;
     return _iview2.default.version && _iview2.default.version.split('.')[0] == 3 ? iview3 : iview2;
 }();
@@ -1221,7 +1240,7 @@ var componentCommon = exports.componentCommon = {
             this.$set(this.trueData[field], 'value', value);
         },
         getTrueDataValue: function getTrueDataValue(field) {
-            return this.trueData[field].value;
+            return this.trueData[field] === undefined ? undefined : this.trueData[field].value;
         },
         getTrueData: function getTrueData(field) {
             return this.trueData[field];
@@ -1469,7 +1488,7 @@ function _newArrowCheck(innerThis, boundThis) { if (innerThis !== boundThis) { t
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var version = '1.5.1';
+var version = '1.5.2';
 
 var formCreateStyleElId = 'form-create-style';
 
@@ -1708,7 +1727,7 @@ var FormCreate = function () {
                 } else unWatch2();
             }.bind(this), { deep: true });
 
-            handler.watch = [unWatch, unWatch2];
+            handler.watch.push(unWatch, unWatch2);
 
             var bind = (0, _util.debounce)(function (n, o) {
                 _newArrowCheck(this, _this7);
@@ -1726,8 +1745,7 @@ var FormCreate = function () {
                 _newArrowCheck(this, _this7);
 
                 if (key === 'value') return;
-                var unWatch = this.vm.$watch("trueData." + String(field) + ".rule." + String(key), bind, { deep: true });
-                handler.watch.push(unWatch);
+                handler.watch.push(this.vm.$watch("trueData." + String(field) + ".rule." + String(key), bind, { deep: true }));
             }.bind(this));
         }
     }, {
@@ -2135,7 +2153,7 @@ var handler = function (_Handler) {
 
                 return file !== undefined;
             }.bind(this));
-            return this.rule.props.maxLength <= 1 ? files[0] || '' : files;
+            return this.rule.props.maxLength === 1 ? files[0] || '' : files;
         }
     }, {
         key: "changeParseValue",
@@ -3898,11 +3916,11 @@ var render = function (_Render) {
             var _this3 = this;
 
             var field = this.handler.field;
-            this.vm.$watch("cptData." + String(field), function () {
+            this.handler.watch.push(this.vm.$watch("cptData." + String(field), function () {
                 _newArrowCheck(this, _this3);
 
                 this.onChange();
-            }.bind(this), { deep: true });
+            }.bind(this), { deep: true }));
             this._props = this.handler.rule.props;
             this.issetIcon = this._props.handleIcon !== false || this._props.allowRemove === true;
         }

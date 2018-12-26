@@ -162,7 +162,7 @@ function jsonMock() {
                 "type": "datetimerange", //显示类型，可选值为 date、daterange、datetime、datetimerange、year、month
                 "format": "yyyy-MM-dd HH:mm:ss", //展示的日期格式
                 "placement": "bottom-start", //	日期选择器出现的位置，可选值为toptop-starttop-endbottombottom-startbottom-endleftleft-startleft-endrightright-startright-end
-                "placeholder": "请选择获得时间", //占位文本
+                "placeholder": "请选择活动日期", //占位文本
                 "confirm": false, //是否显示底部控制栏，开启后，选择完日期，选择器不会主动关闭，需用户确认后才可关闭
                 "size": "default", //尺寸，可选值为large、small、default或者不设置
                 "disabled": false, //是否禁用选择器
@@ -181,7 +181,7 @@ function jsonMock() {
                 "format": "HH:mm:ss", //展示的时间格式
                 "steps": [], //下拉列表的时间间隔，数组的三项分别对应小时、分钟、秒。例如设置为 [1, 15] 时，分钟会显示：00、15、30、45。
                 "placement": "bottom-start", //	时间选择器出现的位置，可选值为toptop-starttop-endbottombottom-startbottom-endleftleft-startleft-endrightright-startright-end
-                "placeholder": "请选择获得时间", //占位文本
+                "placeholder": "请选择活动时间", //占位文本
                 "confirm": false, //是否显示底部控制栏，开启后，选择完日期，选择器不会主动关闭，需用户确认后才可关闭
                 "size": "default", //尺寸，可选值为large、small、default或者不设置
                 "disabled": false, //是否禁用选择器
@@ -333,3 +333,11 @@ function jsonMock() {
     ]
 
 }
+
+
+/**
+ *
+ * JS表单生成器
+ * Author: xaboy
+ * Github: https://github.com/xaboy/form-create
+ */

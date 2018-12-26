@@ -4,25 +4,27 @@ import Render from '../factory/render';
 import componentList from './componentList';
 import iview from 'iview';
 
+export const iview2 = {
+    _v: 2,
+    resetBtnType: 'ghost',
+    resetBtnIcon: 'refresh',
+    submitBtnIcon: 'ios-upload',
+    fileIcon: 'document-text',
+    fileUpIcon: 'folder',
+    imgUpIcon: 'camera',
+};
+
+export const iview3 = {
+    _v: 3,
+    resetBtnType: 'default',
+    resetBtnIcon: 'md-refresh',
+    submitBtnIcon: 'ios-share',
+    fileIcon: 'md-document',
+    fileUpIcon: 'ios-folder-open',
+    imgUpIcon: 'md-images',
+};
+
 export const iviewConfig = (function () {
-    const iview2 = {
-        _v: 2,
-        resetBtnType: 'ghost',
-        resetBtnIcon: 'refresh',
-        submitBtnIcon: 'ios-upload',
-        fileIcon: 'document-text',
-        fileUpIcon: 'folder',
-        imgUpIcon: 'camera',
-    };
-    const iview3 = {
-        _v: 3,
-        resetBtnType: 'default',
-        resetBtnIcon: 'md-refresh',
-        submitBtnIcon: 'ios-share',
-        fileIcon: 'md-document',
-        fileUpIcon: 'ios-folder-open',
-        imgUpIcon: 'md-images',
-    };
     if (typeof iview === 'undefined') return iview2;
     return (iview.version && iview.version.split('.')[0] == 3) ? iview3 : iview2;
 }());
@@ -353,7 +355,7 @@ export const componentCommon = {
             this.$set(this.trueData[field], 'value', value);
         },
         getTrueDataValue(field) {
-            return this.trueData[field].value;
+            return this.trueData[field] === undefined ? undefined : this.trueData[field].value;
         },
         getTrueData(field) {
             return this.trueData[field];

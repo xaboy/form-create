@@ -16,7 +16,7 @@ function mock() {
             {required: true, message: '请输入商品名称', trigger: 'blur'}
         ]).event({
         //    change: console.log
-        }).emit(['change']).emitPrefix('GoodsName'),
+        }).emit(['change']),
         maker.auto('自动完成', 'auto', 'xaboy').props({
             data: [
                 'xaboy',
@@ -26,7 +26,7 @@ function mock() {
             filterMethod: (value, option) => {
                 return option.toUpperCase().indexOf(value.toUpperCase()) !== -1
             }
-        }),
+        }).emitPrefix('xaboy').emit(['change']),
         maker.input('商品简介', 'goods_info', '').props({
             type: 'textarea',
             autosize: {minRows: 5, maxRows: 9}
@@ -236,3 +236,9 @@ $r = maker.upload('产品主图', 'logo', 'http://img1.touxiang.cn/uploads/20131
     }
 }).validate({required: true, type: 'array', min: 1, message: '请上传1张图片', trigger: 'change'});
 
+/**
+ *
+ * JS表单生成器
+ * Author: xaboy
+ * Github: https://github.com/xaboy/form-create
+ */

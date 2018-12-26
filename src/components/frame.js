@@ -68,9 +68,9 @@ const eventList = {onOpen: 'on-open', onChange: 'on-change', onCancel: 'on-cance
 class render extends Render {
     init() {
         let field = this.handler.field;
-        this.vm.$watch(`cptData.${field}`, () => {
+        this.handler.watch.push(this.vm.$watch(`cptData.${field}`, () => {
             this.onChange();
-        }, {deep: true});
+        }, {deep: true}));
         this._props = this.handler.rule.props;
         this.issetIcon = this._props.handleIcon !== false || this._props.allowRemove === true;
     }

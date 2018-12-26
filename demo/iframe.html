@@ -39,7 +39,7 @@
 		}
 		image.addEventListener('click',onClick)
     });
-    
+
     function onClick() {
         var parent = this.parentNode;
         if(Array.from(parent.classList).indexOf('on') !== -1) {
@@ -64,6 +64,7 @@
 				list.push(image.src);
 	        }
         });
+
         //修改表单fodder字段的值
 		parent.$f.changeField('fodder',list);
     }

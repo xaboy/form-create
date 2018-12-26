@@ -61,7 +61,7 @@ class handler extends Handler {
     toTrueValue(parseValue) {
         if (!parseValue) return [];
         let files = parseValue.map((file) => file.url).filter((file) => file !== undefined);
-        return this.rule.props.maxLength <= 1
+        return this.rule.props.maxLength === 1
             ? (files[0] || '')
             : files;
     }

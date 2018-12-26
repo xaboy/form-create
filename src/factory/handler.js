@@ -18,6 +18,7 @@ export default class Handler {
         this.key = 'key_' + id;
         this.el = {};
         this.childrenHandlers = [];
+        this.watch = [];
 
         this.init();
 
@@ -103,10 +104,8 @@ export function parseEmit(field, emitPrefix, emit, vm) {
         const emitKey = emitPrefix ? (`${emitPrefix}-`).toLowerCase() + toLine(eventName) : emitPrefix;
 
         event[`on-${eventName}`] = event[`${eventName}`] = (...arg) => {
-
             vm.$emit(fieldKey, ...arg);
-
-            if (emitKey)
+            if (emitKey && fieldKey !== emitKey)
                 vm.$emit(emitKey, ...arg);
         };
     });

@@ -5,7 +5,7 @@ import formCreateComponent from "../core/formCreateComponent";
 import {$FormCreate, formCreateName} from "../core/component";
 import maker from "./maker";
 import Vue from 'vue';
-const version = '1.5.1';
+const version = '1.5.2';
 
 const formCreateStyleElId = 'form-create-style';
 
@@ -224,7 +224,7 @@ export default class FormCreate {
                 unWatch2();
         }, {deep: true});
 
-        handler.watch = [unWatch, unWatch2];
+        handler.watch.push(unWatch, unWatch2);
 
         const bind = debounce((n, o) => {
             if (this.handlers[field] !== undefined) {
@@ -235,8 +235,7 @@ export default class FormCreate {
 
         Object.keys(this.vm.trueData[field].rule).map((key) => {
             if (key === 'value') return;
-            let unWatch = this.vm.$watch(`trueData.${field}.rule.${key}`, bind, {deep: true});
-            handler.watch.push(unWatch);
+            handler.watch.push(this.vm.$watch(`trueData.${field}.rule.${key}`, bind, {deep: true}));
         });
     }
 
