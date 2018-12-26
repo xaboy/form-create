@@ -198,4 +198,4 @@ form-builder: [使用PHP快速生成现代化表单](https://github.com/xaboy/fo
 
 [MIT](http://opensource.org/licenses/MIT)
 
-Copyright (c) 2018-present, form-create
+Copyright (c) 2018-present xaboy

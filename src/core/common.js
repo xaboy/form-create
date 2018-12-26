@@ -308,6 +308,9 @@ export function getGlobalApi(fComponent) {
             vm.sync();
         },
         onSuccess(fn) {
+            this.onSubmit(fn);
+        },
+        onSubmit(fn) {
             this.options({onSubmit: fn});
         },
         sync: (field, callback) => {

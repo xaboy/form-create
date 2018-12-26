@@ -89,6 +89,7 @@
         },
         mounted:function () {
             console.log(this.fApi);
+            $f = this.fApi;
             //实际开发中记得加 var
             this.formModel = this.fApi.model();
             //动态添加表单元素

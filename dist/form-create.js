@@ -1192,6 +1192,9 @@ function getGlobalApi(fComponent) {
             vm.sync();
         }.bind(this),
         onSuccess: function onSuccess(fn) {
+            this.onSubmit(fn);
+        },
+        onSubmit: function onSubmit(fn) {
             this.options({ onSubmit: fn });
         },
 
