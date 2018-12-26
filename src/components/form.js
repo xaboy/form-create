@@ -55,7 +55,7 @@ export default class Form {
             });
         if (vn.length > 0)
             vn.push(this.makeFormBtn(unique));
-        return this.vNode.form(propsData, [this.vNode.row({props: this.options.row || {}}, vn)]);
+        return this.vNode.form(propsData, [this.vNode.row(extend({props: this.options.row || {}},{key:'row'+unique}), vn)]);
     }
 
     makeFormItem({rule, unique, field, refName}, VNodeFn, fItemUnique) {

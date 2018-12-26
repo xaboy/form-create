@@ -1,4 +1,4 @@
-import {$nt, extend, isFunction, uniqueId} from '../core/util';
+import {$nt, extend, isFunction, isUndef, uniqueId} from '../core/util';
 import VNode from "./vNode";
 import VData from "./vData";
 import Vue from 'vue';
@@ -50,12 +50,14 @@ export default class Render {
         let {type, rule, childrenHandlers, refName, key} = this.handler;
         if (rule.type === '__tmp') {
             let vn = Vue.compile(rule.template, {}).render.call(rule._vm || this.vm);
-            if(vn.data === undefined) vn.data = {};
+            if (vn.data === undefined) vn.data = {};
             extend(vn.data, rule);
             vn.key = key;
             return [vn];
         } else {
             rule.ref = refName;
+            if (isUndef(rule.key))
+                rule.key = 'def' + uniqueId();
             let vn = this.vNode.make(type, extend({}, rule), () => {
                 let vn = [];
                 if (childrenHandlers.length > 0)

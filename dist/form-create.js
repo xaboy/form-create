@@ -399,6 +399,7 @@ var Render = function () {
                 return [vn];
             } else {
                 rule.ref = refName;
+                if ((0, _util.isUndef)(rule.key)) rule.key = 'def' + (0, _util.uniqueId)();
                 var _vn = this.vNode.make(type, (0, _util.extend)({}, rule), function () {
                     _newArrowCheck(this, _this3);
 
@@ -4687,7 +4688,7 @@ var Form = function () {
                 return this.makeFormItem(render.handler, render.cacheParse(), "fItem" + String(key) + String(unique));
             }.bind(this));
             if (vn.length > 0) vn.push(this.makeFormBtn(unique));
-            return this.vNode.form(propsData, [this.vNode.row({ props: this.options.row || {} }, vn)]);
+            return this.vNode.form(propsData, [this.vNode.row((0, _util.extend)({ props: this.options.row || {} }, { key: 'row' + unique }), vn)]);
         }
     }, {
         key: "makeFormItem",
