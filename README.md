@@ -26,6 +26,8 @@
 >
 >  本项目QQ讨论群[28963712](https://jq.qq.com/?_wv=1027&k=54aKUVw)
 
+> [更新日志](http://www.form-create.com/guide/update.html)
+
 
 
 
