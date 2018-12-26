@@ -132,17 +132,17 @@ npm run dev
 使用  `<form-create></form-create>` 标签创建表单
 
 ```html
-<form-create ref="fc" :rule="rule" :option="option"></form-create>
+<form-create ref="fc" v-model="fApi" :rule="rule" :option="option"></form-create>
 ```
 
 ```javascript
     new Vue({
         el:'#app1',
         data:{
-            formData:{},
+            fApi:{},
             rule:[
-				formCreate.maker.input('商品名称','goods_name'),
-				formCreate.maker.date('创建时间','created_at')
+                formCreate.maker.input('商品名称','goods_name'),
+                formCreate.maker.date('创建时间','created_at')
         	],
             option:{
                 //显示表单重置按钮
@@ -161,7 +161,8 @@ npm run dev
             }
         },
         mounted:function () {
-            $f = this.$refs.fc.$f;
+            //fApi === $f
+            console.log(this.fApi.formData());
         }
     });
 ```
