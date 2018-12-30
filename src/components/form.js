@@ -66,7 +66,7 @@ export default class Form {
             rules: rule.validate,
             labelWidth: rule.col.labelWidth,
             required: rule.props.required
-        }).key(fItemUnique).ref('fItem' + refName).class({[className]: className}).get();
+        }).key(fItemUnique).ref('fItem' + refName).class(className).get();
         return this.vNode.col({
             props: rule.col, 'class': {
                 '__fc_h': rule.props.hidden === true,
