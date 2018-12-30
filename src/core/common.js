@@ -328,7 +328,6 @@ export function getGlobalApi(fComponent) {
         refresh: () => {
             vm.refresh();
         },
-        // vm: fComponent,
     };
 }
 

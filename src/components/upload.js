@@ -101,7 +101,6 @@ class render extends Render {
 
     onSuccess(response, file, fileList) {
         let url = this.uploadOptions.onSuccess.call(null, response, file, fileList);
-
         if (!isUndef(url)) {
             file.url = url;
             file.showProgress = false;
@@ -159,7 +158,8 @@ class render extends Render {
     }
 
     cacheParse() {
-        return this.parse();
+        this.cache = null;
+        return super.cacheParse();
     }
 
     makeUploadView(src, key, index) {
@@ -189,7 +189,11 @@ class render extends Render {
 
     makeProgress(file, unique) {
         return this.vNode.make('div', {key: `div3${unique}`, class: {'fc-files': true}}, [
-            this.vNode.progress({key: `upp${unique}`, props: {percent: file.percentage, hideInfo: true},style:{width:'90%'}})
+            this.vNode.progress({
+                key: `upp${unique}`,
+                props: {percent: file.percentage, hideInfo: true},
+                style: {width: '90%'}
+            })
         ]);
     }
 
