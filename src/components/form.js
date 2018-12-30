@@ -39,7 +39,7 @@ export default class Form {
         if (!vm.isShow)
             return;
         if (this.cacheUnique !== vm.unique) {
-            this.renderSort.map((field) => {
+            this.renderSort.forEach((field) => {
                 this.renders[field].clearCache();
             });
             this.cacheUnique = vm.unique;

@@ -5,6 +5,7 @@ import formCreateComponent from "../core/formCreateComponent";
 import {$FormCreate, formCreateName} from "../core/component";
 import maker from "./maker";
 import Vue from 'vue';
+
 const version = '1.5.2';
 
 const formCreateStyleElId = 'form-create-style';
@@ -118,7 +119,7 @@ export default class FormCreate {
                 this.setHandler(handler);
                 this.fieldList.push(handler.field);
             } else {
-                console.error(`${rule.field} 字段已存在`+errMsg());
+                console.error(`${rule.field} 字段已存在` + errMsg());
             }
 
         });
@@ -126,7 +127,7 @@ export default class FormCreate {
 
     createChildren(handler) {
         if (Array.isArray(handler.rule.children) && handler.rule.children.length > 0) {
-            handler.rule.children.map((rule, index) => {
+            handler.rule.children.forEach((rule, index) => {
                 rule = getRule(rule);
                 if (this.switchMaker)
                     handler.rule.children[index] = rule;
@@ -136,7 +137,7 @@ export default class FormCreate {
                     this.createChildren(_handler);
                     handler.childrenHandlers.push(_handler);
                 } else {
-                    console.error(`${rule.field} 字段已存在`+errMsg());
+                    console.error(`${rule.field} 字段已存在` + errMsg());
                 }
             });
         }
@@ -148,18 +149,21 @@ export default class FormCreate {
         return $vm;
     }
 
-    mounted(vm,first = true) {
+    mounted(vm, first = true) {
         this.vm = vm;
+        let {mounted, onReload} = this.options;
         $nt(() => {
-            Object.keys(this.handlers).map((field) => {
+            Object.keys(this.handlers).forEach((field) => {
                 let handler = this.handlers[field];
                 if (vm.cptData[field] !== undefined)
                     this.addHandlerWatch(handler);
                 handler.mounted();
             });
-            if(first)
-                this.options.mounted && this.options.mounted(this.fCreateApi);
+            if (first)
+                mounted && mounted(this.fCreateApi);
         });
+
+        onReload && onReload(this.fCreateApi);
     }
 
     component() {
@@ -170,7 +174,7 @@ export default class FormCreate {
         if (isFunction(rule.getRule))
             rule = rule.getRule();
         if (Object.keys(this.handlers).indexOf(toString(rule.field)) !== -1)
-            throw new Error(`${rule.field}字段已存在`+errMsg());
+            throw new Error(`${rule.field}字段已存在` + errMsg());
         let handler = getComponent(this.vm, rule, this.options);
         this.createChildren(handler);
         this.vm.setField(handler.field);
@@ -184,7 +188,7 @@ export default class FormCreate {
 
     removeField(field) {
         if (this.handlers[field] === undefined)
-            throw new Error(`${field}字段不存在`+errMsg());
+            throw new Error(`${field}字段不存在` + errMsg());
         let watch = this.handlers[field].watch;
 
         delete this.handlers[field];
@@ -234,7 +238,7 @@ export default class FormCreate {
                 unWatch();
         }, 100);
 
-        Object.keys(this.vm.trueData[field].rule).map((key) => {
+        Object.keys(this.vm.trueData[field].rule).forEach((key) => {
             if (key === 'value') return;
             handler.watch.push(this.vm.$watch(`trueData.${field}.rule.${key}`, bind, {deep: true}));
         });
@@ -252,7 +256,7 @@ export default class FormCreate {
             this.vm.init();
             $nt(() => {
                 this.vm.isShow = true;
-                setTimeout(() => this.mounted(this.vm,false))
+                setTimeout(() => this.mounted(this.vm, false))
             });
         }
         return this.vm.$f = this.fCreateApi;

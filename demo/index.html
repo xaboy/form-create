@@ -70,7 +70,11 @@
 	            mounted($f){
 		            var $m = $f.model();
                     $m.goods_name.value += " now";
-	            }
+	            },
+	            //onReload 表单重载是触发 用与更新$f
+                onReload($f){
+                    console.log($f);
+                }
             },
             fApi:{}
         },

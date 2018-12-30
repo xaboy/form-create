@@ -88,8 +88,6 @@ export function getConfig() {
             handleIcon: 'ios-eye-outline',
             allowRemove: true
         },
-        onSubmit: (formData) => {
-        },
         submitBtn: {
             type: "primary",
             size: "large",
@@ -117,7 +115,11 @@ export function getConfig() {
             col: undefined,
         },
         mounted: () => {
-        }
+        },
+        onReload: () => {
+        },
+        onSubmit: (formData) => {
+        },
     };
 };
 

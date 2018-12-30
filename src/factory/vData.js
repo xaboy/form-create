@@ -27,7 +27,7 @@ export default class VData {
         if (isUndef(classList)) return this;
 
         if (Array.isArray(classList)) {
-            classList.map((cls) => {
+            classList.forEach((cls) => {
                 this._data.class[toString(cls)] = true
             })
         } else if (isPlainObject(classList)) {
@@ -35,7 +35,6 @@ export default class VData {
         } else {
             this._data.class[toString(classList)] = (status === undefined ? true : status)
         }
-
         return this
     }
 
@@ -43,7 +42,6 @@ export default class VData {
         if (isUndef(directives)) return this;
 
         this._data.directives = this._data.directives.concat(toArray(directives));
-
         return this
     }
 
