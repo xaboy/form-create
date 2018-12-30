@@ -1,12 +1,20 @@
 //使用 json对象 规则生成表单.!!json 不支持函数和正则
 function jsonMock() {
 
+
+    //以下是组件的生成规则及参数默认值
+
     return [
+
+        //hidden 组件
         {
             type: "hidden",
             field: "id",
             value: "1"
         },
+
+
+        //cascader 多级联动组件
         {
             type: "cascader",
             title: "所在区域",
@@ -40,6 +48,9 @@ function jsonMock() {
                 transfer: false,
             }
         },
+
+
+        //input 输入框组件
         {
             type: "input",
             title: "商品名称",//label名称
@@ -61,6 +72,9 @@ function jsonMock() {
                 "required": false,
             },
         },
+
+
+        //autoComplete 自动选择组件
         {
             type: "autoComplete",
             title: "自动完成",
@@ -77,6 +91,9 @@ function jsonMock() {
                 }
             }
         },
+
+
+        //radio 单选框组件
         {
             type: "radio",
             title: "是否包邮",//label名称
@@ -93,6 +110,9 @@ function jsonMock() {
                 "vertical": false, //是否垂直排列，按钮样式下无效
             }
         },
+
+
+        //checkbox 复选框付选择
         {
             type: "checkbox",
             title: "标签",//label名称
@@ -110,6 +130,9 @@ function jsonMock() {
                 "size": "default", //多选框组的尺寸，可选值为 large、small、default 或者不设置
             }
         },
+
+
+        //switch 开关组件
         {
             type: "switch",
             title: "是否上架",//label名称
@@ -126,6 +149,9 @@ function jsonMock() {
                 close: "下架", //自定义显示关闭时的内容
             }, //slot可以不用配置
         },
+
+
+        //select 下拉选择组件
         {
             type: "select",
             field: "cate_id",
@@ -153,6 +179,9 @@ function jsonMock() {
                 {"value": "105", "label": "新鲜水果", "disabled": false},
             ]
         },
+
+
+        //datePicker 日期选择组件
         {
             type: "DatePicker",
             field: "section_day",
@@ -171,6 +200,9 @@ function jsonMock() {
                 "editable": false, //文本框是否可以输入
             }
         },
+
+
+        //timePicker 时间选择组件
         {
             type: "TimePicker",
             field: "section_time",
@@ -190,6 +222,9 @@ function jsonMock() {
                 "editable": false, //文本框是否可以输入
             }
         },
+
+
+        //inputNumber 数组输入框组件
         {
             type: "InputNumber",
             field: "sort",
@@ -206,6 +241,9 @@ function jsonMock() {
                 "precision": 0, //数值精度
             }
         },
+
+
+        //colorPicker 颜色选择组件
         {
             type: "ColorPicker",
             field: "color",
@@ -220,6 +258,9 @@ function jsonMock() {
                 "format": "hex", //颜色的格式，可选值为 hsl、hsv、hex、rgb,开启 alpha 时为 rgb，其它为 hex
             },
         },
+
+
+        //rate 评分组件
         {
             type: "rate",
             field: "rate",
@@ -233,6 +274,9 @@ function jsonMock() {
                 "clearable": true, //是否可以取消选择
             }
         },
+
+
+        //slider 滑块组件
         {
             type: "slider",
             field: "slider",
@@ -251,6 +295,9 @@ function jsonMock() {
                 "inputSize": "small", //数字输入框的尺寸，可选值为large、small、default或者不填，仅在开启 show-input 时有效
             }
         },
+
+
+        //upload 上传组件
         {
             type: "Upload",
             field: "pic",
@@ -294,6 +341,8 @@ function jsonMock() {
                 allowRemove: true,
             }
         },
+
+
         {
             type: "checkbox",
             title: "",//label名称
@@ -308,6 +357,9 @@ function jsonMock() {
                 "vertical": false, //是否垂直排列，按钮样式下无效
             }
         },
+
+
+        //frame 框架组件
         {
             type: "frame",
             title: "素材",
@@ -336,8 +388,8 @@ function jsonMock() {
 
 
 /**
- *
  * JS表单生成器
+ *
  * Author: xaboy
  * Github: https://github.com/xaboy/form-create
  */

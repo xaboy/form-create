@@ -68,7 +68,7 @@ export default class Handler {
 }
 
 export function parseRule(rule, vm) {
-    let {validate = [], event = {}, col = {}, emit = [], props = {}, on = {}, options = [], title = '', value = '', field = ''} = rule;
+    let {validate = [], event = {}, col = {}, emit = [], props = {}, on = {}, options = [], title = '', value = '', field = '', className = ''} = rule;
     rule.col = parseCol(col);
     rule.props = parseProps(props);
     rule.emitEvent = parseEmit(field, rule.emitPrefix, emit, vm);
@@ -78,6 +78,7 @@ export function parseRule(rule, vm) {
     rule.title = title;
     rule.value = value;
     rule.field = field;
+    rule.className = className;
 
     if (!field)
         console.error('规则的 field 字段不能空' + errMsg());

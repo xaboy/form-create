@@ -56,12 +56,16 @@ export default class Creator extends VData {
         this.rule.value = value;
         return this
     }
+}
 
-    emitPrefix(prefix) {
-        this.rule.emitPrefix = prefix;
+const keyAttrs = ['emitPrefix', 'className'];
+
+keyAttrs.forEach((attr) => {
+    Creator.prototype[attr] = function (value) {
+        this.rule[attr] = value;
         return this;
     }
-}
+});
 
 const objAttrs = ['event', 'col'];
 

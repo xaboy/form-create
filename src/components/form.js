@@ -55,18 +55,18 @@ export default class Form {
             });
         if (vn.length > 0)
             vn.push(this.makeFormBtn(unique));
-        return this.vNode.form(propsData, [this.vNode.row(extend({props: this.options.row || {}},{key:'row'+unique}), vn)]);
+        return this.vNode.form(propsData, [this.vNode.row(extend({props: this.options.row || {}}, {key: 'row' + unique}), vn)]);
     }
 
     makeFormItem({rule, unique, field, refName}, VNodeFn, fItemUnique) {
-        let propsData = this.vData.props({
+        let className = rule.className, propsData = this.vData.props({
             prop: field,
             label: rule.title,
             labelFor: unique,
             rules: rule.validate,
             labelWidth: rule.col.labelWidth,
             required: rule.props.required
-        }).key(fItemUnique).ref('fItem' + refName).get();
+        }).key(fItemUnique).ref('fItem' + refName).class({[className]: className}).get();
         return this.vNode.col({
             props: rule.col, 'class': {
                 '__fc_h': rule.props.hidden === true,
