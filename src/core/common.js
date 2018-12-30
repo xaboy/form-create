@@ -136,6 +136,10 @@ export const formCreateStyle = '.form-create{padding:25px;} .fc-upload-btn,.fc-f
     '.fc-upload .ivu-upload-list{ position: absolute;left: 0; }' +
     '.fc-spin-icon-load{animation: ani-fc-spin 1s linear infinite;} @-webkit-keyframes ani-fc-spin{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}50%{-webkit-transform:rotate(180deg);transform:rotate(180deg)}to{-webkit-transform:rotate(1turn);transform:rotate(1turn)}}@keyframes ani-fc-spin{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}50%{-webkit-transform:rotate(180deg);transform:rotate(180deg)}to{-webkit-transform:rotate(1turn);transform:rotate(1turn)}}';
 
+export function toDefSlot(slot, $h, rule) {
+    return [slot && isFunction(slot) ? slot.call(rule, $h) : slot]
+}
+
 export function getGlobalApi(fComponent) {
     let vm = fComponent.vm;
     return {

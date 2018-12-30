@@ -1,6 +1,7 @@
 import Handler from "../factory/handler";
 import Render from "../factory/render";
 import {creatorTypeFactory} from "../factory/creator";
+import {toDefSlot} from "../core/common";
 
 const name = "select";
 
@@ -16,11 +17,11 @@ class handler extends Handler {
 
 class render extends Render {
     parse() {
-        let {unique, rule: {options}} = this.handler;
-        return [this.vNode.select(this.inputProps().get(), () => options.map((option, index) => this.vNode.option({
+        let {unique, rule} = this.handler;
+        return [this.vNode.select(this.inputProps().get(), () => rule.options.map((option, index) => this.vNode.option({
             props: option,
-            key: `sopt${index}${unique}`
-        })))];
+            key: `sopt${index}${unique}`,
+        }, toDefSlot(option.slot, this.vm.$createElement, rule))))];
     }
 }
 

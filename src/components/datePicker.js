@@ -1,8 +1,8 @@
 import Handler from "../factory/handler";
 import Render from "../factory/render";
-import {timeStampToDate} from "../core/common";
+import {timeStampToDate, toDefSlot} from "../core/common";
 import {creatorTypeFactory} from "../factory/creator";
-import {toString} from "../core/util";
+import {isUndef, toString} from "../core/util";
 
 const name = "datePicker";
 
@@ -12,7 +12,7 @@ class handler extends Handler {
         props.type = !props.type
             ? 'date'
             : toString(props.type).toLowerCase();
-        if (props.startDate === undefined)
+        if (isUndef(props.startDate))
             props.startDate = timeStampToDate(props.startDate);
     }
 
@@ -46,7 +46,8 @@ class handler extends Handler {
 
 class render extends Render {
     parse() {
-        return [this.vNode.datePicker(this.inputProps().key(this.handler.key).get())];
+        let {key, rule, vm} = this.handler;
+        return [this.vNode.datePicker(this.inputProps().key(key).get(), toDefSlot(rule.defaultSlot, vm.$createElement, rule))];
     }
 }
 

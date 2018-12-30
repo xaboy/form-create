@@ -96,7 +96,7 @@ export default class Form {
                         this.fCreateApi.resetFields();
                     }
                 }
-            }, [this.vNode.span(this.vm.resetProps.innerText)])
+            }, [this.vm.resetProps.innerText])
         ]);
     }
 
@@ -109,7 +109,7 @@ export default class Form {
                         this.fCreateApi.submit();
                     }
                 }
-            }, [this.vNode.span(this.vm.buttonProps.innerText)])
+            }, [this.vm.buttonProps.innerText])
         ]);
     }
 

@@ -1,8 +1,6 @@
 var maker = formCreate.maker;
 
 
-
-
 //使用maker 生成器生成
 function mock() {
     let mock;
@@ -129,8 +127,19 @@ function mock() {
 
         //select 下拉选择组件
         maker.select("产品分类", "cate_id", ["104", "105"]).options([
-            {"value": "104", "label": "生态蔬菜", "disabled": false},
-            {"value": "105", "label": "新鲜水果", "disabled": false},
+            {"value": "104", "label": "生态蔬菜", "disabled": false, "slot": "<div style:'color:#ff7271;'>自定义显示内容</div>"},
+            {
+                "value": "105", "label": "新鲜水果", "disabled": false, "slot": ($h) => {
+                    return $h("div", {
+                        style: "color:#ff7271;"
+                    }, [$h('icon', {
+                        props: {
+                            //iview2 与 iview3 图标名称不同
+                            type: 'social-apple'
+                        }
+                    }), "新鲜水果"]);
+                }
+            },
         ]).props({
             multiple: true
         }),
@@ -140,7 +149,7 @@ function mock() {
         maker.date('活动日期', 'section_day', ['2018-02-20', new Date()]).props({
             "type": "datetimerange",
             "startDate": new Date(),
-            "showWeekNumbers": true
+            "showWeekNumbers": true,
         }).col({span: 12}),
 
 
@@ -150,6 +159,46 @@ function mock() {
             "placeholder": "请选择活动时间"
         }).col({span: 12}),
 
+
+        //datePicker 日期选择组件
+        maker.date('活动日期', 'section_day2', ['2018-02-20', new Date()]).props({
+            "type": "datetimerange",
+            "startDate": new Date(),
+            "showWeekNumbers": true,
+            "open": false, //自定义内容时一定要预定义 open
+        }).col({span: 12}).defaultSlot(function ($h) {
+            return $h('a', {
+                on: {
+                    click: () => {
+                        this.props.open = true;
+                    }
+                },
+            }, [mock[14].value ? mock[14].value.toString() : 'select Date']);
+        }).event({
+            ok: () => {
+                mock[14].props.open = false;
+            }
+        }),
+
+
+        //timePicker 时间选择组件
+        maker.time('活动时间', 'section_time2', ['01:01:01', new Date()]).props({
+            "type": "timerange",
+            "placeholder": "请选择活动时间",
+            "open": false, //自定义内容时一定要预定义 open
+        }).col({span: 12}).defaultSlot(function ($h) {
+            return $h('a', {
+                on: {
+                    click: () => {
+                        this.props.open = true;
+                    }
+                },
+            }, [mock[15].value ? mock[15].value.toString() : 'select Time']);
+        }).event({
+            ok: () => {
+                mock[15].props.open = false;
+            }
+        }),
 
         //inputNumber 数组输入框组件
         maker.number('排序', 'sort', 0).props({
@@ -294,7 +343,6 @@ $r = maker.upload('产品主图', 'logo', 'http://img1.touxiang.cn/uploads/20131
         return 'http://img1.touxiang.cn/uploads/20131030/30-075657_191.jpg';
     }
 }).validate({required: true, type: 'array', min: 1, message: '请上传1张图片', trigger: 'change'});
-
 
 
 /**
