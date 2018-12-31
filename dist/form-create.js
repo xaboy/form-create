@@ -1,4 +1,4 @@
-/*! form-create v1.5 | github https://github.com/xaboy/form-create | author xaboy */
+/*! form-create v1.5.3 | github https://github.com/xaboy/form-create | author xaboy */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory(require("vue"), require("iview"));
@@ -204,7 +204,9 @@ function parseRule(rule, vm) {
         _rule$value = rule.value,
         value = _rule$value === undefined ? '' : _rule$value,
         _rule$field = rule.field,
-        field = _rule$field === undefined ? '' : _rule$field;
+        field = _rule$field === undefined ? '' : _rule$field,
+        _rule$className = rule.className,
+        className = _rule$className === undefined ? '' : _rule$className;
 
     rule.col = parseCol(col);
     rule.props = parseProps(props);
@@ -215,6 +217,7 @@ function parseRule(rule, vm) {
     rule.title = title;
     rule.value = value;
     rule.field = field;
+    rule.className = className;
 
     if (!field) console.error('规则的 field 字段不能空' + (0, _util.errMsg)());
 
@@ -740,12 +743,6 @@ var Creator = function (_VData) {
             this.rule.value = value;
             return this;
         }
-    }, {
-        key: "emitPrefix",
-        value: function emitPrefix(prefix) {
-            this.rule.emitPrefix = prefix;
-            return this;
-        }
     }]);
 
     return Creator;
@@ -753,6 +750,17 @@ var Creator = function (_VData) {
 
 exports.default = Creator;
 
+
+var keyAttrs = ['emitPrefix', 'className', 'defaultSlot'];
+
+keyAttrs.forEach(function (attr) {
+    _newArrowCheck(undefined, undefined);
+
+    Creator.prototype[attr] = function (value) {
+        this.rule[attr] = value;
+        return this;
+    };
+}.bind(undefined));
 
 var objAttrs = ['event', 'col'];
 
@@ -791,6 +799,7 @@ exports.componentCommon = exports.getGlobalApi = exports.formCreateStyle = expor
 exports.getComponent = getComponent;
 exports.getUdfComponent = getUdfComponent;
 exports.getConfig = getConfig;
+exports.toDefSlot = toDefSlot;
 exports.timeStampToDate = timeStampToDate;
 
 var _util = __webpack_require__(2);
@@ -907,9 +916,6 @@ function getConfig() {
             handleIcon: 'ios-eye-outline',
             allowRemove: true
         },
-        onSubmit: function onSubmit(formData) {
-            _newArrowCheck(this, _this);
-        }.bind(this),
         submitBtn: {
             type: "primary",
             size: "large",
@@ -938,11 +944,21 @@ function getConfig() {
         },
         mounted: function mounted() {
             _newArrowCheck(this, _this);
+        }.bind(this),
+        onReload: function onReload() {
+            _newArrowCheck(this, _this);
+        }.bind(this),
+        onSubmit: function onSubmit(formData) {
+            _newArrowCheck(this, _this);
         }.bind(this)
     };
 };
 
 var formCreateStyle = exports.formCreateStyle = '.form-create{padding:25px;} .fc-upload-btn,.fc-files{display: inline-block;width: 58px;height: 58px;text-align: center;line-height: 58px;border: 1px solid #c0ccda;border-radius: 4px;overflow: hidden;background: #fff;position: relative;box-shadow: 2px 2px 5px rgba(0,0,0,.1);margin-right: 4px;box-sizing: border-box;}.__fc_h{display:none;}.__fc_v{visibility:hidden;}' + ' .fc-files>.ivu-icon{vertical-align: middle;}' + '.fc-files img{width:100%;height:100%;display:inline-block;vertical-align: top;}' + '.fc-upload .ivu-upload{display: inline-block;}' + '.fc-upload-btn{border: 1px dashed #c0ccda;}' + '.fc-upload-btn>ivu-icon{vertical-align:sub;}' + '.fc-upload .fc-upload-cover{opacity: 0; position: absolute; top: 0; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,.6); transition: opacity .3s;}' + '.fc-upload .fc-upload-cover i{ color: #fff; font-size: 20px; cursor: pointer; margin: 0 2px; }' + '.fc-files:hover .fc-upload-cover{opacity: 1; }' + '.fc-upload .ivu-upload-list-file{ display: inline-block;float: left; }' + '.fc-upload .ivu-upload-list{ position: absolute;left: 0; }' + '.fc-spin-icon-load{animation: ani-fc-spin 1s linear infinite;} @-webkit-keyframes ani-fc-spin{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}50%{-webkit-transform:rotate(180deg);transform:rotate(180deg)}to{-webkit-transform:rotate(1turn);transform:rotate(1turn)}}@keyframes ani-fc-spin{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}50%{-webkit-transform:rotate(180deg);transform:rotate(180deg)}to{-webkit-transform:rotate(1turn);transform:rotate(1turn)}}';
+
+function toDefSlot(slot, $h, rule) {
+    return [slot && (0, _util.isFunction)(slot) ? slot.call(rule, $h) : slot];
+}
 
 function getGlobalApi(fComponent) {
     var _this2 = this,
@@ -1208,7 +1224,6 @@ function getGlobalApi(fComponent) {
 
             vm.refresh();
         }.bind(this)
-        // vm: fComponent,
     };
 }
 
@@ -1378,7 +1393,7 @@ var VData = function () {
             if ((0, _util.isUndef)(classList)) return this;
 
             if (Array.isArray(classList)) {
-                classList.map(function (cls) {
+                classList.forEach(function (cls) {
                     _newArrowCheck(this, _this);
 
                     this._data.class[(0, _util.toString)(cls)] = true;
@@ -1388,7 +1403,6 @@ var VData = function () {
             } else {
                 this._data.class[(0, _util.toString)(classList)] = status === undefined ? true : status;
             }
-
             return this;
         }
     }, {
@@ -1397,7 +1411,6 @@ var VData = function () {
             if ((0, _util.isUndef)(_directives)) return this;
 
             this._data.directives = this._data.directives.concat((0, _util.toArray)(_directives));
-
             return this;
         }
     }, {
@@ -1494,7 +1507,7 @@ function _newArrowCheck(innerThis, boundThis) { if (innerThis !== boundThis) { t
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var version = '1.5.2';
+var version = '1.5.3';
 
 var formCreateStyleElId = 'form-create-style';
 
@@ -1606,7 +1619,7 @@ var FormCreate = function () {
             var _this3 = this;
 
             if (Array.isArray(handler.rule.children) && handler.rule.children.length > 0) {
-                handler.rule.children.map(function (rule, index) {
+                handler.rule.children.forEach(function (rule, index) {
                     _newArrowCheck(this, _this3);
 
                     rule = getRule(rule);
@@ -1638,18 +1651,24 @@ var FormCreate = function () {
             var first = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
 
             this.vm = vm;
+            var _options2 = this.options,
+                mounted = _options2.mounted,
+                onReload = _options2.onReload;
+
             (0, _util.$nt)(function () {
                 _newArrowCheck(this, _this4);
 
-                Object.keys(this.handlers).map(function (field) {
+                Object.keys(this.handlers).forEach(function (field) {
                     _newArrowCheck(this, _this4);
 
                     var handler = this.handlers[field];
                     if (vm.cptData[field] !== undefined) this.addHandlerWatch(handler);
                     handler.mounted();
                 }.bind(this));
-                if (first) this.options.mounted && this.options.mounted(this.fCreateApi);
+                if (first) mounted && mounted(this.fCreateApi);
             }.bind(this));
+
+            onReload && onReload(this.fCreateApi);
         }
     }, {
         key: "component",
@@ -1749,7 +1768,7 @@ var FormCreate = function () {
                 } else unWatch();
             }.bind(this), 100);
 
-            Object.keys(this.vm.trueData[field].rule).map(function (key) {
+            Object.keys(this.vm.trueData[field].rule).forEach(function (key) {
                 _newArrowCheck(this, _this7);
 
                 if (key === 'value') return;
@@ -2221,7 +2240,6 @@ var render = function (_Render) {
         key: "onSuccess",
         value: function onSuccess(response, file, fileList) {
             var url = this.uploadOptions.onSuccess.call(null, response, file, fileList);
-
             if (!(0, _util.isUndef)(url)) {
                 file.url = url;
                 file.showProgress = false;
@@ -2289,7 +2307,8 @@ var render = function (_Render) {
     }, {
         key: "cacheParse",
         value: function cacheParse() {
-            return this.parse();
+            this.cache = null;
+            return _get(render.prototype.__proto__ || Object.getPrototypeOf(render.prototype), "cacheParse", this).call(this);
         }
     }, {
         key: "makeUploadView",
@@ -2326,7 +2345,11 @@ var render = function (_Render) {
     }, {
         key: "makeProgress",
         value: function makeProgress(file, unique) {
-            return this.vNode.make('div', { key: "div3" + String(unique), class: { 'fc-files': true } }, [this.vNode.progress({ key: "upp" + String(unique), props: { percent: file.percentage, hideInfo: true }, style: { width: '90%' } })]);
+            return this.vNode.make('div', { key: "div3" + String(unique), class: { 'fc-files': true } }, [this.vNode.progress({
+                key: "upp" + String(unique),
+                props: { percent: file.percentage, hideInfo: true },
+                style: { width: '90%' }
+            })]);
         }
     }, {
         key: "makeUploadBtn",
@@ -3044,6 +3067,8 @@ var _render2 = _interopRequireDefault(_render);
 
 var _creator = __webpack_require__(3);
 
+var _common = __webpack_require__(4);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _newArrowCheck(innerThis, boundThis) { if (innerThis !== boundThis) { throw new TypeError("Cannot instantiate an arrow function"); } }
@@ -3092,18 +3117,18 @@ var render = function (_Render) {
 
             var _handler = this.handler,
                 unique = _handler.unique,
-                options = _handler.rule.options;
+                rule = _handler.rule;
 
             return [this.vNode.select(this.inputProps().get(), function () {
                 _newArrowCheck(this, _this3);
 
-                return options.map(function (option, index) {
+                return rule.options.map(function (option, index) {
                     _newArrowCheck(this, _this3);
 
                     return this.vNode.option({
                         props: option,
                         key: "sopt" + String(index) + String(unique)
-                    });
+                    }, (0, _common.toDefSlot)(option.slot, this.vm.$createElement, rule));
                 }.bind(this));
             }.bind(this))];
         }
@@ -3134,9 +3159,9 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
 
-var _handler = __webpack_require__(0);
+var _handler2 = __webpack_require__(0);
 
-var _handler2 = _interopRequireDefault(_handler);
+var _handler3 = _interopRequireDefault(_handler2);
 
 var _render = __webpack_require__(1);
 
@@ -3174,7 +3199,7 @@ var handler = function (_Handler) {
         value: function init() {
             var props = this.rule.props;
             props.type = !props.type ? 'date' : (0, _util.toString)(props.type).toLowerCase();
-            if (props.startDate === undefined) props.startDate = (0, _common.timeStampToDate)(props.startDate);
+            if ((0, _util.isUndef)(props.startDate)) props.startDate = (0, _common.timeStampToDate)(props.startDate);
         }
     }, {
         key: "toParseValue",
@@ -3217,7 +3242,7 @@ var handler = function (_Handler) {
     }]);
 
     return handler;
-}(_handler2.default);
+}(_handler3.default);
 
 var render = function (_Render) {
     _inherits(render, _Render);
@@ -3231,7 +3256,12 @@ var render = function (_Render) {
     _createClass(render, [{
         key: "parse",
         value: function parse() {
-            return [this.vNode.datePicker(this.inputProps().key(this.handler.key).get())];
+            var _handler = this.handler,
+                key = _handler.key,
+                rule = _handler.rule,
+                vm = _handler.vm;
+
+            return [this.vNode.datePicker(this.inputProps().key(key).get(), (0, _common.toDefSlot)(rule.defaultSlot, vm.$createElement, rule))];
         }
     }]);
 
@@ -3264,9 +3294,9 @@ var _get = function get(object, property, receiver) { if (object === null) objec
 
 exports.getTime = getTime;
 
-var _handler = __webpack_require__(0);
+var _handler2 = __webpack_require__(0);
 
-var _handler2 = _interopRequireDefault(_handler);
+var _handler3 = _interopRequireDefault(_handler2);
 
 var _render = __webpack_require__(1);
 
@@ -3308,7 +3338,7 @@ var handler = function (_Handler) {
         value: function init() {
             var props = this.rule.props;
             if (!props.type) props.type = 'time';
-            if (props.confirm === undefined) props.confirm = true;
+            if ((0, _util.isUndef)(props.confirm)) props.confirm = true;
         }
     }, {
         key: "toParseValue",
@@ -3343,7 +3373,7 @@ var handler = function (_Handler) {
     }]);
 
     return handler;
-}(_handler2.default);
+}(_handler3.default);
 
 var render = function (_Render) {
     _inherits(render, _Render);
@@ -3357,7 +3387,12 @@ var render = function (_Render) {
     _createClass(render, [{
         key: "parse",
         value: function parse() {
-            return [this.vNode.timePicker(this.inputProps().key(this.handler.key).get())];
+            var _handler = this.handler,
+                key = _handler.key,
+                rule = _handler.rule,
+                vm = _handler.vm;
+
+            return [this.vNode.timePicker(this.inputProps().key(key).get(), (0, _common.toDefSlot)(rule.defaultSlot, vm.$createElement, rule))];
         }
     }]);
 
@@ -4676,7 +4711,7 @@ var Form = function () {
             this.vNode.setVm(vm);
             if (!vm.isShow) return;
             if (this.cacheUnique !== vm.unique) {
-                this.renderSort.map(function (field) {
+                this.renderSort.forEach(function (field) {
                     _newArrowCheck(this, _this2);
 
                     this.renders[field].clearCache();
@@ -4706,14 +4741,15 @@ var Form = function () {
                 field = _ref2.field,
                 refName = _ref2.refName;
 
-            var propsData = this.vData.props({
+            var className = rule.className,
+                propsData = this.vData.props({
                 prop: field,
                 label: rule.title,
                 labelFor: unique,
                 rules: rule.validate,
                 labelWidth: rule.col.labelWidth,
                 required: rule.props.required
-            }).key(fItemUnique).ref('fItem' + refName).get();
+            }).key(fItemUnique).ref('fItem' + refName).class(className).get();
             return this.vNode.col({
                 props: rule.col, 'class': {
                     '__fc_h': rule.props.hidden === true,
@@ -4746,7 +4782,7 @@ var Form = function () {
                         this.fCreateApi.resetFields();
                     }.bind(this)
                 }
-            }, [this.vNode.span(this.vm.resetProps.innerText)])]);
+            }, [this.vm.resetProps.innerText])]);
         }
     }, {
         key: "makeSubmitBtn",
@@ -4762,7 +4798,7 @@ var Form = function () {
                         this.fCreateApi.submit();
                     }.bind(this)
                 }
-            }, [this.vNode.span(this.vm.buttonProps.innerText)])]);
+            }, [this.vm.buttonProps.innerText])]);
         }
     }, {
         key: "removeRender",

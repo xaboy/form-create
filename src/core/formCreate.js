@@ -6,7 +6,7 @@ import {$FormCreate, formCreateName} from "../core/component";
 import maker from "./maker";
 import Vue from 'vue';
 
-const version = '1.5.2';
+const version = process.env.VERSION;
 
 const formCreateStyleElId = 'form-create-style';
 

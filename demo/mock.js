@@ -161,7 +161,7 @@ function mock() {
 
 
         //datePicker 日期选择组件
-        maker.date('活动日期', 'section_day2', ['2018-02-20', new Date()]).props({
+        maker.date('活动日期', 'section_day2', ['2018-02-20', '2019-01-01']).props({
             "type": "datetimerange",
             "startDate": new Date(),
             "showWeekNumbers": true,
@@ -182,7 +182,7 @@ function mock() {
 
 
         //timePicker 时间选择组件
-        maker.time('活动时间', 'section_time2', ['01:01:01', new Date()]).props({
+        maker.time('活动时间', 'section_time2', ['01:01:01', '12:12:12']).props({
             "type": "timerange",
             "placeholder": "请选择活动时间",
             "open": false, //自定义内容时一定要预定义 open

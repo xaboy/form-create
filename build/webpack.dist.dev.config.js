@@ -1,11 +1,13 @@
 const webpack = require('webpack');
+const pkg = require("../package.json");
+
 module.exports = {
     entry: __dirname + '/../src/index.js',
     output: {//输出文件
         filename: 'form-create.js',
         path: __dirname + '/../dist',
         library: 'formCreate',
-        libraryTarget:'umd',
+        libraryTarget: 'umd',
         umdNamedDefine: true
     },
     module: {
@@ -17,7 +19,11 @@ module.exports = {
     },
     plugins: [
         new webpack.optimize.ModuleConcatenationPlugin(),
-        new webpack.BannerPlugin('form-create v1.5 | github https://github.com/xaboy/form-create | author xaboy')
+        new webpack.DefinePlugin({
+            'process.env.VERSION': `'${pkg.version}'`,
+            'process.env.NODE_ENV': '"production"'
+        }),
+        new webpack.BannerPlugin('form-create v' + pkg.version + ' | github https://github.com/xaboy/form-create | author xaboy')
     ],
     resolve: {
         alias: {
