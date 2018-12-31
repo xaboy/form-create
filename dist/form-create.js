@@ -2357,7 +2357,7 @@ var render = function (_Render) {
             return this.vNode.upload(this.propsData, isShow === true ? [this.vNode.make('div', { key: "div5" + String(unique), class: { 'fc-upload-btn': true } }, [this.vNode.icon({
                 key: "upi" + String(unique),
                 props: {
-                    type: this.handler.rule.props.uploadType === 'file' ? _common.iviewConfig.fileUpIcon : _common.iviewConfig.imgUpIcon,
+                    type: this.handler.rule.props.uploadType === 'file' ? 'ios-cloud-upload-outline' : _common.iviewConfig.imgUpIcon,
                     size: 20
                 }
             })])] : []);

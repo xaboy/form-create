@@ -7,10 +7,7 @@ import {creatorTypeFactory} from "../factory/creator";
 const name = "upload";
 
 export function getFileName(pic) {
-    let res = toString(pic).split('/'),
-        file = res[res.length - 1],
-        index = file.indexOf('.');
-    return index === -1 ? file : file.substr(0, index);
+    return toString(pic).split('/').pop()
 }
 
 export function parseValue(value) {
@@ -24,7 +21,7 @@ class handler extends Handler {
     init() {
         let props = this.rule.props;
         props.defaultFileList = [];
-        props.showUploadList = false;
+        if (isUndef(props.showUploadList)) props.showUploadList = false;
         props.uploadType = !props.uploadType
             ? 'file'
             : props.uploadType;
@@ -41,6 +38,7 @@ class handler extends Handler {
         this.parseValue.splice(0, this.parseValue.length);
         files.forEach((file) => this.push(file));
         this.rule.props.defaultFileList = this.parseValue;
+        // if (!isUndef(this.el.fileList)) this.el.fileList = this.parseValue;
         return this.parseValue;
     }
 
@@ -59,7 +57,7 @@ class handler extends Handler {
     }
 
     toTrueValue(parseValue) {
-        if (!parseValue) return [];
+        if (isUndef(parseValue)) return [];
         let files = parseValue.map((file) => file.url).filter((file) => file !== undefined);
         return this.rule.props.maxLength === 1
             ? (files[0] || '')
@@ -96,7 +94,15 @@ class render extends Render {
         this.uploadOptions = extend(extend({}, this.options.upload), this.handler.rule.props);
         this.issetIcon = this.uploadOptions.allowRemove || this.uploadOptions.handleIcon;
         this.propsData = this.vData.props(this.uploadOptions)
-            .props('onSuccess', (...arg) => this.onSuccess(...arg)).ref(handler.refName).key(`fip${handler.unique}`).get();
+            .props('onSuccess', (...arg) => this.onSuccess(...arg))
+            .props('onRemove', (...arg) => this.onRemove(...arg))
+            .ref(handler.refName).key(`fip${handler.unique}`).get();
+    }
+
+    onRemove() {
+        this.handler.changeParseValue(this.handler.el.fileList);
+        this.sync();
+        this.uploadOptions.onRemove && this.uploadOptions.onRemove(this.handler.el.fileList);
     }
 
     onSuccess(response, file, fileList) {
@@ -105,17 +111,12 @@ class render extends Render {
             file.url = url;
             file.showProgress = false;
 
-            // fileList.push({
-            //     url,
-            //     name: getFileName(url)
-            // });
-            // this.handler.changeParseValue(this.handler.el.fileList);
-
         } else {
             let index = fileList.indexOf(file);
             if (index !== -1)
                 fileList.splice(index, 1);
         }
+        this.handler.changeParseValue(this.handler.el.fileList);
     }
 
     defaultOnHandle(src) {
@@ -146,15 +147,19 @@ class render extends Render {
         this.init();
         if (this.uploadOptions.handleIcon === true) this.uploadOptions.handleIcon = 'ios-eye-outline';
         let value = this.vm.cptData[this.handler.field],
-            render = [...value.map((file, index) => {
+            render = this.uploadOptions.showUploadList ? [] : [...value.map((file, index) => {
                 if (file.showProgress) {
                     return this.makeProgress(file, `uppg${index}${unique}`);
                 } else if (file.status === undefined || file.status === 'finished') {
                     return this.makeUploadView(file.url, `upview${index}${unique}`, index)
                 }
             })];
-        render.push(this.makeUploadBtn(unique, (!this.uploadOptions.maxLength || this.uploadOptions.maxLength > this.vm.cptData[this.handler.field].length)));
-        return [this.vNode.make('div', {key: `div4${unique}`, class: {'fc-upload': true}}, render)];
+        const isShow = (!this.uploadOptions.maxLength || this.uploadOptions.maxLength > this.vm.cptData[this.handler.field].length);
+        render.push(this.makeUploadBtn(unique, isShow));
+        return [this.vNode.make('div', {
+            key: `div4${unique}`,
+            class: {'fc-upload': true, 'fc-hide-btn': !isShow}
+        }, render)];
     }
 
     cacheParse() {
@@ -204,7 +209,7 @@ class render extends Render {
                     this.vNode.icon({
                         key: `upi${unique}`,
                         props: {
-                            type: this.handler.rule.props.uploadType === 'file' ? iviewConfig.fileUpIcon : iviewConfig.imgUpIcon,
+                            type: this.handler.rule.props.uploadType === 'file' ? 'ios-cloud-upload-outline' : iviewConfig.imgUpIcon,
                             size: 20
                         }
                     })
@@ -217,9 +222,7 @@ class render extends Render {
             key: `upri${key}${index}`, props: {type: 'ios-trash-outline'}, nativeOn: {
                 'click': () => {
                     this.handler.el.fileList.splice(index, 1);
-                    this.handler.changeParseValue(this.handler.el.fileList);
-                    this.sync();
-                    this.propsData.props.onRemove && this.propsData.props.onRemove(this.handler.el.fileList);
+                    this.onRemove()
                 }
             }
         });

@@ -240,10 +240,11 @@ function mock() {
                 "action": "http://127.0.0.1:8000/index/index/upload",
                 "maxLength": 4,
                 "multiple": true,
+                "showUploadList": true,
                 "type": "select",
-                "uploadType": "image",
+                "uploadType": "file",
                 "name": "file",
-                "onSuccess": function () {
+                "onSuccess": function (res) {
                     console.log('upload success');
                     return 'http://img1.touxiang.cn/uploads/20131030/30-075657_191.jpg';
                 },
@@ -332,9 +333,10 @@ function mock() {
 
 //upload 上传组件
 $r = maker.upload('产品主图', 'logo', 'http://img1.touxiang.cn/uploads/20131030/30-075657_191.jpg').props({
-    "action": "",
+    "action": "http://127.0.0.1:8000/index/index/upload",
     "maxLength": 1,
     "multiple": false,
+    "showUploadList": false,
     "max": 0,
     "type": "select",
     "uploadType": "image",

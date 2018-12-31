@@ -11,7 +11,7 @@ export const iview2 = {
     submitBtnIcon: 'ios-upload',
     fileIcon: 'document-text',
     fileUpIcon: 'folder',
-    imgUpIcon: 'camera',
+    imgUpIcon: 'image',
 };
 
 export const iview3 = {
@@ -132,8 +132,8 @@ export const formCreateStyle = '.form-create{padding:25px;} .fc-upload-btn,.fc-f
     '.fc-upload .fc-upload-cover{opacity: 0; position: absolute; top: 0; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,.6); transition: opacity .3s;}' +
     '.fc-upload .fc-upload-cover i{ color: #fff; font-size: 20px; cursor: pointer; margin: 0 2px; }' +
     '.fc-files:hover .fc-upload-cover{opacity: 1; }' +
-    '.fc-upload .ivu-upload-list-file{ display: inline-block;float: left; }' +
-    '.fc-upload .ivu-upload-list{ position: absolute;left: 0; }' +
+    '.fc-hide-btn .ivu-upload .ivu-upload{display:none;}' +
+    '.fc-upload .ivu-upload-list{margin-top: 0;}' +
     '.fc-spin-icon-load{animation: ani-fc-spin 1s linear infinite;} @-webkit-keyframes ani-fc-spin{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}50%{-webkit-transform:rotate(180deg);transform:rotate(180deg)}to{-webkit-transform:rotate(1turn);transform:rotate(1turn)}}@keyframes ani-fc-spin{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}50%{-webkit-transform:rotate(180deg);transform:rotate(180deg)}to{-webkit-transform:rotate(1turn);transform:rotate(1turn)}}';
 
 export function toDefSlot(slot, $h, rule) {
@@ -142,6 +142,7 @@ export function toDefSlot(slot, $h, rule) {
 
 export function getGlobalApi(fComponent) {
     let vm = fComponent.vm;
+    // window.fc = fComponent;
     return {
         formData: () => {
             return Object.keys(vm.trueData).reduce((initial, key) => {
