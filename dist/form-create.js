@@ -831,7 +831,7 @@ var iview2 = exports.iview2 = {
     submitBtnIcon: 'ios-upload',
     fileIcon: 'document-text',
     fileUpIcon: 'folder',
-    imgUpIcon: 'camera'
+    imgUpIcon: 'image'
 };
 
 var iview3 = exports.iview3 = {
@@ -954,7 +954,7 @@ function getConfig() {
     };
 };
 
-var formCreateStyle = exports.formCreateStyle = '.form-create{padding:25px;} .fc-upload-btn,.fc-files{display: inline-block;width: 58px;height: 58px;text-align: center;line-height: 58px;border: 1px solid #c0ccda;border-radius: 4px;overflow: hidden;background: #fff;position: relative;box-shadow: 2px 2px 5px rgba(0,0,0,.1);margin-right: 4px;box-sizing: border-box;}.__fc_h{display:none;}.__fc_v{visibility:hidden;}' + ' .fc-files>.ivu-icon{vertical-align: middle;}' + '.fc-files img{width:100%;height:100%;display:inline-block;vertical-align: top;}' + '.fc-upload .ivu-upload{display: inline-block;}' + '.fc-upload-btn{border: 1px dashed #c0ccda;}' + '.fc-upload-btn>ivu-icon{vertical-align:sub;}' + '.fc-upload .fc-upload-cover{opacity: 0; position: absolute; top: 0; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,.6); transition: opacity .3s;}' + '.fc-upload .fc-upload-cover i{ color: #fff; font-size: 20px; cursor: pointer; margin: 0 2px; }' + '.fc-files:hover .fc-upload-cover{opacity: 1; }' + '.fc-upload .ivu-upload-list-file{ display: inline-block;float: left; }' + '.fc-upload .ivu-upload-list{ position: absolute;left: 0; }' + '.fc-spin-icon-load{animation: ani-fc-spin 1s linear infinite;} @-webkit-keyframes ani-fc-spin{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}50%{-webkit-transform:rotate(180deg);transform:rotate(180deg)}to{-webkit-transform:rotate(1turn);transform:rotate(1turn)}}@keyframes ani-fc-spin{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}50%{-webkit-transform:rotate(180deg);transform:rotate(180deg)}to{-webkit-transform:rotate(1turn);transform:rotate(1turn)}}';
+var formCreateStyle = exports.formCreateStyle = '.form-create{padding:25px;} .fc-upload-btn,.fc-files{display: inline-block;width: 58px;height: 58px;text-align: center;line-height: 58px;border: 1px solid #c0ccda;border-radius: 4px;overflow: hidden;background: #fff;position: relative;box-shadow: 2px 2px 5px rgba(0,0,0,.1);margin-right: 4px;box-sizing: border-box;}.__fc_h{display:none;}.__fc_v{visibility:hidden;}' + ' .fc-files>.ivu-icon{vertical-align: middle;}' + '.fc-files img{width:100%;height:100%;display:inline-block;vertical-align: top;}' + '.fc-upload .ivu-upload{display: inline-block;}' + '.fc-upload-btn{border: 1px dashed #c0ccda;}' + '.fc-upload-btn>ivu-icon{vertical-align:sub;}' + '.fc-upload .fc-upload-cover{opacity: 0; position: absolute; top: 0; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,.6); transition: opacity .3s;}' + '.fc-upload .fc-upload-cover i{ color: #fff; font-size: 20px; cursor: pointer; margin: 0 2px; }' + '.fc-files:hover .fc-upload-cover{opacity: 1; }' + '.fc-hide-btn .ivu-upload .ivu-upload{display:none;}' + '.fc-upload .ivu-upload-list{margin-top: 0;}' + '.fc-spin-icon-load{animation: ani-fc-spin 1s linear infinite;} @-webkit-keyframes ani-fc-spin{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}50%{-webkit-transform:rotate(180deg);transform:rotate(180deg)}to{-webkit-transform:rotate(1turn);transform:rotate(1turn)}}@keyframes ani-fc-spin{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}50%{-webkit-transform:rotate(180deg);transform:rotate(180deg)}to{-webkit-transform:rotate(1turn);transform:rotate(1turn)}}';
 
 function toDefSlot(slot, $h, rule) {
     return [slot && (0, _util.isFunction)(slot) ? slot.call(rule, $h) : slot];
@@ -965,6 +965,7 @@ function getGlobalApi(fComponent) {
         _this9 = this;
 
     var vm = fComponent.vm;
+    // window.fc = fComponent;
     return {
         formData: function formData() {
             _newArrowCheck(this, _this2);
@@ -2102,10 +2103,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var name = "upload";
 
 function getFileName(pic) {
-    var res = (0, _util.toString)(pic).split('/'),
-        file = res[res.length - 1],
-        index = file.indexOf('.');
-    return index === -1 ? file : file.substr(0, index);
+    return (0, _util.toString)(pic).split('/').pop();
 }
 
 function parseValue(value) {
@@ -2126,7 +2124,7 @@ var handler = function (_Handler) {
         value: function init() {
             var props = this.rule.props;
             props.defaultFileList = [];
-            props.showUploadList = false;
+            if ((0, _util.isUndef)(props.showUploadList)) props.showUploadList = false;
             props.uploadType = !props.uploadType ? 'file' : props.uploadType;
             if (props.maxLength === undefined) props.maxLength = 0;
             if (props.action === undefined) props.action = '';
@@ -2147,6 +2145,7 @@ var handler = function (_Handler) {
                 return this.push(file);
             }.bind(this));
             this.rule.props.defaultFileList = this.parseValue;
+            // if (!isUndef(this.el.fileList)) this.el.fileList = this.parseValue;
             return this.parseValue;
         }
     }, {
@@ -2170,7 +2169,7 @@ var handler = function (_Handler) {
         value: function toTrueValue(parseValue) {
             var _this3 = this;
 
-            if (!parseValue) return [];
+            if ((0, _util.isUndef)(parseValue)) return [];
             var files = parseValue.map(function (file) {
                 _newArrowCheck(this, _this3);
 
@@ -2234,7 +2233,18 @@ var render = function (_Render) {
                 _newArrowCheck(this, _this6);
 
                 return this.onSuccess.apply(this, arguments);
+            }.bind(this)).props('onRemove', function () {
+                _newArrowCheck(this, _this6);
+
+                return this.onRemove.apply(this, arguments);
             }.bind(this)).ref(handler.refName).key("fip" + String(handler.unique)).get();
+        }
+    }, {
+        key: "onRemove",
+        value: function onRemove() {
+            this.handler.changeParseValue(this.handler.el.fileList);
+            this.sync();
+            this.uploadOptions.onRemove && this.uploadOptions.onRemove(this.handler.el.fileList);
         }
     }, {
         key: "onSuccess",
@@ -2243,16 +2253,11 @@ var render = function (_Render) {
             if (!(0, _util.isUndef)(url)) {
                 file.url = url;
                 file.showProgress = false;
-
-                // fileList.push({
-                //     url,
-                //     name: getFileName(url)
-                // });
-                // this.handler.changeParseValue(this.handler.el.fileList);
             } else {
                 var index = fileList.indexOf(file);
                 if (index !== -1) fileList.splice(index, 1);
             }
+            this.handler.changeParseValue(this.handler.el.fileList);
         }
     }, {
         key: "defaultOnHandle",
@@ -2292,7 +2297,7 @@ var render = function (_Render) {
             this.init();
             if (this.uploadOptions.handleIcon === true) this.uploadOptions.handleIcon = 'ios-eye-outline';
             var value = this.vm.cptData[this.handler.field],
-                render = [].concat(_toConsumableArray(value.map(function (file, index) {
+                render = this.uploadOptions.showUploadList ? [] : [].concat(_toConsumableArray(value.map(function (file, index) {
                 _newArrowCheck(this, _this8);
 
                 if (file.showProgress) {
@@ -2301,8 +2306,12 @@ var render = function (_Render) {
                     return this.makeUploadView(file.url, "upview" + String(index) + String(unique), index);
                 }
             }.bind(this))));
-            render.push(this.makeUploadBtn(unique, !this.uploadOptions.maxLength || this.uploadOptions.maxLength > this.vm.cptData[this.handler.field].length));
-            return [this.vNode.make('div', { key: "div4" + String(unique), class: { 'fc-upload': true } }, render)];
+            var isShow = !this.uploadOptions.maxLength || this.uploadOptions.maxLength > this.vm.cptData[this.handler.field].length;
+            render.push(this.makeUploadBtn(unique, isShow));
+            return [this.vNode.make('div', {
+                key: "div4" + String(unique),
+                class: { 'fc-upload': true, 'fc-hide-btn': !isShow }
+            }, render)];
         }
     }, {
         key: "cacheParse",
@@ -2373,9 +2382,7 @@ var render = function (_Render) {
                         _newArrowCheck(this, _this11);
 
                         this.handler.el.fileList.splice(index, 1);
-                        this.handler.changeParseValue(this.handler.el.fileList);
-                        this.sync();
-                        this.propsData.props.onRemove && this.propsData.props.onRemove(this.handler.el.fileList);
+                        this.onRemove();
                     }.bind(this)
                 }
             });

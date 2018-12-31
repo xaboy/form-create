@@ -262,7 +262,7 @@ function mock() {
         maker.frame('素材', 'fodder', ["http://img1.touxiang.cn/uploads/20131030/30-075657_191.jpg"]).props({
             src: "iframe.html",
             maxLength: 0,
-            type: "file"
+            type: "image"
         }).validate([
             {required: true, type: 'array', min: 2, message: '请选择2张图片', trigger: 'change'}
         ]).event({
