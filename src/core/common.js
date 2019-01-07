@@ -34,11 +34,8 @@ export function getComponent(vm, rule, createOptions) {
         ? getUdfComponent()
         : componentList[name];
 
-    let $h = new component.handler(vm, rule);
-    $h.render = new component.render(vm, $h, createOptions);
-    $h.noValue = component.noValue;
-    return $h
-};
+    return new component.handler(vm, rule, component.render, createOptions, component.noValue);
+}
 
 export function getUdfComponent() {
     return {

@@ -3,10 +3,12 @@ import {isNumeric, uniqueId, toLine, isUndef, extend, toString, deepExtend, errM
 
 export default class Handler {
 
-    constructor(vm, _rule = {}) {
-        const rule = parseRule(_rule, vm);
+    constructor(vm, _rule, Render, createOptions, noValue) {
+
+        const rule = parseRule(_rule, vm, noValue);
 
         this.rule = rule;
+        this.noValue = noValue;
         this.type = rule.type;
         this.field = rule.field;
         this.vm = vm;
@@ -25,6 +27,8 @@ export default class Handler {
         this.init();
 
         this.parseValue = this.toParseValue(this.rule.value);
+
+        this.render = new Render(vm, this, createOptions);
     }
 
     init() {
@@ -73,7 +77,9 @@ export default class Handler {
     }
 }
 
-export function parseRule(rule, vm) {
+export function parseRule(rule, vm, n) {
+    if (!n && rule.value === undefined)
+        console.warn(`${rule.field} 字段未定义 value 属性`);
     let {validate = [], event = {}, col = {}, emit = [], props = {}, on = {}, options = [], title = '', value = '', field = '', className = ''} = rule;
     rule.col = parseCol(col);
     rule.props = parseProps(props);
