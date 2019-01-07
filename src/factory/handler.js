@@ -20,6 +20,8 @@ export default class Handler {
         this.childrenHandlers = [];
         this.watch = [];
 
+        if (isUndef(rule.props.elementId)) rule.props.elementId = this.unique;
+
         this.init();
 
         this.parseValue = this.toParseValue(this.rule.value);
@@ -56,6 +58,10 @@ export default class Handler {
     }
 
     watchParseValue(n) {
+    }
+
+    reset() {
+        this.vm.changeTrueData(this.field, this.defaultValue);
     }
 
     mounted() {

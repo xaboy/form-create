@@ -56,6 +56,7 @@ export default class FormCreate {
         this.switchMaker = this.options.switchMaker;
 
         initStyle();
+        this.$tick = debounce((fn) => $nt(fn), 100);
     }
 
 
@@ -87,7 +88,6 @@ export default class FormCreate {
         vm.$set(vm, 'rules', this.rules);
         this.fRender = new formRender(this);
 
-        this.$tick = debounce((fn) => $nt(fn), 100);
     }
 
 
@@ -246,7 +246,7 @@ export default class FormCreate {
 
     reload(rules) {
         if (!rules) {
-            this.vm.refresh();
+            return this.reload(this.rules);
         } else {
             this.vm.unWatch();
             Object.keys(this.handlers).forEach(field => this.removeField(field));

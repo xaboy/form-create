@@ -1,5 +1,6 @@
 import Handler from "../factory/handler";
 import Render from "../factory/render";
+import {isUndef} from "../core/util";
 
 const name = "switch";
 
@@ -11,12 +12,12 @@ class handler extends Handler {
 
 class render extends Render {
     parse() {
-        let {slot} = this.handler.rule;
-        this.propsData = this.inputProps().scopedSlots({
+        let rule = this.handler.rule, slot = isUndef(rule.props.slot) ? rule.slot : rule.props.slot;
+
+        return [this.vNode.switch(this.inputProps().scopedSlots({
             open: () => slot.open,
             close: () => slot.close
-        }).get();
-        return [this.vNode.switch(this.propsData)]
+        }).style({'margin': '4.5px 0px'}).get())]
     }
 }
 

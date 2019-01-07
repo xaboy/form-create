@@ -193,8 +193,9 @@ export function getGlobalApi(fComponent) {
         resetFields: function () {
             let handlers = fComponent.handlers;
             Object.keys(vm.trueData).forEach(key => {
-                vm.$set(vm.trueData[key], 'value', handlers[key].defaultValue);
+                handlers[key].reset();
             });
+            this.refresh();
 
         },
         destroy: () => {

@@ -71,9 +71,9 @@ export default class Render {
     }
 
     inputProps() {
-        let {refName, unique, key, field, rule: {props, event}} = this.handler;
+        let {refName, key, field, rule: {props, event}} = this.handler;
         return this.vData
-            .props(extend(props, {value: this.vm.cptData[field], elementId: unique}))
+            .props(extend(props, {value: this.vm.cptData[field]}))
             .ref(refName).key(key + '' + uniqueId()).on(event).on('input', (value) => {
                 this.onInput(value)
             });

@@ -36,6 +36,9 @@ function mock() {
                 'github'
             ],
             filterMethod: (value, option) => {
+                value = value || '';
+                option = option || '';
+
                 return option.toUpperCase().indexOf(value.toUpperCase()) !== -1
             }
         }).emitPrefix('xaboy').emit(['change']),
@@ -109,7 +112,7 @@ function mock() {
                     console.log('click');
                 },
             }).col({span: 12}).children([
-            maker.create('span', 'goods_name2').domProps({
+            maker.create('span').domProps({
                 innerHTML: '测试自定义按钮'
             })
         ]).emit(['click']),
