@@ -79,7 +79,7 @@ export default class Handler {
 
 export function parseRule(rule, vm, n) {
     if (!n && rule.value === undefined)
-        console.warn(`${rule.field} 字段未定义 value 属性`);
+        console.warn(`${rule.field} 字段未定义 value 属性` + errMsg());
     let {validate = [], event = {}, col = {}, emit = [], props = {}, on = {}, options = [], title = '', value = '', field = '', className = ''} = rule;
     rule.col = parseCol(col);
     rule.props = parseProps(props);
