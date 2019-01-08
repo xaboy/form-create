@@ -1,4 +1,4 @@
-/*! form-create v1.5.3 | github https://github.com/xaboy/form-create | author xaboy */
+/*! form-create v1.5.4 | github https://github.com/xaboy/form-create | author xaboy */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory(require("vue"), require("iview"));
@@ -76,382 +76,6 @@ return /******/ (function(modules) { // webpackBootstrap
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-exports.parseRule = parseRule;
-exports.parseArray = parseArray;
-exports.parseEmit = parseEmit;
-exports.parseEvent = parseEvent;
-exports.parseProps = parseProps;
-exports.parseCol = parseCol;
-
-var _util = __webpack_require__(2);
-
-function _newArrowCheck(innerThis, boundThis) { if (innerThis !== boundThis) { throw new TypeError("Cannot instantiate an arrow function"); } }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Handler = function () {
-    function Handler(vm) {
-        var _rule = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-        _classCallCheck(this, Handler);
-
-        var rule = parseRule(_rule, vm);
-
-        this.rule = rule;
-        this.type = rule.type;
-        this.field = rule.field;
-        this.vm = vm;
-
-        var id = (0, _util.uniqueId)();
-        this.id = id;
-        this.unique = 'fc_' + id;
-        this.refName = '__' + this.field + id;
-        this.key = 'key_' + id;
-        this.el = {};
-        this.childrenHandlers = [];
-        this.watch = [];
-
-        this.init();
-
-        this.parseValue = this.toParseValue(this.rule.value);
-    }
-
-    _createClass(Handler, [{
-        key: 'init',
-        value: function init() {}
-    }, {
-        key: 'toParseValue',
-        value: function toParseValue(value) {
-            return value;
-        }
-    }, {
-        key: 'toTrueValue',
-        value: function toTrueValue(parseValue) {
-            return parseValue;
-        }
-    }, {
-        key: 'setTrueValue',
-        value: function setTrueValue(value) {
-            this.rule.value = value;
-            this.vm.changeTrueData(this.field, value);
-        }
-    }, {
-        key: 'getValue',
-        value: function getValue() {
-            return this.vm.getTrueDataValue(this.field);
-        }
-    }, {
-        key: 'setParseValue',
-        value: function setParseValue(parseValue) {
-            this.setTrueValue(this.toTrueValue(parseValue));
-        }
-    }, {
-        key: 'watchTrueValue',
-        value: function watchTrueValue(n) {
-            this.rule.value = n;
-            this.vm.changeFormData(this.field, this.toParseValue(n));
-        }
-    }, {
-        key: 'watchParseValue',
-        value: function watchParseValue(n) {}
-    }, {
-        key: 'mounted',
-        value: function mounted() {
-            var _this = this;
-
-            this.el = this.vm.$refs[this.refName];
-            this.defaultValue = this.toTrueValue(this.vm.$refs['fItem' + this.refName] ? this.vm.$refs['fItem' + this.refName].initialValue : (0, _util.deepExtend)({}, { value: this.rule.value }).value);
-            if (this.childrenHandlers.length > 0) this.childrenHandlers.forEach(function (handler) {
-                _newArrowCheck(this, _this);
-
-                return handler.mounted();
-            }.bind(this));
-        }
-    }]);
-
-    return Handler;
-}();
-
-exports.default = Handler;
-function parseRule(rule, vm) {
-    var _rule$validate = rule.validate,
-        validate = _rule$validate === undefined ? [] : _rule$validate,
-        _rule$event = rule.event,
-        event = _rule$event === undefined ? {} : _rule$event,
-        _rule$col = rule.col,
-        col = _rule$col === undefined ? {} : _rule$col,
-        _rule$emit = rule.emit,
-        emit = _rule$emit === undefined ? [] : _rule$emit,
-        _rule$props = rule.props,
-        props = _rule$props === undefined ? {} : _rule$props,
-        _rule$on = rule.on,
-        on = _rule$on === undefined ? {} : _rule$on,
-        _rule$options = rule.options,
-        options = _rule$options === undefined ? [] : _rule$options,
-        _rule$title = rule.title,
-        title = _rule$title === undefined ? '' : _rule$title,
-        _rule$value = rule.value,
-        value = _rule$value === undefined ? '' : _rule$value,
-        _rule$field = rule.field,
-        field = _rule$field === undefined ? '' : _rule$field,
-        _rule$className = rule.className,
-        className = _rule$className === undefined ? '' : _rule$className;
-
-    rule.col = parseCol(col);
-    rule.props = parseProps(props);
-    rule.emitEvent = parseEmit(field, rule.emitPrefix, emit, vm);
-    rule.event = (0, _util.extend)(parseEvent(event), rule.emitEvent);
-    rule.validate = parseArray(validate);
-    rule.options = parseArray(options);
-    rule.title = title;
-    rule.value = value;
-    rule.field = field;
-    rule.className = className;
-
-    if (!field) console.error('规则的 field 字段不能空' + (0, _util.errMsg)());
-
-    if (Object.keys(rule.emitEvent).length > 0) (0, _util.extend)(on, rule.emitEvent);
-    rule.on = on;
-    return rule;
-}
-
-function parseArray(validate) {
-    return Array.isArray(validate) ? validate : [];
-}
-
-function parseEmit(field, emitPrefix, emit, vm) {
-    var _this2 = this;
-
-    var event = {};
-
-    if (!Array.isArray(emit)) return event;
-
-    emit.forEach(function (eventName) {
-        _newArrowCheck(this, _this2);
-
-        var fieldKey = (0, _util.toLine)(String(field) + '-' + String(eventName)).replace('_', '-');
-
-        var emitKey = emitPrefix ? (String(emitPrefix) + '-').toLowerCase() + (0, _util.toLine)(eventName) : emitPrefix;
-
-        event['on-' + String(eventName)] = event['' + String(eventName)] = function () {
-            for (var _len = arguments.length, arg = Array(_len), _key = 0; _key < _len; _key++) {
-                arg[_key] = arguments[_key];
-            }
-
-            _newArrowCheck(this, _this2);
-
-            vm.$emit.apply(vm, [fieldKey].concat(arg));
-            if (emitKey && fieldKey !== emitKey) vm.$emit.apply(vm, [emitKey].concat(arg));
-        }.bind(this);
-    }.bind(this));
-
-    return event;
-}
-
-function parseEvent(event) {
-    Object.keys(event).forEach(function (eventName) {
-        var _name = (0, _util.toString)(eventName).indexOf('on-') === 0 ? eventName : 'on-' + String(eventName);
-
-        if (_name !== eventName) {
-            event[_name] = event[eventName];
-            // delete event[eventName];
-        }
-    });
-
-    return event;
-}
-
-function parseProps(props) {
-    if ((0, _util.isUndef)(props.hidden)) props.hidden = false;
-    if ((0, _util.isUndef)(props.visibility)) props.visibility = false;
-
-    return props;
-}
-
-function parseCol(col) {
-    if ((0, _util.isNumeric)(col)) {
-        return { span: col };
-    } else if (col.span === undefined) col.span = 24;
-
-    return col;
-}
-
-/***/ }),
-/* 1 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _util = __webpack_require__(2);
-
-var _vNode = __webpack_require__(8);
-
-var _vNode2 = _interopRequireDefault(_vNode);
-
-var _vData = __webpack_require__(6);
-
-var _vData2 = _interopRequireDefault(_vData);
-
-var _vue = __webpack_require__(5);
-
-var _vue2 = _interopRequireDefault(_vue);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _newArrowCheck(innerThis, boundThis) { if (innerThis !== boundThis) { throw new TypeError("Cannot instantiate an arrow function"); } }
-
-function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Render = function () {
-    function Render(vm, handler) {
-        var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-
-        _classCallCheck(this, Render);
-
-        this.vm = vm;
-        this.handler = handler;
-        this.options = options;
-        this.vNode = new _vNode2.default(vm);
-        this.vData = new _vData2.default();
-        this.cache = null;
-        this.$tickEvent = [];
-
-        this.init();
-    }
-
-    _createClass(Render, [{
-        key: "init",
-        value: function init() {}
-    }, {
-        key: "cacheParse",
-        value: function cacheParse() {
-            var _this = this;
-
-            if (!(this.cache && this.handler.rule.type !== '__tmp')) {
-                this.cache = this.parse();
-            }
-            var eventList = [].concat(_toConsumableArray(this.$tickEvent));
-            this.$tickEvent = [];
-            (0, _util.$nt)(function () {
-                _newArrowCheck(this, _this);
-
-                eventList.forEach(function (event) {
-                    _newArrowCheck(this, _this);
-
-                    return event();
-                }.bind(this));
-            }.bind(this));
-            return this.cache;
-        }
-    }, {
-        key: "sync",
-        value: function sync(event) {
-            if ((0, _util.isFunction)(event)) this.$tickEvent.push(event);
-            this.clearCache();
-            this.vm.sync();
-        }
-    }, {
-        key: "clearCache",
-        value: function clearCache() {
-            var _this2 = this;
-
-            this.cache = null;
-            if (this.handler.childrenHandlers.length > 0) this.handler.childrenHandlers.forEach(function (handler) {
-                _newArrowCheck(this, _this2);
-
-                return handler.render.clearCache();
-            }.bind(this));
-        }
-    }, {
-        key: "parse",
-        value: function parse() {
-            var _this3 = this;
-
-            var _handler = this.handler,
-                type = _handler.type,
-                rule = _handler.rule,
-                childrenHandlers = _handler.childrenHandlers,
-                refName = _handler.refName,
-                key = _handler.key;
-
-            if (rule.type === '__tmp') {
-                var vn = _vue2.default.compile(rule.template, {}).render.call(rule._vm || this.vm);
-                if (vn.data === undefined) vn.data = {};
-                (0, _util.extend)(vn.data, rule);
-                vn.key = key;
-                return [vn];
-            } else {
-                rule.ref = refName;
-                if ((0, _util.isUndef)(rule.key)) rule.key = 'def' + (0, _util.uniqueId)();
-                var _vn = this.vNode.make(type, (0, _util.extend)({}, rule), function () {
-                    _newArrowCheck(this, _this3);
-
-                    var vn = [];
-                    if (childrenHandlers.length > 0) vn = childrenHandlers.map(function (handler) {
-                        _newArrowCheck(this, _this3);
-
-                        return handler.render.cacheParse();
-                    }.bind(this));
-                    return vn;
-                }.bind(this));
-                _vn.key = key;
-                return [_vn];
-            }
-        }
-    }, {
-        key: "inputProps",
-        value: function inputProps() {
-            var _this4 = this;
-
-            var _handler2 = this.handler,
-                refName = _handler2.refName,
-                unique = _handler2.unique,
-                key = _handler2.key,
-                field = _handler2.field,
-                _handler2$rule = _handler2.rule,
-                props = _handler2$rule.props,
-                event = _handler2$rule.event;
-
-            return this.vData.props((0, _util.extend)(props, { value: this.vm.cptData[field], elementId: unique })).ref(refName).key(key + '' + (0, _util.uniqueId)()).on(event).on('input', function (value) {
-                _newArrowCheck(this, _this4);
-
-                this.onInput(value);
-            }.bind(this));
-        }
-    }, {
-        key: "onInput",
-        value: function onInput(value) {
-            this.vm.$set(this.vm.cptData, this.handler.field, value);
-        }
-    }]);
-
-    return Render;
-}();
-
-exports.default = Render;
-
-/***/ }),
-/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -632,6 +256,386 @@ function errMsg() {
 }
 
 /***/ }),
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+exports.parseRule = parseRule;
+exports.parseArray = parseArray;
+exports.parseEmit = parseEmit;
+exports.parseEvent = parseEvent;
+exports.parseProps = parseProps;
+exports.parseCol = parseCol;
+
+var _util = __webpack_require__(0);
+
+function _newArrowCheck(innerThis, boundThis) { if (innerThis !== boundThis) { throw new TypeError("Cannot instantiate an arrow function"); } }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Handler = function () {
+    function Handler(vm, _rule, Render, createOptions, noValue) {
+        _classCallCheck(this, Handler);
+
+        var rule = parseRule(_rule, vm, noValue);
+
+        this.rule = rule;
+        this.noValue = noValue;
+        this.type = rule.type;
+        this.field = rule.field;
+        this.vm = vm;
+
+        var id = (0, _util.uniqueId)();
+        this.id = id;
+        this.unique = 'fc_' + id;
+        this.refName = '__' + this.field + id;
+        this.key = 'key_' + id;
+        this.el = {};
+        this.childrenHandlers = [];
+        this.watch = [];
+
+        if ((0, _util.isUndef)(rule.props.elementId)) rule.props.elementId = this.unique;
+
+        this.init();
+
+        this.parseValue = this.toFormValue(this.rule.value);
+
+        this.render = new Render(vm, this, createOptions);
+    }
+
+    _createClass(Handler, [{
+        key: 'init',
+        value: function init() {}
+    }, {
+        key: 'toFormValue',
+        value: function toFormValue(value) {
+            return value;
+        }
+    }, {
+        key: 'toValue',
+        value: function toValue(parseValue) {
+            return parseValue;
+        }
+    }, {
+        key: 'setValue',
+        value: function setValue(value) {
+            this.rule.value = value;
+            this.vm._changeValue(this.field, value);
+        }
+    }, {
+        key: 'getValue',
+        value: function getValue() {
+            return this.vm._value(this.field);
+        }
+    }, {
+        key: 'watchValue',
+        value: function watchValue(n) {
+            this.rule.value = n;
+            this.vm._changeFormData(this.field, this.toFormValue(n));
+        }
+    }, {
+        key: 'watchFormValue',
+        value: function watchFormValue(n) {}
+    }, {
+        key: 'reset',
+        value: function reset() {
+            this.vm._changeValue(this.field, this.defaultValue);
+        }
+    }, {
+        key: 'mounted',
+        value: function mounted() {
+            var _this = this;
+
+            var refName = 'fItem' + this.refName,
+                vm = this.vm;
+            this.el = vm.$refs[this.refName];
+            this.defaultValue = this.toValue(vm.$refs[refName] ? vm.$refs[refName].initialValue : (0, _util.deepExtend)({}, { value: this.rule.value }).value);
+            if (this.childrenHandlers.length > 0) this.childrenHandlers.forEach(function (handler) {
+                _newArrowCheck(this, _this);
+
+                return handler.mounted();
+            }.bind(this));
+        }
+    }]);
+
+    return Handler;
+}();
+
+exports.default = Handler;
+function parseRule(rule, vm, n) {
+    if (!n && rule.value === undefined) console.warn(String(rule.field) + ' \u5B57\u6BB5\u672A\u5B9A\u4E49 value \u5C5E\u6027' + (0, _util.errMsg)());
+    var _rule$validate = rule.validate,
+        validate = _rule$validate === undefined ? [] : _rule$validate,
+        _rule$event = rule.event,
+        event = _rule$event === undefined ? {} : _rule$event,
+        _rule$col = rule.col,
+        col = _rule$col === undefined ? {} : _rule$col,
+        _rule$emit = rule.emit,
+        emit = _rule$emit === undefined ? [] : _rule$emit,
+        _rule$props = rule.props,
+        props = _rule$props === undefined ? {} : _rule$props,
+        _rule$on = rule.on,
+        on = _rule$on === undefined ? {} : _rule$on,
+        _rule$options = rule.options,
+        options = _rule$options === undefined ? [] : _rule$options,
+        _rule$title = rule.title,
+        title = _rule$title === undefined ? '' : _rule$title,
+        _rule$value = rule.value,
+        value = _rule$value === undefined ? '' : _rule$value,
+        _rule$field = rule.field,
+        field = _rule$field === undefined ? '' : _rule$field,
+        _rule$className = rule.className,
+        className = _rule$className === undefined ? '' : _rule$className;
+
+    rule.col = parseCol(col);
+    rule.props = parseProps(props);
+    rule.emitEvent = parseEmit(field, rule.emitPrefix, emit, vm);
+    rule.event = (0, _util.extend)(parseEvent(event), rule.emitEvent);
+    rule.validate = parseArray(validate);
+    rule.options = parseArray(options);
+    rule.title = title;
+    rule.value = value;
+    rule.field = field;
+    rule.className = className;
+
+    if (!field) console.error('规则的 field 字段不能空' + (0, _util.errMsg)());
+
+    if (Object.keys(rule.emitEvent).length > 0) (0, _util.extend)(on, rule.emitEvent);
+    rule.on = on;
+    return rule;
+}
+
+function parseArray(validate) {
+    return Array.isArray(validate) ? validate : [];
+}
+
+function parseEmit(field, emitPrefix, emit, vm) {
+    var _this2 = this;
+
+    var event = {};
+
+    if (!Array.isArray(emit)) return event;
+
+    emit.forEach(function (eventName) {
+        _newArrowCheck(this, _this2);
+
+        var fieldKey = (0, _util.toLine)(String(field) + '-' + String(eventName)).replace('_', '-');
+
+        var emitKey = emitPrefix ? (String(emitPrefix) + '-').toLowerCase() + (0, _util.toLine)(eventName) : emitPrefix;
+
+        event['on-' + String(eventName)] = event['' + String(eventName)] = function () {
+            for (var _len = arguments.length, arg = Array(_len), _key = 0; _key < _len; _key++) {
+                arg[_key] = arguments[_key];
+            }
+
+            _newArrowCheck(this, _this2);
+
+            vm.$emit.apply(vm, [fieldKey].concat(arg));
+            if (emitKey && fieldKey !== emitKey) vm.$emit.apply(vm, [emitKey].concat(arg));
+        }.bind(this);
+    }.bind(this));
+
+    return event;
+}
+
+function parseEvent(event) {
+    Object.keys(event).forEach(function (eventName) {
+        var _name = (0, _util.toString)(eventName).indexOf('on-') === 0 ? eventName : 'on-' + String(eventName);
+
+        if (_name !== eventName) {
+            event[_name] = event[eventName];
+        }
+    });
+
+    return event;
+}
+
+function parseProps(props) {
+    if ((0, _util.isUndef)(props.hidden)) props.hidden = false;
+    if ((0, _util.isUndef)(props.visibility)) props.visibility = false;
+
+    return props;
+}
+
+function parseCol(col) {
+    if ((0, _util.isNumeric)(col)) {
+        return { span: col };
+    } else if (col.span === undefined) col.span = 24;
+
+    return col;
+}
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _util = __webpack_require__(0);
+
+var _vNode = __webpack_require__(8);
+
+var _vNode2 = _interopRequireDefault(_vNode);
+
+var _vData = __webpack_require__(6);
+
+var _vData2 = _interopRequireDefault(_vData);
+
+var _vue = __webpack_require__(5);
+
+var _vue2 = _interopRequireDefault(_vue);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _newArrowCheck(innerThis, boundThis) { if (innerThis !== boundThis) { throw new TypeError("Cannot instantiate an arrow function"); } }
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Render = function () {
+    function Render(vm, handler) {
+        var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
+        _classCallCheck(this, Render);
+
+        this.vm = vm;
+        this.handler = handler;
+        this.options = options;
+        this.vNode = new _vNode2.default(vm);
+        this.vData = new _vData2.default();
+        this.cache = null;
+        this.$tickEvent = [];
+
+        this.init();
+    }
+
+    _createClass(Render, [{
+        key: "init",
+        value: function init() {}
+    }, {
+        key: "cacheParse",
+        value: function cacheParse() {
+            var _this = this;
+
+            if (!(this.cache && this.handler.rule.type !== '__tmp')) {
+                this.cache = this.parse();
+            }
+            var eventList = [].concat(_toConsumableArray(this.$tickEvent));
+            this.$tickEvent = [];
+            (0, _util.$nt)(function () {
+                _newArrowCheck(this, _this);
+
+                eventList.forEach(function (event) {
+                    _newArrowCheck(this, _this);
+
+                    return event();
+                }.bind(this));
+            }.bind(this));
+            return this.cache;
+        }
+    }, {
+        key: "sync",
+        value: function sync(event) {
+            if ((0, _util.isFunction)(event)) this.$tickEvent.push(event);
+            this.clearCache();
+            this.vm._sync();
+        }
+    }, {
+        key: "clearCache",
+        value: function clearCache() {
+            var _this2 = this;
+
+            this.cache = null;
+            if (this.handler.childrenHandlers.length > 0) this.handler.childrenHandlers.forEach(function (handler) {
+                _newArrowCheck(this, _this2);
+
+                return handler.render.clearCache();
+            }.bind(this));
+        }
+    }, {
+        key: "parse",
+        value: function parse() {
+            var _this3 = this;
+
+            var _handler = this.handler,
+                type = _handler.type,
+                rule = _handler.rule,
+                childrenHandlers = _handler.childrenHandlers,
+                refName = _handler.refName,
+                key = _handler.key;
+
+            if (rule.type === '__tmp') {
+                var vn = _vue2.default.compile(rule.template, {}).render.call(rule._vm || this.vm);
+                if (vn.data === undefined) vn.data = {};
+                (0, _util.extend)(vn.data, rule);
+                vn.key = key;
+                return [vn];
+            } else {
+                rule.ref = refName;
+                if ((0, _util.isUndef)(rule.key)) rule.key = 'def' + (0, _util.uniqueId)();
+                var _vn = this.vNode.make(type, (0, _util.extend)({}, rule), function () {
+                    _newArrowCheck(this, _this3);
+
+                    var vn = [];
+                    if (childrenHandlers.length > 0) vn = childrenHandlers.map(function (handler) {
+                        _newArrowCheck(this, _this3);
+
+                        return handler.render.cacheParse();
+                    }.bind(this));
+                    return vn;
+                }.bind(this));
+                _vn.key = key;
+                return [_vn];
+            }
+        }
+    }, {
+        key: "inputProps",
+        value: function inputProps() {
+            var _this4 = this;
+
+            var _handler2 = this.handler,
+                refName = _handler2.refName,
+                key = _handler2.key,
+                field = _handler2.field,
+                _handler2$rule = _handler2.rule,
+                props = _handler2$rule.props,
+                event = _handler2$rule.event;
+
+            return this.vData.props((0, _util.extend)(props, { value: this.vm._formData(field) })).ref(refName).key(key + '' + (0, _util.uniqueId)()).on(event).on('input', function (value) {
+                _newArrowCheck(this, _this4);
+
+                this.onInput(value);
+            }.bind(this));
+        }
+    }, {
+        key: "onInput",
+        value: function onInput(value) {
+            this.vm._changeFormData(this.handler.field, value);
+        }
+    }]);
+
+    return Render;
+}();
+
+exports.default = Render;
+
+/***/ }),
 /* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -648,7 +652,7 @@ exports.baseRule = baseRule;
 exports.creatorFactory = creatorFactory;
 exports.creatorTypeFactory = creatorTypeFactory;
 
-var _util = __webpack_require__(2);
+var _util = __webpack_require__(0);
 
 var _vData = __webpack_require__(6);
 
@@ -802,13 +806,13 @@ exports.getConfig = getConfig;
 exports.toDefSlot = toDefSlot;
 exports.timeStampToDate = timeStampToDate;
 
-var _util = __webpack_require__(2);
+var _util = __webpack_require__(0);
 
-var _handler = __webpack_require__(0);
+var _handler = __webpack_require__(1);
 
 var _handler2 = _interopRequireDefault(_handler);
 
-var _render = __webpack_require__(1);
+var _render = __webpack_require__(2);
 
 var _render2 = _interopRequireDefault(_render);
 
@@ -853,11 +857,8 @@ function getComponent(vm, rule, createOptions) {
     var name = (0, _util.toString)(rule.type).toLowerCase(),
         component = _componentList2.default[name] === undefined ? getUdfComponent() : _componentList2.default[name];
 
-    var $h = new component.handler(vm, rule);
-    $h.render = new component.render(vm, $h, createOptions);
-    $h.noValue = component.noValue;
-    return $h;
-};
+    return new component.handler(vm, rule, component.render, createOptions, component.noValue);
+}
 
 function getUdfComponent() {
     return {
@@ -942,10 +943,10 @@ function getConfig() {
             show: false,
             col: undefined
         },
-        mounted: function mounted() {
+        mounted: function mounted($f) {
             _newArrowCheck(this, _this);
         }.bind(this),
-        onReload: function onReload() {
+        onReload: function onReload($f) {
             _newArrowCheck(this, _this);
         }.bind(this),
         onSubmit: function onSubmit(formData) {
@@ -965,15 +966,15 @@ function getGlobalApi(fComponent) {
         _this9 = this;
 
     var vm = fComponent.vm;
-    // window.fc = fComponent;
+
     return {
         formData: function formData() {
             _newArrowCheck(this, _this2);
 
-            return Object.keys(vm.trueData).reduce(function (initial, key) {
+            return vm._formField().reduce(function (initial, key) {
                 _newArrowCheck(this, _this2);
 
-                initial[key] = vm.trueData[key].value;
+                initial[key] = vm._value(key);
                 return initial;
             }.bind(this), {});
         }.bind(this),
@@ -981,9 +982,8 @@ function getGlobalApi(fComponent) {
             _newArrowCheck(this, _this2);
 
             field = (0, _util.toString)(field);
-            var handler = fComponent.handlers[field];
-            if (handler === undefined) throw new Error(String(field) + ' \u5B57\u6BB5\u4E0D\u5B58\u5728!' + (0, _util.errMsg)());else {
-                return handler.getValue();
+            if (vm._formField(field) === undefined) throw new Error(String(field) + ' \u5B57\u6BB5\u4E0D\u5B58\u5728!' + (0, _util.errMsg)());else {
+                return vm._value(field);
             }
         }.bind(this),
         changeField: function changeField(field, value) {
@@ -992,12 +992,12 @@ function getGlobalApi(fComponent) {
             field = (0, _util.toString)(field);
             var handler = fComponent.handlers[field];
             if (handler === undefined) throw new Error(String(field) + ' \u5B57\u6BB5\u4E0D\u5B58\u5728!' + (0, _util.errMsg)());else {
-                if ((0, _util.isFunction)(value)) value(vm.getTrueData(field), function (changeValue) {
+                if ((0, _util.isFunction)(value)) value(vm._trueData(field), function (changeValue) {
                     _newArrowCheck(this, _this2);
 
                     this.changeField(field, changeValue);
                 }.bind(this));else {
-                    handler.setTrueValue(value);
+                    handler.setValue(value);
                     handler.render.sync();
                 }
             }
@@ -1006,7 +1006,7 @@ function getGlobalApi(fComponent) {
             _newArrowCheck(this, _this2);
 
             fComponent.removeField((0, _util.toString)(field));
-            vm.sync();
+            vm._sync();
         }.bind(this),
         validate: function validate(successFn, errorFn) {
             _newArrowCheck(this, _this2);
@@ -1027,11 +1027,12 @@ function getGlobalApi(fComponent) {
             var _this3 = this;
 
             var handlers = fComponent.handlers;
-            Object.keys(vm.trueData).forEach(function (key) {
+            vm._formField().forEach(function (key) {
                 _newArrowCheck(this, _this3);
 
-                vm.$set(vm.trueData[key], 'value', handlers[key].defaultValue);
+                handlers[key].reset();
             }.bind(this));
+            this.refresh();
         },
         destroy: function destroy() {
             _newArrowCheck(this, _this2);
@@ -1073,12 +1074,11 @@ function getGlobalApi(fComponent) {
 
             var hidden = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
 
-            var vm = fComponent.vm;
             if (!fields) fields = this.fields();else if (!Array.isArray(fields)) fields = [fields];
             fields.forEach(function (field) {
                 _newArrowCheck(this, _this5);
 
-                vm.$set(vm.trueData[field].rule.props, 'hidden', !!hidden);
+                vm.$set(vm._trueData(field).rule.props, 'hidden', !!hidden);
             }.bind(this));
         },
         visibility: function visibility(fields) {
@@ -1086,12 +1086,11 @@ function getGlobalApi(fComponent) {
 
             var visibility = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
 
-            var vm = fComponent.vm;
             if (!fields) fields = this.fields();else if (!Array.isArray(fields)) fields = [fields];
             fields.forEach(function (field) {
                 _newArrowCheck(this, _this6);
 
-                vm.$set(vm.trueData[field].rule.props, 'visibility', !!visibility);
+                vm.$set(vm._trueData(field).rule.props, 'visibility', !!visibility);
             }.bind(this));
         },
         model: function model(fields) {
@@ -1104,7 +1103,7 @@ function getGlobalApi(fComponent) {
 
                 var handler = fComponent.handlers[field];
                 if (!handler) throw new Error(String(field) + '\u5B57\u6BB5\u4E0D\u5B58\u5728' + (0, _util.errMsg)());
-                model[field] = handler.vm.getTrueData(field);
+                model[field] = vm._trueData(field);
             }.bind(this));
             return model;
         },
@@ -1112,13 +1111,12 @@ function getGlobalApi(fComponent) {
             var _this8 = this;
 
             var bind = {},
-                properties = {},
-                vm = fComponent.vm;
+                properties = {};
             if (!fields) fields = this.fields();else if (!Array.isArray(fields)) fields = [fields];
             fields.forEach(function (field) {
                 _newArrowCheck(this, _this8);
 
-                var rule = vm.trueData[field];
+                var rule = vm._trueData(field);
                 properties[field] = {
                     get: function get() {
                         return rule.value;
@@ -1140,14 +1138,14 @@ function getGlobalApi(fComponent) {
 
             _newArrowCheck(this, _this2);
 
-            vm.changeButtonProps(props);
+            vm._buttonProps(props);
         }.bind(this),
         resetStatus: function resetStatus() {
             var props = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
             _newArrowCheck(this, _this2);
 
-            vm.changeResetProps(props);
+            vm._resetProps(props);
         }.bind(this),
         btn: {
             loading: function loading() {
@@ -1155,7 +1153,7 @@ function getGlobalApi(fComponent) {
 
                 _newArrowCheck(this, _this9);
 
-                vm.changeButtonProps({ loading: _loading });
+                vm._buttonProps({ loading: _loading });
             }.bind(this),
             finish: function finish() {
                 this.loading(false);
@@ -1165,7 +1163,7 @@ function getGlobalApi(fComponent) {
 
                 _newArrowCheck(this, _this9);
 
-                vm.changeButtonProps({ disabled: _disabled });
+                vm._buttonProps({ disabled: _disabled });
             }.bind(this)
         },
         resetBtn: {
@@ -1174,7 +1172,7 @@ function getGlobalApi(fComponent) {
 
                 _newArrowCheck(this, _this9);
 
-                vm.changeResetProps({ loading: _loading2 });
+                vm._resetProps({ loading: _loading2 });
             }.bind(this),
             finish: function finish() {
                 this.loading(false);
@@ -1184,7 +1182,7 @@ function getGlobalApi(fComponent) {
 
                 _newArrowCheck(this, _this9);
 
-                vm.changeResetProps({ disabled: _disabled2 });
+                vm._resetProps({ disabled: _disabled2 });
             }.bind(this)
         },
         closeModal: function closeModal() {
@@ -1206,7 +1204,7 @@ function getGlobalApi(fComponent) {
             _newArrowCheck(this, _this9);
 
             (0, _util.deepExtend)(fComponent.options, _options);
-            vm.sync();
+            vm._sync();
         }.bind(this),
         onSuccess: function onSuccess(fn) {
             this.onSubmit(fn);
@@ -1223,7 +1221,7 @@ function getGlobalApi(fComponent) {
         refresh: function refresh() {
             _newArrowCheck(this, _this9);
 
-            vm.refresh();
+            vm._refresh();
         }.bind(this)
     };
 }
@@ -1250,41 +1248,40 @@ var componentCommon = exports.componentCommon = {
             $f: {},
             isShow: true,
             watchs: [],
-            unique: 1,
-            other: {}
+            unique: 1
         };
     }.bind(undefined),
     methods: {
-        changeFormData: function changeFormData(field, value) {
+        _formField: function _formField() {
+            return Object.keys(this.trueData);
+        },
+        _changeFormData: function _changeFormData(field, value) {
             if (Object.keys(this.cptData).indexOf(field) !== -1) this.$set(this.cptData, field, value);
         },
-        changeTrueData: function changeTrueData(field, value) {
+        _changeValue: function _changeValue(field, value) {
             this.$set(this.trueData[field], 'value', value);
         },
-        getTrueDataValue: function getTrueDataValue(field) {
+        _value: function _value(field) {
             return this.trueData[field] === undefined ? undefined : this.trueData[field].value;
         },
-        getTrueData: function getTrueData(field) {
+        _trueData: function _trueData(field) {
             return this.trueData[field];
         },
-        getFormData: function getFormData(field) {
+        _formData: function _formData(field) {
             return this.cptData[field];
         },
-        removeFormData: function removeFormData(field) {
+        _removeField: function _removeField(field) {
             delete this.cptData[field];
             delete this.trueData[field];
             delete this.jsonData[field];
-            // this.$delete(this.cptData, field);
-            // this.$delete(this.trueData, field);
-            // this.$delete(this.jsonData, field);
         },
-        changeButtonProps: function changeButtonProps(props) {
+        _buttonProps: function _buttonProps(props) {
             this.$set(this, 'buttonProps', (0, _util.deepExtend)(this.buttonProps, props));
         },
-        changeResetProps: function changeResetProps(props) {
+        _resetProps: function _resetProps(props) {
             this.$set(this, 'resetProps', (0, _util.deepExtend)(this.resetProps, props));
         },
-        setField: function setField(field) {
+        _setField: function _setField(field) {
             this.$set(this.cptData, field, '');
             this.$set(this.trueData, field, {});
         },
@@ -1299,12 +1296,12 @@ var componentCommon = exports.componentCommon = {
                     _newArrowCheck(this, _this10);
 
                     if (this.trueData[rule.field] === undefined) return unWatch();
-                    this.$set(this.trueData[rule.field], 'value', n);
+                    this._changeValue(rule.field, n);
                 }.bind(this));
                 this.watchs.push(unWatch);
             }.bind(this));
         },
-        unWatch: function unWatch() {
+        _unWatch: function _unWatch() {
             var _this11 = this;
 
             this.watchs.forEach(function (unWatch) {
@@ -1314,21 +1311,19 @@ var componentCommon = exports.componentCommon = {
             }.bind(this));
             this.watchs = [];
         },
-        refresh: function refresh() {
+        _refresh: function _refresh() {
             this.unique += 1;
         },
-        sync: function sync() {
-            // if (!this._sync)
-            //     this._sync = debounce(() => {
-            //         this.$nextTick(() => {
-            //             this.fComponent.fRender.cacheUnique = this.unique + 1;
-            //             this.unique += 1;
-            //         });
-            //     }, 50);
-            // this._sync();
-
-            this.fComponent.fRender.cacheUnique = this.unique + 1;
+        _sync: function _sync() {
             this.unique += 1;
+            this.fComponent.fRender.cacheUnique = this.unique;
+        },
+        _change: function _change(field, json) {
+            if (this.jsonData[field] !== json) {
+                this.jsonData[field] = json;
+                return true;
+            }
+            return false;
         }
     }
 };
@@ -1354,7 +1349,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 exports.defVData = defVData;
 
-var _util = __webpack_require__(2);
+var _util = __webpack_require__(0);
 
 function _newArrowCheck(innerThis, boundThis) { if (innerThis !== boundThis) { throw new TypeError("Cannot instantiate an arrow function"); } }
 
@@ -1480,7 +1475,7 @@ exports.margeGlobal = margeGlobal;
 exports.getRule = getRule;
 exports.initStyle = initStyle;
 
-var _util = __webpack_require__(2);
+var _util = __webpack_require__(0);
 
 var _common = __webpack_require__(4);
 
@@ -1508,7 +1503,7 @@ function _newArrowCheck(innerThis, boundThis) { if (innerThis !== boundThis) { t
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var version = '1.5.3';
+var version = '1.5.4';
 
 var formCreateStyleElId = 'form-create-style';
 
@@ -1535,6 +1530,8 @@ function initStyle() {
 
 var FormCreate = function () {
     function FormCreate(rules) {
+        var _this = this;
+
         var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
         _classCallCheck(this, FormCreate);
@@ -1551,13 +1548,16 @@ var FormCreate = function () {
         this.switchMaker = this.options.switchMaker;
 
         initStyle();
+        this.$tick = (0, _util.debounce)(function (fn) {
+            _newArrowCheck(this, _this);
+
+            return (0, _util.$nt)(fn);
+        }.bind(this), 100);
     }
 
     _createClass(FormCreate, [{
         key: "init",
         value: function init(vm) {
-            var _this = this;
-
             this.vm = vm;
             this.createHandler();
             this.fCreateApi = (0, _common.getGlobalApi)(this);
@@ -1567,12 +1567,6 @@ var FormCreate = function () {
             vm.$set(vm, 'resetProps', this.options.resetBtn);
             vm.$set(vm, 'rules', this.rules);
             this.fRender = new _form2.default(this);
-
-            this.$tick = (0, _util.debounce)(function (fn) {
-                _newArrowCheck(this, _this);
-
-                return (0, _util.$nt)(fn);
-            }.bind(this), 100);
         }
     }, {
         key: "setHandler",
@@ -1663,7 +1657,7 @@ var FormCreate = function () {
                     _newArrowCheck(this, _this4);
 
                     var handler = this.handlers[field];
-                    if (vm.cptData[field] !== undefined) this.addHandlerWatch(handler);
+                    if (vm._formData(field) !== undefined) this.addHandlerWatch(handler);
                     handler.mounted();
                 }.bind(this));
                 if (first) mounted && mounted(this.fCreateApi);
@@ -1685,7 +1679,7 @@ var FormCreate = function () {
             if (Object.keys(this.handlers).indexOf((0, _util.toString)(rule.field)) !== -1) throw new Error(String(rule.field) + "\u5B57\u6BB5\u5DF2\u5B58\u5728" + (0, _util.errMsg)());
             var handler = (0, _common.getComponent)(this.vm, rule, this.options);
             this.createChildren(handler);
-            this.vm.setField(handler.field);
+            this.vm._setField(handler.field);
             this.fRender.setRender(handler, after || '', pre);
             this.setHandler(handler);
             this.addHandlerWatch(handler);
@@ -1710,7 +1704,7 @@ var FormCreate = function () {
 
                 return unWatch();
             }.bind(this));
-            this.vm.removeFormData(field);
+            this.vm._removeField(field);
             this.fRender.removeRender(field);
             delete this.formData[field];
             delete this.trueData[field];
@@ -1721,31 +1715,30 @@ var FormCreate = function () {
             var _this7 = this;
 
             if (handler.noValue === true) return;
-            var field = handler.field;
+            var field = handler.field,
+                vm = this.vm;
 
-            var unWatch = this.vm.$watch("cptData." + String(field), function (n, o) {
+            var unWatch = vm.$watch("cptData." + String(field), function (n, o) {
                 _newArrowCheck(this, _this7);
 
                 if (this.handlers[field] !== undefined) {
-                    var trueValue = handler.toTrueValue(n),
+                    var trueValue = handler.toValue(n),
                         json = JSON.stringify(trueValue);
-                    if (this.vm.jsonData[field] !== json) {
-                        this.vm.jsonData[field] = json;
-                        handler.setTrueValue(trueValue);
-                        handler.watchParseValue(n);
+                    if (vm._change(field, json)) {
+                        handler.setValue(trueValue);
+                        handler.watchFormValue(n);
                     }
                 } else unWatch();
             }.bind(this), { deep: true });
 
-            var unWatch2 = this.vm.$watch("trueData." + String(field) + ".value", function (n, o) {
+            var unWatch2 = vm.$watch("trueData." + String(field) + ".value", function (n, o) {
                 _newArrowCheck(this, _this7);
 
                 if (n === undefined) return;
                 if (this.handlers[field] !== undefined) {
                     var json = JSON.stringify(n);
-                    if (this.vm.jsonData[field] !== json) {
-                        this.vm.jsonData[field] = json;
-                        handler.watchTrueValue(n);
+                    if (vm._change(field, json)) {
+                        handler.watchValue(n);
                         (0, _util.$nt)(function () {
                             _newArrowCheck(this, _this7);
 
@@ -1769,11 +1762,11 @@ var FormCreate = function () {
                 } else unWatch();
             }.bind(this), 100);
 
-            Object.keys(this.vm.trueData[field].rule).forEach(function (key) {
+            Object.keys(vm._trueData(field).rule).forEach(function (key) {
                 _newArrowCheck(this, _this7);
 
                 if (key === 'value') return;
-                handler.watch.push(this.vm.$watch("trueData." + String(field) + ".rule." + String(key), bind, { deep: true }));
+                handler.watch.push(vm.$watch("trueData." + String(field) + ".rule." + String(key), bind, { deep: true }));
             }.bind(this));
         }
     }, {
@@ -1781,31 +1774,32 @@ var FormCreate = function () {
         value: function reload(rules) {
             var _this8 = this;
 
+            var vm = this.vm;
             if (!rules) {
-                this.vm.refresh();
+                return this.reload(this.rules);
             } else {
-                this.vm.unWatch();
+                vm._unWatch();
                 Object.keys(this.handlers).forEach(function (field) {
                     _newArrowCheck(this, _this8);
 
                     return this.removeField(field);
                 }.bind(this));
-                this.vm.isShow = false;
+                vm.isShow = false;
                 this.constructor(rules, this.options);
-                this.init(this.vm);
-                this.vm.init();
+                this.init(vm);
+                vm.init();
                 (0, _util.$nt)(function () {
                     _newArrowCheck(this, _this8);
 
-                    this.vm.isShow = true;
+                    vm.isShow = true;
                     setTimeout(function () {
                         _newArrowCheck(this, _this8);
 
-                        return this.mounted(this.vm, false);
+                        return this.mounted(vm, false);
                     }.bind(this));
                 }.bind(this));
             }
-            return this.vm.$f = this.fCreateApi;
+            return vm.$f = this.fCreateApi;
         }
     }, {
         key: "getFormRef",
@@ -1869,7 +1863,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 exports.parseVData = parseVData;
 exports.getVNode = getVNode;
 
-var _util = __webpack_require__(2);
+var _util = __webpack_require__(0);
 
 function _newArrowCheck(innerThis, boundThis) { if (innerThis !== boundThis) { throw new TypeError("Cannot instantiate an arrow function"); } }
 
@@ -2074,15 +2068,15 @@ var _get = function get(object, property, receiver) { if (object === null) objec
 exports.getFileName = getFileName;
 exports.parseValue = parseValue;
 
-var _handler = __webpack_require__(0);
+var _handler2 = __webpack_require__(1);
 
-var _handler2 = _interopRequireDefault(_handler);
+var _handler3 = _interopRequireDefault(_handler2);
 
-var _render = __webpack_require__(1);
+var _render = __webpack_require__(2);
 
 var _render2 = _interopRequireDefault(_render);
 
-var _util = __webpack_require__(2);
+var _util = __webpack_require__(0);
 
 var _common = __webpack_require__(4);
 
@@ -2133,8 +2127,8 @@ var handler = function (_Handler) {
             this.rule.value = parseValue(this.rule.value);
         }
     }, {
-        key: "toParseValue",
-        value: function toParseValue(value) {
+        key: "toFormValue",
+        value: function toFormValue(value) {
             var _this2 = this;
 
             var files = parseValue(value);
@@ -2145,14 +2139,14 @@ var handler = function (_Handler) {
                 return this.push(file);
             }.bind(this));
             this.rule.props.defaultFileList = this.parseValue;
-            // if (!isUndef(this.el.fileList)) this.el.fileList = this.parseValue;
+
             return this.parseValue;
         }
     }, {
         key: "mounted",
         value: function mounted() {
             _get(handler.prototype.__proto__ || Object.getPrototypeOf(handler.prototype), "mounted", this).call(this);
-            // this.el.fileList = this.parseValue;
+
             this.rule.props.defaultFileList = this.parseValue;
             this.changeParseValue(this.el.fileList);
         }
@@ -2165,8 +2159,8 @@ var handler = function (_Handler) {
             });
         }
     }, {
-        key: "toTrueValue",
-        value: function toTrueValue(parseValue) {
+        key: "toValue",
+        value: function toValue(parseValue) {
             var _this3 = this;
 
             if ((0, _util.isUndef)(parseValue)) return [];
@@ -2185,16 +2179,11 @@ var handler = function (_Handler) {
         key: "changeParseValue",
         value: function changeParseValue(parseValue) {
             this.parseValue = parseValue;
-            this.vm.changeFormData(this.field, parseValue);
+            this.vm._changeFormData(this.field, parseValue);
         }
-
-        // watchParseValue(n){
-        //
-        // }
-
     }, {
-        key: "watchTrueValue",
-        value: function watchTrueValue(n) {
+        key: "watchValue",
+        value: function watchValue(n) {
             var _this4 = this;
 
             var b = true;
@@ -2203,14 +2192,12 @@ var handler = function (_Handler) {
 
                 b = b && (pic.percentage === undefined || pic.status === 'finished');
             }.bind(this));
-            if (b) _get(handler.prototype.__proto__ || Object.getPrototypeOf(handler.prototype), "watchTrueValue", this).call(this, n);
+            if (b) _get(handler.prototype.__proto__ || Object.getPrototypeOf(handler.prototype), "watchValue", this).call(this, n);
         }
     }]);
 
     return handler;
-}(_handler2.default);
-
-//const propsEventType = ['beforeUpload','onProgress','onPreview','onRemove','onFormatError','onExceededSize','onError'];
+}(_handler3.default);
 
 var render = function (_Render) {
     _inherits(render, _Render);
@@ -2242,9 +2229,11 @@ var render = function (_Render) {
     }, {
         key: "onRemove",
         value: function onRemove() {
+            var _uploadOptions;
+
             this.handler.changeParseValue(this.handler.el.fileList);
+            this.uploadOptions.onRemove && (_uploadOptions = this.uploadOptions).onRemove.apply(_uploadOptions, arguments);
             this.sync();
-            this.uploadOptions.onRemove && this.uploadOptions.onRemove(this.handler.el.fileList);
         }
     }, {
         key: "onSuccess",
@@ -2292,11 +2281,13 @@ var render = function (_Render) {
         value: function parse() {
             var _this8 = this;
 
-            var unique = this.handler.unique;
+            var _handler = this.handler,
+                unique = _handler.unique,
+                field = _handler.field;
 
             this.init();
             if (this.uploadOptions.handleIcon === true) this.uploadOptions.handleIcon = 'ios-eye-outline';
-            var value = this.vm.cptData[this.handler.field],
+            var value = this.vm._formData(field),
                 render = this.uploadOptions.showUploadList ? [] : [].concat(_toConsumableArray(value.map(function (file, index) {
                 _newArrowCheck(this, _this8);
 
@@ -2306,7 +2297,7 @@ var render = function (_Render) {
                     return this.makeUploadView(file.url, "upview" + String(index) + String(unique), index);
                 }
             }.bind(this))));
-            var isShow = !this.uploadOptions.maxLength || this.uploadOptions.maxLength > this.vm.cptData[this.handler.field].length;
+            var isShow = !this.uploadOptions.maxLength || this.uploadOptions.maxLength > value.length;
             render.push(this.makeUploadBtn(unique, isShow));
             return [this.vNode.make('div', {
                 key: "div4" + String(unique),
@@ -2381,8 +2372,10 @@ var render = function (_Render) {
                     'click': function click() {
                         _newArrowCheck(this, _this11);
 
-                        this.handler.el.fileList.splice(index, 1);
-                        this.onRemove();
+                        var fileList = this.handler.el.fileList,
+                            file = fileList[index];
+                        fileList.splice(index, 1);
+                        this.onRemove(file, fileList);
                     }.bind(this)
                 }
             });
@@ -2533,12 +2526,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 if (typeof window !== 'undefined' && window.Vue) {
   window.Vue.use(_formCreate2.default);
-} /**
-   *
-   * JS表单生成器
-   * Author: xaboy
-   * Github: https://github.com/xaboy/form-create
-   */
+}
 
 module.exports.default = module.exports = _formCreate2.default;
 
@@ -2555,11 +2543,11 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _handler = __webpack_require__(0);
+var _handler = __webpack_require__(1);
 
 var _handler2 = _interopRequireDefault(_handler);
 
-var _render = __webpack_require__(1);
+var _render = __webpack_require__(2);
 
 var _render2 = _interopRequireDefault(_render);
 
@@ -2632,17 +2620,17 @@ exports.render = exports.handler = undefined;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _handler = __webpack_require__(0);
+var _handler = __webpack_require__(1);
 
 var _handler2 = _interopRequireDefault(_handler);
 
-var _render = __webpack_require__(1);
+var _render = __webpack_require__(2);
 
 var _render2 = _interopRequireDefault(_render);
 
 var _creator = __webpack_require__(3);
 
-var _util = __webpack_require__(2);
+var _util = __webpack_require__(0);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -2673,8 +2661,8 @@ var handler = exports.handler = function (_Handler) {
             if (props.autosize && props.autosize.minRows) props.rows = props.autosize.minRows || 2;
         }
     }, {
-        key: "toParseValue",
-        value: function toParseValue(v) {
+        key: "toFormValue",
+        value: function toFormValue(v) {
             return (0, _util.toString)(v);
         }
     }]);
@@ -2725,15 +2713,15 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _handler2 = __webpack_require__(0);
+var _handler2 = __webpack_require__(1);
 
 var _handler3 = _interopRequireDefault(_handler2);
 
-var _render = __webpack_require__(1);
+var _render = __webpack_require__(2);
 
 var _render2 = _interopRequireDefault(_render);
 
-var _util = __webpack_require__(2);
+var _util = __webpack_require__(0);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -2757,8 +2745,8 @@ var handler = function (_Handler) {
     }
 
     _createClass(handler, [{
-        key: "toParseValue",
-        value: function toParseValue(value) {
+        key: "toFormValue",
+        value: function toFormValue(value) {
             var _this2 = this;
 
             return this.rule.options.filter(function (opt) {
@@ -2772,8 +2760,8 @@ var handler = function (_Handler) {
             }.bind(this), '');
         }
     }, {
-        key: "toTrueValue",
-        value: function toTrueValue(parseValue) {
+        key: "toValue",
+        value: function toValue(parseValue) {
             var _this3 = this;
 
             return this.rule.options.filter(function (opt) {
@@ -2847,15 +2835,15 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
 
-var _handler2 = __webpack_require__(0);
+var _handler2 = __webpack_require__(1);
 
 var _handler3 = _interopRequireDefault(_handler2);
 
-var _render = __webpack_require__(1);
+var _render = __webpack_require__(2);
 
 var _render2 = _interopRequireDefault(_render);
 
-var _util = __webpack_require__(2);
+var _util = __webpack_require__(0);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -2879,8 +2867,8 @@ var handler = function (_Handler) {
     }
 
     _createClass(handler, [{
-        key: "toParseValue",
-        value: function toParseValue(value) {
+        key: "toFormValue",
+        value: function toFormValue(value) {
             var _this2 = this;
 
             if (!value) value = [];else if (!Array.isArray(value)) value = [value];
@@ -2895,8 +2883,8 @@ var handler = function (_Handler) {
             }.bind(this));
         }
     }, {
-        key: "toTrueValue",
-        value: function toTrueValue(parseValue) {
+        key: "toValue",
+        value: function toValue(parseValue) {
             var _this3 = this;
 
             var value = this.rule.options.filter(function (opt) {
@@ -2911,9 +2899,9 @@ var handler = function (_Handler) {
             if (this.rule.options.length === 1) return value[0] === undefined ? '' : value[0];else return value;
         }
     }, {
-        key: "watchParseValue",
-        value: function watchParseValue(n) {
-            _get(handler.prototype.__proto__ || Object.getPrototypeOf(handler.prototype), "watchParseValue", this).call(this, n);
+        key: "watchFormValue",
+        value: function watchFormValue(n) {
+            _get(handler.prototype.__proto__ || Object.getPrototypeOf(handler.prototype), "watchFormValue", this).call(this, n);
             this.render.sync();
         }
     }]);
@@ -2975,13 +2963,15 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _handler = __webpack_require__(0);
+var _handler = __webpack_require__(1);
 
 var _handler2 = _interopRequireDefault(_handler);
 
-var _render = __webpack_require__(1);
+var _render = __webpack_require__(2);
 
 var _render2 = _interopRequireDefault(_render);
+
+var _util = __webpack_require__(0);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -3028,9 +3018,10 @@ var render = function (_Render) {
         value: function parse() {
             var _this3 = this;
 
-            var slot = this.handler.rule.slot;
+            var rule = this.handler.rule,
+                slot = (0, _util.isUndef)(rule.props.slot) ? rule.slot : rule.props.slot;
 
-            this.propsData = this.inputProps().scopedSlots({
+            return [this.vNode.switch(this.inputProps().scopedSlots({
                 open: function open() {
                     _newArrowCheck(this, _this3);
 
@@ -3041,8 +3032,7 @@ var render = function (_Render) {
 
                     return slot.close;
                 }.bind(this)
-            }).get();
-            return [this.vNode.switch(this.propsData)];
+            }).style({ 'margin': '4.5px 0px' }).get())];
         }
     }]);
 
@@ -3064,11 +3054,11 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _handler2 = __webpack_require__(0);
+var _handler2 = __webpack_require__(1);
 
 var _handler3 = _interopRequireDefault(_handler2);
 
-var _render = __webpack_require__(1);
+var _render = __webpack_require__(2);
 
 var _render2 = _interopRequireDefault(_render);
 
@@ -3098,8 +3088,8 @@ var handler = function (_Handler) {
     }
 
     _createClass(handler, [{
-        key: "toParseValue",
-        value: function toParseValue(value) {
+        key: "toFormValue",
+        value: function toFormValue(value) {
             var isArr = Array.isArray(value);
             if (this.rule.props.multiple === true) return isArr === true ? value : [value];else return isArr === true ? value[0] || '' : value;
         }
@@ -3166,11 +3156,11 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
 
-var _handler2 = __webpack_require__(0);
+var _handler2 = __webpack_require__(1);
 
 var _handler3 = _interopRequireDefault(_handler2);
 
-var _render = __webpack_require__(1);
+var _render = __webpack_require__(2);
 
 var _render2 = _interopRequireDefault(_render);
 
@@ -3178,7 +3168,7 @@ var _common = __webpack_require__(4);
 
 var _creator = __webpack_require__(3);
 
-var _util = __webpack_require__(2);
+var _util = __webpack_require__(0);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -3209,8 +3199,8 @@ var handler = function (_Handler) {
             if ((0, _util.isUndef)(props.startDate)) props.startDate = (0, _common.timeStampToDate)(props.startDate);
         }
     }, {
-        key: "toParseValue",
-        value: function toParseValue(value) {
+        key: "toFormValue",
+        value: function toFormValue(value) {
             var _this2 = this;
 
             var isArr = Array.isArray(value),
@@ -3235,8 +3225,8 @@ var handler = function (_Handler) {
             return parseValue;
         }
     }, {
-        key: "toTrueValue",
-        value: function toTrueValue() {
+        key: "toValue",
+        value: function toValue() {
             return this.el.publicStringValue;
         }
     }, {
@@ -3244,7 +3234,7 @@ var handler = function (_Handler) {
         value: function mounted() {
             _get(handler.prototype.__proto__ || Object.getPrototypeOf(handler.prototype), "mounted", this).call(this);
             this.rule.value = this.el.publicStringValue;
-            this.vm.changeFormData(this.field, this.toParseValue(this.el.publicStringValue));
+            this.vm._changeFormData(this.field, this.toFormValue(this.el.publicStringValue));
         }
     }]);
 
@@ -3301,15 +3291,15 @@ var _get = function get(object, property, receiver) { if (object === null) objec
 
 exports.getTime = getTime;
 
-var _handler2 = __webpack_require__(0);
+var _handler2 = __webpack_require__(1);
 
 var _handler3 = _interopRequireDefault(_handler2);
 
-var _render = __webpack_require__(1);
+var _render = __webpack_require__(2);
 
 var _render2 = _interopRequireDefault(_render);
 
-var _util = __webpack_require__(2);
+var _util = __webpack_require__(0);
 
 var _common = __webpack_require__(4);
 
@@ -3348,8 +3338,8 @@ var handler = function (_Handler) {
             if ((0, _util.isUndef)(props.confirm)) props.confirm = true;
         }
     }, {
-        key: "toParseValue",
-        value: function toParseValue(value) {
+        key: "toFormValue",
+        value: function toFormValue(value) {
             var _this2 = this;
 
             var parseValue = void 0,
@@ -3375,7 +3365,7 @@ var handler = function (_Handler) {
         value: function mounted() {
             _get(handler.prototype.__proto__ || Object.getPrototypeOf(handler.prototype), "mounted", this).call(this);
             this.rule.value = this.el.publicStringValue;
-            this.vm.changeFormData(this.field, this.toParseValue(this.el.publicStringValue));
+            this.vm._changeFormData(this.field, this.toFormValue(this.el.publicStringValue));
         }
     }]);
 
@@ -3426,11 +3416,11 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _handler = __webpack_require__(0);
+var _handler = __webpack_require__(1);
 
 var _handler2 = _interopRequireDefault(_handler);
 
-var _render = __webpack_require__(1);
+var _render = __webpack_require__(2);
 
 var _render2 = _interopRequireDefault(_render);
 
@@ -3456,8 +3446,8 @@ var handler = function (_Handler) {
     }
 
     _createClass(handler, [{
-        key: "toParseValue",
-        value: function toParseValue(value) {
+        key: "toFormValue",
+        value: function toFormValue(value) {
             var parseValue = parseFloat(value);
             if (Number.isNaN(parseValue)) parseValue = 0;
             return parseValue;
@@ -3507,11 +3497,11 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
 
-var _handler = __webpack_require__(0);
+var _handler = __webpack_require__(1);
 
 var _handler2 = _interopRequireDefault(_handler);
 
-var _render = __webpack_require__(1);
+var _render = __webpack_require__(2);
 
 var _render2 = _interopRequireDefault(_render);
 
@@ -3537,9 +3527,9 @@ var handler = function (_Handler) {
     }
 
     _createClass(handler, [{
-        key: "watchParseValue",
-        value: function watchParseValue(n) {
-            _get(handler.prototype.__proto__ || Object.getPrototypeOf(handler.prototype), "watchParseValue", this).call(this, n);
+        key: "watchFormValue",
+        value: function watchFormValue(n) {
+            _get(handler.prototype.__proto__ || Object.getPrototypeOf(handler.prototype), "watchFormValue", this).call(this, n);
             this.render.sync();
         }
     }]);
@@ -3587,11 +3577,11 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
 
-var _handler = __webpack_require__(0);
+var _handler = __webpack_require__(1);
 
 var _handler2 = _interopRequireDefault(_handler);
 
-var _render = __webpack_require__(1);
+var _render = __webpack_require__(2);
 
 var _render2 = _interopRequireDefault(_render);
 
@@ -3622,15 +3612,15 @@ var handler = function (_Handler) {
             if (!Array.isArray(this.rule.value)) this.rule.value = [];
         }
     }, {
-        key: "toParseValue",
-        value: function toParseValue(value) {
+        key: "toFormValue",
+        value: function toFormValue(value) {
             return Array.isArray(value) ? value : [];
         }
     }, {
         key: "mounted",
         value: function mounted() {
             _get(handler.prototype.__proto__ || Object.getPrototypeOf(handler.prototype), "mounted", this).call(this);
-            this.vm.changeFormData(this.field, this.toParseValue(this.el.value));
+            this.vm._changeFormData(this.field, this.toFormValue(this.el.value));
         }
     }]);
 
@@ -3671,11 +3661,11 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _handler = __webpack_require__(0);
+var _handler = __webpack_require__(1);
 
 var _handler2 = _interopRequireDefault(_handler);
 
-var _render = __webpack_require__(1);
+var _render = __webpack_require__(2);
 
 var _render2 = _interopRequireDefault(_render);
 
@@ -3699,8 +3689,8 @@ var handler = function (_Handler) {
     }
 
     _createClass(handler, [{
-        key: "toParseValue",
-        value: function toParseValue(value) {
+        key: "toFormValue",
+        value: function toFormValue(value) {
             var parseValue = parseFloat(value);
             if (Number.isNaN(parseValue)) parseValue = 0;
             return parseValue;
@@ -3744,11 +3734,11 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _handler = __webpack_require__(0);
+var _handler = __webpack_require__(1);
 
 var _handler2 = _interopRequireDefault(_handler);
 
-var _render = __webpack_require__(1);
+var _render = __webpack_require__(2);
 
 var _render2 = _interopRequireDefault(_render);
 
@@ -3763,22 +3753,6 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var name = "slider";
-
-// function parseRule(rule) {
-//
-//     rule.props.min = rule.props.min === undefined
-//         ? 0
-//         : parseFloat(rule.props.min) || 0;
-//
-//     let value = !rule.value ? 0 : rule.value, isArr = Array.isArray(value), props = rule.props, min = props.min,
-//         parseValue;
-//     if (props.range === true) {
-//         parseValue = isArr ? value : [min, (parseFloat(value) || min)];
-//     } else {
-//         parseValue = isArr ? (parseFloat(value[0]) || min) : parseFloat(value);
-//     }
-//     rule.value = parseValue;
-// }
 
 var handler = function (_Handler) {
     _inherits(handler, _Handler);
@@ -3796,8 +3770,8 @@ var handler = function (_Handler) {
             rule.props.min = rule.props.min === undefined ? 0 : parseFloat(rule.props.min) || 0;
         }
     }, {
-        key: "toParseValue",
-        value: function toParseValue(value) {
+        key: "toFormValue",
+        value: function toFormValue(value) {
             var rule = this.rule,
                 isArr = Array.isArray(value),
                 props = rule.props,
@@ -3857,15 +3831,15 @@ var _get = function get(object, property, receiver) { if (object === null) objec
 
 exports.parseRule = parseRule;
 
-var _handler = __webpack_require__(0);
+var _handler = __webpack_require__(1);
 
 var _handler2 = _interopRequireDefault(_handler);
 
-var _render = __webpack_require__(1);
+var _render = __webpack_require__(2);
 
 var _render2 = _interopRequireDefault(_render);
 
-var _util = __webpack_require__(2);
+var _util = __webpack_require__(0);
 
 var _upload = __webpack_require__(10);
 
@@ -3920,8 +3894,8 @@ var handler = function (_Handler) {
             parseRule(this.rule);
         }
     }, {
-        key: "toParseValue",
-        value: function toParseValue(value) {
+        key: "toFormValue",
+        value: function toFormValue(value) {
             var parseValue = void 0,
                 oldValue = value,
                 isArr = Array.isArray(oldValue);
@@ -3930,20 +3904,20 @@ var handler = function (_Handler) {
             return parseValue;
         }
     }, {
-        key: "toTrueValue",
-        value: function toTrueValue(parseValue) {
+        key: "toValue",
+        value: function toValue(parseValue) {
             return this.rule.props.multiple === true ? parseValue : parseValue[0] === undefined ? '' : parseValue[0];
         }
     }, {
-        key: "watchTrueValue",
-        value: function watchTrueValue(n) {
-            _get(handler.prototype.__proto__ || Object.getPrototypeOf(handler.prototype), "watchTrueValue", this).call(this, n);
+        key: "watchValue",
+        value: function watchValue(n) {
+            _get(handler.prototype.__proto__ || Object.getPrototypeOf(handler.prototype), "watchValue", this).call(this, n);
             this.render.sync();
         }
     }, {
-        key: "watchParseValue",
-        value: function watchParseValue(n) {
-            _get(handler.prototype.__proto__ || Object.getPrototypeOf(handler.prototype), "watchParseValue", this).call(this, n);
+        key: "watchFormValue",
+        value: function watchFormValue(n) {
+            _get(handler.prototype.__proto__ || Object.getPrototypeOf(handler.prototype), "watchFormValue", this).call(this, n);
             this.parseValue = n;
             this.render.sync();
         }
@@ -4013,7 +3987,7 @@ var render = function (_Render) {
                 key: "ifgp1" + String(unique),
                 class: { 'fc-upload fc-frame': true },
                 ref: this.handler.refName,
-                props: { value: this.vm.cptData[field] }
+                props: { value: this.vm._formData(field) }
             }, render), this.makeInput(true)];
         }
     }, {
@@ -4200,7 +4174,7 @@ var render = function (_Render) {
                                             iframe[String(this.handler.field) + "_change"] = function (val) {
                                                 _newArrowCheck(this, _this11);
 
-                                                this.handler.setParseValue(val);
+                                                this.handler.setValue(val);
                                             }.bind(this);
 
                                             iframe["form_create_helper"] = {
@@ -4304,15 +4278,15 @@ var _createClass = function () { function defineProperties(target, props) { for 
 exports.parseRule = parseRule;
 exports.isMultiple = isMultiple;
 
-var _handler2 = __webpack_require__(0);
+var _handler2 = __webpack_require__(1);
 
 var _handler3 = _interopRequireDefault(_handler2);
 
-var _render = __webpack_require__(1);
+var _render = __webpack_require__(2);
 
 var _render2 = _interopRequireDefault(_render);
 
-var _util = __webpack_require__(2);
+var _util = __webpack_require__(0);
 
 var _creator = __webpack_require__(3);
 
@@ -4395,8 +4369,8 @@ var handler = function (_Handler) {
             this.rule.value = value;
         }
     }, {
-        key: "toParseValue",
-        value: function toParseValue(value) {
+        key: "toFormValue",
+        value: function toFormValue(value) {
             value = (0, _util.toArray)(value);
             this.choose(value);
             this.parseValue = value;
@@ -4435,19 +4409,19 @@ var handler = function (_Handler) {
             }
         }
     }, {
-        key: "toTrueValue",
-        value: function toTrueValue(parseValue) {
+        key: "toValue",
+        value: function toValue(parseValue) {
             var value = parseValue;
             return !isMultiple(this.rule) ? value : value[0] || '';
         }
     }, {
-        key: "watchParseValue",
-        value: function watchParseValue(n) {
+        key: "watchFormValue",
+        value: function watchFormValue(n) {
             this.choose(n);
         }
     }, {
-        key: "selectedNodeToValue",
-        value: function selectedNodeToValue(nodes) {
+        key: "selectedValue",
+        value: function selectedValue(nodes) {
             var _this4 = this;
 
             var value = [];
@@ -4459,8 +4433,8 @@ var handler = function (_Handler) {
             return value;
         }
     }, {
-        key: "checkedNodeToValue",
-        value: function checkedNodeToValue(nodes) {
+        key: "checkedValue",
+        value: function checkedValue(nodes) {
             var _this5 = this;
 
             var value = [];
@@ -4472,9 +4446,9 @@ var handler = function (_Handler) {
             return value;
         }
     }, {
-        key: "toValue",
-        value: function toValue() {
-            return this.rule.props.type === 'selected' ? this.selectedNodeToValue(this.el.getSelectedNodes()) : this.checkedNodeToValue(this.el.getCheckedNodes());
+        key: "_toValue",
+        value: function _toValue() {
+            return this.rule.props.type === 'selected' ? this.selectedValue(this.el.getSelectedNodes()) : this.checkedValue(this.el.getCheckedNodes());
         }
     }, {
         key: "data",
@@ -4521,12 +4495,12 @@ var render = function (_Render) {
                 props = this.vData.on(rule.event).on((_vData$on$on = {}, _defineProperty(_vData$on$on, event.s, function (v) {
                 _newArrowCheck(this, _this8);
 
-                this.vm.changeFormData(field, this.handler.toValue());
+                this.vm._changeFormData(field, this.handler._toValue());
                 rule.event[event.s] && rule.event[event.s](v);
             }.bind(this)), _defineProperty(_vData$on$on, event.c, function (v) {
                 _newArrowCheck(this, _this8);
 
-                this.vm.changeFormData(field, this.handler.toValue());
+                this.vm._changeFormData(field, this.handler._toValue());
                 rule.event[event.c] && rule.event[event.c](v);
             }.bind(this)), _vData$on$on)).props(rule.props).ref(refName).key("fip" + String(unique)).get();
 
@@ -4568,11 +4542,11 @@ exports.handler = undefined;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _handler = __webpack_require__(0);
+var _handler = __webpack_require__(1);
 
 var _handler2 = _interopRequireDefault(_handler);
 
-var _render = __webpack_require__(1);
+var _render = __webpack_require__(2);
 
 var _render2 = _interopRequireDefault(_render);
 
@@ -4649,7 +4623,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 exports.getRenders = getRenders;
 exports.preventDefault = preventDefault;
 
-var _util = __webpack_require__(2);
+var _util = __webpack_require__(0);
 
 var _vNode = __webpack_require__(8);
 
@@ -4899,7 +4873,7 @@ var _componentList = __webpack_require__(9);
 
 var _componentList2 = _interopRequireDefault(_componentList);
 
-var _util = __webpack_require__(2);
+var _util = __webpack_require__(0);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 

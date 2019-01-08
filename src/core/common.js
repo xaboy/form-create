@@ -1,4 +1,4 @@
-import {deepExtend, isFunction, isDate, toString, extend, debounce, errMsg} from "./util";
+import {deepExtend, isFunction, isDate, toString, errMsg} from "./util";
 import Handler from '../factory/handler';
 import Render from '../factory/render';
 import componentList from './componentList';
@@ -111,9 +111,9 @@ export function getConfig() {
             show: false,
             col: undefined,
         },
-        mounted: () => {
+        mounted: ($f) => {
         },
-        onReload: () => {
+        onReload: ($f) => {
         },
         onSubmit: (formData) => {
         },

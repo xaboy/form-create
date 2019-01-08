@@ -20,10 +20,12 @@
         "useBuiltIns": "usage",
         "debug": false
       }
-    ]
+    ],
+    "stage-3"
   ],
   "plugins": [
-//    "transform-object-rest-spread",
-//    "transform-runtime"
-  ]
+//        "transform-object-rest-spread",
+//        "transform-runtime"
+  ],
+  "comments": false
 }
