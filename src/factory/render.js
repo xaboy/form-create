@@ -73,14 +73,14 @@ export default class Render {
     inputProps() {
         let {refName, key, field, rule: {props, event}} = this.handler;
         return this.vData
-            .props(extend(props, {value: this.vm.cptData[field]}))
+            .props(extend(props, {value: this.vm.getFormData(field)}))
             .ref(refName).key(key + '' + uniqueId()).on(event).on('input', (value) => {
                 this.onInput(value)
             });
     }
 
     onInput(value) {
-        this.vm.$set(this.vm.cptData, this.handler.field, value);
+        this.vm.changeFormData(this.handler.field, value);
     }
 
 }

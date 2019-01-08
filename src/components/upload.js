@@ -143,10 +143,10 @@ class render extends Render {
     }
 
     parse() {
-        let {unique} = this.handler;
+        let {unique,field} = this.handler;
         this.init();
         if (this.uploadOptions.handleIcon === true) this.uploadOptions.handleIcon = 'ios-eye-outline';
-        let value = this.vm.cptData[this.handler.field],
+        let value = this.vm.getFormData(field),
             render = this.uploadOptions.showUploadList ? [] : [...value.map((file, index) => {
                 if (file.showProgress) {
                     return this.makeProgress(file, `uppg${index}${unique}`);
@@ -154,7 +154,7 @@ class render extends Render {
                     return this.makeUploadView(file.url, `upview${index}${unique}`, index)
                 }
             })];
-        const isShow = (!this.uploadOptions.maxLength || this.uploadOptions.maxLength > this.vm.cptData[this.handler.field].length);
+        const isShow = (!this.uploadOptions.maxLength || this.uploadOptions.maxLength > value.length);
         render.push(this.makeUploadBtn(unique, isShow));
         return [this.vNode.make('div', {
             key: `div4${unique}`,

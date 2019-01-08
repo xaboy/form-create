@@ -222,7 +222,7 @@ export function getGlobalApi(fComponent) {
             else if (!Array.isArray(fields))
                 fields = [fields];
             fields.forEach((field) => {
-                vm.$set(vm.trueData[field].rule.props, 'hidden', !!hidden);
+                vm.$set(vm.getTrueData(field).rule.props, 'hidden', !!hidden);
             })
         },
         visibility(fields, visibility = true) {
@@ -232,7 +232,7 @@ export function getGlobalApi(fComponent) {
             else if (!Array.isArray(fields))
                 fields = [fields];
             fields.forEach((field) => {
-                vm.$set(vm.trueData[field].rule.props, 'visibility', !!visibility);
+                vm.$set(vm.getTrueData(field).rule.props, 'visibility', !!visibility);
             })
         },
         model(fields) {
@@ -256,7 +256,7 @@ export function getGlobalApi(fComponent) {
             else if (!Array.isArray(fields))
                 fields = [fields];
             fields.forEach((field) => {
-                const rule = vm.trueData[field];
+                const rule = vm.getTrueData(field);
                 properties[field] = {
                     get() {
                         return rule.value;
@@ -420,6 +420,13 @@ export const componentCommon = {
 
             this.fComponent.fRender.cacheUnique = this.unique + 1;
             this.unique += 1;
+        },
+        _change(field,json){
+            if(this.jsonData[field] !== json){
+                this.jsonData[field] = json;
+                return true;
+            }
+            return false;
         }
     }
 };

@@ -105,7 +105,7 @@ class render extends Render {
             key: `ifgp1${unique}`,
             class: {'fc-upload fc-frame': true},
             ref: this.handler.refName,
-            props: {value: this.vm.cptData[field]}
+            props: {value: this.vm.getFormData(field)}
         }, render),
             this.makeInput(true)
         ]

@@ -155,7 +155,7 @@ export default class FormCreate {
         $nt(() => {
             Object.keys(this.handlers).forEach((field) => {
                 let handler = this.handlers[field];
-                if (vm.cptData[field] !== undefined)
+                if (vm.getFormData(field)!== undefined)
                     this.addHandlerWatch(handler);
                 handler.mounted();
             });
@@ -207,8 +207,7 @@ export default class FormCreate {
         let unWatch = this.vm.$watch(`cptData.${field}`, (n, o) => {
             if (this.handlers[field] !== undefined) {
                 let trueValue = handler.toTrueValue(n), json = JSON.stringify(trueValue);
-                if (this.vm.jsonData[field] !== json) {
-                    this.vm.jsonData[field] = json;
+                if (this.vm._change(field,json)) {
                     handler.setTrueValue(trueValue);
                     handler.watchParseValue(n);
                 }
@@ -220,8 +219,7 @@ export default class FormCreate {
             if (n === undefined) return;
             if (this.handlers[field] !== undefined) {
                 let json = JSON.stringify(n);
-                if (this.vm.jsonData[field] !== json) {
-                    this.vm.jsonData[field] = json;
+                if (this.vm._change(field,json)) {
                     handler.watchTrueValue(n);
                     $nt(() => handler.render.sync());
                 }
@@ -238,7 +236,7 @@ export default class FormCreate {
                 unWatch();
         }, 100);
 
-        Object.keys(this.vm.trueData[field].rule).forEach((key) => {
+        Object.keys(this.vm.getTrueData(field).rule).forEach((key) => {
             if (key === 'value') return;
             handler.watch.push(this.vm.$watch(`trueData.${field}.rule.${key}`, bind, {deep: true}));
         });

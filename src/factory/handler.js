@@ -70,8 +70,9 @@ export default class Handler {
 
     mounted() {
         this.el = this.vm.$refs[this.refName];
-        this.defaultValue = this.toTrueValue(this.vm.$refs['fItem' + this.refName]
-            ? this.vm.$refs['fItem' + this.refName].initialValue : deepExtend({}, {value: this.rule.value}).value);
+        const refName = 'fItem' + this.refName;
+        this.defaultValue = this.toTrueValue(this.vm.$refs[refName]
+            ? this.vm.$refs[refName].initialValue : deepExtend({}, {value: this.rule.value}).value);
         if (this.childrenHandlers.length > 0)
             this.childrenHandlers.forEach(handler => handler.mounted());
     }
