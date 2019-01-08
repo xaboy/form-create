@@ -34,7 +34,7 @@ export function debounce(fn, wait) {
     return function (...arg) {
         if (timeout !== null)
             clearTimeout(timeout);
-        timeout = setTimeout(()=>fn(...arg), wait);
+        timeout = setTimeout(() => fn(...arg), wait);
     }
 }
 
@@ -60,7 +60,7 @@ export function isBool(arg) {
 
 export function toLine(name) {
     let line = name.replace(/([A-Z])/g, '-$1').toLowerCase();
-    if(line.indexOf('-') === 0)
+    if (line.indexOf('-') === 0)
         line = line.substr(1);
     return line;
 }
@@ -129,7 +129,7 @@ export function dateFormat(fmt, date = new Date) {
     return fmt
 }
 
-export function errMsg(){
+export function errMsg() {
 
     return '\n\x67\x69\x74\x68\x75\x62\x3a\x68\x74\x74\x70' +
         '\x73\x3a\x2f\x2f\x67\x69\x74\x68\x75\x62\x2e\x63\x6f' +
