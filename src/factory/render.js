@@ -1,4 +1,4 @@
-import {$nt, extend, isFunction, isUndef, uniqueId} from '../core/util';
+import {$nt, errMsg, extend, isFunction, isUndef, uniqueId} from '../core/util';
 import VNode from "./vNode";
 import VData from "./vData";
 import Vue from 'vue';
@@ -22,9 +22,8 @@ export default class Render {
     }
 
     cacheParse() {
-        if (!(this.cache && this.handler.rule.type !== '__tmp')) {
+        if (!this.cache || this.handler.noValue === true)
             this.cache = this.parse();
-        }
         let eventList = [...this.$tickEvent];
         this.$tickEvent = [];
         $nt(() => {
@@ -49,11 +48,14 @@ export default class Render {
     parse() {
         let {type, rule, childrenHandlers, refName, key} = this.handler;
         if (rule.type === '__tmp') {
-            let vn = Vue.compile(rule.template, {}).render.call(rule._vm || this.vm);
-            if (vn.data === undefined) vn.data = {};
-            extend(vn.data, rule);
-            vn.key = key;
-            return [vn];
+            if (Vue.compile !== undefined) {
+                let vn = Vue.compile(rule.template, {}).render.call(rule._vm || this.vm);
+                if (vn.data === undefined) vn.data = {};
+                extend(vn.data, rule);
+                vn.key = key;
+                return [vn];
+            } else
+                console.log('使用的 Vue 版本不支持 compile' + errMsg());
         } else {
             rule.ref = refName;
             if (isUndef(rule.key))
