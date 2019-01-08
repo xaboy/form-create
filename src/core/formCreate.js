@@ -202,12 +202,12 @@ export default class FormCreate {
 
     addHandlerWatch(handler) {
         if (handler.noValue === true) return;
-        let field = handler.field;
+        let field = handler.field, vm = this.vm;
 
-        let unWatch = this.vm.$watch(`cptData.${field}`, (n, o) => {
+        let unWatch = vm.$watch(`cptData.${field}`, (n, o) => {
             if (this.handlers[field] !== undefined) {
                 let trueValue = handler.toValue(n), json = JSON.stringify(trueValue);
-                if (this.vm._change(field, json)) {
+                if (vm._change(field, json)) {
                     handler.setValue(trueValue);
                     handler.watchFormValue(n);
                 }
@@ -215,11 +215,11 @@ export default class FormCreate {
                 unWatch();
         }, {deep: true});
 
-        let unWatch2 = this.vm.$watch(`trueData.${field}.value`, (n, o) => {
+        let unWatch2 = vm.$watch(`trueData.${field}.value`, (n, o) => {
             if (n === undefined) return;
             if (this.handlers[field] !== undefined) {
                 let json = JSON.stringify(n);
-                if (this.vm._change(field, json)) {
+                if (vm._change(field, json)) {
                     handler.watchValue(n);
                     $nt(() => handler.render.sync());
                 }
@@ -236,28 +236,29 @@ export default class FormCreate {
                 unWatch();
         }, 100);
 
-        Object.keys(this.vm._trueData(field).rule).forEach((key) => {
+        Object.keys(vm._trueData(field).rule).forEach((key) => {
             if (key === 'value') return;
-            handler.watch.push(this.vm.$watch(`trueData.${field}.rule.${key}`, bind, {deep: true}));
+            handler.watch.push(vm.$watch(`trueData.${field}.rule.${key}`, bind, {deep: true}));
         });
     }
 
     reload(rules) {
+        let vm = this.vm;
         if (!rules) {
             return this.reload(this.rules);
         } else {
-            this.vm._unWatch();
+            vm._unWatch();
             Object.keys(this.handlers).forEach(field => this.removeField(field));
-            this.vm.isShow = false;
+            vm.isShow = false;
             this.constructor(rules, this.options);
-            this.init(this.vm);
-            this.vm.init();
+            this.init(vm);
+            vm.init();
             $nt(() => {
-                this.vm.isShow = true;
-                setTimeout(() => this.mounted(this.vm, false))
+                vm.isShow = true;
+                setTimeout(() => this.mounted(vm, false))
             });
         }
-        return this.vm.$f = this.fCreateApi;
+        return vm.$f = this.fCreateApi;
     }
 
     getFormRef() {

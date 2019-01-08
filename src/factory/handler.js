@@ -65,10 +65,11 @@ export default class Handler {
     }
 
     mounted() {
-        this.el = this.vm.$refs[this.refName];
-        const refName = 'fItem' + this.refName;
-        this.defaultValue = this.toValue(this.vm.$refs[refName]
-            ? this.vm.$refs[refName].initialValue : deepExtend({}, {value: this.rule.value}).value);
+
+        const refName = 'fItem' + this.refName, vm = this.vm;
+        this.el = vm.$refs[this.refName];
+        this.defaultValue = this.toValue(vm.$refs[refName]
+            ? vm.$refs[refName].initialValue : deepExtend({}, {value: this.rule.value}).value);
         if (this.childrenHandlers.length > 0)
             this.childrenHandlers.forEach(handler => handler.mounted());
     }
