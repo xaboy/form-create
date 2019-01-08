@@ -10,13 +10,13 @@ class handler extends Handler {
         if (!Array.isArray(this.rule.value)) this.rule.value = [];
     }
 
-    toParseValue(value) {
+    toFormValue(value) {
         return Array.isArray(value) ? value : []
     }
 
     mounted() {
         super.mounted();
-        this.vm.changeFormData(this.field, this.toParseValue(this.el.value));
+        this.vm._changeFormData(this.field, this.toFormValue(this.el.value));
     }
 }
 

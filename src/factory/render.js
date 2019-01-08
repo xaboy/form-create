@@ -37,7 +37,7 @@ export default class Render {
         if (isFunction(event))
             this.$tickEvent.push(event);
         this.clearCache();
-        this.vm.sync();
+        this.vm._sync();
     }
 
     clearCache() {
@@ -73,14 +73,14 @@ export default class Render {
     inputProps() {
         let {refName, key, field, rule: {props, event}} = this.handler;
         return this.vData
-            .props(extend(props, {value: this.vm.getFormData(field)}))
+            .props(extend(props, {value: this.vm._formData(field)}))
             .ref(refName).key(key + '' + uniqueId()).on(event).on('input', (value) => {
                 this.onInput(value)
             });
     }
 
     onInput(value) {
-        this.vm.changeFormData(this.handler.field, value);
+        this.vm._changeFormData(this.handler.field, value);
     }
 
 }

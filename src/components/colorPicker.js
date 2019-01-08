@@ -6,8 +6,8 @@ const name = "colorPicker";
 
 class handler extends Handler {
 
-    watchParseValue(n) {
-        super.watchParseValue(n);
+    watchFormValue(n) {
+        super.watchFormValue(n);
         this.render.sync();
     }
 }

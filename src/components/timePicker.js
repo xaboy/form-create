@@ -20,7 +20,7 @@ class handler extends Handler {
         if (isUndef(props.confirm)) props.confirm = true;
     }
 
-    toParseValue(value) {
+    toFormValue(value) {
         let parseValue, isArr = Array.isArray(value);
         if ('timerange' === this.rule.props.type) {
             if (isArr) {
@@ -38,7 +38,7 @@ class handler extends Handler {
     mounted() {
         super.mounted();
         this.rule.value = this.el.publicStringValue;
-        this.vm.changeFormData(this.field, this.toParseValue(this.el.publicStringValue));
+        this.vm._changeFormData(this.field, this.toFormValue(this.el.publicStringValue));
     }
 }
 

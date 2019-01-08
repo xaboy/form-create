@@ -30,7 +30,7 @@ class handler extends Handler {
         parseRule(this.rule);
     }
 
-    toParseValue(value) {
+    toFormValue(value) {
         let parseValue, oldValue = value, isArr = Array.isArray(oldValue);
         if (oldValue === '')
             parseValue = [];
@@ -42,7 +42,7 @@ class handler extends Handler {
         return parseValue;
     }
 
-    toTrueValue(parseValue) {
+    toValue(parseValue) {
         return this.rule.props.multiple === true
             ? parseValue
             : (parseValue[0] === undefined
@@ -50,13 +50,13 @@ class handler extends Handler {
                 : parseValue[0]);
     }
 
-    watchTrueValue(n) {
-        super.watchTrueValue(n);
+    watchValue(n) {
+        super.watchValue(n);
         this.render.sync();
     }
 
-    watchParseValue(n) {
-        super.watchParseValue(n);
+    watchFormValue(n) {
+        super.watchFormValue(n);
         this.parseValue = n;
         this.render.sync();
 
@@ -105,7 +105,7 @@ class render extends Render {
             key: `ifgp1${unique}`,
             class: {'fc-upload fc-frame': true},
             ref: this.handler.refName,
-            props: {value: this.vm.getFormData(field)}
+            props: {value: this.vm._formData(field)}
         }, render),
             this.makeInput(true)
         ]
@@ -264,7 +264,7 @@ class render extends Render {
                                         let iframe = e.path[0].contentWindow;
 
                                         iframe[`${this.handler.field}_change`] = (val) => {
-                                            this.handler.setParseValue(val);
+                                            this.handler.setValue(val);
                                         };
 
 

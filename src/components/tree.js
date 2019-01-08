@@ -50,7 +50,7 @@ class handler extends Handler {
         this.rule.value = value;
     }
 
-    toParseValue(value) {
+    toFormValue(value) {
         value = toArray(value);
         this.choose(value);
         this.parseValue = value;
@@ -80,16 +80,16 @@ class handler extends Handler {
         }
     }
 
-    toTrueValue(parseValue) {
+    toValue(parseValue) {
         let value = parseValue;
         return !isMultiple(this.rule) ? value : (value[0] || '');
     }
 
-    watchParseValue(n) {
+    watchFormValue(n) {
         this.choose(n);
     }
 
-    selectedNodeToValue(nodes) {
+    selectedValue(nodes) {
         let value = [];
         nodes.forEach((node) => {
             if (node.selected === true)
@@ -98,7 +98,7 @@ class handler extends Handler {
         return value;
     }
 
-    checkedNodeToValue(nodes) {
+    checkedValue(nodes) {
         let value = [];
         nodes.forEach((node) => {
             if (node.checked === true)
@@ -107,10 +107,10 @@ class handler extends Handler {
         return value;
     }
 
-    toValue() {
+    _toValue() {
         return this.rule.props.type === 'selected'
-            ? this.selectedNodeToValue(this.el.getSelectedNodes())
-            : this.checkedNodeToValue(this.el.getCheckedNodes())
+            ? this.selectedValue(this.el.getSelectedNodes())
+            : this.checkedValue(this.el.getCheckedNodes())
     }
 
     data(data) {
@@ -131,11 +131,11 @@ class render extends Render {
     parse() {
         let {rule, refName, field, unique} = this.handler, props = this.vData.on(rule.event).on({
             [event.s]: (v) => {
-                this.vm.changeFormData(field, this.handler.toValue());
+                this.vm._changeFormData(field, this.handler._toValue());
                 rule.event[event.s] && rule.event[event.s](v);
             },
             [event.c]: (v) => {
-                this.vm.changeFormData(field, this.handler.toValue());
+                this.vm._changeFormData(field, this.handler._toValue());
                 rule.event[event.c] && rule.event[event.c](v);
             },
         }).props(rule.props).ref(refName).key(`fip${unique}`).get();

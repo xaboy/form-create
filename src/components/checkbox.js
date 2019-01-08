@@ -5,7 +5,7 @@ import {extend} from "../core/util";
 const name = "checkbox";
 
 class handler extends Handler {
-    toParseValue(value) {
+    toFormValue(value) {
         if (!value)
             value = [];
         else if (!Array.isArray(value))
@@ -14,7 +14,7 @@ class handler extends Handler {
             .map((option) => option.label);
     }
 
-    toTrueValue(parseValue) {
+    toValue(parseValue) {
         let value = this.rule.options.filter((opt) => parseValue.indexOf(opt.label) !== -1)
             .map((opt) => opt.value);
         if (this.rule.options.length === 1)
@@ -23,8 +23,8 @@ class handler extends Handler {
             return value;
     }
 
-    watchParseValue(n) {
-        super.watchParseValue(n);
+    watchFormValue(n) {
+        super.watchFormValue(n);
         this.render.sync();
     }
 }

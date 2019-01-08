@@ -4,7 +4,7 @@ import Render from "../factory/render";
 const name = "rate";
 
 class handler extends Handler {
-    toParseValue(value) {
+    toFormValue(value) {
         let parseValue = parseFloat(value);
         if (Number.isNaN(parseValue)) parseValue = 0;
         return parseValue

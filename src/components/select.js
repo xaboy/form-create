@@ -6,7 +6,7 @@ import {toDefSlot} from "../core/common";
 const name = "select";
 
 class handler extends Handler {
-    toParseValue(value) {
+    toFormValue(value) {
         let isArr = Array.isArray(value);
         if (this.rule.props.multiple === true)
             return isArr === true ? value : [value];

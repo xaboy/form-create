@@ -16,7 +16,7 @@ class handler extends Handler {
             props.startDate = timeStampToDate(props.startDate);
     }
 
-    toParseValue(value) {
+    toFormValue(value) {
         let isArr = Array.isArray(value), props = this.rule.props, parseValue;
         if (['daterange', 'datetimerange'].indexOf(props.type) !== -1) {
             if (isArr) {
@@ -33,14 +33,14 @@ class handler extends Handler {
         return parseValue;
     }
 
-    toTrueValue() {
+    toValue() {
         return this.el.publicStringValue;
     }
 
     mounted() {
         super.mounted();
         this.rule.value = this.el.publicStringValue;
-        this.vm.changeFormData(this.field, this.toParseValue(this.el.publicStringValue));
+        this.vm._changeFormData(this.field, this.toFormValue(this.el.publicStringValue));
     }
 }
 

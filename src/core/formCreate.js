@@ -155,7 +155,7 @@ export default class FormCreate {
         $nt(() => {
             Object.keys(this.handlers).forEach((field) => {
                 let handler = this.handlers[field];
-                if (vm.getFormData(field)!== undefined)
+                if (vm._formData(field) !== undefined)
                     this.addHandlerWatch(handler);
                 handler.mounted();
             });
@@ -177,7 +177,7 @@ export default class FormCreate {
             throw new Error(`${rule.field}字段已存在` + errMsg());
         let handler = getComponent(this.vm, rule, this.options);
         this.createChildren(handler);
-        this.vm.setField(handler.field);
+        this.vm._setField(handler.field);
         this.fRender.setRender(handler, after || '', pre);
         this.setHandler(handler);
         this.addHandlerWatch(handler);
@@ -194,7 +194,7 @@ export default class FormCreate {
         delete this.handlers[field];
         delete this.validate[field];
         watch && watch.forEach((unWatch) => unWatch());
-        this.vm.removeFormData(field);
+        this.vm._removeField(field);
         this.fRender.removeRender(field);
         delete this.formData[field];
         delete this.trueData[field];
@@ -206,10 +206,10 @@ export default class FormCreate {
 
         let unWatch = this.vm.$watch(`cptData.${field}`, (n, o) => {
             if (this.handlers[field] !== undefined) {
-                let trueValue = handler.toTrueValue(n), json = JSON.stringify(trueValue);
-                if (this.vm._change(field,json)) {
-                    handler.setTrueValue(trueValue);
-                    handler.watchParseValue(n);
+                let trueValue = handler.toValue(n), json = JSON.stringify(trueValue);
+                if (this.vm._change(field, json)) {
+                    handler.setValue(trueValue);
+                    handler.watchFormValue(n);
                 }
             } else
                 unWatch();
@@ -219,8 +219,8 @@ export default class FormCreate {
             if (n === undefined) return;
             if (this.handlers[field] !== undefined) {
                 let json = JSON.stringify(n);
-                if (this.vm._change(field,json)) {
-                    handler.watchTrueValue(n);
+                if (this.vm._change(field, json)) {
+                    handler.watchValue(n);
                     $nt(() => handler.render.sync());
                 }
             } else
@@ -236,7 +236,7 @@ export default class FormCreate {
                 unWatch();
         }, 100);
 
-        Object.keys(this.vm.getTrueData(field).rule).forEach((key) => {
+        Object.keys(this.vm._trueData(field).rule).forEach((key) => {
             if (key === 'value') return;
             handler.watch.push(this.vm.$watch(`trueData.${field}.rule.${key}`, bind, {deep: true}));
         });
@@ -246,7 +246,7 @@ export default class FormCreate {
         if (!rules) {
             return this.reload(this.rules);
         } else {
-            this.vm.unWatch();
+            this.vm._unWatch();
             Object.keys(this.handlers).forEach(field => this.removeField(field));
             this.vm.isShow = false;
             this.constructor(rules, this.options);

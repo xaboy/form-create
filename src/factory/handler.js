@@ -26,7 +26,7 @@ export default class Handler {
 
         this.init();
 
-        this.parseValue = this.toParseValue(this.rule.value);
+        this.parseValue = this.toFormValue(this.rule.value);
 
         this.render = new Render(vm, this, createOptions);
     }
@@ -35,43 +35,39 @@ export default class Handler {
 
     }
 
-    toParseValue(value) {
+    toFormValue(value) {
         return value;
     }
 
-    toTrueValue(parseValue) {
+    toValue(parseValue) {
         return parseValue;
     }
 
-    setTrueValue(value) {
+    setValue(value) {
         this.rule.value = value;
-        this.vm.changeTrueData(this.field, value);
+        this.vm._changeValue(this.field, value);
     }
 
     getValue() {
-        return this.vm.getTrueDataValue(this.field);
+        return this.vm._value(this.field);
     }
 
-    setParseValue(parseValue) {
-        this.setTrueValue(this.toTrueValue(parseValue));
-    }
-
-    watchTrueValue(n) {
+    watchValue(n) {
         this.rule.value = n;
-        this.vm.changeFormData(this.field, this.toParseValue(n));
+        this.vm._changeFormData(this.field, this.toFormValue(n));
     }
 
-    watchParseValue(n) {
+    watchFormValue(n) {
     }
 
     reset() {
-        this.vm.changeTrueData(this.field, this.defaultValue);
+        this.vm._changeValue(this.field, this.defaultValue);
     }
 
     mounted() {
         this.el = this.vm.$refs[this.refName];
         const refName = 'fItem' + this.refName;
-        this.defaultValue = this.toTrueValue(this.vm.$refs[refName]
+        this.defaultValue = this.toValue(this.vm.$refs[refName]
             ? this.vm.$refs[refName].initialValue : deepExtend({}, {value: this.rule.value}).value);
         if (this.childrenHandlers.length > 0)
             this.childrenHandlers.forEach(handler => handler.mounted());

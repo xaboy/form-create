@@ -142,18 +142,17 @@ export function getGlobalApi(fComponent) {
     // window.fc = fComponent;
     return {
         formData: () => {
-            return Object.keys(vm.trueData).reduce((initial, key) => {
-                initial[key] = vm.trueData[key].value;
+            return vm._formField().reduce((initial, key) => {
+                initial[key] = vm._value(key);
                 return initial;
             }, {});
         },
         getValue: (field) => {
             field = toString(field);
-            let handler = fComponent.handlers[field];
-            if (handler === undefined)
+            if (vm._formField(field) === undefined)
                 throw new Error(`${field} 字段不存在!` + errMsg());
             else {
-                return handler.getValue();
+                return vm._value(field);
             }
         },
         changeField: (field, value) => {
@@ -163,11 +162,11 @@ export function getGlobalApi(fComponent) {
                 throw new Error(`${field} 字段不存在!` + errMsg());
             else {
                 if (isFunction(value))
-                    value(vm.getTrueData(field), (changeValue) => {
+                    value(vm._trueData(field), (changeValue) => {
                         this.changeField(field, changeValue);
                     });
                 else {
-                    handler.setTrueValue(value);
+                    handler.setValue(value);
                     handler.render.sync();
                 }
 
@@ -175,7 +174,7 @@ export function getGlobalApi(fComponent) {
         },
         removeField: (field) => {
             fComponent.removeField(toString(field));
-            vm.sync();
+            vm._sync();
         },
         validate: (successFn, errorFn) => {
             fComponent.getFormRef().validate((valid) => {
@@ -189,7 +188,7 @@ export function getGlobalApi(fComponent) {
         },
         resetFields: function () {
             let handlers = fComponent.handlers;
-            Object.keys(vm.trueData).forEach(key => {
+            vm._formField().forEach(key => {
                 handlers[key].reset();
             });
             this.refresh();
@@ -216,23 +215,21 @@ export function getGlobalApi(fComponent) {
             }, () => failFn && failFn());
         },
         hidden(fields, hidden = true) {
-            var vm = fComponent.vm;
             if (!fields)
                 fields = this.fields();
             else if (!Array.isArray(fields))
                 fields = [fields];
             fields.forEach((field) => {
-                vm.$set(vm.getTrueData(field).rule.props, 'hidden', !!hidden);
+                vm.$set(vm._trueData(field).rule.props, 'hidden', !!hidden);
             })
         },
         visibility(fields, visibility = true) {
-            var vm = fComponent.vm;
             if (!fields)
                 fields = this.fields();
             else if (!Array.isArray(fields))
                 fields = [fields];
             fields.forEach((field) => {
-                vm.$set(vm.getTrueData(field).rule.props, 'visibility', !!visibility);
+                vm.$set(vm._trueData(field).rule.props, 'visibility', !!visibility);
             })
         },
         model(fields) {
@@ -245,18 +242,18 @@ export function getGlobalApi(fComponent) {
                 let handler = fComponent.handlers[field];
                 if (!handler)
                     throw new Error(`${field}字段不存在` + errMsg());
-                model[field] = handler.vm.getTrueData(field);
+                model[field] = vm._trueData(field);
             });
             return model;
         },
         bind(fields) {
-            let bind = {}, properties = {}, vm = fComponent.vm;
+            let bind = {}, properties = {};
             if (!fields)
                 fields = this.fields();
             else if (!Array.isArray(fields))
                 fields = [fields];
             fields.forEach((field) => {
-                const rule = vm.getTrueData(field);
+                const rule = vm._trueData(field);
                 properties[field] = {
                     get() {
                         return rule.value;
@@ -272,31 +269,31 @@ export function getGlobalApi(fComponent) {
             return bind;
         },
         submitStatus: (props = {}) => {
-            vm.changeButtonProps(props);
+            vm._buttonProps(props);
         },
         resetStatus: (props = {}) => {
-            vm.changeResetProps(props);
+            vm._resetProps(props);
         },
         btn: {
             loading: (loading = true) => {
-                vm.changeButtonProps({loading: loading});
+                vm._buttonProps({loading: loading});
             },
             finish: function () {
                 this.loading(false);
             },
             disabled: (disabled = true) => {
-                vm.changeButtonProps({disabled: disabled});
+                vm._buttonProps({disabled: disabled});
             }
         },
         resetBtn: {
             loading: (loading = true) => {
-                vm.changeResetProps({loading: loading});
+                vm._resetProps({loading: loading});
             },
             finish: function () {
                 this.loading(false);
             },
             disabled: (disabled = true) => {
-                vm.changeResetProps({disabled: disabled});
+                vm._resetProps({disabled: disabled});
             }
         },
         closeModal: () => {
@@ -310,7 +307,7 @@ export function getGlobalApi(fComponent) {
         },
         options: (options) => {
             deepExtend(fComponent.options, options);
-            vm.sync();
+            vm._sync();
         },
         onSuccess(fn) {
             this.onSubmit(fn);
@@ -325,7 +322,7 @@ export function getGlobalApi(fComponent) {
                 throw new Error(`${field}字段不存在` + errMsg());
         },
         refresh: () => {
-            vm.refresh();
+            vm._refresh();
         },
     };
 }
@@ -351,42 +348,41 @@ export const componentCommon = {
             $f: {},
             isShow: true,
             watchs: [],
-            unique: 1,
-            other: {}
+            unique: 1
         }
     },
     methods: {
-        changeFormData(field, value) {
+        _formField() {
+            return Object.keys(this.trueData);
+        },
+        _changeFormData(field, value) {
             if (Object.keys(this.cptData).indexOf(field) !== -1)
                 this.$set(this.cptData, field, value);
         },
-        changeTrueData(field, value) {
+        _changeValue(field, value) {
             this.$set(this.trueData[field], 'value', value);
         },
-        getTrueDataValue(field) {
+        _value(field) {
             return this.trueData[field] === undefined ? undefined : this.trueData[field].value;
         },
-        getTrueData(field) {
+        _trueData(field) {
             return this.trueData[field];
         },
-        getFormData(field) {
+        _formData(field) {
             return this.cptData[field];
         },
-        removeFormData(field) {
+        _removeField(field) {
             delete this.cptData[field];
             delete this.trueData[field];
             delete this.jsonData[field];
-            // this.$delete(this.cptData, field);
-            // this.$delete(this.trueData, field);
-            // this.$delete(this.jsonData, field);
         },
-        changeButtonProps(props) {
+        _buttonProps(props) {
             this.$set(this, 'buttonProps', deepExtend(this.buttonProps, props));
         },
-        changeResetProps(props) {
+        _resetProps(props) {
             this.$set(this, 'resetProps', deepExtend(this.resetProps, props));
         },
-        setField(field) {
+        _setField(field) {
             this.$set(this.cptData, field, '');
             this.$set(this.trueData, field, {});
         },
@@ -395,34 +391,25 @@ export const componentCommon = {
             this[type].forEach((rule, index) => {
                 let unWatch = this.$watch(`${type}.${index}.value`, n => {
                     if (this.trueData[rule.field] === undefined) return unWatch();
-                    this.$set(this.trueData[rule.field], 'value', n);
+                    this._changeValue(rule.field, n);
                 });
                 this.watchs.push(unWatch);
             });
 
         },
-        unWatch() {
+        _unWatch() {
             this.watchs.forEach(unWatch => unWatch());
             this.watchs = [];
         },
-        refresh() {
+        _refresh() {
             this.unique += 1;
         },
-        sync() {
-            // if (!this._sync)
-            //     this._sync = debounce(() => {
-            //         this.$nextTick(() => {
-            //             this.fComponent.fRender.cacheUnique = this.unique + 1;
-            //             this.unique += 1;
-            //         });
-            //     }, 50);
-            // this._sync();
-
-            this.fComponent.fRender.cacheUnique = this.unique + 1;
+        _sync() {
             this.unique += 1;
+            this.fComponent.fRender.cacheUnique = this.unique;
         },
-        _change(field,json){
-            if(this.jsonData[field] !== json){
+        _change(field, json) {
+            if (this.jsonData[field] !== json) {
                 this.jsonData[field] = json;
                 return true;
             }

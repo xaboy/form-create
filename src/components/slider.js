@@ -28,7 +28,7 @@ class handler extends Handler {
             : parseFloat(rule.props.min) || 0;
     }
 
-    toParseValue(value) {
+    toFormValue(value) {
         let rule = this.rule, isArr = Array.isArray(value), props = rule.props, min = props.min,
             parseValue;
         if (props.range === true) {

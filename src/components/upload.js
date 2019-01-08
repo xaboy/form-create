@@ -33,7 +33,7 @@ class handler extends Handler {
 
     }
 
-    toParseValue(value) {
+    toFormValue(value) {
         let files = parseValue(value);
         this.parseValue.splice(0, this.parseValue.length);
         files.forEach((file) => this.push(file));
@@ -56,7 +56,7 @@ class handler extends Handler {
         });
     }
 
-    toTrueValue(parseValue) {
+    toValue(parseValue) {
         if (isUndef(parseValue)) return [];
         let files = parseValue.map((file) => file.url).filter((file) => file !== undefined);
         return this.rule.props.maxLength === 1
@@ -66,20 +66,20 @@ class handler extends Handler {
 
     changeParseValue(parseValue) {
         this.parseValue = parseValue;
-        this.vm.changeFormData(this.field, parseValue);
+        this.vm._changeFormData(this.field, parseValue);
     }
 
-    // watchParseValue(n){
+    // watchFormValue(n){
     //
     // }
 
-    watchTrueValue(n) {
+    watchValue(n) {
         let b = true;
         this.rule.props.defaultFileList.forEach((pic) => {
             b = b && (pic.percentage === undefined || pic.status === 'finished');
         });
         if (b)
-            super.watchTrueValue(n);
+            super.watchValue(n);
     }
 
 
@@ -94,15 +94,15 @@ class render extends Render {
         this.uploadOptions = extend(extend({}, this.options.upload), this.handler.rule.props);
         this.issetIcon = this.uploadOptions.allowRemove || this.uploadOptions.handleIcon;
         this.propsData = this.vData.props(this.uploadOptions)
-            .props('onSuccess', (...arg) => this.onSuccess(...arg))
-            .props('onRemove', (...arg) => this.onRemove(...arg))
+            .props('onSuccess', (...args) => this.onSuccess(...args))
+            .props('onRemove', (...args) => this.onRemove(...args))
             .ref(handler.refName).key(`fip${handler.unique}`).get();
     }
 
-    onRemove() {
+    onRemove(...args) {
         this.handler.changeParseValue(this.handler.el.fileList);
+        this.uploadOptions.onRemove && this.uploadOptions.onRemove(...args);
         this.sync();
-        this.uploadOptions.onRemove && this.uploadOptions.onRemove(this.handler.el.fileList);
     }
 
     onSuccess(response, file, fileList) {
@@ -143,10 +143,10 @@ class render extends Render {
     }
 
     parse() {
-        let {unique,field} = this.handler;
+        let {unique, field} = this.handler;
         this.init();
         if (this.uploadOptions.handleIcon === true) this.uploadOptions.handleIcon = 'ios-eye-outline';
-        let value = this.vm.getFormData(field),
+        let value = this.vm._formData(field),
             render = this.uploadOptions.showUploadList ? [] : [...value.map((file, index) => {
                 if (file.showProgress) {
                     return this.makeProgress(file, `uppg${index}${unique}`);
@@ -221,8 +221,9 @@ class render extends Render {
         return this.vNode.icon({
             key: `upri${key}${index}`, props: {type: 'ios-trash-outline'}, nativeOn: {
                 'click': () => {
-                    this.handler.el.fileList.splice(index, 1);
-                    this.onRemove()
+                    let fileList = this.handler.el.fileList, file = fileList[index];
+                    fileList.splice(index, 1);
+                    this.onRemove(file, fileList);
                 }
             }
         });

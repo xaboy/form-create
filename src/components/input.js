@@ -12,7 +12,7 @@ export class handler extends Handler {
             props.rows = props.autosize.minRows || 2
     }
 
-    toParseValue(v){
+    toFormValue(v){
         return toString(v)
     }
 }
