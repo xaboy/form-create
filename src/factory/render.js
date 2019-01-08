@@ -22,7 +22,8 @@ export default class Render {
     }
 
     cacheParse() {
-        if (!this.cache || this.handler.noValue === true)
+        let {noValue, noCache} = this.handler;
+        if (!this.cache || noValue === true || noCache === true)
             this.cache = this.parse();
         let eventList = [...this.$tickEvent];
         this.$tickEvent = [];
