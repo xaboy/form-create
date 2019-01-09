@@ -75,27 +75,45 @@ export default class Handler {
     }
 }
 
+export function defRule() {
+    return {
+        validate: [],
+        event: {},
+        col: {},
+        emit: [],
+        props: [],
+        on: {},
+        options: [],
+        title: '',
+        value: '',
+        field: '',
+        className: ''
+    }
+}
+
 export function parseRule(rule, vm, n) {
     if (!n && rule.value === undefined)
         console.warn(`${rule.field} 字段未定义 value 属性` + errMsg());
-    let {validate = [], event = {}, col = {}, emit = [], props = {}, on = {}, options = [], title = '', value = '', field = '', className = ''} = rule;
-    rule.col = parseCol(col);
-    rule.props = parseProps(props);
-    rule.emitEvent = parseEmit(field, rule.emitPrefix, emit, vm);
-    rule.event = extend(parseEvent(event), rule.emitEvent);
-    rule.validate = parseArray(validate);
-    rule.options = parseArray(options);
-    rule.title = title;
-    rule.value = value;
-    rule.field = field;
-    rule.className = className;
 
-    if (!field)
+    const def = defRule();
+    Object.keys(def).forEach((k, v) => {
+        if (isUndef(rule[k]))
+            rule[k] = v;
+    });
+
+    rule.col = parseCol(rule.col);
+    parseProps(rule.props);
+    rule.emitEvent = parseEmit(rule.field, rule.emitPrefix, rule.emit, vm);
+    rule.event = extend(parseEvent(rule.event), rule.emitEvent);
+    rule.validate = parseArray(rule.validate);
+    rule.options = parseArray(rule.options);
+
+    if (!rule.field)
         console.error('规则的 field 字段不能空' + errMsg());
 
     if (Object.keys(rule.emitEvent).length > 0)
-        extend(on, rule.emitEvent);
-    rule.on = on;
+        extend(rule.on, rule.emitEvent);
+
     return rule
 }
 
