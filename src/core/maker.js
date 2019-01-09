@@ -21,17 +21,19 @@ const maker = (() => {
     const commonMaker = creatorFactory('');
 
     extend(_m, {
-        create(type, field = 'tmp' + uniqueId()) {
-            let make = commonMaker('', field);
+        create(type, index) {
+            let make = commonMaker('', 'tmp' + uniqueId());
             make.rule.type = type;
+            make.rule.index = index;
             make.col({labelWidth: 1});
             return make;
         },
-        createTmp(template, vm, field = 'tmp' + uniqueId()) {
-            let make = commonMaker('', field);
+        createTmp(template, vm, index) {
+            let make = commonMaker('', 'tmp' + uniqueId());
             make.rule.type = '__tmp';
             make.rule.template = template;
-            make.rule._vm = vm;
+            make.rule.index = index;
+            make.rule.vm = vm;
             make.col({labelWidth: 1});
             return make;
         }

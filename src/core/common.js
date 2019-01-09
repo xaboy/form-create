@@ -139,7 +139,7 @@ export function toDefSlot(slot, $h, rule) {
 
 export function getGlobalApi(fComponent) {
     let vm = fComponent.vm;
-    // window.fc = fComponent;
+    window.fc = fComponent;
     return {
         formData: () => {
             return vm._formField().reduce((initial, key) => {
@@ -198,7 +198,7 @@ export function getGlobalApi(fComponent) {
             vm.$el.parentNode.removeChild(vm.$el);
             vm.$destroy();
         },
-        fields: () => fComponent.fields(),
+        fields: () => vm._formField(),
         append: (rule, after) => {
             fComponent.append(rule, after, false);
         },
@@ -233,26 +233,32 @@ export function getGlobalApi(fComponent) {
             })
         },
         model(fields) {
-            let model = {};
+            let model = {}, _fields = this.fields();
             if (!fields)
-                fields = this.fields();
+                fields = _fields;
             else if (!Array.isArray(fields))
                 fields = [fields];
             fields.forEach((field) => {
-                let handler = fComponent.handlers[field];
-                if (!handler)
-                    throw new Error(`${field}字段不存在` + errMsg());
+                if (_fields.indexOf(field) === -1)
+                    return console.error(`${field}字段不存在` + errMsg());
                 model[field] = vm._trueData(field);
             });
             return model;
         },
+        component() {
+            return {...vm.components};
+        },
         bind(fields) {
-            let bind = {}, properties = {};
+            let bind = {}, properties = {}, _fields = this.fields();
             if (!fields)
-                fields = this.fields();
+                fields = _fields;
             else if (!Array.isArray(fields))
                 fields = [fields];
             fields.forEach((field) => {
+
+                if (_fields.indexOf(field) === -1)
+                    return console.error(`${field}字段不存在` + errMsg());
+
                 const rule = vm._trueData(field);
                 properties[field] = {
                     get() {
@@ -340,6 +346,7 @@ export const componentCommon = {
     data: () => {
         return {
             rules: {},
+            components: {},
             cptData: {},
             buttonProps: {},
             resetProps: {},

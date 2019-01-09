@@ -1,4 +1,14 @@
-import {$nt, debounce, deepExtend, errMsg, isBool, isElement, isFunction, isUndef, toString} from "../core/util";
+import {
+    $nt,
+    debounce,
+    deepExtend,
+    errMsg,
+    isBool,
+    isElement,
+    isFunction,
+    isUndef,
+    toString
+} from "../core/util";
 import {formCreateStyle, getComponent, getConfig, getGlobalApi} from "../core/common";
 import formRender from "../components/form";
 import formCreateComponent from "../core/formCreateComponent";
@@ -52,6 +62,7 @@ export default class FormCreate {
         this.formData = {};
         this.validate = {};
         this.trueData = {};
+        this.components = {};
         this.fieldList = [];
         this.switchMaker = this.options.switchMaker;
 
@@ -86,15 +97,19 @@ export default class FormCreate {
         vm.$set(vm, 'buttonProps', this.options.submitBtn);
         vm.$set(vm, 'resetProps', this.options.resetBtn);
         vm.$set(vm, 'rules', this.rules);
+        vm.$set(vm, 'components', this.components);
         this.fRender = new formRender(this);
-
     }
 
 
     setHandler(handler) {
         let rule = handler.rule, field = handler.field;
         this.handlers[field] = handler;
-        if (handler.noValue === true) return;
+        if (handler.noValue === true) {
+            if (!isUndef(handler.index))
+                this.components[handler.index] = rule;
+            return;
+        }
         this.formData[field] = handler.parseValue;
         this.validate[field] = rule.validate;
         this.trueData[field] = {
@@ -149,9 +164,26 @@ export default class FormCreate {
         return $vm;
     }
 
+    rebind() {
+        let vm = this.vm, {trueData, components} = vm;
+
+        Object.keys(components).forEach(k => {
+            let rule = components[k];
+            vm.$set(components, k, {...rule});
+        });
+
+        Object.keys(trueData).forEach(k => {
+            let rule = trueData[k];
+            vm.$set(trueData[k], 'rule', {...rule});
+        });
+    }
+
     mounted(vm, first = true) {
         this.vm = vm;
         let {mounted, onReload} = this.options;
+
+        this.rebind();
+
         $nt(() => {
             Object.keys(this.handlers).forEach((field) => {
                 let handler = this.handlers[field];
@@ -265,9 +297,6 @@ export default class FormCreate {
         return this.vm.$refs[this.fRender.refName]
     }
 
-    fields() {
-        return Object.keys(this.formData)
-    }
 }
 
 FormCreate.maker = maker;

@@ -11,6 +11,7 @@ export default class Handler {
         this.noValue = noValue;
         this.type = rule.type;
         this.field = rule.field;
+        this.index = rule.index;
         this.vm = vm;
 
         const id = uniqueId();
@@ -96,9 +97,9 @@ export function parseRule(rule, vm, n) {
         console.warn(`${rule.field} 字段未定义 value 属性` + errMsg());
 
     const def = defRule();
-    Object.keys(def).forEach((k, v) => {
+    Object.keys(def).forEach((k) => {
         if (isUndef(rule[k]))
-            rule[k] = v;
+            rule[k] = def[k];
     });
 
     rule.col = parseCol(rule.col);

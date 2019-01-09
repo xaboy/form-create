@@ -50,7 +50,7 @@ export default class Render {
         let {type, rule, childrenHandlers, refName, key} = this.handler;
         if (rule.type === '__tmp') {
             if (Vue.compile !== undefined) {
-                let vn = Vue.compile(rule.template, {}).render.call(rule._vm || this.vm);
+                let vn = Vue.compile(rule.template, {}).render.call(rule.vm || this.vm);
                 if (vn.data === undefined) vn.data = {};
                 extend(vn.data, rule);
                 vn.key = key;
