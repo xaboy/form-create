@@ -25,7 +25,6 @@ export default class VNode {
     }
 
     make(nodeName, data, VNodeFn) {
-        if (isString(data)) data = {domProps: {innerHTML: data}};
         let Node = this.$h(nodeName, parseVData(data), getVNode(VNodeFn));
         Node.context = this.vm;
 

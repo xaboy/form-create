@@ -4,6 +4,10 @@ export function $nt(fn) {
     Vue.nextTick(fn);
 }
 
+export function $set(org, field, value) {
+    Vue.set(org, field, value);
+}
+
 export const _toString = Object.prototype.toString;
 
 export function toRawType(value) {
@@ -24,7 +28,7 @@ export function toString(val) {
 
 export function extend(to, _from) {
     for (var key in _from) {
-        to[key] = _from[key];
+        $set(to, key, _from[key]);
     }
     return to
 }
@@ -90,13 +94,13 @@ export function deepExtend(origin, target = {}) {
                 let nst = origin[key] === undefined;
                 if (isArr) {
                     isArr = false;
-                    nst && (origin[key] = []);
+                    nst && $set(origin, key, []);
                 } else {
-                    nst && (origin[key] = {});
+                    nst && $set(origin, key, {});
                 }
                 deepExtend(origin[key], clone);
             } else {
-                origin[key] = clone;
+                $set(origin, key, clone);
             }
         }
     }

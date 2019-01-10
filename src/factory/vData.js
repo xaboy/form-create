@@ -1,4 +1,4 @@
-import {isPlainObject, isUndef, toArray, extend, toString} from '../core/util';
+import {isPlainObject, isUndef, toArray, extend, toString, $set} from '../core/util';
 
 export function defVData() {
     return {
@@ -28,20 +28,20 @@ export default class VData {
 
         if (Array.isArray(classList)) {
             classList.forEach((cls) => {
-                this._data.class[toString(cls)] = true
+                $set(this._data.class, toString(cls), true);
             })
         } else if (isPlainObject(classList)) {
-            this._data.class = extend(this._data.class, classList)
+            $set(this._data, 'class', extend(this._data.class, classList));
         } else {
-            this._data.class[toString(classList)] = (status === undefined ? true : status)
+            $set(this._data.class, toString(classList), status === undefined ? true : status);
         }
+
         return this
     }
 
     directives(directives) {
         if (isUndef(directives)) return this;
-
-        this._data.directives = this._data.directives.concat(toArray(directives));
+        $set(this._data, 'directives', this._data.directives.concat(toArray(directives)));
         return this
     }
 
@@ -62,7 +62,7 @@ const objList = ['scopedSlots', 'nativeOn', 'on', 'domProps', 'props', 'attrs', 
 
 keyList.forEach(key => {
     VData.prototype[key] = function (val) {
-        this._data[key] = val;
+        $set(this._data, key, val);
         return this
     }
 });
@@ -72,9 +72,9 @@ objList.forEach(key => {
         if (isUndef(obj)) return this;
 
         if (isPlainObject(obj)) {
-            this._data[key] = extend(this._data[key], obj);
+            $set(this._data, key, extend(this._data[key], obj));
         } else {
-            this._data[key][toString(obj)] = val;
+            $set(this._data[key], toString(obj), val);
         }
 
         return this

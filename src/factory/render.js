@@ -27,9 +27,10 @@ export default class Render {
             this.cache = this.parse();
         let eventList = [...this.$tickEvent];
         this.$tickEvent = [];
-        $nt(() => {
-            eventList.forEach(event => event());
-        });
+        if (eventList.length)
+            $nt(() => {
+                eventList.forEach(event => event());
+            });
         return this.cache
     }
 
@@ -56,12 +57,12 @@ export default class Render {
                 vn.key = key;
                 return [vn];
             } else
-                console.log('使用的 Vue 版本不支持 compile' + errMsg());
+                console.error('使用的 Vue 版本不支持 compile' + errMsg());
         } else {
             rule.ref = refName;
             if (isUndef(rule.key))
                 rule.key = 'def' + uniqueId();
-            let vn = this.vNode.make(type, extend({}, rule), () => {
+            let vn = this.vNode.make(type, {...rule}, () => {
                 let vn = [];
                 if (childrenHandlers.length > 0)
                     vn = childrenHandlers.map((handler) => handler.render.cacheParse());
@@ -76,7 +77,7 @@ export default class Render {
     inputProps() {
         let {refName, key, field, rule: {props, event}} = this.handler;
         return this.vData
-            .props(extend(props, {value: this.vm._formData(field)}))
+            .props(props).props({value: this.vm._formData(field)})
             .ref(refName).key(key + '' + uniqueId()).on(event).on('input', (value) => {
                 this.onInput(value)
             });

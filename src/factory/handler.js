@@ -1,4 +1,4 @@
-import {isNumeric, uniqueId, toLine, isUndef, extend, toString, deepExtend, errMsg} from "../core/util";
+import {isNumeric, uniqueId, toLine, isUndef, extend, toString, deepExtend, errMsg, $set} from "../core/util";
 
 
 export default class Handler {
@@ -23,7 +23,8 @@ export default class Handler {
         this.childrenHandlers = [];
         this.watch = [];
 
-        if (isUndef(rule.props.elementId)) rule.props.elementId = this.unique;
+        if (isUndef(rule.props.elementId))
+            $set(rule.props, 'elementId', this.unique);
 
         this.init();
 
@@ -54,7 +55,7 @@ export default class Handler {
     }
 
     watchValue(n) {
-        this.rule.value = n;
+        $set(this.rule, 'value', n);
         this.vm._changeFormData(this.field, this.toFormValue(n));
     }
 
@@ -66,7 +67,6 @@ export default class Handler {
     }
 
     mounted() {
-
         const refName = 'fItem' + this.refName, vm = this.vm;
         this.el = vm.$refs[this.refName];
         this.defaultValue = this.toValue(vm.$refs[refName]
@@ -92,30 +92,41 @@ export function defRule() {
     }
 }
 
-export function parseRule(rule, vm, n) {
-    if (!n && rule.value === undefined)
+export function parseRule(rule, vm, noVal) {
+    if (!noVal && rule.value === undefined)
         console.warn(`${rule.field} 字段未定义 value 属性` + errMsg());
 
     const def = defRule();
     Object.keys(def).forEach((k) => {
         if (isUndef(rule[k]))
-            rule[k] = def[k];
+            $set(rule, k, def[k]);
     });
 
-    rule.col = parseCol(rule.col);
-    parseProps(rule.props);
-    rule.emitEvent = parseEmit(rule.field, rule.emitPrefix, rule.emit, vm);
-    rule.event = extend(parseEvent(rule.event), rule.emitEvent);
-    rule.validate = parseArray(rule.validate);
-    rule.options = parseArray(rule.options);
+    const parseRule = {
+        col: parseCol(rule.col),
+        props: parseProps(rule.props),
+        emitEvent: parseEmit(rule.field, rule.emitPrefix, rule.emit, vm),
+        validate: parseArray(rule.validate),
+        options: parseArray(rule.options)
+    };
+
+    parseRule.event = extend(parseEvent(rule.event), parseRule.emitEvent);
+    parseRule.on = parseOn(rule.on, parseRule.emitEvent);
+
+    Object.keys(parseRule).forEach((k) => {
+        $set(rule, k, parseRule[k]);
+    });
 
     if (!rule.field)
         console.error('规则的 field 字段不能空' + errMsg());
 
-    if (Object.keys(rule.emitEvent).length > 0)
-        extend(rule.on, rule.emitEvent);
-
     return rule
+}
+
+export function parseOn(on, emitEvent) {
+    if (Object.keys(emitEvent).length > 0)
+        extend(on, emitEvent);
+    return on;
 }
 
 export function parseArray(validate) {
@@ -131,9 +142,9 @@ export function parseEmit(field, emitPrefix, emit, vm) {
 
         const fieldKey = toLine(`${field}-${eventName}`).replace('_', '-');
 
-        const emitKey = emitPrefix ? (`${emitPrefix}-`).toLowerCase() + toLine(eventName) : emitPrefix;
+        const emitKey = emitPrefix ? ((`${emitPrefix}-`).toLowerCase() + toLine(eventName)) : emitPrefix;
 
-        event[`on-${eventName}`] = event[`${eventName}`] = (...arg) => {
+        event[`on-${eventName}`] = event[eventName] = (...arg) => {
             vm.$emit(fieldKey, ...arg);
             if (emitKey && fieldKey !== emitKey)
                 vm.$emit(emitKey, ...arg);
@@ -148,8 +159,7 @@ export function parseEvent(event) {
         const _name = toString(eventName).indexOf('on-') === 0 ? eventName : `on-${eventName}`;
 
         if (_name !== eventName) {
-            event[_name] = event[eventName];
-            // delete event[eventName];
+            $set(event, _name, event[eventName]);
         }
     });
 
@@ -158,9 +168,9 @@ export function parseEvent(event) {
 
 export function parseProps(props) {
     if (isUndef(props.hidden))
-        props.hidden = false;
+        $set(props, 'hidden', false);
     if (isUndef(props.visibility))
-        props.visibility = false;
+        $set(props, 'visibility', false);
 
     return props
 }
@@ -169,7 +179,7 @@ export function parseCol(col) {
     if (isNumeric(col)) {
         return {span: col};
     } else if (col.span === undefined)
-        col.span = 24;
+        $set(col, 'span', 24);
 
     return col
 }

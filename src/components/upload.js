@@ -1,6 +1,6 @@
 import Handler from "../factory/handler";
 import Render from "../factory/render";
-import {extend, isUndef, toString, uniqueId} from "../core/util";
+import {$set, extend, isUndef, toString, uniqueId} from "../core/util";
 import {iviewConfig} from "../core/common";
 import {creatorTypeFactory} from "../factory/creator";
 
@@ -20,16 +20,17 @@ export function parseValue(value) {
 class handler extends Handler {
     init() {
         let props = this.rule.props;
-        props.defaultFileList = [];
-        if (isUndef(props.showUploadList)) props.showUploadList = false;
-        props.uploadType = !props.uploadType
-            ? 'file'
-            : props.uploadType;
-        if (props.maxLength === undefined) props.maxLength = 0;
-        if (props.action === undefined) props.action = '';
-        if (props.uploadType === 'file' && props.handleIcon === undefined) props.handleIcon = false;
+        $set(props, 'defaultFileList', []);
+        if (isUndef(props.showUploadList)) $set(props, 'showUploadList', false);
+        if (isUndef(props.uploadType)) $set(props, 'uploadType', 'file');
+
+        if (props.maxLength === undefined) $set(props, 'maxLength', 0);
+        if (props.action === undefined) $set(props, 'action', '');
+        if (props.uploadType === 'file' && props.handleIcon === undefined) $set(props, 'handleIcon', false);
+
+        $set(this.rule, 'value', parseValue(this.rule.value));
+
         this.parseValue = [];
-        this.rule.value = parseValue(this.rule.value);
 
     }
 
@@ -37,15 +38,13 @@ class handler extends Handler {
         let files = parseValue(value);
         this.parseValue.splice(0, this.parseValue.length);
         files.forEach((file) => this.push(file));
-        this.rule.props.defaultFileList = this.parseValue;
-        // if (!isUndef(this.el.fileList)) this.el.fileList = this.parseValue;
+        $set(this.rule.props, 'defaultFileList', this.parseValue);
         return this.parseValue;
     }
 
     mounted() {
         super.mounted();
-        // this.el.fileList = this.parseValue;
-        this.rule.props.defaultFileList = this.parseValue;
+        $set(this.rule.props, 'defaultFileList', this.parseValue);
         this.changeParseValue(this.el.fileList);
     }
 
@@ -69,10 +68,6 @@ class handler extends Handler {
         this.vm._changeFormData(this.field, parseValue);
     }
 
-    // watchFormValue(n){
-    //
-    // }
-
     watchValue(n) {
         let b = true;
         this.rule.props.defaultFileList.forEach((pic) => {
@@ -91,7 +86,7 @@ class handler extends Handler {
 class render extends Render {
     init() {
         let handler = this.handler;
-        this.uploadOptions = extend(extend({}, this.options.upload), this.handler.rule.props);
+        this.uploadOptions = extend({...this.options.upload}, this.handler.rule.props);
         this.issetIcon = this.uploadOptions.allowRemove || this.uploadOptions.handleIcon;
         this.propsData = this.vData.props(this.uploadOptions)
             .props('onSuccess', (...args) => this.onSuccess(...args))

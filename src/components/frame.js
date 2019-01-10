@@ -1,6 +1,6 @@
 import Handler from "../factory/handler";
 import Render from "../factory/render";
-import {errMsg, uniqueId} from "../core/util";
+import {$set, errMsg, isUndef, uniqueId} from "../core/util";
 import upload from '../components/upload';
 import {iviewConfig} from "../core/common";
 import {creatorTypeFactory} from "../factory/creator";
@@ -10,24 +10,29 @@ const name = "frame";
 
 export function parseRule(rule) {
     let props = rule.props;
-    if (!props.type) props.type = 'input';
-    if (!props.icon) props.icon = iviewConfig.fileUpIcon;
-    if (!props.width) props.width = '500px';
-    if (!props.height) props.height = '370px';
-    if (props.spin === undefined) props.spin = true;
-    if (!props.title) props.title = '请选择' + rule.title;
-    if (!props.maxLength) props.maxLength = 0;
-    props.multiple = props.maxLength != 1;
+    if (!props.type) $set(props, 'type', 'input');
+    if (!props.icon) $set(props, 'icon', iviewConfig.fileUpIcon);
+    if (!props.width) $set(props, 'width', '500px');
+    if (!props.height) $set(props, 'height', '370px');
+    if (isUndef(props.spin)) $set(props, 'spin', true);
+    if (!props.title) $set(props, 'title', '请选择' + rule.title);
+    if (!props.maxLength) $set(props, 'maxLength', 0);
+
+    let handleIcon = props.handleIcon;
     if (props.type === 'file' && props.handleIcon === undefined)
-        props.handleIcon = false;
+        handleIcon = false;
     else
-        props.handleIcon = props.handleIcon === true || props.handleIcon === undefined ? 'ios-eye-outline' : props.handleIcon;
-    if (props.allowRemove === undefined) props.allowRemove = true;
+        handleIcon = props.handleIcon === true || props.handleIcon === undefined ? 'ios-eye-outline' : props.handleIcon;
+    $set(props, 'handleIcon', handleIcon);
+
+    if (props.allowRemove === undefined) $set(props, 'allowRemove', true);
+
 }
 
 class handler extends Handler {
     init() {
         parseRule(this.rule);
+        this.multiple = this.rule.props.maxLength != 1;
     }
 
     toFormValue(value) {
@@ -43,7 +48,7 @@ class handler extends Handler {
     }
 
     toValue(parseValue) {
-        return this.rule.props.multiple === true
+        return this.multiple === true
             ? parseValue
             : (parseValue[0] === undefined
                 ? ''

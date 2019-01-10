@@ -1,18 +1,19 @@
 import Handler from "../factory/handler";
 import Render from "../factory/render";
-import {toArray} from "../core/util";
+import {$set, toArray} from "../core/util";
 import {creatorTypeFactory} from "../factory/creator";
 
 const name = 'tree';
 
 export function parseRule(rule) {
     let props = rule.props;
-    if (props.data === undefined) props.data = [];
-    if (props.type === undefined) props.type = 'checked';
-    if (props.multiple === undefined) props.multiple = false;
-    if (isMultiple(rule) && Array.isArray(rule.value))
-        rule.value = this.rule.value[0] || '';
-    rule.value = toArray(rule.value);
+    if (props.data === undefined) $set(props, 'data', []);
+    if (props.type === undefined) $set(props, 'type', 'checked');
+    if (props.multiple === undefined) $set(props, 'multiple', false);
+
+    // if (isMultiple(rule) && Array.isArray(rule.value))
+    //     rule.value = this.rule.value[0] || '';
+    // rule.value = toArray(rule.value);
 
     return rule
 }
@@ -47,7 +48,7 @@ class handler extends Handler {
                     value.push(node.id);
             });
 
-        this.rule.value = value;
+        $set(this.rule, 'value', value);
     }
 
     toFormValue(value) {
@@ -61,22 +62,22 @@ class handler extends Handler {
         let {rule, _data} = this;
         rule.props.type === 'selected'
             ? Object.keys(_data).forEach((key) => {
-                this.vm.$set(_data[key], 'selected', value.indexOf(_data[key].id) !== -1);
+                $set(_data[key], 'selected', value.indexOf(_data[key].id) !== -1);
             })
             : Object.keys(_data).forEach((key) => {
-                this.vm.$set(_data[key], 'checked', value.indexOf(_data[key].id) !== -1);
+                $set(_data[key], 'checked', value.indexOf(_data[key].id) !== -1);
             });
     }
 
     checked(v) {
         if (this._data[v] !== undefined) {
-            this.vm.$set(this._data[v], 'checked', true);
+            $set(this._data[v], 'checked', true);
         }
     }
 
     selected(v) {
         if (this._data[v] !== undefined) {
-            this.vm.$set(this._data[v], 'selected', true);
+            $set(this._data[v], 'selected', true);
         }
     }
 

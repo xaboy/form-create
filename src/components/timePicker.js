@@ -1,6 +1,6 @@
 import Handler from "../factory/handler";
 import Render from "../factory/render";
-import {dateFormat, isDate, isUndef} from "../core/util";
+import {$set, dateFormat, isDate, isUndef} from "../core/util";
 import {timeStampToDate, toDefSlot} from "../core/common";
 import {creatorTypeFactory} from "../factory/creator";
 
@@ -16,8 +16,8 @@ class handler extends Handler {
 
     init() {
         let props = this.rule.props;
-        if (!props.type) props.type = 'time';
-        if (isUndef(props.confirm)) props.confirm = true;
+        if (!props.type) $set(props, 'type', 'time');
+        if (isUndef(props.confirm)) $set(props, 'confirm', true);
     }
 
     toFormValue(value) {

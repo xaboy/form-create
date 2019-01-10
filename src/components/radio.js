@@ -19,7 +19,7 @@ class render extends Render {
     parse() {
         let {unique, rule: {options}} = this.handler;
         return [this.vNode.radioGroup(this.inputProps().get(), () => options.map((option, index) => {
-            let clone = extend({}, option);
+            let clone = {...option};
             delete clone.value;
 
             return this.vNode.radio({

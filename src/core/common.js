@@ -139,7 +139,6 @@ export function toDefSlot(slot, $h, rule) {
 
 export function getGlobalApi(fComponent) {
     let vm = fComponent.vm;
-    window.fc = fComponent;
     return {
         formData: () => {
             return vm._formField().reduce((initial, key) => {
@@ -265,7 +264,7 @@ export function getGlobalApi(fComponent) {
                         return rule.value;
                     },
                     set(value) {
-                        rule.value = value;
+                        vm.$set(rule, 'value', value);
                     },
                     enumerable: true,
                     configurable: true

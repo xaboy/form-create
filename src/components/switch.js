@@ -1,12 +1,12 @@
 import Handler from "../factory/handler";
 import Render from "../factory/render";
-import {isUndef} from "../core/util";
+import {$set, isUndef} from "../core/util";
 
 const name = "switch";
 
 class handler extends Handler {
     init() {
-        if (this.rule.slot === undefined) this.rule.slot = {};
+        if (this.rule.slot === undefined) $set(this.rule, 'slot', {});
     }
 }
 

@@ -2,18 +2,20 @@ import Handler from "../factory/handler";
 import Render from "../factory/render";
 import {timeStampToDate, toDefSlot} from "../core/common";
 import {creatorTypeFactory} from "../factory/creator";
-import {isUndef, toString} from "../core/util";
+import {$set, isUndef, toString} from "../core/util";
 
 const name = "datePicker";
 
 class handler extends Handler {
     init() {
         let props = this.rule.props;
-        props.type = !props.type
+
+        $set(props, 'type', !props.type
             ? 'date'
-            : toString(props.type).toLowerCase();
+            : toString(props.type).toLowerCase());
+
         if (isUndef(props.startDate))
-            props.startDate = timeStampToDate(props.startDate);
+            $set(props, 'startDate', timeStampToDate(props.startDate));
     }
 
     toFormValue(value) {

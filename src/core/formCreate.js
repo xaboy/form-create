@@ -1,5 +1,5 @@
 import {
-    $nt,
+    $nt, $set,
     debounce,
     deepExtend,
     errMsg,
@@ -22,16 +22,17 @@ const formCreateStyleElId = 'form-create-style';
 
 export function margeGlobal(_options) {
     if (isBool(_options.sumbitBtn))
-        _options.sumbitBtn = {show: _options.sumbitBtn};
+        $set(_options, 'sumbitBtn', {show: _options.sumbitBtn});
     if (isBool(_options.resetBtn))
-        _options.resetBtn = {show: _options.resetBtn};
+        $set(_options, 'resetBtn', {show: _options.resetBtn});
     let options = deepExtend(getConfig(), _options);
-    options.el = !options.el
+
+    $set(options, 'el', !options.el
         ? window.document.body
         : (isElement(options.el)
                 ? options.el
                 : document.querySelector(options.el)
-        );
+        ));
 
     return options
 }
@@ -67,7 +68,8 @@ export default class FormCreate {
         this.switchMaker = this.options.switchMaker;
 
         initStyle();
-        this.$tick = debounce((fn) => $nt(fn), 100);
+        this.$tick = debounce((fn) => fn(), 150);
+
     }
 
 
@@ -164,25 +166,9 @@ export default class FormCreate {
         return $vm;
     }
 
-    rebind() {
-        let vm = this.vm, {trueData, components} = vm;
-
-        Object.keys(components).forEach(k => {
-            let rule = components[k];
-            vm.$set(components, k, {...rule});
-        });
-
-        Object.keys(trueData).forEach(k => {
-            let rule = trueData[k];
-            vm.$set(trueData[k], 'rule', {...rule});
-        });
-    }
-
     mounted(vm, first = true) {
         this.vm = vm;
         let {mounted, onReload} = this.options;
-
-        this.rebind();
 
         $nt(() => {
             Object.keys(this.handlers).forEach((field) => {
@@ -261,12 +247,10 @@ export default class FormCreate {
 
         handler.watch.push(unWatch, unWatch2);
 
-        const bind = debounce((n, o) => {
-            if (this.handlers[field] !== undefined) {
+        const bind = () => {
+            if (this.handlers[field] !== undefined)
                 this.$tick(() => handler.render.sync());
-            } else
-                unWatch();
-        }, 100);
+        };
 
         Object.keys(vm._trueData(field).rule).forEach((key) => {
             if (key === 'value') return;

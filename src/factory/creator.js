@@ -1,4 +1,4 @@
-import {extend, isFunction, isPlainObject} from "../core/util";
+import {$set, extend, isFunction, isPlainObject} from "../core/util";
 import VData from "./vData";
 
 export function baseRule() {
@@ -53,7 +53,7 @@ export default class Creator extends VData {
     }
 
     setValue(value) {
-        this.rule.value = value;
+        $set(this.rule, 'value', value);
         return this
     }
 }
@@ -62,7 +62,7 @@ const keyAttrs = ['emitPrefix', 'className', 'defaultSlot'];
 
 keyAttrs.forEach((attr) => {
     Creator.prototype[attr] = function (value) {
-        this.rule[attr] = value;
+        $set(this.rule, attr, value);
         return this;
     }
 });
@@ -71,7 +71,7 @@ const objAttrs = ['event', 'col'];
 
 objAttrs.forEach((attr) => {
     Creator.prototype[attr] = function (opt) {
-        this.rule[attr] = extend(this.rule[attr], opt);
+        $set(this.rule, attr, extend(this.rule[attr], opt));
         return this;
     }
 });
@@ -81,7 +81,7 @@ const arrAttrs = ['validate', 'options', 'children', 'emit'];
 arrAttrs.forEach((attr) => {
     Creator.prototype[attr] = function (opt) {
         if (!Array.isArray(opt)) opt = [opt];
-        this.rule[attr] = this.rule[attr].concat(opt);
+        $set(this.rule, attr, this.rule[attr].concat(opt));
         return this;
     }
 });
