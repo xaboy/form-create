@@ -119,7 +119,7 @@ function mock() {
 
 
         //自定义组件
-        maker.create('Tooltip').props({
+        maker.create('Tooltip','tip').props({
             content: "这里是提示文字",
         }).col({span: 11, push: 1}).children([
             maker.create('span').domProps({

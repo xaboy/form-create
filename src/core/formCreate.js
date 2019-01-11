@@ -112,12 +112,14 @@ export default class FormCreate {
                 this.components[handler.index] = rule;
             return;
         }
-        this.formData[field] = handler.parseValue;
-        this.validate[field] = rule.validate;
-        this.trueData[field] = {
+
+        $set(this.formData, field, handler.parseValue);
+        $set(this.validate, field, rule.validate);
+        $set(this.trueData, field, {
             value: handler.rule.value,
-            rule: handler.rule
-        };
+            rule: rule
+        });
+
     }
 
     notField(field) {
