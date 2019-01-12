@@ -1,4 +1,4 @@
-import {deepExtend, isFunction, isDate, toString, errMsg} from "./util";
+import {deepExtend, isFunction, isDate, toString, errMsg, $del} from "./util";
 import Handler from '../factory/handler';
 import Render from '../factory/render';
 import componentList from './componentList';
@@ -379,9 +379,13 @@ export const componentCommon = {
             return this.cptData[field];
         },
         _removeField(field) {
-            delete this.cptData[field];
-            delete this.trueData[field];
-            delete this.jsonData[field];
+            $del(this.cptData, field);
+            $del(this.trueData, field);
+            $del(this.jsonData, field);
+
+            if (this.components[field] !== undefined)
+                $del(this.components, field);
+
         },
         _buttonProps(props) {
             this.$set(this, 'buttonProps', deepExtend(this.buttonProps, props));

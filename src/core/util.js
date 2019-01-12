@@ -4,9 +4,14 @@ export function $nt(fn) {
     Vue.nextTick(fn);
 }
 
-export function $set(org, field, value) {
-    Vue.set(org, field, value);
+export function $set(target, field, value) {
+    Vue.set(target, field, value);
 }
+
+export function $del(target, field) {
+    Vue.delete(target, field);
+}
+
 
 export const _toString = Object.prototype.toString;
 

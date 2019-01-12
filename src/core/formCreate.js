@@ -1,4 +1,5 @@
 import {
+    $del,
     $nt, $set,
     debounce,
     deepExtend,
@@ -211,13 +212,14 @@ export default class FormCreate {
             throw new Error(`${field}字段不存在` + errMsg());
         let watch = this.handlers[field].watch;
 
-        delete this.handlers[field];
-        delete this.validate[field];
+        $del(this.handlers, field);
+        $del(this.validate, field);
+
+        this.fieldList.splice(this.fieldList.indexOf(field), 1);
+
         watch && watch.forEach((unWatch) => unWatch());
         this.vm._removeField(field);
-        this.fRender.removeRender(field);
-        delete this.formData[field];
-        delete this.trueData[field];
+
     }
 
     addHandlerWatch(handler) {

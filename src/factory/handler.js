@@ -3,7 +3,7 @@ import {isNumeric, uniqueId, toLine, isUndef, extend, toString, deepExtend, errM
 
 export default class Handler {
 
-    constructor(vm, _rule, Render, createOptions, noValue) {
+    constructor(vm, _rule, Render, options, noValue) {
 
         const rule = parseRule(_rule, vm, noValue);
 
@@ -30,7 +30,7 @@ export default class Handler {
 
         this.parseValue = this.toFormValue(this.rule.value);
 
-        this.render = new Render(vm, this, createOptions);
+        this.render = new Render(vm, this, options);
     }
 
     init() {
