@@ -49,15 +49,17 @@ export default class Render {
 
     parse() {
         let {type, rule, childrenHandlers, refName, key} = this.handler;
-        if (rule.type === '__tmp') {
+        if (rule.type === 'template') {
             if (Vue.compile !== undefined) {
                 let vn = Vue.compile(rule.template, {}).render.call(rule.vm || this.vm);
                 if (vn.data === undefined) vn.data = {};
                 extend(vn.data, rule);
                 vn.key = key;
                 return [vn];
-            } else
+            } else {
                 console.error('使用的 Vue 版本不支持 compile' + errMsg());
+                return [];
+            }
         } else {
             rule.ref = refName;
             if (isUndef(rule.key))
@@ -76,11 +78,15 @@ export default class Render {
 
     inputProps() {
         let {refName, key, field, rule: {props, event}} = this.handler;
-        return this.vData
+        let data = this.vData
             .props(props).props({value: this.vm._formData(field)})
-            .ref(refName).key(key + '' + uniqueId()).on(event).on('input', (value) => {
+            .ref(refName).key(key + 'fc' + field).on(event).on('input', (value) => {
                 this.onInput(value)
             });
+        if (isUndef(props.size))
+            data.props({size: this.options.form.size});
+
+        return data;
     }
 
     onInput(value) {

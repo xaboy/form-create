@@ -30,7 +30,7 @@ const maker = (() => {
         },
         createTmp(template, vm, index) {
             let make = commonMaker('', 'tmp' + uniqueId());
-            make.rule.type = '__tmp';
+            make.rule.type = 'template';
             make.rule.template = template;
             make.rule.index = index;
             make.rule.vm = vm;

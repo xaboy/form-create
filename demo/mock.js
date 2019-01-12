@@ -164,44 +164,43 @@ function mock() {
 
 
         //datePicker 日期选择组件
-        maker.date('活动日期', 'section_day2', ['2018-02-20', '2019-01-01']).props({
-            "type": "datetimerange",
-            "startDate": new Date(),
-            "showWeekNumbers": true,
-            "open": false, //自定义内容时一定要预定义 open
-        }).col({span: 12}).defaultSlot(function ($h) {
-            return $h('a', {
-                on: {
-                    click: () => {
-                        this.props.open = true;
-                    }
-                },
-            }, [mock[14].value ? mock[14].value.toString() : 'select Date']);
-        }).event({
-            ok: () => {
-                mock[14].props.open = false;
-            }
-        }),
-
+        // maker.date('活动日期', 'section_day2', ['2018-02-20', '2019-01-01']).props({
+        //     "type": "datetimerange",
+        //     "startDate": new Date(),
+        //     "showWeekNumbers": true,
+        //     "open": false, //自定义内容时一定要预定义 open
+        // }).col({span: 12}).defaultSlot(function ($h) {
+        //     return $h('a', {
+        //         on: {
+        //             click: () => {
+        //                 this.props.open = true;
+        //             }
+        //         },
+        //     }, [mock[14].value ? mock[14].value.toString() : 'select Date']);
+        // }).event({
+        //     ok: () => {
+        //         mock[14].props.open = false;
+        //     }
+        // }),
 
         //timePicker 时间选择组件
-        maker.time('活动时间', 'section_time2', ['01:01:01', '12:12:12']).props({
-            "type": "timerange",
-            "placeholder": "请选择活动时间",
-            "open": false, //自定义内容时一定要预定义 open
-        }).col({span: 12}).defaultSlot(function ($h) {
-            return $h('a', {
-                on: {
-                    click: () => {
-                        this.props.open = true;
-                    }
-                },
-            }, [mock[15].value ? mock[15].value.toString() : 'select Time']);
-        }).event({
-            ok: () => {
-                mock[15].props.open = false;
-            }
-        }),
+        // maker.time('活动时间', 'section_time2', ['01:01:01', '12:12:12']).props({
+        //     "type": "timerange",
+        //     "placeholder": "请选择活动时间",
+        //     "open": false, //自定义内容时一定要预定义 open
+        // }).col({span: 12}).defaultSlot(function ($h) {
+        //     return $h('a', {
+        //         on: {
+        //             click: () => {
+        //                 this.props.open = true;
+        //             }
+        //         },
+        //     }, [mock[15].value ? mock[15].value.toString() : 'select Time']);
+        // }).event({
+        //     ok: () => {
+        //         mock[15].props.open = false;
+        //     }
+        // }),
 
         //inputNumber 数组输入框组件
         maker.number('排序', 'sort', 0).props({

@@ -57,6 +57,7 @@ export function getConfig() {
             labelWidth: 125,
             showMessage: true,
             autocomplete: 'off',
+            size: undefined,
         },
         row: {
             gutter: 0,
