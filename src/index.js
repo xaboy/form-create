@@ -7,8 +7,14 @@
 
 import formCreate from './core/formCreate';
 
+export function install(Vue) {
+    if (Vue._installedFormCreate === true) return;
+    Vue._installedFormCreate = true;
+    Vue.use(formCreate);
+}
+
 if (typeof window !== 'undefined' && window.Vue) {
-    window.Vue.use(formCreate);
+    install(Vue);
 }
 
 module.exports.default = module.exports = formCreate;

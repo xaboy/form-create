@@ -1,4 +1,4 @@
-import {deepExtend, isFunction, isDate, toString, errMsg, $del} from "./util";
+import {deepExtend, isFunction, isDate, toString, errMsg, $del, isUndef} from "./util";
 import Handler from '../factory/handler';
 import Render from '../factory/render';
 import componentList from './componentList';
@@ -140,6 +140,7 @@ export function toDefSlot(slot, $h, rule) {
 
 export function getGlobalApi(fComponent) {
     let vm = fComponent.vm;
+    // window.fc = fComponent;
     return {
         formData: () => {
             return vm._formField().reduce((initial, key) => {
@@ -155,6 +156,9 @@ export function getGlobalApi(fComponent) {
                 return vm._value(field);
             }
         },
+        changeValue: function (field, value) {
+            this.changeField(field, value);
+        },
         changeField: (field, value) => {
             field = toString(field);
             let handler = fComponent.handlers[field];
@@ -167,14 +171,15 @@ export function getGlobalApi(fComponent) {
                     });
                 else {
                     handler.setValue(value);
-                    handler.render.sync();
                 }
 
             }
         },
         removeField: (field) => {
-            fComponent.removeField(toString(field));
-            vm._sync();
+            let fields = fComponent.fieldList, index = fields.indexOf(toString(field));
+            if (index === -1)
+                throw new Error(`${after} 字段不存在` + errMsg());
+            fComponent.rules.splice(index, 1);
         },
         validate: (successFn, errorFn) => {
             fComponent.getFormRef().validate((valid) => {
@@ -200,10 +205,24 @@ export function getGlobalApi(fComponent) {
         },
         fields: () => vm._formField(),
         append: (rule, after) => {
-            fComponent.append(rule, after, false);
+            let fields = fComponent.fieldList, index = fields.indexOf(toString(after));
+            if (isUndef(after)) {
+                index = fields.length;
+            } else if (index === -1)
+                throw new Error(`${after} 字段不存在` + errMsg());
+            fComponent.rules.splice(index, 0, rule);
+
         },
         prepend: (rule, after) => {
-            fComponent.append(rule, after, true);
+            let fields = fComponent.fieldList, index = fields.indexOf(toString(after));
+            if (isUndef(after)) {
+                index = 0;
+            } else if (index === -1)
+                throw new Error(`${after} 字段不存在` + errMsg());
+            else
+                index--;
+            fComponent.rules.splice(index, 0, rule);
+
         },
         submit(successFn, failFn) {
             this.validate(() => {
@@ -392,10 +411,6 @@ export const componentCommon = {
         },
         _resetProps(props) {
             this.$set(this, 'resetProps', deepExtend(this.resetProps, props));
-        },
-        _setField(field) {
-            this.$set(this.cptData, field, '');
-            this.$set(this.trueData, field, {});
         },
         init() {
             const type = this.fComponent._type;

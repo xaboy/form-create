@@ -2,13 +2,6 @@ import {deepExtend, extend, isUndef, toString, uniqueId} from "../core/util";
 import VNode from "../factory/vNode";
 import VData from "../factory/vData";
 
-export function getRenders(handlers, renderSort) {
-    return renderSort.reduce((initial, field) => {
-        initial[field] = handlers[field].render;
-        return initial;
-    }, {})
-}
-
 export function preventDefault(e) {
     e.preventDefault();
 }
@@ -20,7 +13,6 @@ export default class Form {
         this.options = options;
         this.handlers = handlers;
         this.renderSort = fieldList;
-        this.renders = getRenders(handlers, fieldList);
         this.form = {
             model: formData,
             rules: validate,
@@ -34,13 +26,17 @@ export default class Form {
         this.cacheUnique = 0;
     }
 
+    getRender(field) {
+        return this.handlers[field].render;
+    }
+
     parse(vm) {
         this.vNode.setVm(vm);
         if (!vm.isShow)
             return;
         if (this.cacheUnique !== vm.unique) {
             this.renderSort.forEach((field) => {
-                this.renders[field].clearCache();
+                this.getRender(field).clearCache();
             });
             this.cacheUnique = vm.unique;
         }
@@ -48,7 +44,7 @@ export default class Form {
             propsData = this.vData.props(this.options.form).props(this.form)
                 .ref(this.refName).nativeOn({submit: preventDefault}).class('form-create', true).key(unique).get(),
             vn = this.renderSort.map((field) => {
-                let render = this.renders[field], {key, type} = render.handler;
+                let render = this.getRender(field), {key, type} = render.handler;
                 if (type === 'hidden') return;
                 return this.makeFormItem(render.handler, render.cacheParse(), `fItem${key}${unique}`);
 
@@ -113,24 +109,4 @@ export default class Form {
         ]);
     }
 
-    removeRender(field) {
-        delete this.renders[field];
-        this.renderSort.splice(this.renderSort.indexOf(field), 1);
-    }
-
-    setRender(handler, after, pre) {
-        this.renders[handler.field] = handler.render;
-        if (after !== undefined)
-            this.changeSort(handler.field, after, pre);
-    }
-
-    changeSort(field, after, pre) {
-        let index = this.renderSort.indexOf(toString(after));
-        if (index !== -1)
-            this.renderSort.splice(pre === false ? index + 1 : index, 0, field);
-        else if (!pre)
-            this.renderSort.push(field);
-        else
-            this.renderSort.unshift(field);
-    }
 }

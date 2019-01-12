@@ -5,9 +5,6 @@ const formCreateName = 'FormCreate';
 
 const $FormCreate = () => ({
     name: formCreateName,
-    render() {
-        return this.fComponent.fRender.parse(this.fComponent.vm);
-    },
     props: {
         rule: {
             type: Array,
@@ -27,6 +24,9 @@ const $FormCreate = () => ({
     },
     data: componentCommon.data,
     methods: componentCommon.methods,
+    render() {
+        return this.fComponent.fRender.parse(this.fComponent.vm);
+    },
     created() {
         this.fComponent = new formCreate(this.rule, this.option);
         this.fComponent._type = 'rule';
@@ -39,7 +39,7 @@ const $FormCreate = () => ({
         this.$watch('rule', n => {
             this.fComponent.reload(n);
             this.$emit('input', this.$f);
-        }, {immediate: true});
+        });
         this.$emit('input', this.$f);
         this.init();
     }

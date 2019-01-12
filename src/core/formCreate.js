@@ -8,7 +8,7 @@ import {
     isElement,
     isFunction,
     isUndef,
-    toString
+    toString, uniqueId
 } from "../core/util";
 import {formCreateStyle, getComponent, getConfig, getGlobalApi} from "../core/common";
 import formRender from "../components/form";
@@ -58,6 +58,7 @@ export default class FormCreate {
     constructor(rules, options = {}) {
         this.options = margeGlobal(options);
         this.rules = Array.isArray(rules) ? rules : [];
+        this.origin = [...this.rules];
 
         this.handlers = {};
         this.fRender = {};
@@ -67,6 +68,7 @@ export default class FormCreate {
         this.components = {};
         this.fieldList = [];
         this.switchMaker = this.options.switchMaker;
+        this.id = uniqueId();
 
         initStyle();
         this.$tick = debounce((fn) => fn(), 150);
@@ -88,7 +90,7 @@ export default class FormCreate {
 
         Vue.prototype.$formCreate.version = version;
         Vue.prototype.$formCreate.maker = maker;
-        Vue.component(formCreateName, $FormCreate());
+        Vue.component(formCreateName, Vue.extend($FormCreate()));
     }
 
     init(vm) {
@@ -124,7 +126,7 @@ export default class FormCreate {
     }
 
     notField(field) {
-        return this.fieldList.indexOf(field) === -1;
+        return this.handlers[field] === undefined;
     }
 
     createHandler() {
@@ -135,8 +137,8 @@ export default class FormCreate {
             rule.field = rule.field === undefined ? '' : toString(rule.field);
             if (this.notField(rule.field)) {
                 let handler = getComponent(this.vm, rule, this.options);
-                this.createChildren(handler);
                 this.setHandler(handler);
+                this.createChildren(handler);
                 this.fieldList.push(handler.field);
             } else {
                 console.error(`${rule.field} 字段已存在` + errMsg());
@@ -184,27 +186,11 @@ export default class FormCreate {
                     mounted && mounted(this.fCreateApi);
                 onReload && onReload(this.fCreateApi);
             })
-        }, 50);
+        });
     }
 
     component() {
         return formCreateComponent(this);
-    }
-
-    append(rule, after, pre) {
-        if (isFunction(rule.getRule))
-            rule = rule.getRule();
-        if (Object.keys(this.handlers).indexOf(toString(rule.field)) !== -1)
-            throw new Error(`${rule.field}字段已存在` + errMsg());
-        let handler = getComponent(this.vm, rule, this.options);
-        this.createChildren(handler);
-        this.vm._setField(handler.field);
-        this.fRender.setRender(handler, after || '', pre);
-        this.setHandler(handler);
-        this.addHandlerWatch(handler);
-        handler.render.sync(() => {
-            handler.mounted();
-        });
     }
 
     removeField(field) {
@@ -267,14 +253,19 @@ export default class FormCreate {
         if (!rules) {
             return this.reload(this.rules);
         } else {
+
+            const flag = rules.reduce((initial, rule, index) => {
+                return initial && rule === this.origin[index];
+            }, true);
+
+            if (flag) return;
+            this.origin = [...rules];
             vm._unWatch();
             Object.keys(this.handlers).forEach(field => this.removeField(field));
-            vm.isShow = false;
             this.constructor(rules, this.options);
             this.init(vm);
             vm.init();
             $nt(() => {
-                vm.isShow = true;
                 this.mounted(vm, false);
             });
         }
