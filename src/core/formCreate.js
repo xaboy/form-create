@@ -172,19 +172,19 @@ export default class FormCreate {
     mounted(vm, first = true) {
         this.vm = vm;
         let {mounted, onReload} = this.options;
-
-        $nt(() => {
-            Object.keys(this.handlers).forEach((field) => {
-                let handler = this.handlers[field];
-                if (vm._formData(field) !== undefined)
-                    this.addHandlerWatch(handler);
-                handler.mounted();
-            });
-            if (first)
-                mounted && mounted(this.fCreateApi);
-        });
-
-        onReload && onReload(this.fCreateApi);
+        setTimeout(() => {
+            $nt(() => {
+                Object.keys(this.handlers).forEach((field) => {
+                    let handler = this.handlers[field];
+                    if (vm._formData(field) !== undefined)
+                        this.addHandlerWatch(handler);
+                    handler.mounted();
+                });
+                if (first)
+                    mounted && mounted(this.fCreateApi);
+                onReload && onReload(this.fCreateApi);
+            })
+        }, 50);
     }
 
     component() {
@@ -275,7 +275,7 @@ export default class FormCreate {
             vm.init();
             $nt(() => {
                 vm.isShow = true;
-                setTimeout(() => this.mounted(vm, false))
+                this.mounted(vm, false);
             });
         }
         return vm.$f = this.fCreateApi;

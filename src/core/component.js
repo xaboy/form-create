@@ -39,7 +39,7 @@ const $FormCreate = () => ({
         this.$watch('rule', n => {
             this.fComponent.reload(n);
             this.$emit('input', this.$f);
-        });
+        }, {immediate: true});
         this.$emit('input', this.$f);
         this.init();
     }

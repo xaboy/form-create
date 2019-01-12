@@ -20,7 +20,7 @@ export default function formCreateComponent(fComponent) {
             this.init();
             this.$watch('rules', n => {
                 this.fComponent.reload(n);
-            })
+            }, {immediate: true})
         }
     }
 };
