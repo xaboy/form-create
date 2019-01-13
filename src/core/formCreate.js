@@ -264,17 +264,25 @@ export default class FormCreate {
         });
     }
 
+    isChange(rules) {
+        return rules.reduce((initial, rule, index) => {
+            return initial && rule === this.origin[index];
+        }, true) && this.origin.reduce((initial, rule, index) => {
+            return initial && rule === rule[index];
+        }, true);
+
+    }
+
     reload(rules) {
         let vm = this.vm;
         if (!rules) {
-            return this.reload(this.rules);
+            this.reload(this.rules);
         } else {
 
-            const flag = rules.reduce((initial, rule, index) => {
-                return initial && rule === this.origin[index];
-            }, true);
-
-            if (flag) return;
+            if (this.isChange(rules)) {
+                this.fCreateApi.refresh();
+                return;
+            }
 
             this.origin = [...rules];
             vm._unWatch();
@@ -286,7 +294,8 @@ export default class FormCreate {
                 this.mounted(vm, false);
             });
         }
-        return vm.$f = this.fCreateApi;
+
+        vm.$f = this.fCreateApi;
     }
 
     getFormRef() {

@@ -26,12 +26,13 @@
     "url": "https://github.com/xaboy/form-create.git"
   },
   "keywords": [
-    "form-create",
+    "form-builder",
+    "json-form",
+    "vue-json-form",
+    "form-generator",
     "vue.js",
     "iview",
     "form",
-    "form-generate",
-    "form-builder",
     "components"
   ],
   "author": "xaboy",
