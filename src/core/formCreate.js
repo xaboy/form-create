@@ -117,19 +117,22 @@ export default class FormCreate {
         vm.$set(vm, 'resetProps', this.options.resetBtn);
         vm.$set(vm, 'rules', this.rules);
         vm.$set(vm, 'components', this.components);
-        this.fRender = new formRender(this);
+
         if (this.fCreateApi === undefined)
             this.fCreateApi = getGlobalApi(this);
         this.fCreateApi.rule = this.rules;
+
+        this.fRender = new formRender(this);
     }
 
 
     setHandler(handler) {
-        let rule = handler.rule, field = handler.field;
+        let rule = handler.rule, {field, isDef} = handler;
         this.handlers[field] = handler;
 
-        if (handler.noValue === true && handler.isDef === false) {
-            $set(this.components, field, rule);
+        if (handler.noValue === true) {
+            if ((isDef === true || isDef === undefined))
+                $set(this.components, field, rule);
             return;
         }
 
@@ -148,7 +151,7 @@ export default class FormCreate {
 
     createHandler(rules, child) {
         rules.forEach((_rule, index) => {
-            if (isString(_rule)) return;
+            if (child && isString(_rule)) return;
             let rule = getRule(_rule), handler = _rule.__handler__ || getComponent(this.vm, rule, this.options),
                 children = handler.rule.children;
 
@@ -225,7 +228,7 @@ export default class FormCreate {
         if (handler.noValue === true) return;
         let field = handler.field, vm = this.vm;
 
-        let unWatch = vm.$watch(`cptData.${field}`, (n, o) => {
+        let unWatch = vm.$watch(`cptData.${field}`, (n) => {
             if (this.handlers[field] !== undefined) {
                 let trueValue = handler.toValue(n), json = JSON.stringify(trueValue);
                 if (vm._change(field, json)) {
@@ -236,7 +239,7 @@ export default class FormCreate {
                 unWatch();
         }, {deep: true});
 
-        let unWatch2 = vm.$watch(`trueData.${field}.value`, (n, o) => {
+        let unWatch2 = vm.$watch(`trueData.${field}.value`, (n) => {
             if (n === undefined) return;
             if (this.handlers[field] !== undefined) {
                 let json = JSON.stringify(n);
@@ -272,6 +275,7 @@ export default class FormCreate {
             }, true);
 
             if (flag) return;
+
             this.origin = [...rules];
             vm._unWatch();
             Object.keys(this.handlers).forEach(field => this.removeField(field));

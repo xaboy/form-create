@@ -90,6 +90,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 exports.$nt = $nt;
 exports.$set = $set;
+exports.$del = $del;
 exports.toRawType = toRawType;
 exports.isUndef = isUndef;
 exports.toString = toString;
@@ -122,8 +123,12 @@ function $nt(fn) {
     _vue2.default.nextTick(fn);
 }
 
-function $set(org, field, value) {
-    _vue2.default.set(org, field, value);
+function $set(target, field, value) {
+    _vue2.default.set(target, field, value);
+}
+
+function $del(target, field) {
+    _vue2.default.delete(target, field);
 }
 
 var _toString = exports._toString = Object.prototype.toString;
@@ -289,7 +294,7 @@ function _newArrowCheck(innerThis, boundThis) { if (innerThis !== boundThis) { t
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Handler = function () {
-    function Handler(vm, _rule, Render, createOptions, noValue) {
+    function Handler(vm, _rule, Render, options, noValue) {
         _classCallCheck(this, Handler);
 
         var rule = parseRule(_rule, vm, noValue);
@@ -298,8 +303,8 @@ var Handler = function () {
         this.noValue = noValue;
         this.type = rule.type;
         this.field = rule.field;
-        this.index = rule.index;
         this.vm = vm;
+        this.isDef = rule.isDef;
 
         var id = (0, _util.uniqueId)();
         this.id = id;
@@ -307,7 +312,6 @@ var Handler = function () {
         this.refName = '__' + this.field + id;
         this.key = 'key_' + id;
         this.el = {};
-        this.childrenHandlers = [];
         this.watch = [];
 
         if ((0, _util.isUndef)(rule.props.elementId)) (0, _util.$set)(rule.props, 'elementId', this.unique);
@@ -316,7 +320,7 @@ var Handler = function () {
 
         this.parseValue = this.toFormValue(this.rule.value);
 
-        this.render = new Render(vm, this, createOptions);
+        this.render = new Render(vm, this, options);
     }
 
     _createClass(Handler, [{
@@ -366,10 +370,10 @@ var Handler = function () {
                 vm = this.vm;
             this.el = vm.$refs[this.refName];
             this.defaultValue = this.toValue(vm.$refs[refName] ? vm.$refs[refName].initialValue : (0, _util.deepExtend)({}, { value: this.rule.value }).value);
-            if (this.childrenHandlers.length > 0) this.childrenHandlers.forEach(function (handler) {
+            if (this.rule.children.length > 0) this.rule.children.forEach(function (rule) {
                 _newArrowCheck(this, _this);
 
-                return handler.mounted();
+                return !(0, _util.isString)(rule) && rule.__handler__.mounted();
             }.bind(this));
         }
     }]);
@@ -508,6 +512,8 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+exports.childParse = childParse;
+
 var _util = __webpack_require__(0);
 
 var _vNode = __webpack_require__(8);
@@ -529,6 +535,10 @@ function _newArrowCheck(innerThis, boundThis) { if (innerThis !== boundThis) { t
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function childParse(child) {
+    return (0, _util.isString)(child) ? [child] : child.__handler__.render.clearCache();
+}
 
 var Render = function () {
     function Render(vm, handler) {
@@ -586,10 +596,11 @@ var Render = function () {
             var _this2 = this;
 
             this.cache = null;
-            if (this.handler.childrenHandlers.length > 0) this.handler.childrenHandlers.forEach(function (handler) {
+
+            if (this.handler.rule.children.length > 0) this.handler.rule.children.forEach(function (child) {
                 _newArrowCheck(this, _this2);
 
-                return handler.render.clearCache();
+                return !(0, _util.isString)(child) && child.__handler__.render.clearCache();
             }.bind(this));
         }
     }, {
@@ -600,18 +611,20 @@ var Render = function () {
             var _handler2 = this.handler,
                 type = _handler2.type,
                 rule = _handler2.rule,
-                childrenHandlers = _handler2.childrenHandlers,
                 refName = _handler2.refName,
                 key = _handler2.key;
 
-            if (rule.type === '__tmp') {
+            if (rule.type === 'template') {
                 if (_vue2.default.compile !== undefined) {
                     var vn = _vue2.default.compile(rule.template, {}).render.call(rule.vm || this.vm);
                     if (vn.data === undefined) vn.data = {};
                     (0, _util.extend)(vn.data, rule);
                     vn.key = key;
                     return [vn];
-                } else console.error('使用的 Vue 版本不支持 compile' + (0, _util.errMsg)());
+                } else {
+                    console.error('使用的 Vue 版本不支持 compile' + (0, _util.errMsg)());
+                    return [];
+                }
             } else {
                 rule.ref = refName;
                 if ((0, _util.isUndef)(rule.key)) rule.key = 'def' + (0, _util.uniqueId)();
@@ -619,11 +632,7 @@ var Render = function () {
                     _newArrowCheck(this, _this3);
 
                     var vn = [];
-                    if (childrenHandlers.length > 0) vn = childrenHandlers.map(function (handler) {
-                        _newArrowCheck(this, _this3);
-
-                        return handler.render.cacheParse();
-                    }.bind(this));
+                    if (rule.children.length > 0) vn = rule.children.map(childParse);
                     return vn;
                 }.bind(this));
                 _vn.key = key;
@@ -643,11 +652,14 @@ var Render = function () {
                 props = _handler3$rule.props,
                 event = _handler3$rule.event;
 
-            return this.vData.props(props).props({ value: this.vm._formData(field) }).ref(refName).key(key + '' + (0, _util.uniqueId)()).on(event).on('input', function (value) {
+            var data = this.vData.props(props).props({ value: this.vm._formData(field) }).ref(refName).key(key + 'fc' + field).on(event).on('input', function (value) {
                 _newArrowCheck(this, _this4);
 
                 this.onInput(value);
             }.bind(this));
+            if ((0, _util.isUndef)(props.size)) data.props({ size: this.options.form.size });
+
+            return data;
         }
     }, {
         key: "onInput",
@@ -909,7 +921,8 @@ function getConfig() {
             labelPosition: 'right',
             labelWidth: 125,
             showMessage: true,
-            autocomplete: 'off'
+            autocomplete: 'off',
+            size: undefined
         },
         row: {
             gutter: 0,
@@ -995,6 +1008,7 @@ function getGlobalApi(fComponent) {
         _this9 = this;
 
     var vm = fComponent.vm;
+
     return {
         formData: function formData() {
             _newArrowCheck(this, _this2);
@@ -1014,6 +1028,9 @@ function getGlobalApi(fComponent) {
                 return vm._value(field);
             }
         }.bind(this),
+        changeValue: function changeValue(field, value) {
+            this.changeField(field, value);
+        },
         changeField: function changeField(field, value) {
             _newArrowCheck(this, _this2);
 
@@ -1026,15 +1043,16 @@ function getGlobalApi(fComponent) {
                     this.changeField(field, changeValue);
                 }.bind(this));else {
                     handler.setValue(value);
-                    handler.render.sync();
                 }
             }
         }.bind(this),
         removeField: function removeField(field) {
             _newArrowCheck(this, _this2);
 
-            fComponent.removeField((0, _util.toString)(field));
-            vm._sync();
+            var fields = fComponent.fieldList,
+                index = fields.indexOf((0, _util.toString)(field));
+            if (index === -1) throw new Error(String(after) + ' \u5B57\u6BB5\u4E0D\u5B58\u5728' + (0, _util.errMsg)());
+            fComponent.rules.splice(index, 1);
         }.bind(this),
         validate: function validate(successFn, errorFn) {
             _newArrowCheck(this, _this2);
@@ -1076,12 +1094,22 @@ function getGlobalApi(fComponent) {
         append: function append(rule, after) {
             _newArrowCheck(this, _this2);
 
-            fComponent.append(rule, after, false);
+            var fields = fComponent.fieldList,
+                index = fields.indexOf((0, _util.toString)(after));
+            if ((0, _util.isUndef)(after)) {
+                index = fields.length;
+            } else if (index === -1) throw new Error(String(after) + ' \u5B57\u6BB5\u4E0D\u5B58\u5728' + (0, _util.errMsg)());
+            fComponent.rules.splice(index, 0, rule);
         }.bind(this),
         prepend: function prepend(rule, after) {
             _newArrowCheck(this, _this2);
 
-            fComponent.append(rule, after, true);
+            var fields = fComponent.fieldList,
+                index = fields.indexOf((0, _util.toString)(after));
+            if ((0, _util.isUndef)(after)) {
+                index = 0;
+            } else if (index === -1) throw new Error(String(after) + ' \u5B57\u6BB5\u4E0D\u5B58\u5728' + (0, _util.errMsg)());else index--;
+            fComponent.rules.splice(index, 0, rule);
         }.bind(this),
         submit: function submit(successFn, failFn) {
             var _this4 = this;
@@ -1306,9 +1334,11 @@ var componentCommon = exports.componentCommon = {
             return this.cptData[field];
         },
         _removeField: function _removeField(field) {
-            delete this.cptData[field];
-            delete this.trueData[field];
-            delete this.jsonData[field];
+            (0, _util.$del)(this.cptData, field);
+            (0, _util.$del)(this.trueData, field);
+            (0, _util.$del)(this.jsonData, field);
+
+            if (this.components[field] !== undefined) (0, _util.$del)(this.components, field);
         },
         _buttonProps: function _buttonProps(props) {
             this.$set(this, 'buttonProps', (0, _util.deepExtend)(this.buttonProps, props));
@@ -1316,14 +1346,10 @@ var componentCommon = exports.componentCommon = {
         _resetProps: function _resetProps(props) {
             this.$set(this, 'resetProps', (0, _util.deepExtend)(this.resetProps, props));
         },
-        _setField: function _setField(field) {
-            this.$set(this.cptData, field, '');
-            this.$set(this.trueData, field, {});
-        },
         init: function init() {
             var _this10 = this;
 
-            var type = this.fComponent._type;
+            var type = this._fComponent._type;
             this[type].forEach(function (rule, index) {
                 _newArrowCheck(this, _this10);
 
@@ -1351,7 +1377,7 @@ var componentCommon = exports.componentCommon = {
         },
         _sync: function _sync() {
             this.unique += 1;
-            this.fComponent.fRender.cacheUnique = this.unique;
+            this._fComponent.fRender.cacheUnique = this.unique;
         },
         _change: function _change(field, json) {
             if (this.jsonData[field] !== json) {
@@ -1508,6 +1534,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 exports.margeGlobal = margeGlobal;
 exports.getRule = getRule;
+exports.bindHandler = bindHandler;
 exports.initStyle = initStyle;
 
 var _util = __webpack_require__(0);
@@ -1536,6 +1563,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _newArrowCheck(innerThis, boundThis) { if (innerThis !== boundThis) { throw new TypeError("Cannot instantiate an arrow function"); } }
 
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var version = '1.5.4';
@@ -1556,6 +1585,21 @@ function getRule(rule) {
     if ((0, _util.isFunction)(rule.getRule)) return rule.getRule();else return rule;
 }
 
+function bindHandler(rule, handler) {
+    Object.defineProperties(rule, {
+        __field__: {
+            value: handler.field,
+            enumerable: false,
+            configurable: false
+        },
+        __handler__: {
+            value: handler,
+            enumerable: false,
+            configurable: false
+        }
+    });
+}
+
 function initStyle() {
     if (document.getElementById(formCreateStyleElId) !== null) return;
     var style = document.createElement('style');
@@ -1574,6 +1618,7 @@ var FormCreate = function () {
 
         this.options = margeGlobal(options);
         this.rules = Array.isArray(rules) ? rules : [];
+        this.origin = [].concat(_toConsumableArray(this.rules));
 
         this.handlers = {};
         this.fRender = {};
@@ -1583,6 +1628,7 @@ var FormCreate = function () {
         this.components = {};
         this.fieldList = [];
         this.switchMaker = this.options.switchMaker;
+        this.id = (0, _util.uniqueId)();
 
         initStyle();
         this.$tick = (0, _util.debounce)(function (fn) {
@@ -1596,8 +1642,7 @@ var FormCreate = function () {
         key: "init",
         value: function init(vm) {
             this.vm = vm;
-            this.createHandler();
-            this.fCreateApi = (0, _common.getGlobalApi)(this);
+            this.createHandler(this.rules);
             vm.$set(vm, 'cptData', this.formData);
             vm.$set(vm, 'trueData', this.trueData);
             vm.$set(vm, 'buttonProps', this.options.submitBtn);
@@ -1605,6 +1650,8 @@ var FormCreate = function () {
             vm.$set(vm, 'rules', this.rules);
             vm.$set(vm, 'components', this.components);
             this.fRender = new _form2.default(this);
+            if (this.fCreateApi === undefined) this.fCreateApi = (0, _common.getGlobalApi)(this);
+            this.fCreateApi.rule = this.rules;
         }
     }, {
         key: "setHandler",
@@ -1612,64 +1659,55 @@ var FormCreate = function () {
             var rule = handler.rule,
                 field = handler.field;
             this.handlers[field] = handler;
-            if (handler.noValue === true) {
-                if (!(0, _util.isUndef)(handler.index)) this.components[handler.index] = rule;
+
+            if (handler.noValue === true && handler.isDef === false) {
+                (0, _util.$set)(this.components, field, rule);
                 return;
             }
-            this.formData[field] = handler.parseValue;
-            this.validate[field] = rule.validate;
-            this.trueData[field] = {
+
+            (0, _util.$set)(this.formData, field, handler.parseValue);
+            (0, _util.$set)(this.validate, field, rule.validate);
+            (0, _util.$set)(this.trueData, field, {
                 value: handler.rule.value,
-                rule: handler.rule
-            };
+                rule: rule
+            });
         }
     }, {
         key: "notField",
         value: function notField(field) {
-            return this.fieldList.indexOf(field) === -1;
+            return this.handlers[field] === undefined;
         }
     }, {
         key: "createHandler",
-        value: function createHandler() {
+        value: function createHandler(rules, child) {
             var _this2 = this;
 
-            this.rules.forEach(function (rule, index) {
+            rules.forEach(function (_rule, index) {
                 _newArrowCheck(this, _this2);
 
-                rule = getRule(rule);
-                if (this.switchMaker) this.rules[index] = rule;
-                rule.field = rule.field === undefined ? '' : (0, _util.toString)(rule.field);
-                if (this.notField(rule.field)) {
-                    var handler = (0, _common.getComponent)(this.vm, rule, this.options);
-                    this.createChildren(handler);
-                    this.setHandler(handler);
-                    this.fieldList.push(handler.field);
-                } else {
-                    console.error(String(rule.field) + " \u5B57\u6BB5\u5DF2\u5B58\u5728" + (0, _util.errMsg)());
+                if ((0, _util.isString)(_rule)) return;
+                var rule = getRule(_rule),
+                    handler = _rule.__handler__ || (0, _common.getComponent)(this.vm, rule, this.options),
+                    children = handler.rule.children;
+
+                if (!this.notField(handler.field)) return console.error(String(rule.field) + " \u5B57\u6BB5\u5DF2\u5B58\u5728" + (0, _util.errMsg)());
+
+                if (this.switchMaker) {
+                    rules[index] = rule;
+                    if (!child) this.origin[index] = rule;
+                    _rule = rule;
                 }
+
+                this.setHandler(handler);
+
+                if (!_rule.__handler__) {
+                    bindHandler(_rule, handler);
+                }
+
+                if (Array.isArray(children) && children.length > 0) this.createHandler(children, true);
+
+                if (!child) this.fieldList.push(handler.field);
             }.bind(this));
-        }
-    }, {
-        key: "createChildren",
-        value: function createChildren(handler) {
-            var _this3 = this;
-
-            if (Array.isArray(handler.rule.children) && handler.rule.children.length > 0) {
-                handler.rule.children.forEach(function (rule, index) {
-                    _newArrowCheck(this, _this3);
-
-                    rule = getRule(rule);
-                    if (this.switchMaker) handler.rule.children[index] = rule;
-                    rule.field = rule.field === undefined ? '' : (0, _util.toString)(rule.field);
-                    if (this.notField(rule.field)) {
-                        var _handler = (0, _common.getComponent)(this.vm, rule, this.options);
-                        this.createChildren(_handler);
-                        handler.childrenHandlers.push(_handler);
-                    } else {
-                        console.error(String(rule.field) + " \u5B57\u6BB5\u5DF2\u5B58\u5728" + (0, _util.errMsg)());
-                    }
-                }.bind(this));
-            }
         }
     }, {
         key: "create",
@@ -1682,7 +1720,7 @@ var FormCreate = function () {
     }, {
         key: "mounted",
         value: function mounted(vm) {
-            var _this4 = this;
+            var _this3 = this;
 
             var first = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
 
@@ -1691,21 +1729,23 @@ var FormCreate = function () {
                 mounted = _options2.mounted,
                 onReload = _options2.onReload;
 
+            setTimeout(function () {
+                _newArrowCheck(this, _this3);
 
-            (0, _util.$nt)(function () {
-                _newArrowCheck(this, _this4);
+                (0, _util.$nt)(function () {
+                    _newArrowCheck(this, _this3);
 
-                Object.keys(this.handlers).forEach(function (field) {
-                    _newArrowCheck(this, _this4);
+                    Object.keys(this.handlers).forEach(function (field) {
+                        _newArrowCheck(this, _this3);
 
-                    var handler = this.handlers[field];
-                    if (vm._formData(field) !== undefined) this.addHandlerWatch(handler);
-                    handler.mounted();
+                        var handler = this.handlers[field];
+                        if (vm._formData(field) !== undefined) this.addHandlerWatch(handler);
+                        handler.mounted();
+                    }.bind(this));
+                    if (first) mounted && mounted(this.fCreateApi);
+                    onReload && onReload(this.fCreateApi);
                 }.bind(this));
-                if (first) mounted && mounted(this.fCreateApi);
             }.bind(this));
-
-            onReload && onReload(this.fCreateApi);
         }
     }, {
         key: "component",
@@ -1713,55 +1753,39 @@ var FormCreate = function () {
             return (0, _formCreateComponent2.default)(this);
         }
     }, {
-        key: "append",
-        value: function append(rule, after, pre) {
-            var _this5 = this;
-
-            if ((0, _util.isFunction)(rule.getRule)) rule = rule.getRule();
-            if (Object.keys(this.handlers).indexOf((0, _util.toString)(rule.field)) !== -1) throw new Error(String(rule.field) + "\u5B57\u6BB5\u5DF2\u5B58\u5728" + (0, _util.errMsg)());
-            var handler = (0, _common.getComponent)(this.vm, rule, this.options);
-            this.createChildren(handler);
-            this.vm._setField(handler.field);
-            this.fRender.setRender(handler, after || '', pre);
-            this.setHandler(handler);
-            this.addHandlerWatch(handler);
-            handler.render.sync(function () {
-                _newArrowCheck(this, _this5);
-
-                handler.mounted();
-            }.bind(this));
-        }
-    }, {
         key: "removeField",
         value: function removeField(field) {
-            var _this6 = this;
+            var _this4 = this;
 
             if (this.handlers[field] === undefined) throw new Error(String(field) + "\u5B57\u6BB5\u4E0D\u5B58\u5728" + (0, _util.errMsg)());
-            var watch = this.handlers[field].watch;
+            var watch = this.handlers[field].watch,
+                index = this.fieldList.indexOf(field);
 
-            delete this.handlers[field];
-            delete this.validate[field];
+            (0, _util.$del)(this.handlers, field);
+            (0, _util.$del)(this.validate, field);
+
+            if (index !== -1) {
+                this.fieldList.splice(index, 1);
+            }
+
             watch && watch.forEach(function (unWatch) {
-                _newArrowCheck(this, _this6);
+                _newArrowCheck(this, _this4);
 
                 return unWatch();
             }.bind(this));
             this.vm._removeField(field);
-            this.fRender.removeRender(field);
-            delete this.formData[field];
-            delete this.trueData[field];
         }
     }, {
         key: "addHandlerWatch",
         value: function addHandlerWatch(handler) {
-            var _this7 = this;
+            var _this5 = this;
 
             if (handler.noValue === true) return;
             var field = handler.field,
                 vm = this.vm;
 
             var unWatch = vm.$watch("cptData." + String(field), function (n, o) {
-                _newArrowCheck(this, _this7);
+                _newArrowCheck(this, _this5);
 
                 if (this.handlers[field] !== undefined) {
                     var trueValue = handler.toValue(n),
@@ -1774,7 +1798,7 @@ var FormCreate = function () {
             }.bind(this), { deep: true });
 
             var unWatch2 = vm.$watch("trueData." + String(field) + ".value", function (n, o) {
-                _newArrowCheck(this, _this7);
+                _newArrowCheck(this, _this5);
 
                 if (n === undefined) return;
                 if (this.handlers[field] !== undefined) {
@@ -1782,7 +1806,7 @@ var FormCreate = function () {
                     if (vm._change(field, json)) {
                         handler.watchValue(n);
                         (0, _util.$nt)(function () {
-                            _newArrowCheck(this, _this7);
+                            _newArrowCheck(this, _this5);
 
                             return handler.render.sync();
                         }.bind(this));
@@ -1793,17 +1817,17 @@ var FormCreate = function () {
             handler.watch.push(unWatch, unWatch2);
 
             var bind = function () {
-                _newArrowCheck(this, _this7);
+                _newArrowCheck(this, _this5);
 
                 if (this.handlers[field] !== undefined) this.$tick(function () {
-                    _newArrowCheck(this, _this7);
+                    _newArrowCheck(this, _this5);
 
                     return handler.render.sync();
                 }.bind(this));
             }.bind(this);
 
             Object.keys(vm._trueData(field).rule).forEach(function (key) {
-                _newArrowCheck(this, _this7);
+                _newArrowCheck(this, _this5);
 
                 if (key === 'value') return;
                 handler.watch.push(vm.$watch("trueData." + String(field) + ".rule." + String(key), bind, { deep: true }));
@@ -1812,31 +1836,34 @@ var FormCreate = function () {
     }, {
         key: "reload",
         value: function reload(rules) {
-            var _this8 = this;
+            var _this6 = this;
 
             var vm = this.vm;
             if (!rules) {
                 return this.reload(this.rules);
             } else {
+
+                var flag = rules.reduce(function (initial, rule, index) {
+                    _newArrowCheck(this, _this6);
+
+                    return initial && rule === this.origin[index];
+                }.bind(this), true);
+
+                if (flag) return;
+                this.origin = [].concat(_toConsumableArray(rules));
                 vm._unWatch();
                 Object.keys(this.handlers).forEach(function (field) {
-                    _newArrowCheck(this, _this8);
+                    _newArrowCheck(this, _this6);
 
                     return this.removeField(field);
                 }.bind(this));
-                vm.isShow = false;
                 this.constructor(rules, this.options);
                 this.init(vm);
                 vm.init();
                 (0, _util.$nt)(function () {
-                    _newArrowCheck(this, _this8);
+                    _newArrowCheck(this, _this6);
 
-                    vm.isShow = true;
-                    setTimeout(function () {
-                        _newArrowCheck(this, _this8);
-
-                        return this.mounted(vm, false);
-                    }.bind(this));
+                    this.mounted(vm, false);
                 }.bind(this));
             }
             return vm.$f = this.fCreateApi;
@@ -1869,7 +1896,7 @@ var FormCreate = function () {
 
             Vue.prototype.$formCreate.version = version;
             Vue.prototype.$formCreate.maker = _maker2.default;
-            Vue.component(_component.formCreateName, (0, _component.$FormCreate)());
+            Vue.component(_component.formCreateName, Vue.extend((0, _component.$FormCreate)()));
         }
     }]);
 
@@ -2495,10 +2522,6 @@ var $FormCreate = function () {
 
     return {
         name: formCreateName,
-        render: function render() {
-            return this.fComponent.fRender.parse(this.fComponent.vm);
-        },
-
         props: {
             rule: {
                 type: Array,
@@ -2522,21 +2545,24 @@ var $FormCreate = function () {
         },
         data: _common.componentCommon.data,
         methods: _common.componentCommon.methods,
+        render: function render() {
+            return this._fComponent.fRender.render(this._fComponent.vm);
+        },
         created: function created() {
-            this.fComponent = new _formCreate2.default(this.rule, this.option);
-            this.fComponent._type = 'rule';
-            this.fComponent.init(this);
-            this.$emit('input', this.fComponent.fCreateApi);
+            this._fComponent = new _formCreate2.default(this.rule, this.option);
+            this._fComponent._type = 'rule';
+            this._fComponent.init(this);
+            this.$emit('input', this._fComponent.fCreateApi);
         },
         mounted: function mounted() {
             var _this = this;
 
-            this.fComponent.mounted(this);
-            this.$f = this.fComponent.fCreateApi;
+            this._fComponent.mounted(this);
+            this.$f = this._fComponent.fCreateApi;
             this.$watch('rule', function (n) {
                 _newArrowCheck(this, _this);
 
-                this.fComponent.reload(n);
+                this._fComponent.reload(n);
                 this.$emit('input', this.$f);
             }.bind(this));
             this.$emit('input', this.$f);
@@ -2555,14 +2581,25 @@ exports.formCreateName = formCreateName;
 "use strict";
 
 
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.install = install;
+
 var _formCreate = __webpack_require__(7);
 
 var _formCreate2 = _interopRequireDefault(_formCreate);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function install(Vue) {
+    if (Vue._installedFormCreate === true) return;
+    Vue._installedFormCreate = true;
+    Vue.use(_formCreate2.default);
+}
+
 if (typeof window !== 'undefined' && window.Vue) {
-  window.Vue.use(_formCreate2.default);
+    install(Vue);
 }
 
 module.exports.default = module.exports = _formCreate2.default;
@@ -4378,7 +4415,7 @@ var handler = function (_Handler) {
             this._data = {};
             this.data(this.rule.props.data);
 
-            this._parseValue();
+            (0, _util.$set)(this.rule, 'value', this._parseValue());
         }
     }, {
         key: "_parseValue",
@@ -4407,8 +4444,7 @@ var handler = function (_Handler) {
                 var node = this._data[key];
                 if (node.checked === true) value.push(node.id);
             }.bind(this));
-
-            (0, _util.$set)(this.rule, 'value', value);
+            return value;
         }
     }, {
         key: "toFormValue",
@@ -4664,7 +4700,6 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-exports.getRenders = getRenders;
 exports.preventDefault = preventDefault;
 
 var _util = __webpack_require__(0);
@@ -4679,20 +4714,9 @@ var _vData2 = _interopRequireDefault(_vData);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 function _newArrowCheck(innerThis, boundThis) { if (innerThis !== boundThis) { throw new TypeError("Cannot instantiate an arrow function"); } }
 
-function getRenders(handlers, renderSort) {
-    var _this = this;
-
-    return renderSort.reduce(function (initial, field) {
-        _newArrowCheck(this, _this);
-
-        initial[field] = handlers[field].render;
-        return initial;
-    }.bind(this), {});
-}
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function preventDefault(e) {
     e.preventDefault();
@@ -4714,7 +4738,6 @@ var Form = function () {
         this.options = options;
         this.handlers = handlers;
         this.renderSort = fieldList;
-        this.renders = getRenders(handlers, fieldList);
         this.form = {
             model: formData,
             rules: validate,
@@ -4729,26 +4752,31 @@ var Form = function () {
     }
 
     _createClass(Form, [{
-        key: "parse",
-        value: function parse(vm) {
-            var _this2 = this;
+        key: "getRender",
+        value: function getRender(field) {
+            return this.handlers[field].render;
+        }
+    }, {
+        key: "render",
+        value: function render(vm) {
+            var _this = this;
 
             this.vNode.setVm(vm);
             if (!vm.isShow) return;
             if (this.cacheUnique !== vm.unique) {
                 this.renderSort.forEach(function (field) {
-                    _newArrowCheck(this, _this2);
+                    _newArrowCheck(this, _this);
 
-                    this.renders[field].clearCache();
+                    this.getRender(field).clearCache();
                 }.bind(this));
                 this.cacheUnique = vm.unique;
             }
             var unique = this.unique,
                 propsData = this.vData.props(this.options.form).props(this.form).ref(this.refName).nativeOn({ submit: preventDefault }).class('form-create', true).key(unique).get(),
                 vn = this.renderSort.map(function (field) {
-                _newArrowCheck(this, _this2);
+                _newArrowCheck(this, _this);
 
-                var render = this.renders[field],
+                var render = this.getRender(field),
                     _render$handler = render.handler,
                     key = _render$handler.key,
                     type = _render$handler.type;
@@ -4796,13 +4824,13 @@ var Form = function () {
     }, {
         key: "makeResetBtn",
         value: function makeResetBtn(unique, span) {
-            var _this3 = this;
+            var _this2 = this;
 
             var props = (0, _util.isUndef)(this.options.resetBtn.col) ? { span: span, push: 1 } : this.options.resetBtn.col;
             return this.vNode.col({ props: props, key: String(this.unique) + "col3" }, [this.vNode.button({
                 key: "frsbtn" + String(unique), props: this.vm.resetProps, on: {
                     "click": function click() {
-                        _newArrowCheck(this, _this3);
+                        _newArrowCheck(this, _this2);
 
                         this.fCreateApi.resetFields();
                     }.bind(this)
@@ -4812,36 +4840,18 @@ var Form = function () {
     }, {
         key: "makeSubmitBtn",
         value: function makeSubmitBtn(unique, span) {
-            var _this4 = this;
+            var _this3 = this;
 
             var props = (0, _util.isUndef)(this.options.submitBtn.col) ? { span: span } : this.options.submitBtn.col;
             return this.vNode.col({ props: props, key: String(this.unique) + "col4" }, [this.vNode.button({
                 key: "fbtn" + String(unique), props: this.vm.buttonProps, on: {
                     "click": function click() {
-                        _newArrowCheck(this, _this4);
+                        _newArrowCheck(this, _this3);
 
                         this.fCreateApi.submit();
                     }.bind(this)
                 }
             }, [this.vm.buttonProps.innerText])]);
-        }
-    }, {
-        key: "removeRender",
-        value: function removeRender(field) {
-            delete this.renders[field];
-            this.renderSort.splice(this.renderSort.indexOf(field), 1);
-        }
-    }, {
-        key: "setRender",
-        value: function setRender(handler, after, pre) {
-            this.renders[handler.field] = handler.render;
-            if (after !== undefined) this.changeSort(handler.field, after, pre);
-        }
-    }, {
-        key: "changeSort",
-        value: function changeSort(field, after, pre) {
-            var index = this.renderSort.indexOf((0, _util.toString)(after));
-            if (index !== -1) this.renderSort.splice(pre === false ? index + 1 : index, 0, field);else if (!pre) this.renderSort.push(field);else this.renderSort.unshift(field);
         }
     }]);
 
@@ -4877,7 +4887,7 @@ function formCreateComponent(fComponent) {
         render: function render() {
             _newArrowCheck(this, _this);
 
-            return fComponent.fRender.parse(fComponent.vm);
+            return fComponent.fRender.render(fComponent.vm);
         }.bind(this),
         methods: _common.componentCommon.methods,
         created: function created() {
@@ -4943,18 +4953,24 @@ var maker = function () {
     var commonMaker = (0, _creator.creatorFactory)('');
 
     (0, _util.extend)(_m, {
-        create: function create(type, index) {
-            var make = commonMaker('', 'tmp' + (0, _util.uniqueId)());
+        create: function create(type, field) {
+            var isDef = (0, _util.isUndef)(field);
+            if (isDef) field = 'tmp' + (0, _util.uniqueId)();
+
+            var make = commonMaker('', field);
             make.rule.type = type;
-            make.rule.index = index;
+            make.rule.isDef = isDef;
             make.col({ labelWidth: 1 });
             return make;
         },
-        createTmp: function createTmp(template, vm, index) {
-            var make = commonMaker('', 'tmp' + (0, _util.uniqueId)());
-            make.rule.type = '__tmp';
+        createTmp: function createTmp(template, vm, field) {
+            var isDef = (0, _util.isUndef)(field);
+            if (isDef) field = 'tmp' + (0, _util.uniqueId)();
+
+            var make = commonMaker('', field);
+            make.rule.type = 'template';
             make.rule.template = template;
-            make.rule.index = index;
+            make.rule.isDef = isDef;
             make.rule.vm = vm;
             make.col({ labelWidth: 1 });
             return make;

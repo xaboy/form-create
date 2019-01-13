@@ -3,10 +3,6 @@ import VNode from "./vNode";
 import VData from "./vData";
 import Vue from 'vue';
 
-export function childParse(child) {
-    return isString(child) ? [child] : child.__handler__.render.clearCache();
-}
-
 export default class Render {
 
     constructor(vm, handler, options = {}) {
@@ -47,9 +43,10 @@ export default class Render {
 
     clearCache() {
         this.cache = null;
+        let children = this.handler.rule.children;
 
-        if (this.handler.rule.children.length > 0)
-            this.handler.rule.children.forEach(child => !isString(child) && child.__handler__.render.clearCache());
+        if (Array.isArray(children) && children.length > 0)
+            children.forEach(child => !isString(child) && child.__handler__.render.clearCache());
     }
 
     parse() {
@@ -70,9 +67,15 @@ export default class Render {
             if (isUndef(rule.key))
                 rule.key = 'def' + uniqueId();
             let vn = this.vNode.make(type, {...rule}, () => {
-                let vn = [];
-                if (rule.children.length > 0)
-                    vn = rule.children.map(childParse);
+                let vn = [], children = rule.children;
+                if (Array.isArray(children) && children.length > 0)
+                    vn = children.map((child) => {
+                        if (isString(child))
+                            return [child];
+                        if (!child.__handler__)
+                            vm._fComponent.createHandler([child], true);
+                        return child.__handler__.render.cacheParse();
+                    });
                 return vn;
             });
             vn.key = key;

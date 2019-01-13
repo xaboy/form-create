@@ -10,8 +10,8 @@ export default function formCreateComponent(fComponent) {
         },
         methods: componentCommon.methods,
         created() {
-            this.fComponent = fComponent;
-            this.fComponent._type = 'rules';
+            this._fComponent = fComponent;
+            this._fComponent._type = 'rules';
             fComponent.init(this);
         },
         mounted() {
@@ -19,7 +19,7 @@ export default function formCreateComponent(fComponent) {
             this.$f = fComponent.fCreateApi;
             this.init();
             this.$watch('rules', n => {
-                this.fComponent.reload(n);
+                this._fComponent.reload(n);
             })
         }
     }

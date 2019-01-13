@@ -5,7 +5,7 @@ export default class Handler {
 
     constructor(vm, _rule, Render, options, noValue) {
 
-        const rule = parseRule(_rule, vm, noValue);
+        const rule = parseRule(_rule, vm);
 
         this.rule = rule;
         this.noValue = noValue;
@@ -66,12 +66,12 @@ export default class Handler {
     }
 
     mounted() {
-        const refName = 'fItem' + this.refName, vm = this.vm;
+        let refName = 'fItem' + this.refName, vm = this.vm, children = this.rule.children;
         this.el = vm.$refs[this.refName];
         this.defaultValue = this.toValue(vm.$refs[refName]
             ? vm.$refs[refName].initialValue : deepExtend({}, {value: this.rule.value}).value);
-        if (this.rule.children.length > 0)
-            this.rule.children.forEach(rule => !isString(rule) && rule.__handler__.mounted());
+        if (Array.isArray(children) && children.length > 0)
+            children.forEach(child => !isString(child) && child.__handler__.mounted());
     }
 }
 
@@ -91,9 +91,7 @@ export function defRule() {
     }
 }
 
-export function parseRule(rule, vm, noVal) {
-    if (!noVal && rule.value === undefined)
-        console.warn(`${rule.field} 字段未定义 value 属性` + errMsg());
+export function parseRule(rule, vm) {
 
     const def = defRule();
     Object.keys(def).forEach((k) => {
