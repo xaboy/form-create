@@ -53,7 +53,10 @@ export default class Render {
         let {type, rule, refName, key} = this.handler;
         if (rule.type === 'template') {
             if (Vue.compile !== undefined) {
-                let vn = Vue.compile(rule.template, {}).render.call(rule.vm || this.vm);
+
+                if (isUndef(rule.vm)) rule.vm = new Vue;
+
+                let vn = Vue.compile(rule.template, {}).render.call(rule.vm);
                 if (vn.data === undefined) vn.data = {};
                 extend(vn.data, rule);
                 vn.key = key;
