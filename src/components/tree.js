@@ -29,8 +29,7 @@ class handler extends Handler {
         this._data = {};
         this.data(this.rule.props.data);
 
-        this._parseValue();
-
+        $set(this.rule, 'value', this._parseValue());
     }
 
     _parseValue() {
@@ -47,8 +46,7 @@ class handler extends Handler {
                 if (node.checked === true)
                     value.push(node.id);
             });
-
-        $set(this.rule, 'value', value);
+        return value;
     }
 
     toFormValue(value) {

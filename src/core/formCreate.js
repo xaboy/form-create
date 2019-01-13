@@ -45,6 +45,21 @@ export function getRule(rule) {
         return rule;
 }
 
+export function bindHandler(rule, handler) {
+    Object.defineProperties(rule, {
+        __field__: {
+            value: handler.field,
+            enumerable: false,
+            configurable: false
+        },
+        __handler__: {
+            value: handler,
+            enumerable: false,
+            configurable: false
+        }
+    })
+}
+
 export function initStyle() {
     if (document.getElementById(formCreateStyleElId) !== null) return;
     let style = document.createElement('style');
@@ -96,7 +111,6 @@ export default class FormCreate {
     init(vm) {
         this.vm = vm;
         this.createHandler();
-        this.fCreateApi = getGlobalApi(this);
         vm.$set(vm, 'cptData', this.formData);
         vm.$set(vm, 'trueData', this.trueData);
         vm.$set(vm, 'buttonProps', this.options.submitBtn);
@@ -104,12 +118,16 @@ export default class FormCreate {
         vm.$set(vm, 'rules', this.rules);
         vm.$set(vm, 'components', this.components);
         this.fRender = new formRender(this);
+        if (this.fCreateApi === undefined)
+            this.fCreateApi = getGlobalApi(this);
+        this.fCreateApi.rule = this.rules;
     }
 
 
     setHandler(handler) {
         let rule = handler.rule, field = handler.field;
         this.handlers[field] = handler;
+
         if (handler.noValue === true) {
             if (!isUndef(handler.index))
                 this.components[handler.index] = rule;
@@ -130,19 +148,32 @@ export default class FormCreate {
     }
 
     createHandler() {
-        this.rules.forEach((rule, index) => {
-            rule = getRule(rule);
+        this.rules.forEach((_rule, index) => {
+            let rule = getRule(_rule), handler = _rule.__handler__ || getComponent(this.vm, rule, this.options);
+
+            if (!this.notField(handler.field))
+                return console.error(`${rule.field} 字段已存在` + errMsg());
+
             if (this.switchMaker)
-                this.rules[index] = rule;
-            rule.field = rule.field === undefined ? '' : toString(rule.field);
-            if (this.notField(rule.field)) {
-                let handler = getComponent(this.vm, rule, this.options);
-                this.setHandler(handler);
+                this.origin[index] = this.rules[index] = rule;
+
+
+            this.setHandler(handler);
+
+            if (!_rule.__handler__) {
+                bindHandler(_rule, handler);
                 this.createChildren(handler);
-                this.fieldList.push(handler.field);
-            } else {
-                console.error(`${rule.field} 字段已存在` + errMsg());
             }
+
+            this.fieldList.push(handler.field);
+            // let handler;
+            // if (_rule.__handler__ === undefined) {
+            //     handler = getComponent(this.vm, rule, this.options);
+            //     bindHandler(_rule, handler);
+            // } else {
+            //     handler = _rule.__handler__;
+            // }
+
 
         });
     }
