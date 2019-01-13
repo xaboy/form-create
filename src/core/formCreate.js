@@ -6,7 +6,7 @@ import {
     errMsg,
     isBool,
     isElement,
-    isFunction,
+    isFunction, isString,
     isUndef,
     toString, uniqueId
 } from "../core/util";
@@ -110,7 +110,7 @@ export default class FormCreate {
 
     init(vm) {
         this.vm = vm;
-        this.createHandler();
+        this.createHandler(this.rules);
         vm.$set(vm, 'cptData', this.formData);
         vm.$set(vm, 'trueData', this.trueData);
         vm.$set(vm, 'buttonProps', this.options.submitBtn);
@@ -146,45 +146,34 @@ export default class FormCreate {
         return this.handlers[field] === undefined;
     }
 
-    createHandler() {
-        this.rules.forEach((_rule, index) => {
-            let rule = getRule(_rule), handler = _rule.__handler__ || getComponent(this.vm, rule, this.options);
+    createHandler(rules, child) {
+        rules.forEach((_rule, index) => {
+            if (isString(_rule)) return;
+            let rule = getRule(_rule), handler = _rule.__handler__ || getComponent(this.vm, rule, this.options),
+                children = handler.rule.children;
 
             if (!this.notField(handler.field))
                 return console.error(`${rule.field} 字段已存在` + errMsg());
 
-            if (this.switchMaker)
-                this.origin[index] = this.rules[index] = rule;
-
+            if (this.switchMaker) {
+                rules[index] = rule;
+                if (!child)
+                    this.origin[index] = rule;
+                _rule = rule;
+            }
 
             this.setHandler(handler);
 
             if (!_rule.__handler__) {
                 bindHandler(_rule, handler);
-                this.createChildren(handler);
             }
 
-            this.fieldList.push(handler.field);
+            if (Array.isArray(children) && children.length > 0)
+                this.createHandler(children, true);
 
+            if (!child)
+                this.fieldList.push(handler.field);
         });
-    }
-
-    createChildren(handler) {
-        if (Array.isArray(handler.rule.children) && handler.rule.children.length > 0) {
-            handler.rule.children.forEach((rule, index) => {
-                rule = getRule(rule);
-                if (this.switchMaker)
-                    handler.rule.children[index] = rule;
-                rule.field = rule.field === undefined ? '' : toString(rule.field);
-                if (this.notField(rule.field)) {
-                    let _handler = getComponent(this.vm, rule, this.options);
-                    this.createChildren(_handler);
-                    handler.childrenHandlers.push(_handler);
-                } else {
-                    console.error(`${rule.field} 字段已存在` + errMsg());
-                }
-            });
-        }
     }
 
     create(Vue) {
@@ -218,12 +207,14 @@ export default class FormCreate {
     removeField(field) {
         if (this.handlers[field] === undefined)
             throw new Error(`${field}字段不存在` + errMsg());
-        let watch = this.handlers[field].watch;
+        let watch = this.handlers[field].watch, index = this.fieldList.indexOf(field);
 
         $del(this.handlers, field);
         $del(this.validate, field);
 
-        this.fieldList.splice(this.fieldList.indexOf(field), 1);
+        if (index !== -1) {
+            this.fieldList.splice(index, 1);
+        }
 
         watch && watch.forEach((unWatch) => unWatch());
         this.vm._removeField(field);

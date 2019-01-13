@@ -30,7 +30,7 @@ export default class Form {
         return this.handlers[field].render;
     }
 
-    parse(vm) {
+    render(vm) {
         this.vNode.setVm(vm);
         if (!vm.isShow)
             return;

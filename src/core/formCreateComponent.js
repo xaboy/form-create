@@ -6,7 +6,7 @@ export default function formCreateComponent(fComponent) {
         name: `${formCreateName}Core`,
         data: componentCommon.data,
         render: () => {
-            return fComponent.fRender.parse(fComponent.vm);
+            return fComponent.fRender.render(fComponent.vm);
         },
         methods: componentCommon.methods,
         created() {

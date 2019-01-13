@@ -1,7 +1,11 @@
-import {$nt, errMsg, extend, isFunction, isUndef, uniqueId} from '../core/util';
+import {$nt, errMsg, extend, isFunction, isString, isUndef, uniqueId} from '../core/util';
 import VNode from "./vNode";
 import VData from "./vData";
 import Vue from 'vue';
+
+export function childParse(child) {
+    return isString(child) ? [child] : child.__handler__.render.clearCache();
+}
 
 export default class Render {
 
@@ -43,12 +47,13 @@ export default class Render {
 
     clearCache() {
         this.cache = null;
-        if (this.handler.childrenHandlers.length > 0)
-            this.handler.childrenHandlers.forEach(handler => handler.render.clearCache());
+
+        if (this.handler.rule.children.length > 0)
+            this.handler.rule.children.forEach(child => !isString(child) && child.__handler__.render.clearCache());
     }
 
     parse() {
-        let {type, rule, childrenHandlers, refName, key} = this.handler;
+        let {type, rule, refName, key} = this.handler;
         if (rule.type === 'template') {
             if (Vue.compile !== undefined) {
                 let vn = Vue.compile(rule.template, {}).render.call(rule.vm || this.vm);
@@ -66,8 +71,8 @@ export default class Render {
                 rule.key = 'def' + uniqueId();
             let vn = this.vNode.make(type, {...rule}, () => {
                 let vn = [];
-                if (childrenHandlers.length > 0)
-                    vn = childrenHandlers.map((handler) => handler.render.cacheParse());
+                if (rule.children.length > 0)
+                    vn = rule.children.map(childParse);
                 return vn;
             });
             vn.key = key;

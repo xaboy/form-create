@@ -25,19 +25,19 @@ const $FormCreate = () => ({
     data: componentCommon.data,
     methods: componentCommon.methods,
     render() {
-        return this.fComponent.fRender.parse(this.fComponent.vm);
+        return this._fComponent.fRender.render(this._fComponent.vm);
     },
     created() {
-        this.fComponent = new formCreate(this.rule, this.option);
-        this.fComponent._type = 'rule';
-        this.fComponent.init(this);
-        this.$emit('input', this.fComponent.fCreateApi);
+        this._fComponent = new formCreate(this.rule, this.option);
+        this._fComponent._type = 'rule';
+        this._fComponent.init(this);
+        this.$emit('input', this._fComponent.fCreateApi);
     },
     mounted() {
-        this.fComponent.mounted(this);
-        this.$f = this.fComponent.fCreateApi;
+        this._fComponent.mounted(this);
+        this.$f = this._fComponent.fCreateApi;
         this.$watch('rule', n => {
-            this.fComponent.reload(n);
+            this._fComponent.reload(n);
             this.$emit('input', this.$f);
         });
         this.$emit('input', this.$f);

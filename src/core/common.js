@@ -413,7 +413,7 @@ export const componentCommon = {
             this.$set(this, 'resetProps', deepExtend(this.resetProps, props));
         },
         init() {
-            const type = this.fComponent._type;
+            const type = this._fComponent._type;
             this[type].forEach((rule, index) => {
                 let unWatch = this.$watch(`${type}.${index}.value`, n => {
                     if (this.trueData[rule.field] === undefined) return unWatch();
@@ -432,7 +432,7 @@ export const componentCommon = {
         },
         _sync() {
             this.unique += 1;
-            this.fComponent.fRender.cacheUnique = this.unique;
+            this._fComponent.fRender.cacheUnique = this.unique;
         },
         _change(field, json) {
             if (this.jsonData[field] !== json) {

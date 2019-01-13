@@ -1,4 +1,4 @@
-import {isNumeric, uniqueId, toLine, isUndef, extend, toString, deepExtend, errMsg, $set} from "../core/util";
+import {isNumeric, uniqueId, toLine, isUndef, extend, toString, deepExtend, errMsg, $set, isString} from "../core/util";
 
 
 export default class Handler {
@@ -20,7 +20,6 @@ export default class Handler {
         this.refName = '__' + this.field + id;
         this.key = 'key_' + id;
         this.el = {};
-        this.childrenHandlers = [];
         this.watch = [];
 
         if (isUndef(rule.props.elementId))
@@ -71,8 +70,8 @@ export default class Handler {
         this.el = vm.$refs[this.refName];
         this.defaultValue = this.toValue(vm.$refs[refName]
             ? vm.$refs[refName].initialValue : deepExtend({}, {value: this.rule.value}).value);
-        if (this.childrenHandlers.length > 0)
-            this.childrenHandlers.forEach(handler => handler.mounted());
+        if (this.rule.children.length > 0)
+            this.rule.children.forEach(rule => !isString(rule) && rule.__handler__.mounted());
     }
 }
 
