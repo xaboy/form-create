@@ -21,18 +21,26 @@ const maker = (() => {
     const commonMaker = creatorFactory('');
 
     extend(_m, {
-        create(type, index) {
-            let make = commonMaker('', 'tmp' + uniqueId());
+        create(type, field) {
+            let isDef = isUndef(field);
+            if (isDef)
+                field = 'tmp' + uniqueId();
+
+            let make = commonMaker('', field);
             make.rule.type = type;
-            make.rule.index = index;
+            make.rule.isDef = isDef;
             make.col({labelWidth: 1});
             return make;
         },
-        createTmp(template, vm, index) {
-            let make = commonMaker('', 'tmp' + uniqueId());
+        createTmp(template, vm, field) {
+            let isDef = isUndef(field);
+            if (isDef)
+                field = 'tmp' + uniqueId();
+
+            let make = commonMaker('', field);
             make.rule.type = 'template';
             make.rule.template = template;
-            make.rule.index = index;
+            make.rule.isDef = isDef;
             make.rule.vm = vm;
             make.col({labelWidth: 1});
             return make;

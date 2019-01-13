@@ -11,8 +11,8 @@ export default class Handler {
         this.noValue = noValue;
         this.type = rule.type;
         this.field = rule.field;
-        this.index = rule.index;
         this.vm = vm;
+        this.isDef = rule.isDef;
 
         const id = uniqueId();
         this.id = id;

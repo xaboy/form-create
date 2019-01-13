@@ -128,9 +128,8 @@ export default class FormCreate {
         let rule = handler.rule, field = handler.field;
         this.handlers[field] = handler;
 
-        if (handler.noValue === true) {
-            if (!isUndef(handler.index))
-                this.components[handler.index] = rule;
+        if (handler.noValue === true && handler.isDef === false) {
+            $set(this.components, field, rule);
             return;
         }
 
@@ -166,14 +165,6 @@ export default class FormCreate {
             }
 
             this.fieldList.push(handler.field);
-            // let handler;
-            // if (_rule.__handler__ === undefined) {
-            //     handler = getComponent(this.vm, rule, this.options);
-            //     bindHandler(_rule, handler);
-            // } else {
-            //     handler = _rule.__handler__;
-            // }
-
 
         });
     }
