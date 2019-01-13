@@ -22,25 +22,15 @@ const maker = (() => {
 
     extend(_m, {
         create(type, field) {
-            let isDef = !isUndef(field);
-
-            if (!isDef) field = 'tmp' + uniqueId();
-
             let make = commonMaker('', field);
             make.rule.type = type;
-            make.rule.isDef = isDef;
             make.col({labelWidth: 1});
             return make;
         },
         createTmp(template, vm, field) {
-            let isDef = !isUndef(field);
-
-            if (!isDef) field = 'tmp' + uniqueId();
-
             let make = commonMaker('', field);
             make.rule.type = 'template';
             make.rule.template = template;
-            make.rule.isDef = isDef;
             make.rule.vm = vm;
             make.col({labelWidth: 1});
             return make;

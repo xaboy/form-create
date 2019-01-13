@@ -131,7 +131,7 @@ export default class FormCreate {
         this.handlers[field] = handler;
 
         if (handler.noValue === true) {
-            if ((isDef === true || isDef === undefined))
+            if (isDef === true)
                 $set(this.components, field, rule);
             return;
         }

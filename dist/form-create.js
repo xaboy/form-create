@@ -297,14 +297,21 @@ var Handler = function () {
     function Handler(vm, _rule, Render, options, noValue) {
         _classCallCheck(this, Handler);
 
-        var rule = parseRule(_rule, vm);
+        var rule = parseRule(_rule, vm, noValue);
 
         this.rule = rule;
         this.noValue = noValue;
         this.type = rule.type;
-        this.field = rule.field;
+        this.isDef = true;
+
+        if (!rule.field && noValue) {
+            this.field = 'tmp' + (0, _util.uniqueId)();
+            this.isDef = false;
+        } else {
+            this.field = rule.field;
+        }
+
         this.vm = vm;
-        this.isDef = rule.isDef;
 
         var id = (0, _util.uniqueId)();
         this.id = id;
@@ -399,7 +406,7 @@ function defRule() {
     };
 }
 
-function parseRule(rule, vm) {
+function parseRule(rule, vm, noVal) {
     var _this2 = this;
 
     var def = defRule();
@@ -426,7 +433,9 @@ function parseRule(rule, vm) {
         (0, _util.$set)(rule, k, parseRule[k]);
     }.bind(this));
 
-    if (!rule.field) console.error('规则的 field 字段不能空' + (0, _util.errMsg)());
+    if (!rule.field && !noVal) {
+        console.error('规则的 field 字段不能空' + (0, _util.errMsg)());
+    }
 
     return rule;
 }
@@ -1668,7 +1677,7 @@ var FormCreate = function () {
             this.handlers[field] = handler;
 
             if (handler.noValue === true) {
-                if (isDef === true || isDef === undefined) (0, _util.$set)(this.components, field, rule);
+                if (isDef === true) (0, _util.$set)(this.components, field, rule);
                 return;
             }
 
@@ -4975,25 +4984,15 @@ var maker = function () {
 
     (0, _util.extend)(_m, {
         create: function create(type, field) {
-            var isDef = !(0, _util.isUndef)(field);
-
-            if (!isDef) field = 'tmp' + (0, _util.uniqueId)();
-
             var make = commonMaker('', field);
             make.rule.type = type;
-            make.rule.isDef = isDef;
             make.col({ labelWidth: 1 });
             return make;
         },
         createTmp: function createTmp(template, vm, field) {
-            var isDef = !(0, _util.isUndef)(field);
-
-            if (!isDef) field = 'tmp' + (0, _util.uniqueId)();
-
             var make = commonMaker('', field);
             make.rule.type = 'template';
             make.rule.template = template;
-            make.rule.isDef = isDef;
             make.rule.vm = vm;
             make.col({ labelWidth: 1 });
             return make;

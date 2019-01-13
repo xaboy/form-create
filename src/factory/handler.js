@@ -5,14 +5,21 @@ export default class Handler {
 
     constructor(vm, _rule, Render, options, noValue) {
 
-        const rule = parseRule(_rule, vm);
+        const rule = parseRule(_rule, vm, noValue);
 
         this.rule = rule;
         this.noValue = noValue;
         this.type = rule.type;
-        this.field = rule.field;
+        this.isDef = true;
+
+        if (!rule.field && noValue) {
+            this.field = 'tmp' + uniqueId();
+            this.isDef = false;
+        } else {
+            this.field = rule.field;
+        }
+
         this.vm = vm;
-        this.isDef = rule.isDef;
 
         const id = uniqueId();
         this.id = id;
@@ -91,7 +98,7 @@ export function defRule() {
     }
 }
 
-export function parseRule(rule, vm) {
+export function parseRule(rule, vm, noVal) {
 
     const def = defRule();
     Object.keys(def).forEach((k) => {
@@ -114,8 +121,9 @@ export function parseRule(rule, vm) {
         $set(rule, k, parseRule[k]);
     });
 
-    if (!rule.field)
+    if (!rule.field && !noVal) {
         console.error('规则的 field 字段不能空' + errMsg());
+    }
 
     return rule
 }
