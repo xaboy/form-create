@@ -157,9 +157,9 @@ class render extends Render {
         }, render)];
     }
 
-    cacheParse() {
+    cacheParse(form) {
         this.cache = null;
-        return super.cacheParse();
+        return super.cacheParse(form);
     }
 
     makeUploadView(src, key, index) {

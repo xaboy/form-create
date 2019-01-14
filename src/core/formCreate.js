@@ -152,6 +152,10 @@ export default class FormCreate {
     createHandler(rules, child) {
         rules.forEach((_rule, index) => {
             if (child && isString(_rule)) return;
+
+            if (!_rule.type)
+                return console.error(`未定义生成规则的 type` + errMsg());
+
             let rule = getRule(_rule), handler = _rule.__handler__ || getComponent(this.vm, rule, this.options),
                 children = handler.rule.children;
 
@@ -176,6 +180,12 @@ export default class FormCreate {
 
             if (!child)
                 this.fieldList.push(handler.field);
+
+        });
+
+        rules.forEach((rule) => {
+            rule.__handler__.root = rules;
+            rule.__handler__.origin = [...rules];
         });
     }
 
@@ -264,12 +274,9 @@ export default class FormCreate {
         });
     }
 
-    isChange(rules) {
-        return rules.reduce((initial, rule, index) => {
-            return initial && rule === this.origin[index];
-        }, true) && this.origin.reduce((initial, rule, index) => {
-            return initial && rule === rule[index];
-        }, true);
+    isNotChange(rules) {
+        return rules.reduce((initial, rule, index) => initial && rule === this.origin[index], true)
+            && this.origin.reduce((initial, rule, index) => initial && rule === rules[index], true);
 
     }
 
@@ -279,10 +286,13 @@ export default class FormCreate {
             this.reload(this.rules);
         } else {
 
-            if (this.isChange(rules)) {
+            if (this.isNotChange(rules)) {
                 this.fCreateApi.refresh();
                 return;
             }
+
+            if (!this.origin.length)
+                this.fCreateApi.refresh();
 
             this.origin = [...rules];
             vm._unWatch();

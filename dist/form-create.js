@@ -289,6 +289,8 @@ exports.parseCol = parseCol;
 
 var _util = __webpack_require__(0);
 
+var _common = __webpack_require__(4);
+
 function _newArrowCheck(innerThis, boundThis) { if (innerThis !== boundThis) { throw new TypeError("Cannot instantiate an arrow function"); } }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -301,7 +303,7 @@ var Handler = function () {
 
         this.rule = rule;
         this.noValue = noValue;
-        this.type = rule.type;
+        this.type = (0, _util.toString)(rule.type).toLowerCase();
         this.isDef = true;
 
         if (!rule.field && noValue) {
@@ -310,6 +312,8 @@ var Handler = function () {
         } else {
             this.field = rule.field;
         }
+
+        if (!(0, _common.isComponent)(this.type) && !rule.col.labelWidth) rule.col.labelWidth = 1;
 
         this.vm = vm;
 
@@ -320,6 +324,8 @@ var Handler = function () {
         this.key = 'key_' + id;
         this.el = {};
         this.watch = [];
+        this.root = [];
+        this.origin = [];
 
         if ((0, _util.isUndef)(rule.props.elementId)) (0, _util.$set)(rule.props, 'elementId', this.unique);
 
@@ -331,45 +337,45 @@ var Handler = function () {
     }
 
     _createClass(Handler, [{
-        key: 'init',
+        key: "init",
         value: function init() {}
     }, {
-        key: 'toFormValue',
+        key: "toFormValue",
         value: function toFormValue(value) {
             return value;
         }
     }, {
-        key: 'toValue',
+        key: "toValue",
         value: function toValue(parseValue) {
             return parseValue;
         }
     }, {
-        key: 'setValue',
+        key: "setValue",
         value: function setValue(value) {
             this.rule.value = value;
             this.vm._changeValue(this.field, value);
         }
     }, {
-        key: 'getValue',
+        key: "getValue",
         value: function getValue() {
             return this.vm._value(this.field);
         }
     }, {
-        key: 'watchValue',
+        key: "watchValue",
         value: function watchValue(n) {
             (0, _util.$set)(this.rule, 'value', n);
             this.vm._changeFormData(this.field, this.toFormValue(n));
         }
     }, {
-        key: 'watchFormValue',
+        key: "watchFormValue",
         value: function watchFormValue(n) {}
     }, {
-        key: 'reset',
+        key: "reset",
         value: function reset() {
             this.vm._changeValue(this.field, this.defaultValue);
         }
     }, {
-        key: 'mounted',
+        key: "mounted",
         value: function mounted() {
             var _this = this;
 
@@ -459,11 +465,11 @@ function parseEmit(field, emitPrefix, emit, vm) {
     emit.forEach(function (eventName) {
         _newArrowCheck(this, _this3);
 
-        var fieldKey = (0, _util.toLine)(String(field) + '-' + String(eventName)).replace('_', '-');
+        var fieldKey = (0, _util.toLine)(String(field) + "-" + String(eventName)).replace('_', '-');
 
-        var emitKey = emitPrefix ? (String(emitPrefix) + '-').toLowerCase() + (0, _util.toLine)(eventName) : emitPrefix;
+        var emitKey = emitPrefix ? (String(emitPrefix) + "-").toLowerCase() + (0, _util.toLine)(eventName) : emitPrefix;
 
-        event['on-' + String(eventName)] = event[eventName] = function () {
+        event["on-" + String(eventName)] = event[eventName] = function () {
             for (var _len = arguments.length, arg = Array(_len), _key = 0; _key < _len; _key++) {
                 arg[_key] = arguments[_key];
             }
@@ -480,7 +486,7 @@ function parseEmit(field, emitPrefix, emit, vm) {
 
 function parseEvent(event) {
     Object.keys(event).forEach(function (eventName) {
-        var _name = (0, _util.toString)(eventName).indexOf('on-') === 0 ? eventName : 'on-' + String(eventName);
+        var _name = (0, _util.toString)(eventName).indexOf('on-') === 0 ? eventName : "on-" + String(eventName);
 
         if (_name !== eventName) {
             (0, _util.$set)(event, _name, event[eventName]);
@@ -564,14 +570,14 @@ var Render = function () {
         value: function init() {}
     }, {
         key: "cacheParse",
-        value: function cacheParse() {
+        value: function cacheParse(form, _super) {
             var _this = this;
 
             var _handler = this.handler,
                 noValue = _handler.noValue,
                 noCache = _handler.noCache;
 
-            if (!this.cache || noValue === true || noCache === true) this.cache = this.parse();
+            if (!this.cache || noValue === true || noCache === true) this.cache = _super ? _super.parse.call(this, form) : this.parse(form);
             var eventList = [].concat(_toConsumableArray(this.$tickEvent));
             this.$tickEvent = [];
             if (eventList.length) (0, _util.$nt)(function () {
@@ -608,18 +614,22 @@ var Render = function () {
         }
     }, {
         key: "parse",
-        value: function parse() {
+        value: function parse(form) {
             var _this3 = this;
 
             var _handler2 = this.handler,
                 type = _handler2.type,
                 rule = _handler2.rule,
                 refName = _handler2.refName,
-                key = _handler2.key;
+                key = _handler2.key,
+                noValue = _handler2.noValue,
+                origin = _handler2.origin,
+                root = _handler2.root,
+                vm = _handler2.vm;
+
 
             if (rule.type === 'template') {
                 if (_vue2.default.compile !== undefined) {
-
                     if ((0, _util.isUndef)(rule.vm)) rule.vm = new _vue2.default();
 
                     var vn = _vue2.default.compile(rule.template, {}).render.call(rule.vm);
@@ -631,6 +641,18 @@ var Render = function () {
                     console.error('使用的 Vue 版本不支持 compile' + (0, _util.errMsg)());
                     return [];
                 }
+            } else if (!noValue) {
+
+                origin.forEach(function (_rule) {
+                    _newArrowCheck(this, _this3);
+
+                    if (root.indexOf(_rule) === -1) {
+                        vm._fComponent.removeField(_rule.__field__);
+                    }
+                }.bind(this));
+                this.handler.origin = [].concat(_toConsumableArray(root));
+
+                return form.makeComponent(this.handler.render);
             } else {
                 rule.ref = refName;
                 if ((0, _util.isUndef)(rule.key)) rule.key = 'def' + (0, _util.uniqueId)();
@@ -638,16 +660,20 @@ var Render = function () {
                     _newArrowCheck(this, _this3);
 
                     var vn = [],
-                        children = rule.children;
-                    if (Array.isArray(children) && children.length > 0) vn = children.map(function (child) {
-                        _newArrowCheck(this, _this3);
+                        children = rule.children || [];
+                    if (Array.isArray(children) && children.length > 0) {
+                        vn = children.map(function (child) {
+                            _newArrowCheck(this, _this3);
 
-                        if ((0, _util.isString)(child)) return [child];
-                        if (!child.__handler__) vm._fComponent.createHandler([child], true);
-                        return child.__handler__.render.cacheParse();
-                    }.bind(this));
+                            if ((0, _util.isString)(child)) return [child];
+                            if (!child.__handler__) vm._fComponent.createHandler([child], true);
+                            return child.__handler__.render.cacheParse(form, this);
+                        }.bind(this));
+                    }
+
                     return vn;
                 }.bind(this));
+
                 _vn.key = key;
                 return [_vn];
             }
@@ -855,6 +881,7 @@ exports.componentCommon = exports.getGlobalApi = exports.formCreateStyle = expor
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 exports.getComponent = getComponent;
+exports.isComponent = isComponent;
 exports.getUdfComponent = getUdfComponent;
 exports.getConfig = getConfig;
 exports.toDefSlot = toDefSlot;
@@ -909,9 +936,13 @@ var iviewConfig = exports.iviewConfig = function () {
 
 function getComponent(vm, rule, createOptions) {
     var name = (0, _util.toString)(rule.type).toLowerCase(),
-        component = _componentList2.default[name] === undefined ? getUdfComponent() : _componentList2.default[name];
+        component = isComponent(name) ? _componentList2.default[name] : getUdfComponent();
 
     return new component.handler(vm, rule, component.render, createOptions, component.noValue);
+}
+
+function isComponent(type) {
+    return _componentList2.default[type] !== undefined;
 }
 
 function getUdfComponent() {
@@ -1021,7 +1052,6 @@ function getGlobalApi(fComponent) {
         _this9 = this;
 
     var vm = fComponent.vm;
-
     return {
         formData: function formData() {
             _newArrowCheck(this, _this2);
@@ -1062,10 +1092,17 @@ function getGlobalApi(fComponent) {
         removeField: function removeField(field) {
             _newArrowCheck(this, _this2);
 
-            var fields = fComponent.fieldList,
+            var handler = fComponent.handlers[field];
+            if (!handler) throw new Error(String(field) + ' \u5B57\u6BB5\u4E0D\u5B58\u5728' + (0, _util.errMsg)());
+            var fields = handler.root.map(function (rule) {
+                _newArrowCheck(this, _this2);
+
+                return rule.__field__;
+            }.bind(this)),
                 index = fields.indexOf((0, _util.toString)(field));
-            if (index === -1) throw new Error(String(after) + ' \u5B57\u6BB5\u4E0D\u5B58\u5728' + (0, _util.errMsg)());
-            fComponent.rules.splice(index, 1);
+            if (index === -1) throw new Error(String(field) + ' \u5B57\u6BB5\u4E0D\u5B58\u5728' + (0, _util.errMsg)());
+            handler.root.splice(index, 1);
+            vm._refresh();
         }.bind(this),
         validate: function validate(successFn, errorFn) {
             _newArrowCheck(this, _this2);
@@ -1702,6 +1739,9 @@ var FormCreate = function () {
                 _newArrowCheck(this, _this2);
 
                 if (child && (0, _util.isString)(_rule)) return;
+
+                if (!_rule.type) return console.error("\u672A\u5B9A\u4E49\u751F\u6210\u89C4\u5219\u7684 type" + (0, _util.errMsg)());
+
                 var rule = getRule(_rule),
                     handler = _rule.__handler__ || (0, _common.getComponent)(this.vm, rule, this.options),
                     children = handler.rule.children;
@@ -1723,6 +1763,13 @@ var FormCreate = function () {
                 if (Array.isArray(children) && children.length > 0) this.createHandler(children, true);
 
                 if (!child) this.fieldList.push(handler.field);
+            }.bind(this));
+
+            rules.forEach(function (rule) {
+                _newArrowCheck(this, _this2);
+
+                rule.__handler__.root = rules;
+                rule.__handler__.origin = [].concat(_toConsumableArray(rules));
             }.bind(this));
         }
     }, {
@@ -1850,8 +1897,8 @@ var FormCreate = function () {
             }.bind(this));
         }
     }, {
-        key: "isChange",
-        value: function isChange(rules) {
+        key: "isNotChange",
+        value: function isNotChange(rules) {
             var _this6 = this;
 
             return rules.reduce(function (initial, rule, index) {
@@ -1861,7 +1908,7 @@ var FormCreate = function () {
             }.bind(this), true) && this.origin.reduce(function (initial, rule, index) {
                 _newArrowCheck(this, _this6);
 
-                return initial && rule === rule[index];
+                return initial && rule === rules[index];
             }.bind(this), true);
         }
     }, {
@@ -1874,10 +1921,12 @@ var FormCreate = function () {
                 this.reload(this.rules);
             } else {
 
-                if (this.isChange(rules)) {
+                if (this.isNotChange(rules)) {
                     this.fCreateApi.refresh();
                     return;
                 }
+
+                if (!this.origin.length) this.fCreateApi.refresh();
 
                 this.origin = [].concat(_toConsumableArray(rules));
                 vm._unWatch();
@@ -2400,9 +2449,9 @@ var render = function (_Render) {
         }
     }, {
         key: "cacheParse",
-        value: function cacheParse() {
+        value: function cacheParse(form) {
             this.cache = null;
-            return _get(render.prototype.__proto__ || Object.getPrototypeOf(render.prototype), "cacheParse", this).call(this);
+            return _get(render.prototype.__proto__ || Object.getPrototypeOf(render.prototype), "cacheParse", this).call(this, form);
         }
     }, {
         key: "makeUploadView",
@@ -4801,20 +4850,22 @@ var Form = function () {
                 }.bind(this));
                 this.cacheUnique = vm.unique;
             }
+            this.propsData = this.vData.props(this.options.form).props(this.form).ref(this.refName).nativeOn({ submit: preventDefault }).class('form-create', true).key(this.unique).get();
             var unique = this.unique,
-                propsData = this.vData.props(this.options.form).props(this.form).ref(this.refName).nativeOn({ submit: preventDefault }).class('form-create', true).key(unique).get(),
                 vn = this.renderSort.map(function (field) {
                 _newArrowCheck(this, _this);
 
-                var render = this.getRender(field),
-                    _render$handler = render.handler,
-                    key = _render$handler.key,
-                    type = _render$handler.type;
-                if (type === 'hidden') return;
-                return this.makeFormItem(render.handler, render.cacheParse(), "fItem" + String(key) + String(unique));
+                var render = this.getRender(field);
+                if (render.handler.type === 'hidden') return;
+                return this.makeComponent(render);
             }.bind(this));
             if (vn.length > 0) vn.push(this.makeFormBtn(unique));
-            return this.vNode.form(propsData, [this.vNode.row((0, _util.extend)({ props: this.options.row || {} }, { key: 'row' + unique }), vn)]);
+            return this.vNode.form(this.propsData, [this.vNode.row((0, _util.extend)({ props: this.options.row || {} }, { key: 'row' + unique }), vn)]);
+        }
+    }, {
+        key: "makeComponent",
+        value: function makeComponent(render) {
+            return this.makeFormItem(render.handler, render.cacheParse(this), "fItem" + String(render.handler.key) + String(this.unique));
         }
     }, {
         key: "makeFormItem",
@@ -4832,13 +4883,19 @@ var Form = function () {
                 rules: rule.validate,
                 labelWidth: rule.col.labelWidth,
                 required: rule.props.required
-            }).key(fItemUnique).ref('fItem' + refName).class(className).get();
+            }).key(fItemUnique).ref('fItem' + refName).class(className).get(),
+                node = this.vNode.formItem(propsData, VNodeFn);
+            return this.propsData.props.inline === true ? [node] : this.makeCol(rule, fItemUnique, [node]);
+        }
+    }, {
+        key: "makeCol",
+        value: function makeCol(rule, fItemUnique, VNodeFn) {
             return this.vNode.col({
                 props: rule.col, 'class': {
                     '__fc_h': rule.props.hidden === true,
                     '__fc_v': rule.props.visibility === true
                 }, key: String(fItemUnique) + "col1"
-            }, [this.vNode.formItem(propsData, VNodeFn)]);
+            }, VNodeFn);
         }
     }, {
         key: "makeFormBtn",
@@ -4986,7 +5043,6 @@ var maker = function () {
         create: function create(type, field) {
             var make = commonMaker('', field);
             make.rule.type = type;
-            make.col({ labelWidth: 1 });
             return make;
         },
         createTmp: function createTmp(template, vm, field) {
@@ -4994,7 +5050,6 @@ var maker = function () {
             make.rule.type = 'template';
             make.rule.template = template;
             make.rule.vm = vm;
-            make.col({ labelWidth: 1 });
             return make;
         }
     });

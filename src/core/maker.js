@@ -24,7 +24,6 @@ const maker = (() => {
         create(type, field) {
             let make = commonMaker('', field);
             make.rule.type = type;
-            make.col({labelWidth: 1});
             return make;
         },
         createTmp(template, vm, field) {
@@ -32,7 +31,6 @@ const maker = (() => {
             make.rule.type = 'template';
             make.rule.template = template;
             make.rule.vm = vm;
-            make.col({labelWidth: 1});
             return make;
         }
     });

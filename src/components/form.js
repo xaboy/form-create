@@ -40,35 +40,44 @@ export default class Form {
             });
             this.cacheUnique = vm.unique;
         }
+        this.propsData = this.vData.props(this.options.form).props(this.form)
+            .ref(this.refName).nativeOn({submit: preventDefault}).class('form-create', true).key(this.unique).get();
         let unique = this.unique,
-            propsData = this.vData.props(this.options.form).props(this.form)
-                .ref(this.refName).nativeOn({submit: preventDefault}).class('form-create', true).key(unique).get(),
             vn = this.renderSort.map((field) => {
-                let render = this.getRender(field), {key, type} = render.handler;
-                if (type === 'hidden') return;
-                return this.makeFormItem(render.handler, render.cacheParse(), `fItem${key}${unique}`);
+                let render = this.getRender(field);
+                if (render.handler.type === 'hidden') return;
+                return this.makeComponent(render);
 
             });
         if (vn.length > 0)
             vn.push(this.makeFormBtn(unique));
-        return this.vNode.form(propsData, [this.vNode.row(extend({props: this.options.row || {}}, {key: 'row' + unique}), vn)]);
+        return this.vNode.form(this.propsData, [this.vNode.row(extend({props: this.options.row || {}}, {key: 'row' + unique}), vn)]);
+    }
+
+    makeComponent(render) {
+        return this.makeFormItem(render.handler, render.cacheParse(this), `fItem${render.handler.key}${this.unique}`);
     }
 
     makeFormItem({rule, unique, field, refName}, VNodeFn, fItemUnique) {
         let className = rule.className, propsData = this.vData.props({
-            prop: field,
-            label: rule.title,
-            labelFor: unique,
-            rules: rule.validate,
-            labelWidth: rule.col.labelWidth,
-            required: rule.props.required
-        }).key(fItemUnique).ref('fItem' + refName).class(className).get();
+                prop: field,
+                label: rule.title,
+                labelFor: unique,
+                rules: rule.validate,
+                labelWidth: rule.col.labelWidth,
+                required: rule.props.required
+            }).key(fItemUnique).ref('fItem' + refName).class(className).get(),
+            node = this.vNode.formItem(propsData, VNodeFn);
+        return this.propsData.props.inline === true ? [node] : this.makeCol(rule, fItemUnique, [node])
+    }
+
+    makeCol(rule, fItemUnique, VNodeFn) {
         return this.vNode.col({
             props: rule.col, 'class': {
                 '__fc_h': rule.props.hidden === true,
                 '__fc_v': rule.props.visibility === true
             }, key: `${fItemUnique}col1`
-        }, [this.vNode.formItem(propsData, VNodeFn)]);
+        }, VNodeFn);
     }
 
     makeFormBtn(unique) {

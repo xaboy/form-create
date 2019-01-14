@@ -30,11 +30,14 @@ export const iviewConfig = (function () {
 }());
 
 export function getComponent(vm, rule, createOptions) {
-    let name = toString(rule.type).toLowerCase(), component = componentList[name] === undefined
-        ? getUdfComponent()
-        : componentList[name];
+    let name = toString(rule.type).toLowerCase(), component = isComponent(name)
+        ? componentList[name] : getUdfComponent();
 
     return new component.handler(vm, rule, component.render, createOptions, component.noValue);
+}
+
+export function isComponent(type) {
+    return componentList[type] !== undefined;
 }
 
 export function getUdfComponent() {
@@ -140,7 +143,6 @@ export function toDefSlot(slot, $h, rule) {
 
 export function getGlobalApi(fComponent) {
     let vm = fComponent.vm;
-    // window.fc = fComponent;
     return {
         formData: () => {
             return vm._formField().reduce((initial, key) => {
@@ -176,10 +178,14 @@ export function getGlobalApi(fComponent) {
             }
         },
         removeField: (field) => {
-            let fields = fComponent.fieldList, index = fields.indexOf(toString(field));
+            let handler = fComponent.handlers[field];
+            if (!handler)
+                throw new Error(`${field} 字段不存在` + errMsg());
+            let fields = handler.root.map(rule => rule.__field__), index = fields.indexOf(toString(field))
             if (index === -1)
-                throw new Error(`${after} 字段不存在` + errMsg());
-            fComponent.rules.splice(index, 1);
+                throw new Error(`${field} 字段不存在` + errMsg());
+            handler.root.splice(index, 1);
+            vm._refresh();
         },
         validate: (successFn, errorFn) => {
             fComponent.getFormRef().validate((valid) => {

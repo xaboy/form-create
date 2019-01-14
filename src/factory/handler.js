@@ -1,4 +1,5 @@
 import {isNumeric, uniqueId, toLine, isUndef, extend, toString, deepExtend, errMsg, $set, isString} from "../core/util";
+import {isComponent} from "../core/common";
 
 
 export default class Handler {
@@ -9,7 +10,7 @@ export default class Handler {
 
         this.rule = rule;
         this.noValue = noValue;
-        this.type = rule.type;
+        this.type = toString(rule.type).toLowerCase();
         this.isDef = true;
 
         if (!rule.field && noValue) {
@@ -18,6 +19,9 @@ export default class Handler {
         } else {
             this.field = rule.field;
         }
+
+        if (!isComponent(this.type) && !rule.col.labelWidth)
+            rule.col.labelWidth = 1;
 
         this.vm = vm;
 
@@ -28,6 +32,8 @@ export default class Handler {
         this.key = 'key_' + id;
         this.el = {};
         this.watch = [];
+        this.root = [];
+        this.origin = [];
 
         if (isUndef(rule.props.elementId))
             $set(rule.props, 'elementId', this.unique);

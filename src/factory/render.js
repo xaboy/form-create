@@ -21,10 +21,10 @@ export default class Render {
 
     }
 
-    cacheParse() {
+    cacheParse(form, _super) {
         let {noValue, noCache} = this.handler;
         if (!this.cache || noValue === true || noCache === true)
-            this.cache = this.parse();
+            this.cache = _super ? _super.parse.call(this, form) : this.parse(form);
         let eventList = [...this.$tickEvent];
         this.$tickEvent = [];
         if (eventList.length)
@@ -49,11 +49,11 @@ export default class Render {
             children.forEach(child => !isString(child) && child.__handler__.render.clearCache());
     }
 
-    parse() {
-        let {type, rule, refName, key} = this.handler;
+    parse(form) {
+        let {type, rule, refName, key, noValue, origin, root, vm} = this.handler;
+
         if (rule.type === 'template') {
             if (Vue.compile !== undefined) {
-
                 if (isUndef(rule.vm)) rule.vm = new Vue;
 
                 let vn = Vue.compile(rule.template, {}).render.call(rule.vm);
@@ -65,22 +65,35 @@ export default class Render {
                 console.error('使用的 Vue 版本不支持 compile' + errMsg());
                 return [];
             }
+        } else if (!noValue) {
+
+            origin.forEach(_rule => {
+                if (root.indexOf(_rule) === -1) {
+                    vm._fComponent.removeField(_rule.__field__);
+                }
+            });
+            this.handler.origin = [...root];
+
+            return form.makeComponent(this.handler.render);
         } else {
             rule.ref = refName;
             if (isUndef(rule.key))
                 rule.key = 'def' + uniqueId();
             let vn = this.vNode.make(type, {...rule}, () => {
-                let vn = [], children = rule.children;
-                if (Array.isArray(children) && children.length > 0)
+                let vn = [], children = rule.children || [];
+                if (Array.isArray(children) && children.length > 0) {
                     vn = children.map((child) => {
                         if (isString(child))
                             return [child];
                         if (!child.__handler__)
                             vm._fComponent.createHandler([child], true);
-                        return child.__handler__.render.cacheParse();
+                        return child.__handler__.render.cacheParse(form, this);
                     });
+                }
+
                 return vn;
             });
+
             vn.key = key;
             return [vn];
         }
