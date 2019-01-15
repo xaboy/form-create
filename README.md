@@ -19,9 +19,7 @@
 
 
 >  Support iview3.x
->
 >  If it helps, you can click on "Star" in the upper right corner. Thank you!
->
 >  The project is still being developed and improved. If there are any 'recommendations or questions, please ask [here](https://github.com/xaboy/form-create/issues/new)
 >
 
