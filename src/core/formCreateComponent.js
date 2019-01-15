@@ -17,7 +17,7 @@ export default function formCreateComponent(fComponent) {
         mounted() {
             fComponent.mounted(this);
             this.$f = fComponent.fCreateApi;
-            this.init();
+            this.__init();
             this.$watch('rules', n => {
                 this._fComponent.reload(n);
             })

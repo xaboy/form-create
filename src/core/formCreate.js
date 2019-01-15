@@ -299,7 +299,7 @@ export default class FormCreate {
             Object.keys(this.handlers).forEach(field => this.removeField(field));
             this.constructor(rules, this.options);
             this.init(vm);
-            vm.init();
+            vm.__init();
             $nt(() => {
                 this.mounted(vm, false);
             });

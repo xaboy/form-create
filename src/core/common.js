@@ -418,7 +418,7 @@ export const componentCommon = {
         _resetProps(props) {
             this.$set(this, 'resetProps', deepExtend(this.resetProps, props));
         },
-        init() {
+        __init() {
             const type = this._fComponent._type;
             this[type].forEach((rule, index) => {
                 let unWatch = this.$watch(`${type}.${index}.value`, n => {

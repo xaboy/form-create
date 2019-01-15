@@ -41,7 +41,7 @@ const $FormCreate = () => ({
             this.$emit('input', this.$f);
         });
         this.$emit('input', this.$f);
-        this.init();
+        this.__init();
     }
 });
 
