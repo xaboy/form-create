@@ -289,8 +289,6 @@ exports.parseCol = parseCol;
 
 var _util = __webpack_require__(0);
 
-var _common = __webpack_require__(4);
-
 function _newArrowCheck(innerThis, boundThis) { if (innerThis !== boundThis) { throw new TypeError("Cannot instantiate an arrow function"); } }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -312,8 +310,6 @@ var Handler = function () {
         } else {
             this.field = rule.field;
         }
-
-        if (!(0, _common.isComponent)(this.type) && !rule.col.labelWidth) rule.col.labelWidth = 1;
 
         this.vm = vm;
 
@@ -337,45 +333,45 @@ var Handler = function () {
     }
 
     _createClass(Handler, [{
-        key: "init",
+        key: 'init',
         value: function init() {}
     }, {
-        key: "toFormValue",
+        key: 'toFormValue',
         value: function toFormValue(value) {
             return value;
         }
     }, {
-        key: "toValue",
+        key: 'toValue',
         value: function toValue(parseValue) {
             return parseValue;
         }
     }, {
-        key: "setValue",
+        key: 'setValue',
         value: function setValue(value) {
             this.rule.value = value;
             this.vm._changeValue(this.field, value);
         }
     }, {
-        key: "getValue",
+        key: 'getValue',
         value: function getValue() {
             return this.vm._value(this.field);
         }
     }, {
-        key: "watchValue",
+        key: 'watchValue',
         value: function watchValue(n) {
             (0, _util.$set)(this.rule, 'value', n);
             this.vm._changeFormData(this.field, this.toFormValue(n));
         }
     }, {
-        key: "watchFormValue",
+        key: 'watchFormValue',
         value: function watchFormValue(n) {}
     }, {
-        key: "reset",
+        key: 'reset',
         value: function reset() {
             this.vm._changeValue(this.field, this.defaultValue);
         }
     }, {
-        key: "mounted",
+        key: 'mounted',
         value: function mounted() {
             var _this = this;
 
@@ -465,11 +461,11 @@ function parseEmit(field, emitPrefix, emit, vm) {
     emit.forEach(function (eventName) {
         _newArrowCheck(this, _this3);
 
-        var fieldKey = (0, _util.toLine)(String(field) + "-" + String(eventName)).replace('_', '-');
+        var fieldKey = (0, _util.toLine)(String(field) + '-' + String(eventName)).replace('_', '-');
 
-        var emitKey = emitPrefix ? (String(emitPrefix) + "-").toLowerCase() + (0, _util.toLine)(eventName) : emitPrefix;
+        var emitKey = emitPrefix ? (String(emitPrefix) + '-').toLowerCase() + (0, _util.toLine)(eventName) : emitPrefix;
 
-        event["on-" + String(eventName)] = event[eventName] = function () {
+        event['on-' + String(eventName)] = event[eventName] = function () {
             for (var _len = arguments.length, arg = Array(_len), _key = 0; _key < _len; _key++) {
                 arg[_key] = arguments[_key];
             }
@@ -486,7 +482,7 @@ function parseEmit(field, emitPrefix, emit, vm) {
 
 function parseEvent(event) {
     Object.keys(event).forEach(function (eventName) {
-        var _name = (0, _util.toString)(eventName).indexOf('on-') === 0 ? eventName : "on-" + String(eventName);
+        var _name = (0, _util.toString)(eventName).indexOf('on-') === 0 ? eventName : 'on-' + String(eventName);
 
         if (_name !== eventName) {
             (0, _util.$set)(event, _name, event[eventName]);
@@ -4791,6 +4787,8 @@ var _vData = __webpack_require__(6);
 
 var _vData2 = _interopRequireDefault(_vData);
 
+var _common = __webpack_require__(4);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _newArrowCheck(innerThis, boundThis) { if (innerThis !== boundThis) { throw new TypeError("Cannot instantiate an arrow function"); } }
@@ -4870,18 +4868,20 @@ var Form = function () {
     }, {
         key: "makeFormItem",
         value: function makeFormItem(_ref2, VNodeFn, fItemUnique) {
-            var rule = _ref2.rule,
+            var type = _ref2.type,
+                rule = _ref2.rule,
                 unique = _ref2.unique,
                 field = _ref2.field,
                 refName = _ref2.refName;
 
-            var className = rule.className,
+            var labelWidth = !(0, _common.isComponent)(type) && !rule.col.labelWidth && !rule.title ? 1 : rule.col.labelWidth,
+                className = rule.className,
                 propsData = this.vData.props({
                 prop: field,
                 label: rule.title,
                 labelFor: unique,
                 rules: rule.validate,
-                labelWidth: rule.col.labelWidth,
+                labelWidth: labelWidth,
                 required: rule.props.required
             }).key(fItemUnique).ref('fItem' + refName).class(className).get(),
                 node = this.vNode.formItem(propsData, VNodeFn);

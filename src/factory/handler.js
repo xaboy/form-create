@@ -1,6 +1,4 @@
 import {isNumeric, uniqueId, toLine, isUndef, extend, toString, deepExtend, errMsg, $set, isString} from "../core/util";
-import {isComponent} from "../core/common";
-
 
 export default class Handler {
 
@@ -20,8 +18,7 @@ export default class Handler {
             this.field = rule.field;
         }
 
-        if (!isComponent(this.type) && !rule.col.labelWidth)
-            rule.col.labelWidth = 1;
+
 
         this.vm = vm;
 

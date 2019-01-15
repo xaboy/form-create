@@ -1,7 +1,7 @@
 {
   "name": "form-create",
   "version": "1.5.4",
-  "description": "具有动态渲染、数据收集、校验和提交功能的表单生成器，同时支持使用json生成任何vue组件，支持双向数据绑定、事件扩展，内置有时间选择、日期选择、省市区三级联动等17种功能组件。",
+  "description": "好用的表单生成器|Form builder with dynamic rendering, data collection, validation and submission capabilities, built-in 17 commonly used form components, and supports the use of json to generate any vue component, supporting two-way data binding, event expansion.",
   "main": "dist/form-create.min.js",
   "module": "dist/form-create.min.js",
   "unpkg": "dist/form-create.min.js",

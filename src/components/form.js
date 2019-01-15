@@ -1,6 +1,7 @@
 import {deepExtend, extend, isUndef, toString, uniqueId} from "../core/util";
 import VNode from "../factory/vNode";
 import VData from "../factory/vData";
+import {isComponent} from "../core/common";
 
 export function preventDefault(e) {
     e.preventDefault();
@@ -58,13 +59,14 @@ export default class Form {
         return this.makeFormItem(render.handler, render.cacheParse(this), `fItem${render.handler.key}${this.unique}`);
     }
 
-    makeFormItem({rule, unique, field, refName}, VNodeFn, fItemUnique) {
-        let className = rule.className, propsData = this.vData.props({
+    makeFormItem({type, rule, unique, field, refName}, VNodeFn, fItemUnique) {
+        let labelWidth = (!isComponent(type) && !rule.col.labelWidth && !rule.title) ? 1 : rule.col.labelWidth,
+            className = rule.className, propsData = this.vData.props({
                 prop: field,
                 label: rule.title,
                 labelFor: unique,
                 rules: rule.validate,
-                labelWidth: rule.col.labelWidth,
+                labelWidth: labelWidth,
                 required: rule.props.required
             }).key(fItemUnique).ref('fItem' + refName).class(className).get(),
             node = this.vNode.formItem(propsData, VNodeFn);
