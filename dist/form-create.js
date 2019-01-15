@@ -303,6 +303,11 @@ var Handler = function () {
         this.noValue = noValue;
         this.type = (0, _util.toString)(rule.type).toLowerCase();
         this.isDef = true;
+        this.vm = vm;
+        this.el = {};
+        this.watch = [];
+        this.root = [];
+        this.origin = [];
 
         if (!rule.field && noValue) {
             this.field = 'tmp' + (0, _util.uniqueId)();
@@ -311,28 +316,26 @@ var Handler = function () {
             this.field = rule.field;
         }
 
-        this.vm = vm;
-
-        var id = (0, _util.uniqueId)();
-        this.id = id;
-        this.unique = 'fc_' + id;
-        this.refName = '__' + this.field + id;
-        this.key = 'key_' + id;
-        this.el = {};
-        this.watch = [];
-        this.root = [];
-        this.origin = [];
+        this.init();
+        this.refresh();
+        this.refName = '__' + this.field + this.id;
 
         if ((0, _util.isUndef)(rule.props.elementId)) (0, _util.$set)(rule.props, 'elementId', this.unique);
-
-        this.init();
-
-        this.parseValue = this.toFormValue(this.rule.value);
 
         this.render = new Render(vm, this, options);
     }
 
     _createClass(Handler, [{
+        key: 'refresh',
+        value: function refresh() {
+            var id = (0, _util.uniqueId)();
+            this.id = id;
+            this.unique = 'fc_' + id;
+            this.key = 'key_' + id;
+            this.parseValue = this.toFormValue(this.rule.value);
+            return this;
+        }
+    }, {
         key: 'init',
         value: function init() {}
     }, {
@@ -699,7 +702,15 @@ var Render = function () {
     }, {
         key: "onInput",
         value: function onInput(value) {
-            this.vm._changeFormData(this.handler.field, value);
+            var handler = this.handler,
+                _handler4 = this.handler,
+                field = _handler4.field,
+                vm = _handler4.vm,
+                trueValue = handler.toValue(value);
+            vm._changeFormData(field, value);
+            handler.setValue(trueValue);
+            vm._change(field, JSON.stringify(value));
+            handler.watchFormValue(value);
         }
     }]);
 
@@ -1392,7 +1403,7 @@ var componentCommon = exports.componentCommon = {
         _resetProps: function _resetProps(props) {
             this.$set(this, 'resetProps', (0, _util.deepExtend)(this.resetProps, props));
         },
-        init: function init() {
+        __init: function __init() {
             var _this10 = this;
 
             var type = this._fComponent._type;
@@ -1739,7 +1750,7 @@ var FormCreate = function () {
                 if (!_rule.type) return console.error("\u672A\u5B9A\u4E49\u751F\u6210\u89C4\u5219\u7684 type" + (0, _util.errMsg)());
 
                 var rule = getRule(_rule),
-                    handler = _rule.__handler__ || (0, _common.getComponent)(this.vm, rule, this.options),
+                    handler = _rule.__handler__ ? _rule.__handler__.refresh() : (0, _common.getComponent)(this.vm, rule, this.options),
                     children = handler.rule.children;
 
                 if (!this.notField(handler.field)) return console.error(String(rule.field) + " \u5B57\u6BB5\u5DF2\u5B58\u5728" + (0, _util.errMsg)());
@@ -1933,7 +1944,7 @@ var FormCreate = function () {
                 }.bind(this));
                 this.constructor(rules, this.options);
                 this.init(vm);
-                vm.init();
+                vm.__init();
                 (0, _util.$nt)(function () {
                     _newArrowCheck(this, _this7);
 
@@ -2641,7 +2652,7 @@ var $FormCreate = function () {
                 this.$emit('input', this.$f);
             }.bind(this));
             this.$emit('input', this.$f);
-            this.init();
+            this.__init();
         }
     };
 }.bind(undefined);
@@ -3207,6 +3218,8 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+
 var _handler2 = __webpack_require__(1);
 
 var _handler3 = _interopRequireDefault(_handler2);
@@ -3245,6 +3258,12 @@ var handler = function (_Handler) {
         value: function toFormValue(value) {
             var isArr = Array.isArray(value);
             if (this.rule.props.multiple === true) return isArr === true ? value : [value];else return isArr === true ? value[0] || '' : value;
+        }
+    }, {
+        key: "watchFormValue",
+        value: function watchFormValue(n) {
+            _get(handler.prototype.__proto__ || Object.getPrototypeOf(handler.prototype), "watchFormValue", this).call(this, n);
+            this.render.sync();
         }
     }]);
 
@@ -4987,7 +5006,7 @@ function formCreateComponent(fComponent) {
 
             fComponent.mounted(this);
             this.$f = fComponent.fCreateApi;
-            this.init();
+            this.__init();
             this.$watch('rules', function (n) {
                 _newArrowCheck(this, _this2);
 
