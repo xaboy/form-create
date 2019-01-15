@@ -144,8 +144,8 @@ function mock() {
                 }
             },
         ]).props({
-            multiple: true
-        }),
+            multiple: false
+        }).event({change:console.log}),
 
 
         //datePicker 日期选择组件

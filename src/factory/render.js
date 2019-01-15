@@ -114,7 +114,11 @@ export default class Render {
     }
 
     onInput(value) {
-        this.vm._changeFormData(this.handler.field, value);
+        let handler = this.handler, {field, vm} = this.handler, trueValue = handler.toValue(value);
+        vm._changeFormData(field, value);
+        handler.setValue(trueValue);
+        vm._change(field, JSON.stringify(value));
+        handler.watchFormValue(value);
     }
 
 }

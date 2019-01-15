@@ -156,7 +156,8 @@ export default class FormCreate {
             if (!_rule.type)
                 return console.error(`未定义生成规则的 type` + errMsg());
 
-            let rule = getRule(_rule), handler = _rule.__handler__ || getComponent(this.vm, rule, this.options),
+            let rule = getRule(_rule),
+                handler = _rule.__handler__ ? _rule.__handler__.refresh() : getComponent(this.vm, rule, this.options),
                 children = handler.rule.children;
 
             if (!this.notField(handler.field))

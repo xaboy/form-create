@@ -13,6 +13,11 @@ class handler extends Handler {
         else
             return isArr === true ? (value[0] || '') : value;
     }
+
+    watchFormValue(n) {
+        super.watchFormValue(n);
+        this.render.sync();
+    }
 }
 
 class render extends Render {

@@ -10,6 +10,11 @@ export default class Handler {
         this.noValue = noValue;
         this.type = toString(rule.type).toLowerCase();
         this.isDef = true;
+        this.vm = vm;
+        this.el = {};
+        this.watch = [];
+        this.root = [];
+        this.origin = [];
 
         if (!rule.field && noValue) {
             this.field = 'tmp' + uniqueId();
@@ -18,29 +23,25 @@ export default class Handler {
             this.field = rule.field;
         }
 
-
-
-        this.vm = vm;
-
-        const id = uniqueId();
-        this.id = id;
-        this.unique = 'fc_' + id;
-        this.refName = '__' + this.field + id;
-        this.key = 'key_' + id;
-        this.el = {};
-        this.watch = [];
-        this.root = [];
-        this.origin = [];
+        this.init();
+        this.refresh();
+        this.refName = '__' + this.field + this.id;
 
         if (isUndef(rule.props.elementId))
             $set(rule.props, 'elementId', this.unique);
 
-        this.init();
-
-        this.parseValue = this.toFormValue(this.rule.value);
-
         this.render = new Render(vm, this, options);
     }
+
+    refresh() {
+        const id = uniqueId();
+        this.id = id;
+        this.unique = 'fc_' + id;
+        this.key = 'key_' + id;
+        this.parseValue = this.toFormValue(this.rule.value);
+        return this;
+    }
+
 
     init() {
 
