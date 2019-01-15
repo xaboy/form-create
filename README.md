@@ -38,7 +38,7 @@
 
 - [ ] 支持 ElementUi
 
-- [x] 英文文档`1.5.4版本`
+- [x] 英文文档 `1.5.4版本`
 
 
 
@@ -73,10 +73,67 @@
 
 
 
-## 安装
+## Install
 
 ```shell
 npm install form-create
+```
+
+
+## Import
+
+CDN:
+```html
+<!-- import Vue.js -->
+<script src="//vuejs.org/js/vue.min.js"></script>
+<!-- import stylesheet -->
+<link rel="stylesheet" href="//unpkg.com/iview/dist/styles/iview.css">
+<!-- import iView -->
+<script src="//unpkg.com/iview/dist/iview.min.js"></script>
+<!-- import form-create -->
+<script src="//unpkg.com/form-create/dist/form-create.min.js"></script>
+
+```
+NodeJs:
+```js
+import Vue from 'vue';
+import iView from 'iview';
+import 'iview/dist/styles/iview.css';
+import formCreat from 'form-create'
+import { maker } from 'form-create'
+
+Vue.use(iView);
+Vue.use(formCreat)
+```
+
+
+## Usage
+
+```html
+<form-create ref="fc" v-model="fApi" :rule="rule" :option="option"></form-create>
+```
+
+```javascript
+    new Vue({
+        el:'#app1',
+        data:{
+            fApi:{},
+            rule:[
+                formCreate.maker.input('商品名称','goods_name'),
+                formCreate.maker.date('创建时间','created_at')
+            ],
+            option:{
+                onSubmit:function (formData) {
+                    $f.btn.loading();
+                    $f.resetBtn.disabled();
+                    alert(JSON.stringify(formData));
+                }
+            }
+        },
+        mounted:function () {
+            console.log(this.fApi.formData());
+        }
+    });
 ```
 
 ## Reference
