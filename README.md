@@ -24,9 +24,11 @@
 >
 >  The project is still being developed and improved. If there are any 'recommendations or questions, please ask [here](https://github.com/xaboy/form-create/issues/new)
 >
+
+>  如果对您有帮助，您可以点右上角 "Star" 支持一下 谢谢！本项目还在不断开发完善中,如有任何建议或问题[请在这里提出](https://github.com/xaboy/form-create/issues/new)
 >  本项目QQ讨论群[28963712](https://jq.qq.com/?_wv=1027&k=54aKUVw)
 
-> [Update log](http://www.form-create.com/guide/update.html)
+> [Update log / 更新日志](http://www.form-create.com/guide/update.html)
 
 
 
