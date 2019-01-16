@@ -36,13 +36,13 @@
 
 - [x] 性能优化`1.5.0版本`
 
-- [ ] 支持 ElementUi
+- [ ] 支持 ElementUI
 
 - [x] 英文文档 `1.5.4版本`
 
 
 
-![http://file.lotkk.com/demo-live.gif](http://file.lotkk.com/demo-live.gif)
+![http://file.lotkk.com/demo-live2.gif](http://file.lotkk.com/demo-live2.gif)
 
 
 
