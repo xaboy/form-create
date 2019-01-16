@@ -119,6 +119,7 @@ NodeJs
         data () {
             return {
                 fApi:{},
+                model: {},
                 //表单生成规则
                 rule:[
                     maker.input('商品名称','goods_name'),
@@ -130,8 +131,7 @@ NodeJs
                     onSubmit:function (formData) {
                         alert(JSON.stringify(formData));
                     }
-                },
-                model: {}
+                }
             };
         },
         mounted:function(){
@@ -145,6 +145,7 @@ Browser
         el:'#app1',
         data:{
             fApi:{},
+            model: {},
             rule:[
                 formCreate.maker.input('商品名称','goods_name'),
                 formCreate.maker.date('创建时间','created_at')
