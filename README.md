@@ -128,8 +128,6 @@ NodeJs
                 option:{
                     //表单提交事件
                     onSubmit:function (formData) {
-                        $f.btn.loading();
-                        $f.resetBtn.disabled();
                         alert(JSON.stringify(formData));
                     }
                 },
@@ -153,14 +151,12 @@ Browser
             ],
             option:{
                 onSubmit:function (formData) {
-                    $f.btn.loading();
-                    $f.resetBtn.disabled();
                     alert(JSON.stringify(formData));
                 }
             }
         },
         mounted:function () {
-            console.log(this.fApi.formData());
+            this.model = this.fApi.model();
         }
     });
 ```
