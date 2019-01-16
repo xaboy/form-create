@@ -112,7 +112,38 @@ Vue.use(formCreat)
 ```html
 <form-create ref="fc" v-model="fApi" :rule="rule" :option="option"></form-create>
 ```
-
+**NodeJs**
+```javascript
+    import {maker} from 'form-create'
+    export default {
+        data () {
+            return {
+                fApi:{},
+                //表单生成规则
+                rule:[
+                    maker.input('商品名称','goods_name'),
+                    maker.date('创建时间','created_at')
+                ],
+                //组件参数配置
+                option:{
+                    //显示表单重置按钮
+                    resetBtn:true,
+                    //表单提交事件
+                    onSubmit:function (formData) {
+                        $f.btn.loading();
+                        $f.resetBtn.disabled();
+                        alert(JSON.stringify(formData));
+                    }
+                },
+                model: {}
+            };
+        },
+        mounted:function(){
+            this.model = this.fApi.model();
+        }
+    };
+```
+**Browser**
 ```javascript
     new Vue({
         el:'#app1',
