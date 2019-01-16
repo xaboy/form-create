@@ -145,22 +145,56 @@ function mock() {
             },
         ]).props({
             multiple: false
-        }).event({change:console.log}),
+        }).event({change: console.log}),
 
 
-        //datePicker 日期选择组件
-        maker.date('活动日期', 'section_day', ['2018-02-20', new Date()]).props({
-            "type": "datetimerange",
-            "startDate": new Date(),
-            "showWeekNumbers": true,
-        }).col({span: 12}),
+        {
+            type: 'row',
+            children: [
+                {
+                    type: 'i-col',
+                    props: {
+                        span: 12
+                    },
+                    children: [
 
+                        //datePicker 日期选择组件
+                        maker.date('活动日期', 'section_day', ['2018-02-20', new Date()]).props({
+                            "type": "datetimerange",
+                            "startDate": new Date(),
+                            "showWeekNumbers": true,
+                        }),
 
-        //timePicker 时间选择组件
-        maker.time('活动时间', 'section_time', ['01:01:01', new Date()]).props({
-            "type": "timerange",
-            "placeholder": "请选择活动时间"
-        }).col({span: 12}),
+                        //timePicker 时间选择组件
+                        maker.time('活动时间', 'section_time', ['01:01:01', new Date()]).props({
+                            "type": "timerange",
+                            "placeholder": "请选择活动时间"
+                        }),
+
+                    ]
+                },
+                {
+                    type: 'i-col',
+                    props: {
+                        span: 12
+                    },
+                    children: [
+                        //inputNumber 数组输入框组件
+                        maker.number('排序', 'sort', 0).props({
+                            precision: 2
+                        }).col({span: 12}),
+
+                        //colorPicker 颜色选择组件
+                        maker.color('颜色', 'color', '#ff7271').props({
+                            "format": "hex"
+                        }).props({
+                            "hue": true
+                        }).col({span: 12}),
+
+                    ]
+                }
+            ]
+        },
 
 
         //datePicker 日期选择组件
@@ -202,19 +236,6 @@ function mock() {
         //     }
         // }),
 
-        //inputNumber 数组输入框组件
-        maker.number('排序', 'sort', 0).props({
-            precision: 2
-        }).col({span: 12}),
-
-
-        //colorPicker 颜色选择组件
-        maker.color('颜色', 'color', '#ff7271').props({
-            "format": "hex"
-        }).props({
-            "hue": true
-        }).col({span: 12}),
-
 
         //rate 评分组件
         maker.rate('推荐级别', 'rate', 2)
@@ -237,7 +258,7 @@ function mock() {
 
 
         //upload 上传组件
-        maker.upload('轮播图', 'pic', ['http://img1.touxiang.cn/uploads/20131030/30-075657_191.jpg'])
+        maker.upload('轮播图', 'pic', ['http://file.lotkk.com/form-create.jpeg'])
             .props({
                 "action": "http://127.0.0.1:8000/index/index/upload",
                 "maxLength": 4,
@@ -248,7 +269,7 @@ function mock() {
                 "name": "file",
                 "onSuccess": function (res) {
                     console.log('upload success');
-                    return 'http://img1.touxiang.cn/uploads/20131030/30-075657_191.jpg';
+                    return 'http://file.lotkk.com/form-create.jpeg';
                 },
                 "onRemove": function (file, fileList) {
                     console.log(file, fileList);
@@ -263,7 +284,7 @@ function mock() {
 
 
         //frame 框架组件
-        maker.frame('素材', 'fodder', ["http://img1.touxiang.cn/uploads/20131030/30-075657_191.jpg"]).props({
+        maker.frame('素材', 'fodder', ["http://file.lotkk.com/form-create.jpeg"]).props({
             src: "iframe.html",
             maxLength: 0,
             type: "image"
@@ -336,7 +357,7 @@ function mock() {
 
 
 //upload 上传组件
-$r = maker.upload('产品主图', 'logo', 'http://img1.touxiang.cn/uploads/20131030/30-075657_191.jpg').props({
+$r = maker.upload('产品主图', 'logo', 'http://file.lotkk.com/form-create.jpeg').props({
     "action": "http://127.0.0.1:8000/index/index/upload",
     "maxLength": 1,
     "multiple": false,
@@ -346,7 +367,7 @@ $r = maker.upload('产品主图', 'logo', 'http://img1.touxiang.cn/uploads/20131
     "uploadType": "image",
     "name": "file",
     "onSuccess": function () {
-        return 'http://img1.touxiang.cn/uploads/20131030/30-075657_191.jpg';
+        return 'http://file.lotkk.com/form-create.jpeg';
     }
 }).validate({required: true, type: 'array', min: 1, message: '请上传1张图片', trigger: 'change'});
 

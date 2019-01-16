@@ -302,7 +302,7 @@ function jsonMock() {
             type: "Upload",
             field: "pic",
             title: "轮播图",
-            value: ['http://img1.touxiang.cn/uploads/20131030/30-075657_191.jpg'], //input值
+            value: ['http://file.lotkk.com/form-create.jpeg'], //input值
             props: {
                 "type": "select", //上传控件的类型，可选值为 select（点击选择），drag（支持拖拽）
                 "uploadType": "image", //上传文件类型，可选值为 image（图片上传），file（文件上传）
@@ -321,7 +321,7 @@ function jsonMock() {
                 "onProgress": () => {
                 }, //文件上传时的钩子，返回字段为 event, file, fileList
                 "onSuccess": function () {
-                    return 'http://img1.touxiang.cn/uploads/20131030/30-075657_191.jpg';
+                    return 'http://file.lotkk.com/form-create.jpeg';
                 }, //文件上传成功时的钩子，返回字段为 response, file, fileList, 使用$f.uploadPush(field,filePath) 将上传后的路径添加到value中
                 "onError": (error, file, fileList) => {
                 }, //文件上传失败时的钩子，返回字段为 error, file, fileList
@@ -364,7 +364,7 @@ function jsonMock() {
             type: "frame",
             title: "素材",
             field: "fodder",
-            value: ["http://img1.touxiang.cn/uploads/20131030/30-075657_191.jpg"],
+            value: ["http://file.lotkk.com/form-create.jpeg"],
             props: {
                 type: "image", //frame类型,有input,file,image
                 src: "iframe.html", //iframe地址
