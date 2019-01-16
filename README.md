@@ -112,7 +112,7 @@ Vue.use(formCreat)
 ```html
 <form-create ref="fc" v-model="fApi" :rule="rule" :option="option"></form-create>
 ```
-**NodeJs**
+NodeJs
 ```javascript
     import {maker} from 'form-create'
     export default {
@@ -126,8 +126,6 @@ Vue.use(formCreat)
                 ],
                 //组件参数配置
                 option:{
-                    //显示表单重置按钮
-                    resetBtn:true,
                     //表单提交事件
                     onSubmit:function (formData) {
                         $f.btn.loading();
@@ -143,7 +141,7 @@ Vue.use(formCreat)
         }
     };
 ```
-**Browser**
+Browser
 ```javascript
     new Vue({
         el:'#app1',
