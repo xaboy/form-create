@@ -5,9 +5,6 @@ const pkg = require("./package.json");
 
 module.exports = {
     mode: "development",
-    output: {//输出文件
-        filename: 'dist/form-create.js'
-    },
     devtool: "source-map",
     module: {
         rules: [{
