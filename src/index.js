@@ -17,4 +17,6 @@ if (typeof window !== 'undefined' && window.Vue) {
     install(Vue);
 }
 
-module.exports.default = module.exports = formCreate;
+export default window.formCreate = formCreate;
+
+// module.exports.default = module.exports = formCreate;
