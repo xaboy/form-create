@@ -1,10 +1,10 @@
 {
   "presets": [
     [
-      "env",
+      "@babel/preset-env",
       {
         "loose": false,
-        "modules": "commonjs",
+        "modules": false,
         "spec": true,
         "targets": {
           "browsers": [
@@ -20,12 +20,17 @@
         "useBuiltIns": "usage",
         "debug": false
       }
-    ],
-    "stage-3"
+    ]
   ],
   "plugins": [
-//        "transform-object-rest-spread",
-//        "transform-runtime"
+    [
+      "@babel/plugin-transform-runtime", {
+        "corejs": false,
+        "helpers": false,
+        "regenerator": false,
+        "useESModules": true
+      }
+    ]
   ],
   "comments": false
 }
