@@ -1,6 +1,5 @@
 
-
-var maker = typeof formCreate === 'function' ? formCreate.maker : formCreate.default.maker;
+var maker = formCreate.maker;
 
 
 //使用maker 生成器生成
