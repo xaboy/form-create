@@ -24,7 +24,7 @@ function jsonMock() {
                 //可选项的数据源，格式参照示例说明
                 data: window.province_city || [],
                 //选择后展示的函数，用于自定义显示格式
-                renderFormat: label => label.join(' / '),
+                renderFormat: function(label) { return label.join(' / ') },
                 //是否禁用选择器
                 disabled: false,
                 //是否支持清除
@@ -38,7 +38,8 @@ function jsonMock() {
                 //输入框大小，可选值为large和small或者不填
                 size: undefined,
                 //动态获取数据，数据源需标识 loading
-                loadData: () => {
+                loadData: function () {
+
                 },
                 //是否支持搜索
                 filterable: false,
