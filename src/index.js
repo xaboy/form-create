@@ -19,6 +19,7 @@ if (typeof window !== 'undefined' && window.Vue) {
 
 // console.log(1111);
 
-// module.exports.default = module.exports = formCreate;
+
+// export default formCreate;
 
 export default window.formCreate = formCreate;

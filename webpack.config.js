@@ -12,8 +12,9 @@ module.exports = {
   output:{    //输出
     filename: 'dist/form-create.js',
     library: 'formCreate',
+    libraryExport: 'default',
     libraryTarget: 'umd',
-    umdNamedDefine: true    //输出的文件名
+    umdNamedDefine: true
   },
   module: {
     rules: [{

@@ -46,6 +46,7 @@
     "@babel/core": "^7.2.2",
     "@babel/preset-env": "^7.2.3",
     "babel-loader": "^8.0.5",
+    "babel-plugin-add-module-exports": "^1.0.0",
     "bili": "^3.4.2",
     "html-webpack-plugin": "^3.2.0",
     "iview": "^3.1.4",
@@ -55,8 +56,7 @@
     "webpack-cli": "^3.2.1",
     "webpack-dev-server": "^3.1.14"
   },
-  "dependencies": {
-  },
+  "dependencies": {},
   "engines": {
     "node": ">=8.9.1",
     "npm": ">=5.5.1",
