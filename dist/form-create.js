@@ -1289,6 +1289,19 @@
 	  });
 	}
 
+	var DateProto = Date.prototype;
+	var INVALID_DATE = 'Invalid Date';
+	var TO_STRING$1 = 'toString';
+	var $toString$1 = DateProto[TO_STRING$1];
+	var getTime = DateProto.getTime;
+	if (new Date(NaN) + '' != INVALID_DATE) {
+	  _redefine(DateProto, TO_STRING$1, function toString() {
+	    var value = getTime.call(this);
+	    // eslint-disable-next-line no-self-compare
+	    return value === value ? $toString$1.call(this) : INVALID_DATE;
+	  });
+	}
+
 	function $nt(fn) {
 	  Vue$1.nextTick(fn);
 	}
@@ -2647,7 +2660,7 @@
 	};
 
 	var name$7 = 'timePicker';
-	function getTime(date) {
+	function getTime$1(date) {
 	  return isDate(date) ? dateFormat('hh:mm:ss', date) : date;
 	}
 
@@ -2676,14 +2689,14 @@
 	      if ('timerange' === this.rule.props.type) {
 	        if (isArr) {
 	          parseValue = value.map(function (time) {
-	            return !time ? '' : getTime(timeStampToDate(time));
+	            return !time ? '' : getTime$1(timeStampToDate(time));
 	          });
 	        } else {
 	          parseValue = ['', ''];
 	        }
 	      } else {
 	        isArr && (value = value[0]);
-	        parseValue = !value ? '' : getTime(timeStampToDate(value));
+	        parseValue = !value ? '' : getTime$1(timeStampToDate(value));
 	      }
 
 	      return parseValue;
@@ -5200,14 +5213,16 @@
 	  Vue.use(FormCreate);
 	}
 
-	if (typeof window !== 'undefined' && window.Vue) {
-	  install(Vue);
+	if (typeof window !== 'undefined') {
+	  window.formCreate = FormCreate;
+
+	  if (window.Vue) {
+	    install(Vue);
+	  }
 	}
 
-	var index = window.formCreate = FormCreate;
-
 	exports.install = install;
-	exports.default = index;
+	exports.default = FormCreate;
 
 	Object.defineProperty(exports, '__esModule', { value: true });
 

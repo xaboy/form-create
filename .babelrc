@@ -8,9 +8,9 @@
           "chrome": 59,
           "edge": 13,
           "firefox": 50,
-          "ie": 10
+          "ie": 9
         },
-        "useBuiltIns": "usage",
+        "useBuiltIns": "usage"
       }
     ]
   ],

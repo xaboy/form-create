@@ -13,13 +13,12 @@ export function install(Vue) {
     Vue.use(formCreate);
 }
 
-if (typeof window !== 'undefined' && window.Vue) {
-    install(Vue);
+if (typeof window !== 'undefined') {
+    window.formCreate = formCreate;
+
+    if (window.Vue) {
+        install(Vue);
+    }
 }
 
-// console.log(1111);
-
-
-// export default formCreate;
-
-export default window.formCreate = formCreate;
+export default formCreate;

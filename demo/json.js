@@ -24,7 +24,9 @@ function jsonMock() {
                 //可选项的数据源，格式参照示例说明
                 data: window.province_city || [],
                 //选择后展示的函数，用于自定义显示格式
-                renderFormat: function(label) { return label.join(' / ') },
+                renderFormat: function (label) {
+                    return label.join(' / ')
+                },
                 //是否禁用选择器
                 disabled: false,
                 //是否支持清除
@@ -87,7 +89,9 @@ function jsonMock() {
                     'xian',
                     'github'
                 ],
-                filterMethod: (value, option) => {
+                filterMethod: function (value, option) {
+                    value = value || '';
+                    option = option || '';
                     return option.toUpperCase().indexOf(value.toUpperCase()) !== -1
                 }
             }
@@ -317,27 +321,27 @@ function jsonMock() {
                 "format": [], //支持的文件类型，与 accept 不同的是，format 是识别文件的后缀名，accept 为 input 标签原生的 accept 属性，会在选择文件时过滤，可以两者结合使用
                 "maxSize": undefined, //文件大小限制，单位 kb
                 "maxLength": 4, //上传文件最大数
-                "beforeUpload": () => {
+                "beforeUpload": function () {
                 }, //上传文件之前的钩子，参数为上传的文件，若返回 false 或者 Promise 则停止上传
-                "onProgress": () => {
+                "onProgress": function () {
                 }, //文件上传时的钩子，返回字段为 event, file, fileList
                 "onSuccess": function () {
                     return 'http://file.lotkk.com/form-create.jpeg';
                 }, //文件上传成功时的钩子，返回字段为 response, file, fileList, 使用$f.uploadPush(field,filePath) 将上传后的路径添加到value中
-                "onError": (error, file, fileList) => {
+                "onError": function (error, file, fileList) {
                 }, //文件上传失败时的钩子，返回字段为 error, file, fileList
-                "onPreview": () => {
+                "onPreview": function () {
                 }, //点击已上传的文件链接时的钩子，返回字段为 file， 可以通过 file.response 拿到服务端返回数据
-                "onRemove": () => {
+                "onRemove": function () {
                 }, //文件列表移除文件时的钩子，返回字段为 file, fileList
-                "onFormatError": () => {
+                "onFormatError": function () {
                 }, //文件格式验证失败时的钩子，返回字段为 file, fileList
-                "onExceededSize": () => {
+                "onExceededSize": function () {
                 }, //文件超出指定大小限制时的钩子，返回字段为 file, fileList
                 //操作按钮的图标 ,设置为false将不显示
                 handleIcon: 'ios-eye-outline',
                 //点击操作按钮事件,会覆盖默认的预览操作
-                // onHandle:(src)=>{},
+                // onHandle:function (src){},
                 //是否可删除,设置为false是不显示删除按钮
                 allowRemove: true,
             }
@@ -378,7 +382,7 @@ function jsonMock() {
                 handleIcon: true, //操作按钮的图标 ,设置为false将不显示,设置为true为默认的预览图标,类型为file时默认为false,image类型默认为true
                 allowRemove: true, //是否可删除,设置为false是不显示删除按钮
                 onHandle: undefined, //点击操作按钮事件,默认为图片预览
-                onRemove: () => {
+                onRemove: function () {
                     return false;
                 } //点击删除按钮事件,返回false将不删除
             },

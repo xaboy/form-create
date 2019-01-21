@@ -1,10 +1,9 @@
-
 var maker = formCreate.maker;
 
 
 //使用maker 生成器生成
 function mock() {
-    let mock;
+    var mock;
     return mock = [
 
         //hidden 组件
@@ -36,7 +35,7 @@ function mock() {
                 'xian',
                 'github'
             ],
-            filterMethod: (value, option) => {
+            filterMethod: function (value, option) {
                 value = value || '';
                 option = option || '';
 
@@ -109,7 +108,7 @@ function mock() {
             show: true
         })
             .on({
-                "click": function() {
+                "click": function () {
                     console.log('click');
                 },
             }).col({span: 12}).children([
@@ -133,7 +132,7 @@ function mock() {
         maker.select("产品分类", "cate_id", ["104", "105"]).options([
             {"value": "104", "label": "生态蔬菜", "disabled": false, "slot": "<div style:'color:#ff7271;'>自定义显示内容</div>"},
             {
-                "value": "105", "label": "新鲜水果", "disabled": false, "slot": ($h) => {
+                "value": "105", "label": "新鲜水果", "disabled": false, "slot": function ($h) {
                     return $h("div", {
                         style: "color:#ff7271;"
                     }, [$h('icon', {
@@ -207,13 +206,13 @@ function mock() {
         // }).col({span: 12}).defaultSlot(function ($h) {
         //     return $h('a', {
         //         on: {
-        //             click: () => {
+        //             click: function () {
         //                 this.props.open = true;
         //             }
         //         },
         //     }, [mock[14].value ? mock[14].value.toString() : 'select Date']);
         // }).event({
-        //     ok: () => {
+        //     ok: function () {
         //         mock[14].props.open = false;
         //     }
         // }),
@@ -226,13 +225,13 @@ function mock() {
         // }).col({span: 12}).defaultSlot(function ($h) {
         //     return $h('a', {
         //         on: {
-        //             click: () => {
+        //             click: function () {
         //                 this.props.open = true;
         //             }
         //         },
         //     }, [mock[15].value ? mock[15].value.toString() : 'select Time']);
         // }).event({
-        //     ok: () => {
+        //     ok: function () {
         //         mock[15].props.open = false;
         //     }
         // }),
@@ -292,7 +291,7 @@ function mock() {
         }).validate([
             {required: true, type: 'array', min: 2, message: '请选择2张图片', trigger: 'change'}
         ]).event({
-            remove: () => {
+            remove: function () {
                 alert('不能删除');
                 return false;
             },
