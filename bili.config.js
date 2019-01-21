@@ -16,7 +16,7 @@ module.exports = {
   ` * Github https://github.com/xaboy/form-create\n` +
   ` * Released under the ${license} License.\n` +
   ' */',
-  js: "buble",
+  js: "babel",
   replace: {
     'process.env.NODE_ENV': JSON.stringify('production'),
     'process.env.VERSION': JSON.stringify(version)

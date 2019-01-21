@@ -1,4 +1,6 @@
-var maker = formCreate.maker;
+
+
+var maker = typeof formCreate === 'function' ? formCreate.maker : formCreate.default.maker;
 
 
 //使用maker 生成器生成
@@ -108,7 +110,7 @@ function mock() {
             show: true
         })
             .on({
-                "click": () => {
+                "click": function() {
                     console.log('click');
                 },
             }).col({span: 12}).children([
