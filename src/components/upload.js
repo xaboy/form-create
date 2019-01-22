@@ -45,7 +45,7 @@ class handler extends Handler {
     mounted() {
         super.mounted();
         $set(this.rule.props, 'defaultFileList', this.parseValue);
-        this.changeParseValue(this.el.fileList);
+        this.changeParseValue(this.el.fileList || []);
     }
 
     push(file) {

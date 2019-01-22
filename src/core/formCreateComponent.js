@@ -1,5 +1,6 @@
 import {formCreateName} from './component';
 import {componentCommon} from "./common";
+import {$nt} from "./util";
 
 export default function formCreateComponent(fComponent) {
     return {
@@ -19,8 +20,10 @@ export default function formCreateComponent(fComponent) {
             this.$f = fComponent.fCreateApi;
             this.__init();
             this.$watch('rules', n => {
-                this._fComponent.reload(n);
-            })
+                $nt(() => {
+                    this._fComponent.reload(n, this.unique);
+                });
+            });
         }
     }
 };

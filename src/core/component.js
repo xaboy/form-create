@@ -1,5 +1,6 @@
 import formCreate from './formCreate';
 import {componentCommon} from './common';
+import {$nt} from "./util";
 
 const formCreateName = 'FormCreate';
 
@@ -37,9 +38,16 @@ const $FormCreate = () => ({
         this._fComponent.mounted(this);
         this.$f = this._fComponent.fCreateApi;
         this.$watch('rule', n => {
-            this._fComponent.reload(n);
-            this.$emit('input', this.$f);
+            $nt(() => {
+                this._fComponent.reload(n, this.unique);
+                this.$emit('input', this.$f);
+            });
         });
+        this.$watch('option', n => {
+            $nt(() => {
+                this._sync();
+            });
+        }, {deep: true});
         this.$emit('input', this.$f);
         this.__init();
     }

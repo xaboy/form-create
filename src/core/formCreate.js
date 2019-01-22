@@ -121,6 +121,7 @@ export default class FormCreate {
         if (this.fCreateApi === undefined)
             this.fCreateApi = getGlobalApi(this);
         this.fCreateApi.rule = this.rules;
+        this.fCreateApi.config = this.options;
 
         this.fRender = new formRender(this);
     }
@@ -191,7 +192,7 @@ export default class FormCreate {
     }
 
     create(Vue) {
-        let $fCreate = Vue.extend(this.component()), $vm = new $fCreate().$mount();
+        let $fCreate = Vue.extend(formCreateComponent(this)), $vm = new $fCreate().$mount();
         this.options.el.appendChild($vm.$el);
         return $vm;
     }
@@ -212,10 +213,6 @@ export default class FormCreate {
                 onReload && onReload(this.fCreateApi);
             })
         });
-    }
-
-    component() {
-        return formCreateComponent(this);
     }
 
     removeField(field) {
@@ -281,10 +278,10 @@ export default class FormCreate {
 
     }
 
-    reload(rules) {
+    reload(rules, unique) {
         let vm = this.vm;
         if (!rules) {
-            this.reload(this.rules);
+            this.reload(this.rules, unique);
         } else {
 
             if (this.isNotChange(rules)) {
@@ -302,7 +299,8 @@ export default class FormCreate {
             this.init(vm);
             vm.__init();
             $nt(() => {
-                this.mounted(vm, false);
+                if (isUndef(unique) || vm.unique === unique)
+                    this.mounted(vm, false);
             });
         }
 

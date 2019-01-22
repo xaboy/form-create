@@ -79,7 +79,7 @@ export default class Handler {
     mounted() {
         let refName = 'fItem' + this.refName, vm = this.vm, children = this.rule.children;
         this.el = vm.$refs[this.refName];
-        this.defaultValue = this.toValue(vm.$refs[refName]
+        this.defaultValue = this.toValue(vm.$refs[refName] && !isUndef(vm.$refs[refName].initialValue)
             ? vm.$refs[refName].initialValue : deepExtend({}, {value: this.rule.value}).value);
         if (Array.isArray(children) && children.length > 0)
             children.forEach(child => !isString(child) && child.__handler__.mounted());

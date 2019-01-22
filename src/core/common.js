@@ -1,4 +1,4 @@
-import {deepExtend, isFunction, isDate, toString, errMsg, $del, isUndef} from "./util";
+import {deepExtend, isFunction, isDate, toString, errMsg, $del, isUndef, $set, isPlainObject} from "./util";
 import Handler from '../factory/handler';
 import Render from '../factory/render';
 import componentList from './componentList';
@@ -143,6 +143,15 @@ export function toDefSlot(slot, $h, rule) {
 
 export function getGlobalApi(fComponent) {
     let vm = fComponent.vm;
+
+    function tidyFields(fields) {
+        if (!fields)
+            fields = vm._formField();
+        else if (!Array.isArray(fields))
+            fields = [fields];
+        return fields;
+    }
+
     return {
         formData: () => {
             return vm._formField().reduce((initial, key) => {
@@ -158,6 +167,14 @@ export function getGlobalApi(fComponent) {
                 return vm._value(field);
             }
         },
+        setValue: function (field, value) {
+            let formData = field;
+            if (!isPlainObject(field))
+                formData = {[field]: value};
+            Object.keys(formData).forEach(key => {
+                this.changeField(key, formData[key]);
+            });
+        },
         changeValue: function (field, value) {
             this.changeField(field, value);
         },
@@ -165,7 +182,7 @@ export function getGlobalApi(fComponent) {
             field = toString(field);
             let handler = fComponent.handlers[field];
             if (handler === undefined)
-                throw new Error(`${field} 字段不存在!` + errMsg());
+                console.info(`${field} 字段不存在!` + errMsg());
             else {
                 if (isFunction(value))
                     value(vm._trueData(field), (changeValue) => {
@@ -216,7 +233,7 @@ export function getGlobalApi(fComponent) {
                 index = fields.length;
             } else if (index === -1)
                 throw new Error(`${after} 字段不存在` + errMsg());
-            fComponent.rules.splice(index, 0, rule);
+            fComponent.rules.splice(index+1, 0, rule);
 
         },
         prepend: (rule, after) => {
@@ -227,7 +244,7 @@ export function getGlobalApi(fComponent) {
                 throw new Error(`${after} 字段不存在` + errMsg());
             else
                 index--;
-            fComponent.rules.splice(index, 0, rule);
+            fComponent.rules.splice(index+1, 0, rule);
 
         },
         submit(successFn, failFn) {
@@ -240,32 +257,33 @@ export function getGlobalApi(fComponent) {
             }, () => failFn && failFn());
         },
         hidden(fields, hidden = true) {
-            if (!fields)
-                fields = this.fields();
-            else if (!Array.isArray(fields))
-                fields = [fields];
-            fields.forEach((field) => {
+            tidyFields(fields).forEach((field) => {
+                if (!fComponent.handlers[field])
+                    return console.info(`${field} 字段不存在`);
                 vm.$set(vm._trueData(field).rule.props, 'hidden', !!hidden);
             })
         },
         visibility(fields, visibility = true) {
-            if (!fields)
-                fields = this.fields();
-            else if (!Array.isArray(fields))
-                fields = [fields];
-            fields.forEach((field) => {
+            tidyFields(fields).forEach((field) => {
+                if (!fComponent.handlers[field])
+                    return console.info(`${field} 字段不存在`);
                 vm.$set(vm._trueData(field).rule.props, 'visibility', !!visibility);
+            })
+        },
+        disabled(fields, disabled = true) {
+            tidyFields(fields).forEach((field) => {
+                const handler = fComponent.handlers[field];
+                if (!handler)
+                    return console.info(`${field} 字段不存在`);
+                handler.render.sync();
+                vm.$set(vm._trueData(field).rule.props, 'disabled', !!disabled);
             })
         },
         model(fields) {
             let model = {}, _fields = this.fields();
-            if (!fields)
-                fields = _fields;
-            else if (!Array.isArray(fields))
-                fields = [fields];
-            fields.forEach((field) => {
+            tidyFields(fields).forEach((field) => {
                 if (_fields.indexOf(field) === -1)
-                    return console.error(`${field}字段不存在` + errMsg());
+                    return console.info(`${field}字段不存在` + errMsg());
                 model[field] = vm._trueData(field);
             });
             return model;
@@ -275,14 +293,9 @@ export function getGlobalApi(fComponent) {
         },
         bind(fields) {
             let bind = {}, properties = {}, _fields = this.fields();
-            if (!fields)
-                fields = _fields;
-            else if (!Array.isArray(fields))
-                fields = [fields];
-            fields.forEach((field) => {
-
+            tidyFields(fields).forEach((field) => {
                 if (_fields.indexOf(field) === -1)
-                    return console.error(`${field}字段不存在` + errMsg());
+                    return console.info(`${field}字段不存在` + errMsg());
 
                 const rule = vm._trueData(field);
                 properties[field] = {
