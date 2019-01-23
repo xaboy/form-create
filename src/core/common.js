@@ -233,7 +233,7 @@ export function getGlobalApi(fComponent) {
                 index = fields.length;
             } else if (index === -1)
                 throw new Error(`${after} 字段不存在` + errMsg());
-            fComponent.rules.splice(index+1, 0, rule);
+            fComponent.rules.splice(index + 1, 0, rule);
 
         },
         prepend: (rule, after) => {
@@ -244,7 +244,7 @@ export function getGlobalApi(fComponent) {
                 throw new Error(`${after} 字段不存在` + errMsg());
             else
                 index--;
-            fComponent.rules.splice(index+1, 0, rule);
+            fComponent.rules.splice(index + 1, 0, rule);
 
         },
         submit(successFn, failFn) {

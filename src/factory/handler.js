@@ -24,24 +24,18 @@ export default class Handler {
         }
 
         this.init();
-        this.refresh();
+        const id = uniqueId();
+        this.id = id;
+        this.unique = 'fc_' + id;
+        this.key = 'key_' + id;
         this.refName = '__' + this.field + this.id;
 
         if (isUndef(rule.props.elementId))
             $set(rule.props, 'elementId', this.unique);
 
+        this.parseValue = this.toFormValue(this.rule.value);
         this.render = new Render(vm, this, options);
     }
-
-    refresh() {
-        const id = uniqueId();
-        this.id = id;
-        this.unique = 'fc_' + id;
-        this.key = 'key_' + id;
-        this.parseValue = this.toFormValue(this.rule.value);
-        return this;
-    }
-
 
     init() {
 
