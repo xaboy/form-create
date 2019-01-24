@@ -9,7 +9,8 @@ export function preventDefault(e) {
 
 export default class Form {
 
-    constructor({id, vm, options, fieldList, handlers, formData, validate, fCreateApi}) {
+    constructor(fComponent) {
+        let {id, vm, options, fieldList, handlers, formData, validate} = fComponent;
         this.vm = vm;
         this.options = options;
         this.handlers = handlers;
@@ -19,7 +20,8 @@ export default class Form {
             rules: validate,
             key: 'form' + id
         };
-        this.fCreateApi = fCreateApi;
+
+        this._fc = fComponent;
         this.vNode = new VNode(vm);
         this.vData = new VData();
         this.unique = id;
@@ -100,7 +102,7 @@ export default class Form {
             this.vNode.button({
                 key: `frsbtn${unique}`, props: this.vm.resetProps, on: {
                     "click": () => {
-                        this.fCreateApi.resetFields();
+                        this._fc.fCreateApi.resetFields();
                     }
                 }
             }, [this.vm.resetProps.innerText])
@@ -113,7 +115,7 @@ export default class Form {
             this.vNode.button({
                 key: `fbtn${unique}`, props: this.vm.buttonProps, on: {
                     "click": () => {
-                        this.fCreateApi.submit();
+                        this._fc.fCreateApi.submit();
                     }
                 }
             }, [this.vm.buttonProps.innerText])

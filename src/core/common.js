@@ -366,6 +366,9 @@ export function getGlobalApi(fComponent) {
         refresh: () => {
             vm._refresh();
         },
+        show: (isShow) => {
+            vm.isShow = !!isShow;
+        }
     };
 }
 

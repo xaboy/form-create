@@ -1,5 +1,5 @@
 /*!
- * form-create v1.5.5-beta2
+ * form-create v1.5.5-beta4
  * (c) 2018-2019 xaboy
  * Github https://github.com/xaboy/form-create
  * Released under the MIT License.
@@ -1651,6 +1651,15 @@
 	    key: "reset",
 	    value: function reset() {
 	      this.vm._changeValue(this.field, this.defaultValue);
+
+	      var refName = 'fItem' + this.refName,
+	          fItem = this.vm.$refs[refName];
+
+	      if (fItem) {
+	        fItem.validateMessage = '';
+	        fItem.validateState = '';
+	        fItem.validateDisabled = true;
+	      }
 	    }
 	  }, {
 	    key: "mounted",
@@ -4533,6 +4542,9 @@
 	    },
 	    refresh: function refresh() {
 	      vm._refresh();
+	    },
+	    show: function show(isShow) {
+	      vm.isShow = !!isShow;
 	    }
 	  };
 	}
@@ -4632,18 +4644,16 @@
 	}
 
 	var Form = function () {
-	  function Form(_ref) {
-	    var id = _ref.id,
-	        vm = _ref.vm,
-	        options = _ref.options,
-	        fieldList = _ref.fieldList,
-	        handlers = _ref.handlers,
-	        formData = _ref.formData,
-	        validate = _ref.validate,
-	        fCreateApi = _ref.fCreateApi;
-
+	  function Form(fComponent) {
 	    _classCallCheck(this, Form);
 
+	    var id = fComponent.id,
+	        vm = fComponent.vm,
+	        options = fComponent.options,
+	        fieldList = fComponent.fieldList,
+	        handlers = fComponent.handlers,
+	        formData = fComponent.formData,
+	        validate = fComponent.validate;
 	    this.vm = vm;
 	    this.options = options;
 	    this.handlers = handlers;
@@ -4653,7 +4663,7 @@
 	      rules: validate,
 	      key: 'form' + id
 	    };
-	    this.fCreateApi = fCreateApi;
+	    this._fc = fComponent;
 	    this.vNode = new VNode(vm);
 	    this.vData = new VData();
 	    this.unique = id;
@@ -4705,12 +4715,12 @@
 	    }
 	  }, {
 	    key: "makeFormItem",
-	    value: function makeFormItem(_ref2, VNodeFn, fItemUnique) {
-	      var type = _ref2.type,
-	          rule = _ref2.rule,
-	          unique = _ref2.unique,
-	          field = _ref2.field,
-	          refName = _ref2.refName;
+	    value: function makeFormItem(_ref, VNodeFn, fItemUnique) {
+	      var type = _ref.type,
+	          rule = _ref.rule,
+	          unique = _ref.unique,
+	          field = _ref.field,
+	          refName = _ref.refName;
 	      var labelWidth = !isComponent(type) && !rule.col.labelWidth && !rule.title ? 1 : rule.col.labelWidth,
 	          className = rule.className,
 	          propsData = this.vData.props({
@@ -4768,7 +4778,7 @@
 	        props: this.vm.resetProps,
 	        on: {
 	          "click": function click() {
-	            _this2.fCreateApi.resetFields();
+	            _this2._fc.fCreateApi.resetFields();
 	          }
 	        }
 	      }, [this.vm.resetProps.innerText])]);
@@ -4789,7 +4799,7 @@
 	        props: this.vm.buttonProps,
 	        on: {
 	          "click": function click() {
-	            _this3.fCreateApi.submit();
+	            _this3._fc.fCreateApi.submit();
 	          }
 	        }
 	      }, [this.vm.buttonProps.innerText])]);
@@ -4918,7 +4928,7 @@
 	  return _m;
 	}();
 
-	var version = "1.5.5-beta2";
+	var version = "1.5.5-beta4";
 	var formCreateStyleElId = 'form-create-style';
 	function margeGlobal(_options) {
 	  if (isBool(_options.sumbitBtn)) $set(_options, 'sumbitBtn', {

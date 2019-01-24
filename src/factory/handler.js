@@ -73,6 +73,12 @@ export default class Handler {
 
     reset() {
         this.vm._changeValue(this.field, this.defaultValue);
+        let refName = 'fItem' + this.refName, fItem = this.vm.$refs[refName];
+        if (fItem) {
+            fItem.validateMessage = '';
+            fItem.validateState = '';
+            fItem.validateDisabled = true;
+        }
     }
 
     mounted() {
