@@ -71,23 +71,26 @@ export function initStyle() {
 export default class FormCreate {
 
     constructor(rules, options = {}) {
+        this.fRender = undefined;
+        this.fCreateApi = undefined;
+        this.id = uniqueId();
+        this.reloading = false;
+        this.__init(rules, options);
+        initStyle();
+        this.$tick = debounce((fn) => fn(), 150);
+    }
+
+    __init(rules, options) {
         this.options = margeGlobal(options);
         this.rules = Array.isArray(rules) ? rules : [];
         this.origin = [...this.rules];
-
         this.handlers = {};
-        this.fRender = {};
         this.formData = {};
         this.validate = {};
         this.trueData = {};
         this.components = {};
         this.fieldList = [];
         this.switchMaker = this.options.switchMaker;
-        this.id = uniqueId();
-
-        initStyle();
-        this.$tick = debounce((fn) => fn(), 150);
-
     }
 
 
@@ -118,12 +121,13 @@ export default class FormCreate {
         vm.$set(vm, 'rules', this.rules);
         vm.$set(vm, 'components', this.components);
 
+        this.fRender = new formRender(this);
+
         if (this.fCreateApi === undefined)
             this.fCreateApi = getGlobalApi(this);
+
         this.fCreateApi.rule = this.rules;
         this.fCreateApi.config = this.options;
-
-        this.fRender = new formRender(this);
     }
 
 
@@ -136,7 +140,6 @@ export default class FormCreate {
                 $set(this.components, field, rule);
             return;
         }
-
         $set(this.formData, field, handler.parseValue);
         $set(this.validate, field, rule.validate);
         $set(this.trueData, field, {
@@ -158,7 +161,7 @@ export default class FormCreate {
                 return console.error(`未定义生成规则的 type` + errMsg());
 
             let rule = getRule(_rule),
-                handler = _rule.__handler__ || getComponent(this.vm, rule, this.options),
+                handler = _rule.__handler__ ? _rule.__handler__.refresh() : getComponent(this.vm, rule, this.options),
                 children = handler.rule.children;
 
             if (!this.notField(handler.field))
@@ -295,16 +298,17 @@ export default class FormCreate {
             this.origin = [...rules];
             vm._unWatch();
             Object.keys(this.handlers).forEach(field => this.removeField(field));
-            this.constructor(rules, this.options);
+            this.__init(rules, this.options);
             this.init(vm);
             vm.__init();
             $nt(() => {
                 if (isUndef(unique) || vm.unique === unique)
                     this.mounted(vm, false);
             });
+
+            vm.$f = this.fCreateApi;
         }
 
-        vm.$f = this.fCreateApi;
     }
 
     getFormRef() {

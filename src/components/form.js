@@ -9,7 +9,7 @@ export function preventDefault(e) {
 
 export default class Form {
 
-    constructor({vm, options, fieldList, handlers, formData, validate, fCreateApi}) {
+    constructor({id, vm, options, fieldList, handlers, formData, validate, fCreateApi}) {
         this.vm = vm;
         this.options = options;
         this.handlers = handlers;
@@ -17,13 +17,13 @@ export default class Form {
         this.form = {
             model: formData,
             rules: validate,
-            key: 'form' + uniqueId()
+            key: 'form' + id
         };
         this.fCreateApi = fCreateApi;
         this.vNode = new VNode(vm);
         this.vData = new VData();
-        this.unique = uniqueId();
-        this.refName = `cForm${this.unique}`;
+        this.unique = id;
+        this.refName = `cForm${id}`;
         this.cacheUnique = 0;
     }
 

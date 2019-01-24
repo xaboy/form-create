@@ -38,10 +38,8 @@ const $FormCreate = () => ({
         this._fComponent.mounted(this);
         this.$f = this._fComponent.fCreateApi;
         this.$watch('rule', n => {
-            $nt(() => {
-                this._fComponent.reload(n, this.unique);
-                this.$emit('input', this.$f);
-            });
+            this._fComponent.reload(n, this.unique);
+            this.$emit('input', this.$f);
         });
         this.$watch('option', n => {
             $nt(() => {

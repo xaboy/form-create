@@ -20,9 +20,7 @@ export default function formCreateComponent(fComponent) {
             this.$f = fComponent.fCreateApi;
             this.__init();
             this.$watch('rules', n => {
-                $nt(() => {
-                    this._fComponent.reload(n, this.unique);
-                });
+                this._fComponent.reload(n, this.unique);
             });
         }
     }

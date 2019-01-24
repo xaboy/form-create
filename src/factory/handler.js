@@ -33,8 +33,13 @@ export default class Handler {
         if (isUndef(rule.props.elementId))
             $set(rule.props, 'elementId', this.unique);
 
-        this.parseValue = this.toFormValue(this.rule.value);
+        this.refresh();
         this.render = new Render(vm, this, options);
+    }
+
+    refresh() {
+        this.parseValue = this.toFormValue(this.rule.value);
+        return this;
     }
 
     init() {
