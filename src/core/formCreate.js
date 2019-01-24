@@ -111,7 +111,7 @@ export default class FormCreate {
         Vue.component(formCreateName, Vue.extend($FormCreate()));
     }
 
-    init(vm) {
+    boot(vm) {
         this.vm = vm;
         this.createHandler(this.rules);
         vm.$set(vm, 'cptData', this.formData);
@@ -158,7 +158,7 @@ export default class FormCreate {
             if (child && isString(_rule)) return;
 
             if (!_rule.type)
-                return console.error(`未定义生成规则的 type` + errMsg());
+                return console.error(`未定义生成规则的 type 字段` + errMsg());
 
             let rule = getRule(_rule),
                 handler = _rule.__handler__ ? _rule.__handler__.refresh() : getComponent(this.vm, rule, this.options),
@@ -220,7 +220,7 @@ export default class FormCreate {
 
     removeField(field) {
         if (this.handlers[field] === undefined)
-            throw new Error(`${field}字段不存在` + errMsg());
+            return;
         let watch = this.handlers[field].watch, index = this.fieldList.indexOf(field);
 
         $del(this.handlers, field);
@@ -299,7 +299,7 @@ export default class FormCreate {
             vm._unWatch();
             Object.keys(this.handlers).forEach(field => this.removeField(field));
             this.__init(rules, this.options);
-            this.init(vm);
+            this.boot(vm);
             vm.__init();
             $nt(() => {
                 if (isUndef(unique) || vm.unique === unique)

@@ -13,7 +13,7 @@ export default function formCreateComponent(fComponent) {
         created() {
             this._fComponent = fComponent;
             this._fComponent._type = 'rules';
-            fComponent.init(this);
+            fComponent.boot(this);
         },
         mounted() {
             fComponent.mounted(this);

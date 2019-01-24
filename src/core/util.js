@@ -15,10 +15,6 @@ export function $del(target, field) {
 
 export const _toString = Object.prototype.toString;
 
-export function toRawType(value) {
-    return _toString.call(value).slice(8, -1)
-}
-
 export function isUndef(v) {
     return v === undefined || v === null
 }
@@ -80,10 +76,6 @@ export function isNumeric(n) {
 
 export function toArray(a) {
     return Array.isArray(a) ? a : [a]
-}
-
-export function ATS(a) {
-    return Array.isArray(a) ? (a[0] || '') : a
 }
 
 export function isElement(arg) {

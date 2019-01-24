@@ -21,11 +21,9 @@ export class render extends Render {
     parse() {
         return [this.vNode.input(this.inputProps().get())];
     }
-
-
 }
 
-const maker = ['password', 'url', 'email', 'text'].reduce((initial, type) => {
+const maker = ['password', 'url', 'email', 'text', 'textarea'].reduce((initial, type) => {
     initial[type] = creatorTypeFactory(name, type);
     return initial;
 }, {});

@@ -45,8 +45,7 @@ function mock() {
 
 
         //textarea 组件
-        maker.input('商品简介', 'goods_info', '').props({
-            type: 'textarea',
+        maker.textarea('商品简介', 'goods_info', '').props({
             autosize: {minRows: 5, maxRows: 9}
         }),
 

@@ -1,5 +1,5 @@
 /*!
- * form-create v1.5.5-beta
+ * form-create v1.5.5-beta2
  * (c) 2018-2019 xaboy
  * Github https://github.com/xaboy/form-create
  * Released under the MIT License.
@@ -1602,11 +1602,17 @@
 	    this.key = 'key_' + id;
 	    this.refName = '__' + this.field + this.id;
 	    if (isUndef(rule.props.elementId)) $set(rule.props, 'elementId', this.unique);
-	    this.parseValue = this.toFormValue(this.rule.value);
+	    this.refresh();
 	    this.render = new Render(vm, this, options);
 	  }
 
 	  _createClass(Handler, [{
+	    key: "refresh",
+	    value: function refresh() {
+	      this.parseValue = this.toFormValue(this.rule.value);
+	      return this;
+	    }
+	  }, {
 	    key: "init",
 	    value: function init() {}
 	  }, {
@@ -2261,7 +2267,7 @@
 
 	  return render;
 	}(Render);
-	var maker$1 = ['password', 'url', 'email', 'text'].reduce(function (initial, type) {
+	var maker$1 = ['password', 'url', 'email', 'text', 'textarea'].reduce(function (initial, type) {
 	  initial[type] = creatorTypeFactory(name$1, type);
 	  return initial;
 	}, {});
@@ -4313,7 +4319,7 @@
 	    changeField: function changeField(field, value) {
 	      field = toString$2(field);
 	      var handler = fComponent.handlers[field];
-	      if (handler === undefined) console.info("".concat(field, " \u5B57\u6BB5\u4E0D\u5B58\u5728!") + errMsg());else {
+	      if (handler === undefined) return;else {
 	        if (isFunction(value)) value(vm._trueData(field), function (changeValue) {
 	          _this2.changeField(field, changeValue);
 	        });else {
@@ -4323,12 +4329,12 @@
 	    },
 	    removeField: function removeField(field) {
 	      var handler = fComponent.handlers[field];
-	      if (!handler) throw new Error("".concat(field, " \u5B57\u6BB5\u4E0D\u5B58\u5728") + errMsg());
+	      if (!handler) return;
 	      var fields = handler.root.map(function (rule) {
 	        return rule.__field__;
 	      }),
 	          index = fields.indexOf(toString$2(field));
-	      if (index === -1) throw new Error("".concat(field, " \u5B57\u6BB5\u4E0D\u5B58\u5728") + errMsg());
+	      if (index === -1) return;
 	      handler.root.splice(index, 1);
 
 	      vm._refresh();
@@ -4339,7 +4345,7 @@
 	      });
 	    },
 	    validateField: function validateField(field, callback) {
-	      if (fComponent.notField(field)) throw new Error("".concat(field, "\u5B57\u6BB5\u4E0D\u5B58\u5728") + errMsg());
+	      if (fComponent.notField(field)) return;
 	      fComponent.getFormRef().validateField(field, callback);
 	    },
 	    resetFields: function resetFields() {
@@ -4364,7 +4370,7 @@
 
 	      if (isUndef(after)) {
 	        index = fields.length;
-	      } else if (index === -1) throw new Error("".concat(after, " \u5B57\u6BB5\u4E0D\u5B58\u5728") + errMsg());
+	      } else if (index === -1) return;
 
 	      fComponent.rules.splice(index + 1, 0, rule);
 	    },
@@ -4374,7 +4380,7 @@
 
 	      if (isUndef(after)) {
 	        index = 0;
-	      } else if (index === -1) throw new Error("".concat(after, " \u5B57\u6BB5\u4E0D\u5B58\u5728") + errMsg());else index--;
+	      } else if (index === -1) return;else index--;
 
 	      fComponent.rules.splice(index + 1, 0, rule);
 	    },
@@ -4393,7 +4399,7 @@
 	      var _hidden = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
 
 	      tidyFields(fields).forEach(function (field) {
-	        if (!fComponent.handlers[field]) return console.info("".concat(field, " \u5B57\u6BB5\u4E0D\u5B58\u5728"));
+	        if (!fComponent.handlers[field]) return;
 	        vm.$set(vm._trueData(field).rule.props, 'hidden', !!_hidden);
 	      });
 	    },
@@ -4401,7 +4407,7 @@
 	      var _visibility = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
 
 	      tidyFields(fields).forEach(function (field) {
-	        if (!fComponent.handlers[field]) return console.info("".concat(field, " \u5B57\u6BB5\u4E0D\u5B58\u5728"));
+	        if (!fComponent.handlers[field]) return;
 	        vm.$set(vm._trueData(field).rule.props, 'visibility', !!_visibility);
 	      });
 	    },
@@ -4410,7 +4416,7 @@
 
 	      tidyFields(fields).forEach(function (field) {
 	        var handler = fComponent.handlers[field];
-	        if (!handler) return console.info("".concat(field, " \u5B57\u6BB5\u4E0D\u5B58\u5728"));
+	        if (!handler) return;
 	        handler.render.sync();
 	        vm.$set(vm._trueData(field).rule.props, 'disabled', !!_disabled);
 	      });
@@ -4420,7 +4426,7 @@
 	          _fields = this.fields();
 
 	      tidyFields(fields).forEach(function (field) {
-	        if (_fields.indexOf(field) === -1) return console.info("".concat(field, "\u5B57\u6BB5\u4E0D\u5B58\u5728") + errMsg());
+	        if (_fields.indexOf(field) === -1) return console.error("".concat(field, " \u5B57\u6BB5\u4E0D\u5B58\u5728") + errMsg());
 	        model[field] = vm._trueData(field);
 	      });
 	      return model;
@@ -4434,7 +4440,7 @@
 	          _fields = this.fields();
 
 	      tidyFields(fields).forEach(function (field) {
-	        if (_fields.indexOf(field) === -1) return console.info("".concat(field, "\u5B57\u6BB5\u4E0D\u5B58\u5728") + errMsg());
+	        if (_fields.indexOf(field) === -1) return console.error("".concat(field, " \u5B57\u6BB5\u4E0D\u5B58\u5728") + errMsg());
 
 	        var rule = vm._trueData(field);
 
@@ -4523,7 +4529,7 @@
 	      });
 	    },
 	    sync: function sync(field, callback) {
-	      if (fComponent.handlers[field]) fComponent.handlers[field].render.sync(callback);else throw new Error("".concat(field, "\u5B57\u6BB5\u4E0D\u5B58\u5728") + errMsg());
+	      if (fComponent.handlers[field]) fComponent.handlers[field].render.sync(callback);
 	    },
 	    refresh: function refresh() {
 	      vm._refresh();
@@ -4627,7 +4633,8 @@
 
 	var Form = function () {
 	  function Form(_ref) {
-	    var vm = _ref.vm,
+	    var id = _ref.id,
+	        vm = _ref.vm,
 	        options = _ref.options,
 	        fieldList = _ref.fieldList,
 	        handlers = _ref.handlers,
@@ -4644,13 +4651,13 @@
 	    this.form = {
 	      model: formData,
 	      rules: validate,
-	      key: 'form' + uniqueId()
+	      key: 'form' + id
 	    };
 	    this.fCreateApi = fCreateApi;
 	    this.vNode = new VNode(vm);
 	    this.vData = new VData();
-	    this.unique = uniqueId();
-	    this.refName = "cForm".concat(this.unique);
+	    this.unique = id;
+	    this.refName = "cForm".concat(id);
 	    this.cacheUnique = 0;
 	  }
 
@@ -4820,25 +4827,27 @@
 	      return this._fComponent.fRender.render(this._fComponent.vm);
 	    },
 	    created: function created() {
-	      this._fComponent = new FormCreate(this.rule, this.option);
-	      this._fComponent._type = 'rule';
+	      var _fc = new FormCreate(this.rule, this.option);
 
-	      this._fComponent.init(this);
+	      this._fComponent = _fc;
+	      _fc._type = 'rule';
 
-	      this.$emit('input', this._fComponent.fCreateApi);
+	      _fc.boot(this);
+
+	      this.$emit('input', _fc.fCreateApi);
 	    },
 	    mounted: function mounted() {
 	      var _this = this;
 
-	      this._fComponent.mounted(this);
+	      var _fc = this._fComponent;
 
-	      this.$f = this._fComponent.fCreateApi;
+	      _fc.mounted(this);
+
+	      this.$f = _fc.fCreateApi;
 	      this.$watch('rule', function (n) {
-	        $nt(function () {
-	          _this._fComponent.reload(n, _this.unique);
+	        _fc.reload(n, _this.unique);
 
-	          _this.$emit('input', _this.$f);
-	        });
+	        _this.$emit('input', _this.$f);
 	      });
 	      this.$watch('option', function (n) {
 	        $nt(function () {
@@ -4865,7 +4874,7 @@
 	    created: function created() {
 	      this._fComponent = fComponent;
 	      this._fComponent._type = 'rules';
-	      fComponent.init(this);
+	      fComponent.boot(this);
 	    },
 	    mounted: function mounted() {
 	      var _this = this;
@@ -4876,9 +4885,7 @@
 	      this.__init();
 
 	      this.$watch('rules', function (n) {
-	        $nt(function () {
-	          _this._fComponent.reload(n, _this.unique);
-	        });
+	        _this._fComponent.reload(n, _this.unique);
 	      });
 	    }
 	  };
@@ -4911,7 +4918,7 @@
 	  return _m;
 	}();
 
-	var version = "1.5.5-beta";
+	var version = "1.5.5-beta2";
 	var formCreateStyleElId = 'form-create-style';
 	function margeGlobal(_options) {
 	  if (isBool(_options.sumbitBtn)) $set(_options, 'sumbitBtn', {
@@ -4955,18 +4962,13 @@
 
 	    _classCallCheck(this, FormCreate);
 
-	    this.options = margeGlobal(options);
-	    this.rules = Array.isArray(rules) ? rules : [];
-	    this.origin = _toConsumableArray(this.rules);
-	    this.handlers = {};
-	    this.fRender = {};
-	    this.formData = {};
-	    this.validate = {};
-	    this.trueData = {};
-	    this.components = {};
-	    this.fieldList = [];
-	    this.switchMaker = this.options.switchMaker;
+	    this.fRender = undefined;
+	    this.fCreateApi = undefined;
 	    this.id = uniqueId();
+	    this.reloading = false;
+
+	    this.__init(rules, options);
+
 	    initStyle();
 	    this.$tick = debounce(function (fn) {
 	      return fn();
@@ -4974,8 +4976,22 @@
 	  }
 
 	  _createClass(FormCreate, [{
-	    key: "init",
-	    value: function init(vm) {
+	    key: "__init",
+	    value: function __init(rules, options) {
+	      this.options = margeGlobal(options);
+	      this.rules = Array.isArray(rules) ? rules : [];
+	      this.origin = _toConsumableArray(this.rules);
+	      this.handlers = {};
+	      this.formData = {};
+	      this.validate = {};
+	      this.trueData = {};
+	      this.components = {};
+	      this.fieldList = [];
+	      this.switchMaker = this.options.switchMaker;
+	    }
+	  }, {
+	    key: "boot",
+	    value: function boot(vm) {
 	      this.vm = vm;
 	      this.createHandler(this.rules);
 	      vm.$set(vm, 'cptData', this.formData);
@@ -4984,10 +5000,10 @@
 	      vm.$set(vm, 'resetProps', this.options.resetBtn);
 	      vm.$set(vm, 'rules', this.rules);
 	      vm.$set(vm, 'components', this.components);
+	      this.fRender = new Form(this);
 	      if (this.fCreateApi === undefined) this.fCreateApi = getGlobalApi(this);
 	      this.fCreateApi.rule = this.rules;
 	      this.fCreateApi.config = this.options;
-	      this.fRender = new Form(this);
 	    }
 	  }, {
 	    key: "setHandler",
@@ -5021,9 +5037,9 @@
 
 	      rules.forEach(function (_rule, index) {
 	        if (child && isString(_rule)) return;
-	        if (!_rule.type) return console.error("\u672A\u5B9A\u4E49\u751F\u6210\u89C4\u5219\u7684 type" + errMsg());
+	        if (!_rule.type) return console.error("\u672A\u5B9A\u4E49\u751F\u6210\u89C4\u5219\u7684 type \u5B57\u6BB5" + errMsg());
 	        var rule = getRule(_rule),
-	            handler = _rule.__handler__ || getComponent(_this.vm, rule, _this.options),
+	            handler = _rule.__handler__ ? _rule.__handler__.refresh() : getComponent(_this.vm, rule, _this.options),
 	            children = handler.rule.children;
 	        if (!_this.notField(handler.field)) return console.error("".concat(rule.field, " \u5B57\u6BB5\u5DF2\u5B58\u5728") + errMsg());
 
@@ -5080,7 +5096,7 @@
 	  }, {
 	    key: "removeField",
 	    value: function removeField(field) {
-	      if (this.handlers[field] === undefined) throw new Error("".concat(field, "\u5B57\u6BB5\u4E0D\u5B58\u5728") + errMsg());
+	      if (this.handlers[field] === undefined) return;
 	      var watch = this.handlers[field].watch,
 	          index = this.fieldList.indexOf(field);
 	      $del(this.handlers, field);
@@ -5182,17 +5198,18 @@
 	        Object.keys(this.handlers).forEach(function (field) {
 	          return _this5.removeField(field);
 	        });
-	        this.constructor(rules, this.options);
-	        this.init(vm);
+
+	        this.__init(rules, this.options);
+
+	        this.boot(vm);
 
 	        vm.__init();
 
 	        $nt(function () {
 	          if (isUndef(unique) || vm.unique === unique) _this5.mounted(vm, false);
 	        });
+	        vm.$f = this.fCreateApi;
 	      }
-
-	      vm.$f = this.fCreateApi;
 	    }
 	  }, {
 	    key: "getFormRef",

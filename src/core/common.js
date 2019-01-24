@@ -182,7 +182,7 @@ export function getGlobalApi(fComponent) {
             field = toString(field);
             let handler = fComponent.handlers[field];
             if (handler === undefined)
-                console.info(`${field} 字段不存在!` + errMsg());
+                return;
             else {
                 if (isFunction(value))
                     value(vm._trueData(field), (changeValue) => {
@@ -197,10 +197,10 @@ export function getGlobalApi(fComponent) {
         removeField: (field) => {
             let handler = fComponent.handlers[field];
             if (!handler)
-                throw new Error(`${field} 字段不存在` + errMsg());
-            let fields = handler.root.map(rule => rule.__field__), index = fields.indexOf(toString(field))
+                return;
+            let fields = handler.root.map(rule => rule.__field__), index = fields.indexOf(toString(field));
             if (index === -1)
-                throw new Error(`${field} 字段不存在` + errMsg());
+                return;
             handler.root.splice(index, 1);
             vm._refresh();
         },
@@ -211,7 +211,7 @@ export function getGlobalApi(fComponent) {
         },
         validateField: (field, callback) => {
             if (fComponent.notField(field))
-                throw new Error(`${field}字段不存在` + errMsg());
+                return;
             fComponent.getFormRef().validateField(field, callback);
         },
         resetFields: function () {
@@ -232,7 +232,7 @@ export function getGlobalApi(fComponent) {
             if (isUndef(after)) {
                 index = fields.length;
             } else if (index === -1)
-                throw new Error(`${after} 字段不存在` + errMsg());
+                return;
             fComponent.rules.splice(index + 1, 0, rule);
 
         },
@@ -241,7 +241,7 @@ export function getGlobalApi(fComponent) {
             if (isUndef(after)) {
                 index = 0;
             } else if (index === -1)
-                throw new Error(`${after} 字段不存在` + errMsg());
+                return;
             else
                 index--;
             fComponent.rules.splice(index + 1, 0, rule);
@@ -259,14 +259,14 @@ export function getGlobalApi(fComponent) {
         hidden(fields, hidden = true) {
             tidyFields(fields).forEach((field) => {
                 if (!fComponent.handlers[field])
-                    return console.info(`${field} 字段不存在`);
+                    return;
                 vm.$set(vm._trueData(field).rule.props, 'hidden', !!hidden);
             })
         },
         visibility(fields, visibility = true) {
             tidyFields(fields).forEach((field) => {
                 if (!fComponent.handlers[field])
-                    return console.info(`${field} 字段不存在`);
+                    return;
                 vm.$set(vm._trueData(field).rule.props, 'visibility', !!visibility);
             })
         },
@@ -274,7 +274,7 @@ export function getGlobalApi(fComponent) {
             tidyFields(fields).forEach((field) => {
                 const handler = fComponent.handlers[field];
                 if (!handler)
-                    return console.info(`${field} 字段不存在`);
+                    return;
                 handler.render.sync();
                 vm.$set(vm._trueData(field).rule.props, 'disabled', !!disabled);
             })
@@ -283,7 +283,7 @@ export function getGlobalApi(fComponent) {
             let model = {}, _fields = this.fields();
             tidyFields(fields).forEach((field) => {
                 if (_fields.indexOf(field) === -1)
-                    return console.info(`${field}字段不存在` + errMsg());
+                    return console.error(`${field} 字段不存在` + errMsg());
                 model[field] = vm._trueData(field);
             });
             return model;
@@ -295,7 +295,7 @@ export function getGlobalApi(fComponent) {
             let bind = {}, properties = {}, _fields = this.fields();
             tidyFields(fields).forEach((field) => {
                 if (_fields.indexOf(field) === -1)
-                    return console.info(`${field}字段不存在` + errMsg());
+                    return console.error(`${field} 字段不存在` + errMsg());
 
                 const rule = vm._trueData(field);
                 properties[field] = {
@@ -362,8 +362,6 @@ export function getGlobalApi(fComponent) {
         sync: (field, callback) => {
             if (fComponent.handlers[field])
                 fComponent.handlers[field].render.sync(callback);
-            else
-                throw new Error(`${field}字段不存在` + errMsg());
         },
         refresh: () => {
             vm._refresh();
