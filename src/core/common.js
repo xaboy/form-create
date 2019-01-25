@@ -101,6 +101,7 @@ export function getConfig() {
             loading: false,
             show: true,
             col: undefined,
+            click: undefined,
         },
         resetBtn: {
             type: iviewConfig.resetBtnType,
@@ -114,12 +115,13 @@ export function getConfig() {
             loading: false,
             show: false,
             col: undefined,
+            click: undefined,
         },
         mounted: ($f) => {
         },
         onReload: ($f) => {
         },
-        onSubmit: (formData) => {
+        onSubmit: (formData, $f) => {
         },
     };
 };
@@ -183,16 +185,15 @@ export function getGlobalApi(fComponent) {
             let handler = fComponent.handlers[field];
             if (handler === undefined)
                 return;
-            else {
-                if (isFunction(value))
-                    value(vm._trueData(field), (changeValue) => {
-                        this.changeField(field, changeValue);
-                    });
-                else {
-                    handler.setValue(value);
-                }
 
+            if (isFunction(value))
+                value(vm._trueData(field), (changeValue) => {
+                    this.changeField(field, changeValue);
+                });
+            else {
+                handler.setValue(value);
             }
+
         },
         removeField: (field) => {
             let handler = fComponent.handlers[field];
@@ -251,7 +252,7 @@ export function getGlobalApi(fComponent) {
             this.validate(() => {
                 let formData = this.formData();
                 if (isFunction(successFn))
-                    successFn(formData);
+                    successFn(formData, this);
                 else
                     fComponent.options.onSubmit && fComponent.options.onSubmit(formData);
             }, () => failFn && failFn());
@@ -277,6 +278,14 @@ export function getGlobalApi(fComponent) {
                     return;
                 handler.render.sync();
                 vm.$set(vm._trueData(field).rule.props, 'disabled', !!disabled);
+            })
+        },
+        clearValidateState(fields) {
+            tidyFields(fields).forEach(field => {
+                const handler = fComponent.handlers[field];
+                if (!handler)
+                    return;
+                handler.clearMsg();
             })
         },
         model(fields) {

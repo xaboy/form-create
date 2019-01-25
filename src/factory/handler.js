@@ -73,6 +73,10 @@ export default class Handler {
 
     reset() {
         this.vm._changeValue(this.field, this.defaultValue);
+        this.clearMsg();
+    }
+
+    clearMsg() {
         let refName = 'fItem' + this.refName, fItem = this.vm.$refs[refName];
         if (fItem) {
             fItem.validateMessage = '';
