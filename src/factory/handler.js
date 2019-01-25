@@ -17,7 +17,7 @@ export default class Handler {
         this.origin = [];
 
         if (!rule.field && noValue) {
-            this.field = 'tmp' + uniqueId();
+            this.field = '_def_' + uniqueId();
             this.isDef = false;
         } else {
             this.field = rule.field;
@@ -87,11 +87,18 @@ export default class Handler {
 
     mounted() {
         let refName = 'fItem' + this.refName, vm = this.vm, children = this.rule.children;
-        this.el = vm.$refs[this.refName];
+        this.el = vm.$refs[this.refName] || {};
         this.defaultValue = this.toValue(vm.$refs[refName] && !isUndef(vm.$refs[refName].initialValue)
             ? vm.$refs[refName].initialValue : deepExtend({}, {value: this.rule.value}).value);
         if (Array.isArray(children) && children.length > 0)
             children.forEach(child => !isString(child) && child.__handler__.mounted());
+    }
+
+    $emit(eventName, ...params) {
+        if (this.type === 'template')
+            this.rule.vm.$emit(eventName, ...params);
+        else if (this.noValue === true)
+            this.el.$emit && this.el.$emit(eventName, ...params);
     }
 }
 

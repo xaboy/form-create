@@ -8,14 +8,15 @@ import {
     isElement,
     isFunction, isString,
     isUndef,
-    toString, uniqueId
-} from "../core/util";
-import {formCreateStyle, getComponent, getConfig, getGlobalApi} from "../core/common";
+    uniqueId
+} from "./util";
+import {formCreateStyle, getComponent, getConfig} from "./common";
 import formRender from "../components/form";
-import formCreateComponent from "../core/formCreateComponent";
-import {$FormCreate, formCreateName} from "../core/component";
+import formCreateComponent from "./formCreateComponent";
+import {$FormCreate, formCreateName} from "./component";
 import maker from "./maker";
 import Vue from 'vue';
+import getGlobalApi from './fApi';
 
 const version = process.env.VERSION;
 

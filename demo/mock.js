@@ -79,17 +79,30 @@ function mock() {
 
 
         //自定义组件
-        maker.createTmp('<i-button @click="onClick" long>{{button}}字符串测试{{test}}-{{num}}</i-button>', new Vue({
+        maker.createTmp('<i-button @click="onClick" long :disabled="disabled">{{button}}字符串测试{{test}}-{{num}}</i-button>', new Vue({
             data: {
                 test: 'createTmp渲染',
                 button: '<i-button />',
-                num: 0
+                num: 0,
+                disabled: false
             },
             methods: {
                 onClick: function () {
                     this.num++;
                     this.$emit('goods-name-change', this.num);
+                },
+                //表单禁用事件
+                onDisabled: function () {
+                    this.disabled = true;
+                },
+                //表单重置事件
+                onResetField: function () {
+                    this.num = 0;
                 }
+            },
+            created: function () {
+                this.$on('disabled', this.onDisabled);
+                this.$on('reset-field', this.onResetField);
             }
         }), 'tmp').col({labelWidth: 1}),
 
@@ -107,9 +120,9 @@ function mock() {
             show: true
         })
             .on({
-                "click": function () {
-                    console.log('click');
-                },
+                "disabled": function (disabled, $f) {
+                    $f.component().btn.props.disabled = disabled;
+                }
             }).col({span: 12}).children([
             maker.create('span').domProps({
                 innerHTML: '测试自定义按钮'

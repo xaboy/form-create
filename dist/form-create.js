@@ -1,5 +1,5 @@
 /*!
- * form-create v1.5.5-beta4
+ * form-create v1.5.5-beta5
  * (c) 2018-2019 xaboy
  * Github https://github.com/xaboy/form-create
  * Released under the MIT License.
@@ -1589,7 +1589,7 @@
 	    this.origin = [];
 
 	    if (!rule.field && noValue) {
-	      this.field = 'tmp' + uniqueId();
+	      this.field = '_def_' + uniqueId();
 	      this.isDef = false;
 	    } else {
 	      this.field = rule.field;
@@ -1652,6 +1652,11 @@
 	    value: function reset() {
 	      this.vm._changeValue(this.field, this.defaultValue);
 
+	      this.clearMsg();
+	    }
+	  }, {
+	    key: "clearMsg",
+	    value: function clearMsg() {
 	      var refName = 'fItem' + this.refName,
 	          fItem = this.vm.$refs[refName];
 
@@ -1667,13 +1672,24 @@
 	      var refName = 'fItem' + this.refName,
 	          vm = this.vm,
 	          children = this.rule.children;
-	      this.el = vm.$refs[this.refName];
+	      this.el = vm.$refs[this.refName] || {};
 	      this.defaultValue = this.toValue(vm.$refs[refName] && !isUndef(vm.$refs[refName].initialValue) ? vm.$refs[refName].initialValue : deepExtend({}, {
 	        value: this.rule.value
 	      }).value);
 	      if (Array.isArray(children) && children.length > 0) children.forEach(function (child) {
 	        return !isString(child) && child.__handler__.mounted();
 	      });
+	    }
+	  }, {
+	    key: "$emit",
+	    value: function $emit(eventName) {
+	      var _this$rule$vm, _this$el;
+
+	      for (var _len = arguments.length, params = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+	        params[_key - 1] = arguments[_key];
+	      }
+
+	      if (this.type === 'template') (_this$rule$vm = this.rule.vm).$emit.apply(_this$rule$vm, [eventName].concat(params));else if (this.noValue === true) this.el.$emit && (_this$el = this.el).$emit.apply(_this$el, [eventName].concat(params));
 	    }
 	  }]);
 
@@ -1733,8 +1749,8 @@
 	    var emitKey = emitPrefix ? "".concat(emitPrefix, "-").toLowerCase() + toLine(eventName) : emitPrefix;
 
 	    event["on-".concat(eventName)] = event[eventName] = function () {
-	      for (var _len = arguments.length, arg = new Array(_len), _key = 0; _key < _len; _key++) {
-	        arg[_key] = arguments[_key];
+	      for (var _len2 = arguments.length, arg = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+	        arg[_key2] = arguments[_key2];
 	      }
 
 	      vm.$emit.apply(vm, [fieldKey].concat(arg));
@@ -4208,21 +4224,6 @@
 	  if (typeof iview === 'undefined') return iview2;
 	  return iview.version && iview.version.split('.')[0] == 3 ? iview3 : iview2;
 	}();
-	function getComponent(vm, rule, createOptions) {
-	  var name = toString$2(rule.type).toLowerCase(),
-	      component = isComponent(name) ? componentList[name] : getUdfComponent();
-	  return new component.handler(vm, rule, component.render, createOptions, component.noValue);
-	}
-	function isComponent(type) {
-	  return componentList[type] !== undefined;
-	}
-	function getUdfComponent() {
-	  return {
-	    handler: Handler,
-	    render: Render,
-	    noValue: true
-	  };
-	}
 	function getConfig() {
 	  return {
 	    el: null,
@@ -4266,7 +4267,8 @@
 	      innerText: "提交",
 	      loading: false,
 	      show: true,
-	      col: undefined
+	      col: undefined,
+	      click: undefined
 	    },
 	    resetBtn: {
 	      type: iviewConfig.resetBtnType,
@@ -4279,24 +4281,424 @@
 	      innerText: "重置",
 	      loading: false,
 	      show: false,
-	      col: undefined
+	      col: undefined,
+	      click: undefined
 	    },
 	    mounted: function mounted($f) {},
 	    onReload: function onReload($f) {},
-	    onSubmit: function onSubmit(formData) {}
+	    onSubmit: function onSubmit(formData, $f) {}
 	  };
 	}
 	var formCreateStyle = '.form-create{padding:25px;} .fc-upload-btn,.fc-files{display: inline-block;width: 58px;height: 58px;text-align: center;line-height: 58px;border: 1px solid #c0ccda;border-radius: 4px;overflow: hidden;background: #fff;position: relative;box-shadow: 2px 2px 5px rgba(0,0,0,.1);margin-right: 4px;box-sizing: border-box;}.__fc_h{display:none;}.__fc_v{visibility:hidden;}' + ' .fc-files>.ivu-icon{vertical-align: middle;}' + '.fc-files img{width:100%;height:100%;display:inline-block;vertical-align: top;}' + '.fc-upload .ivu-upload{display: inline-block;}' + '.fc-upload-btn{border: 1px dashed #c0ccda;}' + '.fc-upload-btn>ivu-icon{vertical-align:sub;}' + '.fc-upload .fc-upload-cover{opacity: 0; position: absolute; top: 0; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,.6); transition: opacity .3s;}' + '.fc-upload .fc-upload-cover i{ color: #fff; font-size: 20px; cursor: pointer; margin: 0 2px; }' + '.fc-files:hover .fc-upload-cover{opacity: 1; }' + '.fc-hide-btn .ivu-upload .ivu-upload{display:none;}' + '.fc-upload .ivu-upload-list{margin-top: 0;}' + '.fc-spin-icon-load{animation: ani-fc-spin 1s linear infinite;} @-webkit-keyframes ani-fc-spin{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}50%{-webkit-transform:rotate(180deg);transform:rotate(180deg)}to{-webkit-transform:rotate(1turn);transform:rotate(1turn)}}@keyframes ani-fc-spin{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}50%{-webkit-transform:rotate(180deg);transform:rotate(180deg)}to{-webkit-transform:rotate(1turn);transform:rotate(1turn)}}';
 	function toDefSlot(slot, $h, rule) {
 	  return [slot && isFunction(slot) ? slot.call(rule, $h) : slot];
 	}
+	function timeStampToDate(timeStamp) {
+	  if (isDate(timeStamp)) return timeStamp;else {
+	    var date = new Date(timeStamp);
+	    return date.toString() === 'Invalid Date' ? timeStamp : date;
+	  }
+	}
+	function getComponent(vm, rule, createOptions) {
+	  var name = toString$2(rule.type).toLowerCase(),
+	      component = isComponent(name) ? componentList[name] : getUdfComponent();
+	  return new component.handler(vm, rule, component.render, createOptions, component.noValue);
+	}
+	function isComponent(type) {
+	  return componentList[type] !== undefined;
+	}
+	function getUdfComponent() {
+	  return {
+	    handler: Handler,
+	    render: Render,
+	    noValue: true
+	  };
+	}
+
+	function preventDefault(e) {
+	  e.preventDefault();
+	}
+
+	var Form = function () {
+	  function Form(fComponent) {
+	    _classCallCheck(this, Form);
+
+	    var id = fComponent.id,
+	        vm = fComponent.vm,
+	        fieldList = fComponent.fieldList,
+	        handlers = fComponent.handlers,
+	        formData = fComponent.formData,
+	        validate = fComponent.validate;
+	    this.vm = vm;
+	    this.handlers = handlers;
+	    this.renderSort = fieldList;
+	    this.form = {
+	      model: formData,
+	      rules: validate,
+	      key: 'form' + id
+	    };
+	    this._fc = fComponent;
+	    this.vNode = new VNode(vm);
+	    this.vData = new VData();
+	    this.unique = id;
+	    this.refName = "cForm".concat(id);
+	    this.cacheUnique = 0;
+	  }
+
+	  _createClass(Form, [{
+	    key: "getRender",
+	    value: function getRender(field) {
+	      return this.handlers[field].render;
+	    }
+	  }, {
+	    key: "render",
+	    value: function render(vm) {
+	      var _this = this;
+
+	      this.vNode.setVm(vm);
+	      if (!vm.isShow) return;
+
+	      if (this.cacheUnique !== vm.unique) {
+	        this.renderSort.forEach(function (field) {
+	          _this.getRender(field).clearCache();
+	        });
+	        this.cacheUnique = vm.unique;
+	      }
+
+	      this.propsData = this.vData.props(this._fc.options.form).props(this.form).ref(this.refName).nativeOn({
+	        submit: preventDefault
+	      }).class('form-create', true).key(this.unique).get();
+	      var unique = this.unique,
+	          vn = this.renderSort.map(function (field) {
+	        var render = _this.getRender(field);
+
+	        if (render.handler.type === 'hidden') return;
+	        return _this.makeComponent(render);
+	      });
+	      if (vn.length > 0) vn.push(this.makeFormBtn(unique));
+	      return this.vNode.form(this.propsData, [this.vNode.row(extend({
+	        props: this._fc.options.row || {}
+	      }, {
+	        key: 'row' + unique
+	      }), vn)]);
+	    }
+	  }, {
+	    key: "makeComponent",
+	    value: function makeComponent(render) {
+	      return this.makeFormItem(render.handler, render.cacheParse(this), "fItem".concat(render.handler.key).concat(this.unique));
+	    }
+	  }, {
+	    key: "makeFormItem",
+	    value: function makeFormItem(_ref, VNodeFn, fItemUnique) {
+	      var type = _ref.type,
+	          rule = _ref.rule,
+	          unique = _ref.unique,
+	          field = _ref.field,
+	          refName = _ref.refName;
+	      var labelWidth = !isComponent(type) && !rule.col.labelWidth && !rule.title ? 1 : rule.col.labelWidth,
+	          className = rule.className,
+	          propsData = this.vData.props({
+	        prop: field,
+	        label: rule.title,
+	        labelFor: unique,
+	        rules: rule.validate,
+	        labelWidth: labelWidth,
+	        required: rule.props.required
+	      }).key(fItemUnique).ref('fItem' + refName).class(className).get(),
+	          node = this.vNode.formItem(propsData, VNodeFn);
+	      return this.propsData.props.inline === true ? [node] : this.makeCol(rule, fItemUnique, [node]);
+	    }
+	  }, {
+	    key: "makeCol",
+	    value: function makeCol(rule, fItemUnique, VNodeFn) {
+	      return this.vNode.col({
+	        props: rule.col,
+	        'class': {
+	          '__fc_h': rule.props.hidden === true,
+	          '__fc_v': rule.props.visibility === true
+	        },
+	        key: "".concat(fItemUnique, "col1")
+	      }, VNodeFn);
+	    }
+	  }, {
+	    key: "makeFormBtn",
+	    value: function makeFormBtn(unique) {
+	      var btn = [],
+	          submitBtnShow = false !== this.vm.buttonProps && false !== this.vm.buttonProps.show,
+	          resetBtnShow = false !== this.vm.resetProps && false !== this.vm.resetProps.show;
+	      if (submitBtnShow) btn.push(this.makeSubmitBtn(unique, resetBtnShow ? 19 : 24));
+	      if (resetBtnShow) btn.push(this.makeResetBtn(unique, 4));
+	      return this.vNode.col({
+	        props: {
+	          span: 24
+	        },
+	        key: "".concat(this.unique, "col2")
+	      }, btn);
+	    }
+	  }, {
+	    key: "makeResetBtn",
+	    value: function makeResetBtn(unique, span) {
+	      var _this2 = this;
+
+	      var resetBtn = this._fc.options.resetBtn,
+	          props = isUndef(this._fc.options.resetBtn.col) ? {
+	        span: span,
+	        push: 1
+	      } : resetBtn.col;
+	      return this.vNode.col({
+	        props: props,
+	        key: "".concat(this.unique, "col3")
+	      }, [this.vNode.button({
+	        key: "frsbtn".concat(unique),
+	        props: this.vm.resetProps,
+	        on: {
+	          "click": function click() {
+	            var fApi = _this2._fc.fCreateApi;
+	            isFunction(resetBtn.click) ? resetBtn.click(fApi) : fApi.resetFields();
+	          }
+	        }
+	      }, [this.vm.resetProps.innerText])]);
+	    }
+	  }, {
+	    key: "makeSubmitBtn",
+	    value: function makeSubmitBtn(unique, span) {
+	      var _this3 = this;
+
+	      var submitBtn = this._fc.options.submitBtn,
+	          props = isUndef(this._fc.options.submitBtn.col) ? {
+	        span: span
+	      } : submitBtn.col;
+	      return this.vNode.col({
+	        props: props,
+	        key: "".concat(this.unique, "col4")
+	      }, [this.vNode.button({
+	        key: "fbtn".concat(unique),
+	        props: this.vm.buttonProps,
+	        on: {
+	          "click": function click() {
+	            var fApi = _this3._fc.fCreateApi;
+	            isFunction(submitBtn.click) ? submitBtn.click(fApi) : fApi.submit();
+	          }
+	        }
+	      }, [this.vm.buttonProps.innerText])]);
+	    }
+	  }]);
+
+	  return Form;
+	}();
+
+	function baseComponent() {
+	  return {
+	    data: function data() {
+	      return {
+	        rules: {},
+	        components: {},
+	        cptData: {},
+	        buttonProps: {},
+	        resetProps: {},
+	        trueData: {},
+	        jsonData: {},
+	        $f: {},
+	        isShow: true,
+	        watchs: [],
+	        unique: 1
+	      };
+	    },
+	    methods: {
+	      _formField: function _formField() {
+	        return Object.keys(this.trueData);
+	      },
+	      _changeFormData: function _changeFormData(field, value) {
+	        if (Object.keys(this.cptData).indexOf(field) !== -1) this.$set(this.cptData, field, value);
+	      },
+	      _changeValue: function _changeValue(field, value) {
+	        this.$set(this.trueData[field], 'value', value);
+	      },
+	      _value: function _value(field) {
+	        return this.trueData[field] === undefined ? undefined : this.trueData[field].value;
+	      },
+	      _trueData: function _trueData(field) {
+	        return this.trueData[field];
+	      },
+	      _formData: function _formData(field) {
+	        return this.cptData[field];
+	      },
+	      _removeField: function _removeField(field) {
+	        $del(this.cptData, field);
+	        $del(this.trueData, field);
+	        $del(this.jsonData, field);
+	        if (this.components[field] !== undefined) $del(this.components, field);
+	      },
+	      _buttonProps: function _buttonProps(props) {
+	        this.$set(this, 'buttonProps', deepExtend(this.buttonProps, props));
+	      },
+	      _resetProps: function _resetProps(props) {
+	        this.$set(this, 'resetProps', deepExtend(this.resetProps, props));
+	      },
+	      __init: function __init() {
+	        var _this = this;
+
+	        var type = this._fComponent._type;
+	        this[type].forEach(function (rule, index) {
+	          var unWatch = _this.$watch("".concat(type, ".").concat(index, ".value"), function (n) {
+	            if (_this.trueData[rule.field] === undefined) return unWatch();
+
+	            _this._changeValue(rule.field, n);
+	          });
+
+	          _this.watchs.push(unWatch);
+	        });
+	      },
+	      _unWatch: function _unWatch() {
+	        this.watchs.forEach(function (unWatch) {
+	          return unWatch();
+	        });
+	        this.watchs = [];
+	      },
+	      _refresh: function _refresh() {
+	        this.unique += 1;
+	      },
+	      _sync: function _sync() {
+	        this.unique += 1;
+	        this._fComponent.fRender.cacheUnique = this.unique;
+	      },
+	      _change: function _change(field, json) {
+	        if (this.jsonData[field] !== json) {
+	          this.jsonData[field] = json;
+	          return true;
+	        }
+
+	        return false;
+	      }
+	    }
+	  };
+	}
+
+	var formCreateName = 'FormCreate';
+
+	var $FormCreate = function $FormCreate() {
+	  return {
+	    name: formCreateName,
+	    mixins: [baseComponent()],
+	    props: {
+	      rule: {
+	        type: Array,
+	        required: true,
+	        default: function _default() {
+	          return {};
+	        }
+	      },
+	      option: {
+	        type: Object,
+	        default: function _default() {
+	          return {};
+	        },
+	        required: false
+	      },
+	      value: Object
+	    },
+	    render: function render() {
+	      return this._fComponent.fRender.render(this._fComponent.vm);
+	    },
+	    created: function created() {
+	      var _fc = new FormCreate(this.rule, this.option);
+
+	      this._fComponent = _fc;
+	      _fc._type = 'rule';
+
+	      _fc.boot(this);
+
+	      this.$emit('input', _fc.fCreateApi);
+	    },
+	    mounted: function mounted() {
+	      var _this = this;
+
+	      var _fc = this._fComponent;
+
+	      _fc.mounted(this);
+
+	      this.$f = _fc.fCreateApi;
+	      this.$watch('rule', function (n) {
+	        _fc.reload(n, _this.unique);
+
+	        _this.$emit('input', _this.$f);
+	      });
+	      this.$watch('option', function (n) {
+	        $nt(function () {
+	          _this._sync();
+	        });
+	      }, {
+	        deep: true
+	      });
+	      this.$emit('input', this.$f);
+
+	      this.__init();
+	    }
+	  };
+	};
+
+	function formCreateComponent(fComponent) {
+	  return {
+	    name: "".concat(formCreateName, "Core"),
+	    mixins: [baseComponent()],
+	    render: function render() {
+	      return fComponent.fRender.render(fComponent.vm);
+	    },
+	    created: function created() {
+	      this._fComponent = fComponent;
+	      this._fComponent._type = 'rules';
+	      fComponent.boot(this);
+	    },
+	    mounted: function mounted() {
+	      var _this = this;
+
+	      fComponent.mounted(this);
+	      this.$f = fComponent.fCreateApi;
+
+	      this.__init();
+
+	      this.$watch('rules', function (n) {
+	        _this._fComponent.reload(n, _this.unique);
+	      });
+	    }
+	  };
+	}
+
+	var maker$c = function () {
+	  var _m = {};
+	  Object.keys(componentList).forEach(function (key) {
+	    var component = componentList[key];
+	    var undef = isUndef(component.maker);
+	    if (undef || component.maker[component.name] === undefined) _m[component.name] = creatorFactory(component.name);
+	    if (!undef) extend(_m, component.maker);
+	  });
+	  var commonMaker = creatorFactory('');
+	  extend(_m, {
+	    create: function create(type, field) {
+	      var make = commonMaker('', field);
+	      make.rule.type = type;
+	      return make;
+	    },
+	    createTmp: function createTmp(template, vm, field) {
+	      var make = commonMaker('', field);
+	      make.rule.type = 'template';
+	      make.rule.template = template;
+	      make.rule.vm = vm;
+	      return make;
+	    }
+	  });
+	  _m.template = _m.createTmp;
+	  return _m;
+	}();
+
 	function getGlobalApi(fComponent) {
 	  var _this2 = this;
 
 	  var vm = fComponent.vm;
 
 	  function tidyFields(fields) {
-	    if (!fields) fields = vm._formField();else if (!Array.isArray(fields)) fields = [fields];
+	    var all = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+	    if (!fields) fields = all ? Object.keys(fComponent.handlers) : vm._formField();else if (!Array.isArray(fields)) fields = [fields];
 	    return fields;
 	  }
 
@@ -4328,12 +4730,11 @@
 	    changeField: function changeField(field, value) {
 	      field = toString$2(field);
 	      var handler = fComponent.handlers[field];
-	      if (handler === undefined) return;else {
-	        if (isFunction(value)) value(vm._trueData(field), function (changeValue) {
-	          _this2.changeField(field, changeValue);
-	        });else {
-	          handler.setValue(value);
-	        }
+	      if (handler === undefined) return;
+	      if (isFunction(value)) value(vm._trueData(field), function (changeValue) {
+	        _this2.changeField(field, changeValue);
+	      });else {
+	        handler.setValue(value);
 	      }
 	    },
 	    removeField: function removeField(field) {
@@ -4357,13 +4758,15 @@
 	      if (fComponent.notField(field)) return;
 	      fComponent.getFormRef().validateField(field, callback);
 	    },
-	    resetFields: function resetFields() {
+	    resetFields: function resetFields(fields) {
+	      var _this3 = this;
+
 	      var handlers = fComponent.handlers;
-
-	      vm._formField().forEach(function (key) {
-	        handlers[key].reset();
+	      tidyFields(fields, true).forEach(function (field) {
+	        var handler = handlers[field];
+	        if (!handler) return;
+	        if (!handler.noValue) handler.reset();else handler.$emit('reset-field', _this3);
 	      });
-
 	      this.refresh();
 	    },
 	    destroy: function destroy() {
@@ -4394,12 +4797,12 @@
 	      fComponent.rules.splice(index + 1, 0, rule);
 	    },
 	    submit: function submit(successFn, failFn) {
-	      var _this3 = this;
+	      var _this4 = this;
 
 	      this.validate(function () {
-	        var formData = _this3.formData();
+	        var formData = _this4.formData();
 
-	        if (isFunction(successFn)) successFn(formData);else fComponent.options.onSubmit && fComponent.options.onSubmit(formData);
+	        if (isFunction(successFn)) successFn(formData, _this4);else fComponent.options.onSubmit && fComponent.options.onSubmit(formData);
 	      }, function () {
 	        return failFn && failFn();
 	      });
@@ -4421,13 +4824,23 @@
 	      });
 	    },
 	    disabled: function disabled(fields) {
+	      var _this5 = this;
+
 	      var _disabled = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
 
+	      _disabled = !!_disabled;
+	      tidyFields(fields, true).forEach(function (field) {
+	        var handler = fComponent.handlers[field];
+	        if (!handler) return;
+	        if (!handler.noValue) vm.$set(vm._trueData(field).rule.props, 'disabled', _disabled);else handler.$emit('disabled', _disabled, _this5);
+	        handler.render.sync();
+	      });
+	    },
+	    clearValidateState: function clearValidateState(fields) {
 	      tidyFields(fields).forEach(function (field) {
 	        var handler = fComponent.handlers[field];
 	        if (!handler) return;
-	        handler.render.sync();
-	        vm.$set(vm._trueData(field).rule.props, 'disabled', !!_disabled);
+	        handler.clearMsg();
 	      });
 	    },
 	    model: function model(fields) {
@@ -4548,387 +4961,8 @@
 	    }
 	  };
 	}
-	function timeStampToDate(timeStamp) {
-	  if (isDate(timeStamp)) return timeStamp;else {
-	    var date = new Date(timeStamp);
-	    return date.toString() === 'Invalid Date' ? timeStamp : date;
-	  }
-	}
-	var componentCommon = {
-	  data: function data() {
-	    return {
-	      rules: {},
-	      components: {},
-	      cptData: {},
-	      buttonProps: {},
-	      resetProps: {},
-	      trueData: {},
-	      jsonData: {},
-	      $f: {},
-	      isShow: true,
-	      watchs: [],
-	      unique: 1
-	    };
-	  },
-	  methods: {
-	    _formField: function _formField() {
-	      return Object.keys(this.trueData);
-	    },
-	    _changeFormData: function _changeFormData(field, value) {
-	      if (Object.keys(this.cptData).indexOf(field) !== -1) this.$set(this.cptData, field, value);
-	    },
-	    _changeValue: function _changeValue(field, value) {
-	      this.$set(this.trueData[field], 'value', value);
-	    },
-	    _value: function _value(field) {
-	      return this.trueData[field] === undefined ? undefined : this.trueData[field].value;
-	    },
-	    _trueData: function _trueData(field) {
-	      return this.trueData[field];
-	    },
-	    _formData: function _formData(field) {
-	      return this.cptData[field];
-	    },
-	    _removeField: function _removeField(field) {
-	      $del(this.cptData, field);
-	      $del(this.trueData, field);
-	      $del(this.jsonData, field);
-	      if (this.components[field] !== undefined) $del(this.components, field);
-	    },
-	    _buttonProps: function _buttonProps(props) {
-	      this.$set(this, 'buttonProps', deepExtend(this.buttonProps, props));
-	    },
-	    _resetProps: function _resetProps(props) {
-	      this.$set(this, 'resetProps', deepExtend(this.resetProps, props));
-	    },
-	    __init: function __init() {
-	      var _this4 = this;
 
-	      var type = this._fComponent._type;
-	      this[type].forEach(function (rule, index) {
-	        var unWatch = _this4.$watch("".concat(type, ".").concat(index, ".value"), function (n) {
-	          if (_this4.trueData[rule.field] === undefined) return unWatch();
-
-	          _this4._changeValue(rule.field, n);
-	        });
-
-	        _this4.watchs.push(unWatch);
-	      });
-	    },
-	    _unWatch: function _unWatch() {
-	      this.watchs.forEach(function (unWatch) {
-	        return unWatch();
-	      });
-	      this.watchs = [];
-	    },
-	    _refresh: function _refresh() {
-	      this.unique += 1;
-	    },
-	    _sync: function _sync() {
-	      this.unique += 1;
-	      this._fComponent.fRender.cacheUnique = this.unique;
-	    },
-	    _change: function _change(field, json) {
-	      if (this.jsonData[field] !== json) {
-	        this.jsonData[field] = json;
-	        return true;
-	      }
-
-	      return false;
-	    }
-	  }
-	};
-
-	function preventDefault(e) {
-	  e.preventDefault();
-	}
-
-	var Form = function () {
-	  function Form(fComponent) {
-	    _classCallCheck(this, Form);
-
-	    var id = fComponent.id,
-	        vm = fComponent.vm,
-	        options = fComponent.options,
-	        fieldList = fComponent.fieldList,
-	        handlers = fComponent.handlers,
-	        formData = fComponent.formData,
-	        validate = fComponent.validate;
-	    this.vm = vm;
-	    this.options = options;
-	    this.handlers = handlers;
-	    this.renderSort = fieldList;
-	    this.form = {
-	      model: formData,
-	      rules: validate,
-	      key: 'form' + id
-	    };
-	    this._fc = fComponent;
-	    this.vNode = new VNode(vm);
-	    this.vData = new VData();
-	    this.unique = id;
-	    this.refName = "cForm".concat(id);
-	    this.cacheUnique = 0;
-	  }
-
-	  _createClass(Form, [{
-	    key: "getRender",
-	    value: function getRender(field) {
-	      return this.handlers[field].render;
-	    }
-	  }, {
-	    key: "render",
-	    value: function render(vm) {
-	      var _this = this;
-
-	      this.vNode.setVm(vm);
-	      if (!vm.isShow) return;
-
-	      if (this.cacheUnique !== vm.unique) {
-	        this.renderSort.forEach(function (field) {
-	          _this.getRender(field).clearCache();
-	        });
-	        this.cacheUnique = vm.unique;
-	      }
-
-	      this.propsData = this.vData.props(this.options.form).props(this.form).ref(this.refName).nativeOn({
-	        submit: preventDefault
-	      }).class('form-create', true).key(this.unique).get();
-	      var unique = this.unique,
-	          vn = this.renderSort.map(function (field) {
-	        var render = _this.getRender(field);
-
-	        if (render.handler.type === 'hidden') return;
-	        return _this.makeComponent(render);
-	      });
-	      if (vn.length > 0) vn.push(this.makeFormBtn(unique));
-	      return this.vNode.form(this.propsData, [this.vNode.row(extend({
-	        props: this.options.row || {}
-	      }, {
-	        key: 'row' + unique
-	      }), vn)]);
-	    }
-	  }, {
-	    key: "makeComponent",
-	    value: function makeComponent(render) {
-	      return this.makeFormItem(render.handler, render.cacheParse(this), "fItem".concat(render.handler.key).concat(this.unique));
-	    }
-	  }, {
-	    key: "makeFormItem",
-	    value: function makeFormItem(_ref, VNodeFn, fItemUnique) {
-	      var type = _ref.type,
-	          rule = _ref.rule,
-	          unique = _ref.unique,
-	          field = _ref.field,
-	          refName = _ref.refName;
-	      var labelWidth = !isComponent(type) && !rule.col.labelWidth && !rule.title ? 1 : rule.col.labelWidth,
-	          className = rule.className,
-	          propsData = this.vData.props({
-	        prop: field,
-	        label: rule.title,
-	        labelFor: unique,
-	        rules: rule.validate,
-	        labelWidth: labelWidth,
-	        required: rule.props.required
-	      }).key(fItemUnique).ref('fItem' + refName).class(className).get(),
-	          node = this.vNode.formItem(propsData, VNodeFn);
-	      return this.propsData.props.inline === true ? [node] : this.makeCol(rule, fItemUnique, [node]);
-	    }
-	  }, {
-	    key: "makeCol",
-	    value: function makeCol(rule, fItemUnique, VNodeFn) {
-	      return this.vNode.col({
-	        props: rule.col,
-	        'class': {
-	          '__fc_h': rule.props.hidden === true,
-	          '__fc_v': rule.props.visibility === true
-	        },
-	        key: "".concat(fItemUnique, "col1")
-	      }, VNodeFn);
-	    }
-	  }, {
-	    key: "makeFormBtn",
-	    value: function makeFormBtn(unique) {
-	      var btn = [],
-	          submitBtnShow = false !== this.vm.buttonProps && false !== this.vm.buttonProps.show,
-	          resetBtnShow = false !== this.vm.resetProps && false !== this.vm.resetProps.show;
-	      if (submitBtnShow) btn.push(this.makeSubmitBtn(unique, resetBtnShow ? 19 : 24));
-	      if (resetBtnShow) btn.push(this.makeResetBtn(unique, 4));
-	      return this.vNode.col({
-	        props: {
-	          span: 24
-	        },
-	        key: "".concat(this.unique, "col2")
-	      }, btn);
-	    }
-	  }, {
-	    key: "makeResetBtn",
-	    value: function makeResetBtn(unique, span) {
-	      var _this2 = this;
-
-	      var props = isUndef(this.options.resetBtn.col) ? {
-	        span: span,
-	        push: 1
-	      } : this.options.resetBtn.col;
-	      return this.vNode.col({
-	        props: props,
-	        key: "".concat(this.unique, "col3")
-	      }, [this.vNode.button({
-	        key: "frsbtn".concat(unique),
-	        props: this.vm.resetProps,
-	        on: {
-	          "click": function click() {
-	            _this2._fc.fCreateApi.resetFields();
-	          }
-	        }
-	      }, [this.vm.resetProps.innerText])]);
-	    }
-	  }, {
-	    key: "makeSubmitBtn",
-	    value: function makeSubmitBtn(unique, span) {
-	      var _this3 = this;
-
-	      var props = isUndef(this.options.submitBtn.col) ? {
-	        span: span
-	      } : this.options.submitBtn.col;
-	      return this.vNode.col({
-	        props: props,
-	        key: "".concat(this.unique, "col4")
-	      }, [this.vNode.button({
-	        key: "fbtn".concat(unique),
-	        props: this.vm.buttonProps,
-	        on: {
-	          "click": function click() {
-	            _this3._fc.fCreateApi.submit();
-	          }
-	        }
-	      }, [this.vm.buttonProps.innerText])]);
-	    }
-	  }]);
-
-	  return Form;
-	}();
-
-	var formCreateName = 'FormCreate';
-
-	var $FormCreate = function $FormCreate() {
-	  return {
-	    name: formCreateName,
-	    props: {
-	      rule: {
-	        type: Array,
-	        required: true,
-	        default: function _default() {
-	          return {};
-	        }
-	      },
-	      option: {
-	        type: Object,
-	        default: function _default() {
-	          return {};
-	        },
-	        required: false
-	      },
-	      value: Object
-	    },
-	    data: componentCommon.data,
-	    methods: componentCommon.methods,
-	    render: function render() {
-	      return this._fComponent.fRender.render(this._fComponent.vm);
-	    },
-	    created: function created() {
-	      var _fc = new FormCreate(this.rule, this.option);
-
-	      this._fComponent = _fc;
-	      _fc._type = 'rule';
-
-	      _fc.boot(this);
-
-	      this.$emit('input', _fc.fCreateApi);
-	    },
-	    mounted: function mounted() {
-	      var _this = this;
-
-	      var _fc = this._fComponent;
-
-	      _fc.mounted(this);
-
-	      this.$f = _fc.fCreateApi;
-	      this.$watch('rule', function (n) {
-	        _fc.reload(n, _this.unique);
-
-	        _this.$emit('input', _this.$f);
-	      });
-	      this.$watch('option', function (n) {
-	        $nt(function () {
-	          _this._sync();
-	        });
-	      }, {
-	        deep: true
-	      });
-	      this.$emit('input', this.$f);
-
-	      this.__init();
-	    }
-	  };
-	};
-
-	function formCreateComponent(fComponent) {
-	  return {
-	    name: "".concat(formCreateName, "Core"),
-	    data: componentCommon.data,
-	    render: function render() {
-	      return fComponent.fRender.render(fComponent.vm);
-	    },
-	    methods: componentCommon.methods,
-	    created: function created() {
-	      this._fComponent = fComponent;
-	      this._fComponent._type = 'rules';
-	      fComponent.boot(this);
-	    },
-	    mounted: function mounted() {
-	      var _this = this;
-
-	      fComponent.mounted(this);
-	      this.$f = fComponent.fCreateApi;
-
-	      this.__init();
-
-	      this.$watch('rules', function (n) {
-	        _this._fComponent.reload(n, _this.unique);
-	      });
-	    }
-	  };
-	}
-
-	var maker$c = function () {
-	  var _m = {};
-	  Object.keys(componentList).forEach(function (key) {
-	    var component = componentList[key];
-	    var undef = isUndef(component.maker);
-	    if (undef || component.maker[component.name] === undefined) _m[component.name] = creatorFactory(component.name);
-	    if (!undef) extend(_m, component.maker);
-	  });
-	  var commonMaker = creatorFactory('');
-	  extend(_m, {
-	    create: function create(type, field) {
-	      var make = commonMaker('', field);
-	      make.rule.type = type;
-	      return make;
-	    },
-	    createTmp: function createTmp(template, vm, field) {
-	      var make = commonMaker('', field);
-	      make.rule.type = 'template';
-	      make.rule.template = template;
-	      make.rule.vm = vm;
-	      return make;
-	    }
-	  });
-	  _m.template = _m.createTmp;
-	  return _m;
-	}();
-
-	var version = "1.5.5-beta4";
+	var version = "1.5.5-beta5";
 	var formCreateStyleElId = 'form-create-style';
 	function margeGlobal(_options) {
 	  if (isBool(_options.sumbitBtn)) $set(_options, 'sumbitBtn', {

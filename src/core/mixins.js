@@ -1,6 +1,6 @@
 import {$del, deepExtend} from "./util";
 
-export default function () {
+export default function baseComponent() {
     return {
         data: () => {
             return {
