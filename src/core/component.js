@@ -1,11 +1,12 @@
 import formCreate from './formCreate';
-import {componentCommon} from './common';
+import baseComponent from './mixins';
 import {$nt} from "./util";
 
 const formCreateName = 'FormCreate';
 
 const $FormCreate = () => ({
     name: formCreateName,
+    mixins: [baseComponent()],
     props: {
         rule: {
             type: Array,
@@ -23,8 +24,6 @@ const $FormCreate = () => ({
         },
         value: Object
     },
-    data: componentCommon.data,
-    methods: componentCommon.methods,
     render() {
         return this._fComponent.fRender.render(this._fComponent.vm);
     },

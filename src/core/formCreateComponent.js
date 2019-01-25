@@ -1,15 +1,13 @@
 import {formCreateName} from './component';
-import {componentCommon} from "./common";
-import {$nt} from "./util";
+import baseComponent from "./mixins";
 
 export default function formCreateComponent(fComponent) {
     return {
         name: `${formCreateName}Core`,
-        data: componentCommon.data,
+        mixins: [baseComponent()],
         render: () => {
             return fComponent.fRender.render(fComponent.vm);
         },
-        methods: componentCommon.methods,
         created() {
             this._fComponent = fComponent;
             this._fComponent._type = 'rules';
