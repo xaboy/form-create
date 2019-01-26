@@ -1,5 +1,5 @@
 /*!
- * form-create v1.5.5-beta5
+ * form-create v1.5.5
  * (c) 2018-2019 xaboy
  * Github https://github.com/xaboy/form-create
  * Released under the MIT License.
@@ -4962,7 +4962,7 @@
 	  };
 	}
 
-	var version = "1.5.5-beta5";
+	var version = "1.5.5";
 	var formCreateStyleElId = 'form-create-style';
 	function margeGlobal(_options) {
 	  if (isBool(_options.sumbitBtn)) $set(_options, 'sumbitBtn', {
