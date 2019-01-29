@@ -1,9 +1,9 @@
-import Handler from "../factory/handler";
-import Render from "../factory/render";
-import {$set, errMsg, isUndef, uniqueId} from "../core/util";
-import upload from '../components/upload';
-import {iviewConfig} from "../core/common";
-import {creatorTypeFactory} from "../factory/creator";
+import Handler from "../../factory/handler";
+import Render from "../../factory/render";
+import {$set, errMsg, isUndef, uniqueId} from "../../core/util";
+import upload from './upload';
+import {iviewConfig} from "./install";
+import {creatorTypeFactory} from "../../factory/creator";
 import iview from 'iview';
 
 const name = "frame";

@@ -1,7 +1,7 @@
-import Handler from "../factory/handler";
-import Render from "../factory/render";
-import {creatorFactory} from "../factory/creator";
-import {$set} from "../core/util";
+import Handler from "../../factory/handler";
+import Render from "../../factory/render";
+import {creatorFactory} from "../../factory/creator";
+import {$set} from "../../core/util";
 
 const name = 'autoComplete';
 

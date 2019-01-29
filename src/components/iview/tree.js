@@ -1,7 +1,7 @@
-import Handler from "../factory/handler";
-import Render from "../factory/render";
-import {$set, toArray} from "../core/util";
-import {creatorTypeFactory} from "../factory/creator";
+import Handler from "../../factory/handler";
+import Render from "../../factory/render";
+import {$set, toArray} from "../../core/util";
+import {creatorTypeFactory} from "../../factory/creator";
 
 const name = 'tree';
 

@@ -2,48 +2,51 @@ import {
     $del,
     $nt, $set,
     debounce,
-    deepExtend,
     errMsg,
-    isBool,
     isElement,
     isFunction, isString,
-    isUndef,
+    isUndef, toString,
     uniqueId
 } from "./util";
-import {formCreateStyle, getComponent, getConfig} from "./common";
-import formRender from "../components/form";
-import formCreateComponent from "./formCreateComponent";
+import coreComponent from "./coreComponent";
 import {$FormCreate, formCreateName} from "./component";
-import maker from "./maker";
 import Vue from 'vue';
-import getGlobalApi from './fApi';
+import Handler from "../factory/handler";
+import Render from "../factory/render";
 
 const version = process.env.VERSION;
 
+const ui = process.env.UI;
+
 const formCreateStyleElId = 'form-create-style';
 
-export function margeGlobal(_options) {
-    if (isBool(_options.sumbitBtn))
-        $set(_options, 'sumbitBtn', {show: _options.sumbitBtn});
-    if (isBool(_options.resetBtn))
-        $set(_options, 'resetBtn', {show: _options.resetBtn});
-    let options = deepExtend(getConfig(), _options);
-
-    $set(options, 'el', !options.el
-        ? window.document.body
-        : (isElement(options.el)
-                ? options.el
-                : document.querySelector(options.el)
-        ));
-
-    return options
-}
+let drive = {};
 
 export function getRule(rule) {
     if (isFunction(rule.getRule))
         return rule.getRule();
     else
         return rule;
+}
+
+export function getComponent(vm, rule, createOptions) {
+    let componentList = drive.componentList, name = toString(rule.type).toLowerCase(),
+        component = isComponent(name)
+            ? componentList[name] : getUdfComponent();
+
+    return new component.handler(vm, rule, component.render, createOptions, component.noValue);
+}
+
+export function isComponent(type) {
+    return drive.componentList[type] !== undefined;
+}
+
+export function getUdfComponent() {
+    return {
+        handler: Handler,
+        render: Render,
+        noValue: true
+    }
 }
 
 export function bindHandler(rule, handler) {
@@ -65,7 +68,7 @@ export function initStyle() {
     if (document.getElementById(formCreateStyleElId) !== null) return;
     let style = document.createElement('style');
     style.id = formCreateStyleElId;
-    style.innerText = formCreateStyle;
+    style.innerText = drive.style;
     document.getElementsByTagName('head')[0].appendChild(style);
 }
 
@@ -82,7 +85,7 @@ export default class FormCreate {
     }
 
     __init(rules, options) {
-        this.options = margeGlobal(options);
+        this.options = drive.margeGlobal(options);
         this.rules = Array.isArray(rules) ? rules : [];
         this.origin = [...this.rules];
         this.handlers = {};
@@ -107,8 +110,10 @@ export default class FormCreate {
             return FormCreate.create(rules, opt, Vue)
         };
 
+        Vue.prototype.$formCreate.maker = FormCreate.maker;
         Vue.prototype.$formCreate.version = version;
-        Vue.prototype.$formCreate.maker = maker;
+        Vue.prototype.$formCreate.ui = ui;
+
         Vue.component(formCreateName, Vue.extend($FormCreate()));
     }
 
@@ -122,10 +127,10 @@ export default class FormCreate {
         vm.$set(vm, 'rules', this.rules);
         vm.$set(vm, 'components', this.components);
 
-        this.fRender = new formRender(this);
+        this.fRender = new drive.formRender(this);
 
         if (this.fCreateApi === undefined)
-            this.fCreateApi = getGlobalApi(this);
+            this.fCreateApi = drive.getGlobalApi(this);
 
         this.fCreateApi.rule = this.rules;
         this.fCreateApi.config = this.options;
@@ -196,7 +201,7 @@ export default class FormCreate {
     }
 
     create(Vue) {
-        let $fCreate = Vue.extend(formCreateComponent(this)), $vm = new $fCreate().$mount();
+        let $fCreate = Vue.extend(coreComponent(this)), $vm = new $fCreate().$mount();
         this.options.el.appendChild($vm.$el);
         return $vm;
     }
@@ -318,5 +323,10 @@ export default class FormCreate {
 
 }
 
-FormCreate.maker = maker;
 FormCreate.version = version;
+FormCreate.ui = ui;
+
+export function setDrive(_drive) {
+    drive = _drive;
+    _drive.install(FormCreate)
+}

@@ -1,8 +1,8 @@
-import Handler from "../factory/handler";
-import Render from "../factory/render";
-import {$set, extend, isUndef, toString, uniqueId} from "../core/util";
-import {iviewConfig} from "../core/common";
-import {creatorTypeFactory} from "../factory/creator";
+import Handler from "../../factory/handler";
+import Render from "../../factory/render";
+import {$set, extend, isUndef, toString, uniqueId} from "../../core/util";
+import {iviewConfig} from "./install";
+import {creatorTypeFactory} from "../../factory/creator";
 
 const name = "upload";
 

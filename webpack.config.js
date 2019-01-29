@@ -31,7 +31,8 @@ module.exports = {
             inject: true
         }),
         new webpack.DefinePlugin({
-            'process.env.VERSION': `'${pkg.version}'`
+            'process.env.VERSION': `'${pkg.version}'`,
+            'process.env.UI': JSON.stringify('iview')
         }),
     ],
     devServer: {

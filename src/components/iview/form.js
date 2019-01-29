@@ -1,7 +1,7 @@
-import {deepExtend, extend, isFunction, isUndef, toString, uniqueId} from "../core/util";
-import VNode from "../factory/vNode";
-import VData from "../factory/vData";
-import {isComponent} from "../core/common";
+import {extend, isFunction, isUndef} from "../../core/util";
+import VNode from "../../factory/vNode";
+import VData from "../../factory/vData";
+import {isComponent} from "../../core/formCreate";
 
 export function preventDefault(e) {
     e.preventDefault();

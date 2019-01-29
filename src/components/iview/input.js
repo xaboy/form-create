@@ -1,7 +1,7 @@
-import Handler from "../factory/handler";
-import Render from "../factory/render";
-import {creatorTypeFactory} from "../factory/creator";
-import {$set, toString} from "../core/util";
+import Handler from "../../factory/handler";
+import Render from "../../factory/render";
+import {creatorTypeFactory} from "../../factory/creator";
+import {$set, toString} from "../../core/util";
 
 const name = "input";
 

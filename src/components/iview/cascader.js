@@ -1,6 +1,6 @@
-import Handler from "../factory/handler";
-import Render from "../factory/render";
-import {$set} from "../core/util";
+import Handler from "../../factory/handler";
+import Render from "../../factory/render";
+import {$set} from "../../core/util";
 
 const name = 'cascader';
 

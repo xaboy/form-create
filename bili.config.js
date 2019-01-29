@@ -18,6 +18,7 @@ module.exports = {
     js: "babel",
     replace: {
         'process.env.NODE_ENV': JSON.stringify('production'),
-        'process.env.VERSION': JSON.stringify(version)
+        'process.env.VERSION': JSON.stringify(version),
+        'process.env.UI': JSON.stringify('iview')
     }
 }

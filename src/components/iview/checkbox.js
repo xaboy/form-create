@@ -1,6 +1,5 @@
-import Handler from "../factory/handler";
-import Render from "../factory/render";
-import {extend} from "../core/util";
+import Handler from "../../factory/handler";
+import Render from "../../factory/render";
 
 const name = "checkbox";
 

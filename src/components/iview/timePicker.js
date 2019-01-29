@@ -1,8 +1,8 @@
-import Handler from "../factory/handler";
-import Render from "../factory/render";
-import {$set, dateFormat, isDate, isUndef} from "../core/util";
-import {timeStampToDate, toDefSlot} from "../core/common";
-import {creatorTypeFactory} from "../factory/creator";
+import Handler from "../../factory/handler";
+import Render from "../../factory/render";
+import {$set, dateFormat, isDate, isUndef} from "../../core/util";
+import {timeStampToDate, toDefSlot} from "../../core/util";
+import {creatorTypeFactory} from "../../factory/creator";
 
 const name = 'timePicker';
 

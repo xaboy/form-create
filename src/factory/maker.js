@@ -1,8 +1,7 @@
-import {creatorFactory} from "../factory/creator";
-import componentList from './componentList';
-import {extend, isUndef, uniqueId} from "./util";
+import {creatorFactory} from "./creator";
+import {extend, isUndef} from "../core/util";
 
-const maker = (() => {
+export default function makerFactory(componentList) {
 
     let _m = {};
 
@@ -37,6 +36,4 @@ const maker = (() => {
     _m.template = _m.createTmp;
 
     return _m;
-})();
-
-export default maker;
+};

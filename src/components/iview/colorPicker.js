@@ -1,6 +1,6 @@
-import Handler from "../factory/handler";
-import Render from "../factory/render";
-import {creatorFactory} from "../factory/creator";
+import Handler from "../../factory/handler";
+import Render from "../../factory/render";
+import {creatorFactory} from "../../factory/creator";
 
 const name = "colorPicker";
 

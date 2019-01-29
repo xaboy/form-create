@@ -110,6 +110,20 @@ export function uniqueId() {
     return ++id
 }
 
+export function toDefSlot(slot, $h, rule) {
+    return [slot && isFunction(slot) ? slot.call(rule, $h) : slot]
+}
+
+
+export function timeStampToDate(timeStamp) {
+    if (isDate(timeStamp))
+        return timeStamp;
+    else {
+        let date = new Date(timeStamp);
+        return date.toString() === 'Invalid Date' ? timeStamp : date;
+    }
+}
+
 export function dateFormat(fmt, date = new Date) {
     let o = {
         "M+": date.getMonth() + 1,

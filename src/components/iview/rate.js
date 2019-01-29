@@ -1,5 +1,5 @@
-import Handler from "../factory/handler";
-import Render from "../factory/render";
+import Handler from "../../factory/handler";
+import Render from "../../factory/render";
 
 const name = "rate";
 

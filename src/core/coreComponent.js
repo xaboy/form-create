@@ -1,7 +1,7 @@
 import {formCreateName} from './component';
 import baseComponent from "./mixins";
 
-export default function formCreateComponent(fComponent) {
+export default function coreComponent(fComponent) {
     return {
         name: `${formCreateName}Core`,
         mixins: [baseComponent()],

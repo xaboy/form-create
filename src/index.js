@@ -5,9 +5,12 @@
  * Github: https://github.com/xaboy/form-create
  */
 
-import formCreate from './core/formCreate';
+import formCreate, {setDrive} from './core/formCreate';
+import drive from './components/iview/install'
 
-export function install(Vue) {
+setDrive(drive);
+
+function _install(Vue) {
     if (Vue._installedFormCreate === true) return;
     Vue._installedFormCreate = true;
     Vue.use(formCreate);
@@ -17,8 +20,9 @@ if (typeof window !== 'undefined') {
     window.formCreate = formCreate;
 
     if (window.Vue) {
-        install(Vue);
+        _install(Vue);
     }
 }
+
 
 export default formCreate;

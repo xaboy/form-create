@@ -1,7 +1,7 @@
-import Handler from "../factory/handler";
-import Render from "../factory/render";
-import {creatorTypeFactory} from "../factory/creator";
-import {toDefSlot} from "../core/common";
+import Handler from "../../factory/handler";
+import Render from "../../factory/render";
+import {creatorTypeFactory} from "../../factory/creator";
+import {toDefSlot} from "../../core/util";
 
 const name = "select";
 
