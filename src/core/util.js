@@ -124,6 +124,10 @@ export function timeStampToDate(timeStamp) {
     }
 }
 
+export function preventDefault(e) {
+    e.preventDefault();
+}
+
 export function dateFormat(fmt, date = new Date) {
     let o = {
         "M+": date.getMonth() + 1,

@@ -1,22 +1,20 @@
-import hiddenComponent from "./hidden";
-import inputComponent from "./input";
-import radioComponent from "./radio";
-import checkboxComponent from "./checkbox";
-import switchComponent from "./switch";
-import selectComponent from "./select";
-import datePickerComponent from "./datePicker";
-import timePickerComponent from "./timePicker";
-import inputNumberComponent from "./inputNumber";
-import colorPickerComponent from "./colorPicker";
-import uploadComponent from "./upload";
-import cascaderComponent from "./cascader";
-import rateComponent from "./rate";
-import sliderComponent from "./slider";
-import frameComponent from "./frame";
-import treeComponent from "./tree";
-import autoCompleteComponent from "./autoComplete";
 import formRender from './form';
-import iview from 'iview';
+import hiddenComponent from '../iview/hidden';
+import checkboxComponent from './checkbox';
+import radioComponent from './radio';
+import inputComponent from '../iview/input';
+import autoCompleteComponent from '../iview/autoComplete';
+import inputNumberComponent from '../iview/inputNumber';
+import selectComponent from "../iview/select";
+import cascaderComponent from "../iview/cascader";
+import switchComponent from "../iview/switch";
+import sliderComponent from "../iview/slider";
+import timePickerComponent from "./timePicker";
+import datePickerComponent from "./datePicker";
+import rateComponent from "../iview/rate";
+import colorPickerComponent from "../iview/colorPicker";
+import treeComponent from "./tree";
+import uploadComponent from "./upload";
 import {
     $set,
     deepExtend,
@@ -28,53 +26,30 @@ import {
     isUndef,
     toString
 } from "../../core/util";
+
 import makerFactory from '../../factory/maker'
 import VNode from "../../factory/vNode";
 
 export const componentList = {
     hidden: hiddenComponent,
-    input: inputComponent,
     radio: radioComponent,
     checkbox: checkboxComponent,
-    switch: switchComponent,
-    select: selectComponent,
-    datepicker: datePickerComponent,
-    timepicker: timePickerComponent,
-    inputnumber: inputNumberComponent,
-    colorpicker: colorPickerComponent,
-    upload: uploadComponent,
-    cascader: cascaderComponent,
-    rate: rateComponent,
-    slider: sliderComponent,
-    frame: frameComponent,
-    tree: treeComponent,
+    input: inputComponent,
     autocomplete: autoCompleteComponent,
+    inputnumber: inputNumberComponent,
+    select: selectComponent,
+    cascader: cascaderComponent,
+    switch: switchComponent,
+    slider: sliderComponent,
+    timepicker: timePickerComponent,
+    datepicker: datePickerComponent,
+    rate: rateComponent,
+    colorpicker: colorPickerComponent,
+    tree: treeComponent,
+    upload: uploadComponent,
+    // frame: frameComponent,
 };
 
-export const iview2 = {
-    _v: 2,
-    resetBtnType: 'ghost',
-    resetBtnIcon: 'refresh',
-    submitBtnIcon: 'ios-upload',
-    fileIcon: 'document-text',
-    fileUpIcon: 'folder',
-    imgUpIcon: 'image',
-};
-
-export const iview3 = {
-    _v: 3,
-    resetBtnType: 'default',
-    resetBtnIcon: 'md-refresh',
-    submitBtnIcon: 'ios-share',
-    fileIcon: 'md-document',
-    fileUpIcon: 'ios-folder-open',
-    imgUpIcon: 'md-images',
-};
-
-export const iviewConfig = (function () {
-    if (typeof iview === 'undefined') return iview2;
-    return (iview.version && iview.version.split('.')[0] == 3) ? iview3 : iview2;
-}());
 
 export function getGlobalConfig() {
     return {
@@ -84,9 +59,14 @@ export function getGlobalConfig() {
         form: {
             inline: false,
             labelPosition: 'right',
-            labelWidth: 125,
+            labelSuffix: undefined,
+            hideRequiredAsterisk: false,
+            labelWidth: '125px',
             showMessage: true,
-            autocomplete: 'off',
+            inlineMessage: false,
+            statusIcon: false,
+            validateOnRuleChange: true,
+            disabled: false,
             size: undefined,
         },
         row: {
@@ -94,7 +74,7 @@ export function getGlobalConfig() {
             type: undefined,
             align: undefined,
             justify: undefined,
-            className: undefined
+            tag: 'div'
         },
         upload: {
             beforeUpload: () => {
@@ -113,33 +93,39 @@ export function getGlobalConfig() {
             },
             onExceededSize: (file, fileList) => {
             },
-            handleIcon: 'ios-eye-outline',
-            allowRemove: true
+            allowRemove: true,
+            handleIcon: true,
         },
         submitBtn: {
             type: "primary",
-            size: "large",
-            shape: undefined,
-            long: true,
-            htmlType: "button",
-            disabled: false,
-            icon: iviewConfig.submitBtnIcon,
-            innerText: "提交",
+            size: "medium",
+            plain: false,
+            round: false,
+            circle: false,
             loading: false,
+            disabled: false,
+            icon: 'el-icon-upload',
+            width: '100%',
+            autofocus: false,
+            nativeType: "button",
+            innerText: "提交",
             show: true,
             col: undefined,
             click: undefined,
         },
         resetBtn: {
-            type: iviewConfig.resetBtnType,
-            size: "large",
-            shape: undefined,
-            long: true,
-            htmlType: "button",
-            disabled: false,
-            icon: iviewConfig.resetBtnIcon,
-            innerText: "重置",
+            type: "default",
+            size: "medium",
+            plain: false,
+            round: false,
+            circle: false,
             loading: false,
+            disabled: false,
+            icon: 'el-icon-refresh',
+            width: '100%',
+            autofocus: false,
+            nativeType: "button",
+            innerText: "重置",
             show: false,
             col: undefined,
             click: undefined,
@@ -425,7 +411,7 @@ export function getGlobalApi(fComponent) {
 export const style = '.form-create{padding:25px;} .fc-upload-btn,.fc-files{display: inline-block;width: 58px;height: 58px;text-align: center;line-height: 58px;border: 1px solid #c0ccda;border-radius: 4px;overflow: hidden;background: #fff;position: relative;box-shadow: 2px 2px 5px rgba(0,0,0,.1);margin-right: 4px;box-sizing: border-box;}.__fc_h{display:none;}.__fc_v{visibility:hidden;}' +
     ' .fc-files>.ivu-icon{vertical-align: middle;}' +
     '.fc-files img{width:100%;height:100%;display:inline-block;vertical-align: top;}' +
-    '.fc-upload .ivu-upload{display: inline-block;}' +
+    '.fc-upload .el-upload{display: block;}' +
     '.fc-upload-btn{border: 1px dashed #c0ccda;}' +
     '.fc-upload-btn>ivu-icon{vertical-align:sub;}' +
     '.fc-upload .fc-upload-cover{opacity: 0; position: absolute; top: 0; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,.6); transition: opacity .3s;}' +
@@ -433,35 +419,38 @@ export const style = '.form-create{padding:25px;} .fc-upload-btn,.fc-files{displ
     '.fc-files:hover .fc-upload-cover{opacity: 1; }' +
     '.fc-hide-btn .ivu-upload .ivu-upload{display:none;}' +
     '.fc-upload .ivu-upload-list{margin-top: 0;}' +
+    '.form-create .el-form-item .el-rate{margin-top:10px;}' +
     '.fc-spin-icon-load{animation: ani-fc-spin 1s linear infinite;} @-webkit-keyframes ani-fc-spin{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}50%{-webkit-transform:rotate(180deg);transform:rotate(180deg)}to{-webkit-transform:rotate(1turn);transform:rotate(1turn)}}@keyframes ani-fc-spin{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}50%{-webkit-transform:rotate(180deg);transform:rotate(180deg)}to{-webkit-transform:rotate(1turn);transform:rotate(1turn)}}';
 
 export const nodes = {
     modal: 'Modal',
-    progress: 'i-progress',
-    button: 'i-button',
-    icon: 'Icon',
-    slider: 'Slider',
-    rate: 'Rate',
-    upload: 'Upload',
-    cascader: 'Cascader',
-    colorPicker: 'Color-Picker',
-    timePicker: 'Time-Picker',
-    datePicker: 'Date-Picker',
-    'switch': 'i-switch',
-    option: 'i-option',
-    select: 'i-select',
-    checkbox: 'Checkbox',
-    checkboxGroup: 'Checkbox-Group',
-    radio: 'Radio',
-    radioGroup: 'Radio-Group',
-    inputNumber: 'Input-Number',
-    input: 'i-input',
-    formItem: 'Form-Item',
-    form: 'i-form',
-    col: 'i-col',
-    row: 'row',
-    tree: 'Tree',
-    AutoComplete: 'AutoComplete',
+    progress: 'el-progress',
+    button: 'el-button',
+    icon: 'i',
+    slider: 'el-slider',
+    rate: 'el-rate',
+    upload: 'el-upload',
+    cascader: 'el-cascader',
+    colorPicker: 'el-color-picker',
+    timePicker: 'el-time-picker',
+    datePicker: 'el-date-picker',
+    'switch': 'el-switch',
+    option: 'el-option',
+    select: 'el-select',
+    checkbox: 'el-checkbox',
+    checkboxGroup: 'el-checkbox-Group',
+    checkboxBtn: 'el-checkbox-button',
+    radio: 'el-radio',
+    radioGroup: 'el-radio-group',
+    radioBtn: 'el-radio-button',
+    inputNumber: 'el-input-number',
+    input: 'el-input',
+    formItem: 'el-form-Item',
+    form: 'el-form',
+    col: 'el-col',
+    row: 'el-row',
+    tree: 'el-tree',
+    AutoComplete: 'el-autocomplete',
 };
 
 export function install(FormCreate) {

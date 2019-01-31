@@ -8,6 +8,7 @@ class handler extends Handler {
     init() {
         let rule = this.rule;
         if (!rule.props.data) $set(rule.props, 'data', []);
+        if (!rule.props.options) $set(rule.props, 'options', []);
         if (!Array.isArray(this.rule.value)) $set(rule, 'value', []);
     }
 

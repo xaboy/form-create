@@ -7,7 +7,7 @@ module.exports = {
     mode: "development",
     devtool: "source-map",
     entry: {
-        app: path.join(__dirname, './src', 'index.js')
+        app: path.join(__dirname, './src', 'elm.js')
     },
     output: {    //输出
         filename: 'dist/form-create.js',
@@ -26,17 +26,17 @@ module.exports = {
     plugins: [
         new webpack.HotModuleReplacementPlugin(),
         new HtmlWebpackPlugin({
-            template: path.resolve(__dirname, './demo/iview/index.html'),
-            filename: path.resolve(__dirname, './demo/iview/index.html'),
+            template: path.resolve(__dirname, './demo/elm/index.html'),
+            filename: path.resolve(__dirname, './demo/elm/index.html'),
             inject: true
         }),
         new webpack.DefinePlugin({
             'process.env.VERSION': `'${pkg.version}'`,
-            'process.env.UI': JSON.stringify('iview')
+            'process.env.UI': JSON.stringify('elm')
         }),
     ],
     devServer: {
-        openPage: './demo/iview/index.html',
+        openPage: './demo/elm/index.html',
         hot: true,
         inline: true,
         open: true
@@ -44,7 +44,7 @@ module.exports = {
     resolve: {
         alias: {
             'vue': 'vue/dist/vue.min.js',
-            'iview': 'iview'
+            'element-ui': 'element-ui'
         }
     }
 };

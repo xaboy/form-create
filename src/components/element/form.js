@@ -105,7 +105,7 @@ export default class Form {
                             ? resetBtn.click(fApi)
                             : fApi.resetFields();
                     }
-                }
+                }, style: {width: this.vm.resetProps.width}
             }, [this.vm.resetProps.innerText])
         ]);
     }
@@ -123,7 +123,7 @@ export default class Form {
                             ? submitBtn.click(fApi)
                             : fApi.submit();
                     }
-                }
+                }, style: {width: this.vm.resetProps.width}
             }, [this.vm.buttonProps.innerText])
         ]);
     }

@@ -308,7 +308,7 @@ class render extends Render {
     }
 }
 
-render.prototype.defaultOnHandle = upload.render.prototype.defaultOnHandle;
+// render.prototype.defaultOnHandle = upload.render.prototype.defaultOnHandle;
 Object.keys(eventList).forEach(k => {
     render.prototype[k] = function () {
         let fn = this.handler.rule.event[eventList[k]];

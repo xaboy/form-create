@@ -114,11 +114,15 @@ export default class Render {
     }
 
     onInput(value) {
+        console.log(value);
+        value = isUndef(value) ? '' : value;
         let handler = this.handler, {field, vm} = this.handler, trueValue = handler.toValue(value);
         vm._changeFormData(field, value);
+        if (!vm._change(field, trueValue)) return;
         handler.setValue(trueValue);
-        vm._change(field, JSON.stringify(value));
         handler.watchFormValue(value);
+        if (process.env.ui !== 'iview')
+            handler.render.sync();
     }
 
 }

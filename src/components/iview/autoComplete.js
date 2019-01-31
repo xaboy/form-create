@@ -12,6 +12,11 @@ export class handler extends Handler {
         if (!Array.isArray(rule.data))
             $set(rule, 'data', [])
     }
+
+    watchFormValue(n) {
+        super.watchFormValue(n);
+        this.render.sync();
+    }
 }
 
 class render extends Render {

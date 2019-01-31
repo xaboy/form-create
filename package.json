@@ -7,7 +7,8 @@
   "unpkg": "dist/form-create.min.js",
   "jsdelivr": "dist/form-create.min.js",
   "scripts": {
-    "dev": "webpack-dev-server",
+    "dev:iview": "webpack-dev-server",
+    "dev:elm": "webpack-dev-server --config=webpack.config.elm.js",
     "build": "rimraf dist/*.* && bili"
   },
   "files": [
@@ -48,6 +49,7 @@
     "babel-loader": "^8.0.5",
     "babel-plugin-add-module-exports": "^1.0.0",
     "bili": "^3.4.2",
+    "element-ui": "^2.5.2",
     "html-webpack-plugin": "^3.2.0",
     "iview": "^3.1.4",
     "rimraf": "^2.6.3",

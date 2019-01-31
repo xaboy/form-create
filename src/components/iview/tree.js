@@ -129,13 +129,13 @@ const event = {
 class render extends Render {
     parse() {
         let {rule, refName, field, unique} = this.handler, props = this.vData.on(rule.event).on({
-            [event.s]: (v) => {
+            [event.s]: (...args) => {
                 this.vm._changeFormData(field, this.handler._toValue());
-                rule.event[event.s] && rule.event[event.s](v);
+                rule.event[event.s] && rule.event[event.s](...args);
             },
-            [event.c]: (v) => {
+            [event.c]: (...args) => {
                 this.vm._changeFormData(field, this.handler._toValue());
-                rule.event[event.c] && rule.event[event.c](v);
+                rule.event[event.c] && rule.event[event.c](...args);
             },
         }).props(rule.props).ref(refName).key(`fip${unique}`).get();
 
