@@ -6,7 +6,7 @@ export default function coreComponent(fComponent) {
         name: `${formCreateName}Core`,
         mixins: [baseComponent()],
         render: () => {
-            return fComponent.fRender.render(fComponent.vm);
+            return fComponent.render();
         },
         created() {
             this._fComponent = fComponent;
@@ -18,7 +18,7 @@ export default function coreComponent(fComponent) {
             this.$f = fComponent.fCreateApi;
             this.__init();
             this.$watch('rules', n => {
-                this._fComponent.reload(n, this.unique);
+                this._fComponent.reload(n);
             });
         }
     }

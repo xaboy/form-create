@@ -12,8 +12,7 @@ function mock() {
 
         //cascader 多级联动组件
         maker.cascader('所在区域', 'address', ['陕西省', '西安市', '新城区']).props({
-            data: window.province_city || [],
-            hidden: false
+            options: window.province_city || []
         }),
 
 
@@ -30,16 +29,10 @@ function mock() {
 
         //autoComplete 自动选择组件
         maker.auto('自动完成', 'auto', 'xaboy').props({
-            data: [
-                'xaboy',
-                'xian',
-                'github'
-            ],
-            filterMethod: function (value, option) {
-                value = value || '';
-                option = option || '';
-
-                return option.toUpperCase().indexOf(value.toUpperCase()) !== -1
+            fetchSuggestions: function (queryString, cb) {
+                cb([
+                    {value: queryString}, {value: queryString + queryString}
+                ]);
             }
         }).emitPrefix('xaboy').emit(['change']),
 
@@ -79,7 +72,7 @@ function mock() {
 
 
         //自定义组件
-        maker.createTmp('<i-button @click="onClick" long :disabled="disabled">{{button}}字符串测试{{test}}-{{num}}</i-button>', new Vue({
+        maker.createTmp('<el-button @click="onClick" style="width:100%;" :disabled="disabled">{{button}}字符串测试{{test}}-{{num}}</el-button>', new Vue({
             data: {
                 test: 'createTmp渲染',
                 button: '<i-button />',
@@ -108,22 +101,11 @@ function mock() {
 
 
         //自定义组件
-        maker.create('i-button', 'btn').props({
-            type: "primary",
-            size: "large",
-            shape: undefined,
-            long: true,
-            htmlType: "button",
-            disabled: false,
-            icon: "ios-upload",
-            loading: false,
-            show: true
-        })
-            .on({
-                "disabled": function (disabled, $f) {
-                    $f.component().btn.props.disabled = disabled;
-                }
-            }).col({span: 12}).children([
+        maker.create('el-button', 'btn').on({
+            "disabled": function (disabled, $f) {
+                $f.component().btn.props.disabled = disabled;
+            }
+        }).col({span: 12}).children([
             maker.create('span').domProps({
                 innerHTML: '测试自定义按钮'
             })
@@ -131,7 +113,7 @@ function mock() {
 
 
         //自定义组件
-        maker.create('Tooltip', 'tip').props({
+        maker.create('el-tooltip', 'tip').props({
             content: "这里是提示文字",
         }).col({span: 11, push: 1}).children([
             maker.create('span').domProps({
@@ -147,12 +129,7 @@ function mock() {
                 "value": "105", "label": "新鲜水果", "disabled": false, "slot": function ($h) {
                     return $h("div", {
                         style: "color:#ff7271;"
-                    }, [$h('icon', {
-                        props: {
-                            //iview2 与 iview3 图标名称不同
-                            type: 'social-apple'
-                        }
-                    }), "新鲜水果"]);
+                    }, ['新鲜水果']);
                 }
             },
         ]).props({
@@ -161,10 +138,10 @@ function mock() {
 
 
         {
-            type: 'row',
+            type: 'el-row',
             children: [
                 {
-                    type: 'i-col',
+                    type: 'el-col',
                     props: {
                         span: 12
                     },
@@ -186,7 +163,7 @@ function mock() {
                     ]
                 },
                 {
-                    type: 'i-col',
+                    type: 'el-col',
                     props: {
                         span: 12
                     },
@@ -297,7 +274,7 @@ function mock() {
 
         //frame 框架组件
         maker.frame('素材', 'fodder', ["http://file.lotkk.com/form-create.jpeg"]).props({
-            src: "iframe.html",
+            src: "../iframe.html",
             maxLength: 0,
             type: "image"
         }).validate([
@@ -371,7 +348,7 @@ function mock() {
 //upload 上传组件
 $r = maker.upload('产品主图', 'logo', 'http://file.lotkk.com/form-create.jpeg').props({
     "action": "http://127.0.0.1:8000/index/index/upload",
-    "maxLength": 1,
+    "limit": 1,
     "multiple": false,
     "showUploadList": false,
     "max": 0,

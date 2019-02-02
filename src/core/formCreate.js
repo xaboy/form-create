@@ -1,8 +1,8 @@
 import {
     $del,
     $nt, $set,
-    debounce,
-    errMsg,
+    debounce, deepExtend,
+    errMsg, extend, isBool,
     isElement,
     isFunction, isString,
     isUndef, toString,
@@ -13,6 +13,7 @@ import {$FormCreate, formCreateName} from "./component";
 import Vue from 'vue';
 import Handler from "../factory/handler";
 import Render from "../factory/render";
+import getBaseConfig from "./config";
 
 const version = process.env.VERSION;
 
@@ -49,6 +50,8 @@ export function getUdfComponent() {
     }
 }
 
+export let _vue = Vue;
+
 export function bindHandler(rule, handler) {
     Object.defineProperties(rule, {
         __field__: {
@@ -72,20 +75,36 @@ export function initStyle() {
     document.getElementsByTagName('head')[0].appendChild(style);
 }
 
+export function margeGlobal(_options) {
+    if (isBool(_options.sumbitBtn))
+        $set(_options, 'sumbitBtn', {show: _options.sumbitBtn});
+    if (isBool(_options.resetBtn))
+        $set(_options, 'resetBtn', {show: _options.resetBtn});
+    let options = deepExtend(extend(drive.getConfig(), getBaseConfig()), _options);
+
+    $set(options, 'el', !options.el
+        ? window.document.body
+        : (isElement(options.el)
+                ? options.el
+                : document.querySelector(options.el)
+        ));
+
+    return options
+}
+
 export default class FormCreate {
 
     constructor(rules, options = {}) {
         this.fRender = undefined;
         this.fCreateApi = undefined;
         this.id = uniqueId();
-        this.reloading = false;
         this.__init(rules, options);
         initStyle();
         this.$tick = debounce((fn) => fn(), 150);
     }
 
     __init(rules, options) {
-        this.options = drive.margeGlobal(options);
+        this.options = margeGlobal(options);
         this.rules = Array.isArray(rules) ? rules : [];
         this.origin = [...this.rules];
         this.handlers = {};
@@ -96,7 +115,6 @@ export default class FormCreate {
         this.fieldList = [];
         this.switchMaker = this.options.switchMaker;
     }
-
 
     static create(rules, _opt = {}, _vue = Vue) {
         let opt = isElement(_opt) ? {el: _opt} : _opt;
@@ -115,6 +133,11 @@ export default class FormCreate {
         Vue.prototype.$formCreate.ui = ui;
 
         Vue.component(formCreateName, Vue.extend($FormCreate()));
+        _vue = Vue;
+    }
+
+    render() {
+        return this.fRender.render(this.vm);
     }
 
     boot(vm) {
@@ -209,19 +232,17 @@ export default class FormCreate {
     mounted(vm, first = true) {
         this.vm = vm;
         let {mounted, onReload} = this.options;
-        setTimeout(() => {
-            $nt(() => {
-                Object.keys(this.handlers).forEach((field) => {
-                    let handler = this.handlers[field];
-                    if (vm._formData(field) !== undefined)
-                        this.addHandlerWatch(handler);
-                    handler.mounted();
-                });
-                if (first)
-                    mounted && mounted(this.fCreateApi);
-                onReload && onReload(this.fCreateApi);
-            })
-        });
+        $nt(() => {
+            Object.keys(this.handlers).forEach((field) => {
+                let handler = this.handlers[field];
+                if (vm._formData(field) !== undefined)
+                    this.addHandlerWatch(handler);
+                handler.mounted();
+            });
+            if (first)
+                mounted && mounted(this.fCreateApi);
+            onReload && onReload(this.fCreateApi);
+        })
     }
 
     removeField(field) {
@@ -287,34 +308,30 @@ export default class FormCreate {
 
     }
 
-    reload(rules, unique) {
+    reload(rules) {
         let vm = this.vm;
-        if (!rules) {
-            this.reload(this.rules, unique);
-        } else {
 
-            if (this.isNotChange(rules)) {
-                this.fCreateApi.refresh();
-                return;
-            }
+        if (!rules)
+            return this.reload(this.rules);
 
-            if (!this.origin.length)
-                this.fCreateApi.refresh();
+        if (this.isNotChange(rules))
+            return this.fCreateApi.refresh();
 
-            this.origin = [...rules];
-            vm._unWatch();
-            Object.keys(this.handlers).forEach(field => this.removeField(field));
-            this.__init(rules, this.options);
-            this.boot(vm);
-            vm.__init();
-            $nt(() => {
-                if (isUndef(unique) || vm.unique === unique)
-                    this.mounted(vm, false);
-            });
+        if (!this.origin.length)
+            this.fCreateApi.refresh();
 
-            vm.$f = this.fCreateApi;
-        }
+        this.origin = [...rules];
+        vm._unWatch();
+        Object.keys(this.handlers).forEach(field => this.removeField(field));
+        this.__init(rules, this.options);
+        this.boot(vm);
+        vm.__init();
 
+        $nt(() => {
+            this.mounted(vm, false);
+        });
+
+        vm.$f = this.fCreateApi;
     }
 
     getFormRef() {
@@ -329,4 +346,10 @@ FormCreate.ui = ui;
 export function setDrive(_drive) {
     drive = _drive;
     _drive.install(FormCreate)
+}
+
+export function install(Vue) {
+    if (Vue._installedFormCreate === true) return;
+    Vue._installedFormCreate = true;
+    Vue.use(formCreate);
 }

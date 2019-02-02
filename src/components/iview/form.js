@@ -7,16 +7,10 @@ import {isComponent} from "../../core/formCreate";
 export default class Form {
 
     constructor(fComponent) {
-        let {id, vm, fieldList, handlers, formData, validate} = fComponent;
+        let {id, vm, fieldList, handlers} = fComponent;
         this.vm = vm;
         this.handlers = handlers;
         this.renderSort = fieldList;
-        this.form = {
-            model: formData,
-            rules: validate,
-            key: 'form' + id
-        };
-
         this._fc = fComponent;
         this.vNode = new VNode(vm);
         this.vData = new VData();
@@ -25,21 +19,28 @@ export default class Form {
         this.cacheUnique = 0;
     }
 
+
     getRender(field) {
         return this.handlers[field].render;
     }
 
     render(vm) {
-        this.vNode.setVm(vm);
         if (!vm.isShow)
             return;
+
+        this.vNode.setVm(vm);
+
         if (this.cacheUnique !== vm.unique) {
             this.renderSort.forEach((field) => {
                 this.getRender(field).clearCache();
             });
             this.cacheUnique = vm.unique;
         }
-        this.propsData = this.vData.props(this._fc.options.form).props(this.form)
+        this.propsData = this.vData.props(this._fc.options.form).props({
+            model: this._fc.formData,
+            rules: this._fc.validate,
+            key: 'form' + this.unique
+        })
             .ref(this.refName).nativeOn({submit: preventDefault}).class('form-create', true).key(this.unique).get();
         let unique = this.unique,
             vn = this.renderSort.map((field) => {

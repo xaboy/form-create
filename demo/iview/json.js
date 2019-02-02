@@ -372,7 +372,7 @@ function jsonMock() {
             value: ["http://file.lotkk.com/form-create.jpeg"],
             props: {
                 type: "image", //frame类型,有input,file,image
-                src: "iframe.html", //iframe地址
+                src: "../iframe.html", //iframe地址
                 maxLength: 2, //value的最大数量
                 icon: undefined, //打开弹出框的按钮图标
                 height: "220px", //弹出框高度

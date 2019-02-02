@@ -5,7 +5,6 @@
 	<meta charset="UTF-8">
 	<title>form-create示例</title>
 	<link href="https://cdn.jsdelivr.net/npm/element-ui@2.5.2/lib/theme-chalk/index.css" rel="stylesheet">
-	<link rel="stylesheet" href="https://unpkg.com/vue-cute-modal@1.1.0/dist/vue-cute-modal.min.css">
 
 	<!--<link href="https://cdn.jsdelivr.net/npm/iview/dist/styles/iview.css" rel="stylesheet">-->
 	<!--<script src="https://cdn.jsdelivr.net/npm/iview/dist/iview.min.js"></script>-->
@@ -22,8 +21,7 @@
 	<script defer src="https://cdn.bootcss.com/vue/2.5.22/vue.js"></script>
 	<script defer src="https://cdn.jsdelivr.net/npm/element-ui@2.5.2/lib/index.js"></script>
 	<script defer src="../../district/province_city.js"></script>
-	<script defer src="../../dist/form-create.js"></script>
-	<script src="https://unpkg.com/vue-cute-modal@1.1.0/dist/vue-cute-modal.min.js"></script>
+	<script defer src="../../dist/form-create.elm.js"></script>
 	<script defer src="mock.js"></script>
 	<script defer src="json.js"></script>
 
@@ -44,13 +42,14 @@
 </div>
 <script>
     window.onload = function () {
+        Vue.use(ELEMENT);
         //组件模式
         _vm = new Vue({
             el: '#app1',
             data: {
                 formModel: {},
-                rule:jsonMock(),
-                // rule: mock(),
+                // rule: jsonMock(),
+                rule: mock(),
                 option: {
                     //显示表单重置按钮
                     resetBtn: true,
@@ -103,7 +102,7 @@
                 window.$f = this.fApi;
                 this.formModel = this.fApi.model();
                 //动态添加表单元素
-                // this.fApi.append($r, 'pic');
+                this.fApi.append($r, 'pic');
             }
         });
 

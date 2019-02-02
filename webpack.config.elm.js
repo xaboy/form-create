@@ -10,7 +10,7 @@ module.exports = {
         app: path.join(__dirname, './src', 'elm.js')
     },
     output: {    //输出
-        filename: 'dist/form-create.js',
+        filename: 'dist/form-create.elm.js',
         library: 'formCreate',
         libraryExport: 'default',
         libraryTarget: 'umd',

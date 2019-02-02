@@ -25,7 +25,7 @@ const $FormCreate = () => ({
         value: Object
     },
     render() {
-        return this._fComponent.fRender.render(this._fComponent.vm);
+        return this._fComponent.render();
     },
     created() {
         const _fc = new formCreate(this.rule, this.option);
@@ -39,7 +39,7 @@ const $FormCreate = () => ({
         _fc.mounted(this);
         this.$f = _fc.fCreateApi;
         this.$watch('rule', n => {
-            _fc.reload(n, this.unique);
+            _fc.reload(n);
             this.$emit('input', this.$f);
         });
         this.$watch('option', n => {

@@ -45,9 +45,9 @@ function jsonMock() {
         //input 输入框组件
         {
             type: "input",
-            title: "商品名称",//label名称
-            field: "goods_name",//字段名称
-            value: "iphone",//input值,
+            title: "商品名称",
+            field: "goods_name",
+            value: "iphone",
             props: {
                 "type": "text", //输入框类型，text，textarea 和其他 原生 input 的 type 值
                 "maxlength": undefined, //原生属性，最大输入长度
@@ -70,14 +70,17 @@ function jsonMock() {
                 "tabindex": undefined, //输入框的tabindex
                 "validateEvent": true, //输入时是否触发表单的校验
             },
+            validate: [
+                {required: true, message: '请输入商品名称', trigger: 'blur'}
+            ]
         },
 
         //input 输入框组件
         {
             type: "input",
-            title: "商品简介",//label名称
-            field: "goods_info",//字段名称
-            value: "",//input值,
+            title: "商品简介",
+            field: "goods_info",
+            value: "",
             props: {
                 "type": "textarea", //输入框类型，text，textarea 和其他 原生 input 的 type 值
                 "rows": 10, //输入框行数，只对 type="textarea" 有效
@@ -145,11 +148,11 @@ function jsonMock() {
         //checkbox 复选框付选择
         {
             type: "checkbox",
-            title: "标签",//label名称
-            field: "label",//字段名称
+            title: "标签",
+            field: "label",
             value: [
                 "1", "2", "3"
-            ],//input值,
+            ],
             options: [
                 {value: "1", label: "好用", disabled: true},
                 {value: "2", label: "方便", disabled: false},
@@ -171,9 +174,9 @@ function jsonMock() {
         //switch 开关组件
         {
             type: "switch",
-            title: "是否上架",//label名称
-            field: "is_show",//字段名称
-            value: "1",//input值,
+            title: "是否上架",
+            field: "is_show",
+            value: "1",
             props: {
                 "size": "default", //开关的尺寸，可选值为large、small、default或者不写。建议开关如果使用了2个汉字的文字，使用 large。
                 "disabled": false,//是否禁用
@@ -237,9 +240,9 @@ function jsonMock() {
             type: "DatePicker",
             field: "section_day",
             title: "活动日期",
-            value: ['2018-02-20', new Date()], //input值, type为daterange,datetimerange value为数组 [start_value,end_value]
+            value: ['2018-02-20', new Date()],
             props: {
-                "type": "datetimerange", //显示类型 year/month/date/dates/ week/datetime/datetimerange/daterange
+                "type": "dates", //显示类型 year/month/date/dates/ week/datetime/datetimerange/daterange
                 "readonly": false, //完全只读
                 "disabled": false, //禁用
                 "editable": false, //文本框可输入
@@ -426,11 +429,11 @@ function jsonMock() {
                 "fileList": [], //上传的文件列表, 例如: [{name: 'food.jpg', url: 'https://xxx.cdn.com/xxx.jpg'}]
                 "httpRequest": undefined, //覆盖默认的上传行为，可以自定义上传的实现
                 "disabled": false, //是否禁用
-                "limit": undefined, //最大允许上传个数
+                "limit": 2, //最大允许上传个数
                 "onExceed": function (files, fileList) {
                 }, //文件超出个数限制时的钩子
                 //操作按钮的图标 ,设置为false将不显示
-                // handleIcon: 'ios-eye-outline',
+                handleIcon: undefined,
                 //点击操作按钮事件,会覆盖默认的预览操作
                 // onHandle:function (src){},
                 //是否可删除,设置为false是不显示删除按钮
@@ -448,31 +451,31 @@ function jsonMock() {
                 {value: "1", label: "同意****用户协议", disabled: false},
             ]
         },
-        //
-        //
-        //     //frame 框架组件
-        //     {
-        //         type: "frame",
-        //         title: "素材",
-        //         field: "fodder",
-        //         value: ["http://file.lotkk.com/form-create.jpeg"],
-        //         props: {
-        //             type: "image", //frame类型,有input,file,image
-        //             src: "iframe.html", //iframe地址
-        //             maxLength: 2, //value的最大数量
-        //             icon: undefined, //打开弹出框的按钮图标
-        //             height: "220px", //弹出框高度
-        //             width: "350px", //弹出框宽度
-        //             spin: false, //是否显示加载动画
-        //             title: "请选择", //弹出框标题
-        //             handleIcon: true, //操作按钮的图标 ,设置为false将不显示,设置为true为默认的预览图标,类型为file时默认为false,image类型默认为true
-        //             allowRemove: true, //是否可删除,设置为false是不显示删除按钮
-        //             onHandle: undefined, //点击操作按钮事件,默认为图片预览
-        //             onRemove: function () {
-        //                 return false;
-        //             } //点击删除按钮事件,返回false将不删除
-        //         },
-        //     },
+
+
+        //frame 框架组件
+        {
+            type: "frame",
+            title: "素材",
+            field: "fodder",
+            value: ["http://file.lotkk.com/form-create.jpeg"],
+            props: {
+                type: "image", //frame类型,有input,file,image
+                src: "../iframe.html", //iframe地址
+                maxLength: 2, //value的最大数量
+                icon: undefined, //打开弹出框的按钮图标
+                height: "220px", //弹出框高度
+                width: "350px", //弹出框宽度
+                spin: false, //是否显示加载动画
+                title: "请选择", //弹出框标题
+                handleIcon: true, //操作按钮的图标 ,设置为false将不显示,设置为true为默认的预览图标,类型为file时默认为false,image类型默认为true
+                allowRemove: true, //是否可删除,设置为false是不显示删除按钮
+                onHandle: undefined, //点击操作按钮事件,默认为图片预览
+                onRemove: function () {
+                    return false;
+                } //点击删除按钮事件,返回false将不删除
+            },
+        },
 
         {
             type: 'tree',

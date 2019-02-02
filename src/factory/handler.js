@@ -108,7 +108,7 @@ export function defRule() {
         event: {},
         col: {},
         emit: [],
-        props: [],
+        props: {},
         on: {},
         options: [],
         title: '',

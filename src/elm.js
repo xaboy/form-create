@@ -5,22 +5,16 @@
  * Github: https://github.com/xaboy/form-create
  */
 
-import formCreate, {setDrive} from './core/formCreate';
-import drive from './components/element/install'
+import formCreate, {setDrive, install} from './core/formCreate';
+import drive from './components/element/index'
 
 setDrive(drive);
-
-function _install(Vue) {
-    if (Vue._installedFormCreate === true) return;
-    Vue._installedFormCreate = true;
-    Vue.use(formCreate);
-}
 
 if (typeof window !== 'undefined') {
     window.formCreate = formCreate;
 
     if (window.Vue) {
-        _install(Vue);
+        install(Vue);
     }
 }
 

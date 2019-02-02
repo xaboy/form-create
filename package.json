@@ -1,6 +1,6 @@
 {
   "name": "form-create",
-  "version": "1.5.5",
+  "version": "1.6.0-bata1",
   "description": "好用的表单生成器|Form builder with dynamic rendering, data collection, validation and submission capabilities, built-in 17 commonly used form components, and supports the use of json to generate any vue component, supporting two-way data binding, event expansion.",
   "main": "dist/form-create.min.js",
   "module": "dist/form-create.min.js",
@@ -9,7 +9,7 @@
   "scripts": {
     "dev:iview": "webpack-dev-server",
     "dev:elm": "webpack-dev-server --config=webpack.config.elm.js",
-    "build": "rimraf dist/*.* && bili"
+    "build": "rimraf dist/*.* && bili && bili --config=bili.config.elm.js"
   },
   "files": [
     "README.md",

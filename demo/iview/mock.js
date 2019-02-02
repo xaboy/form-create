@@ -297,7 +297,7 @@ function mock() {
 
         //frame 框架组件
         maker.frame('素材', 'fodder', ["http://file.lotkk.com/form-create.jpeg"]).props({
-            src: "iframe.html",
+            src: "../iframe.html",
             maxLength: 0,
             type: "image"
         }).validate([
