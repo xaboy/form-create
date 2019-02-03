@@ -276,7 +276,8 @@ function mock() {
         maker.frame('素材', 'fodder', ["http://file.lotkk.com/form-create.jpeg"]).props({
             src: "../iframe.html",
             maxLength: 0,
-            type: "image"
+            type: "image",
+            width:'80%'
         }).validate([
             {required: true, type: 'array', min: 2, message: '请选择2张图片', trigger: 'change'}
         ]).event({

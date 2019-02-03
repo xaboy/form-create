@@ -2158,7 +2158,6 @@
 	    onReload: function onReload($f) {},
 	    onSubmit: function onSubmit(formData, $f) {},
 	    el: null,
-	    iframeHelper: false,
 	    switchMaker: true
 	  };
 	}
@@ -2478,8 +2477,6 @@
 	    key: "create",
 	    value: function create(rules) {
 	      var _opt = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-	      var _vue = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : Vue$1;
 
 	      var opt = isElement(_opt) ? {
 	        el: _opt
@@ -2870,7 +2867,7 @@
 	    value: function parse() {
 	      var rule = this.handler.rule,
 	          slot = isUndef(rule.props.slot) ? rule.slot : rule.props.slot;
-	      if (isPlainObject(slot)) slot = {};
+	      if (!isPlainObject(slot)) slot = {};
 	      return [this.vNode.switch(this.inputProps().scopedSlots({
 	        open: function open() {
 	          return slot.open;
@@ -3624,7 +3621,8 @@
 	      show: false,
 	      col: undefined,
 	      click: undefined
-	    }
+	    },
+	    iframeHelper: false
 	  };
 	}
 

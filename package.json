@@ -2,8 +2,8 @@
   "name": "form-create",
   "version": "1.6.0-bata1",
   "description": "好用的表单生成器|Form builder with dynamic rendering, data collection, validation and submission capabilities, built-in 17 commonly used form components, and supports the use of json to generate any vue component, supporting two-way data binding, event expansion.",
-  "main": "dist/form-create.min.js",
-  "module": "dist/form-create.min.js",
+  "main": "index.js",
+  "module": "index.js",
   "unpkg": "dist/form-create.min.js",
   "jsdelivr": "dist/form-create.min.js",
   "scripts": {
@@ -15,6 +15,8 @@
     "README.md",
     "package.json",
     "LICENSE",
+    "elm.js",
+    "index.js",
     "dist",
     "district",
     "demo"
@@ -30,6 +32,7 @@
     "form-generator",
     "vue.js",
     "iview",
+    "element-ui",
     "form",
     "components"
   ],

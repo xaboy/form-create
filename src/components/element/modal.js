@@ -1,8 +1,10 @@
 import VNode from "../../factory/vNode";
 import {_vue} from "../../core/formCreate";
+import {isUndef} from "../../core/util";
 
 const vNode = new VNode({});
 const Modal = (options, cb) => {
+    if(isUndef(options.width)) options.width = '30%';
     return {
         name: 'fc-modal',
         data() {

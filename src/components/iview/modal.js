@@ -1,4 +1,3 @@
-import {$nt} from "../../core/util";
 import VNode from "../../factory/vNode";
 import {_vue} from "../../core/formCreate";
 

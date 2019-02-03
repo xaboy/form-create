@@ -91,6 +91,7 @@ export default function getConfig() {
             show: false,
             col: undefined,
             click: undefined,
-        }
+        },
+        iframeHelper: false,
     };
 }

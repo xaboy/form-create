@@ -1,6 +1,6 @@
 /**
  *
- * JS表单生成器
+ * JS表单生成器 | iviewUI 版本
  * Author: xaboy
  * Github: https://github.com/xaboy/form-create
  */

@@ -7,7 +7,6 @@ export default function getBaseConfig() {
         onSubmit: (formData, $f) => {
         },
         el: null,
-        iframeHelper: false,
         switchMaker: true,
     };
 }
