@@ -30,9 +30,9 @@
 
 
 ## Support
-- iviewUI 2.13.0+
-- iviewUI 3.x
-- elmentUI 2.5.2+
+- **iViewUI 2.13.0+**
+- **iViewUI 3.x**
+- **ElementUI 2.5.2+**
 
 
 ## Docs

@@ -28,9 +28,9 @@
 
 
 ## 支持
-- iviewUI 2.13.0+
-- iviewUI 3.x
-- elmentUI 2.5.2+
+- **iViewUI 2.13.0+**
+- **iViewUI 3.x**
+- **ElementUI 2.5.2+**
 
 
 ## 文档
@@ -173,7 +173,7 @@ Browser
 
 - [async-validator](https://github.com/yiminghe/async-validator)
 
-- [PHP form-builder](https://github.com/xaboy/form-builder)
+- [PHP版的表单生成器:form-builder](https://github.com/xaboy/form-builder)
 
 
 ## 感谢
