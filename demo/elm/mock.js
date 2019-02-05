@@ -39,7 +39,7 @@ function mock() {
 
         //textarea 组件
         maker.textarea('商品简介', 'goods_info', '').props({
-            autosize: {minRows: 5, maxRows: 9}
+            autosize: {minRows: 4, maxRows: 8}
         }),
 
 
@@ -48,7 +48,7 @@ function mock() {
             {value: 0, label: "不包邮", disabled: false},
             {value: 1, label: "包邮", disabled: false},
             {value: 2, label: "未知", disabled: true},
-        ]).props({required: true}).col({span: 8}),
+        ]).col({span: 8}),
 
 
         //checkbox 复选框付选择
@@ -65,9 +65,8 @@ function mock() {
             open: "上架",
             close: "下架",
         }).props({
-            "trueValue": "1",
-            "falseValue": "0",
-            required: true,
+            "activeValue": "1",
+            "inactiveValue": "0"
         }).col({span: 8, labelWidth: 100}),
 
 
@@ -132,9 +131,7 @@ function mock() {
                     }, ['新鲜水果']);
                 }
             },
-        ]).props({
-            multiple: false
-        }).event({change: console.log}),
+        ]).event({change: console.log}),
 
 
         {
@@ -150,8 +147,6 @@ function mock() {
                         //datePicker 日期选择组件
                         maker.date('活动日期', 'section_day', ['2018-02-20', new Date()]).props({
                             "type": "datetimerange",
-                            "startDate": new Date(),
-                            "showWeekNumbers": true,
                         }),
 
                         //timePicker 时间选择组件
@@ -229,9 +224,7 @@ function mock() {
         //rate 评分组件
         maker.rate('推荐级别', 'rate', 2)
             .props({
-                "count": 10,
-                "allowHalf": false,
-                "disabled": false
+                "max": 10,
             })
             .validate({required: true, type: 'number', min: 3, message: '请大于3颗星', trigger: 'change'})
             .col({span: 12}),
@@ -242,7 +235,6 @@ function mock() {
             "min": 0,
             "max": 100,
             "range": true,
-            "showTip": "hover"
         }).col({span: 12}),
 
 
@@ -250,10 +242,7 @@ function mock() {
         maker.upload('轮播图', 'pic', ['http://file.lotkk.com/form-create.jpeg'])
             .props({
                 "action": "http://127.0.0.1:8000/index/index/upload",
-                "maxLength": 4,
-                "multiple": true,
-                "showUploadList": true,
-                "type": "select",
+                "limit": 4,
                 "uploadType": "file",
                 "name": "file",
                 "onSuccess": function (res) {
@@ -277,7 +266,7 @@ function mock() {
             src: "../iframe.html",
             maxLength: 0,
             type: "image",
-            width:'80%'
+            width: '80%'
         }).validate([
             {required: true, type: 'array', min: 2, message: '请选择2张图片', trigger: 'change'}
         ]).event({
@@ -350,10 +339,6 @@ function mock() {
 $r = maker.upload('产品主图', 'logo', 'http://file.lotkk.com/form-create.jpeg').props({
     "action": "http://127.0.0.1:8000/index/index/upload",
     "limit": 1,
-    "multiple": false,
-    "showUploadList": false,
-    "max": 0,
-    "type": "select",
     "uploadType": "image",
     "name": "file",
     "onSuccess": function () {
