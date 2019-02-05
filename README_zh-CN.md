@@ -15,68 +15,68 @@
 [![JS gzip size](http://img.badgesize.io/https://cdn.jsdelivr.net/gh/xaboy/form-create/dist/form-create.min.js?compression=gzip&amp;label=gzip%20size&amp;style=flat-square)](https://www.npmjs.com/package/form-create) [![Join the chat at https://gitter.im/xaboy/form-create](https://badges.gitter.im/xaboy/form-create.svg)](https://gitter.im/xaboy/form-create?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 
-**Form builder with dynamic rendering, data collection, validation and submission capabilities, built-in 17 commonly used form components, and supports the use of json to generate any vue component, supporting two-way data binding, event expansion.**
+**具有动态渲染，数据收集，验证和提交功能的表单生成器，内置17种常用表单组件，支持双向数据绑定，事件扩展，并支持使用json生成内置组件和任何vue组件。**
 
-[中文 README](https://github.com/xaboy/form-create/blob/dev/README_zh-CN.md)
+> 如果对您有帮助，您可以点右上角 "Star" 支持一下 谢谢！本项目还在不断开发完善中,如有任何建议或问题[请在这里提出](https://github.com/xaboy/form-create/issues/new)
+> 本项目QQ讨论群[28963712](https://jq.qq.com/?_wv=1027&k=54aKUVw)
 
->  If it helps, you can click on "Star" in the upper right corner. Thank you!
->  The project is still being developed and improved. If there are any 'recommendations or questions, please ask [here](https://github.com/xaboy/form-create/issues/new)
-
-> [Update log](http://www.form-create.com/en/guide/update.html)
+> [更新日志](http://www.form-create.com/guide/update.html)
 
 
 
 ![http://file.lotkk.com/demo-live2.gif](http://file.lotkk.com/demo-live2.gif)
 
 
-## Support
+## 支持
 - iviewUI 2.13.0+
 - iviewUI 3.x
 - elmentUI 2.5.2+
 
 
-## Docs
+## 文档
 
 **[简体中文](http://www.form-create.com/) | [English](http://www.form-create.com/en/)**
 
 
 
-## Files
+## 文件
 
-| Name               | Description                                                |
+| 文件名             | 说明                                                |
 | ------------------ | ---------------------------------------------------------- |
-| form-create.js     | [iViewUI Version](https://www.iviewui.com/components/form) |
-| form-create.elm.js | [ElementUI Version](http://element.eleme.io/#/zh-CN/component/form)                                      |
+| form-create.js     | [iViewUI 版本](https://www.iviewui.com/components/form) |
+| form-create.elm.js | [ElementUI 版本](http://element.eleme.io/#/zh-CN/component/form)                                      |
 
 
 
-## Example
+## 示例
 
-- [In-depth use case of maker customize component](https://github.com/HeyMrLin/fc-demo) ([Demo station](http://jeekweb.pro/form-create-demo))
+- [CRMEB客户管理+电商管理系统](https://gitee.com/ZhongBangKeJi/CRMEB) ([演示站](http://demo25.crmeb.net) 账号：demo 密码：crmeb.com)
 
-- [Generate a form using the maker generator](https://jsrun.net/NQhKp/edit)
+- [自定义组件 案例](https://github.com/HeyMrLin/fc-demo) ([演示站](http://jeekweb.pro/form-create-demo))
 
-- [Generate a form using the json parameter](https://jsrun.net/NQhKp/edit)
+- [使用生成器生成](https://jsrun.net/NQhKp/edit)
 
-- [Component example](https://jsrun.net/user/xaboy)
+- [使用 json 生成](https://jsrun.net/NQhKp/edit)
+
+- [各种示例](https://jsrun.net/user/xaboy)
 
 
 
 
-## Legend
+## 图例
 
 ![https://raw.githubusercontent.com/xaboy/form-create/dev/images/sample110.jpg](https://raw.githubusercontent.com/xaboy/form-create/dev/images/sample110.jpg)
 
 
 
-## Install
+## 安装
 
 ```shell
 npm install form-create
 ```
 
 
-## Import
+## 引入
 
 CDN:
 ```html
@@ -109,7 +109,7 @@ Vue.use(formCreate)
 ```
 
 
-## Usage
+##  使用
 
 ```html
 <form-create ref="fc" v-model="fApi" :rule="rule" :option="option"></form-create>
@@ -122,11 +122,14 @@ NodeJs
             return {
                 fApi:{},
                 model: {},
+                //表单生成规则
                 rule:[
-                    maker.input('goods_name','goods_name'),
-                    maker.date('create_at','created_at')
+                    maker.input('商品名称','goods_name'),
+                    maker.date('创建时间','created_at')
                 ],
+                //组件参数配置
                 option:{
+                    //表单提交事件
                     onSubmit:function (formData) {
                         alert(JSON.stringify(formData));
                     }
@@ -146,8 +149,8 @@ Browser
             fApi:{},
             model: {},
             rule:[
-                formCreate.maker.input('goods_name','goods_name'),
-                formCreate.maker.date('create_at','created_at')
+                formCreate.maker.input('商品名称','goods_name'),
+                formCreate.maker.date('创建时间','created_at')
             ],
             option:{
                 onSubmit:function (formData) {
@@ -161,7 +164,7 @@ Browser
     });
 ```
 
-## Reference
+##  参考
 
 - [Vue](https://github.com/vuejs/vue)
 
@@ -173,11 +176,11 @@ Browser
 - [PHP form-builder](https://github.com/xaboy/form-builder)
 
 
-## Thank
+## 感谢
 
 [时光弧线](https://github.com/shiguanghuxian)  |  [wxxtqk](https://github.com/wxxtqk)  |  [williamBoss](https://github.com/williamBoss) | [HeyMrLin](https://github.com/HeyMrLin)
 
-## Contact
+## 联系
 
 ##### email : xaboy2005@qq.com
 
