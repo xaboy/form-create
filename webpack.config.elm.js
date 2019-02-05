@@ -32,7 +32,7 @@ module.exports = {
         }),
         new webpack.DefinePlugin({
             'process.env.VERSION': `'${pkg.version}'`,
-            'process.env.UI': JSON.stringify('elm')
+            'process.env.UI': JSON.stringify('element')
         }),
     ],
     devServer: {

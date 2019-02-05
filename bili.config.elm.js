@@ -19,6 +19,6 @@ module.exports = {
     replace: {
         'process.env.NODE_ENV': JSON.stringify('production'),
         'process.env.VERSION': JSON.stringify(version),
-        'process.env.UI': JSON.stringify('elm')
+        'process.env.UI': JSON.stringify('element')
     }
 }

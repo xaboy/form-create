@@ -18,27 +18,11 @@
 **Form builder with dynamic rendering, data collection, validation and submission capabilities, built-in 17 commonly used form components, and supports the use of json to generate any vue component, supporting two-way data binding, event expansion.**
 
 
->  Support iview3.x
+>  Support iviewUI3.x, elmentUI2.5.2+
 >  If it helps, you can click on "Star" in the upper right corner. Thank you!
 >  The project is still being developed and improved. If there are any 'recommendations or questions, please ask [here](https://github.com/xaboy/form-create/issues/new)
->
 
->  如果对您有帮助，您可以点右上角 "Star" 支持一下 谢谢！本项目还在不断开发完善中,如有任何建议或问题[请在这里提出](https://github.com/xaboy/form-create/issues/new)
->  本项目QQ讨论群[28963712](https://jq.qq.com/?_wv=1027&k=54aKUVw)
-
-> [Update log / 更新日志](http://www.form-create.com/guide/update.html)
-
-
-
-
-### Plan (2018-11-30)
-- [x] 内部结构重构 `1.5.0版本`
-
-- [x] 性能优化`1.5.0版本`
-
-- [ ] 支持 ElementUI
-
-- [x] 英文文档 `1.5.4版本`
+> [Update log](http://www.form-create.com/en/guide/update.html)
 
 
 
@@ -52,17 +36,24 @@
 
 
 
+## Files
+
+| Name               | Description                                                |
+| ------------------ | ---------------------------------------------------------- |
+| form-create.js     | [iViewUI Version](https://www.iviewui.com/components/form) |
+| form-create.elm.js | [ElementUI Version]()                                      |
+
+
+
 ## Example
 
-- [CRMEB客户管理+电商管理系统](https://gitee.com/ZhongBangKeJi/CRMEB) ([演示站](http://demo25.crmeb.net) 账号：demo 密码：crmeb.com)
+- [In-depth use case of maker customize component](https://github.com/HeyMrLin/fc-demo) ([Demo station](http://jeekweb.pro/form-create-demo))
 
-- [In-depth use case of maker customize component / 自定义组件 案例](https://github.com/HeyMrLin/fc-demo) ([演示站](http://jeekweb.pro/form-create-demo))
+- [Generate a form using the maker generator](https://jsrun.net/NQhKp/edit)
 
-- [Generate a form using the maker generator / 使用生成器生成](https://jsrun.net/NQhKp/edit)
+- [Generate a form using the json parameter](https://jsrun.net/NQhKp/edit)
 
-- [Generate a form using the json parameter / 使用 json 生成](https://jsrun.net/NQhKp/edit)
-
-- [Component example / 各种示例](https://jsrun.net/user/xaboy)
+- [Component example](https://jsrun.net/user/xaboy)
 
 
 
@@ -122,8 +113,8 @@ NodeJs
                 model: {},
                 //表单生成规则
                 rule:[
-                    maker.input('商品名称','goods_name'),
-                    maker.date('创建时间','created_at')
+                    maker.input('goods_name','goods_name'),
+                    maker.date('create_at','created_at')
                 ],
                 //组件参数配置
                 option:{
@@ -147,8 +138,8 @@ Browser
             fApi:{},
             model: {},
             rule:[
-                formCreate.maker.input('商品名称','goods_name'),
-                formCreate.maker.date('创建时间','created_at')
+                formCreate.maker.input('goods_name','goods_name'),
+                formCreate.maker.date('create_at','created_at')
             ],
             option:{
                 onSubmit:function (formData) {
@@ -164,17 +155,14 @@ Browser
 
 ## Reference
 
-vue框架: [Vue](https://github.com/vuejs/vue)
+- [Vue](https://github.com/vuejs/vue)
 
-iviewUI框架: [iview](https://github.com/iview/iview)
+- [iViewUI](https://github.com/iview/iview)
+- [ElementUI](https://github.com/ElemeFE/element)
 
-validate 表单验证规则，具体配置查看: [async-validator](https://github.com/yiminghe/async-validator)
+- [async-validator](https://github.com/yiminghe/async-validator)
 
-accept 文件类型:  [attr-accept](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#attr-accept)
-
-icon图标: [图标](https://www.iviewui.com/components/icon#示例)
-
-form-builder: [使用PHP快速生成现代化表单](https://github.com/xaboy/form-builder)
+- [PHP form-builder](https://github.com/xaboy/form-builder)
 
 
 ## Thank
