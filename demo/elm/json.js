@@ -97,11 +97,6 @@ function jsonMock() {
             field: "auto",
             value: "xaboy",
             props: {
-                "data": [
-                    'xaboy',
-                    'xian',
-                    'github'
-                ],
                 "fetchSuggestions": function (queryString, cb) {
                     cb([
                         {value: queryString}, {value: queryString + queryString}
