@@ -31,18 +31,14 @@ export default function getGlobalApi(fComponent) {
             if (!isPlainObject(field))
                 formData = {[field]: value};
             Object.keys(formData).forEach(key => {
-                this.changeField(key, formData[key]);
+                this.changeValue(key, formData[key]);
             });
         },
         changeValue: function (field, value) {
-            this.changeField(field, value);
-        },
-        changeField: (field, value) => {
             field = toString(field);
             let handler = fComponent.handlers[field];
             if (handler === undefined)
                 return;
-
             if (isFunction(value))
                 value(vm._trueData(field), (changeValue) => {
                     this.changeField(field, changeValue);
@@ -50,7 +46,9 @@ export default function getGlobalApi(fComponent) {
             else {
                 handler.setValue(value);
             }
-
+        },
+        changeField: function (field, value) {
+            this.setValue(field, value);
         },
         removeField: (field) => {
             let handler = fComponent.handlers[field];

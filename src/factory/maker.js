@@ -41,15 +41,19 @@ export default function makerFactory(componentList) {
     return _m;
 };
 
-function parse(rule) {
+function parse(rule, toMaker = false) {
     if (isString(rule))
         rule = JSON.parse(rule);
-    if (isPlainObject(rule))
-        return ruleToMaker(rule);
-    else if (rule instanceof Creator || !Array.isArray(rule))
+
+    if (rule instanceof Creator)
+        return toMaker ? rule : rule.getRule();
+    if (isPlainObject(rule)) {
+        const maker = ruleToMaker(rule);
+        return toMaker ? maker : maker.getRule();
+    } else if (!Array.isArray(rule))
         return rule;
     else {
-        const rules = rule.map(r => parse(r));
+        const rules = rule.map(r => parse(r, toMaker));
         Object.defineProperty(rules, 'find', {
             value: findField,
             enumerable: false,
@@ -62,10 +66,16 @@ function parse(rule) {
 }
 
 function findField(field) {
+    let children = [];
     for (let i in this) {
-        if (this[i].rule.field === field)
+        const rule = this[i] instanceof Creator ? this[i].rule : this[i];
+        if (rule.field === field)
             return this[i];
+        if (Array.isArray(rule.children) && rule.children.length > 0)
+            children = children.concat(rule.children);
     }
+    if (children.length > 0)
+        return findField.call(children, field);
 }
 
 function ruleToMaker(rule) {

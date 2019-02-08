@@ -86,12 +86,10 @@ export default class Handler {
     }
 
     mounted() {
-        let refName = 'fItem' + this.refName, vm = this.vm, children = this.rule.children;
+        let refName = 'fItem' + this.refName, vm = this.vm;
         this.el = vm.$refs[this.refName] || {};
         this.defaultValue = this.toValue(vm.$refs[refName] && !isUndef(vm.$refs[refName].initialValue)
             ? vm.$refs[refName].initialValue : deepExtend({}, {value: this.rule.value}).value);
-        if (Array.isArray(children) && children.length > 0)
-            children.forEach(child => !isString(child) && child.__handler__.mounted());
     }
 
     $emit(eventName, ...params) {
@@ -174,7 +172,7 @@ export function parseEmit(field, emitPrefix, emit, vm) {
             if (emitKey && fieldKey !== emitKey)
                 vm.$emit(emitKey, ...arg);
         };
-        if(process.env.UI === 'iview')
+        if (process.env.UI === 'iview')
             event[`on-${eventName}`] = event[eventName];
     });
 
