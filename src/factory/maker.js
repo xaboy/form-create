@@ -1,5 +1,6 @@
 import {creatorFactory} from "./creator";
-import {extend, isUndef} from "../core/util";
+import {extend, isPlainObject, isString, isUndef} from "../core/util";
+import Creator from "./creator";
 
 export default function makerFactory(componentList) {
 
@@ -35,5 +36,46 @@ export default function makerFactory(componentList) {
     });
     _m.template = _m.createTmp;
 
+    _m.parse = parse;
+
     return _m;
 };
+
+function parse(rule) {
+    if (isString(rule))
+        rule = JSON.parse(rule);
+    if (isPlainObject(rule))
+        return ruleToMaker(rule);
+    else if (rule instanceof Creator || !Array.isArray(rule))
+        return rule;
+    else {
+        const rules = rule.map(r => parse(r));
+        Object.defineProperty(rules, 'find', {
+            value: findField,
+            enumerable: false,
+            configurable: false
+        });
+
+        return rules;
+    }
+    //TODO 处理 maker 生成器,处理递归搜索
+}
+
+function findField(field) {
+    for (let i in this) {
+        if (this[i].rule.field === field)
+            return this[i];
+    }
+}
+
+function ruleToMaker(rule) {
+    const maker = new Creator();
+    Object.keys(rule).forEach(key => {
+        if (Object.keys(maker._data).indexOf(key) === -1) {
+            maker.rule[key] = rule[key];
+        } else {
+            maker._data[key] = rule[key];
+        }
+    });
+    return maker;
+}
