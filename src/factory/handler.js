@@ -134,7 +134,7 @@ export function parseRule(rule, vm, noVal) {
         options: parseArray(rule.options)
     };
 
-    parseRule.event = extend(parseEvent(rule.event), parseRule.emitEvent);
+    parseRule.event = extend(process.env.UI === 'iview' ? parseEvent(rule.event) : rule.event, parseRule.emitEvent);
     parseRule.on = parseOn(rule.on, parseRule.emitEvent);
 
     Object.keys(parseRule).forEach((k) => {
@@ -169,11 +169,13 @@ export function parseEmit(field, emitPrefix, emit, vm) {
 
         const emitKey = emitPrefix ? ((`${emitPrefix}-`).toLowerCase() + toLine(eventName)) : emitPrefix;
 
-        event[`on-${eventName}`] = event[eventName] = (...arg) => {
+        event[eventName] = (...arg) => {
             vm.$emit(fieldKey, ...arg);
             if (emitKey && fieldKey !== emitKey)
                 vm.$emit(emitKey, ...arg);
         };
+        if(process.env.UI === 'iview')
+            event[`on-${eventName}`] = event[eventName];
     });
 
     return event
