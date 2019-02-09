@@ -6,7 +6,7 @@ module.exports = {
     global: {
         vue: "Vue"
     },
-    input: "src/elm.js",
+    input: "src/element.js",
     name: "formCreate",
     external: ["vue", "Vue"],
     banner: '/*!\n' +

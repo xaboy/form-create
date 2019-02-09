@@ -8,14 +8,15 @@
   "jsdelivr": "dist/form-create.min.js",
   "scripts": {
     "dev:iview": "webpack-dev-server",
-    "dev:elm": "webpack-dev-server --config=webpack.config.elm.js",
+    "dev:element": "webpack-dev-server --config=webpack.config.elm.js",
     "build": "rimraf dist/*.* && bili && bili --config=bili.config.elm.js"
   },
   "files": [
     "README.md",
+    "README_zh-CN.md",
     "package.json",
     "LICENSE",
-    "elm.js",
+    "element.js",
     "index.js",
     "dist",
     "district",

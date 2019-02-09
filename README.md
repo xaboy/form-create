@@ -101,8 +101,8 @@ import formCreate from 'form-create'
 import { maker } from 'form-create'
 
 //ElementUI
-//import formCreate from 'form-create/elm'
-//import { maker } from 'form-create/elm'
+//import formCreate from 'form-create/element'
+//import { maker } from 'form-create/element'
 
 Vue.use(iView);
 Vue.use(formCreate)

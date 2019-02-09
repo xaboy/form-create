@@ -18,7 +18,7 @@
 	}
 
 	var _core = createCommonjsModule(function (module) {
-	var core = module.exports = { version: '2.6.3' };
+	var core = module.exports = { version: '2.6.4' };
 	if (typeof __e == 'number') __e = core; // eslint-disable-line no-undef
 	});
 	var _core_1 = _core.version;
@@ -192,14 +192,16 @@
 	  return hasOwnProperty.call(it, key);
 	};
 
+	var _functionToString = _shared('native-function-to-string', Function.toString);
+
 	var _redefine = createCommonjsModule(function (module) {
 	var SRC = _uid('src');
+
 	var TO_STRING = 'toString';
-	var $toString = Function[TO_STRING];
-	var TPL = ('' + $toString).split(TO_STRING);
+	var TPL = ('' + _functionToString).split(TO_STRING);
 
 	_core.inspectSource = function (it) {
-	  return $toString.call(it);
+	  return _functionToString.call(it);
 	};
 
 	(module.exports = function (O, key, val, safe) {
@@ -219,7 +221,7 @@
 	  }
 	// add fake Function#toString for correct work wrapped methods / constructors with methods like LoDash isNative
 	})(Function.prototype, TO_STRING, function toString() {
-	  return typeof this == 'function' && this[SRC] || $toString.call(this);
+	  return typeof this == 'function' && this[SRC] || _functionToString.call(this);
 	});
 	});
 
@@ -1724,26 +1726,24 @@
 	    key: "mounted",
 	    value: function mounted() {
 	      var refName = 'fItem' + this.refName,
-	          vm = this.vm,
-	          children = this.rule.children;
+	          vm = this.vm;
 	      this.el = vm.$refs[this.refName] || {};
 	      this.defaultValue = this.toValue(vm.$refs[refName] && !isUndef(vm.$refs[refName].initialValue) ? vm.$refs[refName].initialValue : deepExtend({}, {
 	        value: this.rule.value
 	      }).value);
-	      if (Array.isArray(children) && children.length > 0) children.forEach(function (child) {
-	        return !isString(child) && child.__handler__.mounted();
-	      });
 	    }
 	  }, {
 	    key: "$emit",
 	    value: function $emit(eventName) {
 	      var _this$rule$vm, _this$el;
 
+	      eventName = "fc:".concat(eventName);
+
 	      for (var _len = arguments.length, params = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
 	        params[_key - 1] = arguments[_key];
 	      }
 
-	      if (this.type === 'template') (_this$rule$vm = this.rule.vm).$emit.apply(_this$rule$vm, [eventName].concat(params));else if (this.noValue === true) this.el.$emit && (_this$el = this.el).$emit.apply(_this$el, [eventName].concat(params));
+	      if (this.type === 'template') (_this$rule$vm = this.rule.vm).$emit.apply(_this$rule$vm, [eventName].concat(params));else if (this.noValue === true && this.el.$emit) (_this$el = this.el).$emit.apply(_this$el, [eventName].concat(params));
 	    }
 	  }]);
 
@@ -1802,7 +1802,7 @@
 	    var fieldKey = toLine("".concat(field, "-").concat(eventName)).replace('_', '-');
 	    var emitKey = emitPrefix ? "".concat(emitPrefix, "-").toLowerCase() + toLine(eventName) : emitPrefix;
 
-	    event["on-".concat(eventName)] = event[eventName] = function () {
+	    event[eventName] = function () {
 	      for (var _len2 = arguments.length, arg = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
 	        arg[_key2] = arguments[_key2];
 	      }
@@ -1810,6 +1810,8 @@
 	      vm.$emit.apply(vm, [fieldKey].concat(arg));
 	      if (emitKey && fieldKey !== emitKey) vm.$emit.apply(vm, [emitKey].concat(arg));
 	    };
+
+	    event["on-".concat(eventName)] = event[eventName];
 	  });
 	  return event;
 	}
@@ -2287,10 +2289,7 @@
 
 	      $set(this.formData, field, handler.parseValue);
 	      $set(this.validate, field, rule.validate);
-	      $set(this.trueData, field, {
-	        value: handler.rule.value,
-	        rule: rule
-	      });
+	      $set(this.trueData, field, rule);
 	    }
 	  }, {
 	    key: "notField",
@@ -2351,7 +2350,9 @@
 	      $nt(function () {
 	        Object.keys(_this2.handlers).forEach(function (field) {
 	          var handler = _this2.handlers[field];
-	          if (vm._formData(field) !== undefined) _this2.addHandlerWatch(handler);
+
+	          _this2.addHandlerWatch(handler);
+
 	          handler.mounted();
 	        });
 	        if (first) mounted && mounted(_this2.fCreateApi);
@@ -2400,17 +2401,15 @@
 	      });
 	      var unWatch2 = vm.$watch("trueData.".concat(field, ".value"), function (n) {
 	        if (n === undefined) return;
+	        if (_this3.handlers[field] === undefined) return unWatch2();
+	        var json = JSON.stringify(n);
 
-	        if (_this3.handlers[field] !== undefined) {
-	          var json = JSON.stringify(n);
-
-	          if (vm._change(field, json)) {
-	            handler.watchValue(n);
-	            $nt(function () {
-	              return handler.render.sync();
-	            });
-	          }
-	        } else unWatch2();
+	        if (vm._change(field, json)) {
+	          handler.watchValue(n);
+	          $nt(function () {
+	            return handler.render.sync();
+	          });
+	        }
 	      }, {
 	        deep: true
 	      });
@@ -2422,9 +2421,9 @@
 	        });
 	      };
 
-	      Object.keys(vm._trueData(field).rule).forEach(function (key) {
+	      Object.keys(vm._trueData(field)).forEach(function (key) {
 	        if (key === 'value') return;
-	        handler.watch.push(vm.$watch("trueData.".concat(field, ".rule.").concat(key), bind, {
+	        handler.watch.push(vm.$watch("trueData.".concat(field, ".").concat(key), bind, {
 	          deep: true
 	        }));
 	      });
@@ -4908,12 +4907,56 @@
 	    }
 	  });
 	  _m.template = _m.createTmp;
+	  _m.parse = parse;
 	  return _m;
 	}
 
-	function getGlobalApi(fComponent) {
-	  var _this2 = this;
+	function parse(rule) {
+	  var toMaker = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+	  if (isString(rule)) rule = JSON.parse(rule);
+	  if (rule instanceof Creator) return toMaker ? rule : rule.getRule();
 
+	  if (isPlainObject(rule)) {
+	    var maker = ruleToMaker(rule);
+	    return toMaker ? maker : maker.getRule();
+	  } else if (!Array.isArray(rule)) return rule;else {
+	    var rules = rule.map(function (r) {
+	      return parse(r, toMaker);
+	    });
+	    Object.defineProperty(rules, 'find', {
+	      value: findField,
+	      enumerable: false,
+	      configurable: false
+	    });
+	    return rules;
+	  }
+	}
+
+	function findField(field) {
+	  var children = [];
+
+	  for (var i in this) {
+	    var rule = this[i] instanceof Creator ? this[i].rule : this[i];
+	    if (rule.field === field) return this[i];
+	    if (Array.isArray(rule.children) && rule.children.length > 0) children = children.concat(rule.children);
+	  }
+
+	  if (children.length > 0) return findField.call(children, field);
+	}
+
+	function ruleToMaker(rule) {
+	  var maker = new Creator();
+	  Object.keys(rule).forEach(function (key) {
+	    if (Object.keys(maker._data).indexOf(key) === -1) {
+	      maker.rule[key] = rule[key];
+	    } else {
+	      maker._data[key] = rule[key];
+	    }
+	  });
+	  return maker;
+	}
+
+	function getGlobalApi(fComponent) {
 	  var vm = fComponent.vm;
 
 	  function tidyFields(fields) {
@@ -4924,38 +4967,56 @@
 
 	  return {
 	    formData: function formData() {
-	      return vm._formField().reduce(function (initial, key) {
-	        initial[key] = vm._value(key);
+	      var _this = this;
+
+	      var handlers = fComponent.handlers;
+	      return Object.keys(handlers).reduce(function (initial, field) {
+	        var handler = handlers[field];
+
+	        if (handler.noValue === true) {
+	          handler.$emit('input', function (val) {
+	            initial[field] = val;
+	          }, _this);
+	        } else {
+	          initial[field] = vm._value(field);
+	        }
+
 	        return initial;
 	      }, {});
 	    },
 	    getValue: function getValue(field) {
 	      field = toString$1(field);
-	      if (vm._formField(field) === undefined) throw new Error("".concat(field, " \u5B57\u6BB5\u4E0D\u5B58\u5728!") + errMsg());else {
-	        return vm._value(field);
-	      }
+	      var handler = fComponent.handlers[field];
+	      if (isUndef(handler)) return;
+	      var val = undefined;
+	      if (handler.noValue === true) handler.$emit('input', function (v) {
+	        val = v;
+	      }, this);else val = vm._value(field);
+	      return val;
 	    },
 	    setValue: function setValue(field, value) {
-	      var _this = this;
+	      var _this2 = this;
 
 	      var formData = field;
 	      if (!isPlainObject(field)) formData = _defineProperty({}, field, value);
 	      Object.keys(formData).forEach(function (key) {
-	        _this.changeField(key, formData[key]);
+	        _this2.changeValue(key, formData[key]);
 	      });
 	    },
 	    changeValue: function changeValue(field, value) {
-	      this.changeField(field, value);
-	    },
-	    changeField: function changeField(field, value) {
+	      var _this3 = this;
+
 	      field = toString$1(field);
 	      var handler = fComponent.handlers[field];
 	      if (handler === undefined) return;
 	      if (isFunction(value)) value(vm._trueData(field), function (changeValue) {
-	        _this2.changeField(field, changeValue);
+	        _this3.changeField(field, changeValue);
 	      });else {
-	        handler.setValue(value);
+	        if (handler.noValue === true) handler.$emit('set-value', value, this);else handler.setValue(value);
 	      }
+	    },
+	    changeField: function changeField(field, value) {
+	      this.setValue(field, value);
 	    },
 	    removeField: function removeField(field) {
 	      var handler = fComponent.handlers[field];
@@ -4979,13 +5040,13 @@
 	      fComponent.getFormRef().validateField(field, callback);
 	    },
 	    resetFields: function resetFields(fields) {
-	      var _this3 = this;
+	      var _this4 = this;
 
 	      var handlers = fComponent.handlers;
 	      tidyFields(fields, true).forEach(function (field) {
 	        var handler = handlers[field];
 	        if (!handler) return;
-	        if (!handler.noValue) handler.reset();else handler.$emit('reset-field', _this3);
+	        if (!handler.noValue) handler.reset();else handler.$emit('reset-field', _this4);
 	      });
 	      this.refresh();
 	    },
@@ -5017,12 +5078,12 @@
 	      fComponent.rules.splice(index + 1, 0, rule);
 	    },
 	    submit: function submit(successFn, failFn) {
-	      var _this4 = this;
+	      var _this5 = this;
 
 	      this.validate(function () {
-	        var formData = _this4.formData();
+	        var formData = _this5.formData();
 
-	        if (isFunction(successFn)) successFn(formData, _this4);else fComponent.options.onSubmit && fComponent.options.onSubmit(formData);
+	        if (isFunction(successFn)) successFn(formData, _this5);else fComponent.options.onSubmit && fComponent.options.onSubmit(formData);
 	      }, function () {
 	        return failFn && failFn();
 	      });
@@ -5033,7 +5094,7 @@
 	      tidyFields(fields).forEach(function (field) {
 	        var handler = fComponent.handlers[field];
 	        if (!fComponent.handlers[field]) return;
-	        vm.$set(vm._trueData(field).rule.props, 'hidden', !!_hidden);
+	        vm.$set(vm._trueData(field).props, 'hidden', !!_hidden);
 	        handler.render.sync();
 	      });
 	    },
@@ -5043,12 +5104,12 @@
 	      tidyFields(fields).forEach(function (field) {
 	        var handler = fComponent.handlers[field];
 	        if (!handler) return;
-	        vm.$set(vm._trueData(field).rule.props, 'visibility', !!_visibility);
+	        vm.$set(vm._trueData(field).props, 'visibility', !!_visibility);
 	        handler.render.sync();
 	      });
 	    },
 	    disabled: function disabled(fields) {
-	      var _this5 = this;
+	      var _this6 = this;
 
 	      var _disabled = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
 
@@ -5056,7 +5117,7 @@
 	      tidyFields(fields, true).forEach(function (field) {
 	        var handler = fComponent.handlers[field];
 	        if (!handler) return;
-	        if (!handler.noValue) vm.$set(vm._trueData(field).rule.props, 'disabled', _disabled);else handler.$emit('disabled', _disabled, _this5);
+	        if (!handler.noValue) vm.$set(vm._trueData(field).props, 'disabled', _disabled);else handler.$emit('disabled', _disabled, _this6);
 	        handler.render.sync();
 	      });
 	    },
@@ -5067,29 +5128,19 @@
 	        handler.clearMsg();
 	      });
 	    },
-	    model: function model(fields) {
-	      var model = {},
-	          _fields = this.fields();
-
-	      tidyFields(fields).forEach(function (field) {
-	        if (_fields.indexOf(field) === -1) return console.error("".concat(field, " \u5B57\u6BB5\u4E0D\u5B58\u5728") + errMsg());
-	        model[field] = vm._trueData(field);
-	      });
-	      return model;
+	    model: function model() {
+	      return _objectSpread({}, vm.trueData);
 	    },
 	    component: function component() {
 	      return _objectSpread({}, vm.components);
 	    },
 	    bind: function bind(fields) {
 	      var bind = {},
-	          properties = {},
-	          _fields = this.fields();
-
+	          properties = {};
 	      tidyFields(fields).forEach(function (field) {
-	        if (_fields.indexOf(field) === -1) return console.error("".concat(field, " \u5B57\u6BB5\u4E0D\u5B58\u5728") + errMsg());
-
 	        var rule = vm._trueData(field);
 
+	        if (!rule) return console.error("".concat(field, " \u5B57\u6BB5\u4E0D\u5B58\u5728") + errMsg());
 	        properties[field] = {
 	          get: function get() {
 	            return rule.value;

@@ -7,7 +7,7 @@ module.exports = {
     mode: "development",
     devtool: "source-map",
     entry: {
-        app: path.join(__dirname, './src', 'elm.js')
+        app: path.join(__dirname, './src', 'element.js')
     },
     output: {    //输出
         filename: 'dist/form-create.elm.js',
@@ -26,8 +26,8 @@ module.exports = {
     plugins: [
         new webpack.HotModuleReplacementPlugin(),
         new HtmlWebpackPlugin({
-            template: path.resolve(__dirname, './demo/elm/index.html'),
-            filename: path.resolve(__dirname, './demo/elm/index.html'),
+            template: path.resolve(__dirname, './demo/element/index.html'),
+            filename: path.resolve(__dirname, './demo/element/index.html'),
             inject: true
         }),
         new webpack.DefinePlugin({
@@ -36,7 +36,7 @@ module.exports = {
         }),
     ],
     devServer: {
-        openPage: './demo/elm/index.html',
+        openPage: './demo/element/index.html',
         hot: true,
         inline: true,
         open: true
