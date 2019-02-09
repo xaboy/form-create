@@ -177,26 +177,18 @@ export default function getGlobalApi(fComponent) {
                 handler.clearMsg();
             })
         },
-        model(fields) {
-            let model = {};
-            tidyFields(fields).forEach((field) => {
-                const rule = vm._trueData(field);
-                if (!rule)
-                    return console.error(`${field} 字段不存在` + errMsg());
-                model[field] = rule;
-            });
-            return model;
+        model() {
+            return {...vm.trueData};
         },
         component() {
             return {...vm.components};
         },
         bind(fields) {
-            let bind = {}, properties = {}, _fields = this.fields();
+            let bind = {}, properties = {};
             tidyFields(fields).forEach((field) => {
-                if (_fields.indexOf(field) === -1)
-                    return console.error(`${field} 字段不存在` + errMsg());
-
                 const rule = vm._trueData(field);
+                if (!rule)
+                    return console.error(`${field} 字段不存在` + errMsg());
                 properties[field] = {
                     get() {
                         return rule.value;
