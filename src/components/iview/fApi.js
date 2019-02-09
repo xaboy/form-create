@@ -140,7 +140,7 @@ export default function getGlobalApi(fComponent) {
                 const handler = fComponent.handlers[field];
                 if (!fComponent.handlers[field])
                     return;
-                vm.$set(vm._trueData(field).rule.props, 'hidden', !!hidden);
+                vm.$set(vm._trueData(field).props, 'hidden', !!hidden);
                 handler.render.sync();
             })
         },
@@ -149,7 +149,7 @@ export default function getGlobalApi(fComponent) {
                 const handler = fComponent.handlers[field];
                 if (!handler)
                     return;
-                vm.$set(vm._trueData(field).rule.props, 'visibility', !!visibility);
+                vm.$set(vm._trueData(field).props, 'visibility', !!visibility);
                 handler.render.sync();
             })
         },
@@ -161,7 +161,7 @@ export default function getGlobalApi(fComponent) {
                     return;
 
                 if (!handler.noValue)
-                    vm.$set(vm._trueData(field).rule.props, 'disabled', disabled);
+                    vm.$set(vm._trueData(field).props, 'disabled', disabled);
                 else
                     handler.$emit('disabled', disabled, this);
 
@@ -178,11 +178,12 @@ export default function getGlobalApi(fComponent) {
             })
         },
         model(fields) {
-            let model = {}, _fields = this.fields();
+            let model = {};
             tidyFields(fields).forEach((field) => {
-                if (_fields.indexOf(field) === -1)
+                const rule = vm._trueData(field);
+                if (!rule)
                     return console.error(`${field} 字段不存在` + errMsg());
-                model[field] = vm._trueData(field);
+                model[field] = rule;
             });
             return model;
         },

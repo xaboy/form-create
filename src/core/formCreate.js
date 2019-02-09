@@ -170,10 +170,7 @@ export default class FormCreate {
         }
         $set(this.formData, field, handler.parseValue);
         $set(this.validate, field, rule.validate);
-        $set(this.trueData, field, {
-            value: handler.rule.value,
-            rule: rule
-        });
+        $set(this.trueData, field, rule);
 
     }
 
@@ -285,34 +282,19 @@ export default class FormCreate {
             if (vm._change(field, json)) {
                 handler.watchValue(n);
                 $nt(() => handler.render.sync());
-                $set(vm.trueData[field].rule, 'value', n);
             }
         }, {deep: true});
 
-        let unWatch3 = vm.$watch(`trueData.${field}.rule.value`, (n) => {
-            if (n === undefined) return;
-
-            if (this.handlers[field] === undefined)
-                return unWatch3();
-
-            let json = JSON.stringify(n);
-            if (vm._change(field, json)) {
-                handler.watchValue(n);
-                $nt(() => handler.render.sync());
-                $set(vm.trueData[field], 'value', n);
-            }
-        }, {deep: true});
-
-        handler.watch.push(unWatch, unWatch2, unWatch3);
+        handler.watch.push(unWatch, unWatch2);
 
         const bind = () => {
             if (this.handlers[field] !== undefined)
                 this.$tick(() => handler.render.sync());
         };
 
-        Object.keys(vm._trueData(field).rule).forEach((key) => {
+        Object.keys(vm._trueData(field)).forEach((key) => {
             if (key === 'value') return;
-            handler.watch.push(vm.$watch(`trueData.${field}.rule.${key}`, bind, {deep: true}));
+            handler.watch.push(vm.$watch(`trueData.${field}.${key}`, bind, {deep: true}));
         });
     }
 
