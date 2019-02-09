@@ -27,17 +27,27 @@ const $FormCreate = () => ({
     render() {
         return this._fComponent.render();
     },
-    created() {
-        const _fc = new formCreate(this.rule, this.option);
+    beforeCreate() {
+        const {rule, option} = this.$options.propsData;
+        const _fc = new formCreate(rule, option);
+
         this._fComponent = _fc;
         _fc._type = 'rule';
-        _fc.boot(this);
+        _fc.beforeBoot(this);
+    },
+    created() {
+        const _fc = this._fComponent;
+
+        _fc.boot();
+        this.$f = _fc.fCreateApi;
+
         this.$emit('input', _fc.fCreateApi);
     },
     mounted() {
         const _fc = this._fComponent;
+
         _fc.mounted(this);
-        this.$f = _fc.fCreateApi;
+
         this.$watch('rule', n => {
             _fc.reload(n);
             this.$emit('input', this.$f);
@@ -47,8 +57,9 @@ const $FormCreate = () => ({
                 this._sync();
             });
         }, {deep: true});
-        this.$emit('input', this.$f);
+
         this.__init();
+        this.$emit('input', this.$f);
     }
 });
 

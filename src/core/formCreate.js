@@ -139,17 +139,20 @@ export default class FormCreate {
         return this.fRender.render(this.vm);
     }
 
-    boot(vm) {
+    beforeBoot(vm) {
         this.vm = vm;
         this.createHandler(this.rules);
+        this.fRender = new drive.formRender(this);
+    }
+
+    boot() {
+        const vm = this.vm;
         vm.$set(vm, 'cptData', this.formData);
         vm.$set(vm, 'trueData', this.trueData);
         vm.$set(vm, 'buttonProps', this.options.submitBtn);
         vm.$set(vm, 'resetProps', this.options.resetBtn);
         vm.$set(vm, 'rules', this.rules);
         vm.$set(vm, 'components', this.components);
-
-        this.fRender = new drive.formRender(this);
 
         if (this.fCreateApi === undefined)
             this.fCreateApi = drive.getGlobalApi(this);
@@ -305,7 +308,7 @@ export default class FormCreate {
     }
 
     reload(rules) {
-        let vm = this.vm;
+        const vm = this.vm;
 
         if (!rules)
             return this.reload(this.rules);
@@ -317,10 +320,13 @@ export default class FormCreate {
             this.fCreateApi.refresh();
 
         this.origin = [...rules];
+
         vm._unWatch();
         Object.keys(this.handlers).forEach(field => this.removeField(field));
+
         this.__init(rules, this.options);
-        this.boot(vm);
+        this.beforeBoot(vm);
+        this.boot();
         vm.__init();
 
         $nt(() => {

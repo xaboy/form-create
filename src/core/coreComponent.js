@@ -1,5 +1,6 @@
 import {formCreateName} from './component';
 import baseComponent from "./mixins";
+import {$nt} from "./util";
 
 export default function coreComponent(fComponent) {
     return {
@@ -8,18 +9,28 @@ export default function coreComponent(fComponent) {
         render: () => {
             return fComponent.render();
         },
-        created() {
+        beforeCreate() {
             this._fComponent = fComponent;
-            this._fComponent._type = 'rules';
-            fComponent.boot(this);
+            fComponent._type = 'rules';
+            fComponent.beforeBoot(this);
+        },
+        created() {
+            fComponent.boot();
+            this.$f = fComponent.fCreateApi;
         },
         mounted() {
             fComponent.mounted(this);
-            this.$f = fComponent.fCreateApi;
-            this.__init();
+
             this.$watch('rules', n => {
                 this._fComponent.reload(n);
             });
+            this.$watch('option', n => {
+                $nt(() => {
+                    this._sync();
+                });
+            }, {deep: true});
+
+            this.__init();
         }
     }
 };
