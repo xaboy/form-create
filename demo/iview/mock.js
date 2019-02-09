@@ -92,17 +92,27 @@ function mock() {
                     this.$emit('goods-name-change', this.num);
                 },
                 //表单禁用事件
-                onDisabled: function () {
-                    this.disabled = true;
+                onDisabled: function (disabled) {
+                    this.disabled = disabled;
                 },
                 //表单重置事件
                 onResetField: function () {
                     this.num = 0;
+                },
+                //表单提交事件
+                onInput: function (cb, $f) {
+                    cb(this.num);
+                },
+                //通过setValue,changeField,changeValue方法设置表单值时事件
+                onSetValue: function (val, $f) {
+                    this.num = val;
                 }
             },
             created: function () {
-                this.$on('disabled', this.onDisabled);
-                this.$on('reset-field', this.onResetField);
+                this.$on('fc:disabled', this.onDisabled);
+                this.$on('fc:reset-field', this.onResetField);
+                this.$on('fc:input', this.onInput);
+                this.$on('fc:set-value', this.onSetValue);
             }
         }), 'tmp').col({labelWidth: 1}),
 
@@ -120,8 +130,14 @@ function mock() {
             show: true
         })
             .on({
-                "disabled": function (disabled, $f) {
+                "fc:disabled": function (disabled, $f) {
                     $f.component().btn.props.disabled = disabled;
+                },
+                "fc:input": function (cb, $f) {
+                    cb($f.component().btn.props.disabled);
+                },
+                "fc:set-value": function (val, $f) {
+                    $f.component().btn.props.disabled = val;
                 }
             }).col({span: 12}).children([
             maker.create('span').domProps({

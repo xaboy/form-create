@@ -12,21 +12,35 @@ export default function getGlobalApi(fComponent) {
     }
 
     return {
-        formData: () => {
-            return vm._formField().reduce((initial, key) => {
-                initial[key] = vm._value(key);
+        formData() {
+            const handlers = fComponent.handlers;
+
+            return Object.keys(handlers).reduce((initial, field) => {
+                const handler = handlers[field];
+                if (handler.noValue === true) {
+                    handler.$emit('input', (val) => {
+                        initial[field] = val;
+                    }, this);
+                } else {
+                    initial[field] = vm._value(field);
+                }
                 return initial;
             }, {});
         },
-        getValue: (field) => {
+        getValue(field) {
             field = toString(field);
-            if (vm._formField(field) === undefined)
-                throw new Error(`${field} 字段不存在!` + errMsg());
-            else {
-                return vm._value(field);
-            }
+            const handler = fComponent.handlers[field];
+            if (isUndef(handler)) return;
+            let val = undefined;
+            if (handler.noValue === true)
+                handler.$emit('input', (v) => {
+                    val = v;
+                }, this);
+            else
+                val = vm._value(field);
+            return val;
         },
-        setValue: function (field, value) {
+        setValue(field, value) {
             let formData = field;
             if (!isPlainObject(field))
                 formData = {[field]: value};
@@ -34,7 +48,7 @@ export default function getGlobalApi(fComponent) {
                 this.changeValue(key, formData[key]);
             });
         },
-        changeValue: function (field, value) {
+        changeValue(field, value) {
             field = toString(field);
             let handler = fComponent.handlers[field];
             if (handler === undefined)
@@ -44,10 +58,13 @@ export default function getGlobalApi(fComponent) {
                     this.changeField(field, changeValue);
                 });
             else {
-                handler.setValue(value);
+                if (handler.noValue === true)
+                    handler.$emit('set-value', value, this);
+                else
+                    handler.setValue(value);
             }
         },
-        changeField: function (field, value) {
+        changeField(field, value) {
             this.setValue(field, value);
         },
         removeField: (field) => {
@@ -70,7 +87,7 @@ export default function getGlobalApi(fComponent) {
                 return;
             fComponent.getFormRef().validateField(field, callback);
         },
-        resetFields: function (fields) {
+        resetFields(fields) {
             let handlers = fComponent.handlers;
             tidyFields(fields, true).forEach(field => {
                 let handler = handlers[field];
@@ -203,7 +220,7 @@ export default function getGlobalApi(fComponent) {
             loading: (loading = true) => {
                 vm._buttonProps({loading: loading});
             },
-            finish: function () {
+            finish() {
                 this.loading(false);
             },
             disabled: (disabled = true) => {
@@ -217,7 +234,7 @@ export default function getGlobalApi(fComponent) {
             loading: (loading = true) => {
                 vm._resetProps({loading: loading});
             },
-            finish: function () {
+            finish() {
                 this.loading(false);
             },
             disabled: (disabled = true) => {
