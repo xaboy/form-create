@@ -1,6 +1,6 @@
 {
   "name": "form-create",
-  "version": "1.6.0",
+  "version": "1.6.0-bata2",
   "description": "好用的表单生成器|Form builder with dynamic rendering, data collection, validation and submission capabilities, built-in 17 commonly used form components, and supports the use of json to generate any vue component, supporting two-way data binding, event expansion.",
   "main": "index.js",
   "module": "index.js",

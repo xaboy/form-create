@@ -1,5 +1,5 @@
 /*!
- * form-create v1.6.0 elementUI
+ * form-create v1.6.0-bata2 elementUI
  * (c) 2018-2019 xaboy
  * Github https://github.com/xaboy/form-create
  * Released under the MIT License.
@@ -1564,14 +1564,24 @@
 	    render: function render() {
 	      return this._fComponent.render();
 	    },
-	    created: function created() {
-	      var _fc = new FormCreate(this.rule, this.option);
+	    beforeCreate: function beforeCreate() {
+	      var _this$$options$propsD = this.$options.propsData,
+	          rule = _this$$options$propsD.rule,
+	          option = _this$$options$propsD.option;
+
+	      var _fc = new FormCreate(rule, option);
 
 	      this._fComponent = _fc;
 	      _fc._type = 'rule';
 
-	      _fc.boot(this);
+	      _fc.beforeBoot(this);
+	    },
+	    created: function created() {
+	      var _fc = this._fComponent;
 
+	      _fc.boot();
+
+	      this.$f = _fc.fCreateApi;
 	      this.$emit('input', _fc.fCreateApi);
 	    },
 	    mounted: function mounted() {
@@ -1581,7 +1591,6 @@
 
 	      _fc.mounted(this);
 
-	      this.$f = _fc.fCreateApi;
 	      this.$watch('rule', function (n) {
 	        _fc.reload(n);
 
@@ -1594,9 +1603,10 @@
 	      }, {
 	        deep: true
 	      });
-	      this.$emit('input', this.$f);
 
 	      this.__init();
+
+	      this.$emit('input', this.$f);
 	    }
 	  };
 	};
@@ -1608,22 +1618,31 @@
 	    render: function render() {
 	      return fComponent.render();
 	    },
-	    created: function created() {
+	    beforeCreate: function beforeCreate() {
 	      this._fComponent = fComponent;
-	      this._fComponent._type = 'rules';
-	      fComponent.boot(this);
+	      fComponent._type = 'rules';
+	      fComponent.beforeBoot(this);
+	    },
+	    created: function created() {
+	      fComponent.boot();
+	      this.$f = fComponent.fCreateApi;
 	    },
 	    mounted: function mounted() {
 	      var _this = this;
 
 	      fComponent.mounted(this);
-	      this.$f = fComponent.fCreateApi;
-
-	      this.__init();
-
 	      this.$watch('rules', function (n) {
 	        _this._fComponent.reload(n);
 	      });
+	      this.$watch('option', function (n) {
+	        $nt(function () {
+	          _this._sync();
+	        });
+	      }, {
+	        deep: true
+	      });
+
+	      this.__init();
 	    }
 	  };
 	}
@@ -2152,7 +2171,7 @@
 	  };
 	}
 
-	var version = "1.6.0";
+	var version = "1.6.0-bata2";
 	var ui = "element";
 	var formCreateStyleElId = 'form-create-style';
 	var drive = {};
@@ -2247,17 +2266,22 @@
 	      return this.fRender.render(this.vm);
 	    }
 	  }, {
-	    key: "boot",
-	    value: function boot(vm) {
+	    key: "beforeBoot",
+	    value: function beforeBoot(vm) {
 	      this.vm = vm;
 	      this.createHandler(this.rules);
+	      this.fRender = new drive.formRender(this);
+	    }
+	  }, {
+	    key: "boot",
+	    value: function boot() {
+	      var vm = this.vm;
 	      vm.$set(vm, 'cptData', this.formData);
 	      vm.$set(vm, 'trueData', this.trueData);
 	      vm.$set(vm, 'buttonProps', this.options.submitBtn);
 	      vm.$set(vm, 'resetProps', this.options.resetBtn);
 	      vm.$set(vm, 'rules', this.rules);
 	      vm.$set(vm, 'components', this.components);
-	      this.fRender = new drive.formRender(this);
 	      if (this.fCreateApi === undefined) this.fCreateApi = drive.getGlobalApi(this);
 	      this.fCreateApi.rule = this.rules;
 	      this.fCreateApi.config = this.options;
@@ -2446,7 +2470,8 @@
 
 	      this.__init(rules, this.options);
 
-	      this.boot(vm);
+	      this.beforeBoot(vm);
+	      this.boot();
 
 	      vm.__init();
 

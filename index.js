@@ -1,3 +1,1 @@
-import formCreate from "dist/form-create.min";
-
-export default formCreate;
+module.exports = require('./dist/form-create.min');
