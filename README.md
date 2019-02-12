@@ -26,7 +26,7 @@
 
 
 
-![http://file.lotkk.com/demo-live3.gif](http://file.lotkk.com/demo-live2.gif)
+![http://file.lotkk.com/demo-live3.gif](http://file.lotkk.com/demo-live3.gif)
 ![http://file.lotkk.com/demo-live2.gif](http://file.lotkk.com/demo-live2.gif)
 
 
