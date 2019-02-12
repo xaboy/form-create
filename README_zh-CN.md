@@ -25,7 +25,7 @@
 
 
 ![http://file.lotkk.com/demo-live3.gif](https://raw.githubusercontent.com/xaboy/form-create/dev/images/demo-live3.gif)
-![http://file.lotkk.com/demo-live2.gif](http://file.lotkk.com/demo-live2.gif)
+![http://file.lotkk.com/demo-live2.gif](https://raw.githubusercontent.com/xaboy/form-create/dev/images/demo-live2.gif)
 
 
 ## 支持
