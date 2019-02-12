@@ -89,31 +89,32 @@ iviewUI
 <link rel="stylesheet" href="//unpkg.com/iview/dist/styles/iview.css">
 <!-- import iView -->
 <script src="//unpkg.com/iview/dist/iview.min.js"></script>
-<!-- import form-create -->
+<!-- import form-create/iview -->
 <script src="//unpkg.com/form-create/dist/form-create.min.js"></script>
 ```
+
 elementUI
-```
+```html
 <!-- import Vue.js -->
 <script src="//vuejs.org/js/vue.min.js"></script>
 <!-- import stylesheet -->
 <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
 <!-- import element -->
 <script src="https://unpkg.com/element-ui/lib/index.js"></script>
-<!-- import form-create -->
+<!-- import form-create/element -->
 <script src="//unpkg.com/form-create/dist/form-create.elm.min.js"></script>
 ```
 **NodeJs:**
-iviewUI
 
+iviewUI
 ```js
 import formCreate from 'form-create'
 import { maker } from 'form-create'
 Vue.use(formCreate)
 ```
-ElementUI
 
-```
+ElementUI
+```js
 import formCreate from 'form-create/element'
 import { maker } from 'form-create/element'
 Vue.use(formCreate)
