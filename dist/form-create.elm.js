@@ -1,5 +1,5 @@
 /*!
- * form-create v1.6.0-bata2 elementUI
+ * form-create v1.6.0-bata.2 elementUI
  * (c) 2018-2019 xaboy
  * Github https://github.com/xaboy/form-create
  * Released under the MIT License.
@@ -2171,7 +2171,7 @@
 	  };
 	}
 
-	var version = "1.6.0-bata2";
+	var version = "1.6.0-bata.2";
 	var ui = "element";
 	var formCreateStyleElId = 'form-create-style';
 	var drive = {};

@@ -62,7 +62,6 @@ function parse(rule, toMaker = false) {
 
         return rules;
     }
-    //TODO 处理 maker 生成器,处理递归搜索
 }
 
 function findField(field) {

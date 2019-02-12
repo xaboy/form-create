@@ -15,7 +15,7 @@
 [![JS gzip size](http://img.badgesize.io/https://cdn.jsdelivr.net/gh/xaboy/form-create/dist/form-create.min.js?compression=gzip&amp;label=gzip%20size&amp;style=flat-square)](https://www.npmjs.com/package/form-create) [![Join the chat at https://gitter.im/xaboy/form-create](https://badges.gitter.im/xaboy/form-create.svg)](https://gitter.im/xaboy/form-create?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 
-**Form builder with dynamic rendering, data collection, validation and submission capabilities, built-in 17 commonly used form components, and supports the use of json to generate any vue component, supporting two-way data binding, event expansion.**
+**Form builder with dynamic rendering, data collection, validation and submission capabilities, built-in 17 common form components, support for two-way data binding, event extension, and support for building built-in components and any vue components using json.**
 
 [中文 README](https://github.com/xaboy/form-create/blob/dev/README_zh-CN.md)
 
@@ -45,8 +45,8 @@
 
 | Name               | Description                                                |
 | ------------------ | ---------------------------------------------------------- |
-| form-create.js     | [iViewUI Version](https://www.iviewui.com/components/form) |
-| form-create.elm.js | [ElementUI Version](http://element.eleme.io/#/zh-CN/component/form)                                      |
+| form-create.js     | iViewUI Version |
+| form-create.elm.js | ElementUI Version                                     |
 
 
 

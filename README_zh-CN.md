@@ -43,8 +43,8 @@
 
 | 文件名             | 说明                                                |
 | ------------------ | ---------------------------------------------------------- |
-| form-create.js     | [iViewUI 版本](https://www.iviewui.com/components/form) |
-| form-create.elm.js | [ElementUI 版本](http://element.eleme.io/#/zh-CN/component/form)                                      |
+| form-create.js     | iViewUI 版本 |
+| form-create.elm.js | ElementUI 版本                            |
 
 
 
