@@ -35,6 +35,7 @@ export const style = '.form-create{padding:25px;} .fc-upload-btn,.fc-files{displ
     '.fc-upload .fc-upload-cover i{ color: #fff; font-size: 20px; cursor: pointer; margin: 0 2px; }' +
     '.fc-files:hover .fc-upload-cover{opacity: 1; }' +
     '.form-create .el-form-item .el-rate{margin-top:10px;}' +
+    '.form-create .el-form-item .el-tree{margin-top:7px;}' +
     '.fc-spin-icon-load{animation: ani-fc-spin 1s linear infinite;} @-webkit-keyframes ani-fc-spin{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}50%{-webkit-transform:rotate(180deg);transform:rotate(180deg)}to{-webkit-transform:rotate(1turn);transform:rotate(1turn)}}@keyframes ani-fc-spin{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}50%{-webkit-transform:rotate(180deg);transform:rotate(180deg)}to{-webkit-transform:rotate(1turn);transform:rotate(1turn)}}';
 
 export const nodes = {

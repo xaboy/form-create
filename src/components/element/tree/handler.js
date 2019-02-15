@@ -10,6 +10,8 @@ export default class handler extends Handler {
         if (isUndef(props.props)) $set(props, 'props', {
             label: "title"
         });
+        if (isUndef(props.defaultExpandAll))
+            $set(props, 'defaultExpandAll', true);
     }
 
     toValue(parseValue) {
