@@ -19,6 +19,11 @@
 
 [中文 README](https://github.com/xaboy/form-create/blob/dev/README_zh-CN.md)
 
+## Support
+- **iViewUI 2.13.0+**
+- **iViewUI 3.x**
+- **ElementUI 2.5.2+**
+
 >  If it helps, you can click on "Star" in the upper right corner. Thank you!
 >  The project is still being developed and improved. If there are any 'recommendations or questions, please ask [here](https://github.com/xaboy/form-create/issues/new)
 
@@ -28,12 +33,6 @@
 
 ![http://file.lotkk.com/demo-live3.gif](https://raw.githubusercontent.com/xaboy/form-create/dev/images/demo-live3.gif)
 ![http://file.lotkk.com/demo-live2.gif](https://raw.githubusercontent.com/xaboy/form-create/dev/images/demo-live2.gif)
-
-
-## Support
-- **iViewUI 2.13.0+**
-- **iViewUI 3.x**
-- **ElementUI 2.5.2+**
 
 
 ## Docs

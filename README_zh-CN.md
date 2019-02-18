@@ -17,6 +17,13 @@
 
 **具有动态渲染，数据收集，验证和提交功能的表单生成器，内置17种常用表单组件，支持双向数据绑定，事件扩展，并支持使用json生成内置组件和任何vue组件。**
 
+
+## 支持
+- **iViewUI 2.13.0+**
+- **iViewUI 3.x**
+- **ElementUI 2.5.2+**
+
+
 > 如果对您有帮助，您可以点右上角 "Star" 支持一下 谢谢！本项目还在不断开发完善中,如有任何建议或问题[请在这里提出](https://github.com/xaboy/form-create/issues/new)
 > 本项目QQ讨论群[28963712](https://jq.qq.com/?_wv=1027&k=54aKUVw)
 
@@ -26,12 +33,6 @@
 
 ![http://file.lotkk.com/demo-live3.gif](https://raw.githubusercontent.com/xaboy/form-create/dev/images/demo-live3.gif)
 ![http://file.lotkk.com/demo-live2.gif](https://raw.githubusercontent.com/xaboy/form-create/dev/images/demo-live2.gif)
-
-
-## 支持
-- **iViewUI 2.13.0+**
-- **iViewUI 3.x**
-- **ElementUI 2.5.2+**
 
 
 ## 文档
