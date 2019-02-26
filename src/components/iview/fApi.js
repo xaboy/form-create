@@ -248,7 +248,7 @@ export default function getGlobalApi(fComponent) {
             vm.$set(node, field, value);
         },
         reload: (rules) => {
-            return fComponent.reload(rules)
+            fComponent.reload(rules)
         },
         options: (options) => {
             deepExtend(fComponent.options, options);
