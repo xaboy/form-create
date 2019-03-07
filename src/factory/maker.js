@@ -21,15 +21,17 @@ export default function makerFactory(componentList) {
     const commonMaker = creatorFactory('');
 
     extend(_m, {
-        create(type, field) {
+        create(type, field, title) {
             let make = commonMaker('', field);
             make.rule.type = type;
+            make.rule.title = title;
             return make;
         },
-        createTmp(template, vm, field) {
+        createTmp(template, vm, field, title) {
             let make = commonMaker('', field);
             make.rule.type = 'template';
             make.rule.template = template;
+            make.rule.title = title;
             make.rule.vm = vm;
             return make;
         }

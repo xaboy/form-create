@@ -235,11 +235,11 @@ export namespace FormCreate {
     export interface Maker<Creator, Rule> {
         hidden(field: string, value: any): Creator;
 
-        create(type: string, field: string): Creator;
+        create(type: string, field?: string, title?: string): Creator;
 
-        createTmp(template: string, vm: Vue, field?: string): Creator;
+        createTmp(template: string, vm: Vue, field?: string, title?: string): Creator;
 
-        template(template: string, vm: Vue, field?: string): Creator;
+        template(template: string, vm: Vue, field?: string, title?: string): Creator;
 
         parse(rules: string | Array<Rule | Creator>, toMaker?: boolean): ParseRuleList<Rule | Creator>;
 

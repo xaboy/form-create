@@ -19,12 +19,16 @@ declare namespace formCreate {
         size?: '' | 'large' | 'small' | 'default';
     }
 
+    export interface FormCol extends Col {
+        labelWidth?: number;
+    }
+
     export interface FormOption extends FormCreate.BaseOption<Rule>, Option {
     }
 
-    export type Rule = FormCreate.Rule<Col, FormOption>;
+    export type Rule = FormCreate.Rule<FormCol, FormOption>;
 
-    export type Creator = FormCreate.Creator<Rule, Col, FormOption>;
+    export type Creator = FormCreate.Creator<Rule, FormCol, FormOption>;
 
     export type FormRule = Creator | Rule;
 
@@ -32,7 +36,7 @@ declare namespace formCreate {
 
     export type FormConfig = FormCreate.BaseConfig<IviewFormConfig, Row, Upload, Button, FormRule, FormButton>;
 
-    export interface FormButton extends FormCreate.BaseButton<Col>, Button {
+    export interface FormButton extends FormCreate.BaseButton<FormCol>, Button {
 
     }
 

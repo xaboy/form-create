@@ -114,7 +114,7 @@ function mock() {
                 this.$on('fc:input', this.onInput);
                 this.$on('fc:set-value', this.onSetValue);
             }
-        }), 'tmp').col({labelWidth: 1}),
+        }), 'tmp','自定义 title'),
 
 
         //自定义组件
@@ -147,7 +147,7 @@ function mock() {
 
 
         //自定义组件
-        maker.create('Tooltip', 'tip').props({
+        maker.create('Tooltip', 'tip', '自定义 title').props({
             content: "这里是提示文字",
         }).col({span: 11, push: 1}).children([
             maker.create('span').domProps({
