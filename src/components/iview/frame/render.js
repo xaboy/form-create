@@ -33,7 +33,8 @@ export default class render extends Render {
             clearable: true
         }).on('on-click', () => {
             this.showModel();
-        }).key('ifit' + unique).style({display: hidden === true ? 'none' : 'inline-block'}).get();
+        }).on('input', () => {
+        }).key('ifit' + unique).class('__fc_h', hidden === true).get();
         return [this.vNode.input(props)];
     }
 

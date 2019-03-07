@@ -18,6 +18,14 @@ export default class render extends Render {
             },
         }).props(rule.props).ref(refName).key(`fip${unique}`).get();
 
-        return [this.vNode.tree(props)];
+        let inputProps = this.inputProps().props({
+            type: "text",
+            value: '' + this.handler.rule.value,
+            disable: true,
+            readonly: true
+        }).key('fipit' + unique).class('__fc_h').ref(`${refName}it`).on('input', () => {
+        }).get();
+
+        return [this.vNode.tree(props), this.vNode.input(inputProps)];
     }
 }

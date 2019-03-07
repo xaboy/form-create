@@ -97,17 +97,19 @@ export namespace FormCreate {
 
         slot(slot: string): this;
 
-        scopedSlots(scopedSlots: { [key: string]: ScopedSlot }): this;
+        scopedSlots(scopedSlots: { [key: string]: ScopedSlot } | string, val?: ScopedSlot): this;
 
-        nativeOn(nativeOn: { [key: string]: Function | Function[] }): this;
+        nativeOn(nativeOn: { [key: string]: Function | Function[] } | string, val?: Function): this;
 
-        on(on: { [key: string]: Function | Function[] }): this;
+        on(on: { [key: string]: Function | Function[] } | string, val?: Function): this;
 
-        props(props: { [key: string]: any }): this;
+        props(props: { [key: string]: any } | string, val?: any): this;
 
-        attrs(attrs: { [key: string]: any }): this;
+        attrs(attrs: { [key: string]: any } | string, val?: any): this;
 
-        style(style: { [key: string]: any }): this;
+        style(style: { [key: string]: any } | string, val?: any): this;
+
+        domProps(style: { [key: string]: any } | string, val?: any): this;
 
     }
 
@@ -139,7 +141,7 @@ export namespace FormCreate {
 
         col(col: Col): this;
 
-        validate(validate: any[]): this;
+        validate(validate: any[] | object): this;
 
         options(options: FormOption[]): this;
 

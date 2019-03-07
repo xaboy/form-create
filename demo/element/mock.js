@@ -106,7 +106,7 @@ function mock() {
                 this.$on('fc:input', this.onInput);
                 this.$on('fc:set-value', this.onSetValue);
             }
-        }), 'tmp', '自定义 title').col({labelWidth: 1}),
+        }), 'tmp', '自定义 title'),
 
 
         //自定义组件
@@ -346,7 +346,9 @@ function mock() {
                     ]
                 }
             ],
-        })
+        }).validate([
+            {required: true, type: 'array', min: 2, message: '至少选择2个', trigger: 'change'}
+        ])
     ];
 }
 
