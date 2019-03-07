@@ -1,7 +1,7 @@
 import {Button, Col, Option, Row, Upload} from "element-ui";
 import {ElementUIComponentSize} from "element-ui/types/component";
 import {FormItemLabelPosition} from "element-ui/types/form";
-import {FormCreate} from "./types/core";
+import {FormCreate} from "./core";
 
 export = formCreate;
 
@@ -47,7 +47,7 @@ declare namespace formCreate {
 
     export type FormData = FormCreate.FormData;
 
-    export type BinfFormData = FormCreate.BindFormData;
+    export type BindFormData = FormCreate.BindFormData;
 
     export type ParseRuleList = FormCreate.ParseRuleList<FormRule>;
 
