@@ -6,7 +6,7 @@
   "module": "dist/form-create.min.js",
   "unpkg": "dist/form-create.min.js",
   "jsdelivr": "dist/form-create.min.js",
-  "types": "iview.d.ts",
+  "types": "types/iview.d.ts",
   "scripts": {
     "dev:iview": "webpack-dev-server",
     "dev:element": "webpack-dev-server --config=webpack.config.elm.js",
