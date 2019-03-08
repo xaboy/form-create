@@ -3886,8 +3886,11 @@
 	    key: "init",
 	    value: function init() {
 	      this.parseValue = [];
-	      this.rule.props.fileList = [];
-	      this.rule.props.showFileList = false;
+	      var props = this.rule.props;
+	      props.fileList = [];
+	      props.showFileList = false;
+	      if (isUndef(props.uploadType)) $set(props, 'uploadType', 'file');
+	      if (props.uploadType === 'file' && isUndef(props.handleIcon)) $set(props, 'handleIcon', false);
 	      $set(this.rule, 'value', parseValue(this.rule.value));
 	    }
 	  }, {

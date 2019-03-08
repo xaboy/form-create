@@ -3500,7 +3500,7 @@
 	      if (isUndef(props.uploadType)) $set(props, 'uploadType', 'file');
 	      if (props.maxLength === undefined) $set(props, 'maxLength', 0);
 	      if (props.action === undefined) $set(props, 'action', '');
-	      if (props.uploadType === 'file' && props.handleIcon === undefined) $set(props, 'handleIcon', false);
+	      if (props.uploadType === 'file' && isUndef(props.handleIcon)) $set(props, 'handleIcon', false);
 	      $set(this.rule, 'value', parseValue(this.rule.value));
 	      this.parseValue = [];
 	    }
