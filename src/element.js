@@ -18,7 +18,7 @@ if (typeof window !== 'undefined') {
     }
 }
 
-let maker = formCreate;
+const maker = formCreate.maker;
 
 export {maker}
 

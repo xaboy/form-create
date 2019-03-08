@@ -5174,7 +5174,7 @@
 	  }
 	}
 
-	var maker$c = FormCreate;
+	var maker$c = FormCreate.maker;
 
 	exports.maker = maker$c;
 	exports.default = FormCreate;
