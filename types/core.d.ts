@@ -4,12 +4,13 @@ import {Vue} from "vue/types/vue";
 
 export namespace FormCreate {
 
-    export type Install = (Vue) => void;
+    export interface Install {
+        (Vue): void;
+    }
 
-    export type Create<FormRule, FormConfig, FormButton> = (
-        rules: FormRule[],
-        config?: FormConfig
-    ) => $FApi<FormRule, FormConfig, FormButton>;
+    export interface Create<FormRule, FormConfig, FormButton> {
+        (rules: FormRule[], config?: FormConfig): $FApi<FormRule, FormConfig, FormButton>
+    }
 
     export interface FormData {
         [field: string]: any;
@@ -55,7 +56,7 @@ export namespace FormCreate {
     }
 
     export interface BaseOption<Rule> {
-        slot?: DefaultSlot<Rule>
+        slot?: string | DefaultSlot<Rule>
     }
 
     export interface Rule<Col, FormOption extends BaseOption<Rule<Col, FormOption>>> extends Data {
@@ -113,9 +114,9 @@ export namespace FormCreate {
 
     }
 
-    export type DefaultSlot<Rule> =
-        string
-        | { (rule: Rule, $h: CreateElement): ScopedSlotChildren | string };
+    export interface DefaultSlot<Rule> {
+        (rule: Rule, $h: CreateElement): ScopedSlotChildren | string
+    }
 
 
     export class Creator<Rule, Col, FormOption> extends VData {
@@ -135,7 +136,7 @@ export namespace FormCreate {
 
         className(className: any): this;
 
-        defaultSlot(slot: DefaultSlot<Rule>): this;
+        defaultSlot(slot: string | DefaultSlot<Rule>): this;
 
         event(event: object): this;
 

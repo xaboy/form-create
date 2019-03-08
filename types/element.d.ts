@@ -3,62 +3,77 @@ import {ElementUIComponentSize} from "element-ui/types/component";
 import {FormItemLabelPosition} from "element-ui/types/form";
 import {FormCreate} from "./core";
 
-export = formCreate;
+export default formCreate;
 
 declare class formCreate {
-    static create: formCreate.create;
-    static maker: formCreate.maker;
-    static install: formCreate.install;
+    static create: create;
+    static maker: FormCreate.Maker<Creator, Rule>;
+    static install: install;
 }
 
-declare namespace formCreate {
 
-    interface ElementFormConfig {
-        inline?: boolean
-        disabled?: boolean
-        labelPosition?: FormItemLabelPosition
-        labelWidth?: string
-        labelSuffix?: string
-        showMessage?: boolean
-        inlineMessage?: boolean
-        statusIcon?: boolean
-        validateOnRuleChange?: boolean
-        size?: ElementUIComponentSize
-    }
+interface ElementFormConfig {
+    inline?: boolean
+    disabled?: boolean
+    labelPosition?: FormItemLabelPosition
+    labelWidth?: string
+    labelSuffix?: string
+    showMessage?: boolean
+    inlineMessage?: boolean
+    statusIcon?: boolean
+    validateOnRuleChange?: boolean
+    size?: ElementUIComponentSize
+}
 
-    export interface FormCol extends Col {
-        labelWidth?: number;
-    }
+export declare interface FormCol extends Col {
+    labelWidth?: number;
+}
 
-    export interface FormOption extends FormCreate.BaseOption<Rule>, Option {
-    }
+export declare interface FormOption extends FormCreate.BaseOption<Rule>, Option {
+}
 
-    export type Rule = FormCreate.Rule<FormCol, FormOption>;
+export declare interface Rule extends FormCreate.Rule<FormCol, FormOption> {
+}
 
-    export type Creator = FormCreate.Creator<Rule, FormCol, FormOption>;
+export declare interface Creator extends FormCreate.Creator<Rule, FormCol, FormOption> {
 
-    export type FormRule = Creator | Rule;
+}
 
-    export type DefaultSlot = FormCreate.DefaultSlot<Rule>;
+export declare type FormRule = Creator | Rule;
 
-    export type FormConfig = FormCreate.BaseConfig<ElementFormConfig, Row, Upload, Button, FormRule, FormButton>;
+export declare interface DefaultSlot extends FormCreate.DefaultSlot<Rule> {
 
-    export interface FormButton extends FormCreate.BaseButton<FormCol>, Button {
+}
 
-    }
+export declare interface FormConfig extends FormCreate.BaseConfig<ElementFormConfig, Row, Upload, Button, FormRule, FormButton> {
+}
 
-    export type $FApi = FormCreate.$FApi<FormRule, FormConfig, FormButton>;
+export declare interface FormButton extends FormCreate.BaseButton<FormCol>, Button {
 
-    export type FormData = FormCreate.FormData;
+}
 
-    export type BindFormData = FormCreate.BindFormData;
+export declare interface $FApi extends FormCreate.$FApi<FormRule, FormConfig, FormButton> {
 
-    export type ParseRuleList = FormCreate.ParseRuleList<FormRule>;
+}
 
-    export type maker = FormCreate.Maker<Creator, Rule>;
+export declare interface FormData extends FormCreate.FormData {
+}
 
-    export type create = FormCreate.Create<FormRule, FormConfig, FormButton>;
+export declare interface BindFormData extends FormCreate.BindFormData {
+}
 
-    export type install = FormCreate.Install;
+export declare interface ParseRuleList extends FormCreate.ParseRuleList<FormRule> {
+}
+
+export declare const maker: FormCreate.Maker<Creator, Rule>;
+
+export declare interface create extends FormCreate.Create<FormRule, FormConfig, FormButton> {
+}
+
+export declare interface install extends FormCreate.Install {
+}
+
+
+export declare class VData extends FormCreate.VData {
 
 }

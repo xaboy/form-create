@@ -1,57 +1,79 @@
 import {Button, Col, Option, Row, Upload} from "iview";
 import {FormCreate} from "./core";
 
-export = formCreate;
+export default formCreate;
 
 declare class formCreate {
-    static create: formCreate.create;
-    static maker: formCreate.maker;
-    static install: formCreate.install;
+    static create: create;
+    static maker: FormCreate.Maker<Creator, Rule>;
+    static install: install;
 }
 
-declare namespace formCreate {
-    interface IviewFormConfig {
-        inline?: boolean;
-        labelPosition?: 'left' | 'right' | 'top';
-        labelWidth?: number;
-        showMessage?: boolean;
-        autocomplete?: 'on' | 'off';
-        size?: '' | 'large' | 'small' | 'default';
-    }
 
-    export interface FormCol extends Col {
-        labelWidth?: number;
-    }
+interface IviewFormConfig {
+    inline?: boolean;
+    labelPosition?: 'left' | 'right' | 'top';
+    labelWidth?: number;
+    showMessage?: boolean;
+    autocomplete?: 'on' | 'off';
+    size?: '' | 'large' | 'small' | 'default';
+}
 
-    export interface FormOption extends FormCreate.BaseOption<Rule>, Option {
-    }
+export declare interface FormCol extends Col {
+    labelWidth?: number;
+}
 
-    export type Rule = FormCreate.Rule<FormCol, FormOption>;
+export declare interface FormOption extends FormCreate.BaseOption<Rule>, Option {
+}
 
-    export type Creator = FormCreate.Creator<Rule, FormCol, FormOption>;
+export declare interface Rule extends FormCreate.Rule<FormCol, FormOption> {
 
-    export type FormRule = Creator | Rule;
+}
 
-    export type DefaultSlot = FormCreate.DefaultSlot<Rule>;
+export declare interface Creator extends FormCreate.Creator<Rule, FormCol, FormOption> {
+}
 
-    export type FormConfig = FormCreate.BaseConfig<IviewFormConfig, Row, Upload, Button, FormRule, FormButton>;
+export declare type FormRule = Creator | Rule;
 
-    export interface FormButton extends FormCreate.BaseButton<FormCol>, Button {
+export declare interface DefaultSlot extends FormCreate.DefaultSlot<Rule> {
 
-    }
+}
 
-    export type $FApi = FormCreate.$FApi<FormRule, FormConfig, FormButton>;
+export declare interface FormConfig extends FormCreate.BaseConfig<IviewFormConfig, Row, Upload, Button, FormRule, FormButton> {
 
-    export type FormData = FormCreate.FormData;
+}
 
-    export type BindFormData = FormCreate.BindFormData;
+export declare interface FormButton extends FormCreate.BaseButton<FormCol>, Button {
 
-    export type ParseRuleList = FormCreate.ParseRuleList<FormRule>;
+}
 
-    export type maker = FormCreate.Maker<Creator, Rule>;
+export declare interface $FApi extends FormCreate.$FApi<FormRule, FormConfig, FormButton> {
 
-    export type create = FormCreate.Create<FormRule, FormConfig, FormButton>;
+}
 
-    export type install = FormCreate.Install;
+export declare interface FormData extends FormCreate.FormData {
+
+}
+
+export declare interface BindFormData extends FormCreate.BindFormData {
+
+}
+
+export declare interface ParseRuleList extends FormCreate.ParseRuleList<FormRule> {
+
+}
+
+export declare const maker: FormCreate.Maker<Creator, Rule>;
+
+
+export declare interface create extends FormCreate.Create<FormRule, FormConfig, FormButton> {
+
+}
+
+export declare interface install extends FormCreate.Install {
+
+}
+
+export declare class VData extends FormCreate.VData {
 
 }
