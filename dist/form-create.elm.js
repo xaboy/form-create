@@ -1,5 +1,5 @@
 /*!
- * form-create v1.6.0 elementUI
+ * form-create v1.6.1-bata.1 elementUI
  * (c) 2018-2019 xaboy
  * Github https://github.com/xaboy/form-create
  * Released under the MIT License.
@@ -17,7 +17,7 @@
 	}
 
 	var _core = createCommonjsModule(function (module) {
-	var core = module.exports = { version: '2.6.4' };
+	var core = module.exports = { version: '2.6.3' };
 	if (typeof __e == 'number') __e = core; // eslint-disable-line no-undef
 	});
 	var _core_1 = _core.version;
@@ -191,16 +191,14 @@
 	  return hasOwnProperty.call(it, key);
 	};
 
-	var _functionToString = _shared('native-function-to-string', Function.toString);
-
 	var _redefine = createCommonjsModule(function (module) {
 	var SRC = _uid('src');
-
 	var TO_STRING = 'toString';
-	var TPL = ('' + _functionToString).split(TO_STRING);
+	var $toString = Function[TO_STRING];
+	var TPL = ('' + $toString).split(TO_STRING);
 
 	_core.inspectSource = function (it) {
-	  return _functionToString.call(it);
+	  return $toString.call(it);
 	};
 
 	(module.exports = function (O, key, val, safe) {
@@ -220,7 +218,7 @@
 	  }
 	// add fake Function#toString for correct work wrapped methods / constructors with methods like LoDash isNative
 	})(Function.prototype, TO_STRING, function toString() {
-	  return typeof this == 'function' && this[SRC] || _functionToString.call(this);
+	  return typeof this == 'function' && this[SRC] || $toString.call(this);
 	});
 	});
 
@@ -2171,7 +2169,7 @@
 	  };
 	}
 
-	var version = "1.6.0";
+	var version = "1.6.1-bata.1";
 	var ui = "element";
 	var formCreateStyleElId = 'form-create-style';
 	var drive = {};
@@ -3713,7 +3711,13 @@
 	          rule.event['check'] && (_rule$event = rule.event)['check'].apply(_rule$event, arguments);
 	        }
 	      }).props(rule.props).ref(refName).key("fip".concat(unique)).get();
-	      return [this.vNode.tree(props)];
+	      var inputProps = this.inputProps().props({
+	        type: "text",
+	        value: '' + this.handler.rule.value,
+	        disable: true,
+	        readonly: true
+	      }).key('fipit' + unique).class('__fc_h').ref("".concat(refName, "it")).on('input', function () {}).get();
+	      return [this.vNode.tree(props), this.vNode.input(inputProps)];
 	    }
 	  }]);
 
@@ -4335,7 +4339,7 @@
 	        clearable: true
 	      }).on('on-click', function () {
 	        _this.showModel();
-	      }).key('ifit' + unique).style({
+	      }).on('input', function () {}).key('ifit' + unique).style({
 	        display: hidden === true ? 'none' : 'inline-block'
 	      }).get();
 	      return [this.vNode.input(props)];
@@ -4656,15 +4660,17 @@
 	  });
 	  var commonMaker = creatorFactory('');
 	  extend(_m, {
-	    create: function create(type, field) {
+	    create: function create(type, field, title) {
 	      var make = commonMaker('', field);
 	      make.rule.type = type;
+	      make.rule.title = title;
 	      return make;
 	    },
-	    createTmp: function createTmp(template, vm, field) {
+	    createTmp: function createTmp(template, vm, field, title) {
 	      var make = commonMaker('', field);
 	      make.rule.type = 'template';
 	      make.rule.template = template;
+	      make.rule.title = title;
 	      make.rule.vm = vm;
 	      return make;
 	    }
@@ -5064,7 +5070,7 @@
 	      vm.$set(node, field, value);
 	    },
 	    reload: function reload(rules) {
-	      return fComponent.reload(rules);
+	      fComponent.reload(rules);
 	    },
 	    options: function options(_options) {
 	      deepExtend(fComponent.options, _options);
@@ -5165,6 +5171,9 @@
 	  }
 	}
 
+	var maker$c = FormCreate;
+
+	exports.maker = maker$c;
 	exports.default = FormCreate;
 
 	Object.defineProperty(exports, '__esModule', { value: true });

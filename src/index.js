@@ -18,5 +18,8 @@ if (typeof window !== 'undefined') {
     }
 }
 
+let maker = formCreate;
+
+export {maker}
 
 export default formCreate;
