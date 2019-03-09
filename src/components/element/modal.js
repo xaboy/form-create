@@ -4,7 +4,7 @@ import {isUndef} from "../../core/util";
 
 const vNode = new VNode({});
 const Modal = (options, cb) => {
-    if(isUndef(options.width)) options.width = '30%';
+    if (isUndef(options.width)) options.width = '30%';
     return {
         name: 'fc-modal',
         data() {
@@ -39,8 +39,8 @@ export function mount(options, content) {
     window.document.body.appendChild($vm.$el);
 }
 
-export function defaultOnHandle(src) {
-    mount({title: '预览'}, (vNode) => {
+export function defaultOnHandle(src, title) {
+    mount({title}, (vNode) => {
         return vNode.make('img', {
             style: {width: '100%'},
             attrs: {src}

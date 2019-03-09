@@ -3890,6 +3890,7 @@
 	      props.fileList = [];
 	      props.showFileList = false;
 	      if (isUndef(props.uploadType)) $set(props, 'uploadType', 'file');
+	      if (!props.modalTitle) $set(props, 'modalTitle', '预览');
 	      if (props.uploadType === 'file' && isUndef(props.handleIcon)) $set(props, 'handleIcon', false);
 	      $set(this.rule, 'value', parseValue(this.rule.value));
 	    }
@@ -3992,9 +3993,9 @@
 
 	  window.document.body.appendChild($vm.$el);
 	}
-	function defaultOnHandle(src) {
+	function defaultOnHandle(src, title) {
 	  mount({
-	    title: '预览'
+	    title: title
 	  }, function (vNode) {
 	    return vNode.make('img', {
 	      style: {
@@ -4058,7 +4059,7 @@
 	    key: "onHandle",
 	    value: function onHandle(src) {
 	      var fn = this.uploadOptions.onHandle;
-	      if (fn) return fn(src);else defaultOnHandle(src);
+	      if (fn) return fn(src);else defaultOnHandle(src, this.uploadOptions.modalTitle);
 	    }
 	  }, {
 	    key: "parse",
@@ -4241,6 +4242,9 @@
 	  if (isUndef(props.spin)) $set(props, 'spin', true);
 	  if (!props.title) $set(props, 'title', '请选择' + rule.title);
 	  if (!props.maxLength) $set(props, 'maxLength', 0);
+	  if (!props.okBtnText) $set(props, 'okBtnText', '确定');
+	  if (!props.closeBtnText) $set(props, 'closeBtnText', '关闭');
+	  if (!props.modalTitle) $set(props, 'modalTitle', '预览');
 	  var handleIcon = props.handleIcon;
 	  if (props.type === 'file' && props.handleIcon === undefined) handleIcon = false;else handleIcon = props.handleIcon === true || props.handleIcon === undefined ? 'el-icon-view' : props.handleIcon;
 	  $set(props, 'handleIcon', handleIcon);
@@ -4486,7 +4490,7 @@
 	    key: "onHandle",
 	    value: function onHandle(src) {
 	      var fn = this.handler.rule.event['on-handle'];
-	      if (fn) return fn(src);else defaultOnHandle(src);
+	      if (fn) return fn(src);else defaultOnHandle(src, this._props.modalTitle);
 	    }
 	  }, {
 	    key: "valid",
@@ -4503,7 +4507,9 @@
 	          width = _this$_props.width,
 	          height = _this$_props.height,
 	          src = _this$_props.src,
-	          title = _this$_props.title;
+	          title = _this$_props.title,
+	          okBtnText = _this$_props.okBtnText,
+	          closeBtnText = _this$_props.closeBtnText;
 	      if (!isShow) return;
 	      mount({
 	        width: width,
@@ -4560,7 +4566,7 @@
 	              _this8.onCancel();
 	            }
 	          }
-	        }, ['关闭']), vNode.button({
+	        }, [toString$1(closeBtnText)]), vNode.button({
 	          props: {
 	            type: 'primary'
 	          },
@@ -4569,7 +4575,7 @@
 	              _this8.onOk() !== false && _vm.onClose();
 	            }
 	          }
-	        }, ['确定'])])];
+	        }, [toString$1(okBtnText)])])];
 	      });
 	    }
 	  }]);

@@ -113,7 +113,7 @@ export default class render extends Render {
             }),
             vNode.make('div', {
                 domProps: {
-                    innerHTML: '加载中...'
+                    innerHTML: toString(this._props.loadingText)
                 },
                 key: 'ifspd' + unique
             })
@@ -171,7 +171,7 @@ export default class render extends Render {
         if (fn)
             return fn(src);
         else
-            defaultOnHandle(src);
+            defaultOnHandle(src, this._props.modalTitle);
     }
 
     valid(field) {
@@ -181,7 +181,7 @@ export default class render extends Render {
 
     showModel() {
         let isShow = false !== this.onOpen(),
-            {width, height, src, title} = this._props;
+            {width, height, src, title, okBtnText, closeBtnText} = this._props;
         if (!isShow) return;
 
         mount({width, title}, (vNode, _vm) => {
@@ -238,14 +238,14 @@ export default class render extends Render {
                             this.onCancel()
                         }
                     }
-                }, ['关闭']),
+                }, [toString(closeBtnText)]),
                 vNode.button({
                     props: {type: 'primary'}, on: {
                         click: () => {
                             this.onOk() !== false && _vm.onClose();
                         }
                     }
-                }, ['确定'])
+                }, [toString(okBtnText)])
             ])]
         });
     }

@@ -24,6 +24,8 @@ export default class handler extends Handler {
         if (props.action === undefined) $set(props, 'action', '');
         if (props.uploadType === 'file' && isUndef(props.handleIcon)) $set(props, 'handleIcon', false);
 
+        if (!props.modalTitle) $set(props, 'modalTitle', '预览');
+
         $set(this.rule, 'value', parseValue(this.rule.value));
 
         this.parseValue = [];

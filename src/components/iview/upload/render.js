@@ -45,7 +45,7 @@ export default class render extends Render {
         if (fn)
             return fn(src);
         else
-            defaultOnHandle(src);
+            defaultOnHandle(src, this.uploadOptions.modalTitle);
     }
 
     parse() {

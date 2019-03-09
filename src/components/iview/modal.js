@@ -36,8 +36,8 @@ export function mount(options, content) {
     window.document.body.appendChild($vm.$el);
 }
 
-export function defaultOnHandle(src) {
-    mount({title: '预览', footerHide: true}, (vNode) => {
+export function defaultOnHandle(src, title) {
+    mount({title, footerHide: true}, (vNode) => {
         return vNode.make('img', {
             style: {width: '100%'},
             attrs: {src}

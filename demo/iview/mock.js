@@ -315,7 +315,11 @@ function mock() {
         maker.frame('素材', 'fodder', ["http://file.lotkk.com/form-create.jpeg"]).props({
             src: "../iframe.html",
             maxLength: 0,
-            type: "image"
+            type: "image",
+            modalTitle: '预览~~~',
+            okBtnText: 'ok',
+            closeBtnText: 'close',
+            title: 'select'
         }).validate([
             {required: true, type: 'array', min: 2, message: '请选择2张图片', trigger: 'change'}
         ]).event({
@@ -396,6 +400,7 @@ $r = maker.upload('产品主图', 'logo', 'http://file.lotkk.com/form-create.jpe
     "type": "select",
     "uploadType": "image",
     "name": "file",
+    "modalTitle": '预览~~~',
     "onSuccess": function () {
         return 'http://file.lotkk.com/form-create.jpeg';
     }

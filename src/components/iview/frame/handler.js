@@ -13,6 +13,11 @@ export function parseRule(rule) {
     if (!props.title) $set(props, 'title', '请选择' + rule.title);
     if (!props.maxLength) $set(props, 'maxLength', 0);
 
+    if (!props.okBtnText) $set(props, 'okBtnText', '确定');
+    if (!props.closeBtnText) $set(props, 'closeBtnText', '关闭');
+    if (!props.modalTitle) $set(props, 'modalTitle', '预览');
+    if (!props.loadingText) $set(props, 'loadingText', '加载中...');
+
     let handleIcon = props.handleIcon;
     if (props.type === 'file' && props.handleIcon === undefined)
         handleIcon = false;

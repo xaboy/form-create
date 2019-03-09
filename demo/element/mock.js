@@ -268,7 +268,7 @@ function mock() {
                 "onRemove": function (file, fileList) {
                     console.log(file, fileList);
                 },
-                "allowRemove": true
+                "allowRemove": true,
             }).validate({required: true, type: 'array', min: 3, message: '请上传3张图片', trigger: 'change'}),
 
 
@@ -282,7 +282,11 @@ function mock() {
             src: "../iframe.html",
             maxLength: 0,
             type: "image",
-            width: '80%'
+            width: '80%',
+            modalTitle: '预览~~~',
+            okBtnText: 'ok',
+            closeBtnText: 'close',
+            title: 'select'
         }).validate([
             {required: true, type: 'array', min: 2, message: '请选择2张图片', trigger: 'change'}
         ]).event({
@@ -359,6 +363,7 @@ $r = maker.upload('产品主图', 'logo', 'http://file.lotkk.com/form-create.jpe
     "limit": 1,
     "uploadType": "image",
     "name": "file",
+    "modalTitle": '预览~~~',
     "onSuccess": function () {
         return 'http://file.lotkk.com/form-create.jpeg';
     }

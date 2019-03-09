@@ -20,6 +20,7 @@ export default class handler extends Handler {
         props.fileList = [];
         props.showFileList = false;
         if (isUndef(props.uploadType)) $set(props, 'uploadType', 'file');
+        if (!props.modalTitle) $set(props, 'modalTitle', '预览');
         if (props.uploadType === 'file' && isUndef(props.handleIcon)) $set(props, 'handleIcon', false);
         $set(this.rule, 'value', parseValue(this.rule.value));
     }
