@@ -22,7 +22,8 @@
     "images",
     "dist",
     "district",
-    "demo"
+    "demo",
+    "types"
   ],
   "repository": {
     "type": "git",
