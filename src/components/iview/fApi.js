@@ -22,7 +22,7 @@ export default function getGlobalApi(fComponent) {
                         initial[field] = val;
                     }, this);
                 } else {
-                    initial[field] = vm._value(field);
+                    initial[field] = deepExtend({}, {value: vm._value(field)}).value;
                 }
                 return initial;
             }, {});
@@ -37,7 +37,7 @@ export default function getGlobalApi(fComponent) {
                     val = v;
                 }, this);
             else
-                val = vm._value(field);
+                val = deepExtend({}, {value: vm._value(field)}).value;
             return val;
         },
         setValue(field, value) {

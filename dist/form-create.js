@@ -1,5 +1,5 @@
 /*!
- * form-create v1.6.1-bata.1 iviewUI
+ * form-create v1.6.1 iviewUI
  * (c) 2018-2019 xaboy
  * Github https://github.com/xaboy/form-create
  * Released under the MIT License.
@@ -2181,7 +2181,7 @@
 	  };
 	}
 
-	var version = "1.6.1-bata.1";
+	var version = "1.6.1";
 	var ui = "iview";
 	var formCreateStyleElId = 'form-create-style';
 	var drive = {};
@@ -5014,7 +5014,9 @@
 	            initial[field] = val;
 	          }, _this);
 	        } else {
-	          initial[field] = vm._value(field);
+	          initial[field] = deepExtend({}, {
+	            value: vm._value(field)
+	          }).value;
 	        }
 
 	        return initial;
@@ -5027,7 +5029,9 @@
 	      var val = undefined;
 	      if (handler.noValue === true) handler.$emit('input', function (v) {
 	        val = v;
-	      }, this);else val = vm._value(field);
+	      }, this);else val = deepExtend({}, {
+	        value: vm._value(field)
+	      }).value;
 	      return val;
 	    },
 	    setValue: function setValue(field, value) {
