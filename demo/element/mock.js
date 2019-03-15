@@ -19,7 +19,10 @@ function mock() {
         //input 输入框组件
         maker.input('商品名称', 'goods_name', 'iphone').props({
             placeholder: '请输入商品名称',
-            disabled: false
+            clearable: true,
+            disabled: false,
+            maxlength: 20,
+            prefixIcon: 'el-icon-info'
         }).validate([
             {required: true, message: '请输入商品名称', trigger: 'blur'}
         ]).event({
@@ -39,7 +42,8 @@ function mock() {
 
         //textarea 组件
         maker.textarea('商品简介', 'goods_info', '').props({
-            autosize: {minRows: 4, maxRows: 8}
+            autosize: {minRows: 4, maxRows: 8},
+            placeholder: '请输入商品名称'
         }),
 
 

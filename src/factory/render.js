@@ -1,7 +1,13 @@
-import {$nt, errMsg, extend, isFunction, isString, isUndef, uniqueId} from '../core/util';
+import {$nt, errMsg, extend, isFunction, isNumber, isString, isUndef, uniqueId} from '../core/util';
 import VNode from "./vNode";
 import VData from "./vData";
 import Vue from 'vue';
+
+const upperCaseReg = /[A-Z]/;
+
+export function isAttr(name, value) {
+    return (!upperCaseReg.test(name) && (isString(value) || isNumber(value)))
+}
 
 export default class Render {
 
@@ -107,6 +113,14 @@ export default class Render {
             .ref(refName).key(key + 'fc' + field).on(event).on('input', (value) => {
                 this.onInput(value)
             });
+
+        if (process.env.UI !== 'iview')
+            data.attrs(Object.keys(props).reduce((initial, val) => {
+                if (isAttr(val, props[val]))
+                    initial[val] = props[val];
+                return initial;
+            }, {}));
+
         if (isUndef(props.size))
             data.props({size: this.options.form.size});
 

@@ -59,6 +59,10 @@ export function isString(arg) {
     return _toString.call(arg) === '[object String]'
 }
 
+export function isNumber(arg) {
+    return _toString.call(arg) === '[object Number]'
+}
+
 export function isBool(arg) {
     return _toString.call(arg) === '[object Boolean]'
 }
