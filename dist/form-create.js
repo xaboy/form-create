@@ -1,5 +1,5 @@
 /*!
- * form-create v1.6.1 iviewUI
+ * form-create v1.6.2-bata.2 iviewUI
  * (c) 2018-2019 xaboy
  * Github https://github.com/xaboy/form-create
  * Released under the MIT License.
@@ -2181,7 +2181,7 @@
 	  };
 	}
 
-	var version = "1.6.1";
+	var version = "1.6.2-bata.2";
 	var ui = "iview";
 	var formCreateStyleElId = 'form-create-style';
 	var drive = {};
@@ -2347,6 +2347,7 @@
 	        if (!child) _this.fieldList.push(handler.field);
 	      });
 	      rules.forEach(function (rule) {
+	        if (isString(rule)) return;
 	        rule.__handler__.root = rules;
 	        rule.__handler__.origin = _toConsumableArray(rules);
 	      });

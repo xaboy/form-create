@@ -1,10 +1,16 @@
 import {
     $del,
-    $nt, $set,
-    debounce, deepExtend,
-    errMsg, extend, isBool,
+    $nt,
+    $set,
+    debounce,
+    deepExtend,
+    errMsg,
+    extend,
+    isBool,
     isElement,
-    isFunction, isString, toString,
+    isFunction,
+    isString,
+    toString,
     uniqueId
 } from "./util";
 import coreComponent from "./coreComponent";
@@ -217,6 +223,7 @@ export default class FormCreate {
         });
 
         rules.forEach((rule) => {
+            if (isString(rule)) return;
             rule.__handler__.root = rules;
             rule.__handler__.origin = [...rules];
         });

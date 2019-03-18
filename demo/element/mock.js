@@ -85,7 +85,6 @@ function mock() {
             methods: {
                 onClick: function () {
                     this.num++;
-                    this.$emit('goods-name-change', this.num);
                 },
                 //表单禁用事件
                 onDisabled: function (disabled) {

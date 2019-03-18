@@ -1,5 +1,5 @@
 /*!
- * form-create v1.6.1 elementUI
+ * form-create v1.6.2-bata.2 elementUI
  * (c) 2018-2019 xaboy
  * Github https://github.com/xaboy/form-create
  * Released under the MIT License.
@@ -1366,6 +1366,9 @@
 	function isString(arg) {
 	  return _toString.call(arg) === '[object String]';
 	}
+	function isNumber(arg) {
+	  return _toString.call(arg) === '[object Number]';
+	}
 	function isBool(arg) {
 	  return _toString.call(arg) === '[object Boolean]';
 	}
@@ -1980,6 +1983,11 @@
 	  };
 	});
 
+	var upperCaseReg = /[A-Z]/;
+	function isAttr(name, value) {
+	  return !upperCaseReg.test(name) && (isString(value) || isNumber(value));
+	}
+
 	var Render = function () {
 	  function Render(vm, handler) {
 	    var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
@@ -2109,6 +2117,10 @@
 	      }).ref(refName).key(key + 'fc' + field).on(event).on('input', function (value) {
 	        _this2.onInput(value);
 	      });
+	      data.attrs(Object.keys(props).reduce(function (initial, val) {
+	        if (isAttr(val, props[val])) initial[val] = props[val];
+	        return initial;
+	      }, {}));
 	      if (isUndef(props.size)) data.props({
 	        size: this.options.form.size
 	      });
@@ -2169,7 +2181,7 @@
 	  };
 	}
 
-	var version = "1.6.1";
+	var version = "1.6.2-bata.2";
 	var ui = "element";
 	var formCreateStyleElId = 'form-create-style';
 	var drive = {};
@@ -2335,6 +2347,7 @@
 	        if (!child) _this.fieldList.push(handler.field);
 	      });
 	      rules.forEach(function (rule) {
+	        if (isString(rule)) return;
 	        rule.__handler__.root = rules;
 	        rule.__handler__.origin = _toConsumableArray(rules);
 	      });
