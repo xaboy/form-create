@@ -4,13 +4,13 @@
 <head>
 	<meta charset="UTF-8">
 	<title>form-create示例</title>
-	<link href="https://cdn.jsdelivr.net/npm/element-ui@2.5.2/lib/theme-chalk/index.css" rel="stylesheet">
+	<link href="https://cdn.jsdelivr.net/npm/element-ui@2.6.3/lib/theme-chalk/index.css" rel="stylesheet">
 
 	<!--省市区三级联动json数据-->
 	<!--<script src="../district/province_city_area.js"></script>-->
 
 	<script defer src="https://cdn.bootcss.com/vue/2.5.22/vue.js"></script>
-	<script defer src="https://cdn.jsdelivr.net/npm/element-ui@2.5.2/lib/index.js"></script>
+	<script defer src="https://cdn.jsdelivr.net/npm/element-ui@2.6.3/lib/index.js"></script>
 	<!--省市区二级联动json数据-->
 	<script defer src="../../district/province_city.js"></script>
 	<script defer src="../../dist/form-create.elm.js"></script>
@@ -24,7 +24,7 @@
 	<h2>组件模式生成</h2>
 	<form-create ref="fc" v-model="fApi" :rule="rule" :option="option" @goods-name-change="change"
 	             @btn-click="change"
-	             @xaboy-change="change"></form-create>
+	             @xaboy-change="change" @mounted="fcMounted"></form-create>
 </div>
 <div id="app2">
 	<h2 onclick="vm.create()" style="cursor: pointer;">点击使用Vue原型方法生成</h2>
@@ -86,6 +86,9 @@
             methods: {
                 change: function (res) {
                     console.log(res);
+                },
+                fcMounted($f){
+                    console.log('form-create mounted',$f);
                 }
             },
             mounted: function () {
@@ -150,10 +153,14 @@
                     //获取表单数据，双向数据绑定
                     this.formData = $f_2.model();
                     console.log(this.formData);
+                },
+                fcMounted($f){
+                    console.log('form-create mounted',$f);
                 }
             },
             mounted: function () {
                 //this.create();
+	            this.$on('fc:mounted',this.fcMounted);
             }
         });
 

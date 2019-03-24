@@ -102,6 +102,7 @@ export default class FormCreate {
     constructor(rules, options = {}) {
         this.fRender = undefined;
         this.fCreateApi = undefined;
+        this.$parent = undefined;
         this.id = uniqueId();
         this.__init(rules, options);
         initStyle();
@@ -121,16 +122,17 @@ export default class FormCreate {
         this.switchMaker = this.options.switchMaker;
     }
 
-    static create(rules, _opt = {}) {
+    static create(rules, _opt = {}, $parent) {
         let opt = isElement(_opt) ? {el: _opt} : _opt;
         let fComponent = new FormCreate(rules, opt),
             $vm = fComponent.create(_vue);
+        fComponent.$parent = $parent;
         return fComponent.fCreateApi;
     };
 
     static install(Vue) {
         Vue.prototype.$formCreate = function (rules, opt = {}) {
-            return FormCreate.create(rules, opt, Vue)
+            return FormCreate.create(rules, opt, this)
         };
 
         Vue.prototype.$formCreate.maker = FormCreate.maker;
@@ -244,10 +246,21 @@ export default class FormCreate {
                 this.addHandlerWatch(handler);
                 handler.mounted();
             });
-            if (first)
+            if (first) {
                 mounted && mounted(this.fCreateApi);
+                this.$emit('mounted', this.fCreateApi);
+            }
             onReload && onReload(this.fCreateApi);
+            this.$emit('reload', this.fCreateApi);
         })
+    }
+
+    $emit(eventName, ...params) {
+        if (this.$parent) {
+            this.$parent.$emit(`fc:${eventName}`, ...params);
+        } else {
+            this.vm.$emit(eventName, ...params);
+        }
     }
 
     removeField(field) {
@@ -360,5 +373,5 @@ export function setDrive(_drive) {
 export function install(Vue) {
     if (Vue._installedFormCreate === true) return;
     Vue._installedFormCreate = true;
-    Vue.use(formCreate);
+    Vue.use(FormCreate);
 }
