@@ -1,5 +1,5 @@
 /*!
- * form-create v1.6.2-bata.2 iviewUI
+ * form-create v1.6.2 iviewUI
  * (c) 2018-2019 xaboy
  * Github https://github.com/xaboy/form-create
  * Released under the MIT License.
@@ -2181,7 +2181,7 @@
 	  };
 	}
 
-	var version = "1.6.2-bata.2";
+	var version = "1.6.2";
 	var ui = "iview";
 	var formCreateStyleElId = 'form-create-style';
 	var drive = {};
@@ -2246,6 +2246,7 @@
 
 	    this.fRender = undefined;
 	    this.fCreateApi = undefined;
+	    this.$parent = undefined;
 	    this.id = uniqueId();
 
 	    this.__init(rules, options);
@@ -2378,9 +2379,34 @@
 
 	          handler.mounted();
 	        });
-	        if (first) mounted && mounted(_this2.fCreateApi);
+
+	        if (first) {
+	          mounted && mounted(_this2.fCreateApi);
+
+	          _this2.$emit('mounted', _this2.fCreateApi);
+	        }
+
 	        onReload && onReload(_this2.fCreateApi);
+
+	        _this2.$emit('reload', _this2.fCreateApi);
 	      });
+	    }
+	  }, {
+	    key: "$emit",
+	    value: function $emit(eventName) {
+	      for (var _len = arguments.length, params = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+	        params[_key - 1] = arguments[_key];
+	      }
+
+	      if (this.$parent) {
+	        var _this$$parent;
+
+	        (_this$$parent = this.$parent).$emit.apply(_this$$parent, ["fc:".concat(eventName)].concat(params));
+	      } else {
+	        var _this$vm;
+
+	        (_this$vm = this.vm).$emit.apply(_this$vm, [eventName].concat(params));
+	      }
 	    }
 	  }, {
 	    key: "removeField",
@@ -2501,11 +2527,13 @@
 	    value: function create(rules) {
 	      var _opt = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
+	      var $parent = arguments.length > 2 ? arguments[2] : undefined;
 	      var opt = isElement(_opt) ? {
 	        el: _opt
 	      } : _opt;
 	      var fComponent = new FormCreate(rules, opt),
 	          $vm = fComponent.create(_vue);
+	      fComponent.$parent = $parent;
 	      return fComponent.fCreateApi;
 	    }
 	  }, {
@@ -2513,7 +2541,7 @@
 	    value: function install(Vue) {
 	      Vue.prototype.$formCreate = function (rules) {
 	        var opt = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-	        return FormCreate.create(rules, opt, Vue);
+	        return FormCreate.create(rules, opt, this);
 	      };
 
 	      Vue.prototype.$formCreate.maker = FormCreate.maker;
@@ -2536,7 +2564,7 @@
 	function install(Vue) {
 	  if (Vue._installedFormCreate === true) return;
 	  Vue._installedFormCreate = true;
-	  Vue.use(formCreate);
+	  Vue.use(FormCreate);
 	}
 
 	function baseRule() {

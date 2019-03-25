@@ -46,7 +46,8 @@ function mock() {
 
         //textarea 组件
         maker.textarea('商品简介', 'goods_info', '').props({
-            autosize: {minRows: 5, maxRows: 9}
+            autosize: {minRows: 5, maxRows: 9},
+            placeholder: '请输入商品简介'
         }),
 
 
