@@ -26,7 +26,7 @@ interface ElementFormConfig {
 }
 
 export declare interface FormCol extends Col {
-    labelWidth?: number;
+    labelWidth?: number | string;
 }
 
 export declare interface FormOption extends FormCreate.BaseOption<Rule>, Option {

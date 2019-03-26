@@ -62,8 +62,10 @@ export namespace FormCreate {
     export interface Rule<Col, FormOption extends BaseOption<Rule<Col, FormOption>>> extends Data {
         readonly type: string;
         readonly field?: string;
-        event?: Event;
-        options?: FormOption;
+        event?: {
+            [key: string]: Function
+        };
+        options?: FormOption[];
         validate?: any[];
         col?: Col;
         emit?: string[];
@@ -73,7 +75,7 @@ export namespace FormCreate {
         value?: any;
         className?: any;
         defaultSlot?: any;
-        children?: Array<Rule<Col, FormOption> | Creator<Rule<Col, FormOption>, Col, FormOption>>[];
+        children?: Array<Rule<Col, FormOption> | Creator<Rule<Col, FormOption>, Col, FormOption> | string>;
         hidden?: false
         visibility?: false
 
