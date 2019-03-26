@@ -2527,7 +2527,7 @@
 	    value: function create(rules) {
 	      var _opt = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
-	      var $parent = arguments.length > 2 ? arguments[2] : undefined;
+	      var $parent = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
 	      var opt = isElement(_opt) ? {
 	        el: _opt
 	      } : _opt;

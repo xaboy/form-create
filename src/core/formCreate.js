@@ -122,7 +122,7 @@ export default class FormCreate {
         this.switchMaker = this.options.switchMaker;
     }
 
-    static create(rules, _opt = {}, $parent) {
+    static create(rules, _opt = {}, $parent = undefined) {
         let opt = isElement(_opt) ? {el: _opt} : _opt;
         let fComponent = new FormCreate(rules, opt),
             $vm = fComponent.create(_vue);
