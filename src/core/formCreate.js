@@ -143,6 +143,28 @@ export default class FormCreate {
         _vue = Vue;
     }
 
+    static init(rules, _opt = {}) {
+        let opt = isElement(_opt) ? {el: _opt} : _opt;
+        let fComponent = new FormCreate(rules, opt);
+        let $fCreate = _vue.extend(coreComponent(fComponent));
+        let $vm = new $fCreate().$mount();
+
+        return {
+            mount($el) {
+                if ($el && isElement($el))
+                    $set(fComponent.options, 'el', $el);
+
+                fComponent.options.el.appendChild($vm.$el);
+
+                return fComponent.fCreateApi;
+            },
+            remove() {
+                fComponent.options.el.removeChild($vm.$el);
+            },
+            $f: fComponent.fCreateApi
+        };
+    }
+
     render() {
         return this.fRender.render(this.vm);
     }

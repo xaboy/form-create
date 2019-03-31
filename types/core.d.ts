@@ -12,6 +12,18 @@ export namespace FormCreate {
         (rules: FormRule[], config?: FormConfig): $FApi<FormRule, FormConfig, FormButton>
     }
 
+    export interface Init<FormRule, FormConfig, FormButton> {
+        (rules: FormRule[], config?: FormConfig): MountApi<FormRule, FormConfig, FormButton>
+    }
+
+    export interface MountApi<FormRule, FormConfig, FormButton> {
+        mount($el?: Element): $FApi<FormRule, FormConfig, FormButton>;
+
+        remove();
+
+        $f: $FApi<FormRule, FormConfig, FormButton>;
+    }
+
     export interface FormData {
         [field: string]: any;
     }

@@ -7,6 +7,7 @@ declare class formCreate {
     static create: create;
     static maker: FormCreate.Maker<Creator, Rule>;
     static install: install;
+    static init: init;
 }
 
 
@@ -73,6 +74,13 @@ export declare interface create extends FormCreate.Create<FormRule, FormConfig, 
 export declare interface install extends FormCreate.Install {
 
 }
+
+
+export declare interface init extends FormCreate.Init<FormRule, FormConfig, FormButton> {
+
+}
+
+export declare const MountApi: FormCreate.MountApi<FormRule, FormConfig, FormButton>;
 
 export declare class VData extends FormCreate.VData {
 
