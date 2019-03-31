@@ -108,6 +108,10 @@ export default function getGlobalApi(fComponent) {
         fields: () => vm._formField(),
         append: (rule, after) => {
             let fields = fComponent.fieldList, index = fields.indexOf(toString(after));
+
+            if (rule.field && fields.indexOf(toString(rule.field)))
+                return console.error(`${rule.field} 字段已存在` + errMsg());
+
             if (isUndef(after)) {
                 index = fields.length;
             } else if (index === -1)
@@ -117,6 +121,10 @@ export default function getGlobalApi(fComponent) {
         },
         prepend: (rule, after) => {
             let fields = fComponent.fieldList, index = fields.indexOf(toString(after));
+
+            if (rule.field && fields.indexOf(toString(rule.field)))
+                return console.error(`${rule.field} 字段已存在` + errMsg());
+
             if (isUndef(after)) {
                 index = 0;
             } else if (index === -1)

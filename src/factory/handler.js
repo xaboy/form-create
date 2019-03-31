@@ -1,4 +1,4 @@
-import {isNumeric, uniqueId, toLine, isUndef, extend, toString, deepExtend, errMsg, $set, isString} from "../core/util";
+import {$set, deepExtend, errMsg, extend, isNumeric, isUndef, toLine, toString, uniqueId} from "../core/util";
 
 export default class Handler {
 

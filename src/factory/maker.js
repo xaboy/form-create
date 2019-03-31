@@ -1,6 +1,5 @@
-import {creatorFactory} from "./creator";
+import Creator, {creatorFactory} from "./creator";
 import {extend, isPlainObject, isString, isUndef} from "../core/util";
-import Creator from "./creator";
 
 export default function makerFactory(componentList) {
 

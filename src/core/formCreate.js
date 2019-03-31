@@ -247,7 +247,7 @@ export default class FormCreate {
         });
 
         rules.forEach((rule) => {
-            if (isString(rule)) return;
+            if (isString(rule) || !rule.__handler__) return;
             rule.__handler__.root = rules;
             rule.__handler__.origin = [...rules];
         });

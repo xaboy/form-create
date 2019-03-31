@@ -5,7 +5,7 @@
  * Github: https://github.com/xaboy/form-create
  */
 
-import formCreate, {setDrive, install} from './core/formCreate';
+import formCreate, {install, setDrive} from './core/formCreate';
 import drive from './components/element/index'
 
 setDrive(drive);

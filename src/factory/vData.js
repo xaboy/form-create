@@ -1,4 +1,4 @@
-import {isPlainObject, isUndef, toArray, extend, toString, $set} from '../core/util';
+import {$set, extend, isPlainObject, isUndef, toArray, toString} from '../core/util';
 
 export function defVData() {
     return {
