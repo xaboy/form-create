@@ -54,10 +54,9 @@ export default function baseComponent() {
             },
             __init() {
                 const type = this._fComponent._type;
-                this[type].forEach((rule, index) => {
-                    let unWatch = this.$watch(`${type}.${index}.value`, n => {
-                        if (this.trueData[rule.field] === undefined) return unWatch();
-                        this._changeValue(rule.field, n);
+                this[type].forEach((rule) => {
+                    let unWatch = this.$watch(() => rule.value, n => {
+                        this._changeValue(rule.field, n === undefined ? null : n);
                     });
                     this.watchs.push(unWatch);
                 });

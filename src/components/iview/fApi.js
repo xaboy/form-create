@@ -109,7 +109,7 @@ export default function getGlobalApi(fComponent) {
         append: (rule, after) => {
             let fields = fComponent.fieldList, index = fields.indexOf(toString(after));
 
-            if (rule.field && fields.indexOf(toString(rule.field)))
+            if (rule.field && fields.indexOf(toString(rule.field)) !== -1)
                 return console.error(`${rule.field} 字段已存在` + errMsg());
 
             if (isUndef(after)) {
@@ -122,7 +122,7 @@ export default function getGlobalApi(fComponent) {
         prepend: (rule, after) => {
             let fields = fComponent.fieldList, index = fields.indexOf(toString(after));
 
-            if (rule.field && fields.indexOf(toString(rule.field)))
+            if (rule.field && fields.indexOf(toString(rule.field)) !== -1)
                 return console.error(`${rule.field} 字段已存在` + errMsg());
 
             if (isUndef(after)) {

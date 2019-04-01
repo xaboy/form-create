@@ -306,7 +306,7 @@ export default class FormCreate {
         if (handler.noValue === true) return;
         let field = handler.field, vm = this.vm;
 
-        let unWatch = vm.$watch(`cptData.${field}`, (n) => {
+        let unWatch = vm.$watch(() => vm.cptData[field], (n) => {
             if (this.handlers[field] !== undefined) {
                 let trueValue = handler.toValue(n), json = JSON.stringify(trueValue);
                 if (vm._change(field, json)) {
@@ -317,7 +317,7 @@ export default class FormCreate {
                 unWatch();
         }, {deep: true});
 
-        let unWatch2 = vm.$watch(`trueData.${field}.value`, (n) => {
+        let unWatch2 = vm.$watch(() => vm.trueData[field].value, (n) => {
             if (n === undefined) return;
 
             if (this.handlers[field] === undefined)
@@ -339,7 +339,7 @@ export default class FormCreate {
 
         Object.keys(vm._trueData(field)).forEach((key) => {
             if (key === 'value') return;
-            handler.watch.push(vm.$watch(`trueData.${field}.${key}`, bind, {deep: true}));
+            handler.watch.push(vm.$watch(() => vm.trueData[field][key], bind, {deep: true}));
         });
     }
 

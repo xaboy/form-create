@@ -185,7 +185,9 @@ function mock() {
                         //inputNumber 数组输入框组件
                         maker.number('排序', 'sort', 0).props({
                             precision: 2
-                        }).col({span: 12}),
+                        }).col({span: 12}).validate(
+                            [{require: true, type: 'number', min: 10}]
+                        ),
 
                         //colorPicker 颜色选择组件
                         maker.color('颜色', 'color', '#ff7271').props({
