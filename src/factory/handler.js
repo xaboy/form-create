@@ -14,7 +14,7 @@ export default class Handler {
         this.el = {};
         this.watch = [];
         this.root = [];
-        this.origin = [];
+        this.orgChildren = [];
 
         if (!rule.field && noValue) {
             this.field = '_def_' + uniqueId();
@@ -124,7 +124,6 @@ export function parseRule(rule, vm, noVal) {
         if (isUndef(rule[k]))
             $set(rule, k, def[k]);
     });
-
     const parseRule = {
         col: parseCol(rule.col),
         props: parseProps(rule.props),

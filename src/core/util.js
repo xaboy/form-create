@@ -12,6 +12,9 @@ export function $del(target, field) {
     Vue.delete(target, field);
 }
 
+export function isValidChildren(children) {
+    return Array.isArray(children) && children.length > 0;
+}
 
 export const _toString = Object.prototype.toString;
 

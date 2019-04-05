@@ -1,4 +1,4 @@
-import {$nt, errMsg, extend, isFunction, isNumber, isString, isUndef, uniqueId} from '../core/util';
+import {$nt, errMsg, extend, isFunction, isNumber, isString, isUndef, isValidChildren, uniqueId} from '../core/util';
 import VNode from "./vNode";
 import VData from "./vData";
 import Vue from 'vue';
@@ -51,12 +51,12 @@ export default class Render {
         this.cache = null;
         let children = this.handler.rule.children;
 
-        if (Array.isArray(children) && children.length > 0)
+        if (isValidChildren(children))
             children.forEach(child => !isString(child) && child.__handler__.render.clearCache());
     }
 
     parse(form) {
-        let {type, rule, refName, key, noValue, origin, root, vm} = this.handler;
+        let {type, rule, refName, key, noValue, vm, orgChildren} = this.handler;
 
         if (rule.type === 'template') {
             if (Vue.compile !== undefined) {
@@ -72,29 +72,34 @@ export default class Render {
                 return [];
             }
         } else if (!noValue) {
-
-            origin.forEach(_rule => {
-                if (root.indexOf(_rule) === -1) {
-                    vm._fComponent.removeField(_rule.__field__);
-                }
-            });
-            this.handler.origin = [...root];
-
             return form.makeComponent(this.handler.render);
         } else {
             rule.ref = refName;
             if (isUndef(rule.key))
                 rule.key = 'def' + uniqueId();
             let vn = this.vNode.make(type, {...rule}, () => {
-                let vn = [], children = rule.children || [];
-                if (Array.isArray(children) && children.length > 0) {
-                    vn = children.map((child) => {
+                let vn = [], children = rule.children;
+
+                if (isValidChildren(children)) {
+                    orgChildren.forEach(_rule => {
+                        if (children.indexOf(_rule) === -1) {
+                            vm._fComponent.removeField(_rule.__field__);
+                        }
+                    });
+
+                    vn = children.map((child, i) => {
                         if (isString(child))
                             return [child];
                         if (!child.__handler__)
-                            vm._fComponent.createHandler([child], true);
+                            children[i] = child = vm._fComponent.createHandler([child], true)[0];
                         return child.__handler__.render.cacheParse(form, this);
                     });
+                    this.handler.orgChildren = [...children];
+                } else if (orgChildren.length > 0) {
+                    orgChildren.forEach(_rule => {
+                        vm._fComponent.removeField(_rule.__field__);
+                    });
+                    this.handler.orgChildren = [];
                 }
 
                 return vn;

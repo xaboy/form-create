@@ -1,5 +1,5 @@
 import Creator, {creatorFactory} from "./creator";
-import {extend, isPlainObject, isString, isUndef} from "../core/util";
+import {extend, isPlainObject, isString, isUndef, isValidChildren} from "../core/util";
 
 export default function makerFactory(componentList) {
 
@@ -71,7 +71,7 @@ function findField(field) {
         const rule = this[i] instanceof Creator ? this[i].rule : this[i];
         if (rule.field === field)
             return this[i];
-        if (Array.isArray(rule.children) && rule.children.length > 0)
+        if (isValidChildren(rule.children))
             children = children.concat(rule.children);
     }
     if (children.length > 0)

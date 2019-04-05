@@ -10,6 +10,7 @@ import {
     isElement,
     isFunction,
     isString,
+    isValidChildren,
     toString,
     uniqueId
 } from "./util";
@@ -238,7 +239,7 @@ export default class FormCreate {
                 bindHandler(_rule, handler);
             }
 
-            if (Array.isArray(children) && children.length > 0)
+            if (isValidChildren(children))
                 this.createHandler(children, true);
 
             if (!child)
@@ -249,8 +250,10 @@ export default class FormCreate {
         rules.forEach((rule) => {
             if (isString(rule) || !rule.__handler__) return;
             rule.__handler__.root = rules;
-            rule.__handler__.origin = [...rules];
+            rule.__handler__.orgChildren = isValidChildren(rule.children) ? [...rule.children] : [];
         });
+
+        return rules;
     }
 
     create(Vue) {
@@ -344,9 +347,8 @@ export default class FormCreate {
     }
 
     isNotChange(rules) {
-        return rules.reduce((initial, rule, index) => initial && rule === this.origin[index], true)
+        return rules.length === this.origin.length && rules.reduce((initial, rule, index) => initial && rule === this.origin[index], true)
             && this.origin.reduce((initial, rule, index) => initial && rule === rules[index], true);
-
     }
 
     reload(rules) {
