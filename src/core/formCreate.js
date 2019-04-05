@@ -265,7 +265,8 @@ export default class FormCreate {
         $nt(() => {
             Object.keys(this.handlers).forEach((field) => {
                 let handler = this.handlers[field];
-                this.addHandlerWatch(handler);
+                if (handler.watch.length === 0)
+                    this.addHandlerWatch(handler);
                 handler.mounted();
             });
             if (first) {
@@ -289,7 +290,7 @@ export default class FormCreate {
         if (this.handlers[field] === undefined)
             return;
         let watch = this.handlers[field].watch, index = this.fieldList.indexOf(field);
-
+        this.handlers[field].watch = [];
         $del(this.handlers, field);
         $del(this.validate, field);
 
@@ -299,7 +300,6 @@ export default class FormCreate {
 
         watch && watch.forEach((unWatch) => unWatch());
         this.vm._removeField(field);
-
     }
 
     addHandlerWatch(handler) {

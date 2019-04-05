@@ -48,10 +48,11 @@ export default class Form {
                 if (render.handler.type === 'hidden') return;
                 return this.makeComponent(render);
 
-            });
+            }).filter((val) => val !== undefined);
         if (vn.length > 0)
             vn.push(this.makeFormBtn(unique));
-        return this.vNode.form(this.propsData, [this.vNode.row(extend({props: this._fc.options.row || {}}, {key: 'row' + unique}), vn)]);
+
+        return this.vNode.form(this.propsData, vn.length > 0 ? [this.vNode.row(extend({props: this._fc.options.row || {}}, {key: 'row' + unique}), vn)] : []);
     }
 
     makeComponent(render) {
