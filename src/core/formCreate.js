@@ -272,6 +272,11 @@ export default class FormCreate {
                     this.addHandlerWatch(handler);
                 handler.mounted();
             });
+
+            Object.keys(vm.cptData).forEach(field => {
+                vm.jsonData[field] = JSON.stringify(this.handlers[field].toValue(vm.cptData[field]));
+            });
+
             if (first) {
                 mounted && mounted(this.fCreateApi);
                 this.$emit('mounted', this.fCreateApi);
@@ -294,6 +299,7 @@ export default class FormCreate {
             return;
         let watch = this.handlers[field].watch, index = this.fieldList.indexOf(field);
         this.handlers[field].watch = [];
+        watch && watch.forEach((unWatch) => unWatch());
         $del(this.handlers, field);
         $del(this.validate, field);
 
@@ -301,7 +307,6 @@ export default class FormCreate {
             this.fieldList.splice(index, 1);
         }
 
-        watch && watch.forEach((unWatch) => unWatch());
         this.vm._removeField(field);
     }
 

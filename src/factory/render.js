@@ -136,7 +136,7 @@ export default class Render {
         value = isUndef(value) ? '' : value;
         let handler = this.handler, {field, vm} = this.handler, trueValue = handler.toValue(value);
         vm._changeFormData(field, value);
-        if (!vm._change(field, trueValue)) return;
+        if (!vm._change(field, JSON.stringify(trueValue))) return;
         handler.setValue(trueValue);
         handler.watchFormValue(value);
         if (process.env.UI !== 'iview')
