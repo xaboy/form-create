@@ -10,7 +10,8 @@
           "firefox": 50,
           "ie": 9
         },
-        "useBuiltIns": "usage"
+        "useBuiltIns": "usage",
+        "corejs": "3.0.0"
       }
     ]
   ],

@@ -1,6 +1,6 @@
 {
   "name": "form-create",
-  "version": "1.6.2",
+  "version": "1.6.3",
   "description": "好用的表单生成器|Form builder with dynamic rendering, data collection, validation and submission capabilities, built-in 17 common form components, support for two-way data binding, event extension, and support for building built-in components and any vue components using json.",
   "main": "dist/form-create.min.js",
   "module": "dist/form-create.min.js",
@@ -51,7 +51,7 @@
   },
   "devDependencies": {
     "@babel/cli": "^7.2.3",
-    "@babel/core": "^7.2.2",
+    "@babel/core": "^7.4.3",
     "@babel/preset-env": "^7.2.3",
     "babel-loader": "^8.0.5",
     "babel-plugin-add-module-exports": "^1.0.0",
