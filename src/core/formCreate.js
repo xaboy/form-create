@@ -105,6 +105,7 @@ export default class FormCreate {
         this.fCreateApi = undefined;
         this.$parent = undefined;
         this.id = uniqueId();
+        this.validate = {};
         this.__init(rules, options);
         initStyle();
         this.$tick = debounce((fn) => fn(), 150);
@@ -116,7 +117,6 @@ export default class FormCreate {
         this.origin = [...this.rules];
         this.handlers = {};
         this.formData = {};
-        this.validate = {};
         this.trueData = {};
         this.components = {};
         this.fieldList = [];
