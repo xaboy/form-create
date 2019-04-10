@@ -1,4 +1,15 @@
-import {$nt, errMsg, extend, isFunction, isNumber, isString, isUndef, isValidChildren, uniqueId} from '../core/util';
+import {
+    $nt,
+    debounce,
+    errMsg,
+    extend,
+    isFunction,
+    isNumber,
+    isString,
+    isUndef,
+    isValidChildren,
+    uniqueId
+} from '../core/util';
 import VNode from "./vNode";
 import VData from "./vData";
 import Vue from 'vue';
@@ -8,6 +19,8 @@ const upperCaseReg = /[A-Z]/;
 export function isAttr(name, value) {
     return (!upperCaseReg.test(name) && (isString(value) || isNumber(value)))
 }
+
+const $de = debounce((fn) => fn(), 1);
 
 export default class Render {
 
@@ -87,12 +100,13 @@ export default class Render {
                         }
                     });
 
-                    vn = children.map((child, i) => {
+                    vn = children.map((child) => {
                         if (isString(child))
                             return [child];
-                        if (!child.__handler__)
-                            children[i] = child = vm._fComponent.createHandler([child], true)[0];
-                        return child.__handler__.render.cacheParse(form, this);
+                        if (child.__handler__) {
+                            return child.__handler__.render.cacheParse(form, this);
+                        }
+                        $de(() => vm._fComponent.reload());
                     });
                     this.handler.orgChildren = [...children];
                 } else if (orgChildren.length > 0) {

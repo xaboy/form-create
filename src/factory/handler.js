@@ -1,4 +1,15 @@
-import {$set, deepExtend, errMsg, extend, isNumeric, isUndef, toLine, toString, uniqueId} from "../core/util";
+import {
+    $set,
+    deepExtend,
+    errMsg,
+    extend,
+    isNumeric,
+    isUndef,
+    isValidChildren,
+    toLine,
+    toString,
+    uniqueId
+} from "../core/util";
 
 export default class Handler {
 
@@ -38,7 +49,11 @@ export default class Handler {
     }
 
     refresh() {
-        this.parseValue = this.toFormValue(this.rule.value);
+        const rule = this.rule;
+        this.parseValue = this.toFormValue(rule.value);
+        this.orgChildren = isValidChildren(rule.children) ? [...rule.children] : [];
+        this.deleted = false;
+
         return this;
     }
 

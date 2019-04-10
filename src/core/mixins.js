@@ -13,7 +13,6 @@ export default function baseComponent() {
                 jsonData: {},
                 $f: {},
                 isShow: true,
-                watchs: [],
                 unique: 1
             }
         },
@@ -53,18 +52,6 @@ export default function baseComponent() {
                 this.$set(this, 'resetProps', deepExtend(this.resetProps, props));
             },
             __init() {
-                const type = this._fComponent._type;
-                this[type].forEach((rule) => {
-                    let unWatch = this.$watch(() => rule.value, n => {
-                        this._changeValue(rule.field, n === undefined ? null : n);
-                    });
-                    this.watchs.push(unWatch);
-                });
-
-            },
-            _unWatch() {
-                this.watchs.forEach(unWatch => unWatch());
-                this.watchs = [];
             },
             _refresh() {
                 this.unique += 1;

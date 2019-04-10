@@ -213,15 +213,29 @@ export default class FormCreate {
     }
 
     createHandler(rules, child) {
-        rules.forEach((_rule, index) => {
+        rules.map((_rule, index) => {
             if (child && isString(_rule)) return;
 
             if (!_rule.type)
                 return console.error(`未定义生成规则的 type 字段` + errMsg());
 
-            let rule = getRule(_rule),
-                handler = _rule.__handler__ ? _rule.__handler__.refresh() : getComponent(this.vm, rule, this.options),
-                children = handler.rule.children;
+            let rule = getRule(_rule), handler;
+
+            if (_rule.__handler__) {
+                handler = _rule.__handler__;
+                if (handler.vm !== this.vm && !handler.deleted)
+                    return console.error(`第${index + 1}条规则正在其他 form-create 中使用` + errMsg());
+
+                handler.vm = this.vm;
+                handler.render.vm = this.vm;
+                handler.render.vNode.setVm(this.vm);
+
+                handler.refresh();
+            } else {
+                handler = getComponent(this.vm, rule, this.options);
+            }
+
+            let children = handler.rule.children;
 
             if (!this.notField(handler.field))
                 return console.error(`${rule.field} 字段已存在` + errMsg());
@@ -244,13 +258,9 @@ export default class FormCreate {
 
             if (!child)
                 this.fieldList.push(handler.field);
-
-        });
-
-        rules.forEach((rule) => {
-            if (isString(rule) || !rule.__handler__) return;
-            rule.__handler__.root = rules;
-            rule.__handler__.orgChildren = isValidChildren(rule.children) ? [...rule.children] : [];
+            return handler;
+        }).filter(h => h).forEach(h => {
+            h.root = rules;
         });
 
         return rules;
@@ -297,8 +307,9 @@ export default class FormCreate {
     removeField(field) {
         if (this.handlers[field] === undefined)
             return;
-        let watch = this.handlers[field].watch, index = this.fieldList.indexOf(field);
-        this.handlers[field].watch = [];
+        let handler = this.handlers[field], watch = handler.watch, index = this.fieldList.indexOf(field);
+        handler.watch = [];
+        handler.deleted = true;
         watch && watch.forEach((unWatch) => unWatch());
         $del(this.handlers, field);
         $del(this.validate, field);
@@ -351,26 +362,17 @@ export default class FormCreate {
         });
     }
 
-    isNotChange(rules) {
-        return rules.length === this.origin.length && rules.reduce((initial, rule, index) => initial && rule === this.origin[index], true)
-            && this.origin.reduce((initial, rule, index) => initial && rule === rules[index], true);
-    }
-
     reload(rules) {
         const vm = this.vm;
 
         if (!rules)
             return this.reload(this.rules);
 
-        if (this.isNotChange(rules))
-            return this.fCreateApi.refresh();
-
         if (!this.origin.length)
             this.fCreateApi.refresh();
 
         this.origin = [...rules];
 
-        vm._unWatch();
         Object.keys(this.handlers).forEach(field => this.removeField(field));
 
         this.__init(rules, this.options);
