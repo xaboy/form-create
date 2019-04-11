@@ -609,17 +609,120 @@
     }
   });
 
+  var aFunction = function (it) {
+    if (typeof it != 'function') {
+      throw TypeError(String(it) + ' is not a function');
+    } return it;
+  };
+
+  // optional / simple context binding
+  var bindContext = function (fn, that, length) {
+    aFunction(fn);
+    if (that === undefined) return fn;
+    switch (length) {
+      case 0: return function () {
+        return fn.call(that);
+      };
+      case 1: return function (a) {
+        return fn.call(that, a);
+      };
+      case 2: return function (a, b) {
+        return fn.call(that, a, b);
+      };
+      case 3: return function (a, b, c) {
+        return fn.call(that, a, b, c);
+      };
+    }
+    return function (/* ...args */) {
+      return fn.apply(that, arguments);
+    };
+  };
+
+  // `Array.prototype.{ forEach, map, filter, some, every, find, findIndex }` methods implementation
+  // 0 -> Array#forEach
+  // https://tc39.github.io/ecma262/#sec-array.prototype.foreach
+  // 1 -> Array#map
+  // https://tc39.github.io/ecma262/#sec-array.prototype.map
+  // 2 -> Array#filter
+  // https://tc39.github.io/ecma262/#sec-array.prototype.filter
+  // 3 -> Array#some
+  // https://tc39.github.io/ecma262/#sec-array.prototype.some
+  // 4 -> Array#every
+  // https://tc39.github.io/ecma262/#sec-array.prototype.every
+  // 5 -> Array#find
+  // https://tc39.github.io/ecma262/#sec-array.prototype.find
+  // 6 -> Array#findIndex
+  // https://tc39.github.io/ecma262/#sec-array.prototype.findIndex
+  var arrayMethods = function (TYPE, specificCreate) {
+    var IS_MAP = TYPE == 1;
+    var IS_FILTER = TYPE == 2;
+    var IS_SOME = TYPE == 3;
+    var IS_EVERY = TYPE == 4;
+    var IS_FIND_INDEX = TYPE == 6;
+    var NO_HOLES = TYPE == 5 || IS_FIND_INDEX;
+    var create = specificCreate || arraySpeciesCreate;
+    return function ($this, callbackfn, that) {
+      var O = toObject($this);
+      var self = indexedObject(O);
+      var boundFunction = bindContext(callbackfn, that, 3);
+      var length = toLength(self.length);
+      var index = 0;
+      var target = IS_MAP ? create($this, length) : IS_FILTER ? create($this, 0) : undefined;
+      var value, result;
+      for (;length > index; index++) if (NO_HOLES || index in self) {
+        value = self[index];
+        result = boundFunction(value, index, O);
+        if (TYPE) {
+          if (IS_MAP) target[index] = result; // map
+          else if (result) switch (TYPE) {
+            case 3: return true;              // some
+            case 5: return value;             // find
+            case 6: return index;             // findIndex
+            case 2: target.push(value);       // filter
+          } else if (IS_EVERY) return false;  // every
+        }
+      }
+      return IS_FIND_INDEX ? -1 : IS_SOME || IS_EVERY ? IS_EVERY : target;
+    };
+  };
+
+  var internalFilter = arrayMethods(2);
+
+  var SPECIES_SUPPORT$1 = arrayMethodHasSpeciesSupport('filter');
+
+  // `Array.prototype.filter` method
+  // https://tc39.github.io/ecma262/#sec-array.prototype.filter
+  // with adding support of @@species
+  _export({ target: 'Array', proto: true, forced: !SPECIES_SUPPORT$1 }, {
+    filter: function filter(callbackfn /* , thisArg */) {
+      return internalFilter(this, callbackfn, arguments[1]);
+    }
+  });
+
+  var internalMap = arrayMethods(1);
+
+  var SPECIES_SUPPORT$2 = arrayMethodHasSpeciesSupport('map');
+
+  // `Array.prototype.map` method
+  // https://tc39.github.io/ecma262/#sec-array.prototype.map
+  // with adding support of @@species
+  _export({ target: 'Array', proto: true, forced: !SPECIES_SUPPORT$2 }, {
+    map: function map(callbackfn /* , thisArg */) {
+      return internalMap(this, callbackfn, arguments[1]);
+    }
+  });
+
   var max$1 = Math.max;
   var min$2 = Math.min;
   var MAX_SAFE_INTEGER$1 = 0x1FFFFFFFFFFFFF;
   var MAXIMUM_ALLOWED_LENGTH_EXCEEDED = 'Maximum allowed length exceeded';
 
-  var SPECIES_SUPPORT$1 = arrayMethodHasSpeciesSupport('splice');
+  var SPECIES_SUPPORT$3 = arrayMethodHasSpeciesSupport('splice');
 
   // `Array.prototype.splice` method
   // https://tc39.github.io/ecma262/#sec-array.prototype.splice
   // with adding support of @@species
-  _export({ target: 'Array', proto: true, forced: !SPECIES_SUPPORT$1 }, {
+  _export({ target: 'Array', proto: true, forced: !SPECIES_SUPPORT$3 }, {
     splice: function splice(start, deleteCount /* , ...items */) {
       var O = toObject(this);
       var len = toLength(O.length);
@@ -720,83 +823,6 @@
     TextTrackCueList: 0,
     TextTrackList: 0,
     TouchList: 0
-  };
-
-  var aFunction = function (it) {
-    if (typeof it != 'function') {
-      throw TypeError(String(it) + ' is not a function');
-    } return it;
-  };
-
-  // optional / simple context binding
-  var bindContext = function (fn, that, length) {
-    aFunction(fn);
-    if (that === undefined) return fn;
-    switch (length) {
-      case 0: return function () {
-        return fn.call(that);
-      };
-      case 1: return function (a) {
-        return fn.call(that, a);
-      };
-      case 2: return function (a, b) {
-        return fn.call(that, a, b);
-      };
-      case 3: return function (a, b, c) {
-        return fn.call(that, a, b, c);
-      };
-    }
-    return function (/* ...args */) {
-      return fn.apply(that, arguments);
-    };
-  };
-
-  // `Array.prototype.{ forEach, map, filter, some, every, find, findIndex }` methods implementation
-  // 0 -> Array#forEach
-  // https://tc39.github.io/ecma262/#sec-array.prototype.foreach
-  // 1 -> Array#map
-  // https://tc39.github.io/ecma262/#sec-array.prototype.map
-  // 2 -> Array#filter
-  // https://tc39.github.io/ecma262/#sec-array.prototype.filter
-  // 3 -> Array#some
-  // https://tc39.github.io/ecma262/#sec-array.prototype.some
-  // 4 -> Array#every
-  // https://tc39.github.io/ecma262/#sec-array.prototype.every
-  // 5 -> Array#find
-  // https://tc39.github.io/ecma262/#sec-array.prototype.find
-  // 6 -> Array#findIndex
-  // https://tc39.github.io/ecma262/#sec-array.prototype.findIndex
-  var arrayMethods = function (TYPE, specificCreate) {
-    var IS_MAP = TYPE == 1;
-    var IS_FILTER = TYPE == 2;
-    var IS_SOME = TYPE == 3;
-    var IS_EVERY = TYPE == 4;
-    var IS_FIND_INDEX = TYPE == 6;
-    var NO_HOLES = TYPE == 5 || IS_FIND_INDEX;
-    var create = specificCreate || arraySpeciesCreate;
-    return function ($this, callbackfn, that) {
-      var O = toObject($this);
-      var self = indexedObject(O);
-      var boundFunction = bindContext(callbackfn, that, 3);
-      var length = toLength(self.length);
-      var index = 0;
-      var target = IS_MAP ? create($this, length) : IS_FILTER ? create($this, 0) : undefined;
-      var value, result;
-      for (;length > index; index++) if (NO_HOLES || index in self) {
-        value = self[index];
-        result = boundFunction(value, index, O);
-        if (TYPE) {
-          if (IS_MAP) target[index] = result; // map
-          else if (result) switch (TYPE) {
-            case 3: return true;              // some
-            case 5: return value;             // find
-            case 6: return index;             // findIndex
-            case 2: target.push(value);       // filter
-          } else if (IS_EVERY) return false;  // every
-        }
-      }
-      return IS_FIND_INDEX ? -1 : IS_SOME || IS_EVERY ? IS_EVERY : target;
-    };
   };
 
   var sloppyArrayMethod = function (METHOD_NAME, argument) {
@@ -1669,7 +1695,6 @@
           jsonData: {},
           $f: {},
           isShow: true,
-          watchs: [],
           unique: 1
         };
       },
@@ -1704,26 +1729,7 @@
         _resetProps: function _resetProps(props) {
           this.$set(this, 'resetProps', deepExtend(this.resetProps, props));
         },
-        __init: function __init() {
-          var _this = this;
-
-          var type = this._fComponent._type;
-          this[type].forEach(function (rule) {
-            var unWatch = _this.$watch(function () {
-              return rule.value;
-            }, function (n) {
-              _this._changeValue(rule.field, n === undefined ? null : n);
-            });
-
-            _this.watchs.push(unWatch);
-          });
-        },
-        _unWatch: function _unWatch() {
-          this.watchs.forEach(function (unWatch) {
-            return unWatch();
-          });
-          this.watchs = [];
-        },
+        __init: function __init() {},
         _refresh: function _refresh() {
           this.unique += 1;
         },
@@ -1812,6 +1818,9 @@
         this.__init();
 
         this.$emit('input', this.$f);
+      },
+      beforeDestroy: function beforeDestroy() {
+        this._fComponent.reload([]);
       }
     };
   };
@@ -1888,7 +1897,10 @@
     _createClass(Handler, [{
       key: "refresh",
       value: function refresh() {
-        this.parseValue = this.toFormValue(this.rule.value);
+        var rule = this.rule;
+        this.parseValue = this.toFormValue(rule.value);
+        this.orgChildren = isValidChildren(rule.children) ? _toConsumableArray(rule.children) : [];
+        this.deleted = false;
         return this;
       }
     }, {
@@ -1951,7 +1963,7 @@
         var refName = 'fItem' + this.refName,
             vm = this.vm;
         this.el = vm.$refs[this.refName] || {};
-        this.defaultValue = this.toValue(vm.$refs[refName] && !isUndef(vm.$refs[refName].initialValue) ? vm.$refs[refName].initialValue : deepExtend({}, {
+        if (this.defaultValue === undefined) this.defaultValue = this.toValue(vm.$refs[refName] && !isUndef(vm.$refs[refName].initialValue) ? vm.$refs[refName].initialValue : deepExtend({}, {
           value: this.rule.value
         }).value);
       }
@@ -2050,19 +2062,6 @@
 
     return col;
   }
-
-  var internalMap = arrayMethods(1);
-
-  var SPECIES_SUPPORT$2 = arrayMethodHasSpeciesSupport('map');
-
-  // `Array.prototype.map` method
-  // https://tc39.github.io/ecma262/#sec-array.prototype.map
-  // with adding support of @@species
-  _export({ target: 'Array', proto: true, forced: !SPECIES_SUPPORT$2 }, {
-    map: function map(callbackfn /* , thisArg */) {
-      return internalMap(this, callbackfn, arguments[1]);
-    }
-  });
 
   function parseVData(data) {
     if (isString(data)) data = {
@@ -2204,6 +2203,9 @@
   function isAttr(name, value) {
     return !upperCaseReg.test(name) && (isString(value) || isNumber(value));
   }
+  var $de = debounce(function (fn) {
+    return fn();
+  }, 1);
 
   var Render = function () {
     function Render(vm, handler) {
@@ -2301,10 +2303,16 @@
                   vm._fComponent.removeField(_rule.__field__);
                 }
               });
-              vn = children.map(function (child, i) {
+              vn = children.map(function (child) {
                 if (isString(child)) return [child];
-                if (!child.__handler__) children[i] = child = vm._fComponent.createHandler([child], true)[0];
-                return child.__handler__.render.cacheParse(form, _this);
+
+                if (child.__handler__) {
+                  return child.__handler__.render.cacheParse(form, _this);
+                }
+
+                $de(function () {
+                  return vm._fComponent.reload();
+                });
               });
               _this.handler.orgChildren = _toConsumableArray(children);
             } else if (orgChildren.length > 0) {
@@ -2469,6 +2477,7 @@
       this.fCreateApi = undefined;
       this.$parent = undefined;
       this.id = uniqueId();
+      this.validate = {};
 
       this.__init(rules, options);
 
@@ -2486,7 +2495,6 @@
         this.origin = _toConsumableArray(this.rules);
         this.handlers = {};
         this.formData = {};
-        this.validate = {};
         this.trueData = {};
         this.components = {};
         this.fieldList = [];
@@ -2545,12 +2553,24 @@
       value: function createHandler(rules, child) {
         var _this = this;
 
-        rules.forEach(function (_rule, index) {
+        rules.map(function (_rule, index) {
           if (child && isString(_rule)) return;
           if (!_rule.type) return console.error("\u672A\u5B9A\u4E49\u751F\u6210\u89C4\u5219\u7684 type \u5B57\u6BB5" + errMsg());
           var rule = getRule(_rule),
-              handler = _rule.__handler__ ? _rule.__handler__.refresh() : getComponent(_this.vm, rule, _this.options),
-              children = handler.rule.children;
+              handler;
+
+          if (_rule.__handler__) {
+            handler = _rule.__handler__;
+            if (handler.vm !== _this.vm && !handler.deleted) return console.error("\u7B2C".concat(index + 1, "\u6761\u89C4\u5219\u6B63\u5728\u5176\u4ED6\u7684 <form-create> \u4E2D\u4F7F\u7528") + errMsg());
+            handler.vm = _this.vm;
+            handler.render.vm = _this.vm;
+            handler.render.vNode.setVm(_this.vm);
+            handler.refresh();
+          } else {
+            handler = getComponent(_this.vm, rule, _this.options);
+          }
+
+          var children = handler.rule.children;
           if (!_this.notField(handler.field)) return console.error("".concat(rule.field, " \u5B57\u6BB5\u5DF2\u5B58\u5728") + errMsg());
 
           if (_this.switchMaker) {
@@ -2567,11 +2587,11 @@
 
           if (isValidChildren(children)) _this.createHandler(children, true);
           if (!child) _this.fieldList.push(handler.field);
-        });
-        rules.forEach(function (rule) {
-          if (isString(rule) || !rule.__handler__) return;
-          rule.__handler__.root = rules;
-          rule.__handler__.orgChildren = isValidChildren(rule.children) ? _toConsumableArray(rule.children) : [];
+          return handler;
+        }).filter(function (h) {
+          return h;
+        }).forEach(function (h) {
+          h.root = rules;
         });
         return rules;
       }
@@ -2635,9 +2655,11 @@
       key: "removeField",
       value: function removeField(field) {
         if (this.handlers[field] === undefined) return;
-        var watch = this.handlers[field].watch,
+        var handler = this.handlers[field],
+            watch = handler.watch,
             index = this.fieldList.indexOf(field);
-        this.handlers[field].watch = [];
+        handler.watch = [];
+        handler.deleted = true;
         watch && watch.forEach(function (unWatch) {
           return unWatch();
         });
@@ -2707,31 +2729,16 @@
         });
       }
     }, {
-      key: "isNotChange",
-      value: function isNotChange(rules) {
-        var _this4 = this;
-
-        return rules.length === this.origin.length && rules.reduce(function (initial, rule, index) {
-          return initial && rule === _this4.origin[index];
-        }, true) && this.origin.reduce(function (initial, rule, index) {
-          return initial && rule === rules[index];
-        }, true);
-      }
-    }, {
       key: "reload",
       value: function reload(rules) {
-        var _this5 = this;
+        var _this4 = this;
 
         var vm = this.vm;
         if (!rules) return this.reload(this.rules);
-        if (this.isNotChange(rules)) return this.fCreateApi.refresh();
         if (!this.origin.length) this.fCreateApi.refresh();
         this.origin = _toConsumableArray(rules);
-
-        vm._unWatch();
-
         Object.keys(this.handlers).forEach(function (field) {
-          return _this5.removeField(field);
+          return _this4.removeField(field);
         });
 
         this.__init(rules, this.options);
@@ -2742,7 +2749,7 @@
         vm.__init();
 
         $nt(function () {
-          _this5.mounted(vm, false);
+          _this4.mounted(vm, false);
         });
         vm.$f = this.fCreateApi;
       }
@@ -2820,19 +2827,6 @@
     Vue._installedFormCreate = true;
     Vue.use(FormCreate);
   }
-
-  var internalFilter = arrayMethods(2);
-
-  var SPECIES_SUPPORT$3 = arrayMethodHasSpeciesSupport('filter');
-
-  // `Array.prototype.filter` method
-  // https://tc39.github.io/ecma262/#sec-array.prototype.filter
-  // with adding support of @@species
-  _export({ target: 'Array', proto: true, forced: !SPECIES_SUPPORT$3 }, {
-    filter: function filter(callbackfn /* , thisArg */) {
-      return internalFilter(this, callbackfn, arguments[1]);
-    }
-  });
 
   var Form = function () {
     function Form(fComponent) {
