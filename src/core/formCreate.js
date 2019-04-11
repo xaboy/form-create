@@ -224,7 +224,7 @@ export default class FormCreate {
             if (_rule.__handler__) {
                 handler = _rule.__handler__;
                 if (handler.vm !== this.vm && !handler.deleted)
-                    return console.error(`第${index + 1}条规则正在其他 form-create 中使用` + errMsg());
+                    return console.error(`第${index + 1}条规则正在其他的 <form-create> 中使用` + errMsg());
 
                 handler.vm = this.vm;
                 handler.render.vm = this.vm;

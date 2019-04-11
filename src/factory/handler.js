@@ -103,8 +103,9 @@ export default class Handler {
     mounted() {
         let refName = 'fItem' + this.refName, vm = this.vm;
         this.el = vm.$refs[this.refName] || {};
-        this.defaultValue = this.toValue(vm.$refs[refName] && !isUndef(vm.$refs[refName].initialValue)
-            ? vm.$refs[refName].initialValue : deepExtend({}, {value: this.rule.value}).value);
+        if (this.defaultValue === undefined)
+            this.defaultValue = this.toValue(vm.$refs[refName] && !isUndef(vm.$refs[refName].initialValue)
+                ? vm.$refs[refName].initialValue : deepExtend({}, {value: this.rule.value}).value);
     }
 
     $emit(eventName, ...params) {
