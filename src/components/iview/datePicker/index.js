@@ -1,6 +1,6 @@
 import handler from "./handler";
-import render from "./render";
 import {creatorTypeFactory} from "../../../factory/creator";
+import {defaultRenderFactory} from "../../../factory/render";
 
 const name = "datePicker";
 
@@ -11,4 +11,7 @@ const maker = ['date', 'dateRange', 'dateTime', 'dateTimeRange', 'year', 'month'
 }, {});
 
 
+const render = defaultRenderFactory(name, true);
+
+export {render}
 export default {handler, render, name, maker};

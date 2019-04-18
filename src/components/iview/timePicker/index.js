@@ -1,6 +1,6 @@
 import handler from "./handler";
-import render from "./render";
 import {creatorTypeFactory} from "../../../factory/creator";
+import {defaultRenderFactory} from "../../../factory/render";
 
 const name = "timePicker";
 
@@ -9,4 +9,7 @@ const maker = {
     timeRange: creatorTypeFactory(name, 'timerange')
 };
 
+const render = defaultRenderFactory(name, true);
+
+export {render}
 export default {handler, render, name, maker};
