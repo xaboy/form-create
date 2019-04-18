@@ -23,7 +23,7 @@ function mock() {
             disabled: false
         }).validate([
             {required: true, message: '请输入商品名称', trigger: 'blur'}
-        ]).event({
+        ]).children([maker.create('template').children(['append']).slot('append')]).event({
             //    change: console.log
         }).emit(['change']).className('goods-name'),
 
@@ -227,21 +227,13 @@ function mock() {
         },
 
 
-        //datePicker 日期选择组件
+        // datePicker 日期选择组件
         // maker.date('活动日期', 'section_day2', ['2018-02-20', '2019-01-01']).props({
         //     "type": "datetimerange",
         //     "startDate": new Date(),
         //     "showWeekNumbers": true,
         //     "open": false, //自定义内容时一定要预定义 open
-        // }).col({span: 12}).defaultSlot(function ($h) {
-        //     return $h('a', {
-        //         on: {
-        //             click: function () {
-        //                 this.props.open = true;
-        //             }
-        //         },
-        //     }, [mock[14].value ? mock[14].value.toString() : 'select Date']);
-        // }).event({
+        // }).col({span: 12}).children(['select data']).event({
         //     ok: function () {
         //         mock[14].props.open = false;
         //     }
@@ -252,15 +244,7 @@ function mock() {
         //     "type": "timerange",
         //     "placeholder": "请选择活动时间",
         //     "open": false, //自定义内容时一定要预定义 open
-        // }).col({span: 12}).defaultSlot(function ($h) {
-        //     return $h('a', {
-        //         on: {
-        //             click: function () {
-        //                 this.props.open = true;
-        //             }
-        //         },
-        //     }, [mock[15].value ? mock[15].value.toString() : 'select Time']);
-        // }).event({
+        // }).col({span: 12}).children(['select Time']).event({
         //     ok: function () {
         //         mock[15].props.open = false;
         //     }

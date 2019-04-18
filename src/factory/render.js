@@ -43,7 +43,7 @@ export default class Render {
     cacheParse(form, _super) {
         let {noValue, noCache} = this.handler;
         if (!this.cache || noValue === true || noCache === true)
-            this.cache = _super ? _super.parse.call(this, form) : this.parse(form);
+            this.cache = _super ? Render.prototype.parse.call(this, form) : this.parse(form);
         let eventList = [...this.$tickEvent];
         this.$tickEvent = [];
         if (eventList.length)
@@ -68,56 +68,58 @@ export default class Render {
             children.forEach(child => !isString(child) && child.__handler__.render.clearCache());
     }
 
+    childrenParse(form) {
+        let {rule, orgChildren, vm} = this.handler, children = rule.children, vn = [];
+
+        if (isValidChildren(children)) {
+            orgChildren.forEach(_rule => {
+                if (children.indexOf(_rule) === -1) {
+                    vm._fComponent.removeField(_rule.__field__);
+                }
+            });
+
+            vn = children.map((child) => {
+                if (isString(child))
+                    return [child];
+                if (child.__handler__) {
+                    return child.__handler__.render.cacheParse(form, true);
+                }
+                $de(() => vm._fComponent.reload());
+            });
+            this.handler.orgChildren = [...children];
+        } else if (orgChildren.length > 0) {
+            orgChildren.forEach(_rule => {
+                vm._fComponent.removeField(_rule.__field__);
+            });
+            this.handler.orgChildren = [];
+        }
+        return vn;
+    }
+
     parse(form) {
-        let {type, rule, refName, key, noValue, vm, orgChildren} = this.handler;
+        let {type, rule, refName, key, noValue} = this.handler;
+        if (rule.type === 'template' && rule.template) {
 
-        if (rule.type === 'template') {
-            if (Vue.compile !== undefined) {
-                if (isUndef(rule.vm)) rule.vm = new Vue;
-
-                let vn = Vue.compile(rule.template, {}).render.call(rule.vm);
-                if (vn.data === undefined) vn.data = {};
-                extend(vn.data, rule);
-                vn.key = key;
-                return [vn];
-            } else {
+            if (Vue.compile === undefined) {
                 console.error('使用的 Vue 版本不支持 compile' + errMsg());
                 return [];
             }
+
+            if (isUndef(rule.vm)) rule.vm = new Vue;
+
+            let vn = Vue.compile(rule.template, {}).render.call(rule.vm);
+            if (vn.data === undefined) vn.data = {};
+            extend(vn.data, rule);
+            vn.key = key;
+            return [vn];
+
         } else if (!noValue) {
             return form.makeComponent(this.handler.render);
         } else {
             rule.ref = refName;
             if (isUndef(rule.key))
                 rule.key = 'def' + uniqueId();
-            let vn = this.vNode.make(type, {...rule}, () => {
-                let vn = [], children = rule.children;
-
-                if (isValidChildren(children)) {
-                    orgChildren.forEach(_rule => {
-                        if (children.indexOf(_rule) === -1) {
-                            vm._fComponent.removeField(_rule.__field__);
-                        }
-                    });
-
-                    vn = children.map((child) => {
-                        if (isString(child))
-                            return [child];
-                        if (child.__handler__) {
-                            return child.__handler__.render.cacheParse(form, this);
-                        }
-                        $de(() => vm._fComponent.reload());
-                    });
-                    this.handler.orgChildren = [...children];
-                } else if (orgChildren.length > 0) {
-                    orgChildren.forEach(_rule => {
-                        vm._fComponent.removeField(_rule.__field__);
-                    });
-                    this.handler.orgChildren = [];
-                }
-
-                return vn;
-            });
+            let vn = this.vNode.make(type, {...rule}, this.childrenParse(form));
 
             vn.key = key;
             return [vn];
@@ -159,14 +161,13 @@ export default class Render {
 
 }
 
-export function defaultRenderFactory(node, key = false) {
+export function defaultRenderFactory(node, setKey = false) {
     return class render extends Render {
-        parse() {
+        parse(form) {
             const props = this.inputProps();
-            if (key)
+            if (setKey)
                 props.key(this.handler.key);
-
-            return [this.vNode[node](props.get())];
+            return [this.vNode[node](props.get(), this.childrenParse(form))];
         }
     }
 

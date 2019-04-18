@@ -1,5 +1,5 @@
 import handler from "./handler";
-import render from "../../iview/datePicker/render";
+import {render} from "../../iview/datePicker";
 import {creatorTypeFactory} from "../../../factory/creator";
 
 const name = "datePicker";
