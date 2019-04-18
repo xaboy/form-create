@@ -28,7 +28,11 @@ export default class handler extends Handler {
     }
 
     toValue(n) {
-        return this.el.formatToString(n);
+        const type = this.rule.props.type, value = this.el.formatToString(n);
+        if (!value && ['daterange', 'datetimerange'].indexOf(type) !== -1)
+            return ['', ''];
+        else
+            return value;
     }
 
     mounted() {

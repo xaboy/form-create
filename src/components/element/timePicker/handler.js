@@ -22,10 +22,10 @@ export default class handler extends Handler {
     toFormValue(value) {
         let parseValue, isArr = Array.isArray(value);
         if (this.rule.props.isRange === true) {
-            if (isArr) {
+            if (isArr && value.length === 2) {
                 parseValue = value.map((time) => !time ? '' : getTime(timeStampToDate(time)));
             } else {
-                parseValue = ['', ''];
+                parseValue = '';
             }
         } else {
             isArr && (value = value[0]);

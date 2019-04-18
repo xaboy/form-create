@@ -169,8 +169,8 @@ function mock() {
                         }),
 
                         //timePicker 时间选择组件
-                        maker.time('活动时间', 'section_time', ['01:01:01', new Date()]).props({
-                            "type": "timerange",
+                        maker.time('活动时间', 'section_time', '').props({
+                            "isRange": true,
                             "placeholder": "请选择活动时间"
                         }),
 

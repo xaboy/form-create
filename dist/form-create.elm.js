@@ -1,5 +1,5 @@
 /*!
- * form-create v1.6.3 elementUI
+ * form-create v1.6.4-bata.1 elementUI
  * (c) 2018-2019 xaboy
  * Github https://github.com/xaboy/form-create
  * Released under the MIT License.
@@ -2410,7 +2410,7 @@
     };
   }
 
-  var version = "1.6.3";
+  var version = "1.6.4-bata.1";
   var ui = "element";
   var formCreateStyleElId = 'form-create-style';
   var drive = {};
@@ -3762,12 +3762,12 @@
             isArr = Array.isArray(value);
 
         if (this.rule.props.isRange === true) {
-          if (isArr) {
+          if (isArr && value.length === 2) {
             parseValue = value.map(function (time) {
               return !time ? '' : getTime(timeStampToDate(time));
             });
           } else {
-            parseValue = ['', ''];
+            parseValue = '';
           }
         } else {
           isArr && (value = value[0]);
@@ -3878,7 +3878,9 @@
     }, {
       key: "toValue",
       value: function toValue(n) {
-        return this.el.formatToString(n);
+        var type = this.rule.props.type,
+            value = this.el.formatToString(n);
+        if (!value && ['daterange', 'datetimerange'].indexOf(type) !== -1) return ['', ''];else return value;
       }
     }, {
       key: "mounted",
