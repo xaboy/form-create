@@ -110,7 +110,7 @@ export default class Handler {
 
     $emit(eventName, ...params) {
         eventName = `fc:${eventName}`;
-        if (this.type === 'template')
+        if (this.type === 'template' && this.rule.template)
             this.rule.vm.$emit(eventName, ...params);
         else if (this.noValue === true && this.el.$emit)
             this.el.$emit(eventName, ...params);

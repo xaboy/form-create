@@ -98,6 +98,12 @@ export function margeGlobal(_options) {
     return options
 }
 
+export function delHandler(handler) {
+    handler.watch.forEach((unWatch) => unWatch());
+    handler.watch = [];
+    handler.deleted = true;
+}
+
 export default class FormCreate {
 
     constructor(rules, options = {}) {
@@ -284,7 +290,9 @@ export default class FormCreate {
             });
 
             Object.keys(vm.cptData).forEach(field => {
-                vm.jsonData[field] = JSON.stringify(this.handlers[field].toValue(vm.cptData[field]));
+                const value = this.handlers[field].toValue(vm.cptData[field]);
+                vm.jsonData[field] = JSON.stringify(value);
+                vm._changeValue(field, value);
             });
 
             if (first) {
@@ -307,10 +315,9 @@ export default class FormCreate {
     removeField(field) {
         if (this.handlers[field] === undefined)
             return;
-        let handler = this.handlers[field], watch = handler.watch, index = this.fieldList.indexOf(field);
-        handler.watch = [];
-        handler.deleted = true;
-        watch && watch.forEach((unWatch) => unWatch());
+        const index = this.fieldList.indexOf(field);
+
+        delHandler(this.handlers[field]);
         $del(this.handlers, field);
         $del(this.validate, field);
 
@@ -326,21 +333,22 @@ export default class FormCreate {
         let field = handler.field, vm = this.vm;
 
         let unWatch = vm.$watch(() => vm.cptData[field], (n) => {
-            if (this.handlers[field] !== undefined) {
-                let trueValue = handler.toValue(n), json = JSON.stringify(trueValue);
-                if (vm._change(field, json)) {
-                    handler.setValue(trueValue);
-                    handler.watchFormValue(n);
-                }
-            } else
-                unWatch();
+
+            if (this.handlers[field] === undefined)
+                return delHandler(handler);
+
+            let trueValue = handler.toValue(n), json = JSON.stringify(trueValue);
+            if (vm._change(field, json)) {
+                handler.setValue(trueValue);
+                handler.watchFormValue(n);
+            }
         }, {deep: true});
 
         let unWatch2 = vm.$watch(() => vm.trueData[field].value, (n) => {
             if (n === undefined) return;
 
             if (this.handlers[field] === undefined)
-                return unWatch2();
+                return delHandler(handler);
 
             let json = JSON.stringify(n);
             if (vm._change(field, json)) {
@@ -352,7 +360,9 @@ export default class FormCreate {
         handler.watch.push(unWatch, unWatch2);
 
         const bind = () => {
-            if (this.handlers[field] !== undefined)
+            if (this.handlers[field] === undefined)
+                delHandler(handler);
+            else
                 this.$tick(() => handler.render.sync());
         };
 

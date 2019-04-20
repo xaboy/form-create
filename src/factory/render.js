@@ -98,7 +98,7 @@ export default class Render {
 
     parse(form) {
         let {type, rule, refName, key, noValue} = this.handler;
-        if (rule.type === 'template' && rule.template) {
+        if (type === 'template' && rule.template) {
 
             if (Vue.compile === undefined) {
                 console.error('使用的 Vue 版本不支持 compile' + errMsg());

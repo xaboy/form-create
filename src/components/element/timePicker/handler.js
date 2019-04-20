@@ -36,7 +36,10 @@ export default class handler extends Handler {
     }
 
     toValue(n) {
-        return this.el.formatToString(n);
+        let val = this.el.formatToString(n);
+        if (this.rule.props.isRange === true && !val)
+            val = ['', ''];
+        return val;
     }
 
     mounted() {
