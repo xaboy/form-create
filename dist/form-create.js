@@ -1,5 +1,5 @@
 /*!
- * form-create v1.6.4-bata.1 iviewUI
+ * form-create v1.6.4 iviewUI
  * (c) 2018-2019 xaboy
  * Github https://github.com/xaboy/form-create
  * Released under the MIT License.
@@ -1976,7 +1976,7 @@
           params[_key - 1] = arguments[_key];
         }
 
-        if (this.type === 'template') (_this$rule$vm = this.rule.vm).$emit.apply(_this$rule$vm, [eventName].concat(params));else if (this.noValue === true && this.el.$emit) (_this$el = this.el).$emit.apply(_this$el, [eventName].concat(params));
+        if (this.type === 'template' && this.rule.template) (_this$rule$vm = this.rule.vm).$emit.apply(_this$rule$vm, [eventName].concat(params));else if (this.noValue === true && this.el.$emit) (_this$el = this.el).$emit.apply(_this$el, [eventName].concat(params));
       }
     }]);
 
@@ -2238,7 +2238,7 @@
         var _this$handler = this.handler,
             noValue = _this$handler.noValue,
             noCache = _this$handler.noCache;
-        if (!this.cache || noValue === true || noCache === true) this.cache = _super ? _super.parse.call(this, form) : this.parse(form);
+        if (!this.cache || noValue === true || noCache === true) this.cache = _super ? Render.prototype.parse.call(this, form) : this.parse(form);
 
         var eventList = _toConsumableArray(this.$tickEvent);
 
@@ -2268,68 +2268,71 @@
         });
       }
     }, {
+      key: "childrenParse",
+      value: function childrenParse(form) {
+        var _this$handler2 = this.handler,
+            rule = _this$handler2.rule,
+            orgChildren = _this$handler2.orgChildren,
+            vm = _this$handler2.vm,
+            children = rule.children,
+            vn = [];
+
+        if (isValidChildren(children)) {
+          orgChildren.forEach(function (_rule) {
+            if (children.indexOf(_rule) === -1) {
+              vm._fComponent.removeField(_rule.__field__);
+            }
+          });
+          vn = children.map(function (child) {
+            if (isString(child)) return [child];
+
+            if (child.__handler__) {
+              return child.__handler__.render.cacheParse(form, true);
+            }
+
+            $de(function () {
+              return vm._fComponent.reload();
+            });
+          });
+          this.handler.orgChildren = _toConsumableArray(children);
+        } else if (orgChildren.length > 0) {
+          orgChildren.forEach(function (_rule) {
+            vm._fComponent.removeField(_rule.__field__);
+          });
+          this.handler.orgChildren = [];
+        }
+
+        return vn;
+      }
+    }, {
       key: "parse",
       value: function parse(form) {
-        var _this = this;
+        var _this$handler3 = this.handler,
+            type = _this$handler3.type,
+            rule = _this$handler3.rule,
+            refName = _this$handler3.refName,
+            key = _this$handler3.key,
+            noValue = _this$handler3.noValue;
 
-        var _this$handler2 = this.handler,
-            type = _this$handler2.type,
-            rule = _this$handler2.rule,
-            refName = _this$handler2.refName,
-            key = _this$handler2.key,
-            noValue = _this$handler2.noValue,
-            vm = _this$handler2.vm,
-            orgChildren = _this$handler2.orgChildren;
-
-        if (rule.type === 'template') {
-          if (Vue$1.compile !== undefined) {
-            if (isUndef(rule.vm)) rule.vm = new Vue$1();
-            var vn = Vue$1.compile(rule.template, {}).render.call(rule.vm);
-            if (vn.data === undefined) vn.data = {};
-            extend(vn.data, rule);
-            vn.key = key;
-            return [vn];
-          } else {
+        if (type === 'template' && rule.template) {
+          if (Vue$1.compile === undefined) {
             console.error('使用的 Vue 版本不支持 compile' + errMsg());
             return [];
           }
+
+          if (isUndef(rule.vm)) rule.vm = new Vue$1();
+          var vn = Vue$1.compile(rule.template, {}).render.call(rule.vm);
+          if (vn.data === undefined) vn.data = {};
+          extend(vn.data, rule);
+          vn.key = key;
+          return [vn];
         } else if (!noValue) {
           return form.makeComponent(this.handler.render);
         } else {
           rule.ref = refName;
           if (isUndef(rule.key)) rule.key = 'def' + uniqueId();
 
-          var _vn = this.vNode.make(type, _objectSpread({}, rule), function () {
-            var vn = [],
-                children = rule.children;
-
-            if (isValidChildren(children)) {
-              orgChildren.forEach(function (_rule) {
-                if (children.indexOf(_rule) === -1) {
-                  vm._fComponent.removeField(_rule.__field__);
-                }
-              });
-              vn = children.map(function (child) {
-                if (isString(child)) return [child];
-
-                if (child.__handler__) {
-                  return child.__handler__.render.cacheParse(form, _this);
-                }
-
-                $de(function () {
-                  return vm._fComponent.reload();
-                });
-              });
-              _this.handler.orgChildren = _toConsumableArray(children);
-            } else if (orgChildren.length > 0) {
-              orgChildren.forEach(function (_rule) {
-                vm._fComponent.removeField(_rule.__field__);
-              });
-              _this.handler.orgChildren = [];
-            }
-
-            return vn;
-          });
+          var _vn = this.vNode.make(type, _objectSpread({}, rule), this.childrenParse(form));
 
           _vn.key = key;
           return [_vn];
@@ -2338,19 +2341,19 @@
     }, {
       key: "inputProps",
       value: function inputProps() {
-        var _this2 = this;
+        var _this = this;
 
-        var _this$handler3 = this.handler,
-            refName = _this$handler3.refName,
-            key = _this$handler3.key,
-            field = _this$handler3.field,
-            _this$handler3$rule = _this$handler3.rule,
-            props = _this$handler3$rule.props,
-            event = _this$handler3$rule.event;
+        var _this$handler4 = this.handler,
+            refName = _this$handler4.refName,
+            key = _this$handler4.key,
+            field = _this$handler4.field,
+            _this$handler4$rule = _this$handler4.rule,
+            props = _this$handler4$rule.props,
+            event = _this$handler4$rule.event;
         var data = this.vData.props(props).props({
           value: this.vm._formData(field)
         }).ref(refName).key(key + 'fc' + field).on(event).on('input', function (value) {
-          _this2.onInput(value);
+          _this.onInput(value);
         });
         if (isUndef(props.size)) data.props({
           size: this.options.form.size
@@ -2362,9 +2365,9 @@
       value: function onInput(value) {
         value = isUndef(value) ? '' : value;
         var handler = this.handler,
-            _this$handler4 = this.handler,
-            field = _this$handler4.field,
-            vm = _this$handler4.vm,
+            _this$handler5 = this.handler,
+            field = _this$handler5.field,
+            vm = _this$handler5.vm,
             trueValue = handler.toValue(value);
 
         vm._changeFormData(field, value);
@@ -2378,7 +2381,7 @@
     return Render;
   }();
   function defaultRenderFactory(node) {
-    var key = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+    var setKey = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
     return function (_Render) {
       _inherits(render, _Render);
 
@@ -2390,10 +2393,10 @@
 
       _createClass(render, [{
         key: "parse",
-        value: function parse() {
+        value: function parse(form) {
           var props = this.inputProps();
-          if (key) props.key(this.handler.key);
-          return [this.vNode[node](props.get())];
+          if (setKey) props.key(this.handler.key);
+          return [this.vNode[node](props.get(), this.childrenParse(form))];
         }
       }]);
 
@@ -2411,7 +2414,7 @@
     };
   }
 
-  var version = "1.6.4-bata.1";
+  var version = "1.6.4";
   var ui = "iview";
   var formCreateStyleElId = 'form-create-style';
   var drive = {};
@@ -2466,6 +2469,13 @@
     var options = deepExtend(extend(drive.getConfig(), getBaseConfig()), _options);
     $set(options, 'el', !options.el ? window.document.body : isElement(options.el) ? options.el : document.querySelector(options.el));
     return options;
+  }
+  function delHandler(handler) {
+    handler.watch.forEach(function (unWatch) {
+      return unWatch();
+    });
+    handler.watch = [];
+    handler.deleted = true;
   }
 
   var FormCreate = function () {
@@ -2621,7 +2631,11 @@
             handler.mounted();
           });
           Object.keys(vm.cptData).forEach(function (field) {
-            vm.jsonData[field] = JSON.stringify(_this2.handlers[field].toValue(vm.cptData[field]));
+            var value = _this2.handlers[field].toValue(vm.cptData[field]);
+
+            vm.jsonData[field] = JSON.stringify(value);
+
+            vm._changeValue(field, value);
           });
 
           if (first) {
@@ -2656,14 +2670,8 @@
       key: "removeField",
       value: function removeField(field) {
         if (this.handlers[field] === undefined) return;
-        var handler = this.handlers[field],
-            watch = handler.watch,
-            index = this.fieldList.indexOf(field);
-        handler.watch = [];
-        handler.deleted = true;
-        watch && watch.forEach(function (unWatch) {
-          return unWatch();
-        });
+        var index = this.fieldList.indexOf(field);
+        delHandler(this.handlers[field]);
         $del(this.handlers, field);
         $del(this.validate, field);
 
@@ -2684,15 +2692,14 @@
         var unWatch = vm.$watch(function () {
           return vm.cptData[field];
         }, function (n) {
-          if (_this3.handlers[field] !== undefined) {
-            var trueValue = handler.toValue(n),
-                json = JSON.stringify(trueValue);
+          if (_this3.handlers[field] === undefined) return delHandler(handler);
+          var trueValue = handler.toValue(n),
+              json = JSON.stringify(trueValue);
 
-            if (vm._change(field, json)) {
-              handler.setValue(trueValue);
-              handler.watchFormValue(n);
-            }
-          } else unWatch();
+          if (vm._change(field, json)) {
+            handler.setValue(trueValue);
+            handler.watchFormValue(n);
+          }
         }, {
           deep: true
         });
@@ -2700,7 +2707,7 @@
           return vm.trueData[field].value;
         }, function (n) {
           if (n === undefined) return;
-          if (_this3.handlers[field] === undefined) return unWatch2();
+          if (_this3.handlers[field] === undefined) return delHandler(handler);
           var json = JSON.stringify(n);
 
           if (vm._change(field, json)) {
@@ -2715,7 +2722,7 @@
         handler.watch.push(unWatch, unWatch2);
 
         var bind = function bind() {
-          if (_this3.handlers[field] !== undefined) _this3.$tick(function () {
+          if (_this3.handlers[field] === undefined) delHandler(handler);else _this3.$tick(function () {
             return handler.render.sync();
           });
         };
@@ -3337,34 +3344,12 @@
     return handler;
   }(Handler);
 
-  var render$6 = function (_Render) {
-    _inherits(render, _Render);
-
-    function render() {
-      _classCallCheck(this, render);
-
-      return _possibleConstructorReturn(this, _getPrototypeOf(render).apply(this, arguments));
-    }
-
-    _createClass(render, [{
-      key: "parse",
-      value: function parse() {
-        var _this$handler = this.handler,
-            key = _this$handler.key,
-            rule = _this$handler.rule,
-            vm = _this$handler.vm;
-        return [this.vNode.datePicker(this.inputProps().key(key).get(), toDefSlot(rule.defaultSlot, vm.$createElement, rule))];
-      }
-    }]);
-
-    return render;
-  }(Render);
-
   var name$6 = "datePicker";
   var maker$4 = ['date', 'dateRange', 'dateTime', 'dateTimeRange', 'year', 'month'].reduce(function (initial, type) {
     initial[type] = creatorTypeFactory(name$6, type.toLowerCase());
     return initial;
   }, {});
+  var render$6 = defaultRenderFactory(name$6, true);
   var datepicker = {
     handler: handler$4,
     render: render$6,
@@ -3427,34 +3412,12 @@
     return handler;
   }(Handler);
 
-  var render$7 = function (_Render) {
-    _inherits(render, _Render);
-
-    function render() {
-      _classCallCheck(this, render);
-
-      return _possibleConstructorReturn(this, _getPrototypeOf(render).apply(this, arguments));
-    }
-
-    _createClass(render, [{
-      key: "parse",
-      value: function parse() {
-        var _this$handler = this.handler,
-            key = _this$handler.key,
-            rule = _this$handler.rule,
-            vm = _this$handler.vm;
-        return [this.vNode.timePicker(this.inputProps().key(key).get(), toDefSlot(rule.defaultSlot, vm.$createElement, rule))];
-      }
-    }]);
-
-    return render;
-  }(Render);
-
   var name$7 = "timePicker";
   var maker$5 = {
     time: creatorTypeFactory(name$7, 'time'),
     timeRange: creatorTypeFactory(name$7, 'timerange')
   };
+  var render$7 = defaultRenderFactory(name$7, true);
   var timepicker = {
     handler: handler$5,
     render: render$7,
