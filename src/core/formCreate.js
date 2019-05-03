@@ -281,20 +281,21 @@ export default class FormCreate {
     mounted(vm, first = true) {
         this.vm = vm;
         let {mounted, onReload} = this.options;
+
+        Object.keys(this.handlers).forEach((field) => {
+            let handler = this.handlers[field];
+            if (handler.watch.length === 0)
+                this.addHandlerWatch(handler);
+            handler.mounted();
+        });
+
+        Object.keys(vm.cptData).forEach(field => {
+            const value = this.handlers[field].toValue(vm.cptData[field]);
+            vm.jsonData[field] = JSON.stringify(value);
+            vm._changeValue(field, value);
+        });
+
         $nt(() => {
-            Object.keys(this.handlers).forEach((field) => {
-                let handler = this.handlers[field];
-                if (handler.watch.length === 0)
-                    this.addHandlerWatch(handler);
-                handler.mounted();
-            });
-
-            Object.keys(vm.cptData).forEach(field => {
-                const value = this.handlers[field].toValue(vm.cptData[field]);
-                vm.jsonData[field] = JSON.stringify(value);
-                vm._changeValue(field, value);
-            });
-
             if (first) {
                 mounted && mounted(this.fCreateApi);
                 this.$emit('mounted', this.fCreateApi);
