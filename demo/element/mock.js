@@ -275,6 +275,10 @@ function mock() {
                 "onRemove": function (file, fileList) {
                     console.log(file, fileList);
                 },
+                'beforeRemove': function () {
+                    console.log('before-remove');
+                    return false;
+                },
                 "allowRemove": true,
             }).validate({required: true, type: 'array', min: 3, message: '请上传3张图片', trigger: 'change'}),
 

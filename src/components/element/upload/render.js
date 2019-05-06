@@ -10,15 +10,15 @@ export default class render extends Render {
         this.issetIcon = this.uploadOptions.allowRemove || this.uploadOptions.handleIcon;
         this.propsData = this.vData.props(this.uploadOptions).class('fc-upload-con', true)
             .props('onSuccess', (...args) => this.onSuccess(...args))
-            .props('onRemove', (...args) => this.onRemove(...args))
+            // .props('onRemove', (...args) => this.onRemove(...args))
             .ref(handler.refName).key(`fip${handler.unique}`).get();
     }
 
-    onRemove(...args) {
-        this.handler.changeParseValue(this.handler.el.uploadFiles);
-        this.uploadOptions.onRemove && this.uploadOptions.onRemove(...args);
-        this.sync();
-    }
+    // onRemove(...args) {
+    //     this.handler.changeParseValue(this.handler.el.uploadFiles);
+    //     this.uploadOptions.onRemove && this.uploadOptions.onRemove(...args);
+    //     this.sync();
+    // }
 
     onSuccess(response, file, fileList) {
         let url = this.uploadOptions.onSuccess.call(null, response, file, fileList);
@@ -119,8 +119,10 @@ export default class render extends Render {
                 'click': () => {
                     if (this.uploadOptions.disabled === true) return;
                     let fileList = this.handler.el.uploadFiles, file = fileList[index];
-                    fileList.splice(index, 1);
-                    this.onRemove(file, fileList);
+                    this.handler.el.handleRemove(file);
+
+                    // fileList.splice(index, 1);
+                    // this.onRemove(file, fileList);
                 }
             }
         });
