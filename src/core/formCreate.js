@@ -108,7 +108,7 @@ export const components = {
     'form-create': _vue.extend($FormCreate())
 };
 
-export function component(id, component) {
+export function setComponent(id, component) {
     if (component) {
         return _vue.component(toString(id), component);
     } else if (id)
@@ -158,7 +158,7 @@ export default class FormCreate {
         $formCreate.maker = FormCreate.maker;
         $formCreate.version = version;
         $formCreate.ui = ui;
-        $formCreate.component = component;
+        $formCreate.component = setComponent;
         Vue.prototype.$formCreate = $formCreate;
 
         Vue.component(formCreateName, Vue.extend($FormCreate()));
@@ -420,7 +420,7 @@ export default class FormCreate {
 
 FormCreate.version = version;
 FormCreate.ui = ui;
-FormCreate.component = component;
+FormCreate.component = setComponent;
 
 export function setDrive(_drive) {
     drive = _drive;

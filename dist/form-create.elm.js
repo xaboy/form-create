@@ -1,5 +1,5 @@
 /*!
- * form-create v1.6.4 elementUI
+ * form-create v1.6.5 elementUI
  * (c) 2018-2019 xaboy
  * Github https://github.com/xaboy/form-create
  * Released under the MIT License.
@@ -1682,79 +1682,78 @@
     return '\n\x67\x69\x74\x68\x75\x62\x3a\x68\x74\x74\x70' + '\x73\x3a\x2f\x2f\x67\x69\x74\x68\x75\x62\x2e\x63\x6f' + '\x6d\x2f\x78\x61\x62\x6f\x79\x2f\x66\x6f\x72\x6d\x2d' + '\x63\x72\x65\x61\x74\x65\n\x64\x6f\x63\x75\x6d\x65' + '\x6e\x74\x3a\x68\x74\x74\x70\x3a\x2f\x2f\x77\x77\x77' + '\x2e\x66\x6f\x72\x6d\x2d\x63\x72\x65\x61\x74\x65\x2e' + '\x63\x6f\x6d';
   }
 
-  function baseComponent() {
-    return {
-      data: function data() {
-        return {
-          rules: {},
-          components: {},
-          cptData: {},
-          buttonProps: {},
-          resetProps: {},
-          trueData: {},
-          jsonData: {},
-          $f: {},
-          isShow: true,
-          unique: 1
-        };
+  var baseComponent = {
+    data: function data() {
+      return {
+        rules: {},
+        components: {},
+        cptData: {},
+        buttonProps: {},
+        resetProps: {},
+        trueData: {},
+        jsonData: {},
+        $f: {},
+        isShow: true,
+        unique: 1
+      };
+    },
+    components: components,
+    methods: {
+      _formField: function _formField() {
+        return Object.keys(this.trueData);
       },
-      methods: {
-        _formField: function _formField() {
-          return Object.keys(this.trueData);
-        },
-        _changeFormData: function _changeFormData(field, value) {
-          if (Object.keys(this.cptData).indexOf(field) !== -1) this.$set(this.cptData, field, value);
-        },
-        _changeValue: function _changeValue(field, value) {
-          this.$set(this.trueData[field], 'value', value);
-        },
-        _value: function _value(field) {
-          return this.trueData[field] === undefined ? undefined : this.trueData[field].value;
-        },
-        _trueData: function _trueData(field) {
-          return this.trueData[field];
-        },
-        _formData: function _formData(field) {
-          return this.cptData[field];
-        },
-        _removeField: function _removeField(field) {
-          $del(this.cptData, field);
-          $del(this.trueData, field);
-          $del(this.jsonData, field);
-          if (this.components[field] !== undefined) $del(this.components, field);
-        },
-        _buttonProps: function _buttonProps(props) {
-          this.$set(this, 'buttonProps', deepExtend(this.buttonProps, props));
-        },
-        _resetProps: function _resetProps(props) {
-          this.$set(this, 'resetProps', deepExtend(this.resetProps, props));
-        },
-        __init: function __init() {},
-        _refresh: function _refresh() {
-          this.unique += 1;
-        },
-        _sync: function _sync() {
-          this.unique += 1;
-          this._fComponent.fRender.cacheUnique = this.unique;
-        },
-        _change: function _change(field, json) {
-          if (this.jsonData[field] !== json) {
-            this.jsonData[field] = json;
-            return true;
-          }
-
-          return false;
+      _changeFormData: function _changeFormData(field, value) {
+        if (Object.keys(this.cptData).indexOf(field) !== -1) this.$set(this.cptData, field, value);
+      },
+      _changeValue: function _changeValue(field, value) {
+        this.$set(this.trueData[field], 'value', value);
+      },
+      _value: function _value(field) {
+        return this.trueData[field] === undefined ? undefined : this.trueData[field].value;
+      },
+      _trueData: function _trueData(field) {
+        return this.trueData[field];
+      },
+      _formData: function _formData(field) {
+        return this.cptData[field];
+      },
+      _removeField: function _removeField(field) {
+        $del(this.cptData, field);
+        $del(this.trueData, field);
+        $del(this.jsonData, field);
+        if (this.components[field] !== undefined) $del(this.components, field);
+      },
+      _buttonProps: function _buttonProps(props) {
+        this.$set(this, 'buttonProps', deepExtend(this.buttonProps, props));
+      },
+      _resetProps: function _resetProps(props) {
+        this.$set(this, 'resetProps', deepExtend(this.resetProps, props));
+      },
+      __init: function __init() {},
+      _refresh: function _refresh() {
+        this.unique += 1;
+      },
+      _sync: function _sync() {
+        this.unique += 1;
+        this._fComponent.fRender.cacheUnique = this.unique;
+      },
+      _change: function _change(field, json) {
+        if (this.jsonData[field] !== json) {
+          this.jsonData[field] = json;
+          return true;
         }
+
+        return false;
       }
-    };
-  }
+    }
+  };
 
   var formCreateName = 'FormCreate';
 
   var $FormCreate = function $FormCreate() {
     return {
       name: formCreateName,
-      mixins: [baseComponent()],
+      mixins: [baseComponent],
       props: {
         rule: {
           type: Array,
@@ -1828,7 +1827,7 @@
   function coreComponent(fComponent) {
     return {
       name: "".concat(formCreateName, "Core"),
-      mixins: [baseComponent()],
+      mixins: [baseComponent],
       render: function render() {
         return fComponent.render();
       },
@@ -2341,10 +2340,13 @@
             refName = _this$handler4.refName,
             key = _this$handler4.key,
             field = _this$handler4.field,
-            _this$handler4$rule = _this$handler4.rule,
-            props = _this$handler4$rule.props,
-            event = _this$handler4$rule.event;
-        var data = this.vData.props(props).props({
+            rule = _this$handler4.rule;
+        var props = rule.props,
+            event = rule.event;
+        Object.keys(this.vData._data).forEach(function (key) {
+          if (rule[key] !== undefined) _this.vData[key](rule[key]);
+        });
+        var data = this.vData.props({
           value: this.vm._formData(field)
         }).ref(refName).key(key + 'fc' + field).on(event).on('input', function (value) {
           _this.onInput(value);
@@ -2413,7 +2415,7 @@
     };
   }
 
-  var version = "1.6.4";
+  var version = "1.6.5";
   var ui = "element";
   var formCreateStyleElId = 'form-create-style';
   var drive = {};
@@ -2436,7 +2438,7 @@
       noValue: true
     };
   }
-  var _vue = Vue$1;
+  var _vue = typeof window !== 'undefined' && window.Vue ? window.Vue : Vue$1;
   function bindHandler(rule, handler) {
     Object.defineProperties(rule, {
       __field__: {
@@ -2475,6 +2477,14 @@
     });
     handler.watch = [];
     handler.deleted = true;
+  }
+  var components = {
+    'form-create': _vue.extend($FormCreate())
+  };
+  function setComponent(id, component) {
+    if (component) {
+      return _vue.component(toString$1(id), component);
+    } else if (id) return components[toString$1(id)];else return _objectSpread({}, components);
   }
 
   var FormCreate = function () {
@@ -2623,30 +2633,26 @@
         var _this$options = this.options,
             mounted = _this$options.mounted,
             onReload = _this$options.onReload;
-        $nt(function () {
-          Object.keys(_this2.handlers).forEach(function (field) {
-            var handler = _this2.handlers[field];
-            if (handler.watch.length === 0) _this2.addHandlerWatch(handler);
-            handler.mounted();
-          });
-          Object.keys(vm.cptData).forEach(function (field) {
-            var value = _this2.handlers[field].toValue(vm.cptData[field]);
-
-            vm.jsonData[field] = JSON.stringify(value);
-
-            vm._changeValue(field, value);
-          });
-
-          if (first) {
-            mounted && mounted(_this2.fCreateApi);
-
-            _this2.$emit('mounted', _this2.fCreateApi);
-          }
-
-          onReload && onReload(_this2.fCreateApi);
-
-          _this2.$emit('reload', _this2.fCreateApi);
+        Object.keys(this.handlers).forEach(function (field) {
+          var handler = _this2.handlers[field];
+          if (handler.watch.length === 0) _this2.addHandlerWatch(handler);
+          handler.mounted();
         });
+        Object.keys(vm.cptData).forEach(function (field) {
+          var value = _this2.handlers[field].toValue(vm.cptData[field]);
+
+          vm.jsonData[field] = JSON.stringify(value);
+
+          vm._changeValue(field, value);
+        });
+
+        if (first) {
+          mounted && mounted(this.fCreateApi);
+          this.$emit('mounted', this.fCreateApi);
+        }
+
+        onReload && onReload(this.fCreateApi);
+        this.$emit('reload', this.fCreateApi);
       }
     }, {
       key: "$emit",
@@ -2782,14 +2788,16 @@
     }, {
       key: "install",
       value: function install(Vue) {
-        Vue.prototype.$formCreate = function (rules) {
+        var $formCreate = function $formCreate(rules) {
           var opt = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
           return FormCreate.create(rules, opt, this);
         };
 
-        Vue.prototype.$formCreate.maker = FormCreate.maker;
-        Vue.prototype.$formCreate.version = version;
-        Vue.prototype.$formCreate.ui = ui;
+        $formCreate.maker = FormCreate.maker;
+        $formCreate.version = version;
+        $formCreate.ui = ui;
+        $formCreate.component = setComponent;
+        Vue.prototype.$formCreate = $formCreate;
         Vue.component(formCreateName, Vue.extend($FormCreate()));
         _vue = Vue;
       }
@@ -2824,6 +2832,7 @@
   }();
   FormCreate.version = version;
   FormCreate.ui = ui;
+  FormCreate.component = setComponent;
   function setDrive(_drive) {
     drive = _drive;
 
@@ -4475,18 +4484,7 @@
         this.issetIcon = this.uploadOptions.allowRemove || this.uploadOptions.handleIcon;
         this.propsData = this.vData.props(this.uploadOptions).class('fc-upload-con', true).props('onSuccess', function () {
           return _this.onSuccess.apply(_this, arguments);
-        }).props('onRemove', function () {
-          return _this.onRemove.apply(_this, arguments);
         }).ref(handler.refName).key("fip".concat(handler.unique)).get();
-      }
-    }, {
-      key: "onRemove",
-      value: function onRemove() {
-        var _this$uploadOptions;
-
-        this.handler.changeParseValue(this.handler.el.uploadFiles);
-        this.uploadOptions.onRemove && (_this$uploadOptions = this.uploadOptions).onRemove.apply(_this$uploadOptions, arguments);
-        this.sync();
       }
     }, {
       key: "onSuccess",
@@ -4628,9 +4626,8 @@
               if (_this5.uploadOptions.disabled === true) return;
               var fileList = _this5.handler.el.uploadFiles,
                   file = fileList[index];
-              fileList.splice(index, 1);
 
-              _this5.onRemove(file, fileList);
+              _this5.handler.el.handleRemove(file);
             }
           }
         });
