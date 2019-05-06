@@ -68,5 +68,8 @@ export default {
             }
             return false;
         }
+    },
+    beforeDestroy() {
+        this._fComponent.reload([]);
     }
 };

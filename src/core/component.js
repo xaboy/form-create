@@ -60,9 +60,6 @@ const $FormCreate = () => ({
 
         this.__init();
         this.$emit('input', this.$f);
-    },
-    beforeDestroy() {
-        this._fComponent.reload([]);
     }
 });
 

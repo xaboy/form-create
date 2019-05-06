@@ -1745,6 +1745,9 @@
 
         return false;
       }
+    },
+    beforeDestroy: function beforeDestroy() {
+      this._fComponent.reload([]);
     }
   };
 
@@ -1817,9 +1820,6 @@
         this.__init();
 
         this.$emit('input', this.$f);
-      },
-      beforeDestroy: function beforeDestroy() {
-        this._fComponent.reload([]);
       }
     };
   };
