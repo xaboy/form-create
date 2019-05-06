@@ -112,7 +112,9 @@ export function component(name, component = null) {
     if (component) {
         return _vue.component(toString(name), component);
     } else if (name)
-        return components[name];
+        return components[toString(name)];
+    else
+        return {...components};
 }
 
 export default class FormCreate {

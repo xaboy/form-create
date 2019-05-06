@@ -3,6 +3,7 @@
  * JS表单生成器 | iviewUI 版本
  * Author: xaboy
  * Github: https://github.com/xaboy/form-create
+ * Document: http://www.form-create.com
  */
 
 import formCreate, {install, setDrive} from './core/formCreate';

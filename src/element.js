@@ -3,6 +3,7 @@
  * JS表单生成器 | ElementUI 版本
  * Author: xaboy
  * Github: https://github.com/xaboy/form-create
+ * Document: http://www.form-create.com
  */
 
 import formCreate, {install, setDrive} from './core/formCreate';
@@ -14,7 +15,7 @@ if (typeof window !== 'undefined') {
     window.formCreate = formCreate;
 
     if (window.Vue) {
-        // install(Vue);
+        install(Vue);
     }
 }
 
