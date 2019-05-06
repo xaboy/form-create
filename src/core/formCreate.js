@@ -308,14 +308,13 @@ export default class FormCreate {
             vm._changeValue(field, value);
         });
 
-        $nt(() => {
-            if (first) {
-                mounted && mounted(this.fCreateApi);
-                this.$emit('mounted', this.fCreateApi);
-            }
-            onReload && onReload(this.fCreateApi);
-            this.$emit('reload', this.fCreateApi);
-        })
+        if (first) {
+            mounted && mounted(this.fCreateApi);
+            this.$emit('mounted', this.fCreateApi);
+        }
+        onReload && onReload(this.fCreateApi);
+        this.$emit('reload', this.fCreateApi);
+
     }
 
     $emit(eventName, ...params) {
