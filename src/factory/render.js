@@ -128,7 +128,14 @@ export default class Render {
     }
 
     inputProps() {
-        let {refName, key, field, rule: {props, event}} = this.handler;
+        let {refName, key, field, rule} = this.handler;
+        let {props, event} = rule;
+
+        Object.keys(this.vData._data).forEach((key) => {
+            if (rule[key] !== undefined)
+                this.vData[key](rule[key]);
+        });
+
         let data = this.vData
             .props(props).props({value: this.vm._formData(field)})
             .ref(refName).key(key + 'fc' + field).on(event).on('input', (value) => {
