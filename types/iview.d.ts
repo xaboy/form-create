@@ -8,6 +8,7 @@ declare class formCreate {
     static maker: FormCreate.Maker<Creator, Rule>;
     static install: install;
     static init: init;
+    static component: FormCreate.Component;
 }
 
 

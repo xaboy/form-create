@@ -136,8 +136,7 @@ export default class Render {
                 this.vData[key](rule[key]);
         });
 
-        let data = this.vData
-            .props(props).props({value: this.vm._formData(field)})
+        let data = this.vData.props({value: this.vm._formData(field)})
             .ref(refName).key(key + 'fc' + field).on(event).on('input', (value) => {
                 this.onInput(value)
             });

@@ -108,11 +108,11 @@ export const components = {
     'form-create': _vue.extend($FormCreate())
 };
 
-export function component(name, component = null) {
+export function component(id, component) {
     if (component) {
-        return _vue.component(toString(name), component);
-    } else if (name)
-        return components[toString(name)];
+        return _vue.component(toString(id), component);
+    } else if (id)
+        return components[toString(id)];
     else
         return {...components};
 }

@@ -1,6 +1,6 @@
-import {CreateElement, VNodeDirective} from "vue";
+import {CreateElement, VNodeDirective, VueConstructor} from "vue";
 import {ScopedSlot, ScopedSlotChildren} from "vue/types/vnode";
-import {Vue} from "vue/types/vue";
+import {ExtendedVue, Vue} from "vue/types/vue";
 
 export namespace FormCreate {
 
@@ -22,6 +22,14 @@ export namespace FormCreate {
         remove();
 
         $f: $FApi<FormRule, FormConfig, FormButton>;
+    }
+
+    export interface Component {
+        (): VueConstructor[];
+
+        (id: string): VueConstructor;
+
+        (id: string, definition): ExtendedVue<Vue, {}, {}, {}, {}>;
     }
 
     export interface FormData {
