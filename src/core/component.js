@@ -6,7 +6,7 @@ const formCreateName = 'FormCreate';
 
 const $FormCreate = () => ({
     name: formCreateName,
-    mixins: [baseComponent()],
+    mixins: [baseComponent],
     props: {
         rule: {
             type: Array,

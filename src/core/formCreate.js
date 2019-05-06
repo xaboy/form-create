@@ -56,7 +56,7 @@ export function getUdfComponent() {
     }
 }
 
-export let _vue = Vue;
+export let _vue = typeof window !== 'undefined' && window.Vue ? window.Vue : Vue;
 
 export function bindHandler(rule, handler) {
     Object.defineProperties(rule, {
@@ -104,6 +104,17 @@ export function delHandler(handler) {
     handler.deleted = true;
 }
 
+export const components = {
+    'form-create': _vue.extend($FormCreate())
+};
+
+export function component(name, component = null) {
+    if (component) {
+        return _vue.component(toString(name), component);
+    } else if (name)
+        return components[name];
+}
+
 export default class FormCreate {
 
     constructor(rules, options = {}) {
@@ -138,13 +149,15 @@ export default class FormCreate {
     };
 
     static install(Vue) {
-        Vue.prototype.$formCreate = function (rules, opt = {}) {
+        const $formCreate = function (rules, opt = {}) {
             return FormCreate.create(rules, opt, this)
         };
 
-        Vue.prototype.$formCreate.maker = FormCreate.maker;
-        Vue.prototype.$formCreate.version = version;
-        Vue.prototype.$formCreate.ui = ui;
+        $formCreate.maker = FormCreate.maker;
+        $formCreate.version = version;
+        $formCreate.ui = ui;
+        $formCreate.component = component;
+        Vue.prototype.$formCreate = $formCreate;
 
         Vue.component(formCreateName, Vue.extend($FormCreate()));
         _vue = Vue;
@@ -406,6 +419,7 @@ export default class FormCreate {
 
 FormCreate.version = version;
 FormCreate.ui = ui;
+FormCreate.component = component;
 
 export function setDrive(_drive) {
     drive = _drive;

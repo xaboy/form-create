@@ -34,7 +34,10 @@
 </div>
 <script>
     window.onload = function () {
-        Vue.use(ELEMENT);
+		Vue.use(ELEMENT);
+        formCreate.component('aaaa',Vue.extend({
+			template:'<a>asdfasdf</a>'
+		}));
         //组件模式
         _vm = new Vue({
             el: '#app1',
@@ -67,6 +70,8 @@
                     mounted: function ($f) {
                         var $m = $f.model();
                         $m.goods_name.value += " now";
+                        $f.changeField('goods_name','asfsdf');
+                        // console.log(123);
                     },
                     //onReload 表单重载是触发 用与更新$f
                     onReload: function ($f) {

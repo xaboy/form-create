@@ -14,7 +14,7 @@ if (typeof window !== 'undefined') {
     window.formCreate = formCreate;
 
     if (window.Vue) {
-        install(Vue);
+        // install(Vue);
     }
 }
 

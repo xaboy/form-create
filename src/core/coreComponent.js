@@ -5,7 +5,7 @@ import {$nt} from "./util";
 export default function coreComponent(fComponent) {
     return {
         name: `${formCreateName}Core`,
-        mixins: [baseComponent()],
+        mixins: [baseComponent],
         render: () => {
             return fComponent.render();
         },
