@@ -1,4 +1,4 @@
-import {Vue, VNode} from "@form-create";
+import {Vue, VNode} from "@form-create/core";
 
 const vNode = new VNode({});
 const Modal = (options, cb) => {

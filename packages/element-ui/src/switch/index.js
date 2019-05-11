@@ -1,6 +1,5 @@
-import {Handler} from "@form-create/core";
+import {Handler as handler, creatorTypeFactory} from "@form-create/core";
 import render from "./render";
-import {creatorTypeFactory} from "@form-create/core";
 
 const name = "switch";
 

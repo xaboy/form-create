@@ -12,7 +12,7 @@ const types = {
 };
 
 const maker = Object.keys(types).reduce((initial, key) => {
-    initial[key] = creatorTypeFactory(name, m => m.props({uploadType: types[key][0], maxLength: types[key][1]}));
+    initial[key] = creatorTypeFactory(name, m => m.props({uploadType: types[key][0], limit: types[key][1]}));
     return initial
 }, {});
 

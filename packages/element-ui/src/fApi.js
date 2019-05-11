@@ -1,4 +1,4 @@
-import {deepExtend, errMsg, isFunction, isPlainObject, isUndef, toString} from "../../core/util";
+import {deepExtend, errMsg, isFunction, isPlainObject, isUndef, toString} from "@form-create/utils";
 
 export default function getGlobalApi(fComponent) {
     let vm = fComponent.vm;

@@ -1,40 +1,16 @@
-import iview from "iview";
-
-
-export const iview2 = {
-    _v: 2,
-    resetBtnType: 'ghost',
-    resetBtnIcon: 'refresh',
-    submitBtnIcon: 'ios-upload',
-    fileIcon: 'document-text',
-    fileUpIcon: 'folder',
-    imgUpIcon: 'image',
-};
-
-export const iview3 = {
-    _v: 3,
-    resetBtnType: 'default',
-    resetBtnIcon: 'md-refresh',
-    submitBtnIcon: 'ios-share',
-    fileIcon: 'md-document',
-    fileUpIcon: 'ios-folder-open',
-    imgUpIcon: 'md-images',
-};
-
-export const iviewConfig = (function () {
-    if (typeof iview === 'undefined') return iview2;
-    return (iview.version && iview.version.split('.')[0] == 3) ? iview3 : iview2;
-}());
-
-
 export default function getConfig() {
     return {
         form: {
             inline: false,
             labelPosition: 'right',
-            labelWidth: 125,
+            labelSuffix: undefined,
+            hideRequiredAsterisk: false,
+            labelWidth: '125px',
             showMessage: true,
-            autocomplete: 'off',
+            inlineMessage: false,
+            statusIcon: false,
+            validateOnRuleChange: true,
+            disabled: false,
             size: undefined,
         },
         row: {
@@ -42,52 +18,58 @@ export default function getConfig() {
             type: undefined,
             align: undefined,
             justify: undefined,
-            className: undefined
+            tag: 'div'
         },
         upload: {
-            beforeUpload: () => {
+            onPreview: function (file) {
             },
-            onProgress: (event, file, fileList) => {
+            onRemove: function (file, fileList) {
             },
-            onSuccess: (response, file, fileList) => {
+            onSuccess: function () {
             },
-            onError: (error, file, fileList) => {
+            onError: function (err, file, fileList) {
             },
-            onPreview: (file) => {
+            onProgress: function (event, file, fileList) {
             },
-            onRemove: (file, fileList) => {
+            onChange: function (file, fileList) {
             },
-            onFormatError: (file, fileList) => {
+            beforeUpload: function (file) {
             },
-            onExceededSize: (file, fileList) => {
+            beforeRemove: function (file, fileList) {
             },
-            handleIcon: 'ios-eye-outline',
-            allowRemove: true
+            allowRemove: true,
+            handleIcon: true,
         },
         submitBtn: {
             type: "primary",
-            size: "large",
-            shape: undefined,
-            long: true,
-            htmlType: "button",
-            disabled: false,
-            icon: iviewConfig.submitBtnIcon,
-            innerText: "提交",
+            size: "medium",
+            plain: false,
+            round: false,
+            circle: false,
             loading: false,
+            disabled: false,
+            icon: 'el-icon-upload',
+            width: '100%',
+            autofocus: false,
+            nativeType: "button",
+            innerText: "提交",
             show: true,
             col: undefined,
             click: undefined,
         },
         resetBtn: {
-            type: iviewConfig.resetBtnType,
-            size: "large",
-            shape: undefined,
-            long: true,
-            htmlType: "button",
-            disabled: false,
-            icon: iviewConfig.resetBtnIcon,
-            innerText: "重置",
+            type: "default",
+            size: "medium",
+            plain: false,
+            round: false,
+            circle: false,
             loading: false,
+            disabled: false,
+            icon: 'el-icon-refresh',
+            width: '100%',
+            autofocus: false,
+            nativeType: "button",
+            innerText: "重置",
             show: false,
             col: undefined,
             click: undefined,

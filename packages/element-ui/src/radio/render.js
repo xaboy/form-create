@@ -1,17 +1,17 @@
 import {Render} from "@form-create/core";
 
-
 export default class render extends Render {
     parse() {
-        let {unique, rule: {options}} = this.handler;
+        let {unique, rule: {options, props}} = this.handler;
         return [this.vNode.radioGroup(this.inputProps().get(), () => options.map((option, index) => {
-            let clone = {...option};
+            let clone = {...option}, isBtn = props.type === 'button';
             delete clone.value;
 
-            return this.vNode.radio({
+            return this.vNode[isBtn ? 'radioBtn' : 'radio']({
                 props: clone,
-                key: `ropt${index}${unique}`
+                key: (isBtn ? 'b' : 'i') + `ropt${index}${unique}`
             })
+
         }))]
     }
 }

@@ -1,5 +1,5 @@
 import {Handler} from "@form-create/core";
-import {timeStampToDate, $set, isUndef, toString} from "@form-create/utils";
+import {timeStampToDate, $set, toString} from "@form-create/utils";
 
 export default class handler extends Handler {
     init() {
@@ -8,18 +8,15 @@ export default class handler extends Handler {
         $set(props, 'type', !props.type
             ? 'date'
             : toString(props.type).toLowerCase());
-
-        if (isUndef(props.startDate))
-            $set(props, 'startDate', timeStampToDate(props.startDate));
     }
 
     toFormValue(value) {
         let isArr = Array.isArray(value), props = this.rule.props, parseValue;
-        if (['daterange', 'datetimerange'].indexOf(props.type) !== -1) {
+        if (['daterange', 'datetimerange', 'dates'].indexOf(props.type) !== -1) {
             if (isArr) {
                 parseValue = value.map((time) => !time ? '' : timeStampToDate(time));
             } else {
-                parseValue = ['', '']
+                parseValue = props.type === 'dates' ? [] : ['', ''];
             }
         } else if ('date' === props.type && props.multiple === true) {
             parseValue = toString(value);
@@ -30,13 +27,19 @@ export default class handler extends Handler {
         return parseValue;
     }
 
-    toValue() {
-        return this.el.publicStringValue;
+    toValue(n) {
+        const type = this.rule.props.type, value = this.el.formatToString(n);
+        if (!value && ['daterange', 'datetimerange'].indexOf(type) !== -1)
+            return ['', ''];
+        else
+            return value;
     }
 
     mounted() {
         super.mounted();
-        this.rule.value = this.el.publicStringValue;
-        this.vm._changeFormData(this.field, this.toFormValue(this.el.publicStringValue));
+        const value = this.el.formatToString(this.vm._formData(this.field));
+        this.rule.value = value;
+        this.setValue(value);
     }
 }
+

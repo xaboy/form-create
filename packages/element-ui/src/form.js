@@ -1,7 +1,6 @@
-import {extend, isFunction, isUndef, preventDefault} from "../../core/util";
-import VNode from "../../factory/vNode";
-import VData from "../../factory/vData";
-import {isComponent} from "../../core/formCreate";
+import {extend, isFunction, isNumeric, isUndef, preventDefault} from "@form-create/utils";
+import {VNode, VData} from "@form-create/core";
+import {componentList} from "./index";
 
 
 export default class Form {
@@ -18,7 +17,6 @@ export default class Form {
         this.refName = `cForm${id}`;
         this.cacheUnique = 0;
     }
-
 
     getRender(field) {
         return this.handlers[field].render;
@@ -60,8 +58,9 @@ export default class Form {
     }
 
     makeFormItem({type, rule, unique, field, refName}, VNodeFn, fItemUnique) {
-        let labelWidth = (!isComponent(type) && !rule.col.labelWidth && !rule.title) ? 1 : rule.col.labelWidth,
-            className = rule.className, propsData = this.vData.props({
+        let labelWidth = (!componentList[type] && !rule.col.labelWidth && !rule.title) ? 1 : rule.col.labelWidth;
+        labelWidth = isNumeric(labelWidth) ? labelWidth + 'px' : labelWidth;
+        let className = rule.className, propsData = this.vData.props({
                 prop: field,
                 label: rule.title,
                 labelFor: unique,
@@ -107,7 +106,7 @@ export default class Form {
                             ? resetBtn.click(fApi)
                             : fApi.resetFields();
                     }
-                }
+                }, style: {width: this.vm.resetProps.width}
             }, [this.vm.resetProps.innerText])
         ]);
     }
@@ -125,7 +124,7 @@ export default class Form {
                             ? submitBtn.click(fApi)
                             : fApi.submit();
                     }
-                }
+                }, style: {width: this.vm.resetProps.width}
             }, [this.vm.buttonProps.innerText])
         ]);
     }

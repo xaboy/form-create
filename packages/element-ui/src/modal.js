@@ -1,13 +1,14 @@
-import VNode from "../../factory/vNode";
-import {_vue} from "@form-create/core/config";
+import {VNode, Vue} from "@form-create/core";
+import {isUndef} from "@form-create/utils";
 
 const vNode = new VNode({});
 const Modal = (options, cb) => {
+    if (isUndef(options.width)) options.width = '30%';
     return {
         name: 'fc-modal',
         data() {
             return {
-                value: true,
+                visible: true,
                 ...options
             }
         },
@@ -16,15 +17,16 @@ const Modal = (options, cb) => {
             return vNode.modal({
                 props: this.$data,
                 on: {
-                    'on-visible-change': this.remove
+                    close: this.onClose,
+                    closed: this.onClosed,
                 }
             }, [cb(vNode, this)])
         },
         methods: {
             onClose() {
-                this.value = false;
+                this.visible = false;
             },
-            remove() {
+            onClosed() {
                 this.$el.parentNode.removeChild(this.$el);
             }
         }
@@ -32,12 +34,12 @@ const Modal = (options, cb) => {
 };
 
 export function mount(options, content) {
-    let $modal = _vue.extend(Modal(options, content)), $vm = new $modal().$mount();
+    let $modal = Vue.extend(Modal(options, content)), $vm = new $modal().$mount();
     window.document.body.appendChild($vm.$el);
 }
 
 export function defaultOnHandle(src, title) {
-    mount({title, footerHide: true}, (vNode) => {
+    mount({title}, (vNode) => {
         return vNode.make('img', {
             style: {width: '100%'},
             attrs: {src}

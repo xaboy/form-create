@@ -1,15 +1,13 @@
 import handler from "./handler";
-import {creatorTypeFactory} from "@form-create/core";
-import {defaultRenderFactory} from "@form-create/core";
+import {defaultRenderFactory, creatorTypeFactory} from "@form-create/core";
 
 const name = "timePicker";
 
-const maker = {
-    time: creatorTypeFactory(name, 'time'),
-    timeRange: creatorTypeFactory(name, 'timerange')
-};
-
 const render = defaultRenderFactory(name, true);
 
-export {render}
+const maker = {
+    time: creatorTypeFactory(name, (m) => m.props.isRange = false),
+    timeRange: creatorTypeFactory(name, (m) => m.props.isRange = true)
+};
+
 export default {handler, render, name, maker};

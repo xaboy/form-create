@@ -1,6 +1,5 @@
 import {Handler} from "@form-create/core";
-import {$set, dateFormat, isDate, isUndef} from "@form-create/utils";
-import {timeStampToDate} from "@form-create/utils";
+import {$set, dateFormat, isDate, timeStampToDate} from "@form-create/utils";
 
 
 export function getTime(date) {
@@ -9,33 +8,43 @@ export function getTime(date) {
         : date;
 }
 
+export function toDate(time) {
+    return new Date('2018-02-14 ' + time);
+}
+
 export default class handler extends Handler {
 
     init() {
         let props = this.rule.props;
         if (!props.type) $set(props, 'type', 'time');
-        if (isUndef(props.confirm)) $set(props, 'confirm', true);
     }
 
     toFormValue(value) {
         let parseValue, isArr = Array.isArray(value);
-        if ('timerange' === this.rule.props.type) {
-            if (isArr) {
+        if (this.rule.props.isRange === true) {
+            if (isArr && value.length === 2) {
                 parseValue = value.map((time) => !time ? '' : getTime(timeStampToDate(time)));
             } else {
-                parseValue = ['', ''];
+                parseValue = '';
             }
         } else {
             isArr && (value = value[0]);
             parseValue = !value ? '' : getTime(timeStampToDate(value));
         }
-        return parseValue;
+
+        return Array.isArray(parseValue) ? parseValue.map(time => !time ? '' : toDate(time)) : !parseValue ? '' : toDate(parseValue);
+    }
+
+    toValue(n) {
+        let val = this.el.formatToString(n);
+        if (this.rule.props.isRange === true && !val)
+            val = ['', ''];
+        return val;
     }
 
     mounted() {
         super.mounted();
-        this.rule.value = this.el.publicStringValue;
-        this.vm._changeFormData(this.field, this.toFormValue(this.el.publicStringValue));
+        this.rule.value = this.el.displayValue;
+        this.vm._changeFormData(this.field, this.toFormValue(this.el.displayValue));
     }
 }
-

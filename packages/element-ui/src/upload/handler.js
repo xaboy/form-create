@@ -1,7 +1,6 @@
 import {Handler} from "@form-create/core";
 import {$set, isUndef, toString} from "@form-create/utils";
 
-
 export function getFileName(pic) {
     return toString(pic).split('/').pop()
 }
@@ -14,35 +13,30 @@ export function parseValue(value) {
 }
 
 export default class handler extends Handler {
+
     init() {
-        let props = this.rule.props;
-        $set(props, 'defaultFileList', []);
-        if (isUndef(props.showUploadList)) $set(props, 'showUploadList', false);
-        if (isUndef(props.uploadType)) $set(props, 'uploadType', 'file');
-
-        if (props.maxLength === undefined) $set(props, 'maxLength', 0);
-        if (props.action === undefined) $set(props, 'action', '');
-        if (props.uploadType === 'file' && isUndef(props.handleIcon)) $set(props, 'handleIcon', false);
-
-        if (!props.modalTitle) $set(props, 'modalTitle', '预览');
-
-        $set(this.rule, 'value', parseValue(this.rule.value));
-
         this.parseValue = [];
+        const props = this.rule.props;
+        props.fileList = [];
+        props.showFileList = false;
+        if (isUndef(props.uploadType)) $set(props, 'uploadType', 'file');
+        if (!props.modalTitle) $set(props, 'modalTitle', '预览');
+        if (props.uploadType === 'file' && isUndef(props.handleIcon)) $set(props, 'handleIcon', false);
+        $set(this.rule, 'value', parseValue(this.rule.value));
     }
 
     toFormValue(value) {
         let files = parseValue(value);
         this.parseValue.splice(0, this.parseValue.length);
         files.forEach((file) => this.push(file));
-        $set(this.rule.props, 'defaultFileList', this.parseValue);
+        $set(this.rule.props, 'fileList', this.parseValue);
         return this.parseValue;
     }
 
     mounted() {
         super.mounted();
-        $set(this.rule.props, 'defaultFileList', this.parseValue);
-        this.changeParseValue(this.el.fileList || []);
+        $set(this.rule.props, 'fileList', this.parseValue);
+        this.changeParseValue(this.el.uploadFiles || []);
     }
 
     push(file) {
@@ -55,7 +49,7 @@ export default class handler extends Handler {
     toValue(parseValue) {
         if (isUndef(parseValue)) return [];
         let files = parseValue.map((file) => file.url).filter((file) => file !== undefined);
-        return this.rule.props.maxLength === 1
+        return this.rule.props.limit === 1
             ? (files[0] || '')
             : files;
     }
@@ -67,8 +61,8 @@ export default class handler extends Handler {
 
     watchValue(n) {
         let b = true;
-        this.rule.props.defaultFileList.forEach((pic) => {
-            b = b && (pic.percentage === undefined || pic.status === 'finished');
+        this.rule.props.fileList.forEach((pic) => {
+            b = b && (pic.percentage === undefined || pic.status === 'success');
         });
         if (b)
             super.watchValue(n);
@@ -76,4 +70,3 @@ export default class handler extends Handler {
 
 
 }
-

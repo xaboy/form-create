@@ -1,6 +1,5 @@
 import handler from "./handler";
-import {creatorTypeFactory} from "@form-create/core";
-import {defaultRenderFactory} from "@form-create/core";
+import {creatorTypeFactory, defaultRenderFactory} from "@form-create/core";
 
 const name = "slider";
 

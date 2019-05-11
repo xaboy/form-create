@@ -1,8 +1,7 @@
 import {Render} from "@form-create/core";
 import {errMsg, toString} from "@form-create/utils";
-import {iviewConfig} from "../config";
-import iview from 'iview';
 import {defaultOnHandle, mount} from "../modal";
+
 
 const eventList = {onOpen: 'on-open', onChange: 'on-change', onCancel: 'on-cancel', onOk: 'on-ok'};
 
@@ -34,7 +33,7 @@ export default class render extends Render {
         }).on('on-click', () => {
             this.showModel();
         }).on('input', () => {
-        }).key('ifit' + unique).class('__fc_h', hidden === true).get();
+        }).key('ifit' + unique).style({display: hidden === true ? 'none' : 'inline-block'}).get();
         return [this.vNode.input(props)];
     }
 
@@ -42,7 +41,7 @@ export default class render extends Render {
         let unique = this.handler.unique, field = this.handler.field;
         return [this.vNode.make('div', {
             key: `ifgp1${unique}`,
-            class: {'fc-upload fc-frame': true},
+            class: ['fc-upload', 'fc-frame'],
             ref: this.handler.refName,
             props: {value: this.vm._formData(field)}
         }, render),
@@ -53,7 +52,7 @@ export default class render extends Render {
     makeImage() {
         let unique = this.handler.unique;
         let vNode = this.handler.parseValue.map((src, index) => {
-            return this.vNode.make('div', {key: `ifid1${unique}${index}`, class: {'fc-files': true}}, [
+            return this.vNode.make('div', {key: `ifid1${unique}${index}`, class: ['fc-files']}, [
                 this.vNode.make('img', {key: `ifim${unique}${index}`, attrs: {src}}),
                 this.makeIcons(src, unique, index)
             ]);
@@ -65,8 +64,8 @@ export default class render extends Render {
     makeFile() {
         let unique = this.handler.unique;
         let vNode = this.handler.parseValue.map((src, index) => {
-            return this.vNode.make('div', {key: `iffd2${unique}${index}`, class: {'fc-files': true}}, [
-                this.vNode.icon({key: `iff${unique}${index}`, props: {type: iviewConfig.fileIcon, size: 40}}),
+            return this.vNode.make('div', {key: `iffd2${unique}${index}`, class: ['fc-files']}, [
+                this.vNode.icon({key: `iff${unique}${index}`, class: ['el-icon-tickets']}),
                 this.makeIcons(src, unique, index)
             ]);
         });
@@ -76,53 +75,23 @@ export default class render extends Render {
 
     makeBtn() {
         let props = this.handler.rule.props;
-        if (props.maxLength > 0 && this.handler.parseValue.length >= props.maxLength) return;
+        if (props.maxLenth > 0 && this.handler.parseValue.length >= props.maxLenth) return;
         let unique = this.handler.unique;
         return this.vNode.make('div', {
-            key: `ifbd3${unique}`, class: {'fc-upload-btn': true}, on: {
+            key: `ifbd3${unique}`, class: ['fc-upload-btn'], on: {
                 click: () => {
                     if (props.disabled === true) return;
                     this.showModel();
                 }
             }
         }, [
-            this.vNode.icon({key: `ifbi3${unique}`, props: {type: this._props.icon, size: 20}})
-        ])
-    }
-
-    makeSpin(vNode) {
-        if (true !== this._props.spin) return;
-        let unique = this.handler.unique;
-        return vNode.make('Spin', {
-            props: {fix: true},
-            key: 'ifsp' + unique,
-            ref: 'spin',
-            class: {
-                'fc-spin': true
-            }
-        }, [
-            vNode.icon({
-                props: {
-                    type: 'load-c',
-                    size: 18
-                },
-                class: {
-                    'fc-spin-icon-load': true
-                },
-                key: 'ifspi' + unique
-            }),
-            vNode.make('div', {
-                domProps: {
-                    innerHTML: toString(this._props.loadingText)
-                },
-                key: 'ifspd' + unique
-            })
+            this.vNode.icon({key: `ifbi3${unique}`, class: [this._props.icon]})
         ])
     }
 
     makeIcons(src, key, index) {
         if (this.issetIcon === true)
-            return this.vNode.make('div', {key: `ifis${key}${index}`, class: {'fc-upload-cover': true}}, () => {
+            return this.vNode.make('div', {key: `ifis${key}${index}`, class: ['fc-upload-cover']}, () => {
                 let icon = [];
                 if (this._props.handleIcon !== false)
                     icon.push(this.makeHandleIcon(src, key, index));
@@ -134,7 +103,7 @@ export default class render extends Render {
 
     makeRemoveIcon(src, key, index) {
         return this.vNode.icon({
-            key: `ifri${key}${index}`, props: {type: 'ios-trash-outline'}, nativeOn: {
+            key: `ifri${key}${index}`, 'class': ['el-icon-delete'], on: {
                 'click': () => {
                     if (this._props.disabled === true) return;
                     if (this.onRemove(src) !== false) {
@@ -149,7 +118,7 @@ export default class render extends Render {
     makeHandleIcon(src, key, index) {
         let props = this._props;
         return this.vNode.icon({
-            key: `ifhi${key}${index}`, props: {type: toString(props.handleIcon)}, nativeOn: {
+            key: `ifhi${key}${index}`, class: [toString(props.handleIcon)], on: {
                 'click': () => {
                     if (props.disabled === true) return;
                     this.onHandle(src);
@@ -159,14 +128,12 @@ export default class render extends Render {
     }
 
     onRemove(src) {
-        if (this._props.disabled === true) return;
         let fn = this.handler.rule.event['on-remove'];
         if (fn)
             return fn(src, this.handler.getValue());
     }
 
     onHandle(src) {
-        if (this._props.disabled === true) return;
         let fn = this.handler.rule.event['on-handle'];
         if (fn)
             return fn(src);
@@ -186,7 +153,7 @@ export default class render extends Render {
 
         mount({width, title}, (vNode, _vm) => {
             this.handler.$modal = _vm;
-            return [this.makeSpin(vNode), vNode.make('iframe', {
+            return [vNode.make('iframe', {
                 attrs: {
                     src
                 },
@@ -197,9 +164,6 @@ export default class render extends Render {
                 },
                 on: {
                     'load': (e) => {
-                        const spin = _vm.$refs.spin;
-                        if (spin)
-                            spin.$el.parentNode.removeChild(spin.$el);
                         try {
                             if (this.options.iframeHelper === true) {
                                 let iframe = e.path[0].contentWindow;

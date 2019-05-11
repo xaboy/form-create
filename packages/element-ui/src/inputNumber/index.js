@@ -1,6 +1,5 @@
 import handler from "./handler";
-import {creatorFactory} from "@form-create/core";
-import {defaultRenderFactory} from "@form-create/core";
+import {creatorFactory, defaultRenderFactory} from "@form-create/core";
 
 
 const name = "inputNumber";

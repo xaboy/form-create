@@ -16,7 +16,7 @@ import frame from "./frame";
 import tree from "./tree";
 import autocomplete from "./autoComplete";
 import formRender from './form';
-import {makerFactory, VNode} from '@form-create'
+import {makerFactory, VNode} from '@form-create/core'
 import getConfig from './config';
 import getGlobalApi from './fApi';
 
