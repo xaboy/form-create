@@ -1,0 +1,7 @@
+{
+  "name": "form-create",
+  "private": true,
+  "devDependencies": {
+    "lerna": "^3.13.4"
+  }
+}

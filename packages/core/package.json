@@ -1,0 +1,26 @@
+{
+  "name": "@form-create/core",
+  "version": "0.0.1",
+  "description": "",
+  "main": "src/formCreate.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xaboy/form-create.git"
+  },
+  "keywords": [
+    "form-builder"
+  ],
+  "author": "xaboy",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/xaboy/form-create/issues"
+  },
+  "homepage": "https://github.com/xaboy/form-create#readme",
+  "dependencies": {
+    "vue": "^2.6.10",
+    "@form-create/utils": "^0.0.1"
+  }
+}
