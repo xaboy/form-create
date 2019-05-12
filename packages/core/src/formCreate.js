@@ -22,6 +22,7 @@ import getMixins from './components/mixins'
 import getBaseConfig, {formCreateStyleElId, formCreateName} from "./config";
 import Vue from 'vue';
 
+console.log(process.env.UI_LiB)
 export let _vue = typeof window !== 'undefined' && window.Vue ? window.Vue : Vue;
 
 export function getDefComponent() {
@@ -33,10 +34,8 @@ export function getDefComponent() {
 }
 
 export function getRule(rule) {
-    if (isFunction(rule.getRule))
-        return rule.getRule();
-    else
-        return rule;
+    if (isFunction(rule.getRule)) return rule.getRule();
+    else return rule;
 }
 
 export function bindHandler(rule, handler) {
@@ -115,7 +114,6 @@ export default function createFormCreate(drive) {
 
 
     class FormCreate {
-
         constructor(rules, options = {}) {
             this.fRender = undefined;
             this.fCreateApi = undefined;
@@ -202,10 +200,7 @@ export default function createFormCreate(drive) {
             vm.$set(vm, 'resetProps', this.options.resetBtn);
             vm.$set(vm, 'rules', this.rules);
             vm.$set(vm, 'components', this.components);
-
-            if (this.fCreateApi === undefined)
-                this.fCreateApi = drive.getGlobalApi(this);
-
+            if (this.fCreateApi === undefined) this.fCreateApi = drive.getGlobalApi(this);
             this.fCreateApi.rule = this.rules;
             this.fCreateApi.config = this.options;
         }
@@ -216,8 +211,7 @@ export default function createFormCreate(drive) {
             this.handlers[field] = handler;
 
             if (handler.noValue === true) {
-                if (isDef === true)
-                    $set(this.components, field, rule);
+                if (isDef === true) $set(this.components, field, rule);
                 return;
             }
             $set(this.formData, field, handler.parseValue);
@@ -254,14 +248,10 @@ export default function createFormCreate(drive) {
                 }
 
                 let children = handler.rule.children;
-
-                if (!this.notField(handler.field))
-                    return console.error(`${rule.field} 字段已存在` + errMsg());
-
+                if (!this.notField(handler.field)) return console.error(`${rule.field} 字段已存在` + errMsg());
                 if (this.switchMaker) {
                     rules[index] = rule;
-                    if (!child)
-                        this.origin[index] = rule;
+                    if (!child) this.origin[index] = rule;
                     _rule = rule;
                 }
 
@@ -270,17 +260,12 @@ export default function createFormCreate(drive) {
                 if (!_rule.__handler__) {
                     bindHandler(_rule, handler);
                 }
-
-                if (isValidChildren(children))
-                    this.createHandler(children, true);
-
-                if (!child)
-                    this.fieldList.push(handler.field);
+                if (isValidChildren(children)) this.createHandler(children, true);
+                if (!child) this.fieldList.push(handler.field);
                 return handler;
             }).filter(h => h).forEach(h => {
                 h.root = rules;
             });
-
             return rules;
         }
 
@@ -293,11 +278,9 @@ export default function createFormCreate(drive) {
         mounted(vm, first = true) {
             this.vm = vm;
             let {mounted, onReload} = this.options;
-
             Object.keys(this.handlers).forEach((field) => {
                 let handler = this.handlers[field];
-                if (handler.watch.length === 0)
-                    this.addHandlerWatch(handler);
+                if (handler.watch.length === 0) this.addHandlerWatch(handler);
                 handler.mounted();
             });
 
@@ -325,8 +308,7 @@ export default function createFormCreate(drive) {
         }
 
         removeField(field) {
-            if (this.handlers[field] === undefined)
-                return;
+            if (this.handlers[field] === undefined) return;
             const index = this.fieldList.indexOf(field);
 
             delHandler(this.handlers[field]);
@@ -355,13 +337,9 @@ export default function createFormCreate(drive) {
                     handler.watchFormValue(n);
                 }
             }, {deep: true});
-
             let unWatch2 = vm.$watch(() => vm.trueData[field].value, (n) => {
                 if (n === undefined) return;
-
-                if (this.handlers[field] === undefined)
-                    return delHandler(handler);
-
+                if (this.handlers[field] === undefined) return delHandler(handler);
                 let json = JSON.stringify(n);
                 if (vm._change(field, json)) {
                     handler.watchValue(n);
@@ -386,13 +364,8 @@ export default function createFormCreate(drive) {
 
         reload(rules) {
             const vm = this.vm;
-
-            if (!rules)
-                return this.reload(this.rules);
-
-            if (!this.origin.length)
-                this.fCreateApi.refresh();
-
+            if (!rules) return this.reload(this.rules);
+            if (!this.origin.length) this.fCreateApi.refresh();
             this.origin = [...rules];
 
             Object.keys(this.handlers).forEach(field => this.removeField(field));
@@ -432,5 +405,4 @@ export default function createFormCreate(drive) {
         FormCreate,
         install
     }
-
 }

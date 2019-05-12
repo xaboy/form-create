@@ -4,7 +4,9 @@
   "description": "",
   "main": "./src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "clean": "rimraf dist/",
+    "bili": "bili --env.UI_LiB ele",
+    "build": "npm-run-all clean bili"
   },
   "repository": {
     "type": "git",
