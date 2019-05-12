@@ -2,7 +2,7 @@
   "name": "@form-create/core",
   "version": "0.0.1",
   "description": "",
-  "main": "src/formCreate.js",
+  "main": "./src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

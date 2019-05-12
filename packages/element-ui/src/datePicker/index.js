@@ -1,5 +1,5 @@
 import handler from "./handler";
-import {render, creatorTypeFactory} from "@form-create/core";
+import {Render as render, creatorTypeFactory} from "@form-create/core";
 
 const name = "datePicker";
 

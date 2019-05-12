@@ -1,6 +1,6 @@
 import {extend, isFunction, isNumeric, isUndef, preventDefault} from "@form-create/utils";
 import {VNode, VData} from "@form-create/core";
-import {componentList} from "./index";
+import {componentList} from "./diver";
 
 
 export default class Form {
