@@ -1,3 +1,4 @@
+import { makerFactory, VNode } from '@form-create/core'
 import formRender from './form';
 import hidden from './hidden';
 import checkbox from './checkbox';
@@ -16,7 +17,6 @@ import tree from "./tree";
 import upload from "./upload";
 import frame from "./frame";
 import iswitch from "./switch";
-import {makerFactory, VNode} from '@form-create/core'
 import getConfig from './config'
 import getGlobalApi from './fApi'
 

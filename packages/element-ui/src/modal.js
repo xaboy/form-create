@@ -1,6 +1,6 @@
-import {VNode, Vue} from "@form-create/core";
+import { VNode } from "@form-create/core";
 import {isUndef} from "@form-create/utils";
-
+console.log(isUndef);
 const vNode = new VNode({});
 const Modal = (options, cb) => {
     if (isUndef(options.width)) options.width = '30%';

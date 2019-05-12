@@ -17,6 +17,8 @@ function defVData() {
     }
 }
 
+console.log('VData')
+
 export default class VData {
 
     constructor() {

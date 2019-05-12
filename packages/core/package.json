@@ -2,9 +2,12 @@
   "name": "@form-create/core",
   "version": "0.0.1",
   "description": "",
-  "main": "src/formCreate.js",
+  "main": "./index.js",
+  "module": "./index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "clean": "rimraf dist/",
+    "bili": "bili --env.UI_LiB core",
+    "build": "npm run clean && npm run bili"
   },
   "repository": {
     "type": "git",
@@ -20,7 +23,7 @@
   },
   "homepage": "https://github.com/xaboy/form-create#readme",
   "dependencies": {
-    "vue": "^2.6.10",
-    "@form-create/utils": "^0.0.1"
+    "@form-create/utils": "^0.0.1",
+    "vue": "^2.6.10"
   }
 }
