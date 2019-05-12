@@ -15,7 +15,7 @@ module.exports = {
     name,
     version
   },
-  input: join(cwd, '/index.js'),
+  input: join(cwd, '/src/index.js'),
   output: {
     fileName: `${name}.js`
   },

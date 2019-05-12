@@ -17,7 +17,7 @@ module.exports = {
     name,
     version
   },
-  input: join(cwd, '/index.js'),
+  input: join(cwd, '/src/index.js'),
   extendRollupConfig: (config) => {
     config.outputConfig = Object.assign({}, config.outputConfig, {'outputConfig' : rollupConfig.outputConfig});
     console.log(config);

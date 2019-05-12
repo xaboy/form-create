@@ -1,5 +1,5 @@
-import Vue from 'vue'
-
+import Vue from 'vue';
+console.log(Vue);
 export function $nt(fn) {
     Vue.nextTick(fn);
 }

@@ -6,7 +6,7 @@
   "scripts": {
     "clean": "rimraf dist/",
     "bili": "bili --env.UI_LiB core",
-    "build": "npm run clean && npm run bili"
+    "build": "npm-run-all clean bili"
   },
   "repository": {
     "type": "git",
@@ -22,7 +22,9 @@
   },
   "homepage": "https://github.com/xaboy/form-create#readme",
   "dependencies": {
-    "@form-create/utils": "^0.0.1",
+    "@form-create/utils": "^0.0.1"
+  },
+  "devDependencies": {
     "vue": "^2.6.10"
   }
 }

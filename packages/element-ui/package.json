@@ -24,5 +24,9 @@
   "dependencies": {
     "@form-create/core": "^0.0.1",
     "@form-create/utils": "^0.0.1"
+  },
+  "devDependencies": {
+    "element-ui": "^2.8.2",
+    "vue": "^2.6.10"
   }
 }

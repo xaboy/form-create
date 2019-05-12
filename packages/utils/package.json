@@ -19,7 +19,7 @@
     "url": "https://github.com/xaboy/form-create/issues"
   },
   "homepage": "https://github.com/xaboy/form-create#readme",
-  "dependencies": {
+  "devDependencies": {
     "vue": "^2.6.10"
   }
 }

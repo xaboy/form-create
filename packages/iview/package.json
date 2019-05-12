@@ -4,7 +4,7 @@
   "description": "",
   "main": "./src/index.js",
   "scripts": {
-    "clean": "rimraf dist/",
+    "clean": "rimraf dist",
     "bili": "bili --env.UI_LiB iview",
     "build": "npm-run-all clean bili"
   },
@@ -24,5 +24,9 @@
   "dependencies": {
     "@form-create/core": "^0.0.1",
     "@form-create/utils": "^0.0.1"
+  },
+  "devDependencies": {
+    "iview": "^3.4.1",
+    "vue": "^2.6.10"
   }
 }

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<title>form-create示例</title>
+	<link href="https://cdn.jsdelivr.net/npm/element-ui@2.6.3/lib/theme-chalk/index.css" rel="stylesheet">
+
+	<!--省市区三级联动json数据-->
+	<!--<script src="../district/province_city_area.js"></script>-->
+
+	<script defer src="https://cdn.bootcss.com/vue/2.5.22/vue.js"></script>
+	<script defer src="https://cdn.jsdelivr.net/npm/element-ui@2.6.3/lib/index.js"></script>
+	<!--省市区二级联动json数据-->
+	<script defer src="../../district/province_city.js"></script>
+	<script defer src="../../dist/form-create.elm.js"></script>
+	<script defer src="mock.js"></script>
+	<script defer src="json.js"></script>
+
+</head>
+
+<body>
+<div id="app1">
+	<h2>组件模式生成</h2>
+	<form-create ref="fc" v-model="fApi" :rule="rule" :option="option" @goods-name-change="change"
+	             @btn-click="change"
+	             @xaboy-change="change" @mounted="fcMounted"></form-create>
+</div>
+<div id="app2">
+	<h2 onclick="vm.create()" style="cursor: pointer;">点击使用Vue原型方法生成</h2>
+</div>
+<div id="app3">
+	<h2 onclick="window.create2()" style="cursor: pointer;">点击使用全局方法生成</h2>
+</div>
+<script>
+    window.onload = function () {
+		Vue.use(ELEMENT);
+        //组件模式
+        _vm = new Vue({
+            el: '#app1',
+            data: {
+                formModel: {},
+                // rule: jsonMock(),
+                rule: mock(),
+                option: {
+                    //显示表单重置按钮
+                    resetBtn: true,
+                    iframeHelper: true,
+                    //
+                    upload: {
+                        'beforeUpload': function (res) {
+                            console.log(res);
+                        }
+                    },
+                    //表单提交事件
+                    onSubmit: function (formData) {
+                        alert(JSON.stringify(formData));
+                        //按钮进入提交状态
+                        $f.btn.loading();
+                        //重置按钮禁用
+                        $f.resetBtn.disabled();
+                        //按钮进入可点击状态
+                        //$f.btn.finish();
+                        //创建第二个表单
+                        // $f = that.$formCreate(mock, root);
+                    },
+                    mounted: function ($f) {
+                        var $m = $f.model();
+                        $m.goods_name.value += " now";
+                        // console.log(123);
+                    },
+                    //onReload 表单重载是触发 用与更新$f
+                    onReload: function ($f) {
+                        console.log($f);
+                    }
+                },
+                fApi: {}
+            },
+            watch: {
+                'formData.address': {
+                    handler: function (n) {
+                        console.log(n);
+                    },
+                    deep: true
+                }
+            },
+            methods: {
+                change: function (res) {
+                    console.log(res);
+                },
+                fcMounted($f){
+                    console.log('form-create mounted',$f);
+                }
+            },
+            mounted: function () {
+                console.log(this.fApi);
+                //实际开发中记得加 var
+                window.$f = this.fApi;
+                this.formModel = this.fApi.model();
+                //动态添加表单元素
+                this.fApi.append($r, 'pic');
+            }
+        });
+
+
+        //$formCreate构造方法生成
+
+        var _m1 = false;
+        vm = new Vue({
+            el: '#app2',
+            data: {
+                formData: {},
+                rule: mock()
+            },
+            watch: {
+                'formData.address': {
+                    handler: function (n) {
+                        console.log(n);
+                    },
+                    deep: true
+                }
+            },
+            methods: {
+                create: function () {
+                    if (_m1) return;
+                    _m1 = true;
+
+                    //var root = document.getElementById('app2');
+                    var root = this.$el;
+                    //frame,upload组件请在线上环境测试
+                    $f_2 = this.$formCreate(this.rule, {
+                        //表单插入的父级元素
+                        el: root,
+                        //显示表单重置按钮
+                        resetBtn: true,
+                        //表单提交事件
+                        onSubmit: function (formData) {
+                            alert(JSON.stringify(formData));
+                            //按钮进入提交状态
+                            $f_2.btn.loading();
+                            //重置按钮禁用
+                            $f_2.resetBtn.disabled();
+                            //按钮进入可点击状态
+                            //$f_2.btn.finish();
+                            //创建第二个表单
+                            $f2 = that.$formCreate(mock, root);
+                        },
+                        mounted: function () {
+                            _m1 = false;
+                        }
+                    });
+                    //动态添加表单元素
+                    $f_2.append($r);
+                    //获取表单数据，双向数据绑定
+                    this.formData = $f_2.model();
+                    console.log(this.formData);
+                },
+                fcMounted($f){
+                    console.log('form-create mounted',$f);
+                }
+            },
+            mounted: function () {
+                //this.create();
+	            this.$on('fc:mounted',this.fcMounted);
+            }
+        });
+
+
+        var _m2 = false;
+        window.create2 = function () {
+            if (_m2) return;
+            _m2 = true;
+            _rule = mock();
+
+
+            //全局方法生成
+
+
+            $f_3 = formCreate.create(_rule, {
+                //表单插入的父级元素
+                el: document.getElementById('app3'),
+                //显示表单重置按钮
+                resetBtn: true,
+                //表单提交事件
+                onSubmit: function (formData) {
+                    alert(JSON.stringify(formData));
+                    //按钮进入提交状态
+                    $f_3.btn.loading();
+                    //重置按钮禁用
+                    $f_3.resetBtn.disabled();
+                    //按钮进入可点击状态
+                    //$f_3.btn.finish();
+                },
+                mounted: function () {
+                    _m2 = false;
+                }
+            });
+        }
+    }
+
+</script>
+</body>
+
+</html>

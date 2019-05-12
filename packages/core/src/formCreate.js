@@ -62,9 +62,13 @@ export function delHandler(handler) {
 
 export default function createFormCreate(drive) {
 
-    drive.install(FormCreate);
 
-    const components = {}, version = drive.version, ui = dirve.name, mixin = getMixins(components);
+    const components = {},
+          version = drive.version,
+        // TODO:
+        // ui = dirve.name,
+          ui = '',
+          mixin = getMixins(components);
 
     function setComponent(id, component) {
         if (component) {
@@ -400,6 +404,9 @@ export default function createFormCreate(drive) {
     }
 
     components['form-create'] = _vue.extend($FormCreate(FormCreate, mixin));
+
+    //
+    drive.install(FormCreate);
 
     return {
         FormCreate,
