@@ -16,7 +16,6 @@ import frame from "./components/frame";
 import tree from "./components/tree";
 import autocomplete from "./components/autoComplete";
 import formRender from './form';
-import {makerFactory, VNode} from '@form-create/core'
 import getConfig from './config';
 import getGlobalApi from './fApi';
 
@@ -83,18 +82,13 @@ export const nodes = {
     autoComplete: 'AutoComplete',
 };
 
-export function install(FormCreate) {
-    FormCreate.maker = makerFactory(componentList);
-    VNode.use(nodes);
-}
-
 export default {
+    ui: process.env.UI,
+    version: process.env.VERSION,
+    nodes,
     componentList,
     formRender,
     style,
     getGlobalApi,
     getConfig,
-    ui: process.env.UI,
-    version: process.env.VERSION,
-    install,
 }

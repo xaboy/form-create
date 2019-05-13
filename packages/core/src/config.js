@@ -8,6 +8,7 @@ export default function getBaseConfig() {
         },
         el: null,
         switchMaker: true,
+        iframeHelper: false,
     };
 }
 

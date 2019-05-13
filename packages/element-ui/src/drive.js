@@ -16,7 +16,6 @@ import tree from "./components/tree";
 import upload from "./components/upload";
 import frame from "./components/frame";
 import iswitch from "./components/switch";
-import {makerFactory, VNode} from '@form-create/core'
 import getConfig from './config'
 import getGlobalApi from './fApi'
 
@@ -68,18 +67,15 @@ export const nodes = {
     autoComplete: 'el-autocomplete',
 };
 
-export function install(FormCreate) {
-    FormCreate.maker = makerFactory(componentList);
-    VNode.use(nodes);
-}
 
 export default {
+    ui: process.env.UI,
+    version: process.env.VERSION,
+    nodes,
     componentList,
     formRender,
     style,
     getConfig,
     getGlobalApi,
-    ui: process.env.UI,
-    version: process.env.VERSION,
     install,
 }

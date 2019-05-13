@@ -21,6 +21,8 @@ import Render from "./factory/render";
 import getMixins from './components/mixins'
 import getBaseConfig, {formCreateStyleElId, formCreateName} from "./config";
 import Vue from 'vue';
+import {makerFactory} from "./index";
+import VNode from "./factory/vNode";
 
 export let _vue = typeof window !== 'undefined' && window.Vue ? window.Vue : Vue;
 
@@ -61,9 +63,10 @@ export function delHandler(handler) {
 
 export default function createFormCreate(drive) {
 
-
     const components = {},
-        mixin = getMixins(components);
+        mixin = getMixins(components), maker = makerFactory(drive.componentList);
+
+    VNode.use(drive.nodes);
 
     function setComponent(id, component) {
         if (component) {
@@ -149,7 +152,7 @@ export default function createFormCreate(drive) {
                 return FormCreate.create(rules, opt, this)
             };
 
-            $formCreate.maker = FormCreate.maker;
+            $formCreate.maker = maker;
             $formCreate.version = drive.version;
             $formCreate.ui = drive.ui;
             $formCreate.component = setComponent;
@@ -390,7 +393,7 @@ export default function createFormCreate(drive) {
     FormCreate.version = drive.version;
     FormCreate.ui = drive.ui;
     FormCreate.component = setComponent;
-
+    FormCreate.maker = maker;
 
     function install(Vue) {
         if (Vue._installedFormCreate === true) return;
@@ -399,8 +402,6 @@ export default function createFormCreate(drive) {
     }
 
     components['form-create'] = _vue.extend($FormCreate(FormCreate, mixin));
-
-    drive.install(FormCreate);
 
     return {
         FormCreate,
