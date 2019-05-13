@@ -1,24 +1,30 @@
 import {Render} from "@form-create/core";
-import {extend, isUndef} from "@form-create/utils";
-import {defaultOnHandle} from "../modal";
-
+import {extend, isUndef, toString} from "@form-create/utils";
+import {iviewConfig} from "../../config";
+import {defaultOnHandle} from "../../modal";
 
 export default class render extends Render {
     init() {
         let handler = this.handler;
         this.uploadOptions = extend({...this.options.upload}, this.handler.rule.props);
         this.issetIcon = this.uploadOptions.allowRemove || this.uploadOptions.handleIcon;
-        this.propsData = this.vData.props(this.uploadOptions).class('fc-upload-con', true)
+        this.propsData = this.vData.props(this.uploadOptions)
             .props('onSuccess', (...args) => this.onSuccess(...args))
-            // .props('onRemove', (...args) => this.onRemove(...args))
+            .props('onRemove', (...args) => this.onRemove(...args))
+            .props('beforeUpload', (...args) => this.beforeUpload(...args))
             .ref(handler.refName).key(`fip${handler.unique}`).get();
     }
 
-    // onRemove(...args) {
-    //     this.handler.changeParseValue(this.handler.el.uploadFiles);
-    //     this.uploadOptions.onRemove && this.uploadOptions.onRemove(...args);
-    //     this.sync();
-    // }
+    onRemove(...args) {
+        this.handler.changeParseValue(this.handler.el.fileList);
+        this.uploadOptions.onRemove && this.uploadOptions.onRemove(...args);
+        this.sync();
+    }
+
+    beforeUpload(...args) {
+        this.handler.changeParseValue(this.handler.el.fileList);
+        this.uploadOptions.beforeUpload && this.uploadOptions.beforeUpload(...args);
+    }
 
     onSuccess(response, file, fileList) {
         let url = this.uploadOptions.onSuccess.call(null, response, file, fileList);
@@ -31,7 +37,7 @@ export default class render extends Render {
             if (index !== -1)
                 fileList.splice(index, 1);
         }
-        this.handler.changeParseValue(this.handler.el.uploadFiles);
+        this.handler.changeParseValue(fileList);
     }
 
     onHandle(src) {
@@ -45,16 +51,16 @@ export default class render extends Render {
     parse() {
         let {unique, field} = this.handler;
         this.init();
-        if (this.uploadOptions.handleIcon === true) this.uploadOptions.handleIcon = 'el-icon-view';
+        if (this.uploadOptions.handleIcon === true) this.uploadOptions.handleIcon = 'ios-eye-outline';
         let value = this.vm._formData(field),
-            render = this.uploadOptions.showFileList ? [] : [...value.map((file, index) => {
-                if (!isUndef(file.percentage) && file.showProgress !== false && file.status !== 'success') {
+            render = this.uploadOptions.showUploadList ? [] : [...value.map((file, index) => {
+                if (file.showProgress) {
                     return this.makeProgress(file, `uppg${index}${unique}`);
-                } else if (file.status === undefined || file.status === 'success') {
+                } else if (file.status === undefined || file.status === 'finished') {
                     return this.makeUploadView(file.url, `upview${index}${unique}`, index)
                 }
             })];
-        const isShow = (!this.uploadOptions.limit || this.uploadOptions.limit > value.length);
+        const isShow = (!this.uploadOptions.maxLength || this.uploadOptions.maxLength > value.length);
         render.push(this.makeUploadBtn(unique, isShow));
         return [this.vNode.make('div', {
             key: `div4${unique}`,
@@ -68,12 +74,12 @@ export default class render extends Render {
     }
 
     makeUploadView(src, key, index) {
-        return this.vNode.make('div', {key: `div1${key}`, class: ['fc-files']}, () => {
+        return this.vNode.make('div', {key: `div1${key}`, class: {'fc-files': true}}, () => {
             let container = [];
             if (this.handler.rule.props.uploadType === 'image') {
                 container.push(this.vNode.make('img', {key: `img${key}`, attrs: {src}}));
             } else {
-                container.push(this.vNode.icon({key: `file${key}`, 'class': ['el-icon-tickets']}))
+                container.push(this.vNode.icon({key: `file${key}`, props: {type: iviewConfig.fileIcon, size: 40}}))
             }
             if (this.issetIcon)
                 container.push(this.makeIcons(src, key, index));
@@ -82,7 +88,7 @@ export default class render extends Render {
     }
 
     makeIcons(src, key, index) {
-        return this.vNode.make('div', {key: `div2${key}`, class: ['fc-upload-cover']}, () => {
+        return this.vNode.make('div', {key: `div2${key}`, class: {'fc-upload-cover': true}}, () => {
             let icon = [];
             if (!!this.uploadOptions.handleIcon)
                 icon.push(this.makeHandleIcon(src, key, index));
@@ -93,10 +99,11 @@ export default class render extends Render {
     }
 
     makeProgress(file, unique) {
-        return this.vNode.make('div', {key: `div3${unique}`, class: ['fc-files']}, [
+        return this.vNode.make('div', {key: `div3${unique}`, class: {'fc-files': true}}, [
             this.vNode.progress({
                 key: `upp${unique}`,
-                props: {percentage: file.percentage, type: 'circle', width: 54},
+                props: {percent: file.percentage, hideInfo: true},
+                style: {width: '90%'}
             })
         ]);
     }
@@ -104,10 +111,13 @@ export default class render extends Render {
     makeUploadBtn(unique, isShow) {
         return this.vNode.upload(this.propsData,
             isShow === true ? [
-                this.vNode.make('div', {key: `div5${unique}`, class: ['fc-upload-btn']}, [
+                this.vNode.make('div', {key: `div5${unique}`, class: {'fc-upload-btn': true}}, [
                     this.vNode.icon({
                         key: `upi${unique}`,
-                        'class': ['el-icon-upload2']
+                        props: {
+                            type: this.handler.rule.props.uploadType === 'file' ? 'ios-cloud-upload-outline' : iviewConfig.imgUpIcon,
+                            size: 20
+                        }
                     })
                 ])
             ] : []);
@@ -115,14 +125,12 @@ export default class render extends Render {
 
     makeRemoveIcon(src, key, index) {
         return this.vNode.icon({
-            key: `upri${key}${index}`, 'class': ['el-icon-delete'], on: {
+            key: `upri${key}${index}`, props: {type: 'ios-trash-outline'}, nativeOn: {
                 'click': () => {
                     if (this.uploadOptions.disabled === true) return;
-                    let fileList = this.handler.el.uploadFiles, file = fileList[index];
-                    this.handler.el.handleRemove(file);
-
-                    // fileList.splice(index, 1);
-                    // this.onRemove(file, fileList);
+                    let fileList = this.handler.el.fileList, file = fileList[index];
+                    fileList.splice(index, 1);
+                    this.onRemove(file, fileList);
                 }
             }
         });
@@ -130,7 +138,7 @@ export default class render extends Render {
 
     makeHandleIcon(src, key, index) {
         return this.vNode.icon({
-            key: `uphi${key}${index}`, 'class': ['el-icon-view'], on: {
+            key: `uphi${key}${index}`, props: {type: toString(this.uploadOptions.handleIcon)}, nativeOn: {
                 'click': () => {
                     if (this.uploadOptions.disabled === true) return;
                     this.onHandle(src);
@@ -139,3 +147,4 @@ export default class render extends Render {
         });
     }
 }
+

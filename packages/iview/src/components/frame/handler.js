@@ -1,6 +1,6 @@
 import {Handler} from "@form-create/core";
 import {$set, isUndef} from "@form-create/utils";
-import {iviewConfig} from "../config";
+import {iviewConfig} from "../../config";
 
 
 export function parseRule(rule) {

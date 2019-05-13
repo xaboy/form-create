@@ -1,7 +1,7 @@
 import {Render} from "@form-create/core";
 import {errMsg, toString} from "@form-create/utils";
-import {iviewConfig} from "../config";
-import {defaultOnHandle, mount} from "../modal";
+import {iviewConfig} from "../../config";
+import {defaultOnHandle, mount} from "../../modal";
 
 const eventList = {onOpen: 'on-open', onChange: 'on-change', onCancel: 'on-cancel', onOk: 'on-ok'};
 
