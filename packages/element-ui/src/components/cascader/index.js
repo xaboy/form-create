@@ -1,8 +1,8 @@
 import handler from './handler'
-import {defaultRenderFactory} from "@form-create/core";
+import Render from '../../factory/render';
 
 const name = 'cascader';
 
-const render = defaultRenderFactory(name);
+const render = Render.factory(name);
 
 export default {handler, render, name};

@@ -1,4 +1,4 @@
-import {Render} from "@form-create/core";
+import Render from '../../factory/render';
 import {isPlainObject, isUndef} from "@form-create/utils";
 
 

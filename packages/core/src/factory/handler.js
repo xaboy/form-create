@@ -120,7 +120,7 @@ export default class Handler {
 function defRule() {
     return {
         validate: [],
-        event: {},
+        // event: {},
         col: {},
         emit: [],
         props: {},
@@ -148,7 +148,7 @@ function parseRule(rule, vm, noVal) {
         options: parseArray(rule.options)
     };
 
-    parseRule.event = extend(process.env.UI === 'iview' ? parseEvent(rule.event) : rule.event, parseRule.emitEvent);
+    // parseRule.event = extend(rule.event, parseRule.emitEvent);
     parseRule.on = parseOn(rule.on, parseRule.emitEvent);
 
     Object.keys(parseRule).forEach((k) => {
@@ -188,8 +188,6 @@ function parseEmit(field, emitPrefix, emit, vm) {
             if (emitKey && fieldKey !== emitKey)
                 vm.$emit(emitKey, ...arg);
         };
-        if (process.env.UI === 'iview')
-            event[`on-${eventName}`] = event[eventName];
     });
 
     return event

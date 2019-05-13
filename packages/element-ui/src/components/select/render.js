@@ -1,4 +1,4 @@
-import {Render} from "@form-create/core";
+import Render from '../../factory/render';
 import {toDefSlot} from "@form-create/utils";
 
 

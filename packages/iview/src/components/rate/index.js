@@ -1,8 +1,8 @@
 import handler from "./handler";
-import {defaultRenderFactory} from "@form-create/core";
+import {Render} from "@form-create/core";
 
 const name = "rate";
 
-const render = defaultRenderFactory(name);
+const render = Render.factory(name);
 
 export default {handler, render, name};

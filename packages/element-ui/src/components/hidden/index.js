@@ -1,4 +1,5 @@
-import {Handler, creatorFactory, Render} from "@form-create/core";
+import {Handler as handler, creatorFactory} from "@form-create/core";
+import Render from '../../factory/render';
 
 const name = "hidden";
 

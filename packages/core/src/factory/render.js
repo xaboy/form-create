@@ -4,7 +4,6 @@ import {
     errMsg,
     extend,
     isFunction,
-    isNumber,
     isString,
     isUndef,
     isValidChildren,
@@ -13,12 +12,6 @@ import {
 import VNode from "./vNode";
 import VData from "./vData";
 import {_vue as Vue} from '../formCreate';
-
-const upperCaseReg = /[A-Z]/;
-
-function isAttr(name, value) {
-    return (!upperCaseReg.test(name) && (isString(value) || isNumber(value)))
-}
 
 const $de = debounce((fn) => fn(), 1);
 
@@ -141,13 +134,6 @@ export default class Render {
                 this.onInput(value)
             });
 
-        if (process.env.UI !== 'iview')
-            data.attrs(Object.keys(props).reduce((initial, val) => {
-                if (isAttr(val, props[val]))
-                    initial[val] = props[val];
-                return initial;
-            }, {}));
-
         if (isUndef(props.size))
             data.props({size: this.options.form.size});
 
@@ -161,19 +147,16 @@ export default class Render {
         if (!vm._change(field, JSON.stringify(trueValue))) return;
         handler.setValue(trueValue);
         handler.watchFormValue(value);
-        if (process.env.UI !== 'iview')
-            handler.render.sync();
     }
 
-}
-
-export function defaultRenderFactory(node, setKey = false) {
-    return class render extends Render {
-        parse(form) {
-            const props = this.inputProps();
-            if (setKey)
-                props.key(this.handler.key);
-            return [this.vNode[node](props.get(), this.childrenParse(form))];
+    static factory(node, setKey = false) {
+        return class render extends this {
+            parse(form) {
+                const props = this.inputProps();
+                if (setKey)
+                    props.key(this.handler.key);
+                return [this.vNode[node](props.get(), this.childrenParse(form))];
+            }
         }
     }
 

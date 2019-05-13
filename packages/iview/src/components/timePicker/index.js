@@ -1,5 +1,5 @@
 import handler from "./handler";
-import {creatorTypeFactory, defaultRenderFactory} from "@form-create/core";
+import {creatorTypeFactory, Render} from "@form-create/core";
 
 const name = "timePicker";
 
@@ -8,7 +8,7 @@ const maker = {
     timeRange: creatorTypeFactory(name, 'timerange')
 };
 
-const render = defaultRenderFactory(name, true);
+const render = Render.factory(name, true);
 
 export {render}
 export default {handler, render, name, maker};

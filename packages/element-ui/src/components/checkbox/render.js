@@ -1,4 +1,4 @@
-import {Render} from "@form-create/core";
+import Render from '../../factory/render';
 
 export default class render extends Render {
     parse() {

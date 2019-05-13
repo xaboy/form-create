@@ -1,4 +1,4 @@
-import {Render} from "@form-create/core";
+import Render from '../../factory/render';
 import {extend, isUndef} from "@form-create/utils";
 import {defaultOnHandle} from "../../modal";
 

@@ -1,5 +1,6 @@
 import handler from "./handler";
-import {creatorTypeFactory, defaultRenderFactory} from "@form-create/core";
+import {creatorTypeFactory} from "@form-create/core";
+import Render from '../../factory/render';
 
 const name = "input";
 
@@ -10,6 +11,6 @@ const maker = ['password', 'url', 'email', 'text', 'textarea'].reduce((initial, 
 
 maker.idate = creatorTypeFactory(name, 'date');
 
-const render = defaultRenderFactory(name);
+const render = Render.factory(name);
 
 export default {handler, render, name, maker};

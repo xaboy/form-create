@@ -1,5 +1,6 @@
 import handler from "./handler";
-import {creatorTypeFactory, defaultRenderFactory} from "@form-create/core";
+import {creatorTypeFactory} from "@form-create/core";
+import Render from '../../factory/render';
 
 const name = "slider";
 
@@ -7,6 +8,6 @@ const maker = {
     sliderRange: creatorTypeFactory(name, true, 'range')
 };
 
-const render = defaultRenderFactory(name);
+const render = Render.factory(name);
 
 export default {handler, render, name, maker};
