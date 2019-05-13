@@ -151,7 +151,7 @@ export default function createFormCreate(drive) {
 
             $formCreate.maker = FormCreate.maker;
             $formCreate.version = drive.version;
-            $formCreate.ui = dirve.name;
+            $formCreate.ui = drive.name;
             $formCreate.component = setComponent;
             Vue.prototype.$formCreate = $formCreate;
 
@@ -388,7 +388,7 @@ export default function createFormCreate(drive) {
     }
 
     FormCreate.version = drive.version;
-    FormCreate.ui = dirve.name;
+    FormCreate.ui = drive.name;
     FormCreate.component = setComponent;
 
 

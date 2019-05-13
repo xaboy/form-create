@@ -1,7 +1,7 @@
 import createFormCreate from '@form-create/core';
-import diver from './diver';
+import drive from './drive';
 
-const {FormCreate, install} = createFormCreate(diver);
+const {FormCreate, install} = createFormCreate(drive);
 
 if (typeof window !== 'undefined') {
     window.formCreate = FormCreate;

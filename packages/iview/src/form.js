@@ -1,6 +1,6 @@
 import {extend, isFunction, isUndef, preventDefault} from "@form-create/utils";
 import {VData, VNode} from "@form-create/core";
-import {componentList} from "./diver";
+import {componentList} from "./drive";
 
 
 export default class Form {
