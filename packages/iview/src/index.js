@@ -1,16 +1,17 @@
 import createFormCreate from '@form-create/core';
 import diver from './diver';
-const formCreate = createFormCreate(diver);
+
+const {FormCreate, install} = createFormCreate(diver);
 
 if (typeof window !== 'undefined') {
-    window.formCreate = formCreate;
+    window.formCreate = FormCreate;
     if (window.Vue) {
         install(Vue);
     }
 }
 
-const maker = formCreate.maker;
+const maker = FormCreate.maker;
 
 export {maker}
 
-export default formCreate;
+export default FormCreate;

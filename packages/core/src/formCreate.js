@@ -22,7 +22,6 @@ import getMixins from './components/mixins'
 import getBaseConfig, {formCreateStyleElId, formCreateName} from "./config";
 import Vue from 'vue';
 
-console.log(process.env.UI_LiB)
 export let _vue = typeof window !== 'undefined' && window.Vue ? window.Vue : Vue;
 
 export function getDefComponent() {
@@ -64,11 +63,7 @@ export default function createFormCreate(drive) {
 
 
     const components = {},
-          version = drive.version,
-        // TODO:
-        // ui = dirve.name,
-          ui = '',
-          mixin = getMixins(components);
+        mixin = getMixins(components);
 
     function setComponent(id, component) {
         if (component) {
@@ -155,8 +150,8 @@ export default function createFormCreate(drive) {
             };
 
             $formCreate.maker = FormCreate.maker;
-            $formCreate.version = version;
-            $formCreate.ui = ui;
+            $formCreate.version = drive.version;
+            $formCreate.ui = dirve.name;
             $formCreate.component = setComponent;
             Vue.prototype.$formCreate = $formCreate;
 
@@ -392,8 +387,8 @@ export default function createFormCreate(drive) {
 
     }
 
-    FormCreate.version = version;
-    FormCreate.ui = ui;
+    FormCreate.version = drive.version;
+    FormCreate.ui = dirve.name;
     FormCreate.component = setComponent;
 
 
@@ -405,7 +400,6 @@ export default function createFormCreate(drive) {
 
     components['form-create'] = _vue.extend($FormCreate(FormCreate, mixin));
 
-    //
     drive.install(FormCreate);
 
     return {

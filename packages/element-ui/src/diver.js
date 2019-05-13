@@ -80,6 +80,10 @@ export default {
     style,
     getConfig,
     getGlobalApi,
+    name: 'process.env.UI',
+    config: {
+        eventPrefix: false
+    },
 
     install
 }
