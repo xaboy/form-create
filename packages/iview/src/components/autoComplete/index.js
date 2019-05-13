@@ -7,7 +7,7 @@ const maker = {
     auto: creatorFactory(name)
 };
 
-const render = Render.fade(name, true);
+const render = Render.factory(name, true);
 
 
 export default {handler, render, name, maker};

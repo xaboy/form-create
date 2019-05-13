@@ -74,16 +74,12 @@ export function install(FormCreate) {
 }
 
 export default {
-
     componentList,
     formRender,
     style,
     getConfig,
     getGlobalApi,
-    name: 'process.env.UI',
-    config: {
-        eventPrefix: false
-    },
-
-    install
+    ui: process.env.UI,
+    version: process.env.VERSION,
+    install,
 }

@@ -94,10 +94,7 @@ export default {
     style,
     getGlobalApi,
     getConfig,
-    name: 'process.env.UI',
-    config: {
-        eventPrefix: true
-    },
-
-    install
+    ui: process.env.UI,
+    version: process.env.VERSION,
+    install,
 }
