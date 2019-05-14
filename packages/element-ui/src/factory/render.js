@@ -10,7 +10,7 @@ function isAttr(name, value) {
 export default class Render extends BaseRender {
 
     inputProps() {
-        const data = super.inputProps();
+        const data = super.inputProps(), props = this.handler.rule.props;
 
         data.attrs(Object.keys(props).reduce((initial, val) => {
             if (isAttr(val, props[val]))
