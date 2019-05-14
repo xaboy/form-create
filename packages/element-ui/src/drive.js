@@ -20,8 +20,23 @@ import getConfig from './config'
 import getGlobalApi from './fApi'
 
 export const componentList = {
-    hidden, checkbox, radio, input, autocomplete, inputnumber, select, cascader, slider, timepicker, datepicker,
-    rate, colorpicker, tree, upload, frame, switch: iswitch
+    hidden,
+    checkbox,
+    radio,
+    input,
+    autocomplete,
+    inputnumber,
+    select,
+    cascader,
+    slider,
+    timepicker,
+    datepicker,
+    rate,
+    colorpicker,
+    tree,
+    upload,
+    frame,
+    switch: iswitch
 };
 
 

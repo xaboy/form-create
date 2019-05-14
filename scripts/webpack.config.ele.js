@@ -4,7 +4,7 @@
  * @Author: djkloop
  * @Date: 2019-05-12 23:16:42
  * @Last Modified by: djkloop
- * @Last Modified time: 2019-05-12 23:21:42
+ * @Last Modified time: 2019-05-14 11:37:30
  */
 const path = require('path');
 const webpack = require('webpack');
@@ -30,30 +30,30 @@ config.entry('app').add(baseSrcPath).end();
 // console.log(config.toString());
 
 const eleConfig = webpackMergeConfig(baseWebpackConfig, {
-  entry: {
-    app: baseSrcPath
-  },
-  output: {
-    filename: 'form-create.js'
-  },
-  plugins: [
-    new HTMLWebpackPlugin({
-      template: baseTemplatePath,
-      filename: baseTemplatePath,
-      inject: true
-    }),
-    new webpack.DefinePlugin({
-      'process.env.UI': UI
-    })
-  ],
-  devServer: {
-    openPage: devServerOpenPage
-  },
-  resolve: {
-    alias: {
-      [UI]: UI
+    entry: {
+        app: baseSrcPath
+    },
+    output: {
+        filename: 'form-create.ele.js'
+    },
+    plugins: [
+        new HTMLWebpackPlugin({
+            template: baseTemplatePath,
+            filename: baseTemplatePath,
+            inject: true
+        }),
+        new webpack.DefinePlugin({
+            'process.env.UI': 'element'
+        })
+    ],
+    devServer: {
+        openPage: devServerOpenPage
+    },
+    resolve: {
+        alias: {
+            [UI]: UI
+        }
     }
-  }
 });
 
 module.exports = eleConfig;

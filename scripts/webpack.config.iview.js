@@ -4,7 +4,7 @@
  * @Author: djkloop
  * @Date: 2019-05-12 22:07:32
  * @Last Modified by: djkloop
- * @Last Modified time: 2019-05-13 00:18:06
+ * @Last Modified time: 2019-05-14 10:34:52
  */
 const path = require('path');
 const webpack = require('webpack');
@@ -27,32 +27,31 @@ config.entry('app').add(baseSrcPath).end();
 // console.log(baseDistPath)
 // console.log(baseTemplatePath)
 // console.log(config.toString());
-console.log(11222);
 const iviewConfig = webpackMergeConfig(baseWebpackConfig, {
-  entry: {
-    app: baseSrcPath
-  },
-  output: {
-    filename: 'form-create.iview.js'
-  },
-  plugins: [
-    new HTMLWebpackPlugin({
-      template: baseTemplatePath,
-      filename: baseTemplatePath,
-      inject: true
-    }),
-    new webpack.DefinePlugin({
-      'process.env.UI': UI
-    })
-  ],
-  devServer: {
-    openPage: devServerOpenPage
-  },
-  resolve: {
-    alias: {
-      [UI]: UI
+    entry: {
+        app: baseSrcPath
+    },
+    output: {
+        filename: 'form-create.iview.js'
+    },
+    plugins: [
+        new HTMLWebpackPlugin({
+            template: baseTemplatePath,
+            filename: baseTemplatePath,
+            inject: true
+        }),
+        new webpack.DefinePlugin({
+            'process.env.UI': UI
+        })
+    ],
+    devServer: {
+        openPage: devServerOpenPage
+    },
+    resolve: {
+        alias: {
+            [UI]: UI
+        }
     }
-  }
 });
 
 module.exports = iviewConfig;
