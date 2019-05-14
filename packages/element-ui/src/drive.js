@@ -92,5 +92,4 @@ export default {
     style,
     getConfig,
     getGlobalApi,
-    install,
 }

@@ -17,11 +17,11 @@ const $de = debounce((fn) => fn(), 1);
 
 export default class Render {
 
-    constructor(vm, handler, options = {}) {
-        this.vm = vm;
+    constructor(handler) {
+        this.vm = handler.vm;
         this.handler = handler;
-        this.options = options;
-        this.vNode = new VNode(vm);
+        this.options = handler.fc.options;
+        this.vNode = new VNode(this.vm);
         this.vData = new VData;
         this.cache = null;
         this.$tickEvent = [];
