@@ -1,11 +1,11 @@
 import {deepExtend, errMsg, isFunction, isPlainObject, isUndef, toString} from "@form-create/utils";
 
-export default function getGlobalApi(fComponent) {
-    let vm = fComponent.vm;
+export default function getGlobalApi(fc) {
+    let vm = fc.vm;
 
     function tidyFields(fields, all = false) {
         if (!fields)
-            fields = all ? Object.keys(fComponent.handlers) : vm._formField();
+            fields = all ? Object.keys(fc.handlers) : vm._formField();
         else if (!Array.isArray(fields))
             fields = [fields];
         return fields;
@@ -13,7 +13,7 @@ export default function getGlobalApi(fComponent) {
 
     return {
         formData() {
-            const handlers = fComponent.handlers;
+            const handlers = fc.handlers;
 
             return Object.keys(handlers).reduce((initial, field) => {
                 const handler = handlers[field];
@@ -29,7 +29,7 @@ export default function getGlobalApi(fComponent) {
         },
         getValue(field) {
             field = toString(field);
-            const handler = fComponent.handlers[field];
+            const handler = fc.handlers[field];
             if (isUndef(handler)) return;
             let val = undefined;
             if (handler.noValue === true)
@@ -50,7 +50,7 @@ export default function getGlobalApi(fComponent) {
         },
         changeValue(field, value) {
             field = toString(field);
-            let handler = fComponent.handlers[field];
+            let handler = fc.handlers[field];
             if (handler === undefined)
                 return;
             if (isFunction(value))
@@ -68,7 +68,7 @@ export default function getGlobalApi(fComponent) {
             this.setValue(field, value);
         },
         removeField: (field) => {
-            let handler = fComponent.handlers[field];
+            let handler = fc.handlers[field];
             if (!handler)
                 return;
             let fields = handler.root.map(rule => rule.__field__), index = fields.indexOf(toString(field));
@@ -78,17 +78,17 @@ export default function getGlobalApi(fComponent) {
             vm._refresh();
         },
         validate: (successFn, errorFn) => {
-            fComponent.getFormRef().validate((valid) => {
+            fc.getFormRef().validate((valid) => {
                 valid === true ? (successFn && successFn()) : (errorFn && errorFn());
             });
         },
         validateField: (field, callback) => {
             if (!vm.cptData[field])
                 return;
-            fComponent.getFormRef().validateField(field, callback);
+            fc.getFormRef().validateField(field, callback);
         },
         resetFields(fields) {
-            let handlers = fComponent.handlers;
+            let handlers = fc.handlers;
             tidyFields(fields, true).forEach(field => {
                 let handler = handlers[field];
                 if (!handler) return;
@@ -107,7 +107,7 @@ export default function getGlobalApi(fComponent) {
         },
         fields: () => vm._formField(),
         append: (rule, after) => {
-            let fields = fComponent.fieldList, index = fields.indexOf(toString(after));
+            let fields = fc.fieldList, index = fields.indexOf(toString(after));
 
             if (rule.field && fields.indexOf(toString(rule.field)) !== -1)
                 return console.error(`${rule.field} 字段已存在` + errMsg());
@@ -116,11 +116,11 @@ export default function getGlobalApi(fComponent) {
                 index = fields.length;
             } else if (index === -1)
                 return;
-            fComponent.rules.splice(index + 1, 0, rule);
+            fc.rules.splice(index + 1, 0, rule);
 
         },
         prepend: (rule, after) => {
-            let fields = fComponent.fieldList, index = fields.indexOf(toString(after));
+            let fields = fc.fieldList, index = fields.indexOf(toString(after));
 
             if (rule.field && fields.indexOf(toString(rule.field)) !== -1)
                 return console.error(`${rule.field} 字段已存在` + errMsg());
@@ -131,7 +131,7 @@ export default function getGlobalApi(fComponent) {
                 return;
             else
                 index--;
-            fComponent.rules.splice(index + 1, 0, rule);
+            fc.rules.splice(index + 1, 0, rule);
 
         },
         submit(successFn, failFn) {
@@ -140,13 +140,13 @@ export default function getGlobalApi(fComponent) {
                 if (isFunction(successFn))
                     successFn(formData, this);
                 else
-                    fComponent.options.onSubmit && fComponent.options.onSubmit(formData);
+                    fc.options.onSubmit && fc.options.onSubmit(formData);
             }, () => failFn && failFn());
         },
         hidden(fields, hidden = true) {
             tidyFields(fields).forEach((field) => {
-                const handler = fComponent.handlers[field];
-                if (!fComponent.handlers[field])
+                const handler = fc.handlers[field];
+                if (!fc.handlers[field])
                     return;
                 vm.$set(vm._trueData(field).props, 'hidden', !!hidden);
                 handler.render.sync();
@@ -154,7 +154,7 @@ export default function getGlobalApi(fComponent) {
         },
         visibility(fields, visibility = true) {
             tidyFields(fields).forEach((field) => {
-                const handler = fComponent.handlers[field];
+                const handler = fc.handlers[field];
                 if (!handler)
                     return;
                 vm.$set(vm._trueData(field).props, 'visibility', !!visibility);
@@ -164,7 +164,7 @@ export default function getGlobalApi(fComponent) {
         disabled(fields, disabled = true) {
             disabled = !!disabled;
             tidyFields(fields, true).forEach((field) => {
-                const handler = fComponent.handlers[field];
+                const handler = fc.handlers[field];
                 if (!handler)
                     return;
 
@@ -178,7 +178,7 @@ export default function getGlobalApi(fComponent) {
         },
         clearValidateState(fields) {
             tidyFields(fields).forEach(field => {
-                const handler = fComponent.handlers[field];
+                const handler = fc.handlers[field];
                 if (!handler)
                     return;
 
@@ -246,7 +246,7 @@ export default function getGlobalApi(fComponent) {
             }
         },
         closeModal: (field) => {
-            const handler = fComponent.handlers[field];
+            const handler = fc.handlers[field];
             if (handler && handler.$modal) {
                 handler.$modal.onClose();
                 handler.$modal = null;
@@ -256,10 +256,10 @@ export default function getGlobalApi(fComponent) {
             vm.$set(node, field, value);
         },
         reload: (rules) => {
-            fComponent.reload(rules)
+            fc.reload(rules)
         },
         options: (options) => {
-            deepExtend(fComponent.options, options);
+            deepExtend(fc.options, options);
             vm._sync();
         },
         onSuccess(fn) {
@@ -269,8 +269,8 @@ export default function getGlobalApi(fComponent) {
             this.options({onSubmit: fn});
         },
         sync: (field, callback) => {
-            if (fComponent.handlers[field])
-                fComponent.handlers[field].render.sync(callback);
+            if (fc.handlers[field])
+                fc.handlers[field].render.sync(callback);
         },
         refresh: () => {
             vm._refresh();
