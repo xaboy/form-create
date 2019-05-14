@@ -1,5 +1,5 @@
-import {$set, extend, isFunction, isPlainObject} from "@form-create/utils";
-import VData from "./vData";
+import {$set, extend, isFunction, isPlainObject} from '@form-create/utils';
+import VData from './vData';
 
 function baseRule() {
     return {
@@ -11,22 +11,20 @@ function baseRule() {
         emit: [],
         template: null,
         emitPrefix: null
-    }
+    };
 }
 
 export function creatorFactory(name) {
-    return (title, field, value, props = {}) => new Creator(name, title, field, value, props)
+    return (title, field, value, props = {}) => new Creator(name, title, field, value, props);
 }
 
 export function creatorTypeFactory(name, type, typeName = 'type') {
     return (title, field, value, props = {}) => {
         const maker = new Creator(name, title, field, value, props);
-        if (isFunction(type))
-            type(maker);
-        else
-            maker.props(typeName, type);
-        return maker
-    }
+        if (isFunction(type)) type(maker);
+        else maker.props(typeName, type);
+        return maker;
+    };
 }
 
 export default class Creator extends VData {
@@ -35,13 +33,12 @@ export default class Creator extends VData {
 
         this.rule = extend(baseRule(), {type, title, field, value});
         this.props({hidden: false, visibility: false});
-        if (isPlainObject(props))
-            this.props(props);
+        if (isPlainObject(props)) this.props(props);
     }
 
     type(type) {
         this.props('type', type);
-        return this
+        return this;
     }
 
     get() {
@@ -54,34 +51,34 @@ export default class Creator extends VData {
 
     setValue(value) {
         $set(this.rule, 'value', value);
-        return this
+        return this;
     }
 }
 
 const keyAttrs = ['emitPrefix', 'className', 'defaultSlot'];
 
-keyAttrs.forEach((attr) => {
-    Creator.prototype[attr] = function (value) {
+keyAttrs.forEach(attr => {
+    Creator.prototype[attr] = function(value) {
         $set(this.rule, attr, value);
         return this;
-    }
+    };
 });
 
 const objAttrs = ['event', 'col'];
 
-objAttrs.forEach((attr) => {
-    Creator.prototype[attr] = function (opt) {
+objAttrs.forEach(attr => {
+    Creator.prototype[attr] = function(opt) {
         $set(this.rule, attr, extend(this.rule[attr], opt));
         return this;
-    }
+    };
 });
 
 const arrAttrs = ['validate', 'options', 'children', 'emit'];
 
-arrAttrs.forEach((attr) => {
-    Creator.prototype[attr] = function (opt) {
+arrAttrs.forEach(attr => {
+    Creator.prototype[attr] = function(opt) {
         if (!Array.isArray(opt)) opt = [opt];
         $set(this.rule, attr, this.rule[attr].concat(opt));
         return this;
-    }
+    };
 });

@@ -1,4 +1,4 @@
-import {$del, deepExtend} from "@form-create/utils";
+import {$del, deepExtend} from '@form-create/utils';
 
 export default function getMixins(components) {
     return {
@@ -14,7 +14,7 @@ export default function getMixins(components) {
                 $f: {},
                 isShow: true,
                 unique: 1
-            }
+            };
         },
         components,
         methods: {
@@ -22,8 +22,9 @@ export default function getMixins(components) {
                 return Object.keys(this.trueData);
             },
             _changeFormData(field, value) {
-                if (Object.keys(this.cptData).indexOf(field) !== -1)
+                if (Object.keys(this.cptData).indexOf(field) !== -1) {
                     this.$set(this.cptData, field, value);
+                }
             },
             _changeValue(field, value) {
                 this.$set(this.trueData[field], 'value', value);
@@ -42,9 +43,7 @@ export default function getMixins(components) {
                 $del(this.trueData, field);
                 $del(this.jsonData, field);
 
-                if (this.components[field] !== undefined)
-                    $del(this.components, field);
-
+                if (this.components[field] !== undefined) $del(this.components, field);
             },
             _buttonProps(props) {
                 this.$set(this, 'buttonProps', deepExtend(this.buttonProps, props));
@@ -52,8 +51,7 @@ export default function getMixins(components) {
             _resetProps(props) {
                 this.$set(this, 'resetProps', deepExtend(this.resetProps, props));
             },
-            __init() {
-            },
+            __init() {},
             _refresh() {
                 this.unique += 1;
             },
@@ -72,5 +70,5 @@ export default function getMixins(components) {
         beforeDestroy() {
             this._fComponent.reload([]);
         }
-    }
-};
+    };
+}

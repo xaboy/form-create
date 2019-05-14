@@ -1,4 +1,4 @@
-import {$nt} from "@form-create/utils";
+import {$nt} from '@form-create/utils';
 import {formCreateName} from '../config';
 
 export default function $FormCreate(formCreate, mixin) {
@@ -10,13 +10,13 @@ export default function $FormCreate(formCreate, mixin) {
                 type: Array,
                 required: true,
                 default: () => {
-                    return {}
+                    return {};
                 }
             },
             option: {
                 type: Object,
                 default: () => {
-                    return {}
+                    return {};
                 },
                 required: false
             },
@@ -46,18 +46,23 @@ export default function $FormCreate(formCreate, mixin) {
 
             _fc.mounted(this);
 
-            this.$watch('rule', n => {
+            this.$watch('rule', (n) => {
                 _fc.reload(n);
                 this.$emit('input', this.$f);
             });
-            this.$watch('option', n => {
-                $nt(() => {
-                    this._sync();
-                });
-            }, {deep: true});
+
+            this.$watch(
+                'a',
+                (n) => {
+                    $nt(() => {
+                        this._sync();
+                    });
+                },
+                {deep: true}
+            );
 
             this.__init();
             this.$emit('input', this.$f);
         }
-    }
-};
+    };
+}

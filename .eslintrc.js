@@ -1,11 +1,15 @@
 module.exports = {
     'env': {
-        'browser': true,
-        'es6': true
+        "browser": true,
+        "node": true,
+        "es6": true,
+        "jest": true,
+        "commonjs": true
     },
     'extends': [
         'eslint:recommended',
-        'plugin:vue/essential'
+        'plugin:vue/essential',
+        'plugin:prettier/recommended'
     ],
     'globals': {
         'Atomics': 'readonly',
@@ -34,6 +38,13 @@ module.exports = {
         'semi': [
             'error',
             'always'
-        ]
+        ],
+        "prettier/prettier": [
+            "warn",
+            {
+                "arrowParens": "always"
+            }
+        ],
+        "no-unused-vars":"warn"
     }
 };

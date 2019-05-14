@@ -1,5 +1,5 @@
 import {formCreateName} from '../config';
-import {$nt} from "@form-create/utils";
+import {$nt} from '@form-create/utils';
 
 export default function coreComponent(fComponent, mixin) {
     return {
@@ -23,13 +23,17 @@ export default function coreComponent(fComponent, mixin) {
             this.$watch('rules', n => {
                 this._fComponent.reload(n);
             });
-            this.$watch('option', n => {
-                $nt(() => {
-                    this._sync();
-                });
-            }, {deep: true});
+            this.$watch(
+                'option',
+                () => {
+                    $nt(() => {
+                        this._sync();
+                    });
+                },
+                {deep: true}
+            );
 
             this.__init();
         }
-    }
-};
+    };
+}
