@@ -77,12 +77,12 @@ export default function createFormCreate(drive) {
             return {...components};
     }
 
-    function getComponent(vm, rule, createOptions) {
+    function getComponent(fc, rule) {
         let name = toString(rule.type).toLowerCase(),
             component = isComponent(name)
                 ? drive.componentList[name] : getDefComponent();
 
-        return new component.handler(vm, rule, component.render, createOptions, component.noValue);
+        return new component.handler(fc, rule, component.render, component.noValue);
     }
 
     function isComponent(type) {
@@ -209,7 +209,7 @@ export default function createFormCreate(drive) {
 
 
         setHandler(handler) {
-            let rule = handler.rule, {field, isDef} = handler;
+            let {field, isDef, rule} = handler;
             this.handlers[field] = handler;
 
             if (handler.noValue === true) {
@@ -246,7 +246,7 @@ export default function createFormCreate(drive) {
 
                     handler.refresh();
                 } else {
-                    handler = getComponent(this.vm, rule, this.options);
+                    handler = getComponent(this, rule);
                 }
 
                 let children = handler.rule.children;

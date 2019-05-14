@@ -10,7 +10,7 @@ export default class Form {
         this.vm = vm;
         this.handlers = handlers;
         this.renderSort = fieldList;
-        this._fc = fComponent;
+        this.fc = fComponent;
         this.vNode = new VNode(vm);
         this.vData = new VData();
         this.unique = id;
@@ -34,9 +34,9 @@ export default class Form {
             });
             this.cacheUnique = vm.unique;
         }
-        this.propsData = this.vData.props(this._fc.options.form).props({
-            model: this._fc.formData,
-            rules: this._fc.validate,
+        this.propsData = this.vData.props(this.fc.options.form).props({
+            model: this.fc.formData,
+            rules: this.fc.validate,
             key: 'form' + this.unique
         })
             .ref(this.refName).nativeOn({submit: preventDefault}).class('form-create', true).key(this.unique).get();
@@ -50,7 +50,7 @@ export default class Form {
         if (vn.length > 0)
             vn.push(this.makeFormBtn(unique));
 
-        return this.vNode.form(this.propsData, vn.length > 0 ? [this.vNode.row(extend({props: this._fc.options.row || {}}, {key: 'row' + unique}), vn)] : []);
+        return this.vNode.form(this.propsData, vn.length > 0 ? [this.vNode.row(extend({props: this.fc.options.row || {}}, {key: 'row' + unique}), vn)] : []);
     }
 
     makeComponent(render) {
@@ -94,14 +94,14 @@ export default class Form {
     }
 
     makeResetBtn(unique, span) {
-        const resetBtn = this._fc.options.resetBtn,
-            props = isUndef(this._fc.options.resetBtn.col) ? {span: span, push: 1} : resetBtn.col;
+        const resetBtn = this.fc.options.resetBtn,
+            props = isUndef(this.fc.options.resetBtn.col) ? {span: span, push: 1} : resetBtn.col;
 
         return this.vNode.col({props: props, key: `${this.unique}col3`}, [
             this.vNode.button({
                 key: `frsbtn${unique}`, props: this.vm.resetProps, on: {
                     "click": () => {
-                        const fApi = this._fc.fCreateApi;
+                        const fApi = this.fc.fCreateApi;
                         isFunction(resetBtn.click)
                             ? resetBtn.click(fApi)
                             : fApi.resetFields();
@@ -112,14 +112,14 @@ export default class Form {
     }
 
     makeSubmitBtn(unique, span) {
-        const submitBtn = this._fc.options.submitBtn,
-            props = isUndef(this._fc.options.submitBtn.col) ? {span: span} : submitBtn.col;
+        const submitBtn = this.fc.options.submitBtn,
+            props = isUndef(this.fc.options.submitBtn.col) ? {span: span} : submitBtn.col;
 
         return this.vNode.col({props: props, key: `${this.unique}col4`}, [
             this.vNode.button({
                 key: `fbtn${unique}`, props: this.vm.buttonProps, on: {
                     "click": () => {
-                        const fApi = this._fc.fCreateApi;
+                        const fApi = this.fc.fCreateApi;
                         isFunction(submitBtn.click)
                             ? submitBtn.click(fApi)
                             : fApi.submit();

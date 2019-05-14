@@ -13,15 +13,16 @@ import {
 
 export default class Handler {
 
-    constructor(vm, _rule, Render, options, noValue) {
+    constructor(fc, _rule, Render, noValue) {
 
-        const rule = parseRule(_rule, vm, noValue);
+        const rule = parseRule(_rule, fc.vm, noValue);
 
+        this.fc = fc;
         this.rule = rule;
         this.noValue = noValue;
         this.type = toString(rule.type).toLowerCase();
         this.isDef = true;
-        this.vm = vm;
+        this.vm = fc.vm;
         this.el = {};
         this.watch = [];
         this.root = [];
@@ -45,7 +46,7 @@ export default class Handler {
             $set(rule.props, 'elementId', this.unique);
 
         this.refresh();
-        this.render = new Render(vm, this, options);
+        this.render = new Render(this);
     }
 
     refresh() {
