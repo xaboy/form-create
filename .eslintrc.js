@@ -26,20 +26,12 @@ module.exports = {
             'error',
             4
         ],
-        'linebreak-style': [
-            'error',
-            'unix'
-        ],
         'quotes': [
             'error',
             'single'
         ],
-        'semi': [
-            'error',
-            'always'
-        ],
-        'block-spacing':'error',
-        'no-unused-vars':'warn',
-        'object-curly-spacing':'error',
+        'block-spacing': 'error',
+        'no-unused-vars': 'warn',
+        'object-curly-spacing': 'error',
     }
 };

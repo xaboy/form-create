@@ -6,6 +6,7 @@
         "dev:ele": "cross-env UI_LiB=element-ui webpack-dev-server --config=./scripts/webpack.config.ele.js",
         "dev:iview": "cross-env UI_LiB=iview webpack-dev-server --config=./scripts/webpack.config.iview.js",
         "dev": "xxx",
+        "commit": "git cz",
         "lint": "eslint *.js"
     },
     "devDependencies": {
@@ -15,7 +16,10 @@
         "babel-loader": "^8.0.6",
         "bili": "^4.7.4",
         "chalk": "^2.4.2",
+        "commitizen": "^3.1.1",
         "cross-env": "^5.2.0",
+        "cz-conventional-changelog": "^2.1.0",
+        "cz-customizable": "^6.2.0",
         "eslint": "^5.16.0",
         "eslint-plugin-vue": "^5.2.2",
         "html-webpack-plugin": "^3.2.0",
@@ -28,5 +32,10 @@
         "webpack-cli": "^3.3.2",
         "webpack-dev-server": "^3.3.1",
         "webpack-merge": "^4.2.1"
+    },
+    "config": {
+        "commitizen": {
+            "path": "./node_modules/cz-customizable"
+        }
     }
 }
