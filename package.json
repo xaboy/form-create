@@ -1,59 +1,56 @@
 {
-  "name": "form-create",
-  "private": true,
-  "scripts": {
-    "build": "lerna run build",
-    "dev:ele": "cross-env UI_LiB=element-ui webpack-dev-server --config=./scripts/webpack.config.ele.js",
-    "dev:iview": "cross-env UI_LiB=iview webpack-dev-server --config=./scripts/webpack.config.iview.js",
-    "dev": "xxx",
-    "commit": "git cz",
-    "lint": "eslint *.js"
-  },
-  "devDependencies": {
-    "@babel/cli": "^7.4.4",
-    "@babel/core": "^7.4.4",
-    "@babel/plugin-syntax-jsx": "^7.2.0",
-    "@babel/preset-env": "^7.4.4",
-    "@vue/babel-helper-vue-jsx-merge-props": "^1.0.0",
-    "@vue/babel-preset-jsx": "^1.0.0",
-    "babel-loader": "^8.0.6",
-    "bili": "^4.7.4",
-    "chalk": "^2.4.2",
-    "commitizen": "^3.1.1",
-    "cross-env": "^5.2.0",
-    "cz-conventional-changelog": "^2.1.0",
-    "cz-customizable": "^6.2.0",
-    "eslint": "^5.16.0",
-    "eslint-plugin-vue": "^5.2.2",
-    "html-webpack-plugin": "^3.2.0",
-    "husky": "^2.3.0",
-    "lerna": "^3.13.4",
-    "lint-staged": "^8.1.7",
-    "npm-run-all": "^4.1.5",
-    "rimraf": "^2.6.3",
-    "vue": "^2.6.10",
-    "vue-loader": "^15.7.0",
-    "vue-template-compiler": "^2.6.10",
-    "webpack": "^4.31.0",
-    "webpack-chain": "^6.0.0",
-    "webpack-cli": "^3.3.2",
-    "webpack-dev-server": "^3.3.1",
-    "webpack-merge": "^4.2.1"
-  },
-  "config": {
-    "commitizen": {
-      "path": "./node_modules/cz-customizable"
+    "name": "form-create",
+    "private": true,
+    "scripts": {
+        "build": "lerna run build",
+        "dev:ele": "cross-env UI_LiB=element-ui webpack-dev-server --config=./scripts/webpack.config.ele.js",
+        "dev:iview": "cross-env UI_LiB=iview webpack-dev-server --config=./scripts/webpack.config.iview.js",
+        "dev": "xxx",
+        "commit": "git cz",
+        "lint": "eslint *.js"
+    },
+    "devDependencies": {
+        "bili": "^4.7.4",
+        "chalk": "^2.4.2",
+        "commitizen": "^3.1.1",
+        "cross-env": "^5.2.0",
+        "cz-conventional-changelog": "^2.1.0",
+        "cz-customizable": "^6.2.0",
+        "eslint": "^5.16.0",
+        "eslint-plugin-vue": "^5.2.2",
+        "html-webpack-plugin": "^3.2.0",
+        "husky": "^2.3.0",
+        "lerna": "^3.13.4",
+        "lint-staged": "^8.1.7",
+        "npm-run-all": "^4.1.5",
+        "rimraf": "^2.6.3",
+        "vue": "^2.6.10",
+        "vue-loader": "^15.7.0",
+        "vue-template-compiler": "^2.6.10",
+        "webpack": "^4.31.0",
+        "webpack-chain": "^6.0.0",
+        "webpack-cli": "^3.3.2",
+        "webpack-dev-server": "^3.3.1",
+        "webpack-merge": "^4.2.1"
+    },
+    "config": {
+        "commitizen": {
+            "path": "./node_modules/cz-customizable"
+        }
+    },
+    "_husky": {
+        "hooks": {
+            "pre-commit": "lint-staged"
+        }
+    },
+    "lint-staged": {
+        "*.js": [
+            "eslint --fix",
+            "git add"
+        ]
+    },
+    "dependencies": {
+        "@vue/cli-plugin-babel": "^3.7.0",
+        "rollup-plugin-vue": "^5.0.0"
     }
-  },
-  "_husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
-  "lint-staged": {
-    "*.js": [
-      "eslint --fix",
-      "git add"
-    ]
-  }
 }

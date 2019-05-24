@@ -4,7 +4,7 @@
  * @Author: djkloop
  * @Date: 2019-05-12 21:58:25
  * @Last Modified by: djkloop
- * @Last Modified time: 2019-05-13 00:29:06
+ * @Last Modified time: 2019-05-24 12:09:14
  */
 const webpack = require('webpack');
 const pkg = require('../package.json');
@@ -20,17 +20,17 @@ module.exports = {
         umdNamedDefine: true
     },
     module: {
-        rules: [
-            {
-                test: /\.js$/,
-                exclude: /node_modules/,
-                use: {
-                    loader: 'babel-loader',
-                }
-            }, {
-                test: /\.vue$/,
-                loader: 'vue-loader'
-            },
+        rules: [{
+            test: /\.js$/,
+            exclude: /node_modules/,
+            use: {
+                loader: 'babel-loader',
+            }
+        },
+        {
+            test: /\.vue$/,
+            loader: 'vue-loader'
+        }
         ]
     },
     devServer: {
@@ -47,9 +47,10 @@ module.exports = {
     ],
     resolve: {
         alias: {
-            'vue': 'vue/dist/vue.js',
+            'vue$': 'vue/dist/vue.esm.js',
             'iview': 'iview',
-        }
+        },
+        extensions: ['*', '.js', '.vue', '.json']
     }
 
 }

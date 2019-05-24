@@ -1,6 +1,0 @@
-{
-  "presets": [
-    "@babel/plugin-syntax-jsx",
-    "@vue/babel-preset-jsx"
-  ]
-}
