@@ -16,7 +16,7 @@ const config = new Config();
 
 const UI = 'iview';
 const basePublicPath = path.join(__dirname, '/../', `/packages/${UI}`);
-const baseSrcPath = path.join(basePublicPath + `/src/index.js`);
+const baseSrcPath = path.join(basePublicPath + '/src/index.js');
 const baseTemplatePath = path.join(basePublicPath + '/public/index.html');
 const devServerOpenPage = path.join(`packages/${UI}/public/`);
 
@@ -45,7 +45,8 @@ const iviewConfig = webpackMergeConfig(baseWebpackConfig, {
         })
     ],
     devServer: {
-        openPage: devServerOpenPage
+        openPage: devServerOpenPage,
+        hot: true,
     },
     resolve: {
         alias: {

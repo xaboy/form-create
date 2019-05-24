@@ -1,4 +1,4 @@
-import {$del, deepExtend} from '@form-create/utils';
+import {$del, $nt, deepExtend} from '@form-create/utils';
 
 export default function getMixins(components) {
     return {
@@ -51,7 +51,6 @@ export default function getMixins(components) {
             _resetProps(props) {
                 this.$set(this, 'resetProps', deepExtend(this.resetProps, props));
             },
-            __init() {},
             _refresh() {
                 this.unique += 1;
             },
@@ -68,7 +67,16 @@ export default function getMixins(components) {
             }
         },
         beforeDestroy() {
-            this._fComponent.reload([]);
+            this._fc.reload([]);
+        },
+        mounted() {
+            this._fc.handle.mounted();
+
+            this.$watch('option', n => {
+                $nt(() => {
+                    this._refresh();
+                });
+            }, {deep: true});
         }
     };
 }

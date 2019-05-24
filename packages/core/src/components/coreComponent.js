@@ -1,39 +1,26 @@
-import {formCreateName} from '../config';
-import {$nt} from '@form-create/utils';
+import {formCreateName} from '../core/config';
 
-export default function coreComponent(fComponent, mixin) {
+export default function coreComponent(fc, mixin) {
     return {
         name: `${formCreateName}Core`,
         mixins: [mixin],
         render: () => {
-            return fComponent.render();
+            return fc.handle.run();
         },
         beforeCreate() {
-            this._fComponent = fComponent;
-            fComponent._type = 'rules';
-            fComponent.beforeBoot(this);
+            this._fc = fc;
+            fc.beforeCreate(this);
         },
         created() {
-            fComponent.boot();
-            this.$f = fComponent.fCreateApi;
+            fc.handle.created();
+            this.$f = fc.fCreateApi;
         },
         mounted() {
-            fComponent.mounted(this);
+            fc.handle.mounted();
 
             this.$watch('rules', n => {
-                this._fComponent.reload(n);
+                fc.handle.reloadRule(n);
             });
-            this.$watch(
-                'option',
-                () => {
-                    $nt(() => {
-                        this._sync();
-                    });
-                },
-                {deep: true}
-            );
-
-            this.__init();
         }
     };
 }

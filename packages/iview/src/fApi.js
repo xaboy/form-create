@@ -1,11 +1,12 @@
-import {deepExtend, errMsg, isFunction, isPlainObject, isUndef, toString} from "@form-create/utils";
+import {deepExtend, errMsg, isFunction, isPlainObject, isUndef, toString} from '@form-create/utils';
 
-export default function getGlobalApi(fc) {
-    let vm = fc.vm;
+
+//TODO 直接复制给 form.FormData 可减少一次渲染
+export default function getGlobalApi(h) {
 
     function tidyFields(fields, all = false) {
         if (!fields)
-            fields = all ? Object.keys(fc.handlers) : vm._formField();
+            fields = all ? Object.keys(h.parsers) : h.vm._formField();
         else if (!Array.isArray(fields))
             fields = [fields];
         return fields;
@@ -13,31 +14,31 @@ export default function getGlobalApi(fc) {
 
     return {
         formData() {
-            const handlers = fc.handlers;
+            const parsers = h.parsers;
 
-            return Object.keys(handlers).reduce((initial, field) => {
-                const handler = handlers[field];
-                if (handler.noValue === true) {
-                    handler.$emit('input', (val) => {
+            return Object.keys(parsers).reduce((initial, field) => {
+                const parser = parsers[field];
+                if (h.isNoVal(parser)) {
+                    h.$emit(parser, 'input', (val) => {
                         initial[field] = val;
                     }, this);
                 } else {
-                    initial[field] = deepExtend({}, {value: vm._value(field)}).value;
+                    initial[field] = deepExtend({}, {value: h.vm._value(field)}).value;
                 }
                 return initial;
             }, {});
         },
         getValue(field) {
             field = toString(field);
-            const handler = fc.handlers[field];
-            if (isUndef(handler)) return;
+            const parser = h.parsers[field];
+            if (!parser) return;
             let val = undefined;
-            if (handler.noValue === true)
-                handler.$emit('input', (v) => {
+            if (h.isNoVal(parser))
+                h.$emit(parser, 'input', (v) => {
                     val = v;
                 }, this);
             else
-                val = deepExtend({}, {value: vm._value(field)}).value;
+                val = deepExtend({}, {value: h.vm._value(field)}).value;
             return val;
         },
         setValue(field, value) {
@@ -50,64 +51,64 @@ export default function getGlobalApi(fc) {
         },
         changeValue(field, value) {
             field = toString(field);
-            let handler = fc.handlers[field];
-            if (handler === undefined)
+            let parser = h.parsers[field];
+            if (parser === undefined)
                 return;
             if (isFunction(value))
-                value(vm._trueData(field), (changeValue) => {
+                value(h.vm._trueData(field), (changeValue) => {
                     this.changeField(field, changeValue);
                 });
             else {
-                if (handler.noValue === true)
-                    handler.$emit('set-value', value, this);
+                if (h.isNoVal(parser))
+                    h.$emit(parser, 'set-value', value, this);
                 else
-                    handler.setValue(value);
+                    h.setFormData(field, parser.toFormValue(value));
             }
         },
         changeField(field, value) {
             this.setValue(field, value);
         },
         removeField: (field) => {
-            let handler = fc.handlers[field];
-            if (!handler)
+            let parser = h.parsers[field];
+            if (!parser)
                 return;
-            let fields = handler.root.map(rule => rule.__field__), index = fields.indexOf(toString(field));
+            let fields = parser.root.map(rule => rule.__field__), index = fields.indexOf(toString(field));
             if (index === -1)
                 return;
-            handler.root.splice(index, 1);
-            vm._refresh();
+            parser.root.splice(index, 1);
+            h.vm._refresh();
         },
-        validate: (successFn, errorFn) => {
-            fc.getFormRef().validate((valid) => {
-                valid === true ? (successFn && successFn()) : (errorFn && errorFn());
+        validate: (callback) => {
+            h.getFormRef().validate((valid) => {
+                callback && callback(valid);
             });
         },
         validateField: (field, callback) => {
-            if (!vm.cptData[field])
+            if (!h.vm.cptData[field])
                 return;
-            fc.getFormRef().validateField(field, callback);
+            h.getFormRef().validateField(field, callback);
         },
         resetFields(fields) {
-            let handlers = fc.handlers;
+            let parsers = h.parsers;
             tidyFields(fields, true).forEach(field => {
-                let handler = handlers[field];
-                if (!handler) return;
+                let parser = parsers[field];
+                if (!parser) return;
 
-                if (!handler.noValue)
-                    handler.reset();
+                if (h.isNoVal(parser))
+                    h.$emit(parser, 'reset-field', this);
                 else
-                    handler.$emit('reset-field', this);
+                    h.reset(parser);
             });
-            this.refresh();
+            h.refresh();
 
         },
         destroy: () => {
-            vm.$el.parentNode.removeChild(vm.$el);
-            vm.$destroy();
+            h.vm.$el.parentNode.removeChild(h.vm.$el);
+            h.vm.$destroy();
         },
-        fields: () => vm._formField(),
+        fields: () => h.vm._formField(),
         append: (rule, after) => {
-            let fields = fc.fieldList, index = fields.indexOf(toString(after));
+            let fields = h.fieldList, index = fields.indexOf(toString(after));
 
             if (rule.field && fields.indexOf(toString(rule.field)) !== -1)
                 return console.error(`${rule.field} 字段已存在` + errMsg());
@@ -116,11 +117,11 @@ export default function getGlobalApi(fc) {
                 index = fields.length;
             } else if (index === -1)
                 return;
-            fc.rules.splice(index + 1, 0, rule);
+            h.rules.splice(index + 1, 0, rule);
 
         },
         prepend: (rule, after) => {
-            let fields = fc.fieldList, index = fields.indexOf(toString(after));
+            let fields = h.fieldList, index = fields.indexOf(toString(after));
 
             if (rule.field && fields.indexOf(toString(rule.field)) !== -1)
                 return console.error(`${rule.field} 字段已存在` + errMsg());
@@ -131,70 +132,65 @@ export default function getGlobalApi(fc) {
                 return;
             else
                 index--;
-            fc.rules.splice(index + 1, 0, rule);
+            h.rules.splice(index + 1, 0, rule);
 
         },
         submit(successFn, failFn) {
-            this.validate(() => {
-                let formData = this.formData();
-                if (isFunction(successFn))
-                    successFn(formData, this);
-                else
-                    fc.options.onSubmit && fc.options.onSubmit(formData);
-            }, () => failFn && failFn());
+            this.validate((valid) => {
+                if (valid) {
+                    let formData = this.formData();
+                    if (isFunction(successFn))
+                        successFn(formData, this);
+                    else
+                        h.options.onSubmit && h.options.onSubmit(formData);
+                } else {
+                    failFn && failFn()
+                }
+            });
         },
-        hidden(fields, hidden = true) {
-            tidyFields(fields).forEach((field) => {
-                const handler = fc.handlers[field];
-                if (!fc.handlers[field])
-                    return;
-                vm.$set(vm._trueData(field).props, 'hidden', !!hidden);
-                handler.render.sync();
-            })
-        },
-        visibility(fields, visibility = true) {
-            tidyFields(fields).forEach((field) => {
-                const handler = fc.handlers[field];
-                if (!handler)
-                    return;
-                vm.$set(vm._trueData(field).props, 'visibility', !!visibility);
-                handler.render.sync();
-            })
-        },
-        disabled(fields, disabled = true) {
-            disabled = !!disabled;
+        hidden(hidden, fields) {
             tidyFields(fields, true).forEach((field) => {
-                const handler = fc.handlers[field];
-                if (!handler)
+                const parser = h.parsers[field];
+                if (!parser)
                     return;
-
-                if (!handler.noValue)
-                    vm.$set(vm._trueData(field).props, 'disabled', disabled);
-                else
-                    handler.$emit('disabled', disabled, this);
-
-                handler.render.sync();
+                h.vm.$set(parser.rule.props, 'hidden', !!hidden);
+            })
+        },
+        visibility(visibility, fields) {
+            tidyFields(fields).forEach((field) => {
+                const parser = h.parsers[field];
+                if (!parser)
+                    return;
+                h.vm.$set(parser.rule.props, 'visibility', !!visibility);
+            })
+        },
+        disabled(disabled, fields) {
+            tidyFields(fields, true).forEach((field) => {
+                const parser = h.parsers[field];
+                if (!parser)
+                    return;
+                h.vm.$set(parser.rule.props, 'disabled', !!disabled);
             })
         },
         clearValidateState(fields) {
             tidyFields(fields).forEach(field => {
-                const handler = fc.handlers[field];
-                if (!handler)
+                const parser = h.parsers[field];
+                if (!parser)
                     return;
-
-                handler.clearMsg();
-            })
+                h.clearMsg(parser);
+            });
+            h.refresh();
         },
         model() {
-            return {...vm.trueData};
+            return {...h.vm.trueData};
         },
         component() {
-            return {...vm.components};
+            return {...h.vm.components};
         },
         bind(fields) {
             let bind = {}, properties = {};
             tidyFields(fields).forEach((field) => {
-                const rule = vm._trueData(field);
+                const rule = h.vm._trueData(field);
                 if (!rule)
                     return console.error(`${field} 字段不存在` + errMsg());
                 properties[field] = {
@@ -202,7 +198,7 @@ export default function getGlobalApi(fc) {
                         return rule.value;
                     },
                     set(value) {
-                        vm.$set(rule, 'value', value);
+                        h.vm.$set(rule, 'value', value);
                     },
                     enumerable: true,
                     configurable: true
@@ -211,56 +207,52 @@ export default function getGlobalApi(fc) {
             Object.defineProperties(bind, properties);
             return bind;
         },
-        submitStatus: (props = {}) => {
-            vm._buttonProps(props);
+        submitBtnProps: (props = {}) => {
+            h.vm._buttonProps(props);
         },
-        resetStatus: (props = {}) => {
-            vm._resetProps(props);
+        resetBtnProps: (props = {}) => {
+            h.vm._resetProps(props);
         },
         btn: {
             loading: (loading = true) => {
-                vm._buttonProps({loading: loading});
+                h.vm._buttonProps({loading: !!loading});
             },
             finish() {
                 this.loading(false);
             },
             disabled: (disabled = true) => {
-                vm._buttonProps({disabled: disabled});
+                h.vm._buttonProps({disabled: !!disabled});
             },
             show: (isShow = true) => {
-                vm._buttonProps({show: isShow});
+                h.vm._buttonProps({show: !!isShow});
             }
         },
         resetBtn: {
             loading: (loading = true) => {
-                vm._resetProps({loading: loading});
+                h.vm._resetProps({loading: !!loading});
             },
             finish() {
                 this.loading(false);
             },
             disabled: (disabled = true) => {
-                vm._resetProps({disabled: disabled});
+                h.vm._resetProps({disabled: !!disabled});
             },
             show: (isShow = true) => {
-                vm._resetProps({show: isShow});
+                h.vm._resetProps({show: !!isShow});
             }
         },
         closeModal: (field) => {
-            const handler = fc.handlers[field];
-            if (handler && handler.$modal) {
-                handler.$modal.onClose();
-                handler.$modal = null;
-            }
+            const parser = h.parsers[field];
+            parser && parser.onCloseModal && parser.onCloseModal();
         },
         set: (node, field, value) => {
-            vm.$set(node, field, value);
+            h.vm.$set(node, field, value);
         },
         reload: (rules) => {
-            fc.reload(rules)
+            h.reloadRule(rules)
         },
         options: (options) => {
-            deepExtend(fc.options, options);
-            vm._sync();
+            deepExtend(h.options, options);
         },
         onSuccess(fn) {
             this.onSubmit(fn);
@@ -268,15 +260,15 @@ export default function getGlobalApi(fc) {
         onSubmit(fn) {
             this.options({onSubmit: fn});
         },
-        sync: (field, callback) => {
-            if (fc.handlers[field])
-                fc.handlers[field].render.sync(callback);
-        },
+        // sync: (field, callback) => {
+        //     if (h.parsers[field])
+        //         h.parsers[field].render.sync(callback);
+        // },
         refresh: () => {
-            vm._refresh();
+            h.vm._refresh();
         },
         show: (isShow = true) => {
-            vm.isShow = !!isShow;
+            h.vm.isShow = !!isShow;
         }
     };
 }

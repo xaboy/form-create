@@ -1,6 +1,6 @@
 import Render from '../../factory/render';
-import {errMsg, toString} from "@form-create/utils";
-import {defaultOnHandle, mount} from "../../modal";
+import {errMsg, toString} from '@form-create/utils';
+import {defaultOnHandle, mount} from '../../modal';
 
 
 const eventList = {onOpen: 'on-open', onChange: 'on-change', onCancel: 'on-cancel', onOk: 'on-ok'};
@@ -25,7 +25,7 @@ export default class render extends Render {
 
     makeInput(hidden) {
         let unique = this.handler.unique, props = this.inputProps().props({
-            type: "text",
+            type: 'text',
             value: this.handler.parseValue.toString(),
             icon: this._props.icon,
             readonly: true,
@@ -45,7 +45,7 @@ export default class render extends Render {
             ref: this.handler.refName,
             props: {value: this.vm._formData(field)}
         }, render),
-            this.makeInput(true)
+        this.makeInput(true)
         ]
     }
 
@@ -159,7 +159,7 @@ export default class render extends Render {
                 },
                 style: {
                     'height': height,
-                    'border': "0 none",
+                    'border': '0 none',
                     'width': '100%'
                 },
                 on: {
@@ -173,7 +173,7 @@ export default class render extends Render {
                                 };
 
 
-                                iframe[`form_create_helper`] = {
+                                iframe['form_create_helper'] = {
                                     close: (field) => {
                                         this.valid(field);
                                         _vm.onClose();
@@ -217,8 +217,8 @@ export default class render extends Render {
 
 Object.keys(eventList).forEach(k => {
     render.prototype[k] = function () {
-        let fn = this.handler.rule.event[eventList[k]];
+        let fn = this.handle.rule.event[eventList[k]];
         if (fn)
-            return fn(this.handler.getValue());
+            return fn(this.handle.getValue());
     }
 });

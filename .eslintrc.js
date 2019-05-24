@@ -29,5 +29,6 @@ module.exports = {
         'block-spacing': 'error',
         'no-unused-vars': 'warn',
         'object-curly-spacing': 'error',
+        'no-console': 'warn',
     }
 };

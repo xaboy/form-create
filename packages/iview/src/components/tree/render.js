@@ -1,4 +1,4 @@
-import {Render} from "@form-create/core";
+import {Render} from '@form-create/core';
 
 const event = {
     s: 'on-select-change',
@@ -19,7 +19,7 @@ export default class render extends Render {
         }).props(rule.props).ref(refName).key(`fip${unique}`).get();
 
         let inputProps = this.inputProps().props({
-            type: "text",
+            type: 'text',
             value: '' + this.handler.rule.value,
             disable: true,
             readonly: true

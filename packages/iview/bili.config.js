@@ -1,12 +1,12 @@
-const { join } = require('path');
-const { author, license, name, version } = require('./package.json');
+const {join} = require('path');
+const {author, license, name, version} = require('./package.json');
 const cwd = __dirname;
 
-const { UI_LIB } = process.env;
+const {UI_LIB} = process.env;
 
 const rollupConfig = {
     outputConfig: {
-        exports: "named",
+        exports: 'named',
     }
 }
 
@@ -18,23 +18,24 @@ module.exports = {
         version
     },
     globals: {
-        vue: "Vue",
-        iview: "iview"
+        vue: 'Vue',
+        iview: 'iview'
     },
-    externals: ["vue", "Vue", "iview", "iView"],
+    externals: ['vue', 'Vue', 'iview', 'iView'],
     output: {
-        format: ["umd"],
-        moduleName: "formCreate",
+        format: ['umd'],
+        moduleName: 'formCreate',
         fileName: `form-create.${UI_LIB}.js`
     },
     input: join(cwd, '/src/index.js'),
     extendRollupConfig: (config) => {
-        config.outputConfig = Object.assign({}, config.outputConfig, { 'outputConfig': rollupConfig.outputConfig });
+        config.outputConfig = Object.assign({}, config.outputConfig, {'outputConfig': rollupConfig.outputConfig});
         return config;
     },
     env: {
         'NODE_ENV': 'production',
         'VERSION': version,
         'UI': UI_LIB,
-    }
+    },
+    presets: ['@vue/babel-preset-jsx']
 }

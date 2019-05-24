@@ -1,8 +1,7 @@
-import handler from "./handler";
-import render from "./render";
-import {creatorTypeFactory} from "@form-create/core";
+import parser from './parser';
+import {creatorTypeFactory} from '@form-create/core';
 
-const name = "frame";
+const name = 'frame';
 
 const types = {
     frameInputs: ['input', 0],
@@ -22,4 +21,4 @@ maker.frameInput = maker.frameInputs;
 maker.frameFile = maker.frameFiles;
 maker.frameImage = maker.frameImages;
 
-export default {handler, render, name, maker};
+export default {parser, name, maker};

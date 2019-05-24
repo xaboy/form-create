@@ -1,8 +1,10 @@
-import handler from "./handler";
-import render from "./render";
-import {creatorTypeFactory} from "@form-create/core";
+import parser from './parser';
+import {creatorTypeFactory} from '@form-create/core';
+import Uplaod from './upload.vue';
 
-const name = "upload";
+console.log(Uplaod);
+
+const name = 'upload';
 
 const types = {
     image: ['image', 0],
@@ -19,4 +21,4 @@ const maker = Object.keys(types).reduce((initial, key) => {
 maker.uploadImage = maker.image;
 maker.uploadFile = maker.file;
 
-export default {handler, render, name, maker};
+export default {parser, name, maker};

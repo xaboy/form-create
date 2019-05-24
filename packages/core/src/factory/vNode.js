@@ -1,4 +1,4 @@
-import {isFunction, isString} from '@form-create/utils'
+import {isFunction, isString} from '@form-create/utils';
 
 function parseVData(data) {
     if (isString(data))
@@ -6,17 +6,18 @@ function parseVData(data) {
     else if (data && isFunction(data.get))
         data = data.get();
 
-    return data
+    return data;
 }
 
 function getVNode(VNode) {
-    return isFunction(VNode) ? VNode() : (VNode || [])
+    return isFunction(VNode) ? VNode() : (VNode || []);
 }
 
 export default class VNode {
 
     constructor(vm) {
-        this.setVm(vm);
+        if (vm)
+            this.setVm(vm);
     }
 
     setVm(vm) {
@@ -28,14 +29,14 @@ export default class VNode {
         let Node = this.$h(nodeName, parseVData(data), getVNode(VNodeFn));
         Node.context = this.vm;
 
-        return Node
+        return Node;
     }
 
     static use(nodes) {
         Object.keys(nodes).forEach((k) => {
             VNode.prototype[k] = function (data, VNodeFn) {
                 return this.make(nodes[k], data, VNodeFn);
-            }
-        })
+            };
+        });
     }
 }

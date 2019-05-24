@@ -1,6 +1,6 @@
-import {extend, isFunction, isNumeric, isUndef, preventDefault} from "@form-create/utils";
-import {VNode, VData} from "@form-create/core";
-import {componentList} from "./drive";
+import {extend, isFunction, isNumeric, isUndef, preventDefault} from '@form-create/utils';
+import {VNode, VData} from '@form-create/core';
+import {componentList} from './drive';
 
 
 export default class Form {
@@ -43,7 +43,7 @@ export default class Form {
         let unique = this.unique,
             vn = this.renderSort.map((field) => {
                 let render = this.getRender(field);
-                if (render.handler.type === 'hidden') return;
+                if (render.handle.type === 'hidden') return;
                 return this.makeComponent(render);
 
             }).filter((val) => val !== undefined);
@@ -54,7 +54,7 @@ export default class Form {
     }
 
     makeComponent(render) {
-        return this.makeFormItem(render.handler, render.cacheParse(this), `fItem${render.handler.key}${this.unique}`);
+        return this.makeFormItem(render.handle, render.cacheParse(this), `fItem${render.handle.key}${this.unique}`);
     }
 
     makeFormItem({type, rule, unique, field, refName}, VNodeFn, fItemUnique) {
@@ -100,7 +100,7 @@ export default class Form {
         return this.vNode.col({props: props, key: `${this.unique}col3`}, [
             this.vNode.button({
                 key: `frsbtn${unique}`, props: this.vm.resetProps, on: {
-                    "click": () => {
+                    'click': () => {
                         const fApi = this.fc.fCreateApi;
                         isFunction(resetBtn.click)
                             ? resetBtn.click(fApi)
@@ -118,7 +118,7 @@ export default class Form {
         return this.vNode.col({props: props, key: `${this.unique}col4`}, [
             this.vNode.button({
                 key: `fbtn${unique}`, props: this.vm.buttonProps, on: {
-                    "click": () => {
+                    'click': () => {
                         const fApi = this.fc.fCreateApi;
                         isFunction(submitBtn.click)
                             ? submitBtn.click(fApi)

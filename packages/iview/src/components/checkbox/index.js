@@ -1,6 +1,5 @@
-import handler from "./handler";
-import render from "./render";
+import parser from './parser';
 
-const name = "checkbox";
+const name = 'checkbox';
 
-export default {handler, render, name};
+export default {parser, name};

@@ -1,4 +1,4 @@
-import {deepExtend, errMsg, isFunction, isPlainObject, isUndef, toString} from "@form-create/utils";
+import {deepExtend, errMsg, isFunction, isPlainObject, isUndef, toString} from '@form-create/utils';
 
 export default function getGlobalApi(fc) {
     let vm = fc.vm;
@@ -150,7 +150,7 @@ export default function getGlobalApi(fc) {
                     return;
                 vm.$set(vm._trueData(field).props, 'hidden', !!hidden);
                 handler.render.sync();
-            })
+            });
         },
         visibility(fields, visibility = true) {
             tidyFields(fields).forEach((field) => {
@@ -159,7 +159,7 @@ export default function getGlobalApi(fc) {
                     return;
                 vm.$set(vm._trueData(field).props, 'visibility', !!visibility);
                 handler.render.sync();
-            })
+            });
         },
         disabled(fields, disabled = true) {
             disabled = !!disabled;
@@ -174,7 +174,7 @@ export default function getGlobalApi(fc) {
                     handler.$emit('disabled', disabled, this);
 
                 handler.render.sync();
-            })
+            });
         },
         clearValidateState(fields) {
             tidyFields(fields).forEach(field => {
@@ -183,7 +183,7 @@ export default function getGlobalApi(fc) {
                     return;
 
                 handler.clearMsg();
-            })
+            });
         },
         model() {
             return {...vm.trueData};
@@ -256,7 +256,7 @@ export default function getGlobalApi(fc) {
             vm.$set(node, field, value);
         },
         reload: (rules) => {
-            fc.reload(rules)
+            fc.reload(rules);
         },
         options: (options) => {
             deepExtend(fc.options, options);

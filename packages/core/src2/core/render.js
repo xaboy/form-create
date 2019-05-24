@@ -9,28 +9,15 @@ import {
     isValidChildren,
     uniqueId
 } from '@form-create/utils';
-import VNode from "./vNode";
-import VData from "./vData";
 import {_vue as Vue} from '../formCreate';
 
 const $de = debounce((fn) => fn(), 1);
 
 export default class Render {
 
-    constructor(handler) {
-        this.vm = handler.vm;
-        this.handler = handler;
-        this.options = handler.fc.options;
-        this.vNode = new VNode(this.vm);
-        this.vData = new VData;
-        this.cache = null;
-        this.$tickEvent = [];
-
-        this.init();
-    }
-
-    init() {
-
+    constructor(handlers) {
+        this.handlers = handlers;
+        this.cache = {};
     }
 
     cacheParse(form, _super) {
@@ -43,7 +30,7 @@ export default class Render {
             $nt(() => {
                 eventList.forEach(event => event());
             });
-        return this.cache
+        return this.cache;
     }
 
     sync(event) {
@@ -131,7 +118,7 @@ export default class Render {
 
         let data = this.vData.props({value: this.vm._formData(field)})
             .ref(refName).key(key + 'fc' + field).on(event).on('input', (value) => {
-                this.onInput(value)
+                this.onInput(value);
             });
 
         if (isUndef(props.size))
@@ -157,7 +144,7 @@ export default class Render {
                     props.key(this.handler.key);
                 return [this.vNode[node](props.get(), this.childrenParse(form))];
             }
-        }
+        };
     }
 
 }

@@ -1,12 +1,11 @@
-import handler from "./handler";
-import {creatorTypeFactory, Render} from "@form-create/core";
+import parser from './parser';
+import {creatorTypeFactory} from '@form-create/core';
 
-const name = "slider";
+const name = 'slider';
 
 const maker = {
     sliderRange: creatorTypeFactory(name, true, 'range')
 };
 
-const render = Render.factory(name);
 
-export default {handler, render, name, maker};
+export default {parser, name, maker};

@@ -8,42 +8,48 @@
  */
 const webpack = require('webpack');
 const pkg = require('../package.json');
+const VueLoaderPlugin = require('vue-loader/lib/plugin');
 
 module.exports = {
-  mode: "development",
-  devtool: "source-map",
-  output: {
-    library: 'formCreate',
-    libraryExport: 'default',
-    libraryTarget: 'umd',
-    umdNamedDefine: true
-  },
-  module: {
-    rules: [
-      {
-        test: /\.js$/,
-        exclude: /node_modules/,
-        use: {
-          loader: "babel-loader",
+    mode: 'development',
+    devtool: 'source-map',
+    output: {
+        library: 'formCreate',
+        libraryExport: 'default',
+        libraryTarget: 'umd',
+        umdNamedDefine: true
+    },
+    module: {
+        rules: [
+            {
+                test: /\.js$/,
+                exclude: /node_modules/,
+                use: {
+                    loader: 'babel-loader',
+                }
+            }, {
+                test: /\.vue$/,
+                loader: 'vue-loader'
+            },
+        ]
+    },
+    devServer: {
+        hot: true,
+        inline: true,
+        open: true
+    },
+    plugins: [
+        new webpack.HotModuleReplacementPlugin(),
+        new webpack.DefinePlugin({
+            'process.env.VERSION': `'${pkg.version}'`
+        }),
+        new VueLoaderPlugin(),
+    ],
+    resolve: {
+        alias: {
+            'vue': 'vue/dist/vue.js',
+            'iview': 'iview',
         }
-      }
-    ]
-  },
-  devServer: {
-    hot: true,
-    inline: true,
-    open: true
-  },
-  plugins: [
-    new webpack.HotModuleReplacementPlugin(),
-    new webpack.DefinePlugin({
-      'process.env.VERSION': `'${pkg.version}'`
-    }),
-  ],
-  resolve: {
-    alias: {
-      'vue': 'vue/dist/vue.min.js'
     }
-  }
 
 }

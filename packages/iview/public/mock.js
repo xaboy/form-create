@@ -53,29 +53,30 @@ function mock() {
 
         //radio 单选框组件
         maker.radio('是否包邮', 'is_postage', 0).options([
-            {value: 0, label: "不包邮", disabled: false},
-            {value: 1, label: "包邮", disabled: false},
-            {value: 2, label: "未知", disabled: true},
+            {value: 0, label: '不包邮', disabled: false},
+            {value: 1, label: '包邮', disabled: false},
+            {value: 2, label: '未知', disabled: true},
         ]).props({required: true}).col({span: 8}),
 
 
         //checkbox 复选框付选择
         maker.checkbox('标签', 'label', [1]).options([
-            {value: 1, label: "好用", disabled: true},
-            {value: 2, label: "方便", disabled: false},
-            {value: 3, label: "实用", disabled: false},
-            {value: 4, label: "有效", disabled: false},
+            {value: 1, label: '好用', disabled: true},
+            {value: 2, label: '方便', disabled: false},
+            {value: 3, label: '实用', disabled: false},
+            {value: 4, label: '有效', disabled: false},
         ]).col({span: 8}),
 
 
         //switch 开关组件
-        maker.switch('是否上架', 'is_show', '1').slot({
-            open: "上架",
-            close: "下架",
-        }).props({
-            "trueValue": "1",
-            "falseValue": "0",
+        maker.switch('是否上架', 'is_show', '1').props({
+            'trueValue': '1',
+            'falseValue': '0',
             required: true,
+            slot: {
+                open: '上架',
+                close: '下架',
+            }
         }).col({span: 8, labelWidth: 100}),
 
 
@@ -119,36 +120,36 @@ function mock() {
 
         //自定义组件
         maker.create('i-button', 'btn').props({
-            type: "primary",
-            size: "large",
+            type: 'primary',
+            size: 'large',
             shape: undefined,
             long: true,
-            htmlType: "button",
+            htmlType: 'button',
             disabled: false,
-            icon: "ios-upload",
+            icon: 'ios-upload',
             loading: false,
             show: true
         })
             .on({
-                "fc:disabled": function (disabled, $f) {
+                'fc:disabled': function (disabled, $f) {
                     $f.component().btn.props.disabled = disabled;
                 },
-                "fc:input": function (cb, $f) {
+                'fc:input': function (cb, $f) {
                     cb($f.component().btn.props.disabled);
                 },
-                "fc:set-value": function (val, $f) {
+                'fc:set-value': function (val, $f) {
                     $f.component().btn.props.disabled = val;
                 }
             }).col({span: 12}).children([
-            maker.create('span').domProps({
-                innerHTML: '测试自定义按钮'
-            })
-        ]).emit(['click']),
+                maker.create('span').domProps({
+                    innerHTML: '测试自定义按钮'
+                })
+            ]).emit(['click']),
 
 
         //自定义组件
         maker.create('Tooltip', 'tip', '自定义 title').props({
-            content: "这里是提示文字",
+            content: '这里是提示文字',
         }).col({span: 11, push: 1}).children([
             maker.create('span').domProps({
                 innerHTML: '当鼠标经过这段文字时，会显示一个气泡框'
@@ -157,18 +158,18 @@ function mock() {
 
 
         //select 下拉选择组件
-        maker.select("产品分类", "cate_id", ["104", "105"]).options([
-            {"value": "104", "label": "生态蔬菜", "disabled": false, "slot": "<div style:'color:#ff7271;'>自定义显示内容</div>"},
+        maker.select('产品分类', 'cate_id', ['104', '105']).options([
+            {'value': '104', 'label': '生态蔬菜', 'disabled': false, 'slot': '<div style:\'color:#ff7271;\'>自定义显示内容</div>'},
             {
-                "value": "105", "label": "新鲜水果", "disabled": false, "slot": function ($h) {
-                    return $h("div", {
-                        style: "color:#ff7271;"
+                'value': '105', 'label': '新鲜水果', 'disabled': false, 'slot': function ($h) {
+                    return $h('div', {
+                        style: 'color:#ff7271;'
                     }, [$h('icon', {
                         props: {
                             //iview2 与 iview3 图标名称不同
                             type: 'social-apple'
                         }
-                    }), "新鲜水果"]);
+                    }), '新鲜水果']);
                 }
             },
         ]).props({
@@ -188,15 +189,15 @@ function mock() {
 
                         //datePicker 日期选择组件
                         maker.date('活动日期', 'section_day', ['2018-02-20', new Date()]).props({
-                            "type": "datetimerange",
-                            "startDate": new Date(),
-                            "showWeekNumbers": true,
+                            'type': 'datetimerange',
+                            'startDate': new Date(),
+                            'showWeekNumbers': true,
                         }),
 
                         //timePicker 时间选择组件
                         maker.time('活动时间', 'section_time', ['01:01:01', new Date()]).props({
-                            "type": "timerange",
-                            "placeholder": "请选择活动时间"
+                            'type': 'timerange',
+                            'placeholder': '请选择活动时间'
                         }),
 
                     ]
@@ -216,9 +217,9 @@ function mock() {
 
                         //colorPicker 颜色选择组件
                         maker.color('颜色', 'color', '#ff7271').props({
-                            "format": "hex"
+                            'format': 'hex'
                         }).props({
-                            "hue": true
+                            'hue': true
                         }).col({span: 12}),
 
                     ]
@@ -254,9 +255,9 @@ function mock() {
         //rate 评分组件
         maker.rate('推荐级别', 'rate', 2)
             .props({
-                "count": 10,
-                "allowHalf": false,
-                "disabled": false
+                'count': 10,
+                'allowHalf': false,
+                'disabled': false
             })
             .validate({required: true, type: 'number', min: 3, message: '请大于3颗星', trigger: 'change'})
             .col({span: 12}),
@@ -264,44 +265,44 @@ function mock() {
 
         //slider 滑块组件
         maker.slider('滑块', 'slider', [30, 80]).props({
-            "min": 0,
-            "max": 100,
-            "range": true,
-            "showTip": "hover"
+            'min': 0,
+            'max': 100,
+            'range': true,
+            'showTip': 'hover'
         }).col({span: 12}),
 
 
         //upload 上传组件
         maker.upload('轮播图', 'pic', ['http://file.lotkk.com/form-create.jpeg'])
             .props({
-                "action": "http://127.0.0.1:8000/index/index/upload",
-                "maxLength": 4,
-                "multiple": true,
-                "showUploadList": true,
-                "type": "select",
-                "uploadType": "file",
-                "name": "file",
-                "onSuccess": function (res) {
+                'action': 'http://127.0.0.1:8000/index/index/upload',
+                'maxLength': 4,
+                'multiple': true,
+                'showUploadList': false,
+                'type': 'select',
+                'uploadType': 'file',
+                'name': 'file',
+                'onSuccess': function (res) {
                     console.log('upload success');
                     return 'http://file.lotkk.com/form-create.jpeg';
                 },
-                "onRemove": function (file, fileList) {
+                'onRemove': function (file, fileList) {
                     console.log(file, fileList);
                 },
-                "allowRemove": true
+                'allowRemove': true
             }).validate({required: true, type: 'array', min: 3, message: '请上传3张图片', trigger: 'change'}),
 
 
         maker.checkbox('', 'checked', '0').options([
-            {value: "1", label: "同意****用户协议", disabled: false},
+            {value: '1', label: '同意****用户协议', disabled: false},
         ]),
 
 
         //frame 框架组件
-        maker.frame('素材', 'fodder', ["http://file.lotkk.com/form-create.jpeg"]).props({
-            src: "../iframe.html",
+        maker.frame('素材', 'fodder', ['http://file.lotkk.com/form-create.jpeg']).props({
+            src: 'iframe.html',
             maxLength: 0,
-            type: "image",
+            type: 'image',
             modalTitle: '预览~~~',
             okBtnText: 'ok',
             closeBtnText: 'close',
@@ -378,16 +379,16 @@ function mock() {
 
 //upload 上传组件
 $r = maker.upload('产品主图', 'logo', 'http://file.lotkk.com/form-create.jpeg').props({
-    "action": "http://127.0.0.1:8000/index/index/upload",
-    "maxLength": 1,
-    "multiple": false,
-    "showUploadList": false,
-    "max": 0,
-    "type": "select",
-    "uploadType": "image",
-    "name": "file",
-    "modalTitle": '预览~~~',
-    "onSuccess": function () {
+    'action': 'http://127.0.0.1:8000/index/index/upload',
+    'maxLength': 1,
+    'multiple': false,
+    'showUploadList': false,
+    'max': 0,
+    'type': 'select',
+    'uploadType': 'image',
+    'name': 'file',
+    'modalTitle': '预览~~~',
+    'onSuccess': function () {
         return 'http://file.lotkk.com/form-create.jpeg';
     }
 }).validate({required: true, type: 'array', min: 1, message: '请上传1张图片', trigger: 'change'});

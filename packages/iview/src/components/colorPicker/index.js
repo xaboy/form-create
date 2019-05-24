@@ -1,12 +1,15 @@
-import handler from "./handler";
-import {creatorFactory, Render} from "@form-create/core";
+import {creatorFactory, BaseParser} from '@form-create/core';
 
-const name = "colorPicker";
+const name = 'colorPicker';
 
 const maker = {
     color: creatorFactory(name)
 };
 
-const render = Render.factory(name, true);
+class parser extends BaseParser {
+    watchFormValue(n, h) {
+        h.refresh();
+    }
+}
 
-export default {handler, render, name, maker};
+export default {parser, name, maker};

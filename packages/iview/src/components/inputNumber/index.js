@@ -1,14 +1,12 @@
-import handler from "./handler";
-import {creatorFactory, Render} from "@form-create/core";
+import parser from './parser';
+import {creatorFactory} from '@form-create/core';
 
 
-const name = "inputNumber";
+const name = 'inputNumber';
 
 
 const maker = {
     number: creatorFactory(name)
 };
 
-const render = Render.factory(name);
-
-export default {handler, render, name, maker};
+export default {parser, name, maker};

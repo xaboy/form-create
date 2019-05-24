@@ -1,12 +1,11 @@
-import handler from "./handler";
-import render from "./render";
-import {creatorTypeFactory} from "@form-create/core";
+import parser from './parser';
+import {creatorTypeFactory} from '@form-create/core';
 
-const name = "select";
+const name = 'select';
 
 const maker = {
     selectMultiple: creatorTypeFactory(name, true, 'multiple'),
     selectOne: creatorTypeFactory(name, false, 'multiple'),
 };
 
-export default {handler, render, name, maker};
+export default {parser, name, maker};

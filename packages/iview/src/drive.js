@@ -1,20 +1,20 @@
-import hidden from "./components/hidden";
-import input from "./components/input";
-import radio from "./components/radio";
-import checkbox from "./components/checkbox";
-import iswitch from "./components/switch";
-import select from "./components/select";
-import datepicker from "./components/datePicker";
-import timepicker from "./components/timePicker";
-import inputnumber from "./components/inputNumber";
-import colorpicker from "./components/colorPicker";
-import upload from "./components/upload";
-import cascader from "./components/cascader";
-import rate from "./components/rate";
-import slider from "./components/slider";
-import frame from "./components/frame";
-import tree from "./components/tree";
-import autocomplete from "./components/autoComplete";
+import hidden from './components/hidden';
+import input from './components/input';
+import radio from './components/radio';
+import checkbox from './components/checkbox';
+import iswitch from './components/switch';
+import select from './components/select';
+import datePicker from './components/datePicker';
+import timePicker from './components/timePicker';
+import inputNumber from './components/inputNumber';
+import colorPicker from './components/colorPicker';
+import upload from './components/upload';
+import cascader from './components/cascader';
+import rate from './components/rate';
+import slider from './components/slider';
+import frame from './components/frame';
+import tree from './components/tree';
+import autoComplete from './components/autoComplete';
 import formRender from './form';
 import getConfig from './config';
 import getGlobalApi from './fApi';
@@ -26,17 +26,17 @@ export const componentList = {
     checkbox,
     switch: iswitch,
     select,
-    datepicker,
-    timepicker,
-    inputnumber,
-    colorpicker,
+    datePicker,
+    timePicker,
+    inputNumber,
+    colorPicker,
     upload,
     cascader,
     rate,
     slider,
     frame,
     tree,
-    autocomplete,
+    autoComplete,
 };
 
 

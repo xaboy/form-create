@@ -1,7 +1,7 @@
-import handler from "./handler";
-import {creatorTypeFactory, Render} from "@form-create/core";
+import parser from './parser';
+import {creatorTypeFactory} from '@form-create/core';
 
-const name = "datePicker";
+const name = 'datePicker';
 
 
 const maker = ['date', 'dateRange', 'dateTime', 'dateTimeRange', 'year', 'month'].reduce((initial, type) => {
@@ -10,7 +10,4 @@ const maker = ['date', 'dateRange', 'dateTime', 'dateTimeRange', 'year', 'month'
 }, {});
 
 
-const render = Render.factory(name, true);
-
-export {render}
-export default {handler, render, name, maker};
+export default {parser, name, maker};

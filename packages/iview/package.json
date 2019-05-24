@@ -26,6 +26,6 @@
         "@form-create/utils": "^0.0.1"
     },
     "devDependencies": {
-        "iview": "^3.4.1"
+        "iview": "^3.3.3"
     }
 }

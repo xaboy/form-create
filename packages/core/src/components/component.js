@@ -1,5 +1,5 @@
 import {$nt} from '@form-create/utils';
-import {formCreateName} from '../config';
+import {formCreateName} from '../core/config';
 
 export default function $FormCreate(formCreate, mixin) {
     return {
@@ -23,45 +23,27 @@ export default function $FormCreate(formCreate, mixin) {
             value: Object
         },
         render() {
-            return this._fComponent.render();
+            return this._fc.handle.run();
         },
         beforeCreate() {
             const {rule, option} = this.$options.propsData;
-            const _fc = new formCreate(rule, option);
+            this._fc = new formCreate(rule, option);
 
-            this._fComponent = _fc;
-            _fc._type = 'rule';
-            _fc.beforeBoot(this);
+            this._fc.beforeCreate(this);
         },
         created() {
-            const _fc = this._fComponent;
-
-            _fc.boot();
-            this.$f = _fc.fCreateApi;
-
-            this.$emit('input', _fc.fCreateApi);
+            this._fc.handle.created();
+            this.$f = this._fc.handle.fCreateApi;
+            this.$emit('input', this.$f);
         },
         mounted() {
-            const _fc = this._fComponent;
+            const _fc = this._fc;
 
-            _fc.mounted(this);
-
-            this.$watch('rule', (n) => {
-                _fc.reload(n);
+            _fc.handle.mounted();
+            this.$watch('rule', n => {
+                _fc.handle.reloadRule(n);
                 this.$emit('input', this.$f);
             });
-
-            this.$watch(
-                'a',
-                (n) => {
-                    $nt(() => {
-                        this._sync();
-                    });
-                },
-                {deep: true}
-            );
-
-            this.__init();
             this.$emit('input', this.$f);
         }
     };
