@@ -10,6 +10,7 @@
         "lint": "eslint *.js"
     },
     "devDependencies": {
+        "babel-eslint": "^10.0.1",
         "bili": "^4.7.4",
         "chalk": "^2.4.2",
         "commitizen": "^3.1.1",
