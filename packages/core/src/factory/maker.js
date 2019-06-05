@@ -1,43 +1,32 @@
 import Creator, {creatorFactory} from './creator';
-import {extend, isPlainObject, isString, isUndef, isValidChildren} from '@form-create/utils';
+import {extend, isPlainObject, isString, isValidChildren} from '@form-create/utils';
 
-export default function makerFactory(componentList) {
-    let _m = {};
+export default function makerFactory() {
+    let maker = {};
 
-    Object.keys(componentList).forEach(key => {
-        const component = componentList[key];
-
-        const undef = isUndef(component.maker);
-
-        if (undef || component.maker[component.name] === undefined)
-            _m[component.name] = creatorFactory(component.name);
-
-        if (!undef) extend(_m, component.maker);
-    });
 
     const commonMaker = creatorFactory('');
 
-    extend(_m, {
+    extend(maker, {
         create(type, field, title) {
             let make = commonMaker('', field);
-            make.rule.type = type;
-            make.rule.title = title;
+            make._data.type = type;
+            make._data.title = title;
             return make;
         },
         createTmp(template, vm, field, title) {
             let make = commonMaker('', field);
-            make.rule.type = 'template';
-            make.rule.template = template;
-            make.rule.title = title;
-            make.rule.vm = vm;
+            make._data.type = 'template';
+            make._data.template = template;
+            make._data.title = title;
+            make._data.vm = vm;
             return make;
         }
     });
-    _m.template = _m.createTmp;
+    maker.template = maker.createTmp;
+    maker.parse = parse;
 
-    _m.parse = parse;
-
-    return _m;
+    return maker;
 }
 
 function parse(rule, toMaker = false) {
@@ -73,11 +62,7 @@ function findField(field) {
 function ruleToMaker(rule) {
     const maker = new Creator();
     Object.keys(rule).forEach(key => {
-        if (Object.keys(maker._data).indexOf(key) === -1) {
-            maker.rule[key] = rule[key];
-        } else {
-            maker._data[key] = rule[key];
-        }
+        maker._data[key] = rule[key];
     });
     return maker;
 }

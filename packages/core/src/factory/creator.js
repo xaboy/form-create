@@ -3,14 +3,13 @@ import VData from './vData';
 
 function baseRule() {
     return {
-        event: {},
         validate: [],
         options: [],
         col: {},
         children: [],
         emit: [],
-        template: null,
-        emitPrefix: null
+        template: undefined,
+        emitPrefix: undefined
     };
 }
 
@@ -30,9 +29,10 @@ export function creatorTypeFactory(name, type, typeName = 'type') {
 export default class Creator extends VData {
     constructor(type, title, field, value, props = {}) {
         super();
-
-        this.rule = extend(baseRule(), {type, title, field, value});
-        this.props({hidden: false, visibility: false});
+        extend(this._data, baseRule());
+        extend(this._data, {type, title, field, value});
+        // this.rule = extend(baseRule(), {type, title, field, value});
+        // this.props({hidden: false, visibility: false});
         if (isPlainObject(props)) this.props(props);
     }
 
@@ -41,16 +41,17 @@ export default class Creator extends VData {
         return this;
     }
 
-    get() {
+    getRule() {
         return this._data;
     }
 
-    getRule() {
-        return extend(this.rule, this.get());
+    value(value) {
+        $set(this._data, 'value', value);
+        return this;
     }
 
-    setValue(value) {
-        $set(this.rule, 'value', value);
+    event(...args) {
+        this.on(...args);
         return this;
     }
 }
@@ -59,16 +60,16 @@ const keyAttrs = ['emitPrefix', 'className', 'defaultSlot'];
 
 keyAttrs.forEach(attr => {
     Creator.prototype[attr] = function (value) {
-        $set(this.rule, attr, value);
+        $set(this._data, attr, value);
         return this;
     };
 });
 
-const objAttrs = ['event', 'col'];
+const objAttrs = ['col'];
 
 objAttrs.forEach(attr => {
     Creator.prototype[attr] = function (opt) {
-        $set(this.rule, attr, extend(this.rule[attr], opt));
+        $set(this._data, attr, extend(this._data[attr], opt));
         return this;
     };
 });
@@ -78,7 +79,7 @@ const arrAttrs = ['validate', 'options', 'children', 'emit'];
 arrAttrs.forEach(attr => {
     Creator.prototype[attr] = function (opt) {
         if (!Array.isArray(opt)) opt = [opt];
-        $set(this.rule, attr, this.rule[attr].concat(opt));
+        $set(this._data, attr, this._data[attr].concat(opt));
         return this;
     };
 });

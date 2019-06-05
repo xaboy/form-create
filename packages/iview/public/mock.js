@@ -90,7 +90,9 @@ function mock() {
             },
             methods: {
                 onClick: function () {
+                    console.log('click');
                     this.num++;
+                    this.$emit('input',this.num);
                 },
                 //表单禁用事件
                 onDisabled: function (disabled) {
@@ -100,10 +102,6 @@ function mock() {
                 onResetField: function () {
                     this.num = 0;
                 },
-                //表单提交事件
-                onInput: function (cb, $f) {
-                    cb(this.num);
-                },
                 //通过setValue,changeField,changeValue方法设置表单值时事件
                 onSetValue: function (val, $f) {
                     this.num = val;
@@ -112,7 +110,7 @@ function mock() {
             created: function () {
                 this.$on('fc:disabled', this.onDisabled);
                 this.$on('fc:reset-field', this.onResetField);
-                this.$on('fc:input', this.onInput);
+                // this.$on('fc:input', this.onInput);
                 this.$on('fc:set-value', this.onSetValue);
             }
         }), 'tmp', '自定义 title'),
@@ -150,7 +148,7 @@ function mock() {
         //自定义组件
         maker.create('Tooltip', 'tip', '自定义 title').props({
             content: '这里是提示文字',
-        }).col({span: 11, push: 1}).children([
+        }).value(false).col({span: 11, push: 1}).children([
             maker.create('span').domProps({
                 innerHTML: '当鼠标经过这段文字时，会显示一个气泡框'
             })
@@ -282,21 +280,14 @@ function mock() {
                 'type': 'select',
                 'uploadType': 'file',
                 'name': 'file',
-                'onSuccess': function (res) {
-                    console.log('upload success');
-                    return 'http://file.lotkk.com/form-create.jpeg';
+                'onSuccess': function (res,file) {
+                    file.url = 'http://file.lotkk.com/form-create.jpeg';
                 },
                 'onRemove': function (file, fileList) {
                     console.log(file, fileList);
                 },
                 'allowRemove': true
             }).validate({required: true, type: 'array', min: 3, message: '请上传3张图片', trigger: 'change'}),
-
-
-        maker.checkbox('', 'checked', '0').options([
-            {value: '1', label: '同意****用户协议', disabled: false},
-        ]),
-
 
         //frame 框架组件
         maker.frame('素材', 'fodder', ['http://file.lotkk.com/form-create.jpeg']).props({
@@ -388,8 +379,8 @@ $r = maker.upload('产品主图', 'logo', 'http://file.lotkk.com/form-create.jpe
     'uploadType': 'image',
     'name': 'file',
     'modalTitle': '预览~~~',
-    'onSuccess': function () {
-        return 'http://file.lotkk.com/form-create.jpeg';
+    'onSuccess': function (res,file) {
+        file.url = 'http://file.lotkk.com/form-create.jpeg';
     }
 }).validate({required: true, type: 'array', min: 1, message: '请上传1张图片', trigger: 'change'});
 

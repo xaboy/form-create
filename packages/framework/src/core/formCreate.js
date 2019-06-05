@@ -37,9 +37,9 @@ export default function createFormCreate(drive) {
 
     function initStyle() {
         if (document.getElementById(formCreateStyleElId) !== null) return;
-        let style = document.createElement('style');
+        let style = document.createElement('index.css');
         style.id = formCreateStyleElId;
-        style.innerText = drive.style;
+        style.innerText = drive.index;
         document.getElementsByTagName('head')[0].appendChild(style);
     }
 

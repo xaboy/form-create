@@ -1,5 +1,4 @@
 module.exports = {
-    "parser": "babel-eslint",
     'env': {
         "browser": true,
         "node": true,
@@ -13,7 +12,12 @@ module.exports = {
     ],
     'parserOptions': {
         'ecmaVersion': 2018,
-        'sourceType': 'module'
+        'sourceType': 'module',
+        'ecmaFeatures': {
+            'experimentalObjectRestSpread': true,
+            'jsx': true
+        },
+        "parser": "babel-eslint",
     },
     'plugins': [
         'vue'

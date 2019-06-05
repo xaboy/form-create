@@ -50,47 +50,52 @@
 <button onclick="onUnload()">立即修改</button>
 
 <script>
-    //获取fodder字段值
-    var value = parent.$f.getValue('fodder'),
-        images = Array.from(self.document.getElementsByTagName('img'));
-    //选中对应的图片
-    images.forEach(function (image) {
-        if (value.indexOf(image.src) !== -1) {
-            image.parentNode.classList.add('on');
-        } else {
-            image.parentNode.classList.remove('on');
-        }
-        image.addEventListener('click', onClick)
-    });
+    window.onload = function(){
 
-    function onClick() {
-        var parent = this.parentNode;
-        if (Array.from(parent.classList).indexOf('on') !== -1) {
-            parent.classList.remove('on');
-        } else {
-            parent.classList.add('on');
-        }
-    }
+    	setTimeout(function(){
+			//获取fodder字段值
+			var value = form_create_helper.get('fodder'),
+					images = Array.from(self.document.getElementsByTagName('img'));
+			//选中对应的图片
+			images.forEach(function (image) {
+				if (value.indexOf(image.src) !== -1) {
+					image.parentNode.classList.add('on');
+				} else {
+					image.parentNode.classList.remove('on');
+				}
+				image.addEventListener('click', onClick)
+			});
 
-    document.getElementById('closeBtn').addEventListener('click', function () {
-        //手动关闭frame弹出框
-        parent.$f.closeModal('fodder');
-    });
+			function onClick() {
+				var p = this.parentNode;
+				if (Array.from(p.classList).indexOf('on') !== -1) {
+					p.classList.remove('on');
+				} else {
+					p.classList.add('on');
+				}
+			}
 
-    window.onunload = onUnload;
+			document.getElementById('closeBtn').addEventListener('click', function () {
+				//手动关闭frame弹出框
+				form_create_helper.close('fodder');
+			});
 
-    //当页面关闭时更新frame字段的值
-    function onUnload() {
-        var list = [];
-        images.forEach(function (image) {
-            if (Array.from(image.parentNode.classList).indexOf('on') !== -1) {
-                list.push(image.src);
-            }
-        });
 
-        //修改表单fodder字段的值
-        parent.$f.changeField('fodder', list);
-    }
+			//当页面关闭时更新frame字段的值
+			window.onUnload = function() {
+				var list = [];
+				images.forEach(function (image) {
+					if (Array.from(image.parentNode.classList).indexOf('on') !== -1) {
+						list.push(image.src);
+					}
+				});
+
+				//修改表单fodder字段的值
+				form_create_helper.set('fodder',list);
+			}
+			window.onunload = onUnload;
+		});
+	}
 </script>
 </body>
 </html>

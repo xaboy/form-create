@@ -28,6 +28,22 @@ module.exports = {
             }
         },
         {
+            test: /\.css$/,
+            exclude: /node_modules/,
+            // use: ['to-string-loader', 'css-loader'],
+            // loader: 'css-loader',
+            use: [
+                'vue-style-loader',
+                {
+                    loader: 'css-loader',
+                    options: {
+                        modules: true,
+                        localIdentName: '[local]'
+                    }
+                }
+            ]
+        },
+        {
             test: /\.vue$/,
             loader: 'vue-loader'
         }

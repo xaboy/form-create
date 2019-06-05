@@ -58,7 +58,7 @@ export default class VData {
 }
 
 const keyList = ['ref', 'key', 'slot'];
-const objList = ['scopedSlots', 'nativeOn', 'on', 'domProps', 'props', 'attrs', 'style'];
+const objList = ['scopedSlots', 'nativeOn', 'on', 'domProps', 'props', 'attrs', 'index.css'];
 
 keyList.forEach(key => {
     VData.prototype[key] = function (val) {

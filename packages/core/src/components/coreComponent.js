@@ -1,9 +1,10 @@
 import {formCreateName} from '../core/config';
+import getMixins from './mixins';
 
-export default function coreComponent(fc, mixin) {
+export default function coreComponent(fc, components) {
     return {
         name: `${formCreateName}Core`,
-        mixins: [mixin],
+        mixins: [getMixins(components)],
         render: () => {
             return fc.handle.run();
         },
@@ -16,8 +17,6 @@ export default function coreComponent(fc, mixin) {
             this.$f = fc.fCreateApi;
         },
         mounted() {
-            fc.handle.mounted();
-
             this.$watch('rules', n => {
                 fc.handle.reloadRule(n);
             });

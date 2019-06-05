@@ -49,8 +49,8 @@
             el: '#app1',
             data: {
                 formModel: {},
-                // rule:jsonMock(),
-                rule: mock(),
+                rule:mock(),
+                // rule: [mock()[1],mock()[2]],
                 option: {
                     //显示表单重置按钮
                     resetBtn: true,
@@ -75,7 +75,7 @@
                     },
                     mounted: function ($f) {
                         var $m = $f.model();
-                        $m.goods_name.value += " now";
+                        // $m.goods_name.value += " now";
                     },
                     //onReload 表单重载是触发 用与更新$f
                     onReload: function ($f) {
@@ -104,9 +104,9 @@
                 console.log(this.fApi);
                 //实际开发中记得加 var
                 window.$f = this.fApi;
-                this.formModel = this.fApi.model();
+                // this.formModel = this.fApi.model();
                 //动态添加表单元素
-                this.fApi.append($r, 'pic');
+                // this.fApi.append($r, 'pic');
             }
         });
 

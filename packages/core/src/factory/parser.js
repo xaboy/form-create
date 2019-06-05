@@ -10,7 +10,6 @@ export default class BaseParser {
         this.vNode = new VNode({});
         this.id = id;
         this.watch = [];
-
         this.type = toString(rule.type);
         this.isDef = true;
         this.el = undefined;
@@ -32,11 +31,12 @@ export default class BaseParser {
     }
 
     update(handle) {
-        this.h = handle;
-        this.r = handle.render;
+        this.$handle = handle;
+        this.$render = handle.$render;
         this.vm = handle.vm;
         this.options = handle.options;
         this.vNode.setVm(this.vm);
+        this.deleted = false;
     }
 
     init() {

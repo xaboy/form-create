@@ -9,8 +9,9 @@ import {
     isUndef,
     isValidChildren,
     toLine,
+    toString,
     uniqueId,
-    isFunction, debounce
+    isFunction
 } from '@form-create/utils';
 import BaseParser from '../factory/parser';
 import Render from './render';
@@ -42,33 +43,35 @@ export function getRule(rule) {
 export default class Handle {
 
     constructor(fc) {
-        const {vm, rules, options, drive} = fc;
+        const {vm, rules, options} = fc;
 
         this.vm = vm;
         this.fc = fc;
         this.id = uniqueId();
-        this.formRefName = 'fc_' + this.id;
         this.options = options;
-        this.drive = drive;
 
         this.validate = {};
+        this.formData = {};
+
         this.fCreateApi = undefined;
-        this.$tick = debounce((fn) => fn(), 150);
 
         this.__init(rules);
-        this.render = new Render(this, drive.formRender);
+        this.$form = new fc.drive.formRender(this, this.id);
+        this.$render = new Render(this);
 
         this.loadRule(this.rules, false);
 
-        this.render.initOrgChildren();
+        this.$render.initOrgChildren();
+
+        this.$form.init();
     }
 
     __init(rules) {
-        this.parsers = {};
-        this.formData = {};
+        this.fieldList = {};
         this.trueData = {};
+        this.parsers = {};
         this.customData = {};
-        this.fieldList = [];
+        this.sortList = [];
         this.rules = rules;
         this.origin = [...this.rules];
     }
@@ -80,16 +83,19 @@ export default class Handle {
             if (!_rule.type)
                 return console.error('未定义生成规则的 type 字段' + errMsg());
 
-            let rule = getRule(_rule), parser;
+            let parser;
 
             if (_rule.__fc__) {
                 parser = _rule.__fc__;
+
+                if (parser.vm !== this.vm && !parser.deleted)
+                    return console.error(`${_rule.type}规则正在其他的 <form-create> 中使用` + errMsg());
                 parser.update(this);
             } else {
-                parser = this.createParser(this.parseRule(rule));
+                parser = this.createParser(this.parseRule(_rule));
             }
 
-            let children = parser.rule.children;
+            let children = parser.rule.children, rule = parser.rule;
             if (!this.notField(parser.field))
                 return console.error(`${rule.field} 字段已存在` + errMsg());
 
@@ -103,8 +109,23 @@ export default class Handle {
             }
 
             if (!child) {
-                this.fieldList.push(parser.field);
+                this.sortList.push(parser.id);
             }
+
+            Object.defineProperty(parser.rule, 'value', {
+                get: () => {
+                    return parser.toValue(this.getFormData(parser));
+                },
+                set: (value) => {
+                    console.log('set parser', parser.field, value);
+
+                    if (this.isChange(parser, value)) {
+                        this.$render.clearCache(parser);
+                        this.setFormData(parser, parser.toFormValue(value));
+                    }
+                }
+            });
+
             return parser;
         }).filter(h => h).forEach(h => {
             h.root = rules;
@@ -112,9 +133,9 @@ export default class Handle {
     }
 
     createParser(rule) {
-        const id = this.id + '' + uniqueId();
+        const id = this.id + '' + uniqueId(), parsers = this.fc.parsers, type = toString(rule.type).toLocaleLowerCase();
 
-        const Parser = this.hasParser(rule.type) ? this.getParser(rule.type) : BaseParser;
+        const Parser = (parsers[type]) ? parsers[type] : BaseParser;
 
         return new Parser(this, rule, id);
     }
@@ -126,7 +147,6 @@ export default class Handle {
         });
         const parseRule = {
             col: parseCol(rule.col),
-            props: parseProps(rule.props),
             validate: parseArray(rule.validate),
             options: parseArray(rule.options)
         };
@@ -136,10 +156,6 @@ export default class Handle {
         Object.keys(parseRule).forEach(k => {
             $set(rule, k, parseRule[k]);
         });
-
-        if (!rule.field && this.hasParser(rule.type)) {
-            console.error('规则的 field 字段不能空' + errMsg());
-        }
 
         if (isUndef(rule.props.elementId)) $set(rule.props, 'elementId', this.unique);
         return rule;
@@ -163,9 +179,9 @@ export default class Handle {
     }
 
     run() {
-        console.trace('------------render------------');
+        console.log(this.id, '------------render------------');
         if (this.vm.unique > 0)
-            return this.render.run();
+            return this.$render.run();
         else {
             this.vm.unique = 1;
             return [];
@@ -173,40 +189,52 @@ export default class Handle {
     }
 
     setParser(parser) {
-        let {field, isDef, rule} = parser;
-        this.parsers[field] = parser;
+        let {id, field, name, rule} = parser;
+        if (this.parsers[id])
+            return;
+        this.parsers[id] = parser;
 
         if (this.isNoVal(parser)) {
-            if (isDef === true) $set(this.customData, field, rule);
+            if (name)
+                $set(this.customData, name, rule);
             return;
         }
-
+        this.fieldList[field] = parser;
         $set(this.formData, field, parser.toFormValue(rule.value));
         $set(this.validate, field, rule.validate);
         $set(this.trueData, field, rule);
     }
 
-    notField(field) {
-        return this.parsers[field] === undefined;
+    notField(id) {
+        return this.parsers[id] === undefined;
+    }
+
+    isChange(parser, value) {
+        return JSON.stringify(parser.rule.value) !== JSON.stringify(value);
     }
 
     onInput(parser, value) {
-        value = isUndef(value) ? '' : value;
-        let field = parser.field, vm = this.vm, trueValue = parser.toValue(value);
-        vm._changeFormData(field, value);
-        if (!vm._change(field, JSON.stringify(trueValue))) return;
-        this.setValue(parser, trueValue);
-        parser.watchFormValue && parser.watchFormValue(value, this);
+        if (!this.isNoVal(parser) && this.isChange(parser, parser.toValue(value))) {
+            this.$render.clearCache(parser);
+            this.formData[parser.field] = value;
+
+        }
     }
 
     created() {
+        console.log('---------created---------');
         const vm = this.vm;
-        vm.$set(vm, 'cptData', this.formData);
-        vm.$set(vm, 'trueData', this.trueData);
+        //TODO 可以不加到 vm 中
+        // vm.$set(vm, 'rules', this.rules);
+        // vm.$set(vm, 'trueData', this.trueData);
+        // vm.$set(vm, 'components', this.customData);
+        //^^^^^^^^^^^^^^^^^^^^^
+
         vm.$set(vm, 'buttonProps', this.options.submitBtn);
         vm.$set(vm, 'resetProps', this.options.resetBtn);
-        vm.$set(vm, 'rules', this.rules);
-        vm.$set(vm, 'components', this.customData);
+
+        vm.$set(vm, 'formData', this.formData);
+
 
         if (this.fCreateApi === undefined)
             this.fCreateApi = this.fc.drive.getGlobalApi(this);
@@ -217,55 +245,24 @@ export default class Handle {
 
     addParserWitch(parser) {
         if (this.isNoVal(parser)) return;
-        let field = parser.field, vm = this.vm;
+        console.log('---------mountedParser---------', parser.field);
+        const vm = this.vm;
 
-        let unWatch = vm.$watch(() => vm.cptData[field], (n) => {
-            if (this.parsers[field] === undefined)
-                return delParser(parser);
-
-            let trueValue = parser.toValue(n), json = JSON.stringify(trueValue);
-            if (vm._change(field, json)) {
-                console.log(field, 'cptData');
-                this.setValue(parser, trueValue);
-                parser.watchFormValue && parser.watchFormValue(n, this);
-            }
-        }, {deep: true});
-
-        let unWatch2 = vm.$watch(() => vm.trueData[field].value, (n) => {
-            if (n === undefined) return;
-            if (this.parsers[field] === undefined)
-                return delParser(parser);
-
-            let json = JSON.stringify(n);
-            if (vm._change(field, json)) {
-                console.log(field, 'trueData');
-
-                $set(parser.rule, 'value', n);
-                this.vm._changeFormData(field, parser.toFormValue(n));
-                parser.watchValue && parser.watchValue(n, this);
-                $nt(() => this.vm._refresh());
-            }
-        }, {deep: true});
-
-        parser.watch.push(unWatch, unWatch2);
-
-        // const bind = () => {
-        //     if (this.parsers[field] === undefined)
-        //         delParser(parser);
-        //     else
-        //         this.$tick(() => this.refresh());
-        // };
-        //
-        // Object.keys(vm._trueData(field)).forEach((key) => {
-        //     if (key === 'value') return;
-        //     parser.watch.push(vm.$watch(() => vm.trueData[field][key], bind, {deep: true, lazy: true}));
-        // });
+        Object.keys(parser.rule).forEach((key) => {
+            if (['field', 'type', 'value', 'vm', 'template'].indexOf(key) !== -1 || parser.rule[key] === undefined) return;
+            parser.watch.push(vm.$watch(() => parser.rule[key], (n, o) => {
+                if (o === undefined) return;
+                this.$render.clearCache(parser);
+                console.log(key,' -------------- change');
+            }, {deep: true, immediate: true}));
+        });
     }
 
     mountedParser() {
+        console.log('---------mountedParser---------');
         const vm = this.vm;
-        Object.keys(this.parsers).forEach((field) => {
-            let parser = this.parsers[field];
+        Object.keys(this.parsers).forEach((id) => {
+            let parser = this.parsers[id];
             if (parser.watch.length === 0) this.addParserWitch(parser);
 
             parser.el = vm.$refs[parser.refName] || {};
@@ -273,16 +270,7 @@ export default class Handle {
             if (parser.defaultValue === undefined)
                 parser.defaultValue = deepExtend({}, {value: parser.rule.value}).value;
 
-            parser.mounted && parser.mounted(vm);
-        });
-    }
-
-    defJsonData() {
-        const vm = this.vm;
-        Object.keys(vm.cptData).forEach(field => {
-            const value = this.parsers[field].toValue(vm.cptData[field]);
-            vm.jsonData[field] = JSON.stringify(value);
-            vm._changeValue(field, value);
+            parser.mounted && parser.mounted();
         });
     }
 
@@ -290,7 +278,6 @@ export default class Handle {
         const mounted = this.options.mounted;
 
         this.mountedParser();
-        this.defJsonData();
 
         mounted && mounted(this.fCreateApi);
         this.fc.$emit('mounted', this.fCreateApi);
@@ -300,29 +287,24 @@ export default class Handle {
         const onReload = this.options.onReload;
 
         this.mountedParser();
-        this.defJsonData();
 
         onReload && onReload(this.fCreateApi);
         this.fc.$emit('reload', this.fCreateApi);
     }
 
-    removeField(field) {
-        if (this.parsers[field] === undefined) return;
-        const index = this.fieldList.indexOf(field);
+    removeField(parser) {
+        const {id, field} = parser, index = this.sortList.indexOf(id);
 
-        delParser(this.parsers[field]);
-        $del(this.parsers, field);
+        delParser(parser);
+        $del(this.parsers, id);
         $del(this.validate, field);
 
         if (index !== -1) {
-            this.fieldList.splice(index, 1);
+            this.sortList.splice(index, 1);
         }
-
-        this.vm._removeField(field);
-    }
-
-    getFormRef() {
-        return this.vm.$refs[this.formRefName];
+        $del(this.formData, field);
+        $del(this.customData, field);
+        $del(this.trueData, field);
     }
 
     refresh() {
@@ -335,10 +317,12 @@ export default class Handle {
         if (!this.origin.length) this.fCreateApi.refresh();
         this.origin = [...rules];
 
-        Object.keys(this.parsers).forEach(field => this.removeField(field));
+        const parsers = {...this.parsers};
         this.__init(rules);
         this.loadRule(rules, false);
-        this.render.initOrgChildren();
+        Object.keys(parsers).filter(id => this.parsers[id] === undefined)
+            .forEach(id => this.removeField(parsers[id]));
+        this.$render.initOrgChildren();
         this.created();
 
         $nt(() => {
@@ -346,33 +330,20 @@ export default class Handle {
         });
 
         vm.$f = this.fCreateApi;
+        this.$render.clearCacheAll();
+        this.refresh();
     }
 
-    setFormData(field, value) {
-        this.formData[field] = value;
+    setFormData(parser, value) {
+        this.formData[parser.field] = value;
     }
 
-    setValue(parser, value) {
-        $set(parser.rule, 'value', value);
-        this.vm._changeValue(parser.field, value);
+    getFormData(parser) {
+        return this.formData[parser.field];
     }
 
-    getValue(field) {
-        return this.vm._value(field);
-    }
-
-    clearMsg(parser) {
-        const fItem = this.vm.$refs[parser.formItemRefName];
-        if (fItem) {
-            fItem.validateMessage = '';
-            fItem.validateState = '';
-            fItem.validateDisabled = true;
-        }
-    }
-
-    reset(parser) {
-        this.vm._changeValue(parser.field, parser.defaultValue);
-        this.clearMsg(parser);
+    fields() {
+        return Object.keys(this.formData);
     }
 
     $emit(parser, eventName, ...params) {
@@ -382,15 +353,7 @@ export default class Handle {
     }
 
     isNoVal(parser) {
-        return !this.hasParser(parser.type);
-    }
-
-    hasParser(type) {
-        return !!this.drive.componentList[type];
-    }
-
-    getParser(type) {
-        return this.drive.componentList[type].parser
+        return !parser.isDef;
     }
 
 }
@@ -399,6 +362,9 @@ export function delParser(parser) {
     parser.watch.forEach((unWatch) => unWatch());
     parser.watch = [];
     parser.deleted = true;
+    Object.defineProperty(parser.rule, 'value', {
+        value: extend({}, {value: parser.rule.value}).value
+    });
 }
 
 function parseOn(on, emitEvent) {
@@ -408,13 +374,6 @@ function parseOn(on, emitEvent) {
 
 function parseArray(validate) {
     return Array.isArray(validate) ? validate : [];
-}
-
-function parseProps(props) {
-    if (isUndef(props.hidden)) $set(props, 'hidden', false);
-    if (isUndef(props.visibility)) $set(props, 'visibility', false);
-
-    return props;
 }
 
 function parseCol(col) {

@@ -6,9 +6,10 @@ import Render from './core/render';
 import VData from './factory/vData';
 import VNode from './factory/vNode';
 import BaseParser from './factory/parser';
+import BaseForm from './factory/form';
 
 export {
-    creatorFactory, creatorTypeFactory, Creator,
+    creatorFactory, creatorTypeFactory, Creator, BaseForm,
     Handle, makerFactory, Render, VData, VNode, Vue, BaseParser
 };
 

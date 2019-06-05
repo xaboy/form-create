@@ -1,10 +1,11 @@
 import {$nt} from '@form-create/utils';
 import {formCreateName} from '../core/config';
+import getMixins from './mixins';
 
-export default function $FormCreate(formCreate, mixin) {
+export default function $FormCreate(formCreate, components) {
     return {
         name: formCreateName,
-        mixins: [mixin],
+        mixins: [getMixins(components)],
         props: {
             rule: {
                 type: Array,
@@ -39,7 +40,6 @@ export default function $FormCreate(formCreate, mixin) {
         mounted() {
             const _fc = this._fc;
 
-            _fc.handle.mounted();
             this.$watch('rule', n => {
                 _fc.handle.reloadRule(n);
                 this.$emit('input', this.$f);

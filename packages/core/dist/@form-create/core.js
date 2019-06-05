@@ -122,7 +122,7 @@ function $set(target, field, value) {
   Vue.set(target, field, value);
 }
 function $del(target, field) {
-  Vue["delete"](target, field);
+  Vue.delete(target, field);
 }
 function isValidChildren(children) {
   return Array.isArray(children) && children.length > 0;
@@ -231,85 +231,6 @@ function getBaseConfig() {
 var formCreateStyleElId = 'form-create-style';
 var formCreateName = 'FormCreate';
 
-function coreComponent(fc, mixin) {
-  return {
-    name: "".concat(formCreateName, "Core"),
-    mixins: [mixin],
-    render: function render() {
-      return fc.handle.run();
-    },
-    beforeCreate: function beforeCreate() {
-      this._fc = fc;
-      fc.beforeCreate(this);
-    },
-    created: function created() {
-      fc.handle.created();
-      this.$f = fc.fCreateApi;
-    },
-    mounted: function mounted() {
-      fc.handle.mounted();
-      this.$watch('rules', function (n) {
-        fc.handle.reloadRule(n);
-      });
-    }
-  };
-}
-
-function $FormCreate(formCreate, mixin) {
-  return {
-    name: formCreateName,
-    mixins: [mixin],
-    props: {
-      rule: {
-        type: Array,
-        required: true,
-        "default": function _default() {
-          return {};
-        }
-      },
-      option: {
-        type: Object,
-        "default": function _default() {
-          return {};
-        },
-        required: false
-      },
-      value: Object
-    },
-    render: function render() {
-      return this._fc.handle.run();
-    },
-    beforeCreate: function beforeCreate() {
-      var _this$$options$propsD = this.$options.propsData,
-          rule = _this$$options$propsD.rule,
-          option = _this$$options$propsD.option;
-      this._fc = new formCreate(rule, option);
-
-      this._fc.beforeCreate(this);
-    },
-    created: function created() {
-      this._fc.handle.created();
-
-      this.$f = this._fc.handle.fCreateApi;
-      this.$emit('input', this.$f);
-    },
-    mounted: function mounted() {
-      var _this = this;
-
-      var _fc = this._fc;
-
-      _fc.handle.mounted();
-
-      this.$watch('rule', function (n) {
-        _fc.handle.reloadRule(n);
-
-        _this.$emit('input', _this.$f);
-      });
-      this.$emit('input', this.$f);
-    }
-  };
-}
-
 function getMixins(components) {
   return {
     data: function data() {
@@ -323,7 +244,17 @@ function getMixins(components) {
         jsonData: {},
         $f: {},
         isShow: true,
-        unique: 1
+        unique: 1,
+        obData: {},
+        group: {
+          rules: {},
+          components: {},
+          cptData: {},
+          buttonProps: {},
+          resetProps: {},
+          trueData: {},
+          jsonData: {}
+        }
       };
     },
     components: components,
@@ -384,7 +315,7 @@ function getMixins(components) {
 
       this._fc.handle.mounted();
 
-      this.$watch('option', function (n) {
+      this.$watch('option', function () {
         $nt(function () {
           _this._refresh();
         });
@@ -395,9 +326,84 @@ function getMixins(components) {
   };
 }
 
+function coreComponent(fc, components) {
+  return {
+    name: "".concat(formCreateName, "Core"),
+    mixins: [getMixins(components)],
+    render: function render() {
+      return fc.handle.run();
+    },
+    beforeCreate: function beforeCreate() {
+      this._fc = fc;
+      fc.beforeCreate(this);
+    },
+    created: function created() {
+      fc.handle.created();
+      this.$f = fc.fCreateApi;
+    },
+    mounted: function mounted() {
+      this.$watch('rules', function (n) {
+        fc.handle.reloadRule(n);
+      });
+    }
+  };
+}
+
+function $FormCreate(formCreate, components) {
+  return {
+    name: formCreateName,
+    mixins: [getMixins(components)],
+    props: {
+      rule: {
+        type: Array,
+        required: true,
+        default: function _default() {
+          return {};
+        }
+      },
+      option: {
+        type: Object,
+        default: function _default() {
+          return {};
+        },
+        required: false
+      },
+      value: Object
+    },
+    render: function render() {
+      return this._fc.handle.run();
+    },
+    beforeCreate: function beforeCreate() {
+      var _this$$options$propsD = this.$options.propsData,
+          rule = _this$$options$propsD.rule,
+          option = _this$$options$propsD.option;
+      this._fc = new formCreate(rule, option);
+
+      this._fc.beforeCreate(this);
+    },
+    created: function created() {
+      this._fc.handle.created();
+
+      this.$f = this._fc.handle.fCreateApi;
+      this.$emit('input', this.$f);
+    },
+    mounted: function mounted() {
+      var _this = this;
+
+      var _fc = this._fc;
+      this.$watch('rule', function (n) {
+        _fc.handle.reloadRule(n);
+
+        _this.$emit('input', _this.$f);
+      });
+      this.$emit('input', this.$f);
+    }
+  };
+}
+
 function defVData() {
   return {
-    "class": {},
+    class: {},
     style: {},
     attrs: {},
     props: {},
@@ -431,12 +437,12 @@ function () {
 
       if (Array.isArray(classList)) {
         classList.forEach(function (cls) {
-          $set(_this._data["class"], toString(cls), true);
+          $set(_this._data.class, toString(cls), true);
         });
       } else if (isPlainObject(classList)) {
-        $set(this._data, 'class', extend(this._data["class"], classList));
+        $set(this._data, 'class', extend(this._data.class, classList));
       } else {
-        $set(this._data["class"], toString(classList), status === undefined ? true : status);
+        $set(this._data.class, toString(classList), status === undefined ? true : status);
       }
 
       return this;
@@ -457,16 +463,21 @@ function () {
   }, {
     key: "get",
     value: function get() {
+      var _this2 = this;
+
       this._prev = this._data;
       this.init();
-      return this._prev;
+      return Object.keys(this._prev).reduce(function (initial, key) {
+        if (_this2._prev[key] !== undefined) initial[key] = _this2._prev[key];
+        return initial;
+      }, {});
     }
   }]);
 
   return VData;
 }();
 var keyList = ['ref', 'key', 'slot'];
-var objList = ['scopedSlots', 'nativeOn', 'on', 'domProps', 'props', 'attrs', 'style'];
+var objList = ['scopedSlots', 'nativeOn', 'on', 'domProps', 'props', 'attrs', 'index.css'];
 keyList.forEach(function (key) {
   VData.prototype[key] = function (val) {
     $set(this._data, key, val);
@@ -751,8 +762,8 @@ function () {
   _createClass(BaseParser, [{
     key: "update",
     value: function update(handle) {
-      this.h = handle;
-      this.r = handle.render;
+      this.$handle = handle;
+      this.$render = handle.render;
       this.vm = handle.vm;
       this.options = handle.options;
       this.vNode.setVm(this.vm);
@@ -792,9 +803,38 @@ function () {
     this.form = new FormRender(this, uniqueId());
     this.vNode = new VNode(this.vm);
     this.vData = new VData();
-  }
+    this.cache = {};
+  } //TODO 如果是子级,刷新最顶级的组件
+
 
   _createClass(Render, [{
+    key: "clearCache",
+    value: function clearCache(parser) {
+      console.log('clear--------cache');
+      if (this.cacheStatus(parser)) this.h.refresh();
+      this.cache[parser.field] = null;
+    }
+  }, {
+    key: "setCache",
+    value: function setCache(parser, vnode) {
+      this.cache[parser.field] = {
+        vnode: vnode,
+        use: false
+      };
+    }
+  }, {
+    key: "cacheStatus",
+    value: function cacheStatus(parser) {
+      return this.cache[parser.field] && this.cache[parser.field].use === true;
+    }
+  }, {
+    key: "getCache",
+    value: function getCache(parser) {
+      var cache = this.cache[parser.field];
+      cache.use = true;
+      return cache.vnode;
+    }
+  }, {
     key: "initOrgChildren",
     value: function initOrgChildren() {
       var parsers = this.h.parsers;
@@ -829,58 +869,67 @@ function () {
   }, {
     key: "renderParser",
     value: function renderParser(parser, isChild) {
-      var type = parser.type,
-          rule = parser.rule,
-          refName = parser.refName,
-          key = parser.key,
-          form = this.form,
-          vn;
+      if (!this.cache[parser.field]) {
+        var type = parser.type,
+            rule = parser.rule,
+            refName = parser.refName,
+            key = parser.key,
+            form = this.form,
+            vn;
+        console.log(parser.field, 'rendering');
 
-      if (type === 'template' && rule.template) {
-        if (exports.Vue.compile === undefined) {
-          console.error('使用的 Vue 版本不支持 compile' + errMsg());
-          return [];
+        if (type === 'template' && rule.template) {
+          if (exports.Vue.compile === undefined) {
+            console.error('使用的 Vue 版本不支持 compile' + errMsg());
+            return [];
+          }
+
+          if (isUndef(rule.vm)) rule.vm = new exports.Vue();
+          vn = exports.Vue.compile(rule.template, {}).render.call(rule.vm);
+          if (vn.data === undefined) vn.data = {};
+          vn.key = key;
+          if (isChild) return vn;
+        } else if (!this.h.isNoVal(parser)) {
+          var children = this.renderChildren(parser);
+          vn = parser.render ? parser.render(children) : this.defaultRender(parser, children);
+        } else {
+          rule.ref = refName;
+          if (isUndef(rule.key)) rule.key = parser.key;
+          vn = this.vNode.make(type, Object.assign({}, rule), this.renderChildren(parser));
+          vn.key = key;
+          if (isChild) return vn;
         }
 
-        if (isUndef(rule.vm)) rule.vm = new exports.Vue();
-        vn = exports.Vue.compile(rule.template, {}).render.call(rule.vm);
-        if (vn.data === undefined) vn.data = {};
-        vn.key = key;
-        if (isChild) return vn;
-      } else if (!this.h.isNoVal(parser)) {
-        var children = this.renderChildren(parser);
-        vn = parser.render ? parser.render(children) : this.defaultRender(parser, children);
-      } else {
-        rule.ref = refName;
-        if (isUndef(rule.key)) rule.key = parser.key;
-        vn = this.vNode.make(type, Object.assign({}, rule), this.renderChildren(parser));
-        vn.key = key;
-        if (isChild) return vn;
+        var cache = form.container(vn, parser);
+        this.setCache(parser, cache);
+        return cache;
       }
 
-      return form.container(vn, parser);
+      return this.getCache(parser); // return form.container(vn, parser);
+    }
+  }, {
+    key: "parserToData",
+    value: function parserToData(parser) {
+      Object.keys(parser.vData._data).forEach(function (key) {
+        if (parser.rule[key] !== undefined) parser.vData[key](parser.rule[key]);
+      });
+      return parser.vData;
     }
   }, {
     key: "inputVData",
-    value: function inputVData(parser) {
+    value: function inputVData(parser, custom) {
       var _this2 = this;
 
       var refName = parser.refName,
           key = parser.key,
           field = parser.field,
           rule = parser.rule;
-      Object.keys(parser.vData._data).forEach(function (key) {
-        if (rule[key] !== undefined) parser.vData._data[key] = rule[key]; // parser.vData[key](rule[key]);
-      });
-      window.$vm = this.vm;
-      var data = parser.vData.props({
-        value: this.vm._formData(field)
-      }).ref(refName).key('input' + key).on('input', function (value) {
+      this.parserToData(parser);
+      var data = parser.vData.ref(refName).key('fc_item' + key);
+      if (!custom) data.on('input', function (value) {
         _this2.onInput(parser, value);
-      });
-      if (isUndef(rule.props.size)) data.props({
-        size: this.h.options.form.size
-      });
+      }).props('value', this.h.formData[field]);
+      if (isUndef(rule.props.size)) data.props('size', this.h.options.form.size);
       return data;
     }
   }, {
@@ -924,8 +973,7 @@ function () {
   }, {
     key: "defaultRender",
     value: function defaultRender(parser, children) {
-      var props = this.inputVData(parser);
-      return this.vNode[parser.type](props, children);
+      return this.vNode[parser.type](this.inputVData(parser), children);
     }
   }]);
 
@@ -985,6 +1033,7 @@ function () {
     value: function __init(rules) {
       this.parsers = {};
       this.formData = {};
+      this.obData = {};
       this.trueData = {};
       this.customData = {};
       this.fieldList = [];
@@ -1026,6 +1075,24 @@ function () {
           _this.fieldList.push(parser.field);
         }
 
+        Object.defineProperty(parser.rule, 'value', {
+          get: function get() {
+            return parser.toValue(_this.formData[parser.field]);
+          },
+          set: function set(value) {
+            console.trace('set parser', parser.field, value);
+
+            if (_this.vm._change(parser.field, JSON.stringify(value))) {
+              _this.render.clearCache(parser);
+
+              _this.formData[parser.field] = parser.toFormValue(value); ///TODO 待优化
+
+              _this.obData[parser.field].id += 1;
+              _this.obData[parser.field].value = value;
+            } // this.refresh();
+
+          }
+        });
         return parser;
       }).filter(function (h) {
         return h;
@@ -1095,7 +1162,7 @@ function () {
   }, {
     key: "run",
     value: function run() {
-      console.trace('------------render------------');
+      console.log('------------render------------');
       if (this.vm.unique > 0) return this.render.run();else {
         this.vm.unique = 1;
         return [];
@@ -1114,6 +1181,10 @@ function () {
         return;
       }
 
+      this.obData[field] = {
+        value: parser.rule.value,
+        id: 1
+      };
       $set(this.formData, field, parser.toFormValue(rule.value));
       $set(this.validate, field, rule.validate);
       $set(this.trueData, field, rule);
@@ -1126,27 +1197,26 @@ function () {
   }, {
     key: "onInput",
     value: function onInput(parser, value) {
-      value = isUndef(value) ? '' : value;
-      var field = parser.field,
-          vm = this.vm,
-          trueValue = parser.toValue(value);
-
-      vm._changeFormData(field, value);
-
-      if (!vm._change(field, JSON.stringify(trueValue))) return;
-      this.setValue(parser, trueValue);
-      parser.watchFormValue && parser.watchFormValue(value, this);
+      // TODO 实时获取当前 field.value 进行对比
+      if (this.vm._change(parser.field, JSON.stringify(parser.toValue(value)))) {
+        this.formData[parser.field] = value;
+        this.render.clearCache(parser);
+      }
     }
   }, {
     key: "created",
     value: function created() {
-      var vm = this.vm;
-      vm.$set(vm, 'cptData', this.formData);
-      vm.$set(vm, 'trueData', this.trueData);
-      vm.$set(vm, 'buttonProps', this.options.submitBtn);
-      vm.$set(vm, 'resetProps', this.options.resetBtn);
-      vm.$set(vm, 'rules', this.rules);
-      vm.$set(vm, 'components', this.customData);
+      console.log('---------created---------');
+      var vm = this.vm; // vm.$set(vm, 'obData', this.obData);
+      //TODO 可以不加到 vm 中
+
+      vm.$set(vm.group, 'rules', this.rules);
+      vm.$set(vm.group, 'trueData', this.trueData);
+      vm.$set(vm.group, 'components', this.customData); //^^^^^^^^^^^^^^^^^^^^^
+
+      vm.$set(vm.group, 'buttonProps', this.options.submitBtn);
+      vm.$set(vm.group, 'resetProps', this.options.resetBtn);
+      vm.$set(vm.group, 'cptData', this.formData);
       if (this.fCreateApi === undefined) this.fCreateApi = this.fc.drive.getGlobalApi(this);
       this.fCreateApi.rule = this.rules;
       this.fCreateApi.config = this.options;
@@ -1158,62 +1228,29 @@ function () {
 
       if (this.isNoVal(parser)) return;
       var field = parser.field,
-          vm = this.vm;
-      var unWatch = vm.$watch(function () {
-        return vm.cptData[field];
-      }, function (n) {
-        if (_this3.parsers[field] === undefined) return delParser(parser);
-        var trueValue = parser.toValue(n),
-            json = JSON.stringify(trueValue);
+          vm = this.vm; //TODO 首次绑定时会自动触发 watch
 
-        if (vm._change(field, json)) {
-          console.log(field, 'cptData');
+      Object.keys(parser.rule).forEach(function (key) {
+        if (['field', 'type', 'value'].indexOf(key) !== -1) return;
+        parser.watch.push(vm.$watch(function () {
+          return parser.rule[key];
+        }, function (n, o) {
+          if (o === undefined) return; // console.trace(key, 'change');
 
-          _this3.setValue(parser, trueValue);
+          _this3.render.clearCache(parser); // this.refresh();
 
-          parser.watchFormValue && parser.watchFormValue(n, _this3);
-        }
-      }, {
-        deep: true
+        }, {
+          deep: true,
+          immediate: true
+        }));
       });
-      var unWatch2 = vm.$watch(function () {
-        return vm.trueData[field].value;
-      }, function (n) {
-        if (n === undefined) return;
-        if (_this3.parsers[field] === undefined) return delParser(parser);
-        var json = JSON.stringify(n);
-
-        if (vm._change(field, json)) {
-          console.log(field, 'trueData');
-          $set(parser.rule, 'value', n);
-
-          _this3.vm._changeFormData(field, parser.toFormValue(n));
-
-          parser.watchValue && parser.watchValue(n, _this3);
-          $nt(function () {
-            return _this3.vm._refresh();
-          });
-        }
-      }, {
-        deep: true
-      });
-      parser.watch.push(unWatch, unWatch2); // const bind = () => {
-      //     if (this.parsers[field] === undefined)
-      //         delParser(parser);
-      //     else
-      //         this.$tick(() => this.refresh());
-      // };
-      //
-      // Object.keys(vm._trueData(field)).forEach((key) => {
-      //     if (key === 'value') return;
-      //     parser.watch.push(vm.$watch(() => vm.trueData[field][key], bind, {deep: true, lazy: true}));
-      // });
     }
   }, {
     key: "mountedParser",
     value: function mountedParser() {
       var _this4 = this;
 
+      console.log('---------mountedParser---------');
       var vm = this.vm;
       Object.keys(this.parsers).forEach(function (field) {
         var parser = _this4.parsers[field];
@@ -1234,9 +1271,8 @@ function () {
       Object.keys(vm.cptData).forEach(function (field) {
         var value = _this5.parsers[field].toValue(vm.cptData[field]);
 
-        vm.jsonData[field] = JSON.stringify(value);
-
-        vm._changeValue(field, value);
+        vm.jsonData[field] = JSON.stringify(value); //TODO 更新组件的值
+        // vm._changeValue(field, value);
       });
     }
   }, {
@@ -1307,39 +1343,22 @@ function () {
     }
   }, {
     key: "setFormData",
-    value: function setFormData(field, value) {
-      this.formData[field] = value;
+    value: function setFormData(parser, value) {
+      this.formData[parser.field] = value;
     }
   }, {
-    key: "setValue",
-    value: function setValue(parser, value) {
-      $set(parser.rule, 'value', value);
+    key: "getFormData",
+    value: function getFormData(parser) {
+      return this.formData[parser.field];
+    } // setValue(parser, value) {
+    //     $set(parser.rule, 'value', value);
+    //     this.vm._changeValue(parser.field, value);
+    // }
+    //
+    // getValue(field) {
+    //     return this.vm._value(field);
+    // }
 
-      this.vm._changeValue(parser.field, value);
-    }
-  }, {
-    key: "getValue",
-    value: function getValue(field) {
-      return this.vm._value(field);
-    }
-  }, {
-    key: "clearMsg",
-    value: function clearMsg(parser) {
-      var fItem = this.vm.$refs[parser.formItemRefName];
-
-      if (fItem) {
-        fItem.validateMessage = '';
-        fItem.validateState = '';
-        fItem.validateDisabled = true;
-      }
-    }
-  }, {
-    key: "reset",
-    value: function reset(parser) {
-      this.vm._changeValue(parser.field, parser.defaultValue);
-
-      this.clearMsg(parser);
-    }
   }, {
     key: "$emit",
     value: function $emit(parser, eventName) {
@@ -1390,8 +1409,10 @@ function parseArray(validate) {
 }
 
 function parseProps(props) {
-  if (isUndef(props.hidden)) $set(props, 'hidden', false);
-  if (isUndef(props.visibility)) $set(props, 'visibility', false);
+  //TODO 属性需要预定义,避免在内部定义属性
+  // if (isUndef(props.hidden)) $set(props, 'hidden', false);
+  // if (isUndef(props.visibility)) $set(props, 'visibility', false);
+  // 属性有误直接报错
   return props;
 }
 
@@ -1438,7 +1459,6 @@ function bindParser(rule, parser) {
 exports.Vue = typeof window !== 'undefined' && window.Vue ? window.Vue : Vue;
 function createFormCreate(drive) {
   var components = {},
-      mixin = getMixins(components),
       maker = makerFactory(drive.componentList);
   VNode.use(drive.nodes);
 
@@ -1450,9 +1470,9 @@ function createFormCreate(drive) {
 
   function initStyle() {
     if (document.getElementById(formCreateStyleElId) !== null) return;
-    var style = document.createElement('style');
+    var style = document.createElement('index.css');
     style.id = formCreateStyleElId;
-    style.innerText = drive.style;
+    style.innerText = drive.index;
     document.getElementsByTagName('head')[0].appendChild(style);
   }
 
@@ -1494,7 +1514,7 @@ function createFormCreate(drive) {
     }, {
       key: "mount",
       value: function mount(Vue) {
-        var $fCreate = Vue.extend(coreComponent(this)),
+        var $fCreate = Vue.extend(coreComponent(this, components)),
             $vm = new $fCreate().$mount();
         this.options.el.appendChild($vm.$el);
         return $vm;
@@ -1543,7 +1563,7 @@ function createFormCreate(drive) {
         $formCreate.ui = drive.ui;
         $formCreate.component = setComponent;
         Vue.prototype.$formCreate = $formCreate;
-        Vue.component(formCreateName, Vue.extend($FormCreate(FormCreate, mixin)));
+        Vue.component(formCreateName, Vue.extend($FormCreate(FormCreate, components)));
         exports.Vue = Vue;
       }
     }, {
@@ -1556,7 +1576,7 @@ function createFormCreate(drive) {
         } : _opt;
         var fComponent = new FormCreate(rules, opt);
 
-        var $fCreate = exports.Vue.extend(coreComponent(fComponent, mixin));
+        var $fCreate = exports.Vue.extend(coreComponent(fComponent, components));
 
         var $vm = new $fCreate().$mount();
         return {
@@ -1587,7 +1607,7 @@ function createFormCreate(drive) {
     Vue.use(FormCreate);
   }
 
-  components['form-create'] = exports.Vue.extend($FormCreate(FormCreate, mixin));
+  components['form-create'] = exports.Vue.extend($FormCreate(FormCreate, components));
   return {
     FormCreate: FormCreate,
     install: install

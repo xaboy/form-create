@@ -1,14 +1,5 @@
-import createFormCreate from '@form-create/core';
-import drive from './drive';
+import FormCreate from './core/index';
 
-const {FormCreate, install} = createFormCreate(drive);
-
-if (typeof window !== 'undefined') {
-    window.formCreate = FormCreate;
-    if (window.Vue) {
-        install(Vue);
-    }
-}
 
 const maker = FormCreate.maker;
 

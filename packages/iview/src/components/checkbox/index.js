@@ -1,5 +1,3 @@
-import parser from './parser';
+import Checkbox from './checkbox.vue';
 
-const name = 'checkbox';
-
-export default {parser, name};
+export default Checkbox;

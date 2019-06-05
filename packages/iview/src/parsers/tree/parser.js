@@ -1,0 +1,35 @@
+import {BaseParser} from '@form-create/core';
+
+export function isMultiple(rule) {
+    return (!rule.props.multiple) && rule.props.type === 'selected'
+}
+
+
+export default class Parser extends BaseParser {
+
+    toValue(parseValue) {
+        let value = parseValue;
+        return !isMultiple(this.rule) ? value : (value[0] || '');
+    }
+
+
+    render(children) {
+        const data = this.$render.parserToData(this).get();
+        console.log(data);
+        return this.vNode.tree({
+            props: {
+                ctx: data,
+                children,
+                value: this.$handle.formData[this.field],
+                type: data.props.type
+            },
+            ref: this.refName,
+            key: this.key,
+            on: {
+                input: (value) => {
+                    this.$render.onInput(this, value);
+                }
+            }
+        });
+    }
+}

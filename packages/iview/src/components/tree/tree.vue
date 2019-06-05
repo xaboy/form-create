@@ -1,0 +1,87 @@
+<script>
+
+function parseValue(value) {
+    return Array.isArray(value)
+        ? value
+        : ((!value ? [] : [value])
+        );
+}
+
+export default {
+    name: 'fc-tree',
+    props: {
+        ctx: {
+            type: Object,
+            default: () => ({props: {}})
+        },
+        children: {
+            type: Array,
+            default: () => ([])
+        },
+        type: {
+            type: String,
+            default: 'checked'
+        },
+        value: {
+            type: Array,
+            default: () => ([])
+        }
+    },
+    data() {
+        return {
+            treeData: []
+        }
+    },
+    watch: {
+        value(n) {
+            n = parseValue(n);
+            const data = this.$refs.tree.data;
+            this.type === 'selected' ? this.selected(data, n) : this.checked(data, n);
+        }
+    },
+    methods: {
+        selected(_data, value) {
+            _data.forEach((node) => {
+                this.$set(node, 'selected', value.indexOf(node.id) !== -1);
+                if (node.children !== undefined && Array.isArray(node.children))
+                    this.selected(node.children, value);
+            });
+        },
+        checked(_data, value) {
+            _data.forEach((node) => {
+                if (value.indexOf(node.id) !== -1)
+                    this.$set(node, 'checked', true);
+                else {
+                    this.$set(node, 'indeterminate', false);
+                    this.$set(node, 'checked', false);
+                }
+                if (node.children !== undefined && Array.isArray(node.children))
+                    this.checked(node.children, value);
+            });
+        },
+        makeTree() {
+            return <Tree ref="tree" {...this.ctx}>{this.children}</Tree>;
+        },
+        updateTreeData() {
+            const type = (this.type).toLocaleLowerCase();
+
+            if (type === 'selected')
+                this.treeData = this.$refs.tree.getSelectedNodes();
+            else if (type === 'indeterminate')
+                this.treeData = this.$refs.tree.getCheckedAndIndeterminateNodes();
+            else
+                this.treeData = this.$refs.tree.getCheckedNodes();
+            this.$emit('input', this.treeData.map(node => node.id));
+        }
+    },
+    render() {
+        return (<div>{this.makeTree()}</div>);
+    },
+    mounted() {
+        this.$nextTick(() => {
+            this.$watch(() => this.$refs.tree.flatState, () => this.updateTreeData())
+        })
+
+    }
+}
+</script>

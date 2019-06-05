@@ -11,6 +11,6 @@ export default class render extends Render {
         return [this.vNode.switch(this.inputProps().scopedSlots({
             open: () => slot.open,
             close: () => slot.close
-        }).style({'margin': '4.5px 0px'}).get())]
+        }).index({'margin': '4.5px 0px'}).get())]
     }
 }

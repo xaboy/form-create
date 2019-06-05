@@ -51,9 +51,17 @@ export default class VData {
     }
 
     get() {
-        this._prev = this._data;
+        const data = Object.keys(this._data).reduce((initial, key) => {
+            const value = this._data[key];
+            if (value === undefined) return initial;
+            if (Array.isArray(value) && !value.length) return initial;
+            if (!Object.keys(value).length) return initial;
+
+            initial[key] = value;
+            return initial;
+        }, {});
         this.init();
-        return this._prev;
+        return data;
     }
 }
 

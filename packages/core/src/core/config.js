@@ -13,6 +13,4 @@ export default function getBaseConfig() {
 }
 
 
-export const formCreateStyleElId = 'form-create-style';
-
 export const formCreateName = 'FormCreate';

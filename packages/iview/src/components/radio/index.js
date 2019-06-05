@@ -1,5 +1,3 @@
-import parser from './parser';
+import Radio from './radio.vue';
 
-const name = 'radio';
-
-export default {parser, name};
+export default Radio;

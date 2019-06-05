@@ -8,38 +8,34 @@ import {
 } from '@form-create/utils';
 import coreComponent from '../components/coreComponent';
 import $FormCreate from '../components/component';
-import getMixins from '../components/mixins';
-import getBaseConfig, {formCreateStyleElId, formCreateName} from './config';
+import getBaseConfig, {formCreateName} from './config';
 import Vue from 'vue';
 import makerFactory from '../factory/maker';
-import VNode from '../factory/vNode';
 import Handle from './handle';
+import {creatorFactory} from '../factory/creator';
 
 export let _vue = typeof window !== 'undefined' && window.Vue ? window.Vue : Vue;
 
 export default function createFormCreate(drive) {
 
-    const components = {},
-        mixin = getMixins(components), maker = makerFactory(drive.componentList);
+    const components = {}, parsers = {}, maker = makerFactory();
 
-    VNode.use(drive.nodes);
 
-    function setComponent(id, component) {
-        if (component) {
-            return _vue.component(toString(id), component);
-        } else if (id)
-            return components[toString(id)];
-        else
-            return {...components};
+    function setParser(id, parser) {
+        id = toString(id);
+        parsers[id.toLocaleLowerCase()] = parser;
+        FormCreate.maker[id] = creatorFactory(id);
     }
 
-
-    function initStyle() {
-        if (document.getElementById(formCreateStyleElId) !== null) return;
-        let style = document.createElement('style');
-        style.id = formCreateStyleElId;
-        style.innerText = drive.style;
-        document.getElementsByTagName('head')[0].appendChild(style);
+    function component(id, component) {
+        id = toString(id);
+        const _id = id.toLocaleLowerCase();
+        if (_id === 'form-create' || _id === 'formcreate')
+            return _vue.extend($FormCreate(FormCreate, components));
+        if (component === undefined)
+            return components[toString(id)];
+        else
+            components[toString(id)] = component;
     }
 
     function margeGlobal(_options) {
@@ -59,27 +55,29 @@ export default function createFormCreate(drive) {
         return options;
     }
 
+    function bindAttr(FormCreate) {
+        extend(FormCreate, {
+            version: drive.version,
+            ui: drive.ui,
+            maker,
+            component,
+            setParser
+        });
+    }
 
     class FormCreate {
         constructor(rules, options = {}) {
             this.fCreateApi = undefined;
-            this.$parent = undefined;
             this.drive = drive;
+            this.parsers = parsers;
             this.vm = undefined;
             this.rules = Array.isArray(rules) ? rules : [];
-            initStyle();
             this.options = margeGlobal(options);
         }
 
         beforeCreate(vm) {
             this.vm = vm;
             this.handle = new Handle(this);
-        }
-
-        mount(Vue) {
-            let $fCreate = Vue.extend(coreComponent(this)), $vm = new $fCreate().$mount();
-            this.options.el.appendChild($vm.$el);
-            return $vm;
         }
 
         $emit(eventName, ...params) {
@@ -90,33 +88,40 @@ export default function createFormCreate(drive) {
             }
         }
 
-        static create(rules, _opt = {}, $parent = undefined) {
-            let opt = isElement(_opt) ? {el: _opt} : _opt,
-                fComponent = new FormCreate(rules, opt),
-                $vm = fComponent.mount(_vue);
-            fComponent.$parent = $parent;
-            return fComponent.fCreateApi;
+        static create(rule, _opt = {}) {
+
+            let $vm = new _vue({
+                data() {
+                    return {rule: rule, option: isElement(_opt) ? {el: _opt} : _opt};
+                },
+                render() {
+                    return <form-create ref='fc' props={this.$data}/>
+                }
+            });
+
+            $vm.$mount();
+            $vm.$refs.fc._fc.options.el.appendChild($vm.$el);
+
+            return $vm.$refs.fc._fc.handle.fCreateApi;
         }
 
         static install(Vue) {
             const $formCreate = function (rules, opt = {}) {
-                return FormCreate.create(rules, opt, this);
+                return FormCreate.create(rules, opt);
             };
 
-            $formCreate.maker = maker;
-            $formCreate.version = drive.version;
-            $formCreate.ui = drive.ui;
-            $formCreate.component = setComponent;
+            bindAttr($formCreate);
+
             Vue.prototype.$formCreate = $formCreate;
 
-            Vue.component(formCreateName, Vue.extend($FormCreate(FormCreate, mixin)));
+            Vue.component(formCreateName, Vue.extend($FormCreate(FormCreate, components)));
             _vue = Vue;
         }
 
         static init(rules, _opt = {}) {
             let opt = isElement(_opt) ? {el: _opt} : _opt;
             let fComponent = new FormCreate(rules, opt);
-            let $fCreate = _vue.extend(coreComponent(fComponent, mixin));
+            let $fCreate = _vue.extend(coreComponent(fComponent, components));
             let $vm = new $fCreate().$mount();
 
             return {
@@ -136,18 +141,31 @@ export default function createFormCreate(drive) {
         }
     }
 
-    FormCreate.version = drive.version;
-    FormCreate.ui = drive.ui;
-    FormCreate.component = setComponent;
-    FormCreate.maker = maker;
+    // FormCreate.version = drive.version;
+    // FormCreate.ui = drive.ui;
+    // FormCreate.component = component;
+    // FormCreate.maker = maker;
+    // FormCreate.setParser = setParser;
+    bindAttr(FormCreate);
+
+
+    drive.components.forEach(component => {
+        FormCreate.component(component.name, component);
+    });
+
+    drive.parsers.forEach(({name, parser}) => {
+        FormCreate.setParser(name, parser);
+    });
+
+    Object.keys(drive.makers).forEach(name => {
+        FormCreate.maker[name] = drive.makers[name];
+    });
 
     function install(Vue) {
         if (Vue._installedFormCreate === true) return;
         Vue._installedFormCreate = true;
         Vue.use(FormCreate);
     }
-
-    components['form-create'] = _vue.extend($FormCreate(FormCreate, mixin));
 
     return {
         FormCreate,
