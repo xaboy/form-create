@@ -12,7 +12,8 @@ const rollupConfig = {
 
 module.exports = {
     plugins: {
-        vue: true,
+        commonjs: true,
+        vue: true
     },
     banner: {
         author: `2018-${new Date().getFullYear()} ${author}\n * Github https://github.com/xaboy/form-create`,
@@ -28,7 +29,8 @@ module.exports = {
     output: {
         format: ['umd'],
         moduleName: 'formCreate',
-        fileName: `form-create.${UI_LIB}.js`
+        fileName: `form-create.${UI_LIB}.js`,
+        extractCSS: false
     },
     input: join(cwd, '/src/index.js'),
     extendRollupConfig: (config) => {
@@ -39,6 +41,5 @@ module.exports = {
         'NODE_ENV': 'production',
         'VERSION': version,
         'UI': UI_LIB,
-    },
-    presets: ['@vue/babel-preset-jsx']
+    }
 }
