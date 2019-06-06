@@ -6,7 +6,7 @@ import {defaultOnHandle} from "../modal";
 export default class render extends Render {
     init() {
         let handler = this.handler;
-        this.uploadOptions = extend({...this.options.upload}, this.handler.rule.props);
+        this.uploadOptions = extend({...this.options.upload}, handler.rule.props);
         this.issetIcon = this.uploadOptions.allowRemove || this.uploadOptions.handleIcon;
         this.propsData = this.vData.props(this.uploadOptions)
             .props('onSuccess', (...args) => this.onSuccess(...args))

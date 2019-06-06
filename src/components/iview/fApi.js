@@ -148,7 +148,7 @@ export default function getGlobalApi(fComponent) {
                 const handler = fComponent.handlers[field];
                 if (!fComponent.handlers[field])
                     return;
-                vm.$set(vm._trueData(field).props, 'hidden', !!hidden);
+                vm.$set(handler.rule.props, 'hidden', !!hidden);
                 handler.render.sync();
             })
         },
@@ -157,7 +157,7 @@ export default function getGlobalApi(fComponent) {
                 const handler = fComponent.handlers[field];
                 if (!handler)
                     return;
-                vm.$set(vm._trueData(field).props, 'visibility', !!visibility);
+                vm.$set(handler.rule.props, 'visibility', !!visibility);
                 handler.render.sync();
             })
         },
@@ -169,7 +169,7 @@ export default function getGlobalApi(fComponent) {
                     return;
 
                 if (!handler.noValue)
-                    vm.$set(vm._trueData(field).props, 'disabled', disabled);
+                    vm.$set(handler.rule.props, 'disabled', disabled);
                 else
                     handler.$emit('disabled', disabled, this);
 

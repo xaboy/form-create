@@ -130,7 +130,9 @@ export default class render extends Render {
 
     makeHandleIcon(src, key, index) {
         return this.vNode.icon({
-            key: `uphi${key}${index}`, 'class': ['el-icon-view'], on: {
+            key: `uphi${key}${index}`,
+            'class': [this.uploadOptions.handleIcon === true ? 'el-icon-view' : this.uploadOptions.handleIcon],
+            on: {
                 'click': () => {
                     if (this.uploadOptions.disabled === true) return;
                     this.onHandle(src);

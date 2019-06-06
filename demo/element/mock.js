@@ -67,12 +67,11 @@ function mock() {
 
 
         //switch 开关组件
-        maker.switch('是否上架', 'is_show', '1').slot({
+        maker.switch('是否上架', 'is_show', '1').props({
+            "activeValue": "1",
+            "inactiveValue": "0",
             open: "上架",
             close: "下架",
-        }).props({
-            "activeValue": "1",
-            "inactiveValue": "0"
         }).col({span: 8, labelWidth: 100}),
 
 
@@ -171,7 +170,7 @@ function mock() {
                         }),
 
                         //timePicker 时间选择组件
-                        maker.time('活动时间', 'section_time', []).props({
+                        maker.time('活动时间', 'section_time', ['11:11:11','22:22:22']).props({
                             "isRange": true,
                             "placeholder": "请选择活动时间"
                         }),
