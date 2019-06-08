@@ -15,12 +15,11 @@ export default class Parser extends BaseParser {
 
     render(children) {
         const data = this.$render.parserToData(this).get();
-        console.log(data);
         return this.vNode.tree({
             props: {
                 ctx: data,
                 children,
-                value: this.$handle.formData[this.field],
+                value: this.$handle.getFormData(this),
                 type: data.props.type
             },
             ref: this.refName,

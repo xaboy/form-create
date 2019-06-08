@@ -82,11 +82,22 @@ function mock() {
 
         //自定义组件
         maker.createTmp('<i-button @click="onClick" long :disabled="disabled">{{button}}字符串测试{{test}}-{{num}}</i-button>', new Vue({
-            data: {
-                test: 'createTmp渲染',
-                button: '<i-button />',
-                num: 0,
-                disabled: false
+            data: function () {
+                return {
+                    test: 'createTmp渲染',
+                    button: '<i-button />',
+                    num: this.value,
+                    // disabled: false
+                }
+            },
+            props:{
+                disabled:Boolean,
+                value:Number,
+            },
+            watch:{
+                value(n){
+                    this.num = n;
+                }
             },
             methods: {
                 onClick: function () {
@@ -113,11 +124,11 @@ function mock() {
                 // this.$on('fc:input', this.onInput);
                 this.$on('fc:set-value', this.onSetValue);
             }
-        }), 'tmp', '自定义 title'),
+        }), 'tmp', '自定义 title').value(100).props('disabled',false),
 
 
         //自定义组件
-        maker.create('i-button', 'btn').props({
+        maker.create('i-button').props({
             type: 'primary',
             size: 'large',
             shape: undefined,
@@ -127,7 +138,7 @@ function mock() {
             icon: 'ios-upload',
             loading: false,
             show: true
-        })
+        }).name('btn')
             .on({
                 'fc:disabled': function (disabled, $f) {
                     $f.component().btn.props.disabled = disabled;
@@ -146,7 +157,7 @@ function mock() {
 
 
         //自定义组件
-        maker.create('Tooltip', 'tip', '自定义 title').props({
+        maker.create('Tooltip').name('tip').title('自定义 title').props({
             content: '这里是提示文字',
         }).value(false).col({span: 11, push: 1}).children([
             maker.create('span').domProps({
@@ -202,6 +213,7 @@ function mock() {
                 },
                 {
                     type: 'i-col',
+                    name:'test',
                     props: {
                         span: 12
                     },

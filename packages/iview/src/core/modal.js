@@ -1,6 +1,6 @@
-import {Vue, VNode} from "@form-create/core";
+import {Vue, VNode} from '@form-create/core';
 
-const vNode = new VNode({});
+const vNode = new VNode();
 const Modal = (options, cb) => {
     return {
         name: 'fc-modal',

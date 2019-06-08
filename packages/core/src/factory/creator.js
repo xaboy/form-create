@@ -31,8 +31,6 @@ export default class Creator extends VData {
         super();
         extend(this._data, baseRule());
         extend(this._data, {type, title, field, value});
-        // this.rule = extend(baseRule(), {type, title, field, value});
-        // this.props({hidden: false, visibility: false});
         if (isPlainObject(props)) this.props(props);
     }
 
@@ -45,18 +43,13 @@ export default class Creator extends VData {
         return this._data;
     }
 
-    value(value) {
-        $set(this._data, 'value', value);
-        return this;
-    }
-
     event(...args) {
         this.on(...args);
         return this;
     }
 }
 
-const keyAttrs = ['emitPrefix', 'className', 'defaultSlot'];
+const keyAttrs = ['emitPrefix', 'className', 'defaultSlot', 'value', 'name', 'title'];
 
 keyAttrs.forEach(attr => {
     Creator.prototype[attr] = function (value) {

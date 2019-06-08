@@ -1,5 +1,5 @@
 import {BaseParser} from '@form-create/core';
-import {$set, dateFormat, isDate, isUndef, timeStampToDate} from '@form-create/utils';
+import {dateFormat, isDate, timeStampToDate} from '@form-create/utils';
 
 
 export function getTime(date) {
@@ -9,12 +9,6 @@ export function getTime(date) {
 }
 
 export default class Parser extends BaseParser {
-
-    init() {
-        let props = this.rule.props;
-        if (!props.type) $set(props, 'type', 'time');
-        if (isUndef(props.confirm)) $set(props, 'confirm', true);
-    }
 
     toFormValue(value) {
         let parseValue, isArr = Array.isArray(value);

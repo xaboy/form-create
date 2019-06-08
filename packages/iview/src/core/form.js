@@ -1,6 +1,6 @@
 import {isFunction, preventDefault} from '@form-create/utils';
 import {BaseForm} from '@form-create/core';
-import style from './style/index.css';
+import style from '../style/index.css';
 
 
 export default class Form extends BaseForm {
@@ -39,24 +39,26 @@ export default class Form extends BaseForm {
         return this.makeFormItem(parser, child);
     }
 
-    makeFormItem(parser, VNodeFn) {
+    makeFormItem(parser, child) {
         let fItemUnique = `fItem${parser.key}${this.unique}`,
-            {rule, unique, field, formItemRefName} = parser,
+            {rule, field, formItemRefName} = parser,
             col = this.getGetCol(parser),
             labelWidth = (!col.labelWidth && !rule.title) ? 1 : col.labelWidth,
             className = rule.className, propsData = this.vData.props({
                 prop: field,
                 label: rule.title,
-                labelFor: unique,
+                // labelFor: unique,
                 rules: rule.validate,
                 labelWidth: labelWidth,
                 required: rule.props.required
             }).key(fItemUnique).ref(formItemRefName).class(className).get(),
-            node = this.vNode.formItem(propsData, [VNodeFn]);
+            node = this.vNode.formItem(propsData, [child]);
         return this.propsData.props.inline === true ? node : this.makeCol(col, parser, fItemUnique, [node]);
     }
 
     makeCol(col, parser, fItemUnique, VNodeFn) {
+        if (col.span === undefined)
+            col.span = 24;
         return this.vNode.col({
             props: col, 'class': {
                 [style.__fc_h]: this.hidden.indexOf(parser) !== -1,

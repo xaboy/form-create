@@ -1,4 +1,4 @@
-import createFormCreate, {_vue as Vue} from './core/formCreate';
+import createFormCreate, {_vue as Vue} from './core/index';
 import Creator, {creatorFactory, creatorTypeFactory} from './factory/creator';
 import Handle from './core/handle';
 import makerFactory from './factory/maker';

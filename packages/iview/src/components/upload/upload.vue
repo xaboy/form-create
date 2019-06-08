@@ -1,15 +1,8 @@
 <script>
 import {iviewConfig} from '../../core/config';
-import {hasSlot, toString} from '@form-create/utils';
+import {hasSlot, toArray, toString} from '@form-create/utils';
 import {defaultOnHandle} from '../../core/modal';
 import style from '../../style/index.css';
-
-function parseValue(value) {
-    return Array.isArray(value)
-        ? value
-        : ((!value ? [] : [value])
-        );
-}
 
 function parseFile(file) {
     return {
@@ -68,11 +61,11 @@ export default {
     created() {
         if (this.ctx.props.showUploadList === undefined)
             this.ctx.props.showUploadList = false;
-        this.ctx.props.defaultFileList = parseValue(this.value).map(parseFile);
+        this.ctx.props.defaultFileList = toArray(this.value).map(parseFile);
     },
     watch: {
         value(n) {
-            this.$refs.upload.fileList = parseValue(n).map(parseFile);
+            this.$refs.upload.fileList = toArray(n).map(parseFile);
             this.uploadList = this.$refs.upload.fileList;
         },
         maxLength(n, o) {
@@ -133,7 +126,8 @@ export default {
                 class={style['fc-files']}>{file.showProgress ? this.makeProgress(file) : [this.makeItem(file), this.makeIcons(file)]}</div>);
         },
         makeUpload() {
-            return <Upload ref="upload" class="adf12" style={{display:'inline-block'}} {...this.ctx}>{this.children}</Upload>;
+            return <Upload ref="upload" class="adf12"
+                style={{display: 'inline-block'}} {...this.ctx}>{this.children}</Upload>;
         },
         initChildren() {
             if (!hasSlot(this.children, 'default'))

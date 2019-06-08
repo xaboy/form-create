@@ -1,9 +1,5 @@
 import Vue from 'vue';
 
-export function $nt(fn) {
-    Vue.nextTick(fn);
-}
-
 export function $set(target, field, value) {
     Vue.set(target, field, value);
 }
@@ -66,10 +62,6 @@ export function isString(arg) {
     return isType(arg, 'String');
 }
 
-export function isNumber(arg) {
-    return isType(arg, 'Number');
-}
-
 export function isBool(arg) {
     return isType(arg, 'Boolean');
 }
@@ -85,8 +77,11 @@ export function isNumeric(n) {
     return n !== '' && !isNaN(parseFloat(n)) && isFinite(n)
 }
 
-export function toArray(a) {
-    return Array.isArray(a) ? a : [a]
+export function toArray(value) {
+    return Array.isArray(value)
+        ? value
+        : ((isUndef(value) ? [] : [value])
+        );
 }
 
 export function isElement(arg) {
@@ -121,8 +116,8 @@ export function uniqueId() {
     return ++id
 }
 
-export function toDefSlot(slot, $h, rule) {
-    return [slot && isFunction(slot) ? slot.call(rule, $h) : slot]
+export function toDefSlot(slot, $h) {
+    return [slot && isFunction(slot) ? slot($h) : slot]
 }
 
 

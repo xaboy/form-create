@@ -1,14 +1,14 @@
-const { join } = require('path');
-const { author, license, name, version } = require('./package.json');
+const {join} = require('path');
+const {author, license, name, version} = require('./package.json');
 const cwd = __dirname;
 
-const { UI_LIB } = process.env;
+const {UI_LIB} = process.env;
 
 const rollupConfig = {
     outputConfig: {
         exports: 'named',
     }
-}
+};
 
 module.exports = {
     plugins: {
@@ -32,7 +32,7 @@ module.exports = {
     },
     input: join(cwd, '/src/index.js'),
     extendRollupConfig: (config) => {
-        config.outputConfig = Object.assign({}, config.outputConfig, { 'outputConfig': rollupConfig.outputConfig });
+        config.outputConfig = Object.assign({}, config.outputConfig, {'outputConfig': rollupConfig.outputConfig});
         return config;
     },
     env: {

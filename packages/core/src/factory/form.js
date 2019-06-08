@@ -1,5 +1,6 @@
 import VData from './vData';
 import VNode from './vNode';
+import {deepExtend} from '@form-create/utils';
 
 
 export default class BaseForm {
@@ -16,6 +17,23 @@ export default class BaseForm {
 
     init() {
         this.$render = this.$handle.$render;
+    }
+
+    getGetCol(parser) {
+        let col = parser.rule.col || {}, mCol = {}, pCol = {};
+
+        if (!this.options.global)
+            return col;
+
+        if (this.options.global['*']) {
+            mCol = this.options.global['*'].col || {};
+        }
+
+        if (this.options.global[parser.type]) {
+            pCol = this.options.global[parser.type].col || {};
+        }
+        col = deepExtend(deepExtend(deepExtend({}, mCol), pCol), col);
+        return col;
     }
 
     beforeRender() {

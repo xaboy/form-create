@@ -7,7 +7,7 @@ export default class BaseParser {
     constructor(handle, rule, id) {
         this.rule = rule;
         this.vData = new VData;
-        this.vNode = new VNode({});
+        this.vNode = new VNode();
         this.id = id;
         this.watch = [];
         this.type = toString(rule.type);
@@ -20,6 +20,7 @@ export default class BaseParser {
         } else {
             this.field = rule.field;
         }
+        this.name = rule.name;
 
         this.unique = 'fc_' + id;
         this.key = 'key_' + id;

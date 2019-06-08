@@ -44,26 +44,6 @@ export default function getConfig() {
             justify: undefined,
             className: undefined
         },
-        upload: {
-            beforeUpload: () => {
-            },
-            onProgress: (event, file, fileList) => {
-            },
-            onSuccess: (response, file, fileList) => {
-            },
-            onError: (error, file, fileList) => {
-            },
-            onPreview: (file) => {
-            },
-            onRemove: (file, fileList) => {
-            },
-            onFormatError: (file, fileList) => {
-            },
-            onExceededSize: (file, fileList) => {
-            },
-            handleIcon: 'ios-eye-outline',
-            allowRemove: true
-        },
         submitBtn: {
             type: 'primary',
             size: 'large',

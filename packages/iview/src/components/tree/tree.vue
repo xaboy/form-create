@@ -1,11 +1,6 @@
 <script>
+import {toArray} from '@form-create/utils';
 
-function parseValue(value) {
-    return Array.isArray(value)
-        ? value
-        : ((!value ? [] : [value])
-        );
-}
 
 export default {
     name: 'fc-tree',
@@ -34,7 +29,7 @@ export default {
     },
     watch: {
         value(n) {
-            n = parseValue(n);
+            n = toArray(n);
             const data = this.$refs.tree.data;
             this.type === 'selected' ? this.selected(data, n) : this.checked(data, n);
         }

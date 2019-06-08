@@ -1,6 +1,5 @@
 import {deepExtend, errMsg, isFunction, isPlainObject, toString} from '@form-create/utils';
 
-
 export default function getGlobalApi(h) {
 
     function tidyFields(fields, all = false) {
@@ -72,7 +71,7 @@ export default function getGlobalApi(h) {
 
                 if (parser.type === 'hidden') return;
                 h.vm.$refs[parser.formItemRefName].resetField();
-                h.$render.clearCache(parser);
+                h.$render.clearCache(parser, true);
             });
         },
         destroy: () => {
@@ -80,32 +79,43 @@ export default function getGlobalApi(h) {
             h.vm.$destroy();
         },
         fields: () => h.fields(),
-        append: (rule, after) => {
-            let fields = h.fieldList, index = h.sortList.length;
+        append: (rule, after, isChild) => {
+            let fields = h.fieldList, index = h.sortList.length, rules = h.rules;
             after = toString(after);
+
 
             if (rule.field && fields.indexOf(toString(rule.field)) !== -1)
                 return console.error(`${rule.field} 字段已存在` + errMsg());
 
-            if (h.fieldList[after]) {
-                const parser = h.fieldList[after];
-                index = parser.root.indexOf(parser.rule);
-            }
-            h.rules.splice(index + 1, 0, rule);
+            const parser = h.getParser(after);
 
+            if (parser) {
+                if (isChild) {
+                    rules = parser.rule.children;
+                    index = parser.rule.children.length;
+                } else {
+                    index = parser.root.indexOf(parser.rule);
+                }
+            }
+            rules.splice(index + 1, 0, rule);
         },
-        prepend: (rule, after) => {
-            let fields = h.fieldList, index = 0;
+        prepend: (rule, after, isChild) => {
+            let fields = h.fieldList, index = 0, rules = h.rules;
             after = toString(after);
 
             if (rule.field && fields.indexOf(toString(rule.field)) !== -1)
                 return console.error(`${rule.field} 字段已存在` + errMsg());
 
-            if (h.fieldList[after]) {
-                const parser = h.fieldList[after];
-                index = parser.root.indexOf(parser.rule);
+            const parser = h.getParser(after);
+
+            if (parser) {
+                if (isChild) {
+                    rules = parser.rule.children;
+                } else {
+                    index = parser.root.indexOf(parser.rule);
+                }
             }
-            h.rules.splice(index, 0, rule);
+            rules.splice(index, 0, rule);
         },
         submit(successFn, failFn) {
             this.validate((valid) => {
@@ -113,8 +123,10 @@ export default function getGlobalApi(h) {
                     let formData = this.formData();
                     if (isFunction(successFn))
                         successFn(formData, this);
-                    else
+                    else {
                         h.options.onSubmit && h.options.onSubmit(formData, this);
+                        h.fc.$emit('submit', formData, this);
+                    }
                 } else {
                     failFn && failFn(this)
                 }
@@ -127,7 +139,7 @@ export default function getGlobalApi(h) {
                 if (!parser)
                     return;
                 hidden ? hiddenList.push(parser) : hiddenList.splice(hiddenList.indexOf(parser), 1);
-                h.$render.clearCache(parser);
+                h.$render.clearCache(parser, true);
             });
             h.refresh();
         },
@@ -138,7 +150,7 @@ export default function getGlobalApi(h) {
                 if (!parser)
                     return;
                 visibility ? visibilityList.push(parser) : visibilityList.splice(visibilityList.indexOf(parser), 1);
-                h.$render.clearCache(parser);
+                h.$render.clearCache(parser, true);
             });
             h.refresh();
         },
@@ -164,17 +176,21 @@ export default function getGlobalApi(h) {
             });
         },
         model() {
-            return {...h.trueData};
+            return Object.keys(h.trueData).reduce((initial, key) => {
+                initial[key] = h.trueData[key].rule;
+                return initial;
+            }, {});
         },
         component() {
-            return {...h.customData};
+            return Object.keys(h.customData).reduce((initial, key) => {
+                initial[key] = h.customData[key].rule;
+                return initial;
+            }, {});
         },
-        bind(fields) {
+        bind() {
             let bind = {}, properties = {};
-            tidyFields(fields).forEach((field) => {
+            Object.keys(h.fieldList).forEach((field) => {
                 const parser = h.fieldList[field];
-                if (!parser)
-                    return console.error(`${field} 字段不存在` + errMsg());
                 properties[field] = {
                     get() {
                         return parser.rule.value;
@@ -233,23 +249,26 @@ export default function getGlobalApi(h) {
         reload: (rules) => {
             h.reloadRule(rules)
         },
-        updateOptions: (options) => {
+        updateOptions(options) {
             deepExtend(h.options, options);
+            this.refresh(true);
         },
         onSubmit(fn) {
             this.options({onSubmit: fn});
         },
         sync: (field) => {
-            if (h.fieldList[field]) {
-                h.$render.clearCache(h.fieldList[field]);
-                h.refresh();
+            const parser = h.getParser(toString(field));
+            if (parser) {
+                h.$render.clearCache(parser, true);
+                h.refresh(true);
             }
         },
-        refresh: () => {
-            h.$render.clearCacheAll();
+        refresh: (clear) => {
+            if (clear)
+                h.$render.clearCacheAll();
             h.refresh();
         },
-        show: (isShow = true) => {
+        hideForm: (isShow = false) => {
             h.vm.isShow = !!isShow;
         }
     };

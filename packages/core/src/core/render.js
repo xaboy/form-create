@@ -1,4 +1,4 @@
-import {_vue as Vue} from './formCreate';
+import {_vue as Vue} from './index';
 import {debounce, errMsg, isString, isUndef, isValidChildren} from '@form-create/utils';
 import VNode from '../factory/vNode';
 import VData from '../factory/vData';
@@ -19,31 +19,34 @@ export default class Render {
         this.renderList = {};
     }
 
-    clearCache(parser) {
-        console.log('clear--------cache');
+    clearCache(parser, clear = true) {
+        if (!this.cache[parser.id]) return;
         if (this.cacheStatus(parser))
             this.$handle.refresh();
-
-        this.cache[parser.field] = null;
+        const parent = this.cache[parser.id].parent;
+        this.cache[parser.id] = null;
+        if (parent && clear)
+            this.clearCache(parent, clear);
     }
 
     clearCacheAll() {
         this.cache = {};
     }
 
-    setCache(parser, vnode) {
-        this.cache[parser.field] = {
+    setCache(parser, vnode, parent) {
+        this.cache[parser.id] = {
             vnode,
-            use: false
+            use: false,
+            parent
         };
     }
 
     cacheStatus(parser) {
-        return this.cache[parser.field] && this.cache[parser.field].use === true;
+        return this.cache[parser.id] && (this.cache[parser.id].use === true || this.cache[parser.id].parent);
     }
 
     getCache(parser) {
-        const cache = this.cache[parser.field];
+        const cache = this.cache[parser.id];
         cache.use = true;
         return cache.vnode;
     }
@@ -51,15 +54,11 @@ export default class Render {
     initOrgChildren() {
         const parsers = this.$handle.parsers;
         this.orgChildren = Object.keys(parsers).reduce((initial, id) => {
-            const children = parsers[id].children;
-            initial[id] = isValidChildren(children) ? children : [];
+            const children = parsers[id].rule.children;
+            initial[id] = isValidChildren(children) ? [...children] : [];
 
             return initial;
         }, {});
-    }
-
-    getParser(id) {
-        return this.$handle.parsers[id];
     }
 
     run() {
@@ -69,38 +68,64 @@ export default class Render {
         this.form.beforeRender();
 
         const vn = this.$handle.sortList.map((id) => {
-            let parser = this.getParser(id);
+            let parser = this.$handle.parsers[id];
             if (parser.type === 'hidden') return;
-            return this.renderParser(parser, false);
+            return this.renderParser(parser);
         }).filter((val) => val !== undefined);
 
         return this.form.render(vn);
     }
 
-    renderParser(parser, isChild) {
-        if (!this.cache[parser.field] || parser.type === 'template') {
-            let {type, rule, key} = parser, form = this.form, vn;
-            console.log(parser.field, 'rendering');
+    setGlobalConfig(parser) {
+        if (!this.options.global) return;
+
+        if (this.options.global['*']) {
+            this.toData(parser, this.options.global['*']);
+        }
+        if (this.options.global[parser.type]) {
+            this.toData(parser, this.options.global[parser.type]);
+        }
+    }
+
+    renderTemplate(parser) {
+        const {id, rule, key} = parser;
+        if (Vue.compile === undefined) {
+            console.error('使用的 Vue 版本不支持 compile' + errMsg());
+            return [];
+        }
+
+        if (!this.renderList[id]) {
+            if (isUndef(rule.vm)) rule.vm = new Vue;
+            this.renderList[id] = Vue.compile(rule.template);
+
+        }
+
+        setTemplateProps(parser);
+
+        rule.vm.$off('input');
+        rule.vm.$on('input', (value) => {
+            this.onInput(parser, value);
+        });
+
+        const vn = this.renderList[id].render.call(rule.vm);
+
+        if (vn.data === undefined) vn.data = {};
+        vn.key = key;
+        return vn;
+    }
+
+    renderParser(parser, parent) {
+        parser.vData.get();
+        this.setGlobalConfig(parser);
+
+        if (!this.cache[parser.id] || parser.type === 'template') {
+            let {type, rule} = parser, form = this.form, vn;
+
             if (type === 'template' && rule.template) {
+                vn = this.renderTemplate(parser);
 
-                if (Vue.compile === undefined) {
-                    console.error('使用的 Vue 版本不支持 compile' + errMsg());
-                    return [];
-                }
-
-                if (!this.renderList[parser.id]) {
-                    if (isUndef(rule.vm)) rule.vm = new Vue;
-                    this.renderList[parser.id] = Vue.compile(rule.template);
-                    rule.vm.$on('input', (value) => {
-                        this.onInput(parser, value);
-                    });
-                }
-
-                vn = this.renderList[parser.id].render.call(rule.vm);
-                if (vn.data === undefined) vn.data = {};
-                vn.key = key;
-                if (isChild) {
-                    this.setCache(parser, vn);
+                if (parent) {
+                    this.setCache(parser, vn, parent);
                     return vn;
                 }
             } else if (!this.$handle.isNoVal(parser)) {
@@ -108,27 +133,30 @@ export default class Render {
                 vn = parser.render ? parser.render(children) : this.defaultRender(parser, children);
             } else {
                 vn = this.vNode.make(type, this.inputVData(parser), this.renderChildren(parser));
-                if (isChild) {
-                    this.setCache(parser, vn);
+                if (parent) {
+                    this.setCache(parser, vn, parent);
                     return vn;
                 }
             }
             const cache = form.container(vn, parser);
-            this.setCache(parser, cache);
+            this.setCache(parser, cache, parent);
             return cache;
         }
 
         return this.getCache(parser);
-        // return form.container(vn, parser);
     }
 
-    parserToData(parser) {
+    toData(parser, data) {
         Object.keys(parser.vData._data).forEach((key) => {
-            if (parser.rule[key] !== undefined)
-                parser.vData[key](parser.rule[key]);
+            if (data[key] !== undefined)
+                parser.vData[key](data[key]);
         });
 
         return parser.vData;
+    }
+
+    parserToData(parser) {
+        return this.toData(parser, parser.rule);
     }
 
     inputVData(parser, custom) {
@@ -156,17 +184,20 @@ export default class Render {
 
     renderChildren(parser) {
         const {children} = parser.rule, orgChildren = this.orgChildren[parser.id];
+
         if (!isValidChildren(children)) {
-            orgChildren.forEach(_rule => {
-                this.removeField(_rule.__field__);
+            orgChildren.forEach(child => {
+                if (!isString(child) && child.__fc__) {
+                    this.$handle.removeField(child.__fc__);
+                }
             });
             this.orgChildren[parser.id] = [];
             return [];
         }
 
         this.orgChildren[parser.id].forEach(child => {
-            if (children.indexOf(child) === -1) {
-                this.removeField(child.__field__);
+            if (children.indexOf(child) === -1 && !isString(child) && child.__fc__) {
+                this.$handle.removeField(child.__fc__);
             }
         });
 
@@ -174,15 +205,30 @@ export default class Render {
             if (isString(child)) return child;
 
             if (child.__fc__) {
-                return this.renderParser(child.__fc__, true);
+                return this.renderParser(child.__fc__, parser);
             }
 
-            $de(() => this.$handle.fc.reload());
+            $de(() => this.$handle.reloadRule());
         });
 
     }
 
     defaultRender(parser, children) {
         return this.vNode[parser.type] ? this.vNode[parser.type](this.inputVData(parser), children) : this.vNode.make(parser.type, this.inputVData(parser), children);
+    }
+}
+
+function setTemplateProps(parser) {
+    const {rule} = parser;
+    if (!rule.vm.$props)
+        return;
+    const keys = Object.keys(rule.vm.$props);
+    keys.forEach(key => {
+        if (rule.props[key] !== undefined)
+            rule.vm.$props[key] = rule.props[key];
+    });
+
+    if (keys.indexOf('value') !== -1) {
+        rule.vm.$props.value = parser.rule.value;
     }
 }

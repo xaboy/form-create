@@ -2,16 +2,6 @@ import {BaseParser} from '@form-create/core';
 
 
 export default class Parser extends BaseParser {
-    init() {
-        let rule = this.rule;
-
-        //TODO 添加处理 vData 的方法,避免直接修改 props 对象
-        // $set(rule.props, 'min', rule.props.min === undefined
-        //     ? 0
-        //     : (parseFloat(rule.props.min) || 0));
-    }
-
-
     toFormValue(value) {
         let rule = this.rule, isArr = Array.isArray(value), props = rule.props, min = props.min || 0,
             parseValue;

@@ -2,13 +2,7 @@
 import {iviewConfig} from '../../core/config';
 import {defaultOnHandle, mount} from '../../core/modal';
 import style from '../../style/index.css';
-
-function parseValue(value) {
-    return Array.isArray(value)
-        ? value
-        : ((!value ? [] : [value])
-        );
-}
+import {toArray} from '@form-create/utils';
 
 export default {
     name: 'fc-frame',
@@ -112,13 +106,13 @@ export default {
     data() {
         return {
             modalVm: null,
-            fileList: parseValue(this.value)
+            fileList: toArray(this.value)
         }
     },
     watch: {
         value(n) {
             this.$emit('on-change', n);
-            this.fileList = parseValue(n);
+            this.fileList = toArray(n);
         },
         fileList(n) {
             this.$emit('input', this.maxLength === 1 ? (n[0] || '') : n);
@@ -149,7 +143,6 @@ export default {
                     },
                     on: {
                         'load': (e) => {
-                            //TODO 补充 iframeHelper
                             this.onLoad(e);
 
                             try {
@@ -175,7 +168,6 @@ export default {
                                 }
                             } catch (e) {
                                 console.log(e);
-                                //
                             }
                         }
                     },
@@ -184,7 +176,7 @@ export default {
                         on: {
                             click: () => {
                                 _vm.onClose();
-                                this.onCancel()
+                                this.onCancel();
                             }
                         }
                     }, [closeBtnText]),

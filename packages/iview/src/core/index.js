@@ -1,9 +1,9 @@
 import components from '../components';
 import parsers from '../parsers';
 import getConfig from './config';
-import getGlobalApi from './fApi';
+import getGlobalApi from './api';
 import nodes from './nodes';
-import formRender from '../form';
+import formRender from './form';
 import createFormCreate, {VNode} from '@form-create/core';
 import makers from '../makers';
 
