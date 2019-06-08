@@ -1,4 +1,4 @@
-import {isFunction, isUndef, preventDefault} from '@form-create/utils';
+import {isFunction, preventDefault} from '@form-create/utils';
 import {BaseForm} from '@form-create/core';
 import style from './style/index.css';
 
@@ -36,12 +36,14 @@ export default class Form extends BaseForm {
     }
 
     container(child, parser) {
-        return this.makeFormItem(parser, child, `fItem${parser.key}${this.unique}`);
+        return this.makeFormItem(parser, child);
     }
 
-    makeFormItem(parser, VNodeFn, fItemUnique) {
-        let {rule, unique, field, formItemRefName} = parser,
-            labelWidth = (!rule.col.labelWidth && !rule.title) ? 1 : rule.col.labelWidth,
+    makeFormItem(parser, VNodeFn) {
+        let fItemUnique = `fItem${parser.key}${this.unique}`,
+            {rule, unique, field, formItemRefName} = parser,
+            col = this.getGetCol(parser),
+            labelWidth = (!col.labelWidth && !rule.title) ? 1 : col.labelWidth,
             className = rule.className, propsData = this.vData.props({
                 prop: field,
                 label: rule.title,
@@ -51,13 +53,12 @@ export default class Form extends BaseForm {
                 required: rule.props.required
             }).key(fItemUnique).ref(formItemRefName).class(className).get(),
             node = this.vNode.formItem(propsData, [VNodeFn]);
-        return this.propsData.props.inline === true ? node : this.makeCol(parser, fItemUnique, [node]);
+        return this.propsData.props.inline === true ? node : this.makeCol(col, parser, fItemUnique, [node]);
     }
 
-    makeCol(parser, fItemUnique, VNodeFn) {
-        const rule = parser.rule;
+    makeCol(col, parser, fItemUnique, VNodeFn) {
         return this.vNode.col({
-            props: rule.col, 'class': {
+            props: col, 'class': {
                 [style.__fc_h]: this.hidden.indexOf(parser) !== -1,
                 [style.__fc_v]: this.visibility.indexOf(parser) !== -1
             }, key: `${fItemUnique}col1`
@@ -73,12 +74,15 @@ export default class Form extends BaseForm {
         if (resetBtnShow)
             btn.push(this.makeResetBtn(4));
 
-        return this.vNode.col({props: {span: 24}, key: `${this.unique}col2`}, btn);
+        return this.propsData.props.inline === true ? btn : this.vNode.col({
+            props: {span: 24},
+            key: `${this.unique}col2`
+        }, btn);
     }
 
     makeResetBtn(span) {
         const resetBtn = this.$handle.options.resetBtn,
-            props = isUndef(this.$handle.options.resetBtn.col) ? {span: span, push: 1} : resetBtn.col;
+            props = resetBtn.col || {span: span, push: 1};
 
         return this.vNode.col({props: props, key: `${this.unique}col3`}, [
             this.vNode.button({
@@ -96,7 +100,7 @@ export default class Form extends BaseForm {
 
     makeSubmitBtn(span) {
         const submitBtn = this.$handle.options.submitBtn,
-            props = isUndef(this.$handle.options.submitBtn.col) ? {span: span} : submitBtn.col;
+            props = submitBtn.col || {span: span};
 
         return this.vNode.col({props: props, key: `${this.unique}col4`}, [
             this.vNode.button({

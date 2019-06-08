@@ -70,7 +70,6 @@ export default function getGlobalApi(h) {
                 let parser = parsers[field];
                 if (!parser) return;
 
-                //TODO 自定义组件重置
                 if (parser.type === 'hidden') return;
                 h.vm.$refs[parser.formItemRefName].resetField();
                 h.$render.clearCache(parser);

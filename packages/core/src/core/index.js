@@ -5,10 +5,10 @@ import {
     isBool,
     isElement,
     toString,
+    isPlainObject,
 } from '@form-create/utils';
-import coreComponent from '../components/coreComponent';
-import $FormCreate from '../components/component';
-import getBaseConfig, {formCreateName} from './config';
+import $FormCreate from '../components/formCreate';
+import {formCreateName} from '../components/formCreate';
 import Vue from 'vue';
 import makerFactory from '../factory/maker';
 import Handle from './handle';
@@ -18,8 +18,7 @@ export let _vue = typeof window !== 'undefined' && window.Vue ? window.Vue : Vue
 
 export default function createFormCreate(drive) {
 
-    const components = {}, parsers = {}, maker = makerFactory();
-
+    const components = {}, parsers = {}, maker = makerFactory(), globalConfig = drive.getConfig();
 
     function setParser(id, parser) {
         id = toString(id);
@@ -38,12 +37,14 @@ export default function createFormCreate(drive) {
             components[toString(id)] = component;
     }
 
-    function margeGlobal(_options) {
+    function margeGlobal(config, _options) {
         if (isBool(_options.sumbitBtn))
-            $set(_options, 'sumbitBtn', {show: _options.sumbitBtn});
+            _options.sumbitBtn = {show: _options.sumbitBtn};
+
         if (isBool(_options.resetBtn))
-            $set(_options, 'resetBtn', {show: _options.resetBtn});
-        let options = deepExtend(extend(drive.getConfig(), getBaseConfig()), _options);
+            _options.resetBtn = {show: _options.resetBtn};
+
+        let options = deepExtend(config, _options);
 
         $set(options, 'el', !options.el
             ? window.document.body
@@ -61,8 +62,34 @@ export default function createFormCreate(drive) {
             ui: drive.ui,
             maker,
             component,
-            setParser
+            setParser,
+            $formCreate() {
+                return $FormCreate(FormCreate, components);
+            }
         });
+    }
+
+    function install(Vue, options) {
+        if (Vue._installedFormCreate === true) return;
+        Vue._installedFormCreate = true;
+
+        if (options && isPlainObject(options))
+            margeGlobal(globalConfig, options);
+
+        Vue.use(FormCreate);
+    }
+
+    function create(rules, option) {
+        const $vm = new _vue({
+            data() {
+                return {rule: rules, option: isElement(option) ? {el: option} : option};
+            },
+            render() {
+                return <form-create ref='fc' props={this.$data}/>
+            }
+        });
+        $vm.$mount();
+        return $vm;
     }
 
     class FormCreate {
@@ -72,7 +99,7 @@ export default function createFormCreate(drive) {
             this.parsers = parsers;
             this.vm = undefined;
             this.rules = Array.isArray(rules) ? rules : [];
-            this.options = margeGlobal(options);
+            this.options = margeGlobal(deepExtend({}, globalConfig), options);
         }
 
         beforeCreate(vm) {
@@ -80,34 +107,43 @@ export default function createFormCreate(drive) {
             this.handle = new Handle(this);
         }
 
-        $emit(eventName, ...params) {
-            if (this.$parent) {
-                this.$parent.$emit(`fc:${eventName}`, ...params);
-            } else {
-                this.vm.$emit(eventName, ...params);
-            }
+        created() {
+            this.handle.created();
         }
 
-        static create(rule, _opt = {}) {
+        api() {
+            return this.handle.fCreateApi;
+        }
 
-            let $vm = new _vue({
-                data() {
-                    return {rule: rule, option: isElement(_opt) ? {el: _opt} : _opt};
-                },
-                render() {
-                    return <form-create ref='fc' props={this.$data}/>
-                }
-            });
+        render() {
+            return this.handle.run();
+        }
 
-            $vm.$mount();
-            $vm.$refs.fc._fc.options.el.appendChild($vm.$el);
+        mounted() {
+            this.handle.mounted();
+        }
 
-            return $vm.$refs.fc._fc.handle.fCreateApi;
+        $emit(eventName, ...params) {
+            if (this.$parent)
+                this.$parent.$emit(`fc:${eventName}`, ...params);
+
+            this.vm.$emit(eventName, ...params);
+        }
+
+        static create(rules, _opt = {}, parent) {
+
+            let $vm = create(rules, _opt);
+
+            const _this = $vm.$refs.fc.formCreate;
+            _this.parent = parent;
+            _this.options.el.appendChild($vm.$el);
+
+            return _this.handle.fCreateApi;
         }
 
         static install(Vue) {
             const $formCreate = function (rules, opt = {}) {
-                return FormCreate.create(rules, opt);
+                return FormCreate.create(rules, opt, this);
             };
 
             bindAttr($formCreate);
@@ -119,33 +155,23 @@ export default function createFormCreate(drive) {
         }
 
         static init(rules, _opt = {}) {
-            let opt = isElement(_opt) ? {el: _opt} : _opt;
-            let fComponent = new FormCreate(rules, opt);
-            let $fCreate = _vue.extend(coreComponent(fComponent, components));
-            let $vm = new $fCreate().$mount();
+            let $vm = create(rules, _opt), formCreate = $vm.$refs.fc.formCreate;
 
             return {
                 mount($el) {
                     if ($el && isElement($el))
-                        $set(fComponent.options, 'el', $el);
-
-                    fComponent.options.el.appendChild($vm.$el);
-
-                    return fComponent.fCreateApi;
+                        formCreate.options.el = $el;
+                    formCreate.options.el.appendChild($vm.$el);
+                    return formCreate.handle.fCreateApi;
                 },
                 remove() {
-                    fComponent.options.el.removeChild($vm.$el);
+                    formCreate.options.el.removeChild($vm.$el);
                 },
-                $f: fComponent.fCreateApi
+                $f: formCreate.handle.fCreateApi
             };
         }
     }
 
-    // FormCreate.version = drive.version;
-    // FormCreate.ui = drive.ui;
-    // FormCreate.component = component;
-    // FormCreate.maker = maker;
-    // FormCreate.setParser = setParser;
     bindAttr(FormCreate);
 
 
@@ -160,12 +186,6 @@ export default function createFormCreate(drive) {
     Object.keys(drive.makers).forEach(name => {
         FormCreate.maker[name] = drive.makers[name];
     });
-
-    function install(Vue) {
-        if (Vue._installedFormCreate === true) return;
-        Vue._installedFormCreate = true;
-        Vue.use(FormCreate);
-    }
 
     return {
         FormCreate,
