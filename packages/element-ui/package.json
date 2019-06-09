@@ -6,7 +6,7 @@
     "scripts": {
         "clean": "rimraf dist/",
         "bili": "cross-env UI_LiB=ele bili",
-        "build1111111": "npm-run-all clean bili"
+        "buildxxxxx": "npm-run-all clean bili"
     },
     "repository": {
         "type": "git",
