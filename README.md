@@ -27,6 +27,8 @@
 >  If it helps, you can click on "Star" in the upper right corner. Thank you!
 >  The project is still being developed and improved. If there are any 'recommendations or questions, please ask [here](https://github.com/xaboy/form-create/issues/new)
 
+> **Form-create V2 is coming soon!!! Faster, smaller, and simpler to expand. If you expect it, please star support.**
+
 > [Update log](http://www.form-create.com/en/guide/update.html)
 
 
