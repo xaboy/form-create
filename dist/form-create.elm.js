@@ -1,5 +1,5 @@
 /*!
- * form-create v1.6.5 elementUI
+ * form-create v1.6.6 elementUI
  * (c) 2018-2019 xaboy
  * Github https://github.com/xaboy/form-create
  * Released under the MIT License.
@@ -2415,7 +2415,7 @@
     };
   }
 
-  var version = "1.6.5";
+  var version = "1.6.6";
   var ui = "element";
   var formCreateStyleElId = 'form-create-style';
   var drive = {};
@@ -4639,7 +4639,7 @@
 
         return this.vNode.icon({
           key: "uphi".concat(key).concat(index),
-          'class': ['el-icon-view'],
+          'class': [this.uploadOptions.handleIcon === true ? 'el-icon-view' : this.uploadOptions.handleIcon],
           on: {
             'click': function click() {
               if (_this6.uploadOptions.disabled === true) return;
@@ -5416,7 +5416,7 @@
         tidyFields(fields).forEach(function (field) {
           var handler = fComponent.handlers[field];
           if (!fComponent.handlers[field]) return;
-          vm.$set(vm._trueData(field).props, 'hidden', !!_hidden);
+          vm.$set(handler.rule.props, 'hidden', !!_hidden);
           handler.render.sync();
         });
       },
@@ -5426,7 +5426,7 @@
         tidyFields(fields).forEach(function (field) {
           var handler = fComponent.handlers[field];
           if (!handler) return;
-          vm.$set(vm._trueData(field).props, 'visibility', !!_visibility);
+          vm.$set(handler.rule.props, 'visibility', !!_visibility);
           handler.render.sync();
         });
       },
@@ -5439,7 +5439,7 @@
         tidyFields(fields, true).forEach(function (field) {
           var handler = fComponent.handlers[field];
           if (!handler) return;
-          if (!handler.noValue) vm.$set(vm._trueData(field).props, 'disabled', _disabled);else handler.$emit('disabled', _disabled, _this6);
+          if (!handler.noValue) vm.$set(handler.rule.props, 'disabled', _disabled);else handler.$emit('disabled', _disabled, _this6);
           handler.render.sync();
         });
       },

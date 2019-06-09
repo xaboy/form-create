@@ -1,5 +1,5 @@
 /*!
- * form-create v1.6.5 iviewUI
+ * form-create v1.6.6 iviewUI
  * (c) 2018-2019 xaboy
  * Github https://github.com/xaboy/form-create
  * Released under the MIT License.
@@ -2416,7 +2416,7 @@
     };
   }
 
-  var version = "1.6.5";
+  var version = "1.6.6";
   var ui = "iview";
   var formCreateStyleElId = 'form-create-style';
   var drive = {};
@@ -4034,7 +4034,7 @@
         var _this = this;
 
         var handler = this.handler;
-        this.uploadOptions = extend(_objectSpread({}, this.options.upload), this.handler.rule.props);
+        this.uploadOptions = extend(_objectSpread({}, this.options.upload), handler.rule.props);
         this.issetIcon = this.uploadOptions.allowRemove || this.uploadOptions.handleIcon;
         this.propsData = this.vData.props(this.uploadOptions).props('onSuccess', function () {
           return _this.onSuccess.apply(_this, arguments);
@@ -5477,7 +5477,7 @@
         tidyFields(fields).forEach(function (field) {
           var handler = fComponent.handlers[field];
           if (!fComponent.handlers[field]) return;
-          vm.$set(vm._trueData(field).props, 'hidden', !!_hidden);
+          vm.$set(handler.rule.props, 'hidden', !!_hidden);
           handler.render.sync();
         });
       },
@@ -5487,7 +5487,7 @@
         tidyFields(fields).forEach(function (field) {
           var handler = fComponent.handlers[field];
           if (!handler) return;
-          vm.$set(vm._trueData(field).props, 'visibility', !!_visibility);
+          vm.$set(handler.rule.props, 'visibility', !!_visibility);
           handler.render.sync();
         });
       },
@@ -5500,7 +5500,7 @@
         tidyFields(fields, true).forEach(function (field) {
           var handler = fComponent.handlers[field];
           if (!handler) return;
-          if (!handler.noValue) vm.$set(vm._trueData(field).props, 'disabled', _disabled);else handler.$emit('disabled', _disabled, _this6);
+          if (!handler.noValue) vm.$set(handler.rule.props, 'disabled', _disabled);else handler.$emit('disabled', _disabled, _this6);
           handler.render.sync();
         });
       },
