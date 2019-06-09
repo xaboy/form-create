@@ -8,14 +8,9 @@ import VNode from './factory/vNode';
 import BaseParser from './factory/parser';
 import BaseForm from './factory/form';
 
-console.log('-----------------------------')
-
-
 export {
     creatorFactory, creatorTypeFactory, Creator, BaseForm,
     Handle, makerFactory, Render, VData, VNode, Vue, BaseParser
 };
-
-console.log('-----------------------------')
 
 export default createFormCreate;
