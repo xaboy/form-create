@@ -1,4 +1,3 @@
-<script>
 import {iviewConfig} from '../../core/config';
 import {hasSlot, toArray, toString} from '@form-create/utils';
 import {defaultOnHandle} from '../../core/modal';
@@ -162,4 +161,3 @@ export default {
         }, {deep: true});
     }
 }
-</script>

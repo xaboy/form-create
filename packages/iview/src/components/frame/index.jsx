@@ -1,4 +1,3 @@
-<script>
 import {iviewConfig} from '../../core/config';
 import {defaultOnHandle, mount} from '../../core/modal';
 import style from '../../style/index.css';
@@ -278,4 +277,3 @@ export default {
             return this.makeFiles();
     }
 }
-</script>

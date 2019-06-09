@@ -1,4 +1,3 @@
-<script>
 import {toDefSlot} from '@form-create/utils';
 
 export default {
@@ -20,4 +19,3 @@ export default {
         }).concat(ctx.chlidren)}</Select>;
     }
 }
-</script>

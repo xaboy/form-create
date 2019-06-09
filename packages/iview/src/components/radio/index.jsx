@@ -1,4 +1,3 @@
-<script>
 export default {
     name: 'fc-radio',
     functional: true,
@@ -16,4 +15,3 @@ export default {
         }).concat(ctx.chlidren)}</RadioGroup>
     }
 }
-</script>

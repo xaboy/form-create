@@ -1,4 +1,3 @@
-<script>
 import {toArray} from '@form-create/utils';
 
 
@@ -79,4 +78,3 @@ export default {
 
     }
 }
-</script>

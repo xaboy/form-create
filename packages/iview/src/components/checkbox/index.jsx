@@ -1,4 +1,3 @@
-<script>
 export default {
     name: 'fc-checkbox',
     props: {
@@ -50,4 +49,3 @@ export default {
             }).concat(this.chlidren)}</CheckboxGroup>
     }
 }
-</script>
