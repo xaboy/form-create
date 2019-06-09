@@ -1596,8 +1596,5 @@ function () {
   return BaseForm;
 }();
 
-console.log('-----------------------------');
-console.log('-----------------------------');
-
 export default createFormCreate;
 export { BaseForm, BaseParser, Creator, Handle, Render, VData, VNode, _vue as Vue, creatorFactory, creatorTypeFactory, makerFactory };

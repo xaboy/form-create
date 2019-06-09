@@ -2,7 +2,10 @@
     "name": "@form-create/core",
     "version": "0.0.1",
     "description": "好用的表单生成器|Form builder with dynamic rendering, data collection, validation and submission capabilities, built-in 17 common form components, support for two-way data binding, event extension, and support for building built-in components and any vue components using json.",
-    "main": "./dist/form-create.core.js",
+    "main": "./src/index.js",
+    "module": "./src/index.js",
+    "unpkg": "./dist/form-create.core.min.js",
+    "jsdelivr": "./dist/form-create.core.min.js",
     "scripts": {
         "clean": "rimraf dist/",
         "bili": "cross-env UI_LIB=core bili",
@@ -13,14 +16,20 @@
         "url": "git+https://github.com/xaboy/form-create.git"
     },
     "keywords": [
-        "form-builder"
+        "form-builder",
+        "form",
+        "components",
+        "vue.js",
+        "iview",
+        "json-form",
+        "vue-json-form"
     ],
     "author": "xaboy",
     "license": "MIT",
     "bugs": {
         "url": "https://github.com/xaboy/form-create/issues"
     },
-    "homepage": "https://github.com/xaboy/form-create#readme",
+    "homepage": "http://www.form-create.com",
     "dependencies": {
         "@form-create/utils": "^0.0.1"
     },

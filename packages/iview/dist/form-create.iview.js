@@ -196,7 +196,7 @@
 
   var helper = mergeJsxProps;
 
-  var script = {
+  var checkbox = {
     name: 'fc-checkbox',
     props: {
       options: {
@@ -280,113 +280,6 @@
     }
   };
 
-  function normalizeComponent(template, style, script, scopeId, isFunctionalTemplate, moduleIdentifier
-  /* server only */
-  , shadowMode, createInjector, createInjectorSSR, createInjectorShadow) {
-    if (typeof shadowMode !== 'boolean') {
-      createInjectorSSR = createInjector;
-      createInjector = shadowMode;
-      shadowMode = false;
-    } // Vue.extend constructor export interop.
-
-
-    var options = typeof script === 'function' ? script.options : script; // render functions
-
-    if (template && template.render) {
-      options.render = template.render;
-      options.staticRenderFns = template.staticRenderFns;
-      options._compiled = true; // functional template
-
-      if (isFunctionalTemplate) {
-        options.functional = true;
-      }
-    } // scopedId
-
-
-    if (scopeId) {
-      options._scopeId = scopeId;
-    }
-
-    var hook;
-
-    if (moduleIdentifier) {
-      // server build
-      hook = function hook(context) {
-        // 2.3 injection
-        context = context || // cached call
-        this.$vnode && this.$vnode.ssrContext || // stateful
-        this.parent && this.parent.$vnode && this.parent.$vnode.ssrContext; // functional
-        // 2.2 with runInNewContext: true
-
-        if (!context && typeof __VUE_SSR_CONTEXT__ !== 'undefined') {
-          context = __VUE_SSR_CONTEXT__;
-        } // inject component styles
-
-
-        if (style) {
-          style.call(this, createInjectorSSR(context));
-        } // register component module identifier for async chunk inference
-
-
-        if (context && context._registeredComponents) {
-          context._registeredComponents.add(moduleIdentifier);
-        }
-      }; // used by ssr in case component is cached and beforeCreate
-      // never gets called
-
-
-      options._ssrRegister = hook;
-    } else if (style) {
-      hook = shadowMode ? function () {
-        style.call(this, createInjectorShadow(this.$root.$options.shadowRoot));
-      } : function (context) {
-        style.call(this, createInjector(context));
-      };
-    }
-
-    if (hook) {
-      if (options.functional) {
-        // register for functional component in vue file
-        var originalRender = options.render;
-
-        options.render = function renderWithStyleInjection(h, context) {
-          hook.call(context);
-          return originalRender(h, context);
-        };
-      } else {
-        // inject component registration as beforeCreate hook
-        var existing = options.beforeCreate;
-        options.beforeCreate = existing ? [].concat(existing, hook) : [hook];
-      }
-    }
-
-    return script;
-  }
-
-  var normalizeComponent_1 = normalizeComponent;
-
-  /* script */
-  var __vue_script__ = script;
-  /* template */
-
-  /* style */
-
-  var __vue_inject_styles__ = undefined;
-  /* scoped */
-
-  var __vue_scope_id__ = undefined;
-  /* module identifier */
-
-  var __vue_module_identifier__ = undefined;
-  /* functional template */
-
-  var __vue_is_functional_template__ = undefined;
-  /* style inject */
-
-  /* style inject SSR */
-
-  var Checkbox = normalizeComponent_1({}, __vue_inject_styles__, __vue_script__, __vue_scope_id__, __vue_is_functional_template__, __vue_module_identifier__, undefined, undefined);
-
   var iview2 = {
     _v: 2,
     resetBtnType: 'ghost',
@@ -457,167 +350,22 @@
     };
   }
 
-  function _typeof$1(obj) {
-    if (typeof Symbol === "function" && _typeof(Symbol.iterator) === "symbol") {
-      _typeof$1 = function _typeof$1(obj) {
-        return _typeof(obj);
-      };
-    } else {
-      _typeof$1 = function _typeof$1(obj) {
-        return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : _typeof(obj);
-      };
-    }
-
-    return _typeof$1(obj);
-  }
-
-  function _classCallCheck$1(instance, Constructor) {
-    if (!(instance instanceof Constructor)) {
-      throw new TypeError("Cannot call a class as a function");
-    }
-  }
-
-  function _defineProperties$1(target, props) {
-    for (var i = 0; i < props.length; i++) {
-      var descriptor = props[i];
-      descriptor.enumerable = descriptor.enumerable || false;
-      descriptor.configurable = true;
-      if ("value" in descriptor) descriptor.writable = true;
-      Object.defineProperty(target, descriptor.key, descriptor);
-    }
-  }
-
-  function _createClass$1(Constructor, protoProps, staticProps) {
-    if (protoProps) _defineProperties$1(Constructor.prototype, protoProps);
-    if (staticProps) _defineProperties$1(Constructor, staticProps);
-    return Constructor;
-  }
-
-  function _defineProperty$1(obj, key, value) {
-    if (key in obj) {
-      Object.defineProperty(obj, key, {
-        value: value,
-        enumerable: true,
-        configurable: true,
-        writable: true
-      });
-    } else {
-      obj[key] = value;
-    }
-
-    return obj;
-  }
-
-  function _objectSpread$1(target) {
-    for (var i = 1; i < arguments.length; i++) {
-      var source = arguments[i] != null ? arguments[i] : {};
-      var ownKeys = Object.keys(source);
-
-      if (typeof Object.getOwnPropertySymbols === 'function') {
-        ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) {
-          return Object.getOwnPropertyDescriptor(source, sym).enumerable;
-        }));
-      }
-
-      ownKeys.forEach(function (key) {
-        _defineProperty$1(target, key, source[key]);
-      });
-    }
-
-    return target;
-  }
-
-  function _inherits$1(subClass, superClass) {
-    if (typeof superClass !== "function" && superClass !== null) {
-      throw new TypeError("Super expression must either be null or a function");
-    }
-
-    subClass.prototype = Object.create(superClass && superClass.prototype, {
-      constructor: {
-        value: subClass,
-        writable: true,
-        configurable: true
-      }
-    });
-    if (superClass) _setPrototypeOf$1(subClass, superClass);
-  }
-
-  function _getPrototypeOf$1(o) {
-    _getPrototypeOf$1 = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) {
-      return o.__proto__ || Object.getPrototypeOf(o);
-    };
-    return _getPrototypeOf$1(o);
-  }
-
-  function _setPrototypeOf$1(o, p) {
-    _setPrototypeOf$1 = Object.setPrototypeOf || function _setPrototypeOf(o, p) {
-      o.__proto__ = p;
-      return o;
-    };
-
-    return _setPrototypeOf$1(o, p);
-  }
-
-  function _assertThisInitialized$1(self) {
-    if (self === void 0) {
-      throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-    }
-
-    return self;
-  }
-
-  function _possibleConstructorReturn$1(self, call) {
-    if (call && (_typeof(call) === "object" || typeof call === "function")) {
-      return call;
-    }
-
-    return _assertThisInitialized$1(self);
-  }
-
-  function _toConsumableArray$1(arr) {
-    return _arrayWithoutHoles$1(arr) || _iterableToArray$1(arr) || _nonIterableSpread$1();
-  }
-
-  function _arrayWithoutHoles$1(arr) {
-    if (Array.isArray(arr)) {
-      for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) {
-        arr2[i] = arr[i];
-      }
-
-      return arr2;
-    }
-  }
-
-  function _iterableToArray$1(iter) {
-    if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
-  }
-
-  function _nonIterableSpread$1() {
-    throw new TypeError("Invalid attempt to spread non-iterable instance");
-  }
-
   function $set(target, field, value) {
     Vue.set(target, field, value);
   }
-
   function $del(target, field) {
     Vue.delete(target, field);
   }
-
   function isValidChildren(children) {
     return Array.isArray(children) && children.length > 0;
   }
-
   var _toString = Object.prototype.toString;
-
   function isUndef(v) {
     return v === undefined || v === null;
   }
-
   function toString(val) {
-    return val == null ? '' : _typeof$1(val) === 'object' ? JSON.stringify(val, null, 2) : String(val);
+    return val == null ? '' : _typeof(val) === 'object' ? JSON.stringify(val, null, 2) : String(val);
   }
-
   function extend(to, _from) {
     for (var key in _from) {
       $set(to, key, _from[key]);
@@ -625,7 +373,6 @@
 
     return to;
   }
-
   function debounce(fn, wait) {
     var timeout = null;
     return function () {
@@ -639,41 +386,35 @@
       }, wait);
     };
   }
-
   function isType(arg, type) {
     return _toString.call(arg) === '[object ' + type + ']';
   }
-
+  function isDate(arg) {
+    return isType(arg, 'Date');
+  }
   function isPlainObject(arg) {
     return isType(arg, 'Object');
   }
-
   function isFunction(arg) {
     return isType(arg, 'Function');
   }
-
   function isString(arg) {
     return isType(arg, 'String');
   }
-
   function isBool(arg) {
     return isType(arg, 'Boolean');
   }
-
   function toLine(name) {
     var line = name.replace(/([A-Z])/g, '-$1').toLowerCase();
     if (line.indexOf('-') === 0) line = line.substr(1);
     return line;
   }
-
   function toArray(value) {
     return Array.isArray(value) ? value : isUndef(value) ? [] : [value];
   }
-
   function isElement(arg) {
-    return _typeof$1(arg) === 'object' && arg !== null && arg.nodeType === 1 && !isPlainObject(arg);
+    return _typeof(arg) === 'object' && arg !== null && arg.nodeType === 1 && !isPlainObject(arg);
   }
-
   function deepExtend(origin) {
     var target = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
     var isArr = false;
@@ -701,19 +442,55 @@
 
     return origin;
   }
-
   var id = 0;
-
   function uniqueId() {
     return ++id;
   }
+  function toDefSlot(slot, $h) {
+    return [slot && isFunction(slot) ? slot($h) : slot];
+  }
+  function timeStampToDate(timeStamp) {
+    if (isDate(timeStamp)) return timeStamp;else {
+      var date = new Date(timeStamp);
+      return date.toString() === 'Invalid Date' ? timeStamp : date;
+    }
+  }
+  function preventDefault(e) {
+    e.preventDefault();
+  }
+  function dateFormat(fmt) {
+    var date = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : new Date();
+    var o = {
+      'M+': date.getMonth() + 1,
+      'd+': date.getDate(),
+      'h+': date.getHours(),
+      'm+': date.getMinutes(),
+      's+': date.getSeconds(),
+      'q+': Math.floor((date.getMonth() + 3) / 3),
+      'S': date.getMilliseconds()
+    };
+    if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (date.getFullYear() + '').substr(4 - RegExp.$1.length));
 
+    for (var k in o) {
+      if (new RegExp('(' + k + ')').test(fmt)) fmt = fmt.replace(RegExp.$1, RegExp.$1.length == 1 ? o[k] : ('00' + o[k]).substr(('' + o[k]).length));
+    }
+
+    return fmt;
+  }
+  function hasSlot(children, slotName) {
+    return children.length !== 0 && children.some(function (child) {
+      if (child.data) {
+        if (!child.data.slot && slotName === 'default' || child.data.slot === slotName) return true;
+      } else if (slotName === 'default') return true;
+
+      return false;
+    });
+  }
   function errMsg(i) {
     return '\n\x67\x69\x74\x68\x75\x62\x3a\x68\x74\x74\x70' + '\x73\x3a\x2f\x2f\x67\x69\x74\x68\x75\x62\x2e\x63\x6f' + '\x6d\x2f\x78\x61\x62\x6f\x79\x2f\x66\x6f\x72\x6d\x2d' + '\x63\x72\x65\x61\x74\x65\n\x64\x6f\x63\x75\x6d\x65' + '\x6e\x74\x3a\x68\x74\x74\x70\x3a\x2f\x2f\x77\x77\x77' + '\x2e\x66\x6f\x72\x6d\x2d\x63\x72\x65\x61\x74\x65\x2e' + '\x63\x6f\x6d' + (i || '');
   }
 
   var formCreateName = 'FormCreate';
-
   function $FormCreate(FormCreate, components) {
     return {
       name: formCreateName,
@@ -810,12 +587,12 @@
   /*#__PURE__*/
   function () {
     function VData() {
-      _classCallCheck$1(this, VData);
+      _classCallCheck(this, VData);
 
       this.init();
     }
 
-    _createClass$1(VData, [{
+    _createClass(VData, [{
       key: "class",
       value: function _class(classList) {
         var _this = this;
@@ -868,7 +645,6 @@
 
     return VData;
   }();
-
   var keyList = ['ref', 'key', 'slot'];
   var objList = ['scopedSlots', 'nativeOn', 'on', 'domProps', 'props', 'attrs', 'style'];
   keyList.forEach(function (key) {
@@ -909,7 +685,6 @@
       return new Creator(name, title, field, value, props);
     };
   }
-
   function creatorTypeFactory(name, type) {
     var typeName = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'type';
     return function (title, field, value) {
@@ -923,16 +698,16 @@
   var Creator =
   /*#__PURE__*/
   function (_VData) {
-    _inherits$1(Creator, _VData);
+    _inherits(Creator, _VData);
 
     function Creator(type, title, field, value) {
       var _this;
 
       var props = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : {};
 
-      _classCallCheck$1(this, Creator);
+      _classCallCheck(this, Creator);
 
-      _this = _possibleConstructorReturn$1(this, _getPrototypeOf$1(Creator).call(this));
+      _this = _possibleConstructorReturn(this, _getPrototypeOf(Creator).call(this));
       extend(_this._data, baseRule());
       extend(_this._data, {
         type: type,
@@ -944,7 +719,7 @@
       return _this;
     }
 
-    _createClass$1(Creator, [{
+    _createClass(Creator, [{
       key: "type",
       value: function type(_type) {
         this.props('type', _type);
@@ -965,7 +740,6 @@
 
     return Creator;
   }(VData);
-
   var keyAttrs = ['emitPrefix', 'className', 'defaultSlot', 'value', 'name', 'title'];
   keyAttrs.forEach(function (attr) {
     Creator.prototype[attr] = function (value) {
@@ -1071,12 +845,12 @@
   /*#__PURE__*/
   function () {
     function VNode(vm) {
-      _classCallCheck$1(this, VNode);
+      _classCallCheck(this, VNode);
 
       if (vm) this.setVm(vm);
     }
 
-    _createClass$1(VNode, [{
+    _createClass(VNode, [{
       key: "setVm",
       value: function setVm(vm) {
         this.vm = vm;
@@ -1107,7 +881,7 @@
   /*#__PURE__*/
   function () {
     function BaseParser(handle, rule, id) {
-      _classCallCheck$1(this, BaseParser);
+      _classCallCheck(this, BaseParser);
 
       this.rule = rule;
       this.vData = new VData();
@@ -1134,7 +908,7 @@
       this.init();
     }
 
-    _createClass$1(BaseParser, [{
+    _createClass(BaseParser, [{
       key: "update",
       value: function update(handle) {
         this.$handle = handle;
@@ -1170,7 +944,7 @@
   /*#__PURE__*/
   function () {
     function Render(handle) {
-      _classCallCheck$1(this, Render);
+      _classCallCheck(this, Render);
 
       this.$handle = handle;
       this.fc = handle.fc;
@@ -1183,7 +957,7 @@
       this.renderList = {};
     }
 
-    _createClass$1(Render, [{
+    _createClass(Render, [{
       key: "clearCache",
       value: function clearCache(parser) {
         var clear = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
@@ -1225,7 +999,7 @@
         var parsers = this.$handle.parsers;
         this.orgChildren = Object.keys(parsers).reduce(function (initial, id) {
           var children = parsers[id].rule.children;
-          initial[id] = isValidChildren(children) ? _toConsumableArray$1(children) : [];
+          initial[id] = isValidChildren(children) ? _toConsumableArray(children) : [];
           return initial;
         }, {});
       }
@@ -1425,7 +1199,7 @@
   /*#__PURE__*/
   function () {
     function Handle(fc) {
-      _classCallCheck$1(this, Handle);
+      _classCallCheck(this, Handle);
 
       var vm = fc.vm,
           rules = fc.rules,
@@ -1447,7 +1221,7 @@
       this.$form.init();
     }
 
-    _createClass$1(Handle, [{
+    _createClass(Handle, [{
       key: "__init",
       value: function __init(rules) {
         this.fieldList = {};
@@ -1456,7 +1230,7 @@
         this.customData = {};
         this.sortList = [];
         this.rules = rules;
-        this.origin = _toConsumableArray$1(this.rules);
+        this.origin = _toConsumableArray(this.rules);
       }
     }, {
       key: "loadRule",
@@ -1719,9 +1493,9 @@
         var vm = this.vm;
         if (!rules) return this.reloadRule(this.rules);
         if (!this.origin.length) this.fCreateApi.refresh();
-        this.origin = _toConsumableArray$1(rules);
+        this.origin = _toConsumableArray(rules);
 
-        var parsers = _objectSpread$1({}, this.parsers);
+        var parsers = _objectSpread({}, this.parsers);
 
         this.__init(rules);
 
@@ -1764,7 +1538,6 @@
 
     return Handle;
   }();
-
   function delParser(parser) {
     parser.watch.forEach(function (unWatch) {
       return unWatch();
@@ -1819,7 +1592,6 @@
   }
 
   var _vue = typeof window !== 'undefined' && window.Vue ? window.Vue : Vue;
-
   function createFormCreate(drive) {
     var components = {},
         parsers = {},
@@ -1902,7 +1674,7 @@
       function FormCreate(rules) {
         var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
-        _classCallCheck$1(this, FormCreate);
+        _classCallCheck(this, FormCreate);
 
         this.fCreateApi = undefined;
         this.drive = drive;
@@ -1912,7 +1684,7 @@
         this.options = margeGlobal(deepExtend({}, globalConfig), options);
       }
 
-      _createClass$1(FormCreate, [{
+      _createClass(FormCreate, [{
         key: "beforeCreate",
         value: function beforeCreate(vm) {
           this.vm = vm;
@@ -2027,7 +1799,7 @@
   /*#__PURE__*/
   function () {
     function BaseForm(handle) {
-      _classCallCheck$1(this, BaseForm);
+      _classCallCheck(this, BaseForm);
 
       this.$handle = handle;
       this.vm = handle.vm;
@@ -2038,7 +1810,7 @@
       this.unique = handle.id;
     }
 
-    _createClass$1(BaseForm, [{
+    _createClass(BaseForm, [{
       key: "init",
       value: function init() {
         this.$render = this.$handle.$render;
@@ -2072,9 +1844,6 @@
 
     return BaseForm;
   }();
-
-  console.log('-----------------------------');
-  console.log('-----------------------------');
 
   var vNode = new VNode();
 
@@ -2160,103 +1929,7 @@
   var style = {"fc-upload-btn":"fc-upload-btn","fc-files":"fc-files","__fc_h":"__fc_h","__fc_v":"__fc_v","fc-upload":"fc-upload","fc-upload-cover":"fc-upload-cover","fc-hide-btn":"fc-hide-btn","ivu-upload":"ivu-upload","ivu-upload-list":"ivu-upload-list"};
   styleInject(css);
 
-  function $set$1(target, field, value) {
-    Vue.set(target, field, value);
-  }
-  var _toString$1 = Object.prototype.toString;
-  function isUndef$1(v) {
-    return v === undefined || v === null;
-  }
-  function toString$1(val) {
-    return val == null ? '' : _typeof(val) === 'object' ? JSON.stringify(val, null, 2) : String(val);
-  }
-  function isType$1(arg, type) {
-    return _toString$1.call(arg) === '[object ' + type + ']';
-  }
-  function isDate(arg) {
-    return isType$1(arg, 'Date');
-  }
-  function isPlainObject$1(arg) {
-    return isType$1(arg, 'Object');
-  }
-  function isFunction$1(arg) {
-    return isType$1(arg, 'Function');
-  }
-  function toArray$1(value) {
-    return Array.isArray(value) ? value : isUndef$1(value) ? [] : [value];
-  }
-  function deepExtend$1(origin) {
-    var target = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-    var isArr = false;
-
-    for (var key in target) {
-      if (Object.prototype.hasOwnProperty.call(target, key)) {
-        var clone = target[key];
-
-        if ((isArr = Array.isArray(clone)) || isPlainObject$1(clone)) {
-          var nst = origin[key] === undefined;
-
-          if (isArr) {
-            isArr = false;
-            nst && $set$1(origin, key, []);
-          } else {
-            nst && $set$1(origin, key, {});
-          }
-
-          deepExtend$1(origin[key], clone);
-        } else {
-          $set$1(origin, key, clone);
-        }
-      }
-    }
-
-    return origin;
-  }
-  function toDefSlot(slot, $h) {
-    return [slot && isFunction$1(slot) ? slot($h) : slot];
-  }
-  function timeStampToDate(timeStamp) {
-    if (isDate(timeStamp)) return timeStamp;else {
-      var date = new Date(timeStamp);
-      return date.toString() === 'Invalid Date' ? timeStamp : date;
-    }
-  }
-  function preventDefault(e) {
-    e.preventDefault();
-  }
-  function dateFormat(fmt) {
-    var date = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : new Date();
-    var o = {
-      'M+': date.getMonth() + 1,
-      'd+': date.getDate(),
-      'h+': date.getHours(),
-      'm+': date.getMinutes(),
-      's+': date.getSeconds(),
-      'q+': Math.floor((date.getMonth() + 3) / 3),
-      'S': date.getMilliseconds()
-    };
-    if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (date.getFullYear() + '').substr(4 - RegExp.$1.length));
-
-    for (var k in o) {
-      if (new RegExp('(' + k + ')').test(fmt)) fmt = fmt.replace(RegExp.$1, RegExp.$1.length == 1 ? o[k] : ('00' + o[k]).substr(('' + o[k]).length));
-    }
-
-    return fmt;
-  }
-  function hasSlot(children, slotName) {
-    return children.length !== 0 && children.some(function (child) {
-      if (child.data) {
-        if (!child.data.slot && slotName === 'default' || child.data.slot === slotName) return true;
-      } else if (slotName === 'default') return true;
-
-      return false;
-    });
-  }
-  function errMsg$1(i) {
-    return '\n\x67\x69\x74\x68\x75\x62\x3a\x68\x74\x74\x70' + '\x73\x3a\x2f\x2f\x67\x69\x74\x68\x75\x62\x2e\x63\x6f' + '\x6d\x2f\x78\x61\x62\x6f\x79\x2f\x66\x6f\x72\x6d\x2d' + '\x63\x72\x65\x61\x74\x65\n\x64\x6f\x63\x75\x6d\x65' + '\x6e\x74\x3a\x68\x74\x74\x70\x3a\x2f\x2f\x77\x77\x77' + '\x2e\x66\x6f\x72\x6d\x2d\x63\x72\x65\x61\x74\x65\x2e' + '\x63\x6f\x6d' + (i || '');
-  }
-
-  var script$1 = {
+  var frame = {
     name: 'fc-frame',
     props: {
       type: {
@@ -2351,13 +2024,13 @@
     data: function data() {
       return {
         modalVm: null,
-        fileList: toArray$1(this.value)
+        fileList: toArray(this.value)
       };
     },
     watch: {
       value: function value(n) {
         this.$emit('on-change', n);
-        this.fileList = toArray$1(n);
+        this.fileList = toArray(n);
       },
       fileList: function fileList(n) {
         this.$emit('input', this.maxLength === 1 ? n[0] || '' : n);
@@ -2597,29 +2270,7 @@
     }
   };
 
-  /* script */
-  var __vue_script__$1 = script$1;
-  /* template */
-
-  /* style */
-
-  var __vue_inject_styles__$1 = undefined;
-  /* scoped */
-
-  var __vue_scope_id__$1 = undefined;
-  /* module identifier */
-
-  var __vue_module_identifier__$1 = undefined;
-  /* functional template */
-
-  var __vue_is_functional_template__$1 = undefined;
-  /* style inject */
-
-  /* style inject SSR */
-
-  var Frame = normalizeComponent_1({}, __vue_inject_styles__$1, __vue_script__$1, __vue_scope_id__$1, __vue_is_functional_template__$1, __vue_module_identifier__$1, undefined, undefined);
-
-  var script$2 = {
+  var radio = {
     name: 'fc-radio',
     functional: true,
     props: {
@@ -2642,29 +2293,7 @@
     }
   };
 
-  /* script */
-  var __vue_script__$2 = script$2;
-  /* template */
-
-  /* style */
-
-  var __vue_inject_styles__$2 = undefined;
-  /* scoped */
-
-  var __vue_scope_id__$2 = undefined;
-  /* module identifier */
-
-  var __vue_module_identifier__$2 = undefined;
-  /* functional template */
-
-  var __vue_is_functional_template__$2 = undefined;
-  /* style inject */
-
-  /* style inject SSR */
-
-  var Radio = normalizeComponent_1({}, __vue_inject_styles__$2, __vue_script__$2, __vue_scope_id__$2, __vue_is_functional_template__$2, __vue_module_identifier__$2, undefined, undefined);
-
-  var script$3 = {
+  var select = {
     name: 'fc-select',
     functional: true,
     props: {
@@ -2686,29 +2315,7 @@
     }
   };
 
-  /* script */
-  var __vue_script__$3 = script$3;
-  /* template */
-
-  /* style */
-
-  var __vue_inject_styles__$3 = undefined;
-  /* scoped */
-
-  var __vue_scope_id__$3 = undefined;
-  /* module identifier */
-
-  var __vue_module_identifier__$3 = undefined;
-  /* functional template */
-
-  var __vue_is_functional_template__$3 = undefined;
-  /* style inject */
-
-  /* style inject SSR */
-
-  var Select = normalizeComponent_1({}, __vue_inject_styles__$3, __vue_script__$3, __vue_scope_id__$3, __vue_is_functional_template__$3, __vue_module_identifier__$3, undefined, undefined);
-
-  var script$4 = {
+  var tree = {
     name: 'fc-tree',
     props: {
       ctx: {
@@ -2743,7 +2350,7 @@
     },
     watch: {
       value: function value(n) {
-        n = toArray$1(n);
+        n = toArray(n);
         var data = this.$refs.tree.data;
         this.type === 'selected' ? this.selected(data, n) : this.checked(data, n);
       }
@@ -2801,28 +2408,6 @@
     }
   };
 
-  /* script */
-  var __vue_script__$4 = script$4;
-  /* template */
-
-  /* style */
-
-  var __vue_inject_styles__$4 = undefined;
-  /* scoped */
-
-  var __vue_scope_id__$4 = undefined;
-  /* module identifier */
-
-  var __vue_module_identifier__$4 = undefined;
-  /* functional template */
-
-  var __vue_is_functional_template__$4 = undefined;
-  /* style inject */
-
-  /* style inject SSR */
-
-  var Tree = normalizeComponent_1({}, __vue_inject_styles__$4, __vue_script__$4, __vue_scope_id__$4, __vue_is_functional_template__$4, __vue_module_identifier__$4, undefined, undefined);
-
   function parseFile(file) {
     return {
       url: file,
@@ -2831,10 +2416,10 @@
   }
 
   function getFileName(file) {
-    return toString$1(file).split('/').pop();
+    return toString(file).split('/').pop();
   }
 
-  var script$5 = {
+  var upload = {
     name: 'fc-upload',
     props: {
       ctx: {
@@ -2883,11 +2468,11 @@
     },
     created: function created() {
       if (this.ctx.props.showUploadList === undefined) this.ctx.props.showUploadList = false;
-      this.ctx.props.defaultFileList = toArray$1(this.value).map(parseFile);
+      this.ctx.props.defaultFileList = toArray(this.value).map(parseFile);
     },
     watch: {
       value: function value(n) {
-        this.$refs.upload.fileList = toArray$1(n).map(parseFile);
+        this.$refs.upload.fileList = toArray(n).map(parseFile);
         this.uploadList = this.$refs.upload.fileList;
       },
       maxLength: function maxLength(n, o) {
@@ -3044,29 +2629,7 @@
     }
   };
 
-  /* script */
-  var __vue_script__$5 = script$5;
-  /* template */
-
-  /* style */
-
-  var __vue_inject_styles__$5 = undefined;
-  /* scoped */
-
-  var __vue_scope_id__$5 = undefined;
-  /* module identifier */
-
-  var __vue_module_identifier__$5 = undefined;
-  /* functional template */
-
-  var __vue_is_functional_template__$5 = undefined;
-  /* style inject */
-
-  /* style inject SSR */
-
-  var Upload = normalizeComponent_1({}, __vue_inject_styles__$5, __vue_script__$5, __vue_scope_id__$5, __vue_is_functional_template__$5, __vue_module_identifier__$5, undefined, undefined);
-
-  var components = [Checkbox, Frame, Radio, Select, Tree, Upload];
+  var components = [checkbox, frame, radio, select, tree, upload];
 
   var parser =
   /*#__PURE__*/
@@ -3104,7 +2667,7 @@
   }(BaseParser);
 
   var name = 'checkbox';
-  var checkbox = {
+  var checkbox$1 = {
     parser: parser,
     name: name
   };
@@ -3124,7 +2687,7 @@
       key: "init",
       value: function init() {
         var props = this.rule.props;
-        if (props.startDate) $set$1(props, 'startDate', timeStampToDate(props.startDate));
+        if (props.startDate) $set(props, 'startDate', timeStampToDate(props.startDate));
       }
     }, {
       key: "toFormValue",
@@ -3143,7 +2706,7 @@
             parseValue = ['', ''];
           }
         } else if ('date' === type && props.multiple === true) {
-          parseValue = toString$1(value);
+          parseValue = toString(value);
         } else {
           parseValue = isArr ? value[0] || '' : value;
           parseValue = !parseValue ? '' : timeStampToDate(parseValue);
@@ -3199,7 +2762,7 @@
   }(BaseParser);
 
   var name$2 = 'frame';
-  var frame = {
+  var frame$1 = {
     parser: Parser$1,
     name: name$2
   };
@@ -3247,7 +2810,7 @@
       key: "init",
       value: function init() {
         var props = this.rule.props;
-        if (props.autosize && props.autosize.minRows) $set$1(props, 'rows', props.autosize.minRows || 2);
+        if (props.autosize && props.autosize.minRows) $set(props, 'rows', props.autosize.minRows || 2);
       }
     }]);
 
@@ -3302,7 +2865,7 @@
   }(BaseParser);
 
   var name$5 = 'radio';
-  var radio = {
+  var radio$1 = {
     parser: Parser$3,
     name: name$5
   };
@@ -3329,7 +2892,7 @@
   }(BaseParser);
 
   var name$6 = 'select';
-  var select = {
+  var select$1 = {
     parser: Parser$4,
     name: name$6
   };
@@ -3514,7 +3077,7 @@
   }(BaseParser);
 
   var name$a = 'tree';
-  var tree = {
+  var tree$1 = {
     parser: Parser$7,
     name: name$a
   };
@@ -3567,12 +3130,12 @@
   }(BaseParser);
 
   var name$b = 'upload';
-  var upload = {
+  var upload$1 = {
     parser: Parser$8,
     name: name$b
   };
 
-  var parsers = [checkbox, datePicker, frame, hidden, input, radio, select, slider, iswitch, timePicker, tree, upload];
+  var parsers = [checkbox$1, datePicker, frame$1, hidden, input, radio$1, select$1, slider, iswitch, timePicker, tree$1, upload$1];
 
   function getGlobalApi(h) {
     function tidyFields(fields) {
@@ -3586,23 +3149,23 @@
         var parsers = h.fieldList;
         return Object.keys(parsers).reduce(function (initial, id) {
           var parser = parsers[id];
-          initial[parser.field] = deepExtend$1({}, {
+          initial[parser.field] = deepExtend({}, {
             value: parser.rule.value
           }).value;
           return initial;
         }, {});
       },
       getValue: function getValue(field) {
-        field = toString$1(field);
+        field = toString(field);
         var parser = h.fieldList[field];
         if (!parser) return;
-        return deepExtend$1({}, {
+        return deepExtend({}, {
           value: parser.rule.value
         }).value;
       },
       setValue: function setValue(field, value) {
         var formData = field;
-        if (!isPlainObject$1(field)) formData = _defineProperty({}, field, value);
+        if (!isPlainObject(field)) formData = _defineProperty({}, field, value);
         Object.keys(formData).forEach(function (key) {
           var parser = h.fieldList[key];
           if (!parser) return;
@@ -3621,7 +3184,7 @@
         var fields = parser.root.map(function (rule) {
           return rule.__field__;
         }),
-            index = fields.indexOf(toString$1(field));
+            index = fields.indexOf(toString(field));
         if (index === -1) return;
         parser.root.splice(index, 1);
         if (h.sortList.indexOf(parser.id) === -1) this.reload();
@@ -3656,8 +3219,8 @@
         var fields = h.fieldList,
             index = h.sortList.length,
             rules = h.rules;
-        after = toString$1(after);
-        if (rule.field && fields.indexOf(toString$1(rule.field)) !== -1) return console.error("".concat(rule.field, " \u5B57\u6BB5\u5DF2\u5B58\u5728") + errMsg$1());
+        after = toString(after);
+        if (rule.field && fields.indexOf(toString(rule.field)) !== -1) return console.error("".concat(rule.field, " \u5B57\u6BB5\u5DF2\u5B58\u5728") + errMsg());
         var parser = h.getParser(after);
 
         if (parser) {
@@ -3675,8 +3238,8 @@
         var fields = h.fieldList,
             index = 0,
             rules = h.rules;
-        after = toString$1(after);
-        if (rule.field && fields.indexOf(toString$1(rule.field)) !== -1) return console.error("".concat(rule.field, " \u5B57\u6BB5\u5DF2\u5B58\u5728") + errMsg$1());
+        after = toString(after);
+        if (rule.field && fields.indexOf(toString(rule.field)) !== -1) return console.error("".concat(rule.field, " \u5B57\u6BB5\u5DF2\u5B58\u5728") + errMsg());
         var parser = h.getParser(after);
 
         if (parser) {
@@ -3696,7 +3259,7 @@
           if (valid) {
             var formData = _this.formData();
 
-            if (isFunction$1(successFn)) successFn(formData, _this);else {
+            if (isFunction(successFn)) successFn(formData, _this);else {
               h.options.onSubmit && h.options.onSubmit(formData, _this);
               h.fc.$emit('submit', formData, _this);
             }
@@ -3848,7 +3411,7 @@
         h.reloadRule(rules);
       },
       updateOptions: function updateOptions(options) {
-        deepExtend$1(h.options, options);
+        deepExtend(h.options, options);
         this.refresh(true);
       },
       onSubmit: function onSubmit(fn) {
@@ -3857,7 +3420,7 @@
         });
       },
       sync: function sync(field) {
-        var parser = h.getParser(toString$1(field));
+        var parser = h.getParser(toString(field));
 
         if (parser) {
           h.$render.clearCache(parser, true);
@@ -4024,7 +3587,7 @@
           on: {
             'click': function click() {
               var fApi = _this2.$handle.fCreateApi;
-              isFunction$1(resetBtn.click) ? resetBtn.click(fApi) : fApi.resetFields();
+              isFunction(resetBtn.click) ? resetBtn.click(fApi) : fApi.resetFields();
             }
           }
         }, [this.vm.resetProps.innerText])]);
@@ -4047,7 +3610,7 @@
           on: {
             'click': function click() {
               var fApi = _this3.$handle.fCreateApi;
-              isFunction$1(submitBtn.click) ? submitBtn.click(fApi) : fApi.submit();
+              isFunction(submitBtn.click) ? submitBtn.click(fApi) : fApi.submit();
             }
           }
         }, [this.vm.buttonProps.innerText])]);
@@ -4093,7 +3656,7 @@
   maker$1.idate = creatorTypeFactory(name$e, 'date');
 
   var name$f = 'select';
-  var select$1 = {
+  var select$2 = {
     selectMultiple: creatorTypeFactory(name$f, true, 'multiple'),
     selectOne: creatorTypeFactory(name$f, false, 'multiple')
   };
@@ -4114,7 +3677,7 @@
     'treeSelected': 'selected',
     'treeChecked': 'checked'
   };
-  var tree$1 = Object.keys(types$1).reduce(function (maker, key) {
+  var tree$2 = Object.keys(types$1).reduce(function (maker, key) {
     maker[key] = creatorTypeFactory(name$i, types$1[key]);
     return maker;
   }, {});
@@ -4138,7 +3701,7 @@
   maker$2.uploadImage = maker$2.image;
   maker$2.uploadFile = maker$2.file;
 
-  var maker$3 = _objectSpread({}, datePicker$1, maker, maker$1, select$1, slider$1, timePicker$1, tree$1, maker$2),
+  var maker$3 = _objectSpread({}, datePicker$1, maker, maker$1, select$2, slider$1, timePicker$1, tree$2, maker$2),
       names = ['autoComplete', 'cascader', 'colorPicker', 'datePicker', 'frame', 'inputNumber', 'radio', 'rate'];
 
   names.forEach(function (name) {
