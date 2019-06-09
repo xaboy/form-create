@@ -20,7 +20,6 @@
         "form",
         "components",
         "vue.js",
-        "iview",
         "json-form",
         "vue-json-form"
     ],
@@ -38,5 +37,8 @@
     },
     "devDependencies": {
         "vue": "^2.6.10"
+    },
+    "publishConfig": {
+        "access": "public"
     }
 }

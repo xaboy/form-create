@@ -6,17 +6,26 @@
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1"
     },
+    "files": [
+        "README.md",
+        "package.json",
+        "LICENSE",
+        "src"
+    ],
     "repository": {
         "type": "git",
         "url": "git+https://github.com/xaboy/form-create.git"
     },
-    "keywords": [
-        "form-builder"
-    ],
     "author": "xaboy",
     "license": "MIT",
+    "dependencies": {
+        "vue": "^2.5.2"
+    },
     "bugs": {
         "url": "https://github.com/xaboy/form-create/issues"
     },
-    "homepage": "https://github.com/xaboy/form-create#readme"
+    "homepage": "http://www.form-create.com",
+    "publishConfig": {
+       "access": "public"
+    }
 }
