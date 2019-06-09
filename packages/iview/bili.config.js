@@ -27,9 +27,9 @@ module.exports = {
     },
     externals: ['vue', 'Vue', 'iview', 'iView'],
     output: {
-        format: ['umd'],
+        format: ['umd','umd-min'],
         moduleName: 'formCreate',
-        fileName: `form-create.${UI_LIB}.js`,
+        fileName: `form-create.${UI_LIB}[min].js`,
         extractCSS: false
     },
     input: join(cwd, '/src/index.js'),

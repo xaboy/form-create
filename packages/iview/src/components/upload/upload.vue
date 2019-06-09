@@ -126,7 +126,7 @@ export default {
                 class={style['fc-files']}>{file.showProgress ? this.makeProgress(file) : [this.makeItem(file), this.makeIcons(file)]}</div>);
         },
         makeUpload() {
-            return <Upload ref="upload" class="adf12"
+            return <Upload ref="upload"
                 style={{display: 'inline-block'}} {...this.ctx}>{this.children}</Upload>;
         },
         initChildren() {

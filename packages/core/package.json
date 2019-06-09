@@ -1,7 +1,7 @@
 {
     "name": "@form-create/core",
-    "version": "0.0.1",
-    "description": "",
+    "version": "2.0.0.bata-1",
+    "description": "好用的表单生成器|Form builder with dynamic rendering, data collection, validation and submission capabilities, built-in 17 common form components, support for two-way data binding, event extension, and support for building built-in components and any vue components using json.",
     "main": "./src/index.js",
     "scripts": {
         "clean": "rimraf dist/",
@@ -23,5 +23,11 @@
     "homepage": "https://github.com/xaboy/form-create#readme",
     "dependencies": {
         "@form-create/utils": "^0.0.1"
+    },
+    "peerDependencies": {
+        "vue": "^2.5.2"
+    },
+    "devDependencies": {
+        "vue": "^2.6.10"
     }
 }
