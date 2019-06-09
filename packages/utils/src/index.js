@@ -80,7 +80,7 @@ export function isNumeric(n) {
 export function toArray(value) {
     return Array.isArray(value)
         ? value
-        : ((isUndef(value) ? [] : [value])
+        : ((isUndef(value) || value === '' ? [] : [value])
         );
 }
 

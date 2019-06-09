@@ -1,5 +1,5 @@
 /*!
- * @form-create/iview v2.0.0-bata.1
+ * @form-create/iview v0.0.1
  * (c) 2018-2019 xaboy
  * Github https://github.com/xaboy/form-create
  * Released under the MIT License.
@@ -3718,7 +3718,7 @@
   VNode.use(nodes);
   var drive = {
     ui: "iview",
-    version: "2.0.0-bata.1",
+    version: "0.0.1",
     formRender: Form,
     components: components,
     parsers: parsers,

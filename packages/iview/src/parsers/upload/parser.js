@@ -17,12 +17,12 @@ export default class Parser extends BaseParser {
             allowRemove: ctx.props.allowRemove,
             value: this.$handle.getFormData(this),
             ctx,
-            key,
-            ref: refName,
             children
         };
         return this.vNode.upload({
             props,
+            key,
+            ref: refName,
             on: {
                 input: (n) => {
                     this.$render.onInput(this, n);
