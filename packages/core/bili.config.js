@@ -1,6 +1,7 @@
 const {join} = require('path');
 const {author, license, name, version} = require('./package.json');
 const cwd = __dirname;
+const {UI_LIB} = process.env;
 const rollupConfig = {
     outputConfig: {
         exports: 'named'
@@ -17,7 +18,7 @@ module.exports = {
     },
     input: join(cwd, '/src/index.js'),
     output: {
-        fileName: `${name}[min].js`
+        fileName: `form-create.${UI_LIB}[min].js`
     },
     extendRollupConfig: (config) => {
         config.outputConfig = Object.assign({}, config.outputConfig, {'outputConfig': rollupConfig.outputConfig});
@@ -26,6 +27,5 @@ module.exports = {
     env: {
         'NODE_ENV': 'production',
         'VERSION': version,
-        'UI': 'iview'
     }
 };

@@ -4,7 +4,7 @@
  * @Author: djkloop
  * @Date: 2019-05-12 21:58:25
  * @Last Modified by: djkloop
- * @Last Modified time: 2019-05-24 12:09:14
+ * @Last Modified time: 2019-06-09 14:17:48
  */
 const webpack = require('webpack');
 const pkg = require('../package.json');
@@ -21,7 +21,7 @@ module.exports = {
     },
     module: {
         rules: [{
-            test: /\.js$/,
+            test: /\.jsx?$/,
             exclude: /node_modules/,
             use: {
                 loader: 'babel-loader',
@@ -66,7 +66,7 @@ module.exports = {
             'vue$': 'vue/dist/vue.esm.js',
             'iview': 'iview',
         },
-        extensions: ['*', '.js', '.vue', '.json']
+        extensions: ['*', '.js', '.jsx', '.vue', '.json']
     }
 
 }
