@@ -226,18 +226,13 @@ export default class Handle {
         const vm = this.vm;
 
         Object.keys(parser.rule).forEach((key) => {
-            if (['field', 'type', 'value', 'vm', 'template', 'name', 'config', 'children'].indexOf(key) !== -1 || parser.rule[key] === undefined) return;
+            if (['field', 'type', 'value', 'vm', 'template', 'name', 'config'].indexOf(key) !== -1 || parser.rule[key] === undefined) return;
             parser.watch.push(vm.$watch(() => parser.rule[key], (n, o) => {
                 if (o === undefined) return;
                 this.$render.clearCache(parser);
             }, {deep: true, immediate: true}));
 
         });
-
-        parser.watch.push(vm.$watch(() => parser.rule.children, (n, o) => {
-            if (o === undefined) return;
-            this.$render.clearCache(parser, true);
-        }));
     }
 
     mountedParser() {
