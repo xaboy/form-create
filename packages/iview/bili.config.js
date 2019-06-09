@@ -13,7 +13,12 @@ const rollupConfig = {
 module.exports = {
     plugins: {
         commonjs: true,
-        vue: true
+        vue: true,
+        postcss: {
+            modules: {
+                generateScopedName: '[local]'
+            }
+        }
     },
     banner: {
         author: `2018-${new Date().getFullYear()} ${author}\n * Github https://github.com/xaboy/form-create`,
@@ -27,7 +32,7 @@ module.exports = {
     },
     externals: ['vue', 'Vue', 'iview', 'iView'],
     output: {
-        format: ['umd','umd-min'],
+        format: ['umd', 'umd-min'],
         moduleName: 'formCreate',
         fileName: `form-create.${UI_LIB}[min].js`,
         extractCSS: false
@@ -42,4 +47,4 @@ module.exports = {
         'VERSION': version,
         'UI': UI_LIB,
     }
-}
+};

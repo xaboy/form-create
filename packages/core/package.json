@@ -1,11 +1,11 @@
 {
     "name": "@form-create/core",
-    "version": "2.0.0.bata-1",
+    "version": "2.0.0-bata.1",
     "description": "好用的表单生成器|Form builder with dynamic rendering, data collection, validation and submission capabilities, built-in 17 common form components, support for two-way data binding, event extension, and support for building built-in components and any vue components using json.",
     "main": "./src/index.js",
     "scripts": {
         "clean": "rimraf dist/",
-        "bili": "bili --env.UI_LiB core",
+        "bili": "cross-env UI_LIB=core bili",
         "build": "npm-run-all clean bili"
     },
     "repository": {
