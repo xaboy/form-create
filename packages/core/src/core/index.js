@@ -30,11 +30,11 @@ export default function createFormCreate(drive) {
         id = toString(id);
         const _id = id.toLocaleLowerCase();
         if (_id === 'form-create' || _id === 'formcreate')
-            return _vue.extend($FormCreate(FormCreate, components));
+            return get$FormCreate();
         if (component === undefined)
-            return components[toString(id)];
+            return components[id];
         else
-            components[toString(id)] = component;
+            components[id] = component;
     }
 
     function margeGlobal(config, _options) {
@@ -56,15 +56,19 @@ export default function createFormCreate(drive) {
         return options;
     }
 
-    function bindAttr(FormCreate) {
-        extend(FormCreate, {
+    function get$FormCreate() {
+        return _vue.extend($FormCreate(FormCreate, components));
+    }
+
+    function bindAttr(formCreate) {
+        extend(formCreate, {
             version: drive.version,
             ui: drive.ui,
             maker,
             component,
             setParser,
             $formCreate() {
-                return $FormCreate(FormCreate, components);
+                return get$FormCreate();
             }
         });
     }
@@ -92,6 +96,8 @@ export default function createFormCreate(drive) {
         return $vm;
     }
 
+    //TODO 避免暴露
+    //TODO 获取组件
     class FormCreate {
         constructor(rules, options = {}) {
             this.fCreateApi = undefined;
@@ -150,7 +156,7 @@ export default function createFormCreate(drive) {
 
             Vue.prototype.$formCreate = $formCreate;
 
-            Vue.component(formCreateName, Vue.extend($FormCreate(FormCreate, components)));
+            Vue.component(formCreateName, get$FormCreate());
             _vue = Vue;
         }
 

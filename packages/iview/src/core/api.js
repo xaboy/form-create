@@ -21,7 +21,6 @@ export default function getGlobalApi(h) {
             }, {});
         },
         getValue(field) {
-            field = toString(field);
             const parser = h.fieldList[field];
             if (!parser) return;
             return deepExtend({}, {value: parser.rule.value}).value;
@@ -43,10 +42,10 @@ export default function getGlobalApi(h) {
             this.setValue(field, value);
         },
         removeField(field) {
-            let parser = h.fieldList[field];
+            let parser = h.getParser(field);
             if (!parser)
                 return;
-            let fields = parser.root.map(rule => rule.__field__), index = fields.indexOf(toString(field));
+            let fields = parser.root.map(rule => rule.__field__), index = fields.indexOf(field);
             if (index === -1)
                 return;
             parser.root.splice(index, 1);
@@ -81,10 +80,8 @@ export default function getGlobalApi(h) {
         fields: () => h.fields(),
         append: (rule, after, isChild) => {
             let fields = h.fieldList, index = h.sortList.length, rules = h.rules;
-            after = toString(after);
 
-
-            if (rule.field && fields.indexOf(toString(rule.field)) !== -1)
+            if (rule.field && fields.indexOf(rule.field) !== -1)
                 return console.error(`${rule.field} 字段已存在` + errMsg());
 
             const parser = h.getParser(after);
@@ -101,9 +98,8 @@ export default function getGlobalApi(h) {
         },
         prepend: (rule, after, isChild) => {
             let fields = h.fieldList, index = 0, rules = h.rules;
-            after = toString(after);
 
-            if (rule.field && fields.indexOf(toString(rule.field)) !== -1)
+            if (rule.field && fields.indexOf(rule.field) !== -1)
                 return console.error(`${rule.field} 字段已存在` + errMsg());
 
             const parser = h.getParser(after);
@@ -135,7 +131,7 @@ export default function getGlobalApi(h) {
         hidden(hidden, fields) {
             const hiddenList = h.$render.form.hidden;
             tidyFields(fields, true).forEach((field) => {
-                const parser = h.fieldList[field];
+                const parser = h.getParser(field);
                 if (!parser)
                     return;
                 hidden ? hiddenList.push(parser) : hiddenList.splice(hiddenList.indexOf(parser), 1);
@@ -146,7 +142,7 @@ export default function getGlobalApi(h) {
         visibility(visibility, fields) {
             const visibilityList = h.$render.form.visibility;
             tidyFields(fields, true).forEach((field) => {
-                const parser = h.fieldList[field];
+                const parser = h.getParser(field);
                 if (!parser)
                     return;
                 visibility ? visibilityList.push(parser) : visibilityList.splice(visibilityList.indexOf(parser), 1);
@@ -215,9 +211,6 @@ export default function getGlobalApi(h) {
             loading: (loading = true) => {
                 h.vm._buttonProps({loading: !!loading});
             },
-            finish() {
-                this.loading(false);
-            },
             disabled: (disabled = true) => {
                 h.vm._buttonProps({disabled: !!disabled});
             },
@@ -228,9 +221,6 @@ export default function getGlobalApi(h) {
         resetBtn: {
             loading: (loading = true) => {
                 h.vm._resetProps({loading: !!loading});
-            },
-            finish() {
-                this.loading(false);
             },
             disabled: (disabled = true) => {
                 h.vm._resetProps({disabled: !!disabled});
@@ -257,7 +247,7 @@ export default function getGlobalApi(h) {
             this.options({onSubmit: fn});
         },
         sync: (field) => {
-            const parser = h.getParser(toString(field));
+            const parser = h.getParser(field);
             if (parser) {
                 h.$render.clearCache(parser, true);
                 h.refresh(true);
@@ -268,8 +258,8 @@ export default function getGlobalApi(h) {
                 h.$render.clearCacheAll();
             h.refresh();
         },
-        hideForm: (isShow = false) => {
-            h.vm.isShow = !!isShow;
+        hideForm: (isShow) => {
+            h.vm.isShow = !isShow;
         }
     };
 }

@@ -28,7 +28,6 @@ export default function getGlobalApi(fc) {
             }, {});
         },
         getValue(field) {
-            field = toString(field);
             const handler = fc.handlers[field];
             if (isUndef(handler)) return;
             let val = undefined;
@@ -49,7 +48,6 @@ export default function getGlobalApi(fc) {
             });
         },
         changeValue(field, value) {
-            field = toString(field);
             let handler = fc.handlers[field];
             if (handler === undefined)
                 return;
@@ -71,7 +69,7 @@ export default function getGlobalApi(fc) {
             let handler = fc.handlers[field];
             if (!handler)
                 return;
-            let fields = handler.root.map(rule => rule.__field__), index = fields.indexOf(toString(field));
+            let fields = handler.root.map(rule => rule.__field__), index = fields.indexOf(field);
             if (index === -1)
                 return;
             handler.root.splice(index, 1);
@@ -107,9 +105,9 @@ export default function getGlobalApi(fc) {
         },
         fields: () => vm._formField(),
         append: (rule, after) => {
-            let fields = fc.fieldList, index = fields.indexOf(toString(after));
+            let fields = fc.fieldList, index = fields.indexOf(after);
 
-            if (rule.field && fields.indexOf(toString(rule.field)) !== -1)
+            if (rule.field && fields.indexOf(rule.field) !== -1)
                 return console.error(`${rule.field} 字段已存在` + errMsg());
 
             if (isUndef(after)) {
@@ -120,9 +118,9 @@ export default function getGlobalApi(fc) {
 
         },
         prepend: (rule, after) => {
-            let fields = fc.fieldList, index = fields.indexOf(toString(after));
+            let fields = fc.fieldList, index = fields.indexOf(after);
 
-            if (rule.field && fields.indexOf(toString(rule.field)) !== -1)
+            if (rule.field && fields.indexOf(rule.field) !== -1)
                 return console.error(`${rule.field} 字段已存在` + errMsg());
 
             if (isUndef(after)) {
