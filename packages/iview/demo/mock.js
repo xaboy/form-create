@@ -87,7 +87,6 @@ function mock() {
                     test: 'createTmp渲染',
                     button: '<i-button />',
                     num: this.value,
-                    // disabled: false
                 }
             },
             props:{
@@ -117,12 +116,6 @@ function mock() {
                 onSetValue: function (val, $f) {
                     this.num = val;
                 }
-            },
-            created: function () {
-                this.$on('fc:disabled', this.onDisabled);
-                this.$on('fc:reset-field', this.onResetField);
-                // this.$on('fc:input', this.onInput);
-                this.$on('fc:set-value', this.onSetValue);
             }
         }), 'tmp', '自定义 title').value(100).props('disabled',false),
 
@@ -139,17 +132,7 @@ function mock() {
             loading: false,
             show: true
         }).name('btn')
-            .on({
-                'fc:disabled': function (disabled, $f) {
-                    $f.component().btn.props.disabled = disabled;
-                },
-                'fc:input': function (cb, $f) {
-                    cb($f.component().btn.props.disabled);
-                },
-                'fc:set-value': function (val, $f) {
-                    $f.component().btn.props.disabled = val;
-                }
-            }).col({span: 12}).children([
+            .col({span: 12}).children([
                 maker.create('span').domProps({
                     innerHTML: '测试自定义按钮'
                 })
@@ -309,19 +292,19 @@ function mock() {
             modalTitle: '预览~~~',
             okBtnText: 'ok',
             closeBtnText: 'close',
-            title: 'select'
-        }).validate([
-            {required: true, type: 'array', min: 2, message: '请选择2张图片', trigger: 'change'}
-        ]).event({
-            remove: function () {
+            title: 'select',
+            onBeforeRemove: function () {
                 alert('不能删除');
                 return false;
             },
-            open: console.log,
-            change() {
+            onOpen: console.log
+        }).event({
+            'on-change':()=> {
                 console.log('change');
             }
-        }),
+        }).validate([
+            {required: true, type: 'array', min: 2, message: '请选择2张图片', trigger: 'change'}
+        ]),
 
 
         //tree 树形组件
