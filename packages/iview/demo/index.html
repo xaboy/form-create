@@ -50,7 +50,6 @@
             data: {
                 formModel: {},
                 rule:mock(),
-                // rule: [mock()[1],mock()[2]],
                 option: {
                 	global:{
                 		input:{
@@ -61,13 +60,6 @@
 					},
                     //显示表单重置按钮
                     resetBtn: true,
-                    iframeHelper: true,
-                    //
-                    upload: {
-                        'beforeUpload': function (res) {
-                            console.log(res);
-                        }
-                    },
                     //表单提交事件
                     onSubmit: function (formData) {
                         alert(JSON.stringify(formData));

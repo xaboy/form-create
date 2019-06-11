@@ -13,6 +13,7 @@ import Vue from 'vue';
 import makerFactory from '../factory/maker';
 import Handle from './handle';
 import {creatorFactory} from '../factory/creator';
+import BaseParser from '../factory/parser';
 
 export let _vue = typeof window !== 'undefined' && window.Vue ? window.Vue : Vue;
 
@@ -24,6 +25,11 @@ export default function createFormCreate(drive) {
         id = toString(id);
         parsers[id.toLocaleLowerCase()] = parser;
         FormCreate.maker[id] = creatorFactory(id);
+    }
+
+    function createParser() {
+        return class Parser extends BaseParser {
+        }
     }
 
     function component(id, component) {
@@ -67,6 +73,7 @@ export default function createFormCreate(drive) {
             maker,
             component,
             setParser,
+            createParser,
             $formCreate() {
                 return get$FormCreate();
             }
@@ -170,6 +177,10 @@ export default function createFormCreate(drive) {
                 },
                 remove() {
                     formCreate.options.el.removeChild($vm.$el);
+                },
+                destroy() {
+                    this.remove();
+                    $vm.$destroy();
                 },
                 $f: formCreate.handle.fCreateApi
             };

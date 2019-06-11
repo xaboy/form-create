@@ -121,7 +121,7 @@ export default function getGlobalApi(h) {
                         successFn(formData, this);
                     else {
                         h.options.onSubmit && h.options.onSubmit(formData, this);
-                        h.fc.$emit('submit', formData, this);
+                        h.fc.$emit('on-submit', formData, this);
                     }
                 } else {
                     failFn && failFn(this)
