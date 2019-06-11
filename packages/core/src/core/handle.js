@@ -265,7 +265,7 @@ export default class Handle {
         this.mountedParser();
 
         onReload && onReload(this.fCreateApi);
-        this.fc.$emit('reload', this.fCreateApi);
+        this.fc.$emit('on-reload', this.fCreateApi);
     }
 
     removeField(parser) {
