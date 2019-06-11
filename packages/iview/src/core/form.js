@@ -43,7 +43,7 @@ export default class Form extends BaseForm {
         let fItemUnique = `fItem${parser.key}${this.unique}`,
             {rule, field, formItemRefName} = parser,
             col = this.getGetCol(parser),
-            labelWidth = (!col.labelWidth && !rule.title) ? 1 : col.labelWidth,
+            labelWidth = (!col.labelWidth && !rule.title) ? 0 : col.labelWidth,
             className = rule.className, propsData = this.vData.props({
                 prop: field,
                 label: rule.title,
