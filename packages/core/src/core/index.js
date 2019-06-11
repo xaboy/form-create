@@ -96,8 +96,6 @@ export default function createFormCreate(drive) {
         return $vm;
     }
 
-    //TODO 避免暴露
-    //TODO 获取组件
     class FormCreate {
         constructor(rules, options = {}) {
             this.fCreateApi = undefined;

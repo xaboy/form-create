@@ -24,7 +24,7 @@ function mock() {
         }).validate([
             {required: true, message: '请输入商品名称', trigger: 'blur'}
         ]).children([maker.create('template').children(['append']).slot('append')]).event({
-            //    change: console.log
+               change: console.log
         }).emit(['change']).className('goods-name'),
 
 
