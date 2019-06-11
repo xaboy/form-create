@@ -129,7 +129,7 @@ export default function getGlobalApi(h) {
             });
         },
         hidden(hidden, fields) {
-            const hiddenList = h.$render.form.hidden;
+            const hiddenList = h.$form.hidden;
             tidyFields(fields, true).forEach((field) => {
                 const parser = h.getParser(field);
                 if (!parser)
@@ -140,7 +140,7 @@ export default function getGlobalApi(h) {
             h.refresh();
         },
         visibility(visibility, fields) {
-            const visibilityList = h.$render.form.visibility;
+            const visibilityList = h.$form.visibility;
             tidyFields(fields, true).forEach((field) => {
                 const parser = h.getParser(field);
                 if (!parser)

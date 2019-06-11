@@ -12,7 +12,7 @@ export default class Render {
         this.fc = handle.fc;
         this.vm = handle.vm;
         this.options = handle.options;
-        this.form = handle.$form;
+        this.$form = handle.$form;
         this.vNode = new VNode(this.vm);
         this.vData = new VData();
         this.cache = {};
@@ -65,7 +65,7 @@ export default class Render {
         if (!this.vm.isShow)
             return;
 
-        this.form.beforeRender();
+        this.$form.beforeRender();
 
         const vn = this.$handle.sortList.map((id) => {
             let parser = this.$handle.parsers[id];
@@ -73,7 +73,7 @@ export default class Render {
             return this.renderParser(parser);
         }).filter((val) => val !== undefined);
 
-        return this.form.render(vn);
+        return this.$form.render(vn);
     }
 
     setGlobalConfig(parser) {
@@ -119,7 +119,7 @@ export default class Render {
         this.setGlobalConfig(parser);
 
         if (!this.cache[parser.id] || parser.type === 'template') {
-            let {type, rule} = parser, form = this.form, vn;
+            let {type, rule} = parser, form = this.$form, vn;
 
             if (type === 'template' && rule.template) {
                 vn = this.renderTemplate(parser);
