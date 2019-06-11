@@ -43,4 +43,7 @@ export default class BaseForm {
     render() {
 
     }
+
+    inputVData() {
+    }
 }

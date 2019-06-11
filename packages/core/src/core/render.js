@@ -160,7 +160,7 @@ export default class Render {
     }
 
     inputVData(parser, custom) {
-        const {refName, key, rule} = parser;
+        const {refName, key} = parser;
 
         this.parserToData(parser);
 
@@ -172,8 +172,7 @@ export default class Render {
                 this.onInput(parser, value);
             }).props('value', this.$handle.getFormData(parser));
 
-        if (isUndef(rule.props.size))
-            data.props('size', this.$handle.options.form.size);
+        this.$form.inputVData && this.$form.inputVData(parser, custom);
 
         return data;
     }

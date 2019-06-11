@@ -12,6 +12,11 @@ export default class Form extends BaseForm {
         this.visibility = [];
     }
 
+    inputVData(parser) {
+        if (!parser.rule.props.size && this.options.form.size)
+            parser.vData.props('size', this.options.form.size);
+    }
+
     getFormRef() {
         return this.vm.$refs[this.refName];
     }
