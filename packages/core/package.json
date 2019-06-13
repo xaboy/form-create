@@ -30,13 +30,11 @@
     },
     "homepage": "http://www.form-create.com",
     "dependencies": {
-        "@form-create/utils": "^0.0.1"
+        "@form-create/utils": "^0.0.1",
+        "vue": "^2.6.10"
     },
     "peerDependencies": {
         "vue": "^2.5.2"
-    },
-    "devDependencies": {
-        "vue": "^2.6.10"
     },
     "publishConfig": {
         "access": "public"

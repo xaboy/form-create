@@ -32,9 +32,7 @@
     "homepage": "http://www.form-create.com",
     "dependencies": {
         "@form-create/core": "^0.0.1",
-        "@form-create/utils": "^0.0.1"
-    },
-    "devDependencies": {
+        "@form-create/utils": "^0.0.1",
         "iview": "^3.3.3"
     },
     "publishConfig": {
