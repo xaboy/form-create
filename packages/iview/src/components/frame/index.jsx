@@ -99,7 +99,7 @@ export default {
                 defaultOnHandle(src, this.title)
             }
         },
-        value: [Array, String]
+        value: [Array, String, Number]
 
     },
     data() {
@@ -155,7 +155,8 @@ export default {
                                         },
                                         set: (field, value) => {
                                             this.valid(field);
-                                            this.$emit('input', value);
+                                            if (!this.disabled)
+                                                this.$emit('input', value);
 
                                         },
                                         get: (field) => {
@@ -174,8 +175,8 @@ export default {
                     vNode.button({
                         on: {
                             click: () => {
-                                _vm.onClose();
-                                this.onCancel();
+
+                                this.onCancel() !== false && _vm.onClose();
                             }
                         }
                     }, [closeBtnText]),
@@ -190,7 +191,7 @@ export default {
             });
         },
 
-        makeInput(hidden) {
+        makeInput() {
             const props = {
                 type: 'text',
                 value: this.fileList.toString(),
@@ -198,15 +199,13 @@ export default {
                 readonly: true,
                 clearable: false
             };
-
-            return <Input style={hidden ? 'display:none;' : ''} props={props}
-                on={{'on-click': () => this.showModel()}}/>
+            //TODO 检查 input 的必要性
+            return <Input props={props} on={{'on-click': () => this.showModel()}}/>
         },
 
         makeGroup(children) {
             if (!this.maxLength || this.fileList.length < this.maxLength)
                 children.push(this.makeBtn());
-            children.push(this.makeInput(true));
             return <div class={style['fc-upload']}>{...children}</div>
         },
 
@@ -215,7 +214,7 @@ export default {
         },
         valid(field) {
             if (field !== this.field)
-                throw new Error('form-create:无效的表单字段');
+                throw new Error('frame 无效的字段值');
         },
 
         makeIcons(val) {
