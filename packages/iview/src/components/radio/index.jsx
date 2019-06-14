@@ -1,5 +1,5 @@
 export default {
-    name: 'fc-radio',
+    name: 'fc-iview-radio',
     functional: true,
     props: {
         options: {

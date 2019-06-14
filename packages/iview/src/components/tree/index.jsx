@@ -2,7 +2,7 @@ import {toArray} from '@form-create/utils';
 
 
 export default {
-    name: 'fc-tree',
+    name: 'fc-iview-tree',
     props: {
         ctx: {
             type: Object,

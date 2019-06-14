@@ -1,7 +1,7 @@
 import {toDefSlot} from '@form-create/utils';
 
 export default {
-    name: 'fc-select',
+    name: 'fc-iview-select',
     functional: true,
     props: {
         options: {

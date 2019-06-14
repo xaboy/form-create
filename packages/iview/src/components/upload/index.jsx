@@ -16,7 +16,7 @@ function getFileName(file) {
 
 
 export default {
-    name: 'fc-upload',
+    name: 'fc-iview-upload',
 
     props: {
         ctx: {

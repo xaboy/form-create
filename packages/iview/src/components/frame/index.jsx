@@ -4,7 +4,7 @@ import style from '../../style/index.css';
 import {toArray} from '@form-create/utils';
 
 export default {
-    name: 'fc-frame',
+    name: 'fc-iview-frame',
     props: {
         type: {
             type: String,

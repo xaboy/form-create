@@ -1,5 +1,5 @@
 export default {
-    name: 'fc-checkbox',
+    name: 'fc-iview-checkbox',
     props: {
         options: {
             type: Array,
