@@ -23,9 +23,7 @@
     "homepage": "https://github.com/xaboy/form-create#readme",
     "dependencies": {
         "@form-create/core": "^0.0.1",
-        "@form-create/utils": "^0.0.1"
-    },
-    "devDependencies": {
+        "@form-create/utils": "^0.0.1",
         "element-ui": "^2.8.2"
     }
 }

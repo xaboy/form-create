@@ -2,7 +2,8 @@
     "name": "@form-create/data",
     "version": "0.0.1",
     "description": "",
-    "main": "./src/province_city_area.js",
+    "main": "./src/index.js",
+    "module": "./src/index.js",
     "unpkg": "./dist/province_city.js",
     "jsdelivr": "./dist/province_city.js",
     "scripts": {
