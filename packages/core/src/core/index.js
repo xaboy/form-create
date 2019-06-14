@@ -74,7 +74,7 @@ export default function createFormCreate(drive) {
             component,
             setParser,
             createParser,
-            $formCreate() {
+            $form() {
                 return get$FormCreate();
             }
         });

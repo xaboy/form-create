@@ -199,7 +199,7 @@ export default {
                 readonly: true,
                 clearable: false
             };
-            //TODO 检查 input 的必要性
+
             return <Input props={props} on={{'on-click': () => this.showModel()}}/>
         },
 
