@@ -1,4 +1,4 @@
-//使用 json对象 规则生成表单.!!json 不支持函数和正则
+//使用 json对象 规则生成表单.
 function jsonMock() {
 
 
@@ -376,7 +376,7 @@ function jsonMock() {
             value: ['http://file.lotkk.com/form-create.jpeg'],
             props: {
                 type: 'image', //frame类型,有input,file,image
-                src: 'iframe.html', //iframe地址
+                src: '../iframe.html', //iframe地址
                 maxLength: 2, //value的最大数量
                 icon: undefined, //打开弹出框的按钮图标
                 height: '220px', //弹出框高度
@@ -443,8 +443,8 @@ function jsonMock() {
                 showCheckbox: true,
                 emptyText: '暂无数据'
             },
-            validate:[
-                {required:true,type:'array',trigger:'change'}
+            validate: [
+                {required: true, type: 'array', trigger: 'change'}
             ]
         }
     ]

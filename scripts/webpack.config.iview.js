@@ -17,8 +17,8 @@ const config = new Config();
 const UI = 'iview';
 const basePublicPath = path.join(__dirname, '/../', `/packages/${UI}`);
 const baseSrcPath = path.join(basePublicPath + '/src/index.js');
-const baseTemplatePath = path.join(basePublicPath + '/demo/index.html');
-const devServerOpenPage = path.join(`packages/${UI}/demo/`);
+const baseTemplatePath = path.join(basePublicPath + '/demo/component/index.html');
+const devServerOpenPage = path.join(`packages/${UI}/demo/component/`);
 
 // entry
 config.entry('app').add(baseSrcPath).end();

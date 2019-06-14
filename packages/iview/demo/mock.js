@@ -1,6 +1,5 @@
 var maker = formCreate.maker;
 
-
 //使用maker 生成器生成
 function mock() {
     var mock;
@@ -24,7 +23,7 @@ function mock() {
         }).validate([
             {required: true, message: '请输入商品名称', trigger: 'blur'}
         ]).children([maker.create('template').children(['append']).slot('append')]).event({
-               change: console.log
+            change: console.log
         }).emit(['change']).className('goods-name'),
 
 
@@ -89,12 +88,12 @@ function mock() {
                     num: this.value,
                 }
             },
-            props:{
-                disabled:Boolean,
-                value:Number,
+            props: {
+                disabled: Boolean,
+                value: Number,
             },
-            watch:{
-                value(n){
+            watch: {
+                value(n) {
                     this.num = n;
                 }
             },
@@ -102,7 +101,7 @@ function mock() {
                 onClick: function () {
                     console.log('click');
                     this.num++;
-                    this.$emit('input',this.num);
+                    this.$emit('input', this.num);
                 },
                 //表单禁用事件
                 onDisabled: function (disabled) {
@@ -117,7 +116,7 @@ function mock() {
                     this.num = val;
                 }
             }
-        }), 'tmp', '自定义 title').value(100).props('disabled',false),
+        }), 'tmp', '自定义 title').value(100).props('disabled', false),
 
 
         //自定义组件
@@ -133,10 +132,10 @@ function mock() {
             show: true
         }).name('btn')
             .col({span: 12}).children([
-                maker.create('span').domProps({
-                    innerHTML: '测试自定义按钮'
-                })
-            ]).emit(['click']),
+            maker.create('span').domProps({
+                innerHTML: '测试自定义按钮'
+            })
+        ]).emit(['click']),
 
 
         //自定义组件
@@ -196,7 +195,7 @@ function mock() {
                 },
                 {
                     type: 'i-col',
-                    name:'test',
+                    name: 'test',
                     props: {
                         span: 12
                     },
@@ -219,31 +218,6 @@ function mock() {
                 }
             ]
         },
-
-
-        // datePicker 日期选择组件
-        // maker.date('活动日期', 'section_day2', ['2018-02-20', '2019-01-01']).props({
-        //     "type": "datetimerange",
-        //     "startDate": new Date(),
-        //     "showWeekNumbers": true,
-        //     "open": false, //自定义内容时一定要预定义 open
-        // }).col({span: 12}).children(['select data']).event({
-        //     ok: function () {
-        //         mock[14].props.open = false;
-        //     }
-        // }),
-
-        //timePicker 时间选择组件
-        // maker.time('活动时间', 'section_time2', ['01:01:01', '12:12:12']).props({
-        //     "type": "timerange",
-        //     "placeholder": "请选择活动时间",
-        //     "open": false, //自定义内容时一定要预定义 open
-        // }).col({span: 12}).children(['select Time']).event({
-        //     ok: function () {
-        //         mock[15].props.open = false;
-        //     }
-        // }),
-
 
         //rate 评分组件
         maker.rate('推荐级别', 'rate', 2)
@@ -275,7 +249,7 @@ function mock() {
                 'type': 'select',
                 'uploadType': 'file',
                 'name': 'file',
-                'onSuccess': function (res,file) {
+                'onSuccess': function (res, file) {
                     file.url = 'http://file.lotkk.com/form-create.jpeg';
                 },
                 'onRemove': function (file, fileList) {
@@ -286,7 +260,7 @@ function mock() {
 
         //frame 框架组件
         maker.frame('素材', 'fodder', ['http://file.lotkk.com/form-create.jpeg']).props({
-            src: 'iframe.html',
+            src: '../iframe.html',
             maxLength: 0,
             type: 'image',
             modalTitle: '预览~~~',
@@ -299,7 +273,7 @@ function mock() {
             },
             onOpen: console.log
         }).event({
-            'on-change':()=> {
+            'on-change': () => {
                 console.log('change');
             }
         }).validate([
@@ -374,7 +348,7 @@ $r = maker.upload('产品主图', 'logo', 'http://file.lotkk.com/form-create.jpe
     'uploadType': 'image',
     'name': 'file',
     'modalTitle': '预览~~~',
-    'onSuccess': function (res,file) {
+    'onSuccess': function (res, file) {
         file.url = 'http://file.lotkk.com/form-create.jpeg';
     }
 }).validate({required: true, type: 'array', min: 1, message: '请上传1张图片', trigger: 'change'});
