@@ -1,0 +1,39 @@
+{
+    "name": "@form-create/data",
+    "version": "0.0.1",
+    "description": "",
+    "main": "./src/province_city_area.js",
+    "unpkg": "./dist/province_city.js",
+    "jsdelivr": "./dist/province_city.js",
+    "scripts": {
+        "clean": "rimraf dist/",
+        "bili:province_city": "cross-env LIB=province_city bili",
+        "bili:province_city_code": "cross-env LIB=province_city_code bili",
+        "bili:province_city_area": "cross-env LIB=province_city_area bili",
+        "bili:province_city_area_code": "cross-env LIB=province_city_area_code bili",
+        "build": "npm-run-all clean bili:province_city bili:province_city_code bili:province_city_area bili:province_city_area_code"
+    },
+    "files": [
+        "README.md",
+        "package.json",
+        "LICENSE",
+        "src",
+        "dist"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/xaboy/form-create.git"
+    },
+    "author": "xaboy",
+    "license": "MIT",
+    "dependencies": {
+        "vue": "^2.5.2"
+    },
+    "bugs": {
+        "url": "https://github.com/xaboy/form-create/issues"
+    },
+    "homepage": "http://www.form-create.com",
+    "publishConfig": {
+       "access": "public"
+    }
+}
