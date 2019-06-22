@@ -65,6 +65,7 @@ module.exports = {
         alias: {
             'vue$': 'vue/dist/vue.esm.js',
             'iview': 'iview',
+            'element-ui': 'element-ui',
         },
         extensions: ['*', '.js', '.jsx', '.vue', '.json']
     }

@@ -17,9 +17,9 @@ const config = new Config();
 // TODO: Wrapped in a function
 const UI = 'element-ui';
 const basePublicPath = path.join(__dirname, '/../', `/packages/${UI}`);
-const baseSrcPath = path.join(basePublicPath + `/src/index.js`);
-const baseTemplatePath = path.join(basePublicPath + '/public/index.html');
-const devServerOpenPage = path.join(`packages/${UI}/public/`);
+const baseSrcPath = path.join(basePublicPath + '/src/index.js');
+const baseTemplatePath = path.join(basePublicPath + '/demo/component/index.html');
+const devServerOpenPage = path.join(`packages/${UI}/demo/component/`);
 
 // TODO: use webpack-chain
 config.entry('app').add(baseSrcPath).end();
@@ -43,11 +43,12 @@ const eleConfig = webpackMergeConfig(baseWebpackConfig, {
             inject: true
         }),
         new webpack.DefinePlugin({
-            'process.env.UI': 'element'
+            'process.env.UI': UI
         })
     ],
     devServer: {
-        openPage: devServerOpenPage
+        openPage: devServerOpenPage,
+        hot: true,
     },
     resolve: {
         alias: {

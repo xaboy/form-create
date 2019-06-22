@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>form-create 示例</title>
+    <link href="https://cdn.jsdelivr.net/npm/element-ui@2.8.2/lib/theme-chalk/index.css" rel="stylesheet">
+    <script defer src="https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/element-ui@2.8.2/lib/index.js"></script>
+    <script defer src="/form-create.ele.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/@form-create/data/dist/province_city.js"></script>
+    <script defer src="../json.js"></script>
+</head>
+
+<body>
+<div id="app">
+    <h2>组件模式生成</h2>
+    <form-create v-model="fApi" :rule="rule" :option="option" @goods-name-change="change"
+                 @btn-click="change"
+                 @xaboy-change="change" @mounted="fcMounted"></form-create>
+</div>
+<script>
+    window.onload = function () {
+        var _vm = new Vue({
+            el: '#app',
+            components: {
+                formCreate: formCreate.$form()
+            },
+            data: {
+                rule: [jsonMock()[1]],
+                option: {
+                    global: {
+                        input: {
+                            props: {
+                                disabled: true
+                            }
+                        }
+                    },
+                    //显示表单重置按钮
+                    resetBtn: true,
+                    //表单提交事件
+                    onSubmit: function (formData) {
+                        alert(JSON.stringify(formData));
+                        //按钮进入提交状态
+                        $f.btn.loading();
+                        //重置按钮禁用
+                        $f.resetBtn.disabled();
+                    },
+                    mounted: function ($f) {
+                        var $m = $f.model();
+                        $m.goods_name.value = "HuaWei Plus";
+                    },
+                },
+                //$f
+                fApi: {}
+            },
+            methods: {
+                change: function (res) {
+                    console.log(res);
+                },
+                fcMounted($f) {
+                    console.log('form-create mounted', $f);
+                }
+            },
+            mounted: function () {
+                console.log(this.fApi);
+            }
+        });
+    };
+</script>
+</body>
+
+</html>

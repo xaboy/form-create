@@ -5,7 +5,7 @@
     "main": "./src/index.js",
     "scripts": {
         "clean": "rimraf dist/",
-        "bili": "cross-env UI_LiB=ele bili",
+        "bili": "cross-env UI_LiB='element-ui' bili",
         "buildxxxxx": "npm-run-all clean bili"
     },
     "repository": {
