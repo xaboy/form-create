@@ -39,7 +39,7 @@
     "homepage": "http://www.form-create.com",
     "dependencies": {
         "@form-create/core": "^0.0.1",
-        "@form-create/utils": "^0.0.1",
+        "@form-create/utils": "^0.0.2",
         "element-ui": "^2.8.2"
     },
     "publishConfig": {
