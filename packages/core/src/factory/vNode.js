@@ -1,4 +1,4 @@
-import {isFunction, isString} from '@form-create/utils';
+import {isFunction, isString, toString} from '@form-create/utils';
 
 function parseVData(data) {
     if (isString(data))
@@ -34,7 +34,7 @@ export default class VNode {
 
     static use(nodes) {
         Object.keys(nodes).forEach((k) => {
-            VNode.prototype[k] = function (data, VNodeFn) {
+            VNode.prototype[toString(k).toLocaleLowerCase()] = VNode.prototype[k] = function (data, VNodeFn) {
                 return this.make(nodes[k], data, VNodeFn);
             };
         });

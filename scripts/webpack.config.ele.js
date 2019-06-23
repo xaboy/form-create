@@ -43,7 +43,7 @@ const eleConfig = webpackMergeConfig(baseWebpackConfig, {
             inject: true
         }),
         new webpack.DefinePlugin({
-            'process.env.UI': UI
+            'process.env.UI': JSON.stringify(UI)
         })
     ],
     devServer: {

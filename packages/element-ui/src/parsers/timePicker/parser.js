@@ -8,25 +8,29 @@ export function getTime(date) {
         : date;
 }
 
+export function toDate(time) {
+    return new Date('2018-02-14 ' + time);
+}
+
 export default class Parser extends BaseParser {
 
     toFormValue(value) {
         let parseValue, isArr = Array.isArray(value);
-        if ('timerange' === this.rule.props.type) {
+        if (this.rule.props.isRange === true) {
             if (isArr) {
-                parseValue = value.map((time) => !time ? '' : getTime(timeStampToDate(time)));
+                parseValue = value.map((time) => !time ? '' : toDate(getTime(timeStampToDate(time))));
             } else {
                 parseValue = ['', ''];
             }
         } else {
             isArr && (value = value[0]);
-            parseValue = !value ? '' : getTime(timeStampToDate(value));
+            parseValue = !value ? '' :  toDate(getTime(timeStampToDate(value)));
         }
         return parseValue;
     }
 
     mounted() {
-        this.toValue = () => this.el.publicStringValue;
+        this.toValue = (val) => this.el.formatToString(val);
     }
 }
 

@@ -7,10 +7,10 @@ export default class Parser extends BaseParser {
 
         const ctx = this.$render.parserToData(this).get();
         const {key, refName} = this;
-        delete ctx.props.defaultFileList;
+        delete ctx.props.fileList;
         const props = {
             uploadType: ctx.props.uploadType,
-            maxLength: ctx.props.maxLength,
+            maxLength: ctx.props.limit,
             modalTitle: ctx.props.modalTitle,
             handleIcon: ctx.props.handleIcon,
             onHandle: ctx.props.onHandle,

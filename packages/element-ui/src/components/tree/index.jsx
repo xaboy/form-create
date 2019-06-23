@@ -2,7 +2,7 @@ import {toArray} from '@form-create/utils';
 
 
 export default {
-    name: 'fc-iview-tree',
+    name: 'fc-elm-tree',
     props: {
         ctx: {
             type: Object,
@@ -17,64 +17,49 @@ export default {
             default: 'checked'
         },
         value: {
-            type: Array,
+            type: [Array, String, Number],
             default: () => ([])
         }
     },
-    data() {
-        return {
-            treeData: []
-        }
-    },
     watch: {
-        value(n) {
-            n = toArray(n);
-            const data = this.$refs.tree.data;
-            this.type === 'selected' ? this.selected(data, n) : this.checked(data, n);
+        value() {
+            this.setValue();
         }
     },
     methods: {
-        selected(_data, value) {
-            _data.forEach((node) => {
-                this.$set(node, 'selected', value.indexOf(node.id) !== -1);
-                if (node.children !== undefined && Array.isArray(node.children))
-                    this.selected(node.children, value);
-            });
-        },
-        checked(_data, value) {
-            _data.forEach((node) => {
-                if (value.indexOf(node.id) !== -1)
-                    this.$set(node, 'checked', true);
-                else {
-                    this.$set(node, 'indeterminate', false);
-                    this.$set(node, 'checked', false);
-                }
-                if (node.children !== undefined && Array.isArray(node.children))
-                    this.checked(node.children, value);
-            });
-        },
         makeTree() {
-            return <Tree ref="tree" {...this.ctx}>{this.children}</Tree>;
+            return <ElTree ref="tree" on-check-change={() => this.updateValue()}
+                on-node-click={() => this.updateValue()} {...this.ctx}>{this.children}</ElTree>;
         },
-        updateTreeData() {
+        onChange() {
+            this.updateValue()
+        },
+
+        updateValue() {
+            const type = (this.type).toLocaleLowerCase();
+            let value;
+
+            if (type === 'selected')
+                value = this.$refs.tree.getCurrentKey();
+            else
+                value = this.$refs.tree.getCheckedKeys();
+
+            this.$emit('input', value);
+        },
+        setValue() {
             const type = (this.type).toLocaleLowerCase();
 
             if (type === 'selected')
-                this.treeData = this.$refs.tree.getSelectedNodes();
-            else if (type === 'indeterminate')
-                this.treeData = this.$refs.tree.getCheckedAndIndeterminateNodes();
+                this.$refs.tree.setCurrentKey(this.value);
             else
-                this.treeData = this.$refs.tree.getCheckedNodes();
-            this.$emit('input', this.treeData.map(node => node.id));
+                this.$refs.tree.setCheckedKeys(toArray(this.value));
         }
     },
     render() {
         return (<div>{this.makeTree()}</div>);
     },
     mounted() {
-        this.$nextTick(() => {
-            this.$watch(() => this.$refs.tree.flatState, () => this.updateTreeData())
-        })
-
+        this.setValue();
+        this.updateValue();
     }
 }

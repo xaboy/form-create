@@ -102,7 +102,8 @@ export default {
             return <icon type='ios-trash-outline' on-click={() => this.onRemove(file)}/>;
         },
         makeHandleIcon(file) {
-            return <icon type={this.handleIcon === true ? 'ios-eye-outline' : this.handleIcon}
+            return <icon
+                type={(this.handleIcon === true || this.handleIcon === undefined) ? 'ios-eye-outline' : this.handleIcon}
                 on-click={() => this.handleClick(file)}/>;
         },
         makeProgress(file) {
@@ -110,8 +111,8 @@ export default {
         },
         makeIcons(file) {
             const icons = [];
-            if (this.allowRemove || this.handleIcon) {
-                if (this.handleIcon)
+            if (this.allowRemove || this.handleIcon !== false) {
+                if ((this.uploadType !== 'file' && this.handleIcon !== false) || (this.uploadType === 'file' && this.handleIcon))
                     icons.push(this.makeHandleIcon(file));
                 if (this.allowRemove)
                     icons.push(this.makeRemoveIcon(file));

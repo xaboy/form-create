@@ -134,10 +134,18 @@ export default function getGlobalApi(h) {
                 const parser = h.getParser(field);
                 if (!parser)
                     return;
-                hidden ? hiddenList.push(parser) : hiddenList.splice(hiddenList.indexOf(parser), 1);
+                if (hidden && hiddenList.indexOf(parser) === -1) {
+                    hiddenList.push(parser)
+                } else if (!hidden && hiddenList.indexOf(parser) !== -1) {
+                    hiddenList.splice(hiddenList.indexOf(parser), 1)
+                }
                 h.$render.clearCache(parser, true);
             });
             h.refresh();
+        },
+        hiddenStatus(id) {
+            const parser = h.getParser(id);
+            return h.$form.hidden.indexOf(parser) !== -1;
         },
         visibility(visibility, fields) {
             const visibilityList = h.$form.visibility;
@@ -145,10 +153,19 @@ export default function getGlobalApi(h) {
                 const parser = h.getParser(field);
                 if (!parser)
                     return;
-                visibility ? visibilityList.push(parser) : visibilityList.splice(visibilityList.indexOf(parser), 1);
+
+                if (visibility && visibilityList.indexOf(parser) === -1) {
+                    visibilityList.push(parser)
+                } else if (!visibility && visibilityList.indexOf(parser) !== -1) {
+                    visibilityList.splice(visibilityList.indexOf(parser), 1)
+                }
                 h.$render.clearCache(parser, true);
             });
             h.refresh();
+        },
+        visibilityStatus(id) {
+            const parser = h.getParser(id);
+            return h.$form.visibility.indexOf(parser) !== -1;
         },
         disabled(disabled, fields) {
             tidyFields(fields, true).forEach((field) => {
@@ -260,6 +277,18 @@ export default function getGlobalApi(h) {
         },
         hideForm: (isShow) => {
             h.vm.isShow = !isShow;
+        },
+        changeStatus: () => {
+            return h.changeStatus;
+        },
+        clearChangeStatus: () => {
+            h.changeStatus = false;
+        },
+        method(id, name) {
+            const parser = h.getParser(id);
+            return (...args) => {
+                parser.el[name](args);
+            }
         }
     };
 }

@@ -88,38 +88,38 @@ export default class Form extends BaseForm {
     }
 
     makeResetBtn(span) {
-        const resetBtn = this.$handle.options.resetBtn,
+        const resetBtn = this.vm.resetProps,
             props = resetBtn.col || {span: span, push: 1};
 
         return this.vNode.col({props: props, key: `${this.unique}col3`}, [
             this.vNode.button({
-                key: `frsbtn${this.unique}`, props: this.vm.resetProps, on: {
+                key: `frsbtn${this.unique}`, props: resetBtn, on: {
                     'click': () => {
                         const fApi = this.$handle.fCreateApi;
                         isFunction(resetBtn.click)
                             ? resetBtn.click(fApi)
                             : fApi.resetFields();
                     }
-                }
-            }, [this.vm.resetProps.innerText])
+                }, style: {width: resetBtn.width}
+            }, [resetBtn.innerText])
         ]);
     }
 
     makeSubmitBtn(span) {
-        const submitBtn = this.$handle.options.submitBtn,
+        const submitBtn = this.vm.buttonProps,
             props = submitBtn.col || {span: span};
 
         return this.vNode.col({props: props, key: `${this.unique}col4`}, [
             this.vNode.button({
-                key: `fbtn${this.unique}`, props: this.vm.buttonProps, on: {
+                key: `fbtn${this.unique}`, props: submitBtn, on: {
                     'click': () => {
                         const fApi = this.$handle.fCreateApi;
                         isFunction(submitBtn.click)
                             ? submitBtn.click(fApi)
                             : fApi.submit();
                     }
-                }
-            }, [this.vm.buttonProps.innerText])
+                }, style: {width: submitBtn.width}
+            }, [submitBtn.innerText])
         ]);
     }
 }

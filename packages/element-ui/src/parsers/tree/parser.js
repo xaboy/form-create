@@ -1,17 +1,15 @@
 import {BaseParser} from '@form-create/core';
-
-export function isMultiple(rule) {
-    return (!rule.props.multiple) && rule.props.type === 'selected'
-}
-
+import {isUndef, $set} from '@form-create/utils';
 
 export default class Parser extends BaseParser {
 
-    toValue(parseValue) {
-        let value = parseValue;
-        return !isMultiple(this.rule) ? value : (value[0] || '');
+    init() {
+        const props = this.rule.props;
+        if (isUndef(props.nodeKey)) $set(props, 'nodeKey', 'id');
+        if (isUndef(props.props)) $set(props, 'props', {
+            label: 'title'
+        });
     }
-
 
     render(children) {
         const data = this.$render.parserToData(this).get();

@@ -2,7 +2,7 @@ import {iviewConfig} from '../../core/config';
 import {defaultOnHandle, mount} from '../../core/modal';
 import style from '../../style/index.css';
 import {toArray} from '@form-create/utils';
-
+//组件不依赖 iviewConfig
 export default {
     name: 'fc-iview-frame',
     props: {
@@ -96,7 +96,7 @@ export default {
         onHandle: {
             type: Function,
             default(src) {
-                defaultOnHandle(src, this.title)
+                defaultOnHandle(src, this.modalTitle)
             }
         },
         value: [Array, String, Number]
@@ -229,7 +229,7 @@ export default {
             }
         },
         makeHandleIcon(val) {
-            return <icon props={{type: this.handleIcon === true ? 'ios-eye-outline' : this.handleIcon}}
+            return <icon props={{type: (this.handleIcon === true || this.handleIcon === undefined) ? 'ios-eye-outline' : this.handleIcon}}
                 on-click={() => this.handleClick(val)}/>
         },
 

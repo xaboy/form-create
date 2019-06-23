@@ -1,4 +1,3 @@
-import {iviewConfig} from '../../core/config';
 import {hasSlot, toArray, toString} from '@form-create/utils';
 import {defaultOnHandle} from '../../core/modal';
 import style from '../../style/index.css';
@@ -16,7 +15,7 @@ function getFileName(file) {
 
 
 export default {
-    name: 'fc-iview-upload',
+    name: 'fc-elm-upload',
 
     props: {
         ctx: {
@@ -58,14 +57,14 @@ export default {
         }
     },
     created() {
-        if (this.ctx.props.showUploadList === undefined)
-            this.ctx.props.showUploadList = false;
-        this.ctx.props.defaultFileList = toArray(this.value).map(parseFile);
+        if (this.ctx.props.showFileList === undefined)
+            this.ctx.props.showFileList = false;
+        this.ctx.props.fileList = toArray(this.value).map(parseFile);
     },
     watch: {
         value(n) {
-            this.$refs.upload.fileList = toArray(n).map(parseFile);
-            this.uploadList = this.$refs.upload.fileList;
+            this.$refs.upload.uploadFiles = toArray(n).map(parseFile);
+            this.uploadList = this.$refs.upload.uploadFiles;
         },
         maxLength(n, o) {
             if (o === 1 || n === 1)
@@ -87,31 +86,29 @@ export default {
 
         makeDefaultBtn() {
             return <div class={style['fc-upload-btn']}>
-                <icon props={{
-                    type: this.uploadType === 'file' ? 'ios-cloud-upload-outline' : iviewConfig.imgUpIcon,
-                    size: 20
-                }}/>
+                <i class="el-icon-upload2"/>
             </div>
         },
         makeItem(file) {
             return this.uploadType === 'image'
                 ? <img src={file.url}/>
-                : <icon props={{type: iviewConfig.fileIcon, size: 40}}/>
+                : <i class="el-icon-tickets"/>
         },
         makeRemoveIcon(file) {
-            return <icon type='ios-trash-outline' on-click={() => this.onRemove(file)}/>;
+            return <i class="el-icon-delete" on-click={() => this.onRemove(file)}/>;
         },
         makeHandleIcon(file) {
-            return <icon type={this.handleIcon === true ? 'ios-eye-outline' : this.handleIcon}
+            return <i
+                class={(this.handleIcon === true || this.handleIcon === undefined) ? 'el-icon-view' : this.handleIcon}
                 on-click={() => this.handleClick(file)}/>;
         },
         makeProgress(file) {
-            return <Progress props={{percent: file.percentage, hideInfo: true}} style="width:90%"/>
+            return <ElProgress props={{percent: file.percentage, hideInfo: true}} style="width:90%"/>
         },
         makeIcons(file) {
             const icons = [];
-            if (this.allowRemove || this.handleIcon) {
-                if (this.handleIcon)
+            if (this.allowRemove || this.handleIcon !== false) {
+                if ((this.uploadType !== 'file' && this.handleIcon !== false) || (this.uploadType === 'file' && this.handleIcon))
                     icons.push(this.makeHandleIcon(file));
                 if (this.allowRemove)
                     icons.push(this.makeRemoveIcon(file));
@@ -125,15 +122,15 @@ export default {
                 class={style['fc-files']}>{file.showProgress ? this.makeProgress(file) : [this.makeItem(file), this.makeIcons(file)]}</div>);
         },
         makeUpload() {
-            return <Upload ref="upload"
-                style={{display: 'inline-block'}} {...this.ctx}>{this.children}</Upload>;
+            return <ElUpload ref="upload"
+                style={{display: 'inline-block'}} {...this.ctx}>{this.children}</ElUpload>;
         },
         initChildren() {
             if (!hasSlot(this.children, 'default'))
                 this.children.push(this.makeDefaultBtn());
         },
         update() {
-            let files = this.$refs.upload.fileList.map((file) => file.url).filter((url) => url !== undefined);
+            let files = this.$refs.upload.uploadFiles.map((file) => file.url).filter((url) => url !== undefined);
             this.$emit('input', this.maxLength === 1 ? (files[0] || '') : files);
         }
     },
@@ -141,9 +138,9 @@ export default {
         const isShow = (!this.maxLength || this.maxLength > this.uploadList.length);
 
         if (this.$refs.upload) {
-            if (this.ctx.props.showUploadList === undefined)
-                this.ctx.props.showUploadList = this.$refs.upload.showUploadList;
-            this.ctx.props.defaultFileList = this.$refs.upload.defaultFileList;
+            if (this.ctx.props.showFileList === undefined)
+                this.ctx.props.showFileList = this.$refs.upload.showFileList;
+            this.ctx.props.fileList = this.$refs.upload.fileList;
         }
 
         this.initChildren();
@@ -152,11 +149,11 @@ export default {
             <div class={{
                 [style['fc-upload']]: true,
                 [style['fc-hide-btn']]: !isShow
-            }}>{[this.ctx.props.showUploadList ? [] : this.makeFiles(), this.makeUpload()]}</div>);
+            }}>{[this.ctx.props.showFileList ? [] : this.makeFiles(), this.makeUpload()]}</div>);
     },
     mounted() {
-        this.uploadList = this.$refs.upload.fileList;
-        this.$watch(() => this.$refs.upload.fileList, () => {
+        this.uploadList = this.$refs.upload.uploadFiles;
+        this.$watch(() => this.$refs.upload.uploadFiles, () => {
             this.update();
         }, {deep: true});
     }

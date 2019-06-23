@@ -3,7 +3,7 @@ import style from '../../style/index.css';
 import {toArray} from '@form-create/utils';
 
 export default {
-    name: 'fc-iview-frame',
+    name: 'fc-elm-frame',
     props: {
         type: {
             type: String,
@@ -95,7 +95,7 @@ export default {
         onHandle: {
             type: Function,
             default(src) {
-                defaultOnHandle(src, this.title)
+                defaultOnHandle(src, this.modalTitle)
             }
         },
         value: [Array, String, Number]
@@ -228,17 +228,18 @@ export default {
             }
         },
         makeHandleIcon(val) {
-            return <icon props={{type: this.handleIcon === true ? 'ios-eye-outline' : this.handleIcon}}
+            return <i
+                class={(this.handleIcon === true || this.handleIcon === undefined) ? 'el-icon-view' : this.handleIcon}
                 on-click={() => this.handleClick(val)}/>
         },
 
         makeRemoveIcon(val) {
-            return <icon props={{type: 'ios-trash-outline'}} on-click={() => this.handleRemove(val)}/>
+            return <i class="el-icon-delete" on-click={() => this.handleRemove(val)}/>
         },
 
         makeFiles() {
             return this.makeGroup(this.fileList.map(src => {
-                return this.makeItem([<icon props={{type: 'el-icon-tickets', size: 40}}
+                return this.makeItem([<i class="el-icon-tickets"
                     on-click={() => this.handleClick(src)}/>, this.makeIcons(src)])
             }))
         },
@@ -249,7 +250,7 @@ export default {
         },
         makeBtn() {
             return <div class={style['fc-upload-btn']} on-click={() => this.showModel()}>
-                <icon props={{type: this.icon, size: 20}}/>
+                <i class={this.icon}/>
             </div>
         },
         handleClick(src) {

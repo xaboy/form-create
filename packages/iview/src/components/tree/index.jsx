@@ -17,7 +17,7 @@ export default {
             default: 'checked'
         },
         value: {
-            type: Array,
+            type: [Array, String, Number],
             default: () => ([])
         }
     },
@@ -43,12 +43,7 @@ export default {
         },
         checked(_data, value) {
             _data.forEach((node) => {
-                if (value.indexOf(node.id) !== -1)
-                    this.$set(node, 'checked', true);
-                else {
-                    this.$set(node, 'indeterminate', false);
-                    this.$set(node, 'checked', false);
-                }
+                this.$set(node, 'checked', value.indexOf(node.id) !== -1);
                 if (node.children !== undefined && Array.isArray(node.children))
                     this.checked(node.children, value);
             });
@@ -61,8 +56,6 @@ export default {
 
             if (type === 'selected')
                 this.treeData = this.$refs.tree.getSelectedNodes();
-            else if (type === 'indeterminate')
-                this.treeData = this.$refs.tree.getCheckedAndIndeterminateNodes();
             else
                 this.treeData = this.$refs.tree.getCheckedNodes();
             this.$emit('input', this.treeData.map(node => node.id));

@@ -1,5 +1,5 @@
 /*!
- * @form-create/iview v0.0.1
+ * @form-create/iview v0.0.2
  * (c) 2018-2019 xaboy
  * Github https://github.com/xaboy/form-create
  * Released under the MIT License.
@@ -197,7 +197,7 @@
   var helper = mergeJsxProps;
 
   var checkbox = {
-    name: 'fc-checkbox',
+    name: 'fc-iview-checkbox',
     props: {
       options: {
         type: Array,
@@ -410,7 +410,7 @@
     return line;
   }
   function toArray(value) {
-    return Array.isArray(value) ? value : isUndef(value) ? [] : [value];
+    return Array.isArray(value) ? value : isUndef(value) || value === '' ? [] : [value];
   }
   function isElement(arg) {
     return _typeof(arg) === 'object' && arg !== null && arg.nodeType === 1 && !isPlainObject(arg);
@@ -740,7 +740,7 @@
 
     return Creator;
   }(VData);
-  var keyAttrs = ['emitPrefix', 'className', 'defaultSlot', 'value', 'name', 'title'];
+  var keyAttrs = ['emitPrefix', 'className', 'value', 'name', 'title'];
   keyAttrs.forEach(function (attr) {
     Creator.prototype[attr] = function (value) {
       $set(this._data, attr, value);
@@ -950,7 +950,7 @@
       this.fc = handle.fc;
       this.vm = handle.vm;
       this.options = handle.options;
-      this.form = handle.$form;
+      this.$form = handle.$form;
       this.vNode = new VNode(this.vm);
       this.vData = new VData();
       this.cache = {};
@@ -1009,7 +1009,7 @@
         var _this = this;
 
         if (!this.vm.isShow) return;
-        this.form.beforeRender();
+        this.$form.beforeRender();
         var vn = this.$handle.sortList.map(function (id) {
           var parser = _this.$handle.parsers[id];
           if (parser.type === 'hidden') return;
@@ -1017,7 +1017,7 @@
         }).filter(function (val) {
           return val !== undefined;
         });
-        return this.form.render(vn);
+        return this.$form.render(vn);
       }
     }, {
       key: "setGlobalConfig",
@@ -1070,7 +1070,7 @@
         if (!this.cache[parser.id] || parser.type === 'template') {
           var type = parser.type,
               rule = parser.rule,
-              form = this.form,
+              form = this.$form,
               vn;
 
           if (type === 'template' && rule.template) {
@@ -1118,14 +1118,13 @@
         var _this3 = this;
 
         var refName = parser.refName,
-            key = parser.key,
-            rule = parser.rule;
+            key = parser.key;
         this.parserToData(parser);
         var data = parser.vData.ref(refName).key('fc_item' + key);
         if (!custom) data.on('input', function (value) {
           _this3.onInput(parser, value);
         }).props('value', this.$handle.getFormData(parser));
-        if (isUndef(rule.props.size)) data.props('size', this.$handle.options.form.size);
+        this.$form.inputVData && this.$form.inputVData(parser, custom);
         return data;
       }
     }, {
@@ -1409,7 +1408,7 @@
 
         var vm = this.vm;
         Object.keys(parser.rule).forEach(function (key) {
-          if (['field', 'type', 'value', 'vm', 'template', 'name', 'config', 'children'].indexOf(key) !== -1 || parser.rule[key] === undefined) return;
+          if (['field', 'type', 'value', 'vm', 'template', 'name', 'config'].indexOf(key) !== -1 || parser.rule[key] === undefined) return;
           parser.watch.push(vm.$watch(function () {
             return parser.rule[key];
           }, function (n, o) {
@@ -1421,13 +1420,6 @@
             immediate: true
           }));
         });
-        parser.watch.push(vm.$watch(function () {
-          return parser.rule.children;
-        }, function (n, o) {
-          if (o === undefined) return;
-
-          _this3.$render.clearCache(parser, true);
-        }));
       }
     }, {
       key: "mountedParser",
@@ -1459,7 +1451,7 @@
         var onReload = this.options.onReload;
         this.mountedParser();
         onReload && onReload(this.fCreateApi);
-        this.fc.$emit('reload', this.fCreateApi);
+        this.fc.$emit('on-reload', this.fCreateApi);
       }
     }, {
       key: "removeField",
@@ -1596,7 +1588,8 @@
     var components = {},
         parsers = {},
         maker = makerFactory(),
-        globalConfig = drive.getConfig();
+        globalConfig = drive.getConfig(),
+        data = {};
 
     function setParser(id, parser) {
       id = toString(id);
@@ -1604,13 +1597,30 @@
       FormCreate.maker[id] = creatorFactory(id);
     }
 
+    function createParser() {
+      return (
+        /*#__PURE__*/
+        function (_BaseParser) {
+          _inherits(Parser, _BaseParser);
+
+          function Parser() {
+            _classCallCheck(this, Parser);
+
+            return _possibleConstructorReturn(this, _getPrototypeOf(Parser).apply(this, arguments));
+          }
+
+          return Parser;
+        }(BaseParser)
+      );
+    }
+
     function component(id, component) {
       id = toString(id);
 
       var _id = id.toLocaleLowerCase();
 
-      if (_id === 'form-create' || _id === 'formcreate') return _vue.extend($FormCreate(FormCreate, components));
-      if (component === undefined) return components[toString(id)];else components[toString(id)] = component;
+      if (_id === 'form-create' || _id === 'formcreate') return get$FormCreate();
+      if (component === undefined) return components[id];else components[id] = component;
     }
 
     function margeGlobal(config, _options) {
@@ -1625,15 +1635,21 @@
       return options;
     }
 
-    function bindAttr(FormCreate) {
-      extend(FormCreate, {
+    function get$FormCreate() {
+      return _vue.extend($FormCreate(FormCreate, components));
+    }
+
+    function bindAttr(formCreate) {
+      extend(formCreate, {
         version: drive.version,
         ui: drive.ui,
         maker: maker,
         component: component,
         setParser: setParser,
-        $formCreate: function $formCreate() {
-          return $FormCreate(FormCreate, components);
+        createParser: createParser,
+        data: data,
+        $form: function $form() {
+          return get$FormCreate();
         }
       });
     }
@@ -1749,7 +1765,7 @@
 
           bindAttr($formCreate);
           Vue.prototype.$formCreate = $formCreate;
-          Vue.component(formCreateName, Vue.extend($FormCreate(FormCreate, components)));
+          Vue.component(formCreateName, get$FormCreate());
           _vue = Vue;
         }
       }, {
@@ -1768,6 +1784,10 @@
             },
             remove: function remove() {
               formCreate.options.el.removeChild($vm.$el);
+            },
+            destroy: function destroy() {
+              this.remove();
+              $vm.$destroy();
             },
             $f: formCreate.handle.fCreateApi
           };
@@ -1840,6 +1860,9 @@
     }, {
       key: "render",
       value: function render() {}
+    }, {
+      key: "inputVData",
+      value: function inputVData() {}
     }]);
 
     return BaseForm;
@@ -1930,7 +1953,7 @@
   styleInject(css);
 
   var frame = {
-    name: 'fc-frame',
+    name: 'fc-iview-frame',
     props: {
       type: {
         type: String,
@@ -2019,7 +2042,7 @@
           defaultOnHandle(src, this.title);
         }
       },
-      value: [Array, String]
+      value: [Array, String, Number]
     },
     data: function data() {
       return {
@@ -2082,7 +2105,7 @@
                       set: function set(field, value) {
                         _this.valid(field);
 
-                        _this.$emit('input', value);
+                        if (!_this.disabled) _this.$emit('input', value);
                       },
                       get: function get(field) {
                         _this.valid(field);
@@ -2101,9 +2124,7 @@
           }, [vNode.button({
             on: {
               click: function click() {
-                _vm.onClose();
-
-                _this.onCancel();
+                _this.onCancel() !== false && _vm.onClose();
               }
             }
           }, [closeBtnText]), vNode.button({
@@ -2118,7 +2139,7 @@
           }, [okBtnText])])];
         });
       },
-      makeInput: function makeInput(hidden) {
+      makeInput: function makeInput() {
         var _this2 = this;
 
         var h = this.$createElement;
@@ -2129,9 +2150,7 @@
           readonly: true,
           clearable: false
         };
-        return h("Input", helper([{
-          "style": hidden ? 'display:none;' : ''
-        }, {
+        return h("Input", helper([{}, {
           "props": props
         }, {}, {
           "on": {
@@ -2144,7 +2163,6 @@
       makeGroup: function makeGroup(children) {
         var h = this.$createElement;
         if (!this.maxLength || this.fileList.length < this.maxLength) children.push(this.makeBtn());
-        children.push(this.makeInput(true));
         return h("div", {
           "class": style['fc-upload']
         }, _toConsumableArray(children));
@@ -2156,7 +2174,7 @@
         }, _toConsumableArray(children));
       },
       valid: function valid(field) {
-        if (field !== this.field) throw new Error('form-create:无效的表单字段');
+        if (field !== this.field) throw new Error('frame 无效的字段值');
       },
       makeIcons: function makeIcons(val) {
         var h = this.$createElement;
@@ -2271,7 +2289,7 @@
   };
 
   var radio = {
-    name: 'fc-radio',
+    name: 'fc-iview-radio',
     functional: true,
     props: {
       options: {
@@ -2294,7 +2312,7 @@
   };
 
   var select = {
-    name: 'fc-select',
+    name: 'fc-iview-select',
     functional: true,
     props: {
       options: {
@@ -2316,7 +2334,7 @@
   };
 
   var tree = {
-    name: 'fc-tree',
+    name: 'fc-iview-tree',
     props: {
       ctx: {
         type: Object,
@@ -2420,7 +2438,7 @@
   }
 
   var upload = {
-    name: 'fc-upload',
+    name: 'fc-iview-upload',
     props: {
       ctx: {
         type: Object,
@@ -3111,12 +3129,12 @@
           allowRemove: ctx.props.allowRemove,
           value: this.$handle.getFormData(this),
           ctx: ctx,
-          key: key,
-          ref: refName,
           children: children
         };
         return this.vNode.upload({
           props: props,
+          key: key,
+          ref: refName,
           on: {
             input: function input(n) {
               _this.$render.onInput(_this, n);
@@ -3156,7 +3174,6 @@
         }, {});
       },
       getValue: function getValue(field) {
-        field = toString(field);
         var parser = h.fieldList[field];
         if (!parser) return;
         return deepExtend({}, {
@@ -3179,12 +3196,12 @@
         this.setValue(field, value);
       },
       removeField: function removeField(field) {
-        var parser = h.fieldList[field];
+        var parser = h.getParser(field);
         if (!parser) return;
         var fields = parser.root.map(function (rule) {
           return rule.__field__;
         }),
-            index = fields.indexOf(toString(field));
+            index = fields.indexOf(field);
         if (index === -1) return;
         parser.root.splice(index, 1);
         if (h.sortList.indexOf(parser.id) === -1) this.reload();
@@ -3219,8 +3236,7 @@
         var fields = h.fieldList,
             index = h.sortList.length,
             rules = h.rules;
-        after = toString(after);
-        if (rule.field && fields.indexOf(toString(rule.field)) !== -1) return console.error("".concat(rule.field, " \u5B57\u6BB5\u5DF2\u5B58\u5728") + errMsg());
+        if (rule.field && fields.indexOf(rule.field) !== -1) return console.error("".concat(rule.field, " \u5B57\u6BB5\u5DF2\u5B58\u5728") + errMsg());
         var parser = h.getParser(after);
 
         if (parser) {
@@ -3238,8 +3254,7 @@
         var fields = h.fieldList,
             index = 0,
             rules = h.rules;
-        after = toString(after);
-        if (rule.field && fields.indexOf(toString(rule.field)) !== -1) return console.error("".concat(rule.field, " \u5B57\u6BB5\u5DF2\u5B58\u5728") + errMsg());
+        if (rule.field && fields.indexOf(rule.field) !== -1) return console.error("".concat(rule.field, " \u5B57\u6BB5\u5DF2\u5B58\u5728") + errMsg());
         var parser = h.getParser(after);
 
         if (parser) {
@@ -3261,7 +3276,7 @@
 
             if (isFunction(successFn)) successFn(formData, _this);else {
               h.options.onSubmit && h.options.onSubmit(formData, _this);
-              h.fc.$emit('submit', formData, _this);
+              h.fc.$emit('on-submit', formData, _this);
             }
           } else {
             failFn && failFn(_this);
@@ -3269,9 +3284,9 @@
         });
       },
       hidden: function hidden(_hidden, fields) {
-        var hiddenList = h.$render.form.hidden;
+        var hiddenList = h.$form.hidden;
         tidyFields(fields, true).forEach(function (field) {
-          var parser = h.fieldList[field];
+          var parser = h.getParser(field);
           if (!parser) return;
           _hidden ? hiddenList.push(parser) : hiddenList.splice(hiddenList.indexOf(parser), 1);
           h.$render.clearCache(parser, true);
@@ -3279,9 +3294,9 @@
         h.refresh();
       },
       visibility: function visibility(_visibility, fields) {
-        var visibilityList = h.$render.form.visibility;
+        var visibilityList = h.$form.visibility;
         tidyFields(fields, true).forEach(function (field) {
-          var parser = h.fieldList[field];
+          var parser = h.getParser(field);
           if (!parser) return;
           _visibility ? visibilityList.push(parser) : visibilityList.splice(visibilityList.indexOf(parser), 1);
           h.$render.clearCache(parser, true);
@@ -3356,9 +3371,6 @@
             loading: !!_loading
           });
         },
-        finish: function finish() {
-          this.loading(false);
-        },
         disabled: function disabled() {
           var _disabled2 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
 
@@ -3381,9 +3393,6 @@
           h.vm._resetProps({
             loading: !!_loading2
           });
-        },
-        finish: function finish() {
-          this.loading(false);
         },
         disabled: function disabled() {
           var _disabled3 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
@@ -3420,7 +3429,7 @@
         });
       },
       sync: function sync(field) {
-        var parser = h.getParser(toString(field));
+        var parser = h.getParser(field);
 
         if (parser) {
           h.$render.clearCache(parser, true);
@@ -3431,9 +3440,8 @@
         if (clear) h.$render.clearCacheAll();
         h.refresh();
       },
-      hideForm: function hideForm() {
-        var isShow = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
-        h.vm.isShow = !!isShow;
+      hideForm: function hideForm(isShow) {
+        h.vm.isShow = !isShow;
       }
     };
   }
@@ -3445,26 +3453,26 @@
     icon: 'Icon',
     slider: 'Slider',
     rate: 'Rate',
-    upload: 'fc-upload',
+    upload: 'fc-iview-upload',
     cascader: 'Cascader',
     colorPicker: 'Color-Picker',
     timePicker: 'Time-Picker',
     datePicker: 'Date-Picker',
     'switch': 'i-switch',
     option: 'i-option',
-    select: 'fc-select',
-    checkbox: 'fc-checkbox',
+    select: 'fc-iview-select',
+    checkbox: 'fc-iview-checkbox',
     checkboxGroup: 'Checkbox-Group',
-    radio: 'fc-radio',
+    radio: 'fc-iview-radio',
     radioGroup: 'Radio-Group',
     inputNumber: 'Input-Number',
     input: 'i-input',
     formItem: 'Form-Item',
     form: 'i-form',
-    frame: 'fc-frame',
+    frame: 'fc-iview-frame',
     col: 'i-col',
     row: 'row',
-    tree: 'fc-tree',
+    tree: 'fc-iview-tree',
     autoComplete: 'AutoComplete'
   };
 
@@ -3486,6 +3494,11 @@
     }
 
     _createClass(Form, [{
+      key: "inputVData",
+      value: function inputVData(parser) {
+        if (!parser.rule.props.size && this.options.form.size) parser.vData.props('size', this.options.form.size);
+      }
+    }, {
       key: "getFormRef",
       value: function getFormRef() {
         return this.vm.$refs[this.refName];
@@ -3528,7 +3541,7 @@
             field = parser.field,
             formItemRefName = parser.formItemRefName,
             col = this.getGetCol(parser),
-            labelWidth = !col.labelWidth && !rule.title ? 1 : col.labelWidth,
+            labelWidth = !col.labelWidth && !rule.title ? 0 : col.labelWidth,
             className = rule.className,
             propsData = this.vData.props({
           prop: field,
@@ -3718,7 +3731,7 @@
   VNode.use(nodes);
   var drive = {
     ui: "iview",
-    version: "0.0.1",
+    version: "0.0.2",
     formRender: Form,
     components: components,
     parsers: parsers,
@@ -3730,6 +3743,25 @@
   var _createFormCreate = createFormCreate(drive),
       FormCreate = _createFormCreate.FormCreate,
       install = _createFormCreate.install;
+
+  Creator.prototype.event = function (key, value) {
+    var _this = this;
+
+    var event;
+
+    if (!isPlainObject(key)) {
+      event = _defineProperty({}, key, value);
+    } else {
+      event = key;
+    }
+
+    Object.keys(event).forEach(function (eventName) {
+      var name = toString(eventName).indexOf('on-') === 0 ? eventName : "on-".concat(eventName);
+
+      _this.on(name, event[eventName]);
+    });
+    return this;
+  };
 
   if (typeof window !== 'undefined') {
     window.formCreate = FormCreate;

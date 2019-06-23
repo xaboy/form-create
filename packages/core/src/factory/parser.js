@@ -10,7 +10,7 @@ export default class BaseParser {
         this.vNode = new VNode();
         this.id = id;
         this.watch = [];
-        this.type = toString(rule.type);
+        this.type = toString(rule.type).toLocaleLowerCase();
         this.isDef = true;
         this.el = undefined;
 

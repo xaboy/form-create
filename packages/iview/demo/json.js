@@ -438,7 +438,7 @@ function jsonMock() {
                         ]
                     }
                 ],
-                type: 'checked',
+                type: 'selected',
                 multiple: false,
                 showCheckbox: true,
                 emptyText: '暂无数据'

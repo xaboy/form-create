@@ -56,10 +56,19 @@
     opacity: 1;
 }
 
-.fc-hide-btn .ivu-upload .ivu-upload {
-    display: none;
+.fc-upload .el-upload {
+    display: block;
 }
 
-.fc-upload .ivu-upload-list {
-    margin-top: 0;
+
+.form-create .el-form-item .el-rate {
+    margin-top: 10px;
+}
+
+.form-create .el-form-item .el-tree {
+    margin-top: 7px;
+}
+
+.fc-hide-btn .el-upload {
+    display: none;
 }

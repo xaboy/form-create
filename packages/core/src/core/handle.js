@@ -56,6 +56,7 @@ export default class Handle {
         this.sortList = [];
         this.rules = rules;
         this.origin = [...this.rules];
+        this.changeStatus = false;
     }
 
     loadRule(rules, child) {
@@ -195,6 +196,7 @@ export default class Handle {
         if (!this.isNoVal(parser) && this.isChange(parser, parser.toValue(value))) {
             this.$render.clearCache(parser);
             this.setFormData(parser, value);
+            this.changeStatus = true;
         }
     }
 
