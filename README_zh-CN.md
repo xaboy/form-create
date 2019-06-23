@@ -9,7 +9,7 @@
 
 [![MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/xaboy/form-create)
 [![github](https://img.shields.io/badge/Author-xaboy-blue.svg)](https://github.com/xaboy)
-[![version](https://badge.fury.io/js/@form-create/core.svg)](https://www.npmjs.com/package/@form-create/core)
+[![version](https://badge.fury.io/js/@form-create%2Fcore.svg)](https://www.npmjs.com/package/@form-create/core)
 [![npm](https://img.shields.io/npm/dt/@form-create/core.svg)](https://www.npmjs.com/package/@form-create/core)
 [![document](https://img.shields.io/badge/Doc-welcome-red.svg)](http://www.form-create.com/v2/)
 [![iview gzip size](http://img.badgesize.io/https://cdn.jsdelivr.net/gh/xaboy/@form-create/iview/dist/form-create.min.js?compression=gzip&amp;label=gzip%20size&amp;style=flat-square)](https://www.npmjs.com/package/@form-create/iview) [![Join the chat at https://gitter.im/xaboy/form-create](https://badges.gitter.im/xaboy/form-create.svg)](https://gitter.im/xaboy/form-create?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
