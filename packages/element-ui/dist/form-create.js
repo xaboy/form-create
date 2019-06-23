@@ -1,5 +1,5 @@
 /*!
- * @form-create/element-ui v0.0.2
+ * @form-create/element-ui v0.0.3
  * (c) 2018-2019 xaboy
  * Github https://github.com/xaboy/form-create
  * Released under the MIT License.
@@ -3713,7 +3713,7 @@
   VNode.use(nodes);
   var drive = {
     ui: "element-ui",
-    version: "".concat("0.0.2"),
+    version: "".concat("0.0.3"),
     formRender: Form,
     components: components,
     parsers: parsers,
