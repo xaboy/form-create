@@ -2,10 +2,10 @@
     "name": "@form-create/iview",
     "version": "0.0.2",
     "description": "iview版表单生成器|Iview Form builder with dynamic rendering, data collection, validation and submission capabilities, built-in 17 common form components, support for two-way data binding, event extension, and support for building built-in components and any vue components using json.",
-    "main": "./src/index.js",
-    "module": "./src/index.js",
-    "unpkg": "./dist/form-create.iview.min.js",
-    "jsdelivr": "./dist/form-create.iview.min.js",
+    "main": "./dist/form-create.min.js",
+    "module": "./dist/form-create.min.js",
+    "unpkg": "./dist/form-create.min.js",
+    "jsdelivr": "./dist/form-create.min.js",
     "scripts": {
         "clean": "rimraf dist/",
         "bili": "cross-env UI_LIB=iview bili",
@@ -23,6 +23,13 @@
         "iview",
         "json-form",
         "vue-json-form"
+    ],
+    "files": [
+        "README.md",
+        "package.json",
+        "LICENSE",
+        "src",
+        "dist"
     ],
     "author": "xaboy",
     "license": "MIT",

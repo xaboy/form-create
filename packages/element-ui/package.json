@@ -2,28 +2,47 @@
     "name": "@form-create/element-ui",
     "version": "0.0.2",
     "description": "element-ui版表单生成器|Element-ui Form builder with dynamic rendering, data collection, validation and submission capabilities, built-in 17 common form components, support for two-way data binding, event extension, and support for building built-in components and any vue components using json.",
-    "main": "./src/index.js",
+    "main": "./dist/form-create.min.js",
+    "module": "./dist/form-create.min.js",
+    "unpkg": "./dist/form-create.min.js",
+    "jsdelivr": "./dist/form-create.min.js",
     "scripts": {
         "clean": "rimraf dist/",
         "bili": "cross-env UI_LiB=element-ui bili",
-        "buildxxxxx": "npm-run-all clean bili"
+        "build": "npm-run-all clean bili"
     },
     "repository": {
         "type": "git",
         "url": "git+https://github.com/xaboy/form-create.git"
     },
     "keywords": [
-        "form-builder"
+        "form-builder",
+        "form",
+        "components",
+        "vue.js",
+        "element-ui",
+        "json-form",
+        "vue-json-form"
+    ],
+    "files": [
+        "README.md",
+        "package.json",
+        "LICENSE",
+        "src",
+        "dist"
     ],
     "author": "xaboy",
     "license": "MIT",
     "bugs": {
         "url": "https://github.com/xaboy/form-create/issues"
     },
-    "homepage": "https://github.com/xaboy/form-create#readme",
+    "homepage": "http://www.form-create.com",
     "dependencies": {
         "@form-create/core": "^0.0.1",
         "@form-create/utils": "^0.0.1",
         "element-ui": "^2.8.2"
+    },
+    "publishConfig": {
+        "access": "public"
     }
 }

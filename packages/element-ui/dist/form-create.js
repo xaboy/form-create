@@ -1,16 +1,15 @@
 /*!
- * @form-create/iview v0.0.2
+ * @form-create/element-ui v0.0.2
  * (c) 2018-2019 xaboy
  * Github https://github.com/xaboy/form-create
  * Released under the MIT License.
  */
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('iview'), require('vue')) :
-  typeof define === 'function' && define.amd ? define(['exports', 'iview', 'vue'], factory) :
-  (global = global || self, factory(global.formCreate = {}, global.iview, global.Vue));
-}(this, function (exports, iview, Vue) { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('vue')) :
+  typeof define === 'function' && define.amd ? define(['exports', 'vue'], factory) :
+  (global = global || self, factory(global.formCreate = {}, global.Vue));
+}(this, function (exports, Vue) { 'use strict';
 
-  iview = iview && iview.hasOwnProperty('default') ? iview['default'] : iview;
   Vue = Vue && Vue.hasOwnProperty('default') ? Vue['default'] : Vue;
 
   function _typeof(obj) {
@@ -197,7 +196,7 @@
   var helper = mergeJsxProps;
 
   var checkbox = {
-    name: 'fc-iview-checkbox',
+    name: 'fc-elm-checkbox',
     props: {
       options: {
         type: Array,
@@ -222,7 +221,8 @@
         default: function _default() {
           return [];
         }
-      }
+      },
+      type: String
     },
     watch: {
       value: function value() {
@@ -259,7 +259,7 @@
       var _this2 = this;
 
       var h = arguments[0];
-      return h("CheckboxGroup", helper([{}, this.ctx, {
+      return h("ElCheckboxGroup", helper([{}, this.ctx, {
         "on": {
           "input": this.onInput
         },
@@ -272,83 +272,14 @@
       }]), [this.options.map(function (opt) {
         var props = _objectSpread({}, opt);
 
+        var Type = _this2.type === 'button' ? 'ElCheckboxButton' : 'ElCheckbox';
         delete props.value;
-        return h("Checkbox", {
+        return h(Type, {
           "props": _objectSpread({}, props)
         });
       }).concat(this.chlidren)]);
     }
   };
-
-  var iview2 = {
-    _v: 2,
-    resetBtnType: 'ghost',
-    resetBtnIcon: 'refresh',
-    submitBtnIcon: 'ios-upload',
-    fileIcon: 'document-text',
-    fileUpIcon: 'folder',
-    imgUpIcon: 'image'
-  };
-  var iview3 = {
-    _v: 3,
-    resetBtnType: 'default',
-    resetBtnIcon: 'md-refresh',
-    submitBtnIcon: 'ios-share',
-    fileIcon: 'md-document',
-    fileUpIcon: 'ios-folder-open',
-    imgUpIcon: 'md-images'
-  };
-  var iviewConfig = function () {
-    if (typeof iview === 'undefined') return iview2;
-    return iview.version && iview.version.split('.')[0] == 3 ? iview3 : iview2;
-  }();
-  function getConfig() {
-    return {
-      form: {
-        inline: false,
-        labelPosition: 'right',
-        labelWidth: 125,
-        showMessage: true,
-        autocomplete: 'off',
-        size: undefined
-      },
-      row: {
-        gutter: 0,
-        type: undefined,
-        align: undefined,
-        justify: undefined,
-        className: undefined
-      },
-      submitBtn: {
-        type: 'primary',
-        size: 'large',
-        shape: undefined,
-        long: true,
-        htmlType: 'button',
-        disabled: false,
-        icon: iviewConfig.submitBtnIcon,
-        innerText: '提交',
-        loading: false,
-        show: true,
-        col: undefined,
-        click: undefined
-      },
-      resetBtn: {
-        type: iviewConfig.resetBtnType,
-        size: 'large',
-        shape: undefined,
-        long: true,
-        htmlType: 'button',
-        disabled: false,
-        icon: iviewConfig.resetBtnIcon,
-        innerText: '重置',
-        loading: false,
-        show: false,
-        col: undefined,
-        click: undefined
-      }
-    };
-  }
 
   function $set(target, field, value) {
     Vue.set(target, field, value);
@@ -634,7 +565,7 @@
           var value = _this2._data[key];
           if (value === undefined) return initial;
           if (Array.isArray(value) && !value.length) return initial;
-          if (!Object.keys(value).length) return initial;
+          if (!Object.keys(value).length && key !== 'props') return initial;
           initial[key] = value;
           return initial;
         }, {});
@@ -675,7 +606,8 @@
       children: [],
       emit: [],
       template: undefined,
-      emitPrefix: undefined
+      emitPrefix: undefined,
+      native: false
     };
   }
 
@@ -740,7 +672,7 @@
 
     return Creator;
   }(VData);
-  var keyAttrs = ['emitPrefix', 'className', 'value', 'name', 'title'];
+  var keyAttrs = ['emitPrefix', 'className', 'value', 'name', 'title', 'native'];
   keyAttrs.forEach(function (attr) {
     Creator.prototype[attr] = function (value) {
       $set(this._data, attr, value);
@@ -867,7 +799,7 @@
       key: "use",
       value: function use(nodes) {
         Object.keys(nodes).forEach(function (k) {
-          VNode.prototype[k] = function (data, VNodeFn) {
+          VNode.prototype[toString(k).toLocaleLowerCase()] = VNode.prototype[k] = function (data, VNodeFn) {
             return this.make(nodes[k], data, VNodeFn);
           };
         });
@@ -888,7 +820,7 @@
       this.vNode = new VNode();
       this.id = id;
       this.watch = [];
-      this.type = toString(rule.type);
+      this.type = toString(rule.type).toLocaleLowerCase();
       this.isDef = true;
       this.el = undefined;
 
@@ -1092,9 +1024,9 @@
             }
           }
 
-          var cache = form.container(vn, parser);
-          this.setCache(parser, cache, parent);
-          return cache;
+          if (rule.native !== true) vn = form.container(vn, parser);
+          this.setCache(parser, vn, parent);
+          return vn;
         }
 
         return this.getCache(parser);
@@ -1230,6 +1162,7 @@
         this.sortList = [];
         this.rules = rules;
         this.origin = _toConsumableArray(this.rules);
+        this.changeStatus = false;
       }
     }, {
       key: "loadRule",
@@ -1383,6 +1316,7 @@
         if (!this.isNoVal(parser) && this.isChange(parser, parser.toValue(value))) {
           this.$render.clearCache(parser);
           this.setFormData(parser, value);
+          this.changeStatus = true;
         }
       }
     }, {
@@ -1868,14 +1802,15 @@
     return BaseForm;
   }();
 
-  var vNode = new VNode();
+  var vNode = new VNode({});
 
   var Modal = function Modal(options, cb) {
+    if (isUndef(options.width)) options.width = '30%';
     return {
       name: 'fc-modal',
       data: function data() {
         return _objectSpread({
-          value: true
+          visible: true
         }, options);
       },
       render: function render() {
@@ -1883,15 +1818,16 @@
         return vNode.modal({
           props: this.$data,
           on: {
-            'on-visible-change': this.remove
+            close: this.onClose,
+            closed: this.onClosed
           }
         }, [cb(vNode, this)]);
       },
       methods: {
         onClose: function onClose() {
-          this.value = false;
+          this.visible = false;
         },
-        remove: function remove() {
+        onClosed: function onClosed() {
           this.$el.parentNode.removeChild(this.$el);
         }
       }
@@ -1905,8 +1841,7 @@
   }
   function defaultOnHandle(src, title) {
     mount({
-      title: title,
-      footerHide: true
+      title: title
     }, function (vNode) {
       return vNode.make('img', {
         style: {
@@ -1948,12 +1883,12 @@
     }
   }
 
-  var css = ".fc-upload-btn, .fc-files {\n    display: inline-block;\n    width: 58px;\n    height: 58px;\n    text-align: center;\n    line-height: 58px;\n    border: 1px solid #c0ccda;\n    border-radius: 4px;\n    overflow: hidden;\n    background: #fff;\n    position: relative;\n    box-shadow: 2px 2px 5px rgba(0, 0, 0, .1);\n    margin-right: 4px;\n    box-sizing: border-box;\n}\n\n.__fc_h {\n    display: none;\n}\n\n.__fc_v {\n    visibility: hidden;\n}\n\n.fc-files img {\n    width: 100%;\n    height: 100%;\n    display: inline-block;\n    vertical-align: top;\n}\n\n.fc-upload-btn {\n    border: 1px dashed #c0ccda;\n    cursor: pointer;\n}\n\n.fc-upload .fc-upload-cover {\n    opacity: 0;\n    position: absolute;\n    top: 0;\n    bottom: 0;\n    left: 0;\n    right: 0;\n    background: rgba(0, 0, 0, .6);\n    transition: opacity .3s;\n}\n\n.fc-upload .fc-upload-cover i {\n    color: #fff;\n    font-size: 20px;\n    cursor: pointer;\n    margin: 0 2px;\n}\n\n.fc-files:hover .fc-upload-cover {\n    opacity: 1;\n}\n\n.fc-hide-btn .ivu-upload .ivu-upload {\n    display: none;\n}\n\n.fc-upload .ivu-upload-list {\n    margin-top: 0;\n}";
-  var style = {"fc-upload-btn":"fc-upload-btn","fc-files":"fc-files","__fc_h":"__fc_h","__fc_v":"__fc_v","fc-upload":"fc-upload","fc-upload-cover":"fc-upload-cover","fc-hide-btn":"fc-hide-btn","ivu-upload":"ivu-upload","ivu-upload-list":"ivu-upload-list"};
+  var css = ".fc-upload-btn, .fc-files {\n    display: inline-block;\n    width: 58px;\n    height: 58px;\n    text-align: center;\n    line-height: 58px;\n    border: 1px solid #c0ccda;\n    border-radius: 4px;\n    overflow: hidden;\n    background: #fff;\n    position: relative;\n    box-shadow: 2px 2px 5px rgba(0, 0, 0, .1);\n    margin-right: 4px;\n    box-sizing: border-box;\n}\n\n.__fc_h {\n    display: none;\n}\n\n.__fc_v {\n    visibility: hidden;\n}\n\n.fc-files img {\n    width: 100%;\n    height: 100%;\n    display: inline-block;\n    vertical-align: top;\n}\n\n.fc-upload-btn {\n    border: 1px dashed #c0ccda;\n    cursor: pointer;\n}\n\n.fc-upload .fc-upload-cover {\n    opacity: 0;\n    position: absolute;\n    top: 0;\n    bottom: 0;\n    left: 0;\n    right: 0;\n    background: rgba(0, 0, 0, .6);\n    transition: opacity .3s;\n}\n\n.fc-upload .fc-upload-cover i {\n    color: #fff;\n    font-size: 20px;\n    cursor: pointer;\n    margin: 0 2px;\n}\n\n.fc-files:hover .fc-upload-cover {\n    opacity: 1;\n}\n\n.fc-upload .el-upload {\n    display: block;\n}\n\n\n.form-create .el-form-item .el-rate {\n    margin-top: 10px;\n}\n\n.form-create .el-form-item .el-tree {\n    margin-top: 7px;\n}\n\n.fc-hide-btn .el-upload {\n    display: none;\n}";
+  var style = {"fc-upload-btn":"fc-upload-btn","fc-files":"fc-files","__fc_h":"__fc_h","__fc_v":"__fc_v","fc-upload":"fc-upload","fc-upload-cover":"fc-upload-cover","el-upload":"el-upload","form-create":"form-create","el-form-item":"el-form-item","el-rate":"el-rate","el-tree":"el-tree","fc-hide-btn":"fc-hide-btn"};
   styleInject(css);
 
   var frame = {
-    name: 'fc-iview-frame',
+    name: 'fc-elm-frame',
     props: {
       type: {
         type: String,
@@ -1977,7 +1912,7 @@
       },
       icon: {
         type: String,
-        default: iviewConfig.fileUpIcon
+        default: 'el-icon-upload2'
       },
       width: {
         type: [Number, String],
@@ -2039,7 +1974,7 @@
       onHandle: {
         type: Function,
         default: function _default(src) {
-          defaultOnHandle(src, this.title);
+          defaultOnHandle(src, this.modalTitle);
         }
       },
       value: [Array, String, Number]
@@ -2192,51 +2127,41 @@
         var _this3 = this;
 
         var h = this.$createElement;
-        return h("icon", helper([{}, {
-          "props": {
-            type: this.handleIcon === true ? 'ios-eye-outline' : this.handleIcon
-          }
-        }, {
+        return h("i", {
+          "class": this.handleIcon === true || this.handleIcon === undefined ? 'el-icon-view' : this.handleIcon,
           "on": {
             "click": function click() {
               return _this3.handleClick(val);
             }
           }
-        }]));
+        });
       },
       makeRemoveIcon: function makeRemoveIcon(val) {
         var _this4 = this;
 
         var h = this.$createElement;
-        return h("icon", helper([{}, {
-          "props": {
-            type: 'ios-trash-outline'
-          }
-        }, {
+        return h("i", {
+          "class": "el-icon-delete",
           "on": {
             "click": function click() {
               return _this4.handleRemove(val);
             }
           }
-        }]));
+        });
       },
       makeFiles: function makeFiles() {
         var _this5 = this;
 
         var h = this.$createElement;
         return this.makeGroup(this.fileList.map(function (src) {
-          return _this5.makeItem([h("icon", helper([{}, {
-            "props": {
-              type: iviewConfig.fileIcon,
-              size: 40
-            }
-          }, {
+          return _this5.makeItem([h("i", {
+            "class": "el-icon-tickets",
             "on": {
               "click": function click() {
                 return _this5.handleClick(src);
               }
             }
-          }])), _this5.makeIcons(src)]);
+          }), _this5.makeIcons(src)]);
         }));
       },
       makeImages: function makeImages() {
@@ -2262,12 +2187,9 @@
               return _this7.showModel();
             }
           }
-        }, [h("icon", helper([{}, {
-          "props": {
-            type: this.icon,
-            size: 20
-          }
-        }]))]);
+        }, [h("i", {
+          "class": this.icon
+        })]);
       },
       handleClick: function handleClick(src) {
         if (this.disabled) return;
@@ -2289,7 +2211,7 @@
   };
 
   var radio = {
-    name: 'fc-iview-radio',
+    name: 'fc-elm-radio',
     functional: true,
     props: {
       options: {
@@ -2297,14 +2219,17 @@
         default: function _default() {
           return [];
         }
-      }
+      },
+      type: String
     },
     render: function render(h, ctx) {
-      return h("RadioGroup", helper([{}, ctx.data]), [ctx.props.options.map(function (opt) {
+      return h("ElRadioGroup", helper([{}, ctx.data]), [ctx.props.options.map(function (opt) {
         var props = _objectSpread({}, opt);
 
         delete props.value;
-        return h("Radio", {
+        return ctx.props.type === 'button' ? h("ElRadioButton", {
+          "props": _objectSpread({}, props)
+        }) : h("ElRadio", {
           "props": _objectSpread({}, props)
         });
       }).concat(ctx.chlidren)]);
@@ -2312,7 +2237,7 @@
   };
 
   var select = {
-    name: 'fc-iview-select',
+    name: 'fc-elm-select',
     functional: true,
     props: {
       options: {
@@ -2323,9 +2248,9 @@
       }
     },
     render: function render(h, ctx) {
-      return h("Select", helper([{}, ctx.data]), [ctx.props.options.map(function (props, index) {
+      return h("ElSelect", helper([{}, ctx.data]), [ctx.props.options.map(function (props, index) {
         var slot = props.slot ? toDefSlot(props.slot, h) : [];
-        return h("Option", {
+        return h("ElOption", {
           "props": _objectSpread({}, props),
           "key": "t".concat(index).concat(ctx._uid)
         }, [slot]);
@@ -2334,7 +2259,7 @@
   };
 
   var tree = {
-    name: 'fc-iview-tree',
+    name: 'fc-elm-tree',
     props: {
       ctx: {
         type: Object,
@@ -2355,58 +2280,46 @@
         default: 'checked'
       },
       value: {
-        type: Array,
+        type: [Array, String, Number],
         default: function _default() {
           return [];
         }
       }
     },
-    data: function data() {
-      return {
-        treeData: []
-      };
-    },
     watch: {
-      value: function value(n) {
-        n = toArray(n);
-        var data = this.$refs.tree.data;
-        this.type === 'selected' ? this.selected(data, n) : this.checked(data, n);
+      value: function value() {
+        this.setValue();
       }
     },
     methods: {
-      selected: function selected(_data, value) {
+      makeTree: function makeTree() {
         var _this = this;
 
-        _data.forEach(function (node) {
-          _this.$set(node, 'selected', value.indexOf(node.id) !== -1);
-
-          if (node.children !== undefined && Array.isArray(node.children)) _this.selected(node.children, value);
-        });
-      },
-      checked: function checked(_data, value) {
-        var _this2 = this;
-
-        _data.forEach(function (node) {
-          if (value.indexOf(node.id) !== -1) _this2.$set(node, 'checked', true);else {
-            _this2.$set(node, 'indeterminate', false);
-
-            _this2.$set(node, 'checked', false);
-          }
-          if (node.children !== undefined && Array.isArray(node.children)) _this2.checked(node.children, value);
-        });
-      },
-      makeTree: function makeTree() {
         var h = this.$createElement;
-        return h("Tree", helper([{
-          "ref": "tree"
+        return h("ElTree", helper([{
+          "ref": "tree",
+          "on": {
+            "check-change": function checkChange() {
+              return _this.updateValue();
+            },
+            "node-click": function nodeClick() {
+              return _this.updateValue();
+            }
+          }
         }, this.ctx]), [this.children]);
       },
-      updateTreeData: function updateTreeData() {
+      onChange: function onChange() {
+        this.updateValue();
+      },
+      updateValue: function updateValue() {
         var type = this.type.toLocaleLowerCase();
-        if (type === 'selected') this.treeData = this.$refs.tree.getSelectedNodes();else if (type === 'indeterminate') this.treeData = this.$refs.tree.getCheckedAndIndeterminateNodes();else this.treeData = this.$refs.tree.getCheckedNodes();
-        this.$emit('input', this.treeData.map(function (node) {
-          return node.id;
-        }));
+        var value;
+        if (type === 'selected') value = this.$refs.tree.getCurrentKey();else value = this.$refs.tree.getCheckedKeys();
+        this.$emit('input', value);
+      },
+      setValue: function setValue() {
+        var type = this.type.toLocaleLowerCase();
+        if (type === 'selected') this.$refs.tree.setCurrentKey(this.value);else this.$refs.tree.setCheckedKeys(toArray(this.value));
       }
     },
     render: function render() {
@@ -2414,15 +2327,8 @@
       return h("div", [this.makeTree()]);
     },
     mounted: function mounted() {
-      var _this3 = this;
-
-      this.$nextTick(function () {
-        _this3.$watch(function () {
-          return _this3.$refs.tree.flatState;
-        }, function () {
-          return _this3.updateTreeData();
-        });
-      });
+      this.setValue();
+      this.updateValue();
     }
   };
 
@@ -2438,7 +2344,7 @@
   }
 
   var upload = {
-    name: 'fc-iview-upload',
+    name: 'fc-elm-upload',
     props: {
       ctx: {
         type: Object,
@@ -2485,13 +2391,13 @@
       };
     },
     created: function created() {
-      if (this.ctx.props.showUploadList === undefined) this.ctx.props.showUploadList = false;
-      this.ctx.props.defaultFileList = toArray(this.value).map(parseFile);
+      if (this.ctx.props.showFileList === undefined) this.ctx.props.showFileList = false;
+      this.ctx.props.fileList = toArray(this.value).map(parseFile);
     },
     watch: {
       value: function value(n) {
-        this.$refs.upload.fileList = toArray(n).map(parseFile);
-        this.uploadList = this.$refs.upload.fileList;
+        this.$refs.upload.uploadFiles = toArray(n).map(parseFile);
+        this.uploadList = this.$refs.upload.uploadFiles;
       },
       maxLength: function maxLength(n, o) {
         if (o === 1 || n === 1) this.update();
@@ -2513,12 +2419,9 @@
         var h = this.$createElement;
         return h("div", {
           "class": style['fc-upload-btn']
-        }, [h("icon", helper([{}, {
-          "props": {
-            type: this.uploadType === 'file' ? 'ios-cloud-upload-outline' : iviewConfig.imgUpIcon,
-            size: 20
-          }
-        }]))]);
+        }, [h("i", {
+          "class": "el-icon-upload2"
+        })]);
       },
       makeItem: function makeItem(file) {
         var h = this.$createElement;
@@ -2526,21 +2429,16 @@
           "attrs": {
             "src": file.url
           }
-        }) : h("icon", helper([{}, {
-          "props": {
-            type: iviewConfig.fileIcon,
-            size: 40
-          }
-        }]));
+        }) : h("i", {
+          "class": "el-icon-tickets"
+        });
       },
       makeRemoveIcon: function makeRemoveIcon(file) {
         var _this = this;
 
         var h = this.$createElement;
-        return h("icon", {
-          "attrs": {
-            "type": 'ios-trash-outline'
-          },
+        return h("i", {
+          "class": "el-icon-delete",
           "on": {
             "click": function click() {
               return _this.onRemove(file);
@@ -2552,10 +2450,8 @@
         var _this2 = this;
 
         var h = this.$createElement;
-        return h("icon", {
-          "attrs": {
-            "type": this.handleIcon === true ? 'ios-eye-outline' : this.handleIcon
-          },
+        return h("i", {
+          "class": this.handleIcon === true || this.handleIcon === undefined ? 'el-icon-view' : this.handleIcon,
           "on": {
             "click": function click() {
               return _this2.handleClick(file);
@@ -2565,7 +2461,7 @@
       },
       makeProgress: function makeProgress(file) {
         var h = this.$createElement;
-        return h("Progress", helper([{}, {
+        return h("ElProgress", helper([{}, {
           "props": {
             percent: file.percentage,
             hideInfo: true
@@ -2578,8 +2474,8 @@
         var h = this.$createElement;
         var icons = [];
 
-        if (this.allowRemove || this.handleIcon) {
-          if (this.handleIcon) icons.push(this.makeHandleIcon(file));
+        if (this.allowRemove || this.handleIcon !== false) {
+          if (this.uploadType !== 'file' && this.handleIcon !== false || this.uploadType === 'file' && this.handleIcon) icons.push(this.makeHandleIcon(file));
           if (this.allowRemove) icons.push(this.makeRemoveIcon(file));
           return h("div", {
             "class": style['fc-upload-cover']
@@ -2598,7 +2494,7 @@
       },
       makeUpload: function makeUpload() {
         var h = this.$createElement;
-        return h("Upload", helper([{
+        return h("ElUpload", helper([{
           "ref": "upload",
           "style": {
             display: 'inline-block'
@@ -2609,7 +2505,7 @@
         if (!hasSlot(this.children, 'default')) this.children.push(this.makeDefaultBtn());
       },
       update: function update() {
-        var files = this.$refs.upload.fileList.map(function (file) {
+        var files = this.$refs.upload.uploadFiles.map(function (file) {
           return file.url;
         }).filter(function (url) {
           return url !== undefined;
@@ -2624,21 +2520,21 @@
       var isShow = !this.maxLength || this.maxLength > this.uploadList.length;
 
       if (this.$refs.upload) {
-        if (this.ctx.props.showUploadList === undefined) this.ctx.props.showUploadList = this.$refs.upload.showUploadList;
-        this.ctx.props.defaultFileList = this.$refs.upload.defaultFileList;
+        if (this.ctx.props.showFileList === undefined) this.ctx.props.showFileList = this.$refs.upload.showFileList;
+        this.ctx.props.fileList = this.$refs.upload.fileList;
       }
 
       this.initChildren();
       return h("div", {
         "class": (_class = {}, _defineProperty(_class, style['fc-upload'], true), _defineProperty(_class, style['fc-hide-btn'], !isShow), _class)
-      }, [[this.ctx.props.showUploadList ? [] : this.makeFiles(), this.makeUpload()]]);
+      }, [[this.ctx.props.showFileList ? [] : this.makeFiles(), this.makeUpload()]]);
     },
     mounted: function mounted() {
       var _this4 = this;
 
-      this.uploadList = this.$refs.upload.fileList;
+      this.uploadList = this.$refs.upload.uploadFiles;
       this.$watch(function () {
-        return _this4.$refs.upload.fileList;
+        return _this4.$refs.upload.uploadFiles;
       }, function () {
         _this4.update();
       }, {
@@ -2665,9 +2561,11 @@
       value: function render(children) {
         var _this = this;
 
+        var data = this.$render.inputVData(this, true).get();
         return this.vNode.checkbox({
           props: {
-            ctx: this.$render.inputVData(this, true).get(),
+            ctx: data,
+            type: data.props.type,
             options: this.rule.options,
             value: this.$handle.getFormData(this),
             children: children
@@ -2702,12 +2600,6 @@
     }
 
     _createClass(Parser, [{
-      key: "init",
-      value: function init() {
-        var props = this.rule.props;
-        if (props.startDate) $set(props, 'startDate', timeStampToDate(props.startDate));
-      }
-    }, {
       key: "toFormValue",
       value: function toFormValue(value) {
         var isArr = Array.isArray(value),
@@ -2715,7 +2607,7 @@
             parseValue,
             type = props.type || 'date';
 
-        if (['daterange', 'datetimerange'].indexOf(type) !== -1) {
+        if (['daterange', 'datetimerange', 'dates'].indexOf(type) !== -1) {
           if (isArr) {
             parseValue = value.map(function (time) {
               return !time ? '' : timeStampToDate(time);
@@ -2737,8 +2629,8 @@
       value: function mounted() {
         var _this = this;
 
-        this.toValue = function () {
-          return _this.el.publicStringValue;
+        this.toValue = function (val) {
+          return _this.el.formatToString(val);
         };
       }
     }]);
@@ -2968,16 +2860,7 @@
     _createClass(parser, [{
       key: "render",
       value: function render(children) {
-        var rule = this.rule,
-            slot = rule.props.slot || {};
-        return this.vNode.switch(this.$render.inputVData(this).scopedSlots({
-          open: function open() {
-            return slot.open;
-          },
-          close: function close() {
-            return slot.close;
-          }
-        }).get(), children);
+        return this.vNode.switch(this.$render.inputVData(this).get(), children);
       }
     }]);
 
@@ -2992,6 +2875,9 @@
 
   function getTime(date) {
     return isDate(date) ? dateFormat('hh:mm:ss', date) : date;
+  }
+  function toDate(time) {
+    return new Date('2018-02-14 ' + time);
   }
 
   var Parser$6 =
@@ -3011,17 +2897,17 @@
         var parseValue,
             isArr = Array.isArray(value);
 
-        if ('timerange' === this.rule.props.type) {
+        if (this.rule.props.isRange === true) {
           if (isArr) {
             parseValue = value.map(function (time) {
-              return !time ? '' : getTime(timeStampToDate(time));
+              return !time ? '' : toDate(getTime(timeStampToDate(time)));
             });
           } else {
             parseValue = ['', ''];
           }
         } else {
           isArr && (value = value[0]);
-          parseValue = !value ? '' : getTime(timeStampToDate(value));
+          parseValue = !value ? '' : toDate(getTime(timeStampToDate(value)));
         }
 
         return parseValue;
@@ -3031,8 +2917,8 @@
       value: function mounted() {
         var _this = this;
 
-        this.toValue = function () {
-          return _this.el.publicStringValue;
+        this.toValue = function (val) {
+          return _this.el.formatToString(val);
         };
       }
     }]);
@@ -3046,10 +2932,6 @@
     name: name$9
   };
 
-  function isMultiple(rule) {
-    return !rule.props.multiple && rule.props.type === 'selected';
-  }
-
   var Parser$7 =
   /*#__PURE__*/
   function (_BaseParser) {
@@ -3062,10 +2944,13 @@
     }
 
     _createClass(Parser, [{
-      key: "toValue",
-      value: function toValue(parseValue) {
-        var value = parseValue;
-        return !isMultiple(this.rule) ? value : value[0] || '';
+      key: "init",
+      value: function init() {
+        var props = this.rule.props;
+        if (isUndef(props.nodeKey)) $set(props, 'nodeKey', 'id');
+        if (isUndef(props.props)) $set(props, 'props', {
+          label: 'title'
+        });
       }
     }, {
       key: "render",
@@ -3119,10 +3004,10 @@
         var ctx = this.$render.parserToData(this).get();
         var key = this.key,
             refName = this.refName;
-        delete ctx.props.defaultFileList;
+        delete ctx.props.fileList;
         var props = {
           uploadType: ctx.props.uploadType,
-          maxLength: ctx.props.maxLength,
+          maxLength: ctx.props.limit,
           modalTitle: ctx.props.modalTitle,
           handleIcon: ctx.props.handleIcon,
           onHandle: ctx.props.onHandle,
@@ -3154,6 +3039,65 @@
   };
 
   var parsers = [checkbox$1, datePicker, frame$1, hidden, input, radio$1, select$1, slider, iswitch, timePicker, tree$1, upload$1];
+
+  function getConfig() {
+    return {
+      form: {
+        inline: false,
+        labelPosition: 'right',
+        labelSuffix: undefined,
+        hideRequiredAsterisk: false,
+        labelWidth: '125px',
+        showMessage: true,
+        inlineMessage: false,
+        statusIcon: false,
+        validateOnRuleChange: true,
+        disabled: false,
+        size: undefined
+      },
+      row: {
+        gutter: 0,
+        type: undefined,
+        align: undefined,
+        justify: undefined,
+        tag: 'div'
+      },
+      submitBtn: {
+        type: 'primary',
+        size: 'medium',
+        plain: false,
+        round: false,
+        circle: false,
+        loading: false,
+        disabled: false,
+        icon: 'el-icon-upload',
+        width: '100%',
+        autofocus: false,
+        nativeType: 'button',
+        innerText: '提交',
+        show: true,
+        col: undefined,
+        click: undefined
+      },
+      resetBtn: {
+        type: 'default',
+        size: 'medium',
+        plain: false,
+        round: false,
+        circle: false,
+        loading: false,
+        disabled: false,
+        icon: 'el-icon-refresh',
+        width: '100%',
+        autofocus: false,
+        nativeType: 'button',
+        innerText: '重置',
+        show: false,
+        col: undefined,
+        click: undefined
+      }
+    };
+  }
 
   function getGlobalApi(h) {
     function tidyFields(fields) {
@@ -3288,20 +3232,40 @@
         tidyFields(fields, true).forEach(function (field) {
           var parser = h.getParser(field);
           if (!parser) return;
-          _hidden ? hiddenList.push(parser) : hiddenList.splice(hiddenList.indexOf(parser), 1);
+
+          if (_hidden && hiddenList.indexOf(parser) === -1) {
+            hiddenList.push(parser);
+          } else if (!_hidden && hiddenList.indexOf(parser) !== -1) {
+            hiddenList.splice(hiddenList.indexOf(parser), 1);
+          }
+
           h.$render.clearCache(parser, true);
         });
         h.refresh();
+      },
+      hiddenStatus: function hiddenStatus(id) {
+        var parser = h.getParser(id);
+        return h.$form.hidden.indexOf(parser) !== -1;
       },
       visibility: function visibility(_visibility, fields) {
         var visibilityList = h.$form.visibility;
         tidyFields(fields, true).forEach(function (field) {
           var parser = h.getParser(field);
           if (!parser) return;
-          _visibility ? visibilityList.push(parser) : visibilityList.splice(visibilityList.indexOf(parser), 1);
+
+          if (_visibility && visibilityList.indexOf(parser) === -1) {
+            visibilityList.push(parser);
+          } else if (!_visibility && visibilityList.indexOf(parser) !== -1) {
+            visibilityList.splice(visibilityList.indexOf(parser), 1);
+          }
+
           h.$render.clearCache(parser, true);
         });
         h.refresh();
+      },
+      visibilityStatus: function visibilityStatus(id) {
+        var parser = h.getParser(id);
+        return h.$form.visibility.indexOf(parser) !== -1;
       },
       disabled: function disabled(_disabled, fields) {
         tidyFields(fields, true).forEach(function (field) {
@@ -3442,38 +3406,50 @@
       },
       hideForm: function hideForm(isShow) {
         h.vm.isShow = !isShow;
+      },
+      changeStatus: function changeStatus() {
+        return h.changeStatus;
+      },
+      clearChangeStatus: function clearChangeStatus() {
+        h.changeStatus = false;
+      },
+      method: function method(id, name) {
+        var parser = h.getParser(id);
+        return function () {
+          for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+            args[_key] = arguments[_key];
+          }
+
+          parser.el[name](args);
+        };
       }
     };
   }
 
   var nodes = {
-    modal: 'Modal',
-    progress: 'i-progress',
-    button: 'i-button',
-    icon: 'Icon',
-    slider: 'Slider',
-    rate: 'Rate',
-    upload: 'fc-iview-upload',
-    cascader: 'Cascader',
-    colorPicker: 'Color-Picker',
-    timePicker: 'Time-Picker',
-    datePicker: 'Date-Picker',
-    'switch': 'i-switch',
-    option: 'i-option',
-    select: 'fc-iview-select',
-    checkbox: 'fc-iview-checkbox',
-    checkboxGroup: 'Checkbox-Group',
-    radio: 'fc-iview-radio',
-    radioGroup: 'Radio-Group',
-    inputNumber: 'Input-Number',
-    input: 'i-input',
-    formItem: 'Form-Item',
-    form: 'i-form',
-    frame: 'fc-iview-frame',
-    col: 'i-col',
-    row: 'row',
-    tree: 'fc-iview-tree',
-    autoComplete: 'AutoComplete'
+    modal: 'el-dialog',
+    button: 'el-button',
+    icon: 'i',
+    slider: 'el-slider',
+    rate: 'el-rate',
+    upload: 'fc-elm-upload',
+    cascader: 'el-cascader',
+    colorPicker: 'el-color-picker',
+    timePicker: 'el-time-picker',
+    datePicker: 'el-date-picker',
+    'switch': 'el-switch',
+    select: 'fc-elm-select',
+    checkbox: 'fc-elm-checkbox',
+    radio: 'fc-elm-radio',
+    inputNumber: 'el-input-number',
+    input: 'el-input',
+    formItem: 'el-form-Item',
+    form: 'el-form',
+    frame: 'fc-elm-frame',
+    col: 'el-col',
+    row: 'el-row',
+    tree: 'fc-elm-tree',
+    autoComplete: 'el-autocomplete'
   };
 
   var Form =
@@ -3548,7 +3524,7 @@
           label: rule.title,
           // labelFor: unique,
           rules: rule.validate,
-          labelWidth: labelWidth,
+          labelWidth: toString(labelWidth),
           required: rule.props.required
         }).key(fItemUnique).ref(formItemRefName).class(className).get(),
             node = this.vNode.formItem(propsData, [child]);
@@ -3586,7 +3562,7 @@
       value: function makeResetBtn(span) {
         var _this2 = this;
 
-        var resetBtn = this.$handle.options.resetBtn,
+        var resetBtn = this.vm.resetProps,
             props = resetBtn.col || {
           span: span,
           push: 1
@@ -3596,21 +3572,24 @@
           key: "".concat(this.unique, "col3")
         }, [this.vNode.button({
           key: "frsbtn".concat(this.unique),
-          props: this.vm.resetProps,
+          props: resetBtn,
           on: {
             'click': function click() {
               var fApi = _this2.$handle.fCreateApi;
               isFunction(resetBtn.click) ? resetBtn.click(fApi) : fApi.resetFields();
             }
+          },
+          style: {
+            width: resetBtn.width
           }
-        }, [this.vm.resetProps.innerText])]);
+        }, [resetBtn.innerText])]);
       }
     }, {
       key: "makeSubmitBtn",
       value: function makeSubmitBtn(span) {
         var _this3 = this;
 
-        var submitBtn = this.$handle.options.submitBtn,
+        var submitBtn = this.vm.buttonProps,
             props = submitBtn.col || {
           span: span
         };
@@ -3619,14 +3598,17 @@
           key: "".concat(this.unique, "col4")
         }, [this.vNode.button({
           key: "fbtn".concat(this.unique),
-          props: this.vm.buttonProps,
+          props: submitBtn,
           on: {
             'click': function click() {
               var fApi = _this3.$handle.fCreateApi;
               isFunction(submitBtn.click) ? submitBtn.click(fApi) : fApi.submit();
             }
+          },
+          style: {
+            width: submitBtn.width
           }
-        }, [this.vm.buttonProps.innerText])]);
+        }, [submitBtn.innerText])]);
       }
     }]);
 
@@ -3730,8 +3712,8 @@
 
   VNode.use(nodes);
   var drive = {
-    ui: "iview",
-    version: "0.0.2",
+    ui: undefined,
+    version: "".concat("0.0.2"),
     formRender: Form,
     components: components,
     parsers: parsers,
@@ -3743,25 +3725,6 @@
   var _createFormCreate = createFormCreate(drive),
       FormCreate = _createFormCreate.FormCreate,
       install = _createFormCreate.install;
-
-  Creator.prototype.event = function (key, value) {
-    var _this = this;
-
-    var event;
-
-    if (!isPlainObject(key)) {
-      event = _defineProperty({}, key, value);
-    } else {
-      event = key;
-    }
-
-    Object.keys(event).forEach(function (eventName) {
-      var name = toString(eventName).indexOf('on-') === 0 ? eventName : "on-".concat(eventName);
-
-      _this.on(name, event[eventName]);
-    });
-    return this;
-  };
 
   if (typeof window !== 'undefined') {
     window.formCreate = FormCreate;

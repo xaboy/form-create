@@ -34,7 +34,7 @@ module.exports = {
     output: {
         format: ['umd', 'umd-min'],
         moduleName: 'formCreate',
-        fileName: `form-create.${UI_LIB}[min].js`,
+        fileName: 'form-create[min].js',
         extractCSS: false
     },
     input: join(cwd, '/src/index.js'),
