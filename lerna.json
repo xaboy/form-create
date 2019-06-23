@@ -3,7 +3,8 @@
     "packages/core",
     "packages/element-ui",
     "packages/iview",
-    "packages/utils"
+    "packages/utils",
+    "packages/data"
   ],
   "version": "0.0.3"
 }
