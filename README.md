@@ -7,12 +7,13 @@
 
 # form-create
 
-[![MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/xaboy/form-create/blob/master/LICENSE)
+[![MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/xaboy/form-create)
 [![github](https://img.shields.io/badge/Author-xaboy-blue.svg)](https://github.com/xaboy)
-[![version](https://badge.fury.io/js/form-create.svg)](https://www.npmjs.com/package/form-create)
-[![npm](https://img.shields.io/npm/dt/form-create.svg)](https://www.npmjs.com/package/form-create)
+[![version](https://badge.fury.io/js/@form-create/core.svg)](https://www.npmjs.com/package/@form-create/core)
+[![npm](https://img.shields.io/npm/dt/@form-create/core.svg)](https://www.npmjs.com/package/@form-create/core)
 [![document](https://img.shields.io/badge/Doc-welcome-red.svg)](http://www.form-create.com/v2/)
-[![JS gzip size](http://img.badgesize.io/https://cdn.jsdelivr.net/gh/xaboy/form-create/dist/form-create.min.js?compression=gzip&amp;label=gzip%20size&amp;style=flat-square)](https://www.npmjs.com/package/form-create) [![Join the chat at https://gitter.im/xaboy/form-create](https://badges.gitter.im/xaboy/form-create.svg)](https://gitter.im/xaboy/form-create?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![iview gzip size](http://img.badgesize.io/https://cdn.jsdelivr.net/gh/xaboy/@form-create/iview/dist/form-create.min.js?compression=gzip&amp;label=gzip%20size&amp;style=flat-square)](https://www.npmjs.com/package/@form-create/iview) [![Join the chat at https://gitter.im/xaboy/form-create](https://badges.gitter.im/xaboy/form-create.svg)](https://gitter.im/xaboy/form-create?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![elment-ui gzip size](http://img.badgesize.io/https://cdn.jsdelivr.net/gh/xaboy/@form-create/element-ui/dist/form-create.min.js?compression=gzip&amp;label=gzip%20size&amp;style=flat-square)](https://www.npmjs.com/package/@form-create/element-ui) [![Join the chat at https://gitter.im/xaboy/form-create](https://badges.gitter.im/xaboy/form-create.svg)](https://gitter.im/xaboy/form-create?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 
 **Form-create is a form generator that can generate dynamic rendering, data collection, validation, and submission via JSON. And support for generating any Vue components. Combined with the built-in 17 common form components and custom components, complex forms can be easily handled.**
