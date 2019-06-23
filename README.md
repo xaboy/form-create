@@ -11,13 +11,13 @@
 [![github](https://img.shields.io/badge/Author-xaboy-blue.svg)](https://github.com/xaboy)
 [![version](https://badge.fury.io/js/form-create.svg)](https://www.npmjs.com/package/form-create)
 [![npm](https://img.shields.io/npm/dt/form-create.svg)](https://www.npmjs.com/package/form-create)
-[![document](https://img.shields.io/badge/Doc-welcome-red.svg)](http://www.form-create.com)
+[![document](https://img.shields.io/badge/Doc-welcome-red.svg)](http://www.form-create.com/v2/)
 [![JS gzip size](http://img.badgesize.io/https://cdn.jsdelivr.net/gh/xaboy/form-create/dist/form-create.min.js?compression=gzip&amp;label=gzip%20size&amp;style=flat-square)](https://www.npmjs.com/package/form-create) [![Join the chat at https://gitter.im/xaboy/form-create](https://badges.gitter.im/xaboy/form-create.svg)](https://gitter.im/xaboy/form-create?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 
-**Form builder with dynamic rendering, data collection, validation and submission capabilities, built-in 17 common form components, support for two-way data binding, event extension, and support for building built-in components and any vue components using json.**
+**Form-create is a form generator that can generate dynamic rendering, data collection, validation, and submission via JSON. And support for generating any Vue components. Combined with the built-in 17 common form components and custom components, complex forms can be easily handled.**
 
-[中文 README](https://github.com/xaboy/form-create/blob/dev/README_zh-CN.md)
+[中文 README](https://github.com/xaboy/form-create/blob/2.0/README_zh-CN.md)
 
 ## Support
 - **iViewUI 2.13.0+**
@@ -36,7 +36,7 @@
 
 ## Docs
 
-**[简体中文](http://www.form-create.com/) | [English](http://www.form-create.com/en/)**
+**[简体中文](http://www.form-create.com/v2/) | [English](http://www.form-create.com/en/v2/)**
 
 
 
@@ -70,10 +70,15 @@
 
 ## Install
 
+iview
 ```shell
-npm install form-create
+npm install @form-create/iview
 ```
 
+elementUI
+```shell
+npm install @form-create/element-ui
+```
 
 ## Import
 
@@ -88,7 +93,7 @@ iviewUI
 <!-- import iView -->
 <script src="//unpkg.com/iview/dist/iview.min.js"></script>
 <!-- import form-create/iview -->
-<script src="//unpkg.com/form-create/dist/form-create.min.js"></script>
+<script src="//unpkg.com/@form-create/iview/dist/form-create.min.js"></script>
 ```
 
 elementUI
@@ -100,21 +105,21 @@ elementUI
 <!-- import element -->
 <script src="https://unpkg.com/element-ui/lib/index.js"></script>
 <!-- import form-create/element -->
-<script src="//unpkg.com/form-create/dist/form-create.elm.min.js"></script>
+<script src="//unpkg.com/@form-create/element-ui/dist/form-create.elm.min.js"></script>
 ```
 **NodeJs:**
 
 iviewUI
 ```js
-import formCreate from 'form-create'
-import { maker } from 'form-create'
+import formCreate from '@form-create/iview'
+import { maker } from '@form-create/iview'
 Vue.use(formCreate)
 ```
 
 ElementUI
 ```js
-import formCreate from 'form-create/element'
-import { maker } from 'form-create/element'
+import formCreate from '@form-create/element-ui'
+import { maker } from '@form-create/element-ui'
 Vue.use(formCreate)
 ```
 

@@ -11,11 +11,11 @@
 [![github](https://img.shields.io/badge/Author-xaboy-blue.svg)](https://github.com/xaboy)
 [![version](https://badge.fury.io/js/form-create.svg)](https://www.npmjs.com/package/form-create)
 [![npm](https://img.shields.io/npm/dt/form-create.svg)](https://www.npmjs.com/package/form-create)
-[![document](https://img.shields.io/badge/Doc-welcome-red.svg)](http://www.form-create.com)
+[![document](https://img.shields.io/badge/Doc-welcome-red.svg)](http://www.form-create.com/v2/)
 [![JS gzip size](http://img.badgesize.io/https://cdn.jsdelivr.net/gh/xaboy/form-create/dist/form-create.min.js?compression=gzip&amp;label=gzip%20size&amp;style=flat-square)](https://www.npmjs.com/package/form-create) [![Join the chat at https://gitter.im/xaboy/form-create](https://badges.gitter.im/xaboy/form-create.svg)](https://gitter.im/xaboy/form-create?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 
-**具有动态渲染，数据收集，验证和提交功能的表单生成器，内置17种常用表单组件，支持双向数据绑定，事件扩展，并支持使用json生成内置组件和任何vue组件。**
+**form-create 是一个可以通过 JSON 生成具有动态渲染、数据收集、验证和提交功能的表单生成器。并且支持生成任何 Vue 组件。结合内置17种常用表单组件和自定义组件，再复杂的表单都可以轻松搞定。**
 
 
 ## 支持
@@ -35,7 +35,7 @@
 
 ## 文档
 
-**[简体中文](http://www.form-create.com/) | [English](http://www.form-create.com/en/)**
+**[简体中文](http://www.form-create.com/v2/) | [English](http://www.form-create.com/en/v2/)**
 
 
 
@@ -106,7 +106,7 @@ elementUI
 <!-- import element -->
 <script src="https://unpkg.com/element-ui/lib/index.js"></script>
 <!-- import form-create/element -->
-<script src="//unpkg.com/@form-create/iview/dist/form-create.elm.min.js"></script>
+<script src="//unpkg.com/@form-create/element-ui/dist/form-create.min.js"></script>
 ```
 **NodeJs:**
 
