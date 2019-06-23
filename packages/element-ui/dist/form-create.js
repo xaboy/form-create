@@ -3712,7 +3712,7 @@
 
   VNode.use(nodes);
   var drive = {
-    ui: undefined,
+    ui: "element-ui",
     version: "".concat("0.0.2"),
     formRender: Form,
     components: components,
