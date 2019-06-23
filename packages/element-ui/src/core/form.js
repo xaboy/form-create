@@ -1,4 +1,4 @@
-import {isFunction, preventDefault} from '@form-create/utils';
+import {isFunction, preventDefault, toString} from '@form-create/utils';
 import {BaseForm} from '@form-create/core';
 import style from '../style/index.css';
 
@@ -54,7 +54,7 @@ export default class Form extends BaseForm {
                 label: rule.title,
                 // labelFor: unique,
                 rules: rule.validate,
-                labelWidth: labelWidth,
+                labelWidth: toString(labelWidth),
                 required: rule.props.required
             }).key(fItemUnique).ref(formItemRefName).class(className).get(),
             node = this.vNode.formItem(propsData, [child]);

@@ -55,7 +55,7 @@ export default class VData {
             const value = this._data[key];
             if (value === undefined) return initial;
             if (Array.isArray(value) && !value.length) return initial;
-            if (!Object.keys(value).length) return initial;
+            if (!Object.keys(value).length && key !== 'props') return initial;
 
             initial[key] = value;
             return initial;

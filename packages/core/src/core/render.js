@@ -138,9 +138,10 @@ export default class Render {
                     return vn;
                 }
             }
-            const cache = form.container(vn, parser);
-            this.setCache(parser, cache, parent);
-            return cache;
+            if (rule.native !== true)
+                vn = form.container(vn, parser);
+            this.setCache(parser, vn, parent);
+            return vn;
         }
 
         return this.getCache(parser);
