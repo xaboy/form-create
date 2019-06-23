@@ -267,7 +267,7 @@ export default function getGlobalApi(h) {
             const parser = h.getParser(field);
             if (parser) {
                 h.$render.clearCache(parser, true);
-                h.refresh(true);
+                h.refresh();
             }
         },
         refresh: (clear) => {

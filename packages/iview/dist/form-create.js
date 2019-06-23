@@ -1,5 +1,5 @@
 /*!
- * @form-create/iview v0.0.2
+ * @form-create/iview v0.0.3
  * (c) 2018-2019 xaboy
  * Github https://github.com/xaboy/form-create
  * Released under the MIT License.
@@ -3443,7 +3443,7 @@
 
         if (parser) {
           h.$render.clearCache(parser, true);
-          h.refresh(true);
+          h.refresh();
         }
       },
       refresh: function refresh(clear) {
@@ -3753,7 +3753,7 @@
   VNode.use(nodes);
   var drive = {
     ui: "iview",
-    version: "0.0.2",
+    version: "0.0.3",
     formRender: Form,
     components: components,
     parsers: parsers,

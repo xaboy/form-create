@@ -3397,7 +3397,7 @@
 
         if (parser) {
           h.$render.clearCache(parser, true);
-          h.refresh(true);
+          h.refresh();
         }
       },
       refresh: function refresh(clear) {
