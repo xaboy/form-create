@@ -3,12 +3,7 @@ const {author, license, name, version} = require('./package.json');
 const cwd = __dirname;
 
 const {UI_LIB} = process.env;
-
-const rollupConfig = {
-    outputConfig: {
-        exports: 'named',
-    }
-};
+console.log(`开始打包 -> ${UI_LIB} \n`);
 
 module.exports = {
     plugins: {
@@ -38,10 +33,6 @@ module.exports = {
         extractCSS: false
     },
     input: join(cwd, '/src/index.js'),
-    extendRollupConfig: (config) => {
-        config.outputConfig = Object.assign({}, config.outputConfig, {'outputConfig': rollupConfig.outputConfig});
-        return config;
-    },
     env: {
         'NODE_ENV': 'production',
         'VERSION': version,

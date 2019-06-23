@@ -8,7 +8,7 @@
     "jsdelivr": "./dist/form-create.min.js",
     "scripts": {
         "clean": "rimraf dist/",
-        "bili": "cross-env UI_LiB=element-ui bili",
+        "bili": "cross-env UI_LIB=element-ui bili",
         "build": "npm-run-all clean bili"
     },
     "repository": {
