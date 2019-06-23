@@ -169,7 +169,7 @@ function mock() {
 
 
         {
-            type: 'row',
+            type: 'div',
             children: [
                 {
                     type: 'i-col',
@@ -216,7 +216,8 @@ function mock() {
 
                     ]
                 }
-            ]
+            ],
+            native: true
         },
 
         //rate 评分组件

@@ -78,15 +78,27 @@ function mock() {
 
         //自定义组件
         maker.createTmp('<el-button @click="onClick" style="width:100%;" :disabled="disabled">{{button}}字符串测试{{test}}-{{num}}</el-button>', new Vue({
-            data: {
-                test: 'createTmp渲染',
-                button: '<i-button />',
-                num: 0,
-                disabled: false
+            data: function () {
+                return {
+                    test: 'createTmp渲染',
+                    button: '<i-button />',
+                    num: this.value,
+                }
+            },
+            props: {
+                disabled: Boolean,
+                value: Number,
+            },
+            watch: {
+                value(n) {
+                    this.num = n;
+                }
             },
             methods: {
                 onClick: function () {
+                    console.log('click');
                     this.num++;
+                    this.$emit('input', this.num);
                 },
                 //表单禁用事件
                 onDisabled: function (disabled) {
@@ -96,36 +108,16 @@ function mock() {
                 onResetField: function () {
                     this.num = 0;
                 },
-                //表单提交事件
-                onInput: function (cb, $f) {
-                    cb(this.num);
-                },
                 //通过setValue,changeField,changeValue方法设置表单值时事件
                 onSetValue: function (val, $f) {
                     this.num = val;
                 }
-            },
-            created: function () {
-                this.$on('fc:disabled', this.onDisabled);
-                this.$on('fc:reset-field', this.onResetField);
-                this.$on('fc:input', this.onInput);
-                this.$on('fc:set-value', this.onSetValue);
             }
-        }), 'tmp', '自定义 title'),
+        }), 'tmp', '自定义 title').value(100).props('disabled', false),
 
 
         //自定义组件
-        maker.create('el-button', 'btn').props('disabled', false).on({
-            "fc:disabled": function (disabled, $f) {
-                $f.component().btn.props.disabled = disabled;
-            },
-            "fc:input": function (cb, $f) {
-                cb($f.component().btn.props.disabled);
-            },
-            "fc:set-value": function (val, $f) {
-                $f.component().btn.props.disabled = val;
-            }
-        }).col({span: 12}).children([
+        maker.create('el-button', 'btn').props('disabled', false).col({span: 12}).children([
             maker.create('span').domProps({
                 innerHTML: '测试自定义按钮'
             })
@@ -156,7 +148,7 @@ function mock() {
 
 
         {
-            type: 'el-row',
+            type: 'div',
             children: [
                 {
                     type: 'el-col',
