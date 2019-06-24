@@ -5,7 +5,7 @@
 </p>
 
 
-# form-create
+# form-create V2
 
 [![MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/xaboy/form-create)
 [![github](https://img.shields.io/badge/Author-xaboy-blue.svg)](https://github.com/xaboy)
