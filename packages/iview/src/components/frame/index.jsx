@@ -99,6 +99,10 @@ export default {
                 defaultOnHandle(src, this.modalTitle)
             }
         },
+        modal: {
+            type: Object,
+            default: () => ({})
+        },
         value: [Array, String, Number]
 
     },
@@ -129,7 +133,7 @@ export default {
 
             const {width, height, src, title, okBtnText, closeBtnText} = this.$props;
 
-            mount({width, title}, (vNode, _vm) => {
+            mount({width, title, ...this.modal}, (vNode, _vm) => {
                 this.modalVm = _vm;
                 return [vNode.make('iframe', {
                     attrs: {
@@ -229,7 +233,8 @@ export default {
             }
         },
         makeHandleIcon(val) {
-            return <icon props={{type: (this.handleIcon === true || this.handleIcon === undefined) ? 'ios-eye-outline' : this.handleIcon}}
+            return <icon
+                props={{type: (this.handleIcon === true || this.handleIcon === undefined) ? 'ios-eye-outline' : this.handleIcon}}
                 on-click={() => this.handleClick(val)}/>
         },
 

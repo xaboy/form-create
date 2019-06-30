@@ -386,6 +386,9 @@ function jsonMock() {
                 handleIcon: true, //操作按钮的图标 ,设置为false将不显示,设置为true为默认的预览图标,类型为file时默认为false,image类型默认为true
                 allowRemove: true, //是否可删除,设置为false是不显示删除按钮
                 onHandle: undefined, //点击操作按钮事件,默认为图片预览
+                modal:{
+                    draggable:true
+                },
                 onBeforeRemove: function () {
                     return false;
                 } //点击删除按钮事件,返回false将不删除
