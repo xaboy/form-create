@@ -24,7 +24,7 @@ function mock() {
             {required: true, message: '请输入商品名称', trigger: 'blur'}
         ]).children([maker.create('template').children(['append']).slot('append')]).event({
             change: console.log
-        }).emit(['change']).className('goods-name'),
+        }).emit(['change']).className('goods-name').info('请输入商品名称!!!!'),
 
 
         //autoComplete 自动选择组件

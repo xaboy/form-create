@@ -9,6 +9,7 @@ export const iview2 = {
     fileIcon: 'document-text',
     fileUpIcon: 'folder',
     imgUpIcon: 'image',
+    infoIcon: 'ios-information-outline',
 };
 
 export const iview3 = {
@@ -19,6 +20,7 @@ export const iview3 = {
     fileIcon: 'md-document',
     fileUpIcon: 'ios-folder-open',
     imgUpIcon: 'md-images',
+    infoIcon: 'ios-information-circle-outline',
 };
 
 export const iviewConfig = (function () {
@@ -43,6 +45,13 @@ export default function getConfig() {
             align: undefined,
             justify: undefined,
             className: undefined
+        },
+        info: {
+            type: 'poptip',
+            trigger: 'hover',
+            placement: 'top-start',
+            wordWrap: true,
+            icon: iviewConfig.infoIcon
         },
         submitBtn: {
             type: 'primary',
