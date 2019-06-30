@@ -1,6 +1,6 @@
 {
     "name": "@form-create/core",
-    "version": "0.0.3",
+    "version": "0.0.4",
     "description": "轻松搞定 form 表单,让你不在为表单而烦恼|Form builder with dynamic rendering, data collection, validation and submission capabilities, built-in 17 common form components, support for two-way data binding, event extension, and support for building built-in components and any vue components using json.",
     "main": "./src/index.js",
     "scripts": {
@@ -34,7 +34,7 @@
     },
     "homepage": "http://www.form-create.com",
     "dependencies": {
-        "@form-create/utils": "^0.0.3",
+        "@form-create/utils": "^0.0.4",
         "vue": "^2.6.10"
     },
     "peerDependencies": {
