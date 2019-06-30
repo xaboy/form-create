@@ -29,7 +29,7 @@ function mock() {
             //    change: console.log
         }).emit(['change']).className('goods-name').children([
             maker.create('template').children(['append']).slot('append')
-        ]),
+        ]).info('请输入商品名称!!!!!'),
 
 
         //autoComplete 自动选择组件
@@ -163,7 +163,7 @@ function mock() {
                         }),
 
                         //timePicker 时间选择组件
-                        maker.time('活动时间', 'section_time', ['11:11:11','22:22:22']).props({
+                        maker.time('活动时间', 'section_time', ['11:11:11', '22:22:22']).props({
                             "isRange": true,
                             "placeholder": "请选择活动时间"
                         }),

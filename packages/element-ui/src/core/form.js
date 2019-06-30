@@ -8,6 +8,10 @@ export function isAttr(name, value) {
     return (!upperCaseReg.test(name) && (isString(value) || isType(value) === 'Number'))
 }
 
+function isTooltip(info) {
+    return info.type === 'tooltip';
+}
+
 export default class Form extends BaseForm {
 
     constructor(handle) {
@@ -62,14 +66,32 @@ export default class Form extends BaseForm {
             labelWidth = (!col.labelWidth && !rule.title) ? 0 : col.labelWidth,
             className = rule.className, propsData = this.vData.props({
                 prop: field,
-                label: rule.title,
+                // label: rule.title,
                 // labelFor: unique,
                 rules: rule.validate,
                 labelWidth: toString(labelWidth),
                 required: rule.props.required
             }).key(fItemUnique).ref(formItemRefName).class(className).get(),
-            node = this.vNode.formItem(propsData, [child]);
+            node = this.vNode.formItem(propsData, [child, this.makeFormPop(parser, fItemUnique)]);
         return this.propsData.props.inline === true ? node : this.makeCol(col, parser, fItemUnique, [node]);
+    }
+
+    makeFormPop({rule}, unique) {
+        if (rule.title) {
+            const info = this.options.info || {}, svn = [rule.title];
+            if (rule.info) {
+                svn.push(this.vNode.make(isTooltip(info) ? 'el-tooltip' : 'el-popover', {
+                    props: {...info, content: rule.info},
+                    key: `pop${unique}`
+                }, [
+                    this.vNode.icon({
+                        class: [info.icon || 'el-icon-warning'],
+                        slot: isTooltip(info) ? 'default' : 'reference'
+                    })
+                ]));
+            }
+            return this.vNode.make('span', {slot: 'label'}, svn);
+        }
     }
 
     makeCol(col, parser, fItemUnique, VNodeFn) {

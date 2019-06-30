@@ -11,6 +11,7 @@ function baseRule() {
         template: undefined,
         emitPrefix: undefined,
         native: false,
+        info: '',
     };
 }
 
@@ -50,7 +51,7 @@ export default class Creator extends VData {
     }
 }
 
-const keyAttrs = ['emitPrefix', 'className', 'value', 'name', 'title', 'native'];
+const keyAttrs = ['emitPrefix', 'className', 'value', 'name', 'title', 'native', 'info'];
 
 keyAttrs.forEach(attr => {
     Creator.prototype[attr] = function (value) {
