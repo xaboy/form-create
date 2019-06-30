@@ -15,7 +15,7 @@ export default {
             const slot = props.slot ? toDefSlot(props.slot, h) : [];
 
             return <Option {...{props}}
-                key={`t${index}${ctx._uid}`}>{slot}</Option>
+                key={`t${index}${ctx.parent._uid}`}>{slot}</Option>
         }).concat(ctx.chlidren)}</Select>;
     }
 }

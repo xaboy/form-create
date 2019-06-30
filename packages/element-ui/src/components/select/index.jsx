@@ -15,7 +15,7 @@ export default {
             const slot = props.slot ? toDefSlot(props.slot, h) : [];
 
             return <ElOption {...{props}}
-                key={`t${index}${ctx._uid}`}>{slot}</ElOption>
+                key={`t${index}${ctx.parent._uid}`}>{slot}</ElOption>
         }).concat(ctx.chlidren)}</ElSelect>;
     }
 }
