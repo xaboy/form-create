@@ -286,6 +286,8 @@ export default function getGlobalApi(h) {
         },
         method(id, name) {
             const parser = h.getParser(id);
+            if (!parser || !parser.el[name])
+                throw new Error('方法不存在' + errMsg());
             return (...args) => {
                 parser.el[name](args);
             }
