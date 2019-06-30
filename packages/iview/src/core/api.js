@@ -1,4 +1,4 @@
-import {deepExtend, errMsg, isFunction, isPlainObject, toString} from '@form-create/utils';
+import {deepExtend, errMsg, isFunction, isPlainObject, toJson} from '@form-create/utils';
 
 export default function getGlobalApi(h) {
 
@@ -291,6 +291,9 @@ export default function getGlobalApi(h) {
             return (...args) => {
                 parser.el[name](args);
             }
+        },
+        toJson(){
+            return toJson(this.rule);
         }
     };
 }

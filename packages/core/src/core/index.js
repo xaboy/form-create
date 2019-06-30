@@ -5,7 +5,7 @@ import {
     isBool,
     isElement,
     toString,
-    isPlainObject,
+    isPlainObject, parseJson,
 } from '@form-create/utils';
 import $FormCreate from '../components/formCreate';
 import {formCreateName} from '../components/formCreate';
@@ -77,6 +77,9 @@ export default function createFormCreate(drive) {
             data,
             $form() {
                 return get$FormCreate();
+            },
+            parseJson(json) {
+                return parseJson(json);
             }
         });
     }

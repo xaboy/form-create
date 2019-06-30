@@ -1,5 +1,5 @@
 import Creator, {creatorFactory} from './creator';
-import {extend, isPlainObject, isString, isValidChildren} from '@form-create/utils';
+import {extend, isPlainObject, isString, isValidChildren, parseJson} from '@form-create/utils';
 
 export default function makerFactory() {
     let maker = {};
@@ -30,7 +30,7 @@ export default function makerFactory() {
 }
 
 function parse(rule, toMaker = false) {
-    if (isString(rule)) rule = JSON.parse(rule);
+    if (isString(rule)) rule = parseJson(rule);
 
     if (rule instanceof Creator) return toMaker ? rule : rule.getRule();
     if (isPlainObject(rule)) {
