@@ -191,7 +191,7 @@ function jsonMock() {
             type: "DatePicker",
             field: "section_day",
             title: "活动日期",
-            value: ['2018-02-20', new Date()], //input值, type为daterange,datetimerange value为数组 [start_value,end_value]
+            value: ['2018-02-20 11:11:11', '2019-06-30 22:22:22'], //input值, type为daterange,datetimerange value为数组 [start_value,end_value]
             props: {
                 "type": "datetimerange", //显示类型，可选值为 date、daterange、datetime、datetimerange、year、month
                 "format": "yyyy-MM-dd HH:mm:ss", //展示的日期格式
