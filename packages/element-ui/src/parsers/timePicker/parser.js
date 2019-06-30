@@ -9,7 +9,7 @@ export function getTime(date) {
 }
 
 export function toDate(time) {
-    return new Date('2018-02-14 ' + time);
+    return new Date('2018/02/14 ' + time);
 }
 
 export default class Parser extends BaseParser {

@@ -9,7 +9,7 @@
     <script defer src="https://cdn.jsdelivr.net/npm/element-ui@2.8.2/lib/index.js"></script>
     <script defer src="/form-create.ele.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/@form-create/data/dist/province_city.js"></script>
-    <script defer src="../json.js"></script>
+    <script defer src="../mock.js"></script>
 </head>
 
 <body>
@@ -29,7 +29,7 @@
                 formCreate: formCreate.$form()
             },
             data: {
-                rule: jsonMock(),
+                rule: mock(),
                 option: {
                     global: {
                         input: {

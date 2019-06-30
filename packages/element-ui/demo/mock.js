@@ -131,11 +131,11 @@ function mock() {
             maker.create('span').domProps({
                 innerHTML: '当鼠标经过这段文字时，会显示一个气泡框'
             })
-        ]),
+        ]).value(false),
 
 
         //select 下拉选择组件
-        maker.select("产品分类", "cate_id", ["104", "105"]).options([
+        maker.select("产品分类", "cate_id", "104").options([
             {"value": "104", "label": "生态蔬菜", "disabled": false, "slot": "<div style:'color:#ff7271;'>自定义显示内容</div>"},
             {
                 "value": "105", "label": "新鲜水果", "disabled": false, "slot": function ($h) {
@@ -158,12 +158,12 @@ function mock() {
                     children: [
 
                         //datePicker 日期选择组件
-                        maker.date('活动日期', 'section_day', ['2018-02-20', new Date()]).props({
+                        maker.date('活动日期', 'section_day', ['2018-02-20 12:12:12', '2018-03-20 12:12:12']).props({
                             "type": "datetimerange",
                         }),
 
                         //timePicker 时间选择组件
-                        maker.time('活动时间', 'section_time', []).props({
+                        maker.time('活动时间', 'section_time', ['11:11:11','22:22:22']).props({
                             "isRange": true,
                             "placeholder": "请选择活动时间"
                         }),
