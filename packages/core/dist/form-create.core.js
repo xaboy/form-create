@@ -1,5 +1,5 @@
 /*!
- * @form-create/core v0.0.3
+ * @form-create/core v0.0.4
  * (c) 2018-2019 xaboy
  * Github https://github.com/xaboy/form-create
  * Released under the MIT License.
@@ -237,6 +237,15 @@ var id = 0;
 function uniqueId() {
   return ++id;
 }
+function parseJson(json) {
+  return JSON.parse(json, function (k, v) {
+    if (v.indexOf && v.indexOf('function') > -1) {
+      return eval('(function(){return ' + v + ' })()');
+    }
+
+    return v;
+  });
+}
 function errMsg(i) {
   return '\n\x67\x69\x74\x68\x75\x62\x3a\x68\x74\x74\x70' + '\x73\x3a\x2f\x2f\x67\x69\x74\x68\x75\x62\x2e\x63\x6f' + '\x6d\x2f\x78\x61\x62\x6f\x79\x2f\x66\x6f\x72\x6d\x2d' + '\x63\x72\x65\x61\x74\x65\n\x64\x6f\x63\x75\x6d\x65' + '\x6e\x74\x3a\x68\x74\x74\x70\x3a\x2f\x2f\x77\x77\x77' + '\x2e\x66\x6f\x72\x6d\x2d\x63\x72\x65\x61\x74\x65\x2e' + '\x63\x6f\x6d' + (i || '');
 }
@@ -427,7 +436,8 @@ function baseRule() {
     emit: [],
     template: undefined,
     emitPrefix: undefined,
-    native: false
+    native: false,
+    info: ''
   };
 }
 
@@ -492,7 +502,7 @@ function (_VData) {
 
   return Creator;
 }(VData);
-var keyAttrs = ['emitPrefix', 'className', 'value', 'name', 'title', 'native'];
+var keyAttrs = ['emitPrefix', 'className', 'value', 'name', 'title', 'native', 'info'];
 keyAttrs.forEach(function (attr) {
   Creator.prototype[attr] = function (value) {
     $set(this._data, attr, value);
@@ -541,7 +551,7 @@ function makerFactory() {
 
 function parse(rule) {
   var toMaker = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-  if (isString(rule)) rule = JSON.parse(rule);
+  if (isString(rule)) rule = parseJson(rule);
   if (rule instanceof Creator) return toMaker ? rule : rule.getRule();
 
   if (isPlainObject(rule)) {
@@ -1404,6 +1414,9 @@ function createFormCreate(drive) {
       data: data,
       $form: function $form() {
         return get$FormCreate();
+      },
+      parseJson: function parseJson$1(json) {
+        return parseJson(json);
       }
     });
   }

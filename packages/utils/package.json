@@ -12,6 +12,9 @@
         "LICENSE",
         "src"
     ],
+    "keywords": [
+        "@form-create"
+    ],
     "repository": {
         "type": "git",
         "url": "git+https://github.com/xaboy/form-create.git"

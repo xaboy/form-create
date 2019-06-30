@@ -21,6 +21,9 @@
         "src",
         "dist"
     ],
+    "keywords": [
+        "@form-create"
+    ],
     "repository": {
         "type": "git",
         "url": "git+https://github.com/xaboy/form-create.git"
@@ -35,6 +38,6 @@
     },
     "homepage": "http://www.form-create.com",
     "publishConfig": {
-       "access": "public"
+        "access": "public"
     }
 }

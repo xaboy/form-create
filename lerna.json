@@ -1,10 +1,10 @@
 {
   "packages": [
     "packages/core",
+    "packages/data",
     "packages/element-ui",
     "packages/iview",
-    "packages/utils",
-    "packages/data"
+    "packages/utils"
   ],
   "version": "0.0.3"
 }

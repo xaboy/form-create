@@ -1,5 +1,5 @@
 /*!
- * @form-create/iview v0.0.3
+ * @form-create/iview v0.0.4
  * (c) 2018-2019 xaboy
  * Github https://github.com/xaboy/form-create
  * Released under the MIT License.
@@ -287,7 +287,8 @@
     submitBtnIcon: 'ios-upload',
     fileIcon: 'document-text',
     fileUpIcon: 'folder',
-    imgUpIcon: 'image'
+    imgUpIcon: 'image',
+    infoIcon: 'ios-information-outline'
   };
   var iview3 = {
     _v: 3,
@@ -296,7 +297,8 @@
     submitBtnIcon: 'ios-share',
     fileIcon: 'md-document',
     fileUpIcon: 'ios-folder-open',
-    imgUpIcon: 'md-images'
+    imgUpIcon: 'md-images',
+    infoIcon: 'ios-information-circle-outline'
   };
   var iviewConfig = function () {
     if (typeof iview === 'undefined') return iview2;
@@ -318,6 +320,13 @@
         align: undefined,
         justify: undefined,
         className: undefined
+      },
+      info: {
+        type: 'poptip',
+        trigger: 'hover',
+        placement: 'top-start',
+        wordWrap: true,
+        icon: iviewConfig.infoIcon
       },
       submitBtn: {
         type: 'primary',
@@ -458,25 +467,6 @@
   function preventDefault(e) {
     e.preventDefault();
   }
-  function dateFormat(fmt) {
-    var date = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : new Date();
-    var o = {
-      'M+': date.getMonth() + 1,
-      'd+': date.getDate(),
-      'h+': date.getHours(),
-      'm+': date.getMinutes(),
-      's+': date.getSeconds(),
-      'q+': Math.floor((date.getMonth() + 3) / 3),
-      'S': date.getMilliseconds()
-    };
-    if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (date.getFullYear() + '').substr(4 - RegExp.$1.length));
-
-    for (var k in o) {
-      if (new RegExp('(' + k + ')').test(fmt)) fmt = fmt.replace(RegExp.$1, RegExp.$1.length == 1 ? o[k] : ('00' + o[k]).substr(('' + o[k]).length));
-    }
-
-    return fmt;
-  }
   function hasSlot(children, slotName) {
     return children.length !== 0 && children.some(function (child) {
       if (child.data) {
@@ -484,6 +474,24 @@
       } else if (slotName === 'default') return true;
 
       return false;
+    });
+  }
+  function toJson(obj) {
+    return JSON.stringify(obj, function (key, val) {
+      if (typeof val === 'function') {
+        return val + '';
+      }
+
+      return val;
+    });
+  }
+  function parseJson(json) {
+    return JSON.parse(json, function (k, v) {
+      if (v.indexOf && v.indexOf('function') > -1) {
+        return eval('(function(){return ' + v + ' })()');
+      }
+
+      return v;
     });
   }
   function errMsg(i) {
@@ -676,7 +684,8 @@
       emit: [],
       template: undefined,
       emitPrefix: undefined,
-      native: false
+      native: false,
+      info: ''
     };
   }
 
@@ -741,7 +750,7 @@
 
     return Creator;
   }(VData);
-  var keyAttrs = ['emitPrefix', 'className', 'value', 'name', 'title', 'native'];
+  var keyAttrs = ['emitPrefix', 'className', 'value', 'name', 'title', 'native', 'info'];
   keyAttrs.forEach(function (attr) {
     Creator.prototype[attr] = function (value) {
       $set(this._data, attr, value);
@@ -790,7 +799,7 @@
 
   function parse(rule) {
     var toMaker = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-    if (isString(rule)) rule = JSON.parse(rule);
+    if (isString(rule)) rule = parseJson(rule);
     if (rule instanceof Creator) return toMaker ? rule : rule.getRule();
 
     if (isPlainObject(rule)) {
@@ -1653,6 +1662,9 @@
         data: data,
         $form: function $form() {
           return get$FormCreate();
+        },
+        parseJson: function parseJson$1(json) {
+          return parseJson(json);
         }
       });
     }
@@ -2045,6 +2057,12 @@
           defaultOnHandle(src, this.modalTitle);
         }
       },
+      modal: {
+        type: Object,
+        default: function _default() {
+          return {};
+        }
+      },
       value: [Array, String, Number]
     },
     data: function data() {
@@ -2078,10 +2096,10 @@
             title = _this$$props.title,
             okBtnText = _this$$props.okBtnText,
             closeBtnText = _this$$props.closeBtnText;
-        mount({
+        mount(_objectSpread({
           width: width,
           title: title
-        }, function (vNode, _vm) {
+        }, this.modal), function (vNode, _vm) {
           _this.modalVm = _vm;
           return [vNode.make('iframe', {
             attrs: {
@@ -2330,7 +2348,7 @@
         var slot = props.slot ? toDefSlot(props.slot, h) : [];
         return h("Option", {
           "props": _objectSpread({}, props),
-          "key": "t".concat(index).concat(ctx._uid)
+          "key": "t".concat(index).concat(ctx.parent._uid)
         }, [slot]);
       }).concat(ctx.chlidren)]);
     }
@@ -2708,31 +2726,6 @@
         if (props.startDate) $set(props, 'startDate', timeStampToDate(props.startDate));
       }
     }, {
-      key: "toFormValue",
-      value: function toFormValue(value) {
-        var isArr = Array.isArray(value),
-            props = this.rule.props,
-            parseValue,
-            type = props.type || 'date';
-
-        if (['daterange', 'datetimerange'].indexOf(type) !== -1) {
-          if (isArr) {
-            parseValue = value.map(function (time) {
-              return !time ? '' : timeStampToDate(time);
-            });
-          } else {
-            parseValue = ['', ''];
-          }
-        } else if ('date' === type && props.multiple === true) {
-          parseValue = toString(value);
-        } else {
-          parseValue = isArr ? value[0] || '' : value;
-          parseValue = !parseValue ? '' : timeStampToDate(parseValue);
-        }
-
-        return parseValue;
-      }
-    }, {
       key: "mounted",
       value: function mounted() {
         var _this = this;
@@ -2990,10 +2983,6 @@
     name: name$8
   };
 
-  function getTime(date) {
-    return isDate(date) ? dateFormat('hh:mm:ss', date) : date;
-  }
-
   var Parser$6 =
   /*#__PURE__*/
   function (_BaseParser) {
@@ -3006,27 +2995,6 @@
     }
 
     _createClass(Parser, [{
-      key: "toFormValue",
-      value: function toFormValue(value) {
-        var parseValue,
-            isArr = Array.isArray(value);
-
-        if ('timerange' === this.rule.props.type) {
-          if (isArr) {
-            parseValue = value.map(function (time) {
-              return !time ? '' : getTime(timeStampToDate(time));
-            });
-          } else {
-            parseValue = ['', ''];
-          }
-        } else {
-          isArr && (value = value[0]);
-          parseValue = !value ? '' : getTime(timeStampToDate(value));
-        }
-
-        return parseValue;
-      }
-    }, {
       key: "mounted",
       value: function mounted() {
         var _this = this;
@@ -3461,6 +3429,7 @@
       },
       method: function method(id, name) {
         var parser = h.getParser(id);
+        if (!parser || !parser.el[name]) throw new Error('方法不存在' + errMsg());
         return function () {
           for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
             args[_key] = arguments[_key];
@@ -3468,6 +3437,9 @@
 
           parser.el[name](args);
         };
+      },
+      toJson: function toJson$1() {
+        return toJson(this.rule);
       }
     };
   }
@@ -3497,6 +3469,10 @@
     tree: 'fc-iview-tree',
     autoComplete: 'AutoComplete'
   };
+
+  function isTooltip(info) {
+    return info.type === 'tooltip';
+  }
 
   var Form =
   /*#__PURE__*/
@@ -3573,8 +3549,36 @@
           labelWidth: labelWidth,
           required: rule.props.required
         }).key(fItemUnique).ref(formItemRefName).class(className).get(),
-            node = this.vNode.formItem(propsData, [child]);
+            node = this.vNode.formItem(propsData, [child, this.makeFormPop(parser, fItemUnique)]);
         return this.propsData.props.inline === true ? node : this.makeCol(col, parser, fItemUnique, [node]);
+      }
+    }, {
+      key: "makeFormPop",
+      value: function makeFormPop(_ref, unique) {
+        var rule = _ref.rule;
+
+        if (rule.title) {
+          var info = this.options.info || {},
+              svn = [rule.title];
+
+          if (rule.info) {
+            svn.push(this.vNode.make(isTooltip(info) ? 'Tooltip' : 'Poptip', {
+              props: _objectSpread({}, info, {
+                content: rule.info
+              }),
+              key: "pop".concat(unique)
+            }, [this.vNode.icon({
+              props: {
+                type: info.icon || iviewConfig.infoIcon,
+                size: 16
+              }
+            })]));
+          }
+
+          return this.vNode.make('span', {
+            slot: 'label'
+          }, svn);
+        }
       }
     }, {
       key: "makeCol",
@@ -3753,7 +3757,7 @@
   VNode.use(nodes);
   var drive = {
     ui: "iview",
-    version: "0.0.3",
+    version: "0.0.4",
     formRender: Form,
     components: components,
     parsers: parsers,

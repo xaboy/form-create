@@ -16,6 +16,7 @@
         "url": "git+https://github.com/xaboy/form-create.git"
     },
     "keywords": [
+        "@form-create",
         "form-builder",
         "form",
         "components",

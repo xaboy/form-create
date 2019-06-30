@@ -1,5 +1,5 @@
 /*!
- * @form-create/element-ui v0.0.3
+ * @form-create/element-ui v0.0.4
  * (c) 2018-2019 xaboy
  * Github https://github.com/xaboy/form-create
  * Released under the MIT License.
@@ -417,6 +417,24 @@
       return false;
     });
   }
+  function toJson(obj) {
+    return JSON.stringify(obj, function (key, val) {
+      if (typeof val === 'function') {
+        return val + '';
+      }
+
+      return val;
+    });
+  }
+  function parseJson(json) {
+    return JSON.parse(json, function (k, v) {
+      if (v.indexOf && v.indexOf('function') > -1) {
+        return eval('(function(){return ' + v + ' })()');
+      }
+
+      return v;
+    });
+  }
   function errMsg(i) {
     return '\n\x67\x69\x74\x68\x75\x62\x3a\x68\x74\x74\x70' + '\x73\x3a\x2f\x2f\x67\x69\x74\x68\x75\x62\x2e\x63\x6f' + '\x6d\x2f\x78\x61\x62\x6f\x79\x2f\x66\x6f\x72\x6d\x2d' + '\x63\x72\x65\x61\x74\x65\n\x64\x6f\x63\x75\x6d\x65' + '\x6e\x74\x3a\x68\x74\x74\x70\x3a\x2f\x2f\x77\x77\x77' + '\x2e\x66\x6f\x72\x6d\x2d\x63\x72\x65\x61\x74\x65\x2e' + '\x63\x6f\x6d' + (i || '');
   }
@@ -607,7 +625,8 @@
       emit: [],
       template: undefined,
       emitPrefix: undefined,
-      native: false
+      native: false,
+      info: ''
     };
   }
 
@@ -672,7 +691,7 @@
 
     return Creator;
   }(VData);
-  var keyAttrs = ['emitPrefix', 'className', 'value', 'name', 'title', 'native'];
+  var keyAttrs = ['emitPrefix', 'className', 'value', 'name', 'title', 'native', 'info'];
   keyAttrs.forEach(function (attr) {
     Creator.prototype[attr] = function (value) {
       $set(this._data, attr, value);
@@ -721,7 +740,7 @@
 
   function parse(rule) {
     var toMaker = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-    if (isString(rule)) rule = JSON.parse(rule);
+    if (isString(rule)) rule = parseJson(rule);
     if (rule instanceof Creator) return toMaker ? rule : rule.getRule();
 
     if (isPlainObject(rule)) {
@@ -1584,6 +1603,9 @@
         data: data,
         $form: function $form() {
           return get$FormCreate();
+        },
+        parseJson: function parseJson$1(json) {
+          return parseJson(json);
         }
       });
     }
@@ -1977,6 +1999,12 @@
           defaultOnHandle(src, this.modalTitle);
         }
       },
+      modal: {
+        type: Object,
+        default: function _default() {
+          return {};
+        }
+      },
       value: [Array, String, Number]
     },
     data: function data() {
@@ -2010,10 +2038,10 @@
             title = _this$$props.title,
             okBtnText = _this$$props.okBtnText,
             closeBtnText = _this$$props.closeBtnText;
-        mount({
+        mount(_objectSpread({
           width: width,
           title: title
-        }, function (vNode, _vm) {
+        }, this.modal), function (vNode, _vm) {
           _this.modalVm = _vm;
           return [vNode.make('iframe', {
             attrs: {
@@ -2252,7 +2280,7 @@
         var slot = props.slot ? toDefSlot(props.slot, h) : [];
         return h("ElOption", {
           "props": _objectSpread({}, props),
-          "key": "t".concat(index).concat(ctx._uid)
+          "key": "t".concat(index).concat(ctx.parent._uid)
         }, [slot]);
       }).concat(ctx.chlidren)]);
     }
@@ -2600,31 +2628,6 @@
     }
 
     _createClass(Parser, [{
-      key: "toFormValue",
-      value: function toFormValue(value) {
-        var isArr = Array.isArray(value),
-            props = this.rule.props,
-            parseValue,
-            type = props.type || 'date';
-
-        if (['daterange', 'datetimerange', 'dates'].indexOf(type) !== -1) {
-          if (isArr) {
-            parseValue = value.map(function (time) {
-              return !time ? '' : timeStampToDate(time);
-            });
-          } else {
-            parseValue = ['', ''];
-          }
-        } else if ('date' === type && props.multiple === true) {
-          parseValue = toString(value);
-        } else {
-          parseValue = isArr ? value[0] || '' : value;
-          parseValue = !parseValue ? '' : timeStampToDate(parseValue);
-        }
-
-        return parseValue;
-      }
-    }, {
       key: "mounted",
       value: function mounted() {
         var _this = this;
@@ -2877,7 +2880,7 @@
     return isDate(date) ? dateFormat('hh:mm:ss', date) : date;
   }
   function toDate(time) {
-    return new Date('2018-02-14 ' + time);
+    return new Date('2018/02/14 ' + time);
   }
 
   var Parser$6 =
@@ -3061,6 +3064,12 @@
         align: undefined,
         justify: undefined,
         tag: 'div'
+      },
+      info: {
+        type: 'popover',
+        trigger: 'hover',
+        placement: 'top-start',
+        icon: 'el-icon-warning'
       },
       submitBtn: {
         type: 'primary',
@@ -3415,6 +3424,7 @@
       },
       method: function method(id, name) {
         var parser = h.getParser(id);
+        if (!parser || !parser.el[name]) throw new Error('方法不存在' + errMsg());
         return function () {
           for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
             args[_key] = arguments[_key];
@@ -3422,6 +3432,9 @@
 
           parser.el[name](args);
         };
+      },
+      toJson: function toJson$1() {
+        return toJson(this.rule);
       }
     };
   }
@@ -3452,6 +3465,15 @@
     autoComplete: 'el-autocomplete'
   };
 
+  var upperCaseReg = /[A-Z]/;
+  function isAttr(name, value) {
+    return !upperCaseReg.test(name) && (isString(value) || isType(value) === 'Number');
+  }
+
+  function isTooltip(info) {
+    return info.type === 'tooltip';
+  }
+
   var Form =
   /*#__PURE__*/
   function (_BaseForm) {
@@ -3472,7 +3494,12 @@
     _createClass(Form, [{
       key: "inputVData",
       value: function inputVData(parser) {
-        if (!parser.rule.props.size && this.options.form.size) parser.vData.props('size', this.options.form.size);
+        var props = parser.rule.props || {};
+        parser.vData.attrs(Object.keys(props).reduce(function (initial, val) {
+          if (isAttr(val, props[val])) initial[val] = props[val];
+          return initial;
+        }, {}));
+        if (!props.size && this.options.form.size) parser.vData.props('size', this.options.form.size);
       }
     }, {
       key: "getFormRef",
@@ -3521,14 +3548,40 @@
             className = rule.className,
             propsData = this.vData.props({
           prop: field,
-          label: rule.title,
+          // label: rule.title,
           // labelFor: unique,
           rules: rule.validate,
           labelWidth: toString(labelWidth),
           required: rule.props.required
         }).key(fItemUnique).ref(formItemRefName).class(className).get(),
-            node = this.vNode.formItem(propsData, [child]);
+            node = this.vNode.formItem(propsData, [child, this.makeFormPop(parser, fItemUnique)]);
         return this.propsData.props.inline === true ? node : this.makeCol(col, parser, fItemUnique, [node]);
+      }
+    }, {
+      key: "makeFormPop",
+      value: function makeFormPop(_ref, unique) {
+        var rule = _ref.rule;
+
+        if (rule.title) {
+          var info = this.options.info || {},
+              svn = [rule.title];
+
+          if (rule.info) {
+            svn.push(this.vNode.make(isTooltip(info) ? 'el-tooltip' : 'el-popover', {
+              props: _objectSpread({}, info, {
+                content: rule.info
+              }),
+              key: "pop".concat(unique)
+            }, [this.vNode.icon({
+              class: [info.icon || 'el-icon-warning'],
+              slot: isTooltip(info) ? 'default' : 'reference'
+            })]));
+          }
+
+          return this.vNode.make('span', {
+            slot: 'label'
+          }, svn);
+        }
       }
     }, {
       key: "makeCol",
@@ -3616,9 +3669,9 @@
   }(BaseForm);
 
   var name$c = 'datePicker';
-  var datePicker$1 = ['date', 'dateRange', 'dateTime', 'dateTimeRange', 'year', 'month'].reduce(function (maker, type) {
-    maker[type] = creatorTypeFactory(name$c, type.toLowerCase());
-    return maker;
+  var datePicker$1 = ['year', 'month', 'date', 'dates', 'week', 'datetime', 'datetimeRange', 'dateRange'].reduce(function (initial, type) {
+    initial[type] = creatorTypeFactory(name$c, type.toLowerCase());
+    return initial;
   }, {});
 
   var name$d = 'frame';
@@ -3663,8 +3716,12 @@
 
   var name$h = 'timePicker';
   var timePicker$1 = {
-    time: creatorTypeFactory(name$h, 'time'),
-    timeRange: creatorTypeFactory(name$h, 'timerange')
+    time: creatorTypeFactory(name$h, function (m) {
+      return m.props.isRange = false;
+    }),
+    timeRange: creatorTypeFactory(name$h, function (m) {
+      return m.props.isRange = true;
+    })
   };
 
   var name$i = 'tree';
@@ -3713,7 +3770,7 @@
   VNode.use(nodes);
   var drive = {
     ui: "element-ui",
-    version: "".concat("0.0.3"),
+    version: "".concat("0.0.4"),
     formRender: Form,
     components: components,
     parsers: parsers,
