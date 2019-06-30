@@ -1,7 +1,12 @@
-import {isFunction, preventDefault, toString} from '@form-create/utils';
+import {isFunction, preventDefault, toString, isString, isType} from '@form-create/utils';
 import {BaseForm} from '@form-create/core';
 import style from '../style/index.css';
 
+const upperCaseReg = /[A-Z]/;
+
+export function isAttr(name, value) {
+    return (!upperCaseReg.test(name) && (isString(value) || isType(value) === 'Number'))
+}
 
 export default class Form extends BaseForm {
 
@@ -13,7 +18,13 @@ export default class Form extends BaseForm {
     }
 
     inputVData(parser) {
-        if (!parser.rule.props.size && this.options.form.size)
+        const props = parser.rule.props || {};
+        parser.vData.attrs(Object.keys(props).reduce((initial, val) => {
+            if (isAttr(val, props[val]))
+                initial[val] = props[val];
+            return initial;
+        }, {}));
+        if (!props.size && this.options.form.size)
             parser.vData.props('size', this.options.form.size);
     }
 
