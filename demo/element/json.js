@@ -235,7 +235,7 @@ function jsonMock() {
             type: "DatePicker",
             field: "section_day",
             title: "活动日期",
-            value: ['2018-02-20', new Date()],
+            value: ['2018-02-20', '2018-02-21'],
             props: {
                 "type": "dates", //显示类型 year/month/date/dates/ week/datetime/datetimerange/daterange
                 "readonly": false, //完全只读
@@ -268,7 +268,7 @@ function jsonMock() {
             type: "TimePicker",
             field: "section_time",
             title: "活动时间",
-            value: ['01:01:01', new Date()],
+            value: ['01:01:01', '12:12:12'],
             props: {
                 "readonly": false, //完全只读
                 "disabled": false, //禁用

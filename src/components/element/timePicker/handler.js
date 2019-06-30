@@ -1,5 +1,5 @@
 import Handler from "../../../factory/handler";
-import {$set, dateFormat, isDate, isUndef, timeStampToDate} from "../../../core/util";
+import {$set, dateFormat, isDate, timeStampToDate} from "../../../core/util";
 
 
 export function getTime(date) {
@@ -9,7 +9,7 @@ export function getTime(date) {
 }
 
 export function toDate(time) {
-    return new Date('2018-02-14 ' + time);
+    return new Date('2018/02/14 ' + time);
 }
 
 export default class handler extends Handler {
