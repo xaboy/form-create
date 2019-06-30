@@ -179,8 +179,8 @@ function mock() {
                     children: [
 
                         //datePicker 日期选择组件
-                        maker.date('活动日期', 'section_day', ['2018-02-20', new Date()]).props({
-                            'type': 'datetimerange',
+                        maker.date('活动日期', 'section_day', ['2018-02-20', '2018-02-22']).props({
+                            'type': 'daterange',
                             'startDate': new Date(),
                             'showWeekNumbers': true,
                         }),
