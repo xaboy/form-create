@@ -284,6 +284,17 @@ export default function getGlobalApi(h) {
         clearChangeStatus: () => {
             h.changeStatus = false;
         },
+        updateRule: (id, rule) => {
+            const parser = h.getParser(id);
+            if (parser) {
+                deepExtend(parser.rule, rule);
+            }
+        },
+        updateRules(rules) {
+            Object.keys(rules).forEach(id => {
+                this.updateRule(id, rules[id]);
+            })
+        },
         method(id, name) {
             const parser = h.getParser(id);
             if (!parser || !parser.el[name])
@@ -292,7 +303,7 @@ export default function getGlobalApi(h) {
                 parser.el[name](args);
             }
         },
-        toJson(){
+        toJson() {
             return toJson(this.rule);
         }
     };
