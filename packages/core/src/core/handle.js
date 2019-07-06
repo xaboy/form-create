@@ -275,15 +275,18 @@ export default class Handle {
 
         delParser(parser);
         $del(this.parsers, id);
-        $del(this.validate, field);
 
         if (index !== -1) {
             this.sortList.splice(index, 1);
         }
-        $del(this.formData, field);
-        $del(this.customData, field);
-        $del(this.fieldList, field);
-        $del(this.trueData, field);
+
+        if (!this.fieldList[field]) {
+            $del(this.validate, field);
+            $del(this.formData, field);
+            $del(this.customData, field);
+            $del(this.fieldList, field);
+            $del(this.trueData, field);
+        }
     }
 
     refresh() {
