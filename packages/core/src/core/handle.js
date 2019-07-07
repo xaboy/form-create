@@ -6,6 +6,7 @@ import {
     isString,
     isUndef,
     isValidChildren,
+    isPlainObject,
     toLine,
     toString,
     uniqueId,
@@ -131,14 +132,42 @@ export default class Handle {
             options: parseArray(rule.options)
         };
 
-        parseRule.on = parseOn(rule.on, this.parseEmit(rule));
+        parseRule.on = this.parseOn(rule.on || {}, this.parseEmit(rule));
 
         Object.keys(parseRule).forEach(k => {
             $set(rule, k, parseRule[k]);
         });
 
-        // if (isUndef(rule.props.elementId)) $set(rule.props, 'elementId', this.unique);
         return rule;
+    }
+
+    parseOn(on, emit) {
+        if (this.options.injectEvent)
+            Object.keys(on).forEach(k => {
+                on[k] = this.inject(on[k])
+            });
+        return parseOn(on, emit);
+    }
+
+    inject(_fn, inject) {
+        if (_fn.__inject)
+            _fn = _fn.__origin;
+
+        const h = this;
+
+        const fn = function (...args) {
+            const {option, rule} = h.vm.$options.propsData;
+            args.unshift({
+                $f: h.fCreateApi,
+                rule,
+                option,
+                inject
+            });
+            _fn.apply(this, args);
+        };
+        fn.__inject = true;
+        fn.__origin = _fn;
+        return fn;
     }
 
     parseEmit(rule) {
@@ -146,13 +175,22 @@ export default class Handle {
 
         if (!Array.isArray(emit)) return event;
 
-        emit.forEach(eventName => {
+        emit.forEach(config => {
+            let inject = {}, eventName = config;
+            if (isPlainObject(config)) {
+                eventName = config.name;
+                inject = config.inject || {};
+            }
+            if (!eventName) return;
+
             const emitKey = emitPrefix ? emitPrefix : field;
             const fieldKey = toLine(`${emitKey}-${eventName}`).replace('_', '-');
 
-            event[eventName] = (...arg) => {
+            const fn = (...arg) => {
                 this.vm.$emit(fieldKey, ...arg);
             };
+
+            event[eventName] = (this.options.injectEvent || config.inject !== undefined) ? this.inject(fn, inject) : fn;
         });
 
         return event;

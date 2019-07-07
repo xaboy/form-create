@@ -17,9 +17,9 @@
     <h2>组件模式生成 / <a style="color: #999;" href="../prototype/index.html">使用Vue原型方法生成</a> / <a style="color: #999;"
                                                                                              href="../window/index.html">使用全局方法生成</a>
     </h2>
-    <form-create v-model="fApi" :rule="rule" :option="option" @goods-name-change="change"
+    <form-create v-model="fApi" :rule="rule" :option="option" @goods-name-on-change="change"
                  @btn-click="change"
-                 @xaboy-change="change" @mounted="fcMounted" @on-submit="onSubmit"></form-create>
+                 @xaboy-on-change="change" @mounted="fcMounted" @on-submit="onSubmit"></form-create>
 </div>
 <script>
     window.onload = function () {
@@ -49,8 +49,8 @@
                 fApi: {}
             },
             methods: {
-                change: function (res) {
-                    console.log(res);
+                change: function () {
+                    console.log(arguments);
                 },
                 //表单提交事件
                 onSubmit: function (formData) {

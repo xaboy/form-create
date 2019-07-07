@@ -27,7 +27,7 @@ function mock() {
             {required: true, message: '请输入商品名称', trigger: 'blur'}
         ]).event({
             //    change: console.log
-        }).emit(['change']).className('goods-name').children([
+        }).emit([{name:'change',inject:[1,2,3]}]).className('goods-name').children([
             maker.create('template').children(['append']).slot('append')
         ]).info('请输入商品名称!!!!!'),
 

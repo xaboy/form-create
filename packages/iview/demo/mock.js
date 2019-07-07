@@ -24,7 +24,7 @@ function mock() {
             {required: true, message: '请输入商品名称', trigger: 'blur'}
         ]).children([maker.create('template').children(['append']).slot('append')]).event({
             change: console.log
-        }).emit(['change']).className('goods-name').info('请输入商品名称!!!!'),
+        }).emit([{name:'on-change',inject:[1,2,3]}]).className('goods-name').info('请输入商品名称!!!!'),
 
 
         //autoComplete 自动选择组件
@@ -40,7 +40,7 @@ function mock() {
 
                 return option.toUpperCase().indexOf(value.toUpperCase()) !== -1
             }
-        }).emitPrefix('xaboy').emit(['change']),
+        }).emitPrefix('xaboy').emit(['on-change']),
 
 
         //textarea 组件
@@ -274,8 +274,8 @@ function mock() {
             },
             onOpen: console.log
         }).event({
-            'on-change': () => {
-                console.log('change');
+            'on-change': (inject) => {
+                console.log(inject, 'change');
             }
         }).validate([
             {required: true, type: 'array', min: 2, message: '请选择2张图片', trigger: 'change'}
