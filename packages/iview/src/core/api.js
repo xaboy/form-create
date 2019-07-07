@@ -1,4 +1,5 @@
-import {deepExtend, errMsg, isFunction, isPlainObject, toJson} from '@form-create/utils';
+import {deepExtend, errMsg, isFunction, isPlainObject} from '@form-create/utils';
+import {toJson} from '@form-create/core';
 
 export default function getGlobalApi(h) {
 

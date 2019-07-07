@@ -7,10 +7,11 @@ import VData from './factory/vData';
 import VNode from './factory/vNode';
 import BaseParser from './factory/parser';
 import BaseForm from './factory/form';
+import {parseJson, toJson} from './core/util';
 
 export {
     creatorFactory, creatorTypeFactory, Creator, BaseForm,
-    Handle, makerFactory, Render, VData, VNode, Vue, BaseParser
+    Handle, makerFactory, Render, VData, VNode, Vue, BaseParser, parseJson, toJson
 };
 
 export default createFormCreate;

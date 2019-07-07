@@ -10,8 +10,8 @@ function baseRule() {
         emit: [],
         template: undefined,
         emitPrefix: undefined,
-        native: false,
-        info: '',
+        native: undefined,
+        info: undefined,
     };
 }
 

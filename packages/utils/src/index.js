@@ -165,24 +165,6 @@ export function hasSlot(children, slotName) {
     })
 }
 
-export function toJson(obj) {
-    return JSON.stringify(obj, function (key, val) {
-        if (typeof val === 'function') {
-            return val + '';
-        }
-        return val;
-    });
-}
-
-export function parseJson(json) {
-    return JSON.parse(json, function (k, v) {
-        if (v.indexOf && v.indexOf('function') > -1) {
-            return eval('(function(){return ' + v + ' })()')
-        }
-        return v;
-    });
-}
-
 export function errMsg(i) {
 
     return '\n\x67\x69\x74\x68\x75\x62\x3a\x68\x74\x74\x70' +

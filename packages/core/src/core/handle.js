@@ -189,7 +189,7 @@ export default class Handle {
             const fn = (...arg) => {
                 this.vm.$emit(fieldKey, ...arg);
             };
-
+            fn.__emit = true;
             event[eventName] = (this.options.injectEvent || config.inject !== undefined) ? this.inject(fn, inject) : fn;
         });
 
@@ -399,11 +399,11 @@ function defRule() {
         props: {},
         on: {},
         options: [],
-        title: '',
+        title: undefined,
         value: '',
         field: '',
-        name: '',
-        className: ''
+        name: undefined,
+        className: undefined
     };
 }
 

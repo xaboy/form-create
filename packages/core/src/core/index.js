@@ -5,7 +5,7 @@ import {
     isBool,
     isElement,
     toString,
-    isPlainObject, parseJson,
+    isPlainObject,
 } from '@form-create/utils';
 import $FormCreate from '../components/formCreate';
 import {formCreateName} from '../components/formCreate';
@@ -14,6 +14,7 @@ import makerFactory from '../factory/maker';
 import Handle from './handle';
 import {creatorFactory} from '../factory/creator';
 import BaseParser from '../factory/parser';
+import {parseJson} from './util';
 
 export let _vue = typeof window !== 'undefined' && window.Vue ? window.Vue : Vue;
 
