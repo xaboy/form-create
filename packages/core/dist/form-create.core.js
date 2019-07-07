@@ -1,5 +1,5 @@
 /*!
- * @form-create/core v0.0.4
+ * @form-create/core v0.0.5
  * (c) 2018-2019 xaboy
  * Github https://github.com/xaboy/form-create
  * Released under the MIT License.
@@ -237,15 +237,6 @@ var id = 0;
 function uniqueId() {
   return ++id;
 }
-function parseJson(json) {
-  return JSON.parse(json, function (k, v) {
-    if (v.indexOf && v.indexOf('function') > -1) {
-      return eval('(function(){return ' + v + ' })()');
-    }
-
-    return v;
-  });
-}
 function errMsg(i) {
   return '\n\x67\x69\x74\x68\x75\x62\x3a\x68\x74\x74\x70' + '\x73\x3a\x2f\x2f\x67\x69\x74\x68\x75\x62\x2e\x63\x6f' + '\x6d\x2f\x78\x61\x62\x6f\x79\x2f\x66\x6f\x72\x6d\x2d' + '\x63\x72\x65\x61\x74\x65\n\x64\x6f\x63\x75\x6d\x65' + '\x6e\x74\x3a\x68\x74\x74\x70\x3a\x2f\x2f\x77\x77\x77' + '\x2e\x66\x6f\x72\x6d\x2d\x63\x72\x65\x61\x74\x65\x2e' + '\x63\x6f\x6d' + (i || '');
 }
@@ -436,8 +427,8 @@ function baseRule() {
     emit: [],
     template: undefined,
     emitPrefix: undefined,
-    native: false,
-    info: ''
+    native: undefined,
+    info: undefined
   };
 }
 
@@ -524,6 +515,33 @@ arrAttrs.forEach(function (attr) {
     return this;
   };
 });
+
+function toJson(obj) {
+  return JSON.stringify(obj, function (key, val) {
+    if (val instanceof Creator) {
+      return val.getRule();
+    }
+
+    if (val && val._isVue === true) return undefined;
+
+    if (typeof val !== 'function') {
+      return val;
+    }
+
+    if (val.__inject) val = val.__origin;
+    if (val.__emit) return undefined;
+    return val;
+  });
+}
+function parseJson(json) {
+  return JSON.parse(json, function (k, v) {
+    if (v.indexOf && v.indexOf('function') > -1) {
+      return eval('(function(){return ' + v + ' })()');
+    }
+
+    return v;
+  });
+}
 
 function makerFactory() {
   var maker = {};
@@ -1069,36 +1087,86 @@ function () {
       var parseRule = {
         options: parseArray(rule.options)
       };
-      parseRule.on = parseOn(rule.on, this.parseEmit(rule));
+      parseRule.on = this.parseOn(rule.on || {}, this.parseEmit(rule));
       Object.keys(parseRule).forEach(function (k) {
         $set(rule, k, parseRule[k]);
-      }); // if (isUndef(rule.props.elementId)) $set(rule.props, 'elementId', this.unique);
-
+      });
       return rule;
+    }
+  }, {
+    key: "parseOn",
+    value: function parseOn(on, emit) {
+      var _this2 = this;
+
+      if (this.options.injectEvent) Object.keys(on).forEach(function (k) {
+        on[k] = _this2.inject(on[k]);
+      });
+      return _parseOn(on, emit);
+    }
+  }, {
+    key: "inject",
+    value: function inject(_fn, _inject) {
+      if (_fn.__inject) _fn = _fn.__origin;
+      var h = this;
+
+      var fn = function fn() {
+        var _h$vm$$options$propsD = h.vm.$options.propsData,
+            option = _h$vm$$options$propsD.option,
+            rule = _h$vm$$options$propsD.rule;
+
+        for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+          args[_key] = arguments[_key];
+        }
+
+        args.unshift({
+          $f: h.fCreateApi,
+          rule: rule,
+          option: option,
+          inject: _inject
+        });
+
+        _fn.apply(this, args);
+      };
+
+      fn.__inject = true;
+      fn.__origin = _fn;
+      return fn;
     }
   }, {
     key: "parseEmit",
     value: function parseEmit(rule) {
-      var _this2 = this;
+      var _this3 = this;
 
       var event = {},
           emit = rule.emit,
           emitPrefix = rule.emitPrefix,
           field = rule.field;
       if (!Array.isArray(emit)) return event;
-      emit.forEach(function (eventName) {
+      emit.forEach(function (config) {
+        var inject = {},
+            eventName = config;
+
+        if (isPlainObject(config)) {
+          eventName = config.name;
+          inject = config.inject || {};
+        }
+
+        if (!eventName) return;
         var emitKey = emitPrefix ? emitPrefix : field;
         var fieldKey = toLine("".concat(emitKey, "-").concat(eventName)).replace('_', '-');
 
-        event[eventName] = function () {
-          var _this2$vm;
+        var fn = function fn() {
+          var _this3$vm;
 
-          for (var _len = arguments.length, arg = new Array(_len), _key = 0; _key < _len; _key++) {
-            arg[_key] = arguments[_key];
+          for (var _len2 = arguments.length, arg = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+            arg[_key2] = arguments[_key2];
           }
 
-          (_this2$vm = _this2.vm).$emit.apply(_this2$vm, [fieldKey].concat(arg));
+          (_this3$vm = _this3.vm).$emit.apply(_this3$vm, [fieldKey].concat(arg));
         };
+
+        fn.__emit = true;
+        event[eventName] = _this3.options.injectEvent || config.inject !== undefined ? _this3.inject(fn, inject) : fn;
       });
       return event;
     }
@@ -1168,7 +1236,7 @@ function () {
   }, {
     key: "addParserWitch",
     value: function addParserWitch(parser) {
-      var _this3 = this;
+      var _this4 = this;
 
       var vm = this.vm;
       Object.keys(parser.rule).forEach(function (key) {
@@ -1178,7 +1246,7 @@ function () {
         }, function (n, o) {
           if (o === undefined) return;
 
-          _this3.$render.clearCache(parser);
+          _this4.$render.clearCache(parser);
         }, {
           deep: true,
           immediate: true
@@ -1188,12 +1256,12 @@ function () {
   }, {
     key: "mountedParser",
     value: function mountedParser() {
-      var _this4 = this;
+      var _this5 = this;
 
       var vm = this.vm;
       Object.keys(this.parsers).forEach(function (id) {
-        var parser = _this4.parsers[id];
-        if (parser.watch.length === 0) _this4.addParserWitch(parser);
+        var parser = _this5.parsers[id];
+        if (parser.watch.length === 0) _this5.addParserWitch(parser);
         parser.el = vm.$refs[parser.refName] || {};
         if (parser.defaultValue === undefined) parser.defaultValue = deepExtend({}, {
           value: parser.rule.value
@@ -1225,16 +1293,18 @@ function () {
           index = this.sortList.indexOf(id);
       delParser(parser);
       $del(this.parsers, id);
-      $del(this.validate, field);
 
       if (index !== -1) {
         this.sortList.splice(index, 1);
       }
 
-      $del(this.formData, field);
-      $del(this.customData, field);
-      $del(this.fieldList, field);
-      $del(this.trueData, field);
+      if (!this.fieldList[field]) {
+        $del(this.validate, field);
+        $del(this.formData, field);
+        $del(this.customData, field);
+        $del(this.fieldList, field);
+        $del(this.trueData, field);
+      }
     }
   }, {
     key: "refresh",
@@ -1244,7 +1314,7 @@ function () {
   }, {
     key: "reloadRule",
     value: function reloadRule(rules) {
-      var _this5 = this;
+      var _this6 = this;
 
       var vm = this.vm;
       if (!rules) return this.reloadRule(this.rules);
@@ -1257,14 +1327,14 @@ function () {
 
       this.loadRule(rules, false);
       Object.keys(parsers).filter(function (id) {
-        return _this5.parsers[id] === undefined;
+        return _this6.parsers[id] === undefined;
       }).forEach(function (id) {
-        return _this5.removeField(parsers[id]);
+        return _this6.removeField(parsers[id]);
       });
       this.$render.initOrgChildren();
       this.created();
       vm.$nextTick(function () {
-        _this5.reload();
+        _this6.reload();
       });
       vm.$f = this.fCreateApi;
       this.$render.clearCacheAll();
@@ -1307,7 +1377,7 @@ function delParser(parser) {
   });
 }
 
-function parseOn(on, emitEvent) {
+function _parseOn(on, emitEvent) {
   if (Object.keys(emitEvent).length > 0) extend(on, emitEvent);
   return on;
 }
@@ -1324,11 +1394,11 @@ function defRule() {
     props: {},
     on: {},
     options: [],
-    title: '',
+    title: undefined,
     value: '',
     field: '',
-    name: '',
-    className: ''
+    name: undefined,
+    className: undefined
   };
 }
 
@@ -1636,4 +1706,4 @@ function () {
 }();
 
 export default createFormCreate;
-export { BaseForm, BaseParser, Creator, Handle, Render, VData, VNode, _vue as Vue, creatorFactory, creatorTypeFactory, makerFactory };
+export { BaseForm, BaseParser, Creator, Handle, Render, VData, VNode, _vue as Vue, creatorFactory, creatorTypeFactory, makerFactory, parseJson, toJson };
