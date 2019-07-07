@@ -6,6 +6,9 @@ export function toJson(obj) {
             return val.getRule();
         }
 
+        if (val && val._isVue === true)
+            return undefined;
+
         if (typeof val !== 'function') {
             return val;
         }

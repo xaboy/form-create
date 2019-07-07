@@ -1,5 +1,6 @@
 import Creator, {creatorFactory} from './creator';
-import {extend, isPlainObject, isString, isValidChildren, parseJson} from '@form-create/utils';
+import {parseJson} from '../core/util';
+import {extend, isPlainObject, isString, isValidChildren} from '@form-create/utils';
 
 export default function makerFactory() {
     let maker = {};
