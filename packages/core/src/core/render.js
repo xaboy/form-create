@@ -100,7 +100,7 @@ export default class Render {
 
         }
 
-        setTemplateProps(parser);
+        setTemplateProps(parser, this.$handle.fCreateApi);
 
         rule.vm.$off('input');
         rule.vm.$on('input', (value) => {
@@ -166,7 +166,7 @@ export default class Render {
         this.parserToData(parser);
 
         let data = parser.vData
-            .ref(refName).key('fc_item' + key);
+            .ref(refName).key('fc_item' + key).props('formCreate', this.$handle.fCreateApi);
 
         if (!custom)
             data.on('input', (value) => {
@@ -218,7 +218,7 @@ export default class Render {
     }
 }
 
-function setTemplateProps(parser) {
+function setTemplateProps(parser, fApi) {
     const {rule} = parser;
     if (!rule.vm.$props)
         return;
@@ -231,4 +231,5 @@ function setTemplateProps(parser) {
     if (keys.indexOf('value') !== -1) {
         rule.vm.$props.value = parser.rule.value;
     }
+    rule.vm.$props.formCreate = fApi;
 }

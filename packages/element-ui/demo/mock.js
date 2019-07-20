@@ -88,6 +88,7 @@ function mock() {
             props: {
                 disabled: Boolean,
                 value: Number,
+                formCreate:Object
             },
             watch: {
                 value(n) {
