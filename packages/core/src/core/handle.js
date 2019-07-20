@@ -267,11 +267,14 @@ export default class Handle {
 
         Object.keys(parser.rule).forEach((key) => {
             if (['field', 'type', 'value', 'vm', 'template', 'name', 'config'].indexOf(key) !== -1 || parser.rule[key] === undefined) return;
-            parser.watch.push(vm.$watch(() => parser.rule[key], (n, o) => {
-                if (o === undefined) return;
-                this.$render.clearCache(parser);
-            }, {deep: true, immediate: true}));
-
+            try{
+                parser.watch.push(vm.$watch(() => parser.rule[key], (n, o) => {
+                    if (o === undefined) return;
+                    this.$render.clearCache(parser);
+                }, {deep: key !== 'children', immediate: true}));
+            }catch (e) {
+                //
+            }
         });
     }
 
