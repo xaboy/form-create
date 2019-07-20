@@ -14,6 +14,7 @@ import {
 } from '@form-create/utils';
 import BaseParser from '../factory/parser';
 import Render from './render';
+import baseApi from './api';
 
 
 export function getRule(rule) {
@@ -256,7 +257,7 @@ export default class Handle {
 
 
         if (this.fCreateApi === undefined)
-            this.fCreateApi = this.fc.drive.getGlobalApi(this);
+            this.fCreateApi = this.fc.drive.getGlobalApi(this, baseApi(this));
         this.fCreateApi.rule = this.rules;
         this.fCreateApi.config = this.options;
     }
@@ -267,12 +268,12 @@ export default class Handle {
 
         Object.keys(parser.rule).forEach((key) => {
             if (['field', 'type', 'value', 'vm', 'template', 'name', 'config'].indexOf(key) !== -1 || parser.rule[key] === undefined) return;
-            try{
+            try {
                 parser.watch.push(vm.$watch(() => parser.rule[key], (n, o) => {
                     if (o === undefined) return;
                     this.$render.clearCache(parser);
                 }, {deep: key !== 'children', immediate: true}));
-            }catch (e) {
+            } catch (e) {
                 //
             }
         });
