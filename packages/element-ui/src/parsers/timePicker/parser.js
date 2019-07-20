@@ -20,17 +20,17 @@ export default class Parser extends BaseParser {
             if (isArr) {
                 parseValue = value.map((time) => !time ? '' : toDate(getTime(timeStampToDate(time))));
             } else {
-                parseValue = ['', ''];
+                parseValue = null;
             }
         } else {
             isArr && (value = value[0]);
-            parseValue = !value ? '' :  toDate(getTime(timeStampToDate(value)));
+            parseValue = !value ? null :  toDate(getTime(timeStampToDate(value)));
         }
         return parseValue;
     }
 
     mounted() {
-        this.toValue = (val) => this.el.formatToString(val);
+        this.toValue = (val) => this.el.formatToValue(val);
     }
 }
 
