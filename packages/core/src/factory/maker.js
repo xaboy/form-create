@@ -1,5 +1,5 @@
 import Creator, {creatorFactory} from './creator';
-import {parseJson} from '../core/util';
+import {parseJson, enumerable} from '../core/util';
 import {extend, isPlainObject, isString, isValidChildren} from '@form-create/utils';
 
 export default function makerFactory() {
@@ -40,24 +40,30 @@ function parse(rule, toMaker = false) {
     } else if (!Array.isArray(rule)) return rule;
     else {
         const rules = rule.map(r => parse(r, toMaker));
-        Object.defineProperty(rules, 'find', {
-            value: findField,
-            enumerable: false,
-            configurable: false
+        Object.defineProperties(rules, {
+            find: enumerable(findField),
+            model: enumerable(model)
         });
 
         return rules;
     }
 }
 
-function findField(field) {
+function findField(field, origin) {
     let children = [];
     for (let i in this) {
-        const rule = this[i] instanceof Creator ? this[i].rule : this[i];
-        if (rule.field === field) return this[i];
+        const rule = this[i] instanceof Creator ? this[i]._data : this[i];
+        if (rule.field === field) return origin === true ? rule : this[i];
         if (isValidChildren(rule.children)) children = children.concat(rule.children);
     }
     if (children.length > 0) return findField.call(children, field);
+}
+
+function model(formData) {
+    Object.keys(formData).forEach(field => {
+        const rule = this.find(field, true);
+        if (rule) rule.value = formData[field];
+    });
 }
 
 function ruleToMaker(rule) {

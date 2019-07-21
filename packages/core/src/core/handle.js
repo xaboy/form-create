@@ -15,6 +15,7 @@ import {
 import BaseParser from '../factory/parser';
 import Render from './render';
 import baseApi from './api';
+import {enumerable} from './util';
 
 
 export function getRule(rule) {
@@ -413,15 +414,7 @@ function defRule() {
 
 function bindParser(rule, parser) {
     Object.defineProperties(rule, {
-        __field__: {
-            value: parser.field,
-            enumerable: false,
-            configurable: false
-        },
-        __fc__: {
-            value: parser,
-            enumerable: false,
-            configurable: false
-        }
+        __field__: enumerable(parser.field),
+        __fc__: enumerable(parser)
     });
 }

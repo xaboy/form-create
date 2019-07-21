@@ -31,3 +31,11 @@ export function parseJson(json) {
         return v;
     });
 }
+
+export function enumerable(value) {
+    return {
+        value,
+        enumerable: false,
+        configurable: false
+    }
+}
