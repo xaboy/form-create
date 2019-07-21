@@ -2,6 +2,7 @@ const data = [{'value':'11','label':'北京市','children':[{'value':'1101','lab
 
 
 if(typeof window !== 'undefined' && window.formCreate){
+    if(!window.formCreate.data) window.formCreate.data = {};
     window.formCreate.data.province_city_area_code = data;
 }
 
