@@ -1,5 +1,5 @@
 /*!
- * @form-create/iview v0.0.5
+ * @form-create/iview v1.0.0
  * (c) 2018-2019 xaboy
  * Github https://github.com/xaboy/form-create
  * Released under the MIT License.
@@ -781,6 +781,13 @@
       return v;
     });
   }
+  function enumerable(value) {
+    return {
+      value: value,
+      enumerable: false,
+      configurable: false
+    };
+  }
 
   function makerFactory() {
     var maker = {};
@@ -818,25 +825,34 @@
       var rules = rule.map(function (r) {
         return parse(r, toMaker);
       });
-      Object.defineProperty(rules, 'find', {
-        value: findField,
-        enumerable: false,
-        configurable: false
+      Object.defineProperties(rules, {
+        find: enumerable(findField),
+        model: enumerable(model)
       });
       return rules;
     }
   }
 
-  function findField(field) {
+  function findField(field, origin) {
     var children = [];
 
     for (var i in this) {
-      var rule = this[i] instanceof Creator ? this[i].rule : this[i];
-      if (rule.field === field) return this[i];
+      var rule = this[i] instanceof Creator ? this[i]._data : this[i];
+      if (rule.field === field) return origin === true ? rule : this[i];
       if (isValidChildren(rule.children)) children = children.concat(rule.children);
     }
 
     if (children.length > 0) return findField.call(children, field);
+  }
+
+  function model(formData) {
+    var _this = this;
+
+    Object.keys(formData).forEach(function (field) {
+      var rule = _this.find(field, true);
+
+      if (rule) rule.value = formData[field];
+    });
   }
 
   function ruleToMaker(rule) {
@@ -1070,7 +1086,7 @@
           this.renderList[id] = _vue.compile(rule.template);
         }
 
-        setTemplateProps(parser);
+        setTemplateProps(parser, this.$handle.fCreateApi);
         rule.vm.$off('input');
         rule.vm.$on('input', function (value) {
           _this2.onInput(parser, value);
@@ -1139,7 +1155,7 @@
         var refName = parser.refName,
             key = parser.key;
         this.parserToData(parser);
-        var data = parser.vData.ref(refName).key('fc_item' + key);
+        var data = parser.vData.ref(refName).key('fc_item' + key).props('formCreate', this.$handle.fCreateApi);
         if (!custom) data.on('input', function (value) {
           _this3.onInput(parser, value);
         }).props('value', this.$handle.getFormData(parser));
@@ -1196,7 +1212,7 @@
     return Render;
   }();
 
-  function setTemplateProps(parser) {
+  function setTemplateProps(parser, fApi) {
     var rule = parser.rule;
     if (!rule.vm.$props) return;
     var keys = Object.keys(rule.vm.$props);
@@ -1207,6 +1223,263 @@
     if (keys.indexOf('value') !== -1) {
       rule.vm.$props.value = parser.rule.value;
     }
+
+    rule.vm.$props.formCreate = fApi;
+  }
+
+  function baseApi(h) {
+    function tidyFields(fields) {
+      var all = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+      if (!fields) fields = all ? Object.keys(h.fieldList) : h.fields();else if (!Array.isArray(fields)) fields = [fields];
+      return fields;
+    }
+
+    return {
+      formData: function formData() {
+        var parsers = h.fieldList;
+        return Object.keys(parsers).reduce(function (initial, id) {
+          var parser = parsers[id];
+          initial[parser.field] = deepExtend({}, {
+            value: parser.rule.value
+          }).value;
+          return initial;
+        }, {});
+      },
+      getValue: function getValue(field) {
+        var parser = h.fieldList[field];
+        if (!parser) return;
+        return deepExtend({}, {
+          value: parser.rule.value
+        }).value;
+      },
+      setValue: function setValue(field, value) {
+        var formData = field;
+        if (!isPlainObject(field)) formData = _defineProperty({}, field, value);
+        Object.keys(formData).forEach(function (key) {
+          var parser = h.fieldList[key];
+          if (!parser) return;
+          parser.rule.value = formData[key];
+        });
+      },
+      changeValue: function changeValue(field, value) {
+        this.setValue(field, value);
+      },
+      changeField: function changeField(field, value) {
+        this.setValue(field, value);
+      },
+      removeField: function removeField(field) {
+        var parser = h.getParser(field);
+        if (!parser) return;
+        var fields = parser.root.map(function (rule) {
+          return rule.__field__;
+        }),
+            index = fields.indexOf(field);
+        if (index === -1) return;
+        parser.root.splice(index, 1);
+        if (h.sortList.indexOf(parser.id) === -1) this.reload();
+      },
+      destroy: function destroy() {
+        h.vm.$el.parentNode.removeChild(h.vm.$el);
+        h.vm.$destroy();
+      },
+      fields: function fields() {
+        return h.fields();
+      },
+      append: function append(rule, after, isChild) {
+        var fields = h.fieldList,
+            index = h.sortList.length,
+            rules = h.rules;
+        if (rule.field && fields.indexOf(rule.field) !== -1) return console.error("".concat(rule.field, " \u5B57\u6BB5\u5DF2\u5B58\u5728") + errMsg());
+        var parser = h.getParser(after);
+
+        if (parser) {
+          if (isChild) {
+            rules = parser.rule.children;
+            index = parser.rule.children.length;
+          } else {
+            index = parser.root.indexOf(parser.rule);
+          }
+        }
+
+        rules.splice(index + 1, 0, rule);
+      },
+      prepend: function prepend(rule, after, isChild) {
+        var fields = h.fieldList,
+            index = 0,
+            rules = h.rules;
+        if (rule.field && fields.indexOf(rule.field) !== -1) return console.error("".concat(rule.field, " \u5B57\u6BB5\u5DF2\u5B58\u5728") + errMsg());
+        var parser = h.getParser(after);
+
+        if (parser) {
+          if (isChild) {
+            rules = parser.rule.children;
+          } else {
+            index = parser.root.indexOf(parser.rule);
+          }
+        }
+
+        rules.splice(index, 0, rule);
+      },
+      hidden: function hidden(_hidden, fields) {
+        var hiddenList = h.$form.hidden;
+        tidyFields(fields, true).forEach(function (field) {
+          var parser = h.getParser(field);
+          if (!parser) return;
+
+          if (_hidden && hiddenList.indexOf(parser) === -1) {
+            hiddenList.push(parser);
+          } else if (!_hidden && hiddenList.indexOf(parser) !== -1) {
+            hiddenList.splice(hiddenList.indexOf(parser), 1);
+          }
+
+          h.$render.clearCache(parser, true);
+        });
+        h.refresh();
+      },
+      hiddenStatus: function hiddenStatus(id) {
+        var parser = h.getParser(id);
+        return h.$form.hidden.indexOf(parser) !== -1;
+      },
+      visibility: function visibility(_visibility, fields) {
+        var visibilityList = h.$form.visibility;
+        tidyFields(fields, true).forEach(function (field) {
+          var parser = h.getParser(field);
+          if (!parser) return;
+
+          if (_visibility && visibilityList.indexOf(parser) === -1) {
+            visibilityList.push(parser);
+          } else if (!_visibility && visibilityList.indexOf(parser) !== -1) {
+            visibilityList.splice(visibilityList.indexOf(parser), 1);
+          }
+
+          h.$render.clearCache(parser, true);
+        });
+        h.refresh();
+      },
+      visibilityStatus: function visibilityStatus(id) {
+        var parser = h.getParser(id);
+        return h.$form.visibility.indexOf(parser) !== -1;
+      },
+      disabled: function disabled(_disabled, fields) {
+        tidyFields(fields, true).forEach(function (field) {
+          var parser = h.fieldList[field];
+          if (!parser) return;
+          h.vm.$set(parser.rule.props, 'disabled', !!_disabled);
+        });
+      },
+      model: function model() {
+        return Object.keys(h.trueData).reduce(function (initial, key) {
+          initial[key] = h.trueData[key].rule;
+          return initial;
+        }, {});
+      },
+      component: function component() {
+        return Object.keys(h.customData).reduce(function (initial, key) {
+          initial[key] = h.customData[key].rule;
+          return initial;
+        }, {});
+      },
+      bind: function bind() {
+        var bind = {},
+            properties = {};
+        Object.keys(h.fieldList).forEach(function (field) {
+          var parser = h.fieldList[field];
+          properties[field] = {
+            get: function get() {
+              return parser.rule.value;
+            },
+            set: function set(value) {
+              parser.rule.value = value;
+            },
+            enumerable: true,
+            configurable: true
+          };
+        });
+        Object.defineProperties(bind, properties);
+        return bind;
+      },
+      submitBtnProps: function submitBtnProps() {
+        var props = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+        h.vm._buttonProps(props);
+      },
+      resetBtnProps: function resetBtnProps() {
+        var props = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+        h.vm._resetProps(props);
+      },
+      set: function set(node, field, value) {
+        h.vm.$set(node, field, value);
+      },
+      reload: function reload(rules) {
+        h.reloadRule(rules);
+      },
+      updateOptions: function updateOptions(options) {
+        deepExtend(h.options, options);
+        this.refresh(true);
+      },
+      onSubmit: function onSubmit(fn) {
+        this.options({
+          onSubmit: fn
+        });
+      },
+      sync: function sync(field) {
+        var parser = h.getParser(field);
+
+        if (parser) {
+          h.$render.clearCache(parser, true);
+          h.refresh();
+        }
+      },
+      refresh: function refresh(clear) {
+        if (clear) h.$render.clearCacheAll();
+        h.refresh();
+      },
+      hideForm: function hideForm(isShow) {
+        h.vm.isShow = !isShow;
+      },
+      changeStatus: function changeStatus() {
+        return h.changeStatus;
+      },
+      clearChangeStatus: function clearChangeStatus() {
+        h.changeStatus = false;
+      },
+      updateRule: function updateRule(id, rule) {
+        var parser = h.getParser(id);
+
+        if (parser) {
+          deepExtend(parser.rule, rule);
+        }
+      },
+      getRule: function getRule(id) {
+        var parser = h.getParser(id);
+
+        if (parser) {
+          return parser.rule;
+        }
+      },
+      updateRules: function updateRules(rules) {
+        var _this = this;
+
+        Object.keys(rules).forEach(function (id) {
+          _this.updateRule(id, rules[id]);
+        });
+      },
+      method: function method(id, name) {
+        var parser = h.getParser(id);
+        if (!parser || !parser.el[name]) throw new Error('方法不存在' + errMsg());
+        return function () {
+          for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+            args[_key] = arguments[_key];
+          }
+
+          parser.el[name](args);
+        };
+      },
+      toJson: function toJson$1() {
+        return toJson(this.rule);
+      }
+    };
   }
 
   function getRule(rule) {
@@ -1468,7 +1741,7 @@
         vm.$set(vm, 'buttonProps', this.options.submitBtn);
         vm.$set(vm, 'resetProps', this.options.resetBtn);
         vm.$set(vm, 'formData', this.formData);
-        if (this.fCreateApi === undefined) this.fCreateApi = this.fc.drive.getGlobalApi(this);
+        if (this.fCreateApi === undefined) this.fCreateApi = this.fc.drive.getGlobalApi(this, baseApi(this));
         this.fCreateApi.rule = this.rules;
         this.fCreateApi.config = this.options;
       }
@@ -1480,16 +1753,20 @@
         var vm = this.vm;
         Object.keys(parser.rule).forEach(function (key) {
           if (['field', 'type', 'value', 'vm', 'template', 'name', 'config'].indexOf(key) !== -1 || parser.rule[key] === undefined) return;
-          parser.watch.push(vm.$watch(function () {
-            return parser.rule[key];
-          }, function (n, o) {
-            if (o === undefined) return;
 
-            _this4.$render.clearCache(parser);
-          }, {
-            deep: true,
-            immediate: true
-          }));
+          try {
+            parser.watch.push(vm.$watch(function () {
+              return parser.rule[key];
+            }, function (n, o) {
+              if (o === undefined) return;
+
+              _this4.$render.clearCache(parser);
+            }, {
+              deep: key !== 'children',
+              immediate: true
+            }));
+          } catch (e) {//
+          }
         });
       }
     }, {
@@ -1643,16 +1920,8 @@
 
   function bindParser(rule, parser) {
     Object.defineProperties(rule, {
-      __field__: {
-        value: parser.field,
-        enumerable: false,
-        configurable: false
-      },
-      __fc__: {
-        value: parser,
-        enumerable: false,
-        configurable: false
-      }
+      __field__: enumerable(parser.field),
+      __fc__: enumerable(parser)
     });
   }
 
@@ -3174,57 +3443,14 @@
 
   var parsers = [checkbox$1, datePicker, frame$1, hidden, input, radio$1, select$1, slider, iswitch, timePicker, tree$1, upload$1];
 
-  function getGlobalApi(h) {
+  function getGlobalApi(h, baseApi) {
     function tidyFields(fields) {
       var all = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
       if (!fields) fields = all ? Object.keys(h.fieldList) : h.fields();else if (!Array.isArray(fields)) fields = [fields];
       return fields;
     }
 
-    return {
-      formData: function formData() {
-        var parsers = h.fieldList;
-        return Object.keys(parsers).reduce(function (initial, id) {
-          var parser = parsers[id];
-          initial[parser.field] = deepExtend({}, {
-            value: parser.rule.value
-          }).value;
-          return initial;
-        }, {});
-      },
-      getValue: function getValue(field) {
-        var parser = h.fieldList[field];
-        if (!parser) return;
-        return deepExtend({}, {
-          value: parser.rule.value
-        }).value;
-      },
-      setValue: function setValue(field, value) {
-        var formData = field;
-        if (!isPlainObject(field)) formData = _defineProperty({}, field, value);
-        Object.keys(formData).forEach(function (key) {
-          var parser = h.fieldList[key];
-          if (!parser) return;
-          parser.rule.value = formData[key];
-        });
-      },
-      changeValue: function changeValue(field, value) {
-        this.setValue(field, value);
-      },
-      changeField: function changeField(field, value) {
-        this.setValue(field, value);
-      },
-      removeField: function removeField(field) {
-        var parser = h.getParser(field);
-        if (!parser) return;
-        var fields = parser.root.map(function (rule) {
-          return rule.__field__;
-        }),
-            index = fields.indexOf(field);
-        if (index === -1) return;
-        parser.root.splice(index, 1);
-        if (h.sortList.indexOf(parser.id) === -1) this.reload();
-      },
+    return _objectSpread({}, baseApi, {
       validate: function validate(callback) {
         h.$form.getFormRef().validate(function (valid) {
           callback && callback(valid);
@@ -3244,48 +3470,6 @@
           h.$render.clearCache(parser, true);
         });
       },
-      destroy: function destroy() {
-        h.vm.$el.parentNode.removeChild(h.vm.$el);
-        h.vm.$destroy();
-      },
-      fields: function fields() {
-        return h.fields();
-      },
-      append: function append(rule, after, isChild) {
-        var fields = h.fieldList,
-            index = h.sortList.length,
-            rules = h.rules;
-        if (rule.field && fields.indexOf(rule.field) !== -1) return console.error("".concat(rule.field, " \u5B57\u6BB5\u5DF2\u5B58\u5728") + errMsg());
-        var parser = h.getParser(after);
-
-        if (parser) {
-          if (isChild) {
-            rules = parser.rule.children;
-            index = parser.rule.children.length;
-          } else {
-            index = parser.root.indexOf(parser.rule);
-          }
-        }
-
-        rules.splice(index + 1, 0, rule);
-      },
-      prepend: function prepend(rule, after, isChild) {
-        var fields = h.fieldList,
-            index = 0,
-            rules = h.rules;
-        if (rule.field && fields.indexOf(rule.field) !== -1) return console.error("".concat(rule.field, " \u5B57\u6BB5\u5DF2\u5B58\u5728") + errMsg());
-        var parser = h.getParser(after);
-
-        if (parser) {
-          if (isChild) {
-            rules = parser.rule.children;
-          } else {
-            index = parser.root.indexOf(parser.rule);
-          }
-        }
-
-        rules.splice(index, 0, rule);
-      },
       submit: function submit(successFn, failFn) {
         var _this = this;
 
@@ -3302,53 +3486,6 @@
           }
         });
       },
-      hidden: function hidden(_hidden, fields) {
-        var hiddenList = h.$form.hidden;
-        tidyFields(fields, true).forEach(function (field) {
-          var parser = h.getParser(field);
-          if (!parser) return;
-
-          if (_hidden && hiddenList.indexOf(parser) === -1) {
-            hiddenList.push(parser);
-          } else if (!_hidden && hiddenList.indexOf(parser) !== -1) {
-            hiddenList.splice(hiddenList.indexOf(parser), 1);
-          }
-
-          h.$render.clearCache(parser, true);
-        });
-        h.refresh();
-      },
-      hiddenStatus: function hiddenStatus(id) {
-        var parser = h.getParser(id);
-        return h.$form.hidden.indexOf(parser) !== -1;
-      },
-      visibility: function visibility(_visibility, fields) {
-        var visibilityList = h.$form.visibility;
-        tidyFields(fields, true).forEach(function (field) {
-          var parser = h.getParser(field);
-          if (!parser) return;
-
-          if (_visibility && visibilityList.indexOf(parser) === -1) {
-            visibilityList.push(parser);
-          } else if (!_visibility && visibilityList.indexOf(parser) !== -1) {
-            visibilityList.splice(visibilityList.indexOf(parser), 1);
-          }
-
-          h.$render.clearCache(parser, true);
-        });
-        h.refresh();
-      },
-      visibilityStatus: function visibilityStatus(id) {
-        var parser = h.getParser(id);
-        return h.$form.visibility.indexOf(parser) !== -1;
-      },
-      disabled: function disabled(_disabled, fields) {
-        tidyFields(fields, true).forEach(function (field) {
-          var parser = h.fieldList[field];
-          if (!parser) return;
-          h.vm.$set(parser.rule.props, 'disabled', !!_disabled);
-        });
-      },
       clearValidateState: function clearValidateState(fields) {
         tidyFields(fields).forEach(function (field) {
           var parser = h.fieldList[field];
@@ -3361,47 +3498,6 @@
           }
         });
       },
-      model: function model() {
-        return Object.keys(h.trueData).reduce(function (initial, key) {
-          initial[key] = h.trueData[key].rule;
-          return initial;
-        }, {});
-      },
-      component: function component() {
-        return Object.keys(h.customData).reduce(function (initial, key) {
-          initial[key] = h.customData[key].rule;
-          return initial;
-        }, {});
-      },
-      bind: function bind() {
-        var bind = {},
-            properties = {};
-        Object.keys(h.fieldList).forEach(function (field) {
-          var parser = h.fieldList[field];
-          properties[field] = {
-            get: function get() {
-              return parser.rule.value;
-            },
-            set: function set(value) {
-              parser.rule.value = value;
-            },
-            enumerable: true,
-            configurable: true
-          };
-        });
-        Object.defineProperties(bind, properties);
-        return bind;
-      },
-      submitBtnProps: function submitBtnProps() {
-        var props = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-
-        h.vm._buttonProps(props);
-      },
-      resetBtnProps: function resetBtnProps() {
-        var props = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-
-        h.vm._resetProps(props);
-      },
       btn: {
         loading: function loading() {
           var _loading = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
@@ -3411,10 +3507,10 @@
           });
         },
         disabled: function disabled() {
-          var _disabled2 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+          var _disabled = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
 
           h.vm._buttonProps({
-            disabled: !!_disabled2
+            disabled: !!_disabled
           });
         },
         show: function show() {
@@ -3434,10 +3530,10 @@
           });
         },
         disabled: function disabled() {
-          var _disabled3 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+          var _disabled2 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
 
           h.vm._resetProps({
-            disabled: !!_disabled3
+            disabled: !!_disabled2
           });
         },
         show: function show() {
@@ -3451,72 +3547,8 @@
       closeModal: function closeModal(field) {
         var parser = h.fieldList[field];
         parser && parser.closeModel && parser.closeModel();
-      },
-      set: function set(node, field, value) {
-        h.vm.$set(node, field, value);
-      },
-      reload: function reload(rules) {
-        h.reloadRule(rules);
-      },
-      updateOptions: function updateOptions(options) {
-        deepExtend(h.options, options);
-        this.refresh(true);
-      },
-      onSubmit: function onSubmit(fn) {
-        this.options({
-          onSubmit: fn
-        });
-      },
-      sync: function sync(field) {
-        var parser = h.getParser(field);
-
-        if (parser) {
-          h.$render.clearCache(parser, true);
-          h.refresh();
-        }
-      },
-      refresh: function refresh(clear) {
-        if (clear) h.$render.clearCacheAll();
-        h.refresh();
-      },
-      hideForm: function hideForm(isShow) {
-        h.vm.isShow = !isShow;
-      },
-      changeStatus: function changeStatus() {
-        return h.changeStatus;
-      },
-      clearChangeStatus: function clearChangeStatus() {
-        h.changeStatus = false;
-      },
-      updateRule: function updateRule(id, rule) {
-        var parser = h.getParser(id);
-
-        if (parser) {
-          deepExtend(parser.rule, rule);
-        }
-      },
-      updateRules: function updateRules(rules) {
-        var _this2 = this;
-
-        Object.keys(rules).forEach(function (id) {
-          _this2.updateRule(id, rules[id]);
-        });
-      },
-      method: function method(id, name) {
-        var parser = h.getParser(id);
-        if (!parser || !parser.el[name]) throw new Error('方法不存在' + errMsg());
-        return function () {
-          for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-            args[_key] = arguments[_key];
-          }
-
-          parser.el[name](args);
-        };
-      },
-      toJson: function toJson$1() {
-        return toJson(this.rule);
       }
-    };
+    });
   }
 
   var nodes = {
@@ -3832,7 +3864,7 @@
   VNode.use(nodes);
   var drive = {
     ui: "iview",
-    version: "0.0.5",
+    version: "1.0.0",
     formRender: Form,
     components: components,
     parsers: parsers,
