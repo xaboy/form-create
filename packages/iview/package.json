@@ -1,6 +1,6 @@
 {
     "name": "@form-create/iview",
-    "version": "0.0.5",
+    "version": "1.0.0",
     "description": "iview版表单生成器|Iview Form builder with dynamic rendering, data collection, validation and submission capabilities, built-in 17 common form components, support for two-way data binding, event extension, and support for building built-in components and any vue components using json.",
     "main": "./dist/form-create.min.js",
     "module": "./dist/form-create.min.js",
@@ -39,8 +39,8 @@
     },
     "homepage": "http://www.form-create.com",
     "dependencies": {
-        "@form-create/core": "^0.0.5",
-        "@form-create/utils": "^0.0.5",
+        "@form-create/core": "^1.0.0",
+        "@form-create/utils": "^1.0.0",
         "iview": "^3.3.3"
     },
     "publishConfig": {
