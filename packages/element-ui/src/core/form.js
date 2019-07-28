@@ -5,7 +5,7 @@ import style from '../style/index.css';
 const upperCaseReg = /[A-Z]/;
 
 export function isAttr(name, value) {
-    return (!upperCaseReg.test(name) && (isString(value) || isType(value) === 'Number'))
+    return (!upperCaseReg.test(name) && (isString(value) || isType(value, 'Number')))
 }
 
 function isTooltip(info) {
