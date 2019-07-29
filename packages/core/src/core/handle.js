@@ -272,6 +272,8 @@ export default class Handle {
             try {
                 parser.watch.push(vm.$watch(() => parser.rule[key], (n, o) => {
                     if (o === undefined) return;
+                    if (key === 'validate')
+                        this.validate[parser.field] = n;
                     this.$render.clearCache(parser);
                 }, {deep: key !== 'children', immediate: true}));
             } catch (e) {

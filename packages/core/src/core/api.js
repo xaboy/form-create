@@ -210,10 +210,12 @@ export default function baseApi(h) {
         clearChangeStatus: () => {
             h.changeStatus = false;
         },
-        updateRule: (id, rule) => {
+        updateRule: (id, rule, cover) => {
             const parser = h.getParser(id);
             if (parser) {
-                deepExtend(parser.rule, rule);
+                cover ? Object.keys(rule).forEach(key => {
+                    parser.rule[key] = rule[key];
+                }) : deepExtend(parser.rule, rule);
             }
         },
         getRule: (id) => {
@@ -222,9 +224,9 @@ export default function baseApi(h) {
                 return parser.rule;
             }
         },
-        updateRules(rules) {
+        updateRules(rules, cover) {
             Object.keys(rules).forEach(id => {
-                this.updateRule(id, rules[id]);
+                this.updateRule(id, rules[id], cover);
             })
         },
         method(id, name) {
