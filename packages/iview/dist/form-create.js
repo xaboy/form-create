@@ -1,5 +1,5 @@
 /*!
- * @form-create/iview v1.0.0
+ * @form-create/iview v1.0.1
  * (c) 2018-2019 xaboy
  * Github https://github.com/xaboy/form-create
  * Released under the MIT License.
@@ -1444,11 +1444,13 @@
       clearChangeStatus: function clearChangeStatus() {
         h.changeStatus = false;
       },
-      updateRule: function updateRule(id, rule) {
+      updateRule: function updateRule(id, rule, cover) {
         var parser = h.getParser(id);
 
         if (parser) {
-          deepExtend(parser.rule, rule);
+          cover ? Object.keys(rule).forEach(function (key) {
+            parser.rule[key] = rule[key];
+          }) : deepExtend(parser.rule, rule);
         }
       },
       getRule: function getRule(id) {
@@ -1458,11 +1460,25 @@
           return parser.rule;
         }
       },
-      updateRules: function updateRules(rules) {
+      updateRules: function updateRules(rules, cover) {
         var _this = this;
 
         Object.keys(rules).forEach(function (id) {
-          _this.updateRule(id, rules[id]);
+          _this.updateRule(id, rules[id], cover);
+        });
+      },
+      updateValidate: function updateValidate(id, validate, merge) {
+        var parser = h.getParser(id);
+
+        if (parser) {
+          parser.rule.validate = merge ? parser.rule.validate.concat(validate) : validate;
+        }
+      },
+      updateValidates: function updateValidates(validates, merge) {
+        var _this2 = this;
+
+        Object.keys(validates).forEach(function (id) {
+          _this2.updateValidate(id, validates[id], merge);
         });
       },
       method: function method(id, name) {
@@ -1759,6 +1775,7 @@
               return parser.rule[key];
             }, function (n, o) {
               if (o === undefined) return;
+              if (key === 'validate') _this4.validate[parser.field] = n;
 
               _this4.$render.clearCache(parser);
             }, {
@@ -2838,8 +2855,12 @@
     },
     watch: {
       value: function value(n) {
-        this.$refs.upload.fileList = toArray(n).map(parseFile);
-        this.uploadList = this.$refs.upload.fileList;
+        if (this.$refs.upload.fileList.every(function (file) {
+          return !file.status || file.status === 'finished';
+        })) {
+          this.$refs.upload.fileList = toArray(n).map(parseFile);
+          this.uploadList = this.$refs.upload.fileList;
+        }
       },
       maxLength: function maxLength(n, o) {
         if (o === 1 || n === 1) this.update();
@@ -2987,7 +3008,9 @@
       this.uploadList = this.$refs.upload.fileList;
       this.$watch(function () {
         return _this4.$refs.upload.fileList;
-      }, function () {
+      }, function (n) {
+        console.log(n);
+
         _this4.update();
       }, {
         deep: true
@@ -3864,7 +3887,7 @@
   VNode.use(nodes);
   var drive = {
     ui: "iview",
-    version: "1.0.0",
+    version: "1.0.1",
     formRender: Form,
     components: components,
     parsers: parsers,
