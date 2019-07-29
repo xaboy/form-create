@@ -405,8 +405,9 @@ function jsonMock() {
                 }, //点击文件列表中已上传的文件时的钩子
                 "onRemove": function (file, fileList) {
                 }, //文件列表移除文件时的钩子
-                "onSuccess": function () {
-                    return 'http://file.lotkk.com/form-create.jpeg';
+                "onSuccess": function (res, file) {
+                    console.log('upload success');
+                    file.url =  res.data.filePath;
                 }, //文件上传成功时的钩子，返回字段为 response, file, fileList
                 "onError": function (err, file, fileList) {
                 },// 文件上传失败时的钩子

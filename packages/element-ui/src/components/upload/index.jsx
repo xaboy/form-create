@@ -63,8 +63,12 @@ export default {
     },
     watch: {
         value(n) {
-            this.$refs.upload.uploadFiles = toArray(n).map(parseFile);
-            this.uploadList = this.$refs.upload.uploadFiles;
+            if (this.uploadList.every(file => {
+                return !file.status || file.status === 'success';
+            })) {
+                this.$refs.upload.uploadFiles = toArray(n).map(parseFile);
+                this.uploadList = this.$refs.upload.uploadFiles;
+            }
         },
         maxLength(n, o) {
             if (o === 1 || n === 1)
@@ -103,7 +107,7 @@ export default {
                 on-click={() => this.handleClick(file)}/>;
         },
         makeProgress(file) {
-            return <ElProgress props={{percent: file.percentage, hideInfo: true}} style="width:90%"/>
+            return <ElProgress props={{percentage: file.percentage, type: 'circle', width: 52}} style="margin-top:2px;"/>
         },
         makeIcons(file) {
             const icons = [];
@@ -116,10 +120,9 @@ export default {
                 return <div class={style['fc-upload-cover']}>{icons}</div>;
             }
         },
-
         makeFiles() {
             return this.uploadList.map(file => <div
-                class={style['fc-files']}>{file.showProgress ? this.makeProgress(file) : [this.makeItem(file), this.makeIcons(file)]}</div>);
+                class={style['fc-files']}>{(file.showProgress || (file.percentage !== undefined && file.status !== 'success')) ? this.makeProgress(file) : [this.makeItem(file), this.makeIcons(file)]}</div>);
         },
         makeUpload() {
             return <ElUpload ref="upload"

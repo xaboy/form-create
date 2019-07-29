@@ -262,16 +262,16 @@ function mock() {
                 "limit": 4,
                 "uploadType": "file",
                 "name": "file",
-                "onSuccess": function (res) {
+                "onSuccess": function (res, file) {
                     console.log('upload success');
-                    return 'http://file.lotkk.com/form-create.jpeg';
+                    file.url =  res.data.filePath;
                 },
                 "onRemove": function (file, fileList) {
                     console.log(file, fileList);
                 },
                 'beforeRemove': function () {
                     console.log('before-remove');
-                    return false;
+                    // return false;
                 },
                 "allowRemove": true,
             }).validate({required: true, type: 'array', min: 3, message: '请上传3张图片', trigger: 'change'}),
