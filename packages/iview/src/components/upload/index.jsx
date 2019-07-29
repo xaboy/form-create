@@ -64,8 +64,12 @@ export default {
     },
     watch: {
         value(n) {
-            this.$refs.upload.fileList = toArray(n).map(parseFile);
-            this.uploadList = this.$refs.upload.fileList;
+            if (this.$refs.upload.fileList.every(file => {
+                return !file.status || file.status === 'finished';
+            })) {
+                this.$refs.upload.fileList = toArray(n).map(parseFile);
+                this.uploadList = this.$refs.upload.fileList;
+            }
         },
         maxLength(n, o) {
             if (o === 1 || n === 1)
@@ -157,7 +161,8 @@ export default {
     },
     mounted() {
         this.uploadList = this.$refs.upload.fileList;
-        this.$watch(() => this.$refs.upload.fileList, () => {
+        this.$watch(() => this.$refs.upload.fileList, (n) => {
+            console.log(n);
             this.update();
         }, {deep: true});
     }
