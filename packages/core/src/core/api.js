@@ -229,6 +229,17 @@ export default function baseApi(h) {
                 this.updateRule(id, rules[id], cover);
             })
         },
+        updateValidate(id, validate, extend) {
+            const parser = h.getParser(id);
+            if (parser) {
+                extend ? extend(parser.rule.validate, validate) : (parser.rule.validate = validate);
+            }
+        },
+        updateValidates(validates, extend) {
+            Object.keys(validates).forEach(id => {
+                this.updateValidate(id, validates[id], extend);
+            })
+        },
         method(id, name) {
             const parser = h.getParser(id);
             if (!parser || !parser.el[name])
