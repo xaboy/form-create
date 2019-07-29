@@ -63,7 +63,7 @@ export default {
     },
     watch: {
         value(n) {
-            if (this.uploadList.every(file => {
+            if (this.$refs.upload.uploadFiles.every(file => {
                 return !file.status || file.status === 'success';
             })) {
                 this.$refs.upload.uploadFiles = toArray(n).map(parseFile);
@@ -122,7 +122,7 @@ export default {
         },
         makeFiles() {
             return this.uploadList.map(file => <div
-                class={style['fc-files']}>{(file.showProgress || (file.percentage !== undefined && file.status !== 'success')) ? this.makeProgress(file) : [this.makeItem(file), this.makeIcons(file)]}</div>);
+                class={style['fc-files']}>{(file.percentage !== undefined && file.status !== 'success') ? this.makeProgress(file) : [this.makeItem(file), this.makeIcons(file)]}</div>);
         },
         makeUpload() {
             return <ElUpload ref="upload"
