@@ -1,6 +1,6 @@
 import {toDefSlot, uniqueId} from '@form-create/utils';
 
-const NAME = 'fc-elm-selec';
+const NAME = 'fc-elm-select';
 export default {
     name: NAME,
     functional: true,

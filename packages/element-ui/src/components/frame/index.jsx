@@ -248,13 +248,13 @@ export default {
 
         makeFiles() {
             return this.makeGroup(this.fileList.map((src, index) => {
-                return this.makeItem([<i class="el-icon-tickets"
+                return this.makeItem(index, [<i class="el-icon-tickets"
                     on-click={() => this.handleClick(src)}/>, this.makeIcons(src, index)])
             }))
         },
         makeImages() {
             return this.makeGroup(this.fileList.map((src, index) => {
-                return this.makeItem([<img src={src}/>, this.makeIcons(src, index)])
+                return this.makeItem(index, [<img src={src}/>, this.makeIcons(src, index)])
             }))
         },
         makeBtn() {
