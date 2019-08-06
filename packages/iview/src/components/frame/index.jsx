@@ -56,7 +56,7 @@ export default {
         },
         handleIcon: {
             type: [String, Boolean],
-            default: ''
+            default: undefined
         },
         title: String,
         allowRemove: {
