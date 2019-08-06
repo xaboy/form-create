@@ -1,12 +1,17 @@
-import {toDefSlot} from '@form-create/utils';
+import {toDefSlot, uniqueId} from '@form-create/utils';
+
+const NAME = 'fc-iview-select';
 
 export default {
-    name: 'fc-iview-select',
+    name: NAME,
     functional: true,
     props: {
         options: {
             type: Array,
             default: () => ([])
+        },
+        unique: {
+            default: () => uniqueId()
         },
     },
     render(h, ctx) {
@@ -15,7 +20,7 @@ export default {
             const slot = props.slot ? toDefSlot(props.slot, h) : [];
 
             return <Option {...{props}}
-                key={`t${index}${ctx.parent._uid}`}>{slot}</Option>
+                key={NAME + index + ctx.props.unique}>{slot}</Option>
         }).concat(ctx.chlidren)}</Select>;
     }
 }

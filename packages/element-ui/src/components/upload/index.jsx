@@ -1,4 +1,4 @@
-import {hasSlot, toArray, toString} from '@form-create/utils';
+import {hasSlot, toArray, toString, uniqueId} from '@form-create/utils';
 import {defaultOnHandle} from '../../core/modal';
 import style from '../../style/index.css';
 
@@ -13,9 +13,10 @@ function getFileName(file) {
     return toString(file).split('/').pop()
 }
 
+const NAME = 'fc-elm-upload';
 
 export default {
-    name: 'fc-elm-upload',
+    name: NAME,
 
     props: {
         ctx: {
@@ -53,7 +54,8 @@ export default {
     },
     data() {
         return {
-            uploadList: []
+            uploadList: [],
+            unique: uniqueId()
         }
     },
     created() {
@@ -76,6 +78,9 @@ export default {
         }
     },
     methods: {
+        key(unique) {
+            return NAME + unique + this.unique;
+        },
         isDisabled() {
             return this.ctx.props.disabled === true;
         },
@@ -93,40 +98,42 @@ export default {
                 <i class="el-icon-upload2"/>
             </div>
         },
-        makeItem(file) {
+        makeItem(file, index) {
             return this.uploadType === 'image'
-                ? <img src={file.url}/>
-                : <i class="el-icon-tickets"/>
+                ? <img src={file.url} key={this.key('img' + index)}/>
+                : <i class="el-icon-tickets" key={this.key('i' + index)}/>
         },
-        makeRemoveIcon(file) {
-            return <i class="el-icon-delete" on-click={() => this.onRemove(file)}/>;
+        makeRemoveIcon(file, index) {
+            return <i class="el-icon-delete" on-click={() => this.onRemove(file)} key={this.key('ri' + index)}/>;
         },
-        makeHandleIcon(file) {
+        makeHandleIcon(file, index) {
             return <i
                 class={(this.handleIcon === true || this.handleIcon === undefined) ? 'el-icon-view' : this.handleIcon}
-                on-click={() => this.handleClick(file)}/>;
+                on-click={() => this.handleClick(file)} key={this.key('hi' + index)}/>;
         },
-        makeProgress(file) {
-            return <ElProgress props={{percentage: file.percentage, type: 'circle', width: 52}} style="margin-top:2px;"/>
+        makeProgress(file, index) {
+            return <ElProgress props={{percentage: file.percentage, type: 'circle', width: 52}} style="margin-top:2px;"
+                key={this.key('pg' + index)}/>
         },
-        makeIcons(file) {
+        makeIcons(file, index) {
             const icons = [];
             if (this.allowRemove || this.handleIcon !== false) {
                 if ((this.uploadType !== 'file' && this.handleIcon !== false) || (this.uploadType === 'file' && this.handleIcon))
-                    icons.push(this.makeHandleIcon(file));
+                    icons.push(this.makeHandleIcon(file, index));
                 if (this.allowRemove)
-                    icons.push(this.makeRemoveIcon(file));
+                    icons.push(this.makeRemoveIcon(file, index));
 
                 return <div class={style['fc-upload-cover']}>{icons}</div>;
             }
         },
         makeFiles() {
-            return this.uploadList.map(file => <div
-                class={style['fc-files']}>{(file.percentage !== undefined && file.status !== 'success') ? this.makeProgress(file) : [this.makeItem(file), this.makeIcons(file)]}</div>);
+            return this.uploadList.map((file, index) => <div key={this.key(index)}
+                class={style['fc-files']}>{(file.percentage !== undefined && file.status !== 'success') ? this.makeProgress(file, index) : [this.makeItem(file, index), this.makeIcons(file, index)]}</div>);
         },
         makeUpload() {
             return <ElUpload ref="upload"
-                style={{display: 'inline-block'}} {...this.ctx}>{this.children}</ElUpload>;
+                style={{display: 'inline-block'}} {...this.ctx}
+                key={this.key('upload')}>{this.children}</ElUpload>;
         },
         initChildren() {
             if (!hasSlot(this.children, 'default'))

@@ -1,17 +1,24 @@
+import {uniqueId} from '@form-create/utils';
+
+const NAME = 'fc-iview-radio';
+
 export default {
-    name: 'fc-iview-radio',
+    name: NAME,
     functional: true,
     props: {
         options: {
             type: Array,
             default: () => ([])
         },
+        unique: {
+            default: () => uniqueId()
+        },
     },
     render(h, ctx) {
-        return <RadioGroup {...ctx.data}>{ctx.props.options.map(opt => {
+        return <RadioGroup {...ctx.data}>{ctx.props.options.map((opt, index) => {
             const props = {...opt};
             delete props.value;
-            return <Radio {...{props}}/>
+            return <Radio {...{props}} key={NAME + index + ctx.props.unique}/>
         }).concat(ctx.chlidren)}</RadioGroup>
     }
 }

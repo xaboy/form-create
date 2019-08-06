@@ -1,12 +1,16 @@
-import {toDefSlot} from '@form-create/utils';
+import {toDefSlot, uniqueId} from '@form-create/utils';
 
+const NAME = 'fc-elm-selec';
 export default {
-    name: 'fc-elm-select',
+    name: NAME,
     functional: true,
     props: {
         options: {
             type: Array,
             default: () => ([])
+        },
+        unique: {
+            default: () => uniqueId()
         },
     },
     render(h, ctx) {
@@ -15,7 +19,7 @@ export default {
             const slot = props.slot ? toDefSlot(props.slot, h) : [];
 
             return <ElOption {...{props}}
-                key={`t${index}${ctx.parent._uid}`}>{slot}</ElOption>
+                key={NAME + index + ctx.props.unique}>{slot}</ElOption>
         }).concat(ctx.chlidren)}</ElSelect>;
     }
 }

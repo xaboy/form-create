@@ -1,5 +1,9 @@
+import {uniqueId} from '@form-create/utils';
+
+const NAME = 'fc-elm-checkbox';
+
 export default {
-    name: 'fc-elm-checkbox',
+    name: NAME,
     props: {
         options: {
             type: Array,
@@ -26,7 +30,8 @@ export default {
     },
     data() {
         return {
-            trueValue: []
+            trueValue: [],
+            unique: uniqueId()
         }
     },
     methods: {
@@ -43,11 +48,11 @@ export default {
     },
     render() {
         return <ElCheckboxGroup {...this.ctx} v-model={this.trueValue}
-            on-input={this.onInput}>{this.options.map(opt => {
+            on-input={this.onInput}>{this.options.map((opt, index) => {
                 const props = {...opt};
                 const Type = this.type === 'button' ? 'ElCheckboxButton' : 'ElCheckbox';
                 delete props.value;
-                return <Type {...{props}}/>
+                return <Type {...{props}} key={NAME + Type + index + this.unique}/>
             }).concat(this.chlidren)}</ElCheckboxGroup>
     }
 }

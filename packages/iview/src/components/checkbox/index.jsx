@@ -1,5 +1,9 @@
+import {uniqueId} from '@form-create/utils';
+
+const NAME = 'fc-iview-checkbox';
+
 export default {
-    name: 'fc-iview-checkbox',
+    name: NAME,
     props: {
         options: {
             type: Array,
@@ -25,7 +29,8 @@ export default {
     },
     data() {
         return {
-            trueValue: []
+            trueValue: [],
+            unique: uniqueId()
         }
     },
     methods: {
@@ -42,10 +47,10 @@ export default {
     },
     render() {
         return <CheckboxGroup {...this.ctx} v-model={this.trueValue}
-            on-input={this.onInput}>{this.options.map(opt => {
+            on-input={this.onInput}>{this.options.map((opt, index) => {
                 const props = {...opt};
                 delete props.value;
-                return <Checkbox {...{props}}/>
+                return <Checkbox {...{props}} key={NAME + index + this.unique}/>
             }).concat(this.chlidren)}</CheckboxGroup>
     }
 }

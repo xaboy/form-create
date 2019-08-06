@@ -56,7 +56,7 @@ export default {
         }
     },
     render() {
-        return (<div>{this.makeTree()}</div>);
+        return this.makeTree();
     },
     mounted() {
         this.setValue();

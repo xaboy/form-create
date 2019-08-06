@@ -1,18 +1,26 @@
+import {uniqueId} from '@form-create/utils';
+
+const NAME = 'fc-elm-radio';
+
 export default {
-    name: 'fc-elm-radio',
+    name: NAME,
     functional: true,
     props: {
         options: {
             type: Array,
             default: () => ([])
         },
-        type: String
+        type: String,
+        unique: {
+            default: () => uniqueId()
+        },
     },
     render(h, ctx) {
-        return <ElRadioGroup {...ctx.data}>{ctx.props.options.map(opt => {
+        return <ElRadioGroup {...ctx.data}>{ctx.props.options.map((opt, index) => {
             const props = {...opt};
+            const Type = ctx.props.type === 'button' ? 'ElRadioButton' : 'ElRadio';
             delete props.value;
-            return ctx.props.type === 'button' ? <ElRadioButton {...{props}}/> : <ElRadio {...{props}}/>;
+            return <Type {...{props}} key={NAME + Type + index + ctx.unique}/>;
         }).concat(ctx.chlidren)}</ElRadioGroup>
     }
 }

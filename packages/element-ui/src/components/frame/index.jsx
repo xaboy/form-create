@@ -1,9 +1,11 @@
 import {defaultOnHandle, mount} from '../../core/modal';
 import style from '../../style/index.css';
-import {toArray} from '@form-create/utils';
+import {toArray, uniqueId} from '@form-create/utils';
+
+const NAME = 'fc-elm-frame';
 
 export default {
-    name: 'fc-elm-frame',
+    name: NAME,
     props: {
         type: {
             type: String,
@@ -108,7 +110,8 @@ export default {
     data() {
         return {
             modalVm: null,
-            fileList: toArray(this.value)
+            fileList: toArray(this.value),
+            unique: uniqueId()
         }
     },
     watch: {
@@ -121,7 +124,9 @@ export default {
         }
     },
     methods: {
-
+        key(unique) {
+            return NAME + unique + this.unique;
+        },
         closeModel() {
             this.modalVm && this.modalVm.onClose();
             this.modalVm = null;
@@ -203,57 +208,57 @@ export default {
                 clearable: false
             };
 
-            return <Input props={props} on={{'on-click': () => this.showModel()}}/>
+            return <Input props={props} on={{'on-click': () => this.showModel()}} key={this.key('input')}/>
         },
 
         makeGroup(children) {
             if (!this.maxLength || this.fileList.length < this.maxLength)
                 children.push(this.makeBtn());
-            return <div class={style['fc-upload']}>{...children}</div>
+            return <div class={style['fc-upload']} key={this.key('group')}>{...children}</div>
         },
 
-        makeItem(children) {
-            return <div class={style['fc-files']}>{...children}</div>;
+        makeItem(index, children) {
+            return <div class={style['fc-files']} key={this.key('file' + index)}>{...children}</div>;
         },
         valid(field) {
             if (field !== this.field)
                 throw new Error('frame 无效的字段值');
         },
 
-        makeIcons(val) {
+        makeIcons(val, index) {
             if (this.handleIcon !== false || this.allowRemove === true) {
                 const icons = [];
                 if ((this.type !== 'file' && this.handleIcon !== false) || (this.type === 'file' && this.handleIcon))
-                    icons.push(this.makeHandleIcon(val));
+                    icons.push(this.makeHandleIcon(val, index));
                 if (this.allowRemove)
-                    icons.push(this.makeRemoveIcon(val));
+                    icons.push(this.makeRemoveIcon(val, index));
 
-                return <div class={style['fc-upload-cover']}>{icons}</div>
+                return <div class={style['fc-upload-cover']} key={this.key('uc')}>{icons}</div>
             }
         },
-        makeHandleIcon(val) {
+        makeHandleIcon(val, index) {
             return <i
                 class={(this.handleIcon === true || this.handleIcon === undefined) ? 'el-icon-view' : this.handleIcon}
-                on-click={() => this.handleClick(val)}/>
+                on-click={() => this.handleClick(val)} key={this.key('hi' + index)}/>
         },
 
-        makeRemoveIcon(val) {
-            return <i class="el-icon-delete" on-click={() => this.handleRemove(val)}/>
+        makeRemoveIcon(val, index) {
+            return <i class="el-icon-delete" on-click={() => this.handleRemove(val)} key={this.key('ri' + index)}/>
         },
 
         makeFiles() {
-            return this.makeGroup(this.fileList.map(src => {
+            return this.makeGroup(this.fileList.map((src, index) => {
                 return this.makeItem([<i class="el-icon-tickets"
-                    on-click={() => this.handleClick(src)}/>, this.makeIcons(src)])
+                    on-click={() => this.handleClick(src)}/>, this.makeIcons(src, index)])
             }))
         },
         makeImages() {
-            return this.makeGroup(this.fileList.map(src => {
-                return this.makeItem([<img src={src}/>, this.makeIcons(src)])
+            return this.makeGroup(this.fileList.map((src, index) => {
+                return this.makeItem([<img src={src}/>, this.makeIcons(src, index)])
             }))
         },
         makeBtn() {
-            return <div class={style['fc-upload-btn']} on-click={() => this.showModel()}>
+            return <div class={style['fc-upload-btn']} on-click={() => this.showModel()} key={this.key('btn')}>
                 <i class={this.icon}/>
             </div>
         },
