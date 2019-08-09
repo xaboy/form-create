@@ -7,7 +7,6 @@ import radio from './radio';
 import select from './select';
 import slider from './slider';
 import iswitch from './switch';
-import timePicker from './timePicker';
 import tree from './tree';
 import upload from './upload';
 
@@ -21,7 +20,6 @@ export default [
     select,
     slider,
     iswitch,
-    timePicker,
     tree,
     upload
 ]
