@@ -250,6 +250,15 @@ export default function baseApi(h) {
         },
         toJson() {
             return toJson(this.rule);
+        },
+        on(...args){
+            h.vm.$on(...args);
+        },
+        once(...args){
+            h.vm.$once(...args);
+        },
+        off(...args){
+            h.vm.$off(...args);
         }
     };
 }
