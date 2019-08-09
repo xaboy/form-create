@@ -215,11 +215,10 @@ export default class Handle {
             return;
         this.parsers[id] = parser;
 
-        if (this.isNoVal(parser)) {
-            if (name)
-                $set(this.customData, name, parser);
-            return;
-        }
+        if (name)
+            $set(this.customData, name, parser);
+
+        if (this.isNoVal(parser)) return;
         this.fieldList[field] = parser;
         $set(this.formData, field, parser.toFormValue(rule.value));
         $set(this.validate, field, rule.validate || []);
