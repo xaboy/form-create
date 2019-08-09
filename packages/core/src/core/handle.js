@@ -139,7 +139,9 @@ export default class Handle {
         Object.keys(parseRule).forEach(k => {
             $set(rule, k, parseRule[k]);
         });
-
+        Object.defineProperties(rule, {
+            __origin__: enumerable(_rule)
+        });
         return rule;
     }
 
