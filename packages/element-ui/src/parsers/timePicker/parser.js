@@ -30,7 +30,7 @@ export default class Parser extends BaseParser {
     }
 
     mounted() {
-        this.toValue = (val) => this.el.formatToValue(val);
+        this.toValue = (val) => this.el.formatToString(val);
     }
 }
 
