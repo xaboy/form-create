@@ -1,17 +1,17 @@
 /*!
- * @form-create/iview v1.0.1
+ * @form-create/iview v1.0.2
  * (c) 2018-2019 xaboy
  * Github https://github.com/xaboy/form-create
  * Released under the MIT License.
  */
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('iview'), require('vue')) :
-  typeof define === 'function' && define.amd ? define(['exports', 'iview', 'vue'], factory) :
-  (global = global || self, factory(global.formCreate = {}, global.iview, global.Vue));
-}(this, function (exports, iview, Vue) { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('vue'), require('iview')) :
+  typeof define === 'function' && define.amd ? define(['exports', 'vue', 'iview'], factory) :
+  (global = global || self, factory(global.formCreate = {}, global.Vue, global.iview));
+}(this, function (exports, Vue, iview) { 'use strict';
 
-  iview = iview && iview.hasOwnProperty('default') ? iview['default'] : iview;
   Vue = Vue && Vue.hasOwnProperty('default') ? Vue['default'] : Vue;
+  iview = iview && iview.hasOwnProperty('default') ? iview['default'] : iview;
 
   function _typeof(obj) {
     if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
@@ -196,169 +196,6 @@
 
   var helper = mergeJsxProps;
 
-  var checkbox = {
-    name: 'fc-iview-checkbox',
-    props: {
-      options: {
-        type: Array,
-        default: function _default() {
-          return [];
-        }
-      },
-      children: {
-        type: Array,
-        default: function _default() {
-          return [];
-        }
-      },
-      ctx: {
-        type: Object,
-        default: function _default() {
-          return {};
-        }
-      },
-      value: {
-        type: Array,
-        default: function _default() {
-          return [];
-        }
-      }
-    },
-    watch: {
-      value: function value() {
-        this.update();
-      }
-    },
-    data: function data() {
-      return {
-        trueValue: []
-      };
-    },
-    methods: {
-      onInput: function onInput(n) {
-        this.$emit('input', this.options.filter(function (opt) {
-          return n.indexOf(opt.label) !== -1;
-        }).map(function (opt) {
-          return opt.value;
-        }));
-      },
-      update: function update() {
-        var _this = this;
-
-        this.trueValue = this.options.filter(function (opt) {
-          return _this.value.indexOf(opt.value) !== -1;
-        }).map(function (option) {
-          return option.label;
-        });
-      }
-    },
-    created: function created() {
-      this.update();
-    },
-    render: function render() {
-      var _this2 = this;
-
-      var h = arguments[0];
-      return h("CheckboxGroup", helper([{}, this.ctx, {
-        "on": {
-          "input": this.onInput
-        },
-        "model": {
-          value: _this2.trueValue,
-          callback: function callback($$v) {
-            _this2.trueValue = $$v;
-          }
-        }
-      }]), [this.options.map(function (opt) {
-        var props = _objectSpread({}, opt);
-
-        delete props.value;
-        return h("Checkbox", {
-          "props": _objectSpread({}, props)
-        });
-      }).concat(this.chlidren)]);
-    }
-  };
-
-  var iview2 = {
-    _v: 2,
-    resetBtnType: 'ghost',
-    resetBtnIcon: 'refresh',
-    submitBtnIcon: 'ios-upload',
-    fileIcon: 'document-text',
-    fileUpIcon: 'folder',
-    imgUpIcon: 'image',
-    infoIcon: 'ios-information-outline'
-  };
-  var iview3 = {
-    _v: 3,
-    resetBtnType: 'default',
-    resetBtnIcon: 'md-refresh',
-    submitBtnIcon: 'ios-share',
-    fileIcon: 'md-document',
-    fileUpIcon: 'ios-folder-open',
-    imgUpIcon: 'md-images',
-    infoIcon: 'ios-information-circle-outline'
-  };
-  var iviewConfig = function () {
-    if (typeof iview === 'undefined') return iview2;
-    return iview.version && iview.version.split('.')[0] == 3 ? iview3 : iview2;
-  }();
-  function getConfig() {
-    return {
-      form: {
-        inline: false,
-        labelPosition: 'right',
-        labelWidth: 125,
-        showMessage: true,
-        autocomplete: 'off',
-        size: undefined
-      },
-      row: {
-        gutter: 0,
-        type: undefined,
-        align: undefined,
-        justify: undefined,
-        className: undefined
-      },
-      info: {
-        type: 'poptip',
-        trigger: 'hover',
-        placement: 'top-start',
-        wordWrap: true,
-        icon: iviewConfig.infoIcon
-      },
-      submitBtn: {
-        type: 'primary',
-        size: 'large',
-        shape: undefined,
-        long: true,
-        htmlType: 'button',
-        disabled: false,
-        icon: iviewConfig.submitBtnIcon,
-        innerText: '提交',
-        loading: false,
-        show: true,
-        col: undefined,
-        click: undefined
-      },
-      resetBtn: {
-        type: iviewConfig.resetBtnType,
-        size: 'large',
-        shape: undefined,
-        long: true,
-        htmlType: 'button',
-        disabled: false,
-        icon: iviewConfig.resetBtnIcon,
-        innerText: '重置',
-        loading: false,
-        show: false,
-        col: undefined,
-        click: undefined
-      }
-    };
-  }
-
   function $set(target, field, value) {
     Vue.set(target, field, value);
   }
@@ -478,6 +315,172 @@
   }
   function errMsg(i) {
     return '\n\x67\x69\x74\x68\x75\x62\x3a\x68\x74\x74\x70' + '\x73\x3a\x2f\x2f\x67\x69\x74\x68\x75\x62\x2e\x63\x6f' + '\x6d\x2f\x78\x61\x62\x6f\x79\x2f\x66\x6f\x72\x6d\x2d' + '\x63\x72\x65\x61\x74\x65\n\x64\x6f\x63\x75\x6d\x65' + '\x6e\x74\x3a\x68\x74\x74\x70\x3a\x2f\x2f\x77\x77\x77' + '\x2e\x66\x6f\x72\x6d\x2d\x63\x72\x65\x61\x74\x65\x2e' + '\x63\x6f\x6d' + (i || '');
+  }
+
+  var NAME = 'fc-iview-checkbox';
+  var checkbox = {
+    name: NAME,
+    props: {
+      options: {
+        type: Array,
+        default: function _default() {
+          return [];
+        }
+      },
+      children: {
+        type: Array,
+        default: function _default() {
+          return [];
+        }
+      },
+      ctx: {
+        type: Object,
+        default: function _default() {
+          return {};
+        }
+      },
+      value: {
+        type: Array,
+        default: function _default() {
+          return [];
+        }
+      }
+    },
+    watch: {
+      value: function value() {
+        this.update();
+      }
+    },
+    data: function data() {
+      return {
+        trueValue: [],
+        unique: uniqueId()
+      };
+    },
+    methods: {
+      onInput: function onInput(n) {
+        this.$emit('input', this.options.filter(function (opt) {
+          return n.indexOf(opt.label) !== -1;
+        }).map(function (opt) {
+          return opt.value;
+        }));
+      },
+      update: function update() {
+        var _this = this;
+
+        this.trueValue = this.options.filter(function (opt) {
+          return _this.value.indexOf(opt.value) !== -1;
+        }).map(function (option) {
+          return option.label;
+        });
+      }
+    },
+    created: function created() {
+      this.update();
+    },
+    render: function render() {
+      var _this2 = this;
+
+      var h = arguments[0];
+      return h("CheckboxGroup", helper([{}, this.ctx, {
+        "on": {
+          "input": this.onInput
+        },
+        "model": {
+          value: _this2.trueValue,
+          callback: function callback($$v) {
+            _this2.trueValue = $$v;
+          }
+        }
+      }]), [this.options.map(function (opt, index) {
+        var props = _objectSpread({}, opt);
+
+        delete props.value;
+        return h("Checkbox", {
+          "props": _objectSpread({}, props),
+          "key": NAME + index + _this2.unique
+        });
+      }).concat(this.chlidren)]);
+    }
+  };
+
+  var iview2 = {
+    _v: 2,
+    resetBtnType: 'ghost',
+    resetBtnIcon: 'refresh',
+    submitBtnIcon: 'ios-upload',
+    fileIcon: 'document-text',
+    fileUpIcon: 'folder',
+    imgUpIcon: 'image',
+    infoIcon: 'ios-information-outline'
+  };
+  var iview3 = {
+    _v: 3,
+    resetBtnType: 'default',
+    resetBtnIcon: 'md-refresh',
+    submitBtnIcon: 'ios-share',
+    fileIcon: 'md-document',
+    fileUpIcon: 'ios-folder-open',
+    imgUpIcon: 'md-images',
+    infoIcon: 'ios-information-circle-outline'
+  };
+  var iviewConfig = function () {
+    if (typeof iview === 'undefined') return iview2;
+    return iview.version && iview.version.split('.')[0] == 3 ? iview3 : iview2;
+  }();
+  function getConfig() {
+    return {
+      form: {
+        inline: false,
+        labelPosition: 'right',
+        labelWidth: 125,
+        showMessage: true,
+        autocomplete: 'off',
+        size: undefined
+      },
+      row: {
+        gutter: 0,
+        type: undefined,
+        align: undefined,
+        justify: undefined,
+        className: undefined
+      },
+      info: {
+        type: 'poptip',
+        trigger: 'hover',
+        placement: 'top-start',
+        wordWrap: true,
+        icon: iviewConfig.infoIcon
+      },
+      submitBtn: {
+        type: 'primary',
+        size: 'large',
+        shape: undefined,
+        long: true,
+        htmlType: 'button',
+        disabled: false,
+        icon: iviewConfig.submitBtnIcon,
+        innerText: '提交',
+        loading: false,
+        show: true,
+        col: undefined,
+        click: undefined
+      },
+      resetBtn: {
+        type: iviewConfig.resetBtnType,
+        size: 'large',
+        shape: undefined,
+        long: true,
+        htmlType: 'button',
+        disabled: false,
+        icon: iviewConfig.resetBtnIcon,
+        innerText: '重置',
+        loading: false,
+        show: false,
+        col: undefined,
+        click: undefined
+      }
+    };
   }
 
   var formCreateName = 'FormCreate';
@@ -1286,7 +1289,7 @@
         return h.fields();
       },
       append: function append(rule, after, isChild) {
-        var fields = h.fieldList,
+        var fields = Object.keys(h.fieldList),
             index = h.sortList.length,
             rules = h.rules;
         if (rule.field && fields.indexOf(rule.field) !== -1) return console.error("".concat(rule.field, " \u5B57\u6BB5\u5DF2\u5B58\u5728") + errMsg());
@@ -1297,14 +1300,14 @@
             rules = parser.rule.children;
             index = parser.rule.children.length;
           } else {
-            index = parser.root.indexOf(parser.rule);
+            index = parser.root.indexOf(parser.rule.__origin__);
           }
         }
 
         rules.splice(index + 1, 0, rule);
       },
       prepend: function prepend(rule, after, isChild) {
-        var fields = h.fieldList,
+        var fields = Object.keys(h.fieldList),
             index = 0,
             rules = h.rules;
         if (rule.field && fields.indexOf(rule.field) !== -1) return console.error("".concat(rule.field, " \u5B57\u6BB5\u5DF2\u5B58\u5728") + errMsg());
@@ -1314,7 +1317,7 @@
           if (isChild) {
             rules = parser.rule.children;
           } else {
-            index = parser.root.indexOf(parser.rule);
+            index = parser.root.indexOf(parser.rule.__origin__);
           }
         }
 
@@ -1494,6 +1497,21 @@
       },
       toJson: function toJson$1() {
         return toJson(this.rule);
+      },
+      on: function on() {
+        var _h$vm;
+
+        (_h$vm = h.vm).$on.apply(_h$vm, arguments);
+      },
+      once: function once() {
+        var _h$vm2;
+
+        (_h$vm2 = h.vm).$once.apply(_h$vm2, arguments);
+      },
+      off: function off() {
+        var _h$vm3;
+
+        (_h$vm3 = h.vm).$off.apply(_h$vm3, arguments);
       }
     };
   }
@@ -1619,6 +1637,9 @@
         Object.keys(parseRule).forEach(function (k) {
           $set(rule, k, parseRule[k]);
         });
+        Object.defineProperties(rule, {
+          __origin__: enumerable(_rule)
+        });
         return rule;
       }
     }, {
@@ -1715,12 +1736,8 @@
             rule = parser.rule;
         if (this.parsers[id]) return;
         this.parsers[id] = parser;
-
-        if (this.isNoVal(parser)) {
-          if (name) $set(this.customData, name, parser);
-          return;
-        }
-
+        if (name) $set(this.customData, name, parser);
+        if (this.isNoVal(parser)) return;
         this.fieldList[field] = parser;
         $set(this.formData, field, parser.toFormValue(rule.value));
         $set(this.validate, field, rule.validate || []);
@@ -2310,12 +2327,13 @@
     }
   }
 
-  var css = ".fc-upload-btn, .fc-files {\n    display: inline-block;\n    width: 58px;\n    height: 58px;\n    text-align: center;\n    line-height: 58px;\n    border: 1px solid #c0ccda;\n    border-radius: 4px;\n    overflow: hidden;\n    background: #fff;\n    position: relative;\n    box-shadow: 2px 2px 5px rgba(0, 0, 0, .1);\n    margin-right: 4px;\n    box-sizing: border-box;\n}\n\n.__fc_h {\n    display: none;\n}\n\n.__fc_v {\n    visibility: hidden;\n}\n\n.fc-files img {\n    width: 100%;\n    height: 100%;\n    display: inline-block;\n    vertical-align: top;\n}\n\n.fc-upload-btn {\n    border: 1px dashed #c0ccda;\n    cursor: pointer;\n}\n\n.fc-upload .fc-upload-cover {\n    opacity: 0;\n    position: absolute;\n    top: 0;\n    bottom: 0;\n    left: 0;\n    right: 0;\n    background: rgba(0, 0, 0, .6);\n    transition: opacity .3s;\n}\n\n.fc-upload .fc-upload-cover i {\n    color: #fff;\n    font-size: 20px;\n    cursor: pointer;\n    margin: 0 2px;\n}\n\n.fc-files:hover .fc-upload-cover {\n    opacity: 1;\n}\n\n.fc-hide-btn .ivu-upload .ivu-upload {\n    display: none;\n}\n\n.fc-upload .ivu-upload-list {\n    margin-top: 0;\n}";
-  var style = {"fc-upload-btn":"fc-upload-btn","fc-files":"fc-files","__fc_h":"__fc_h","__fc_v":"__fc_v","fc-upload":"fc-upload","fc-upload-cover":"fc-upload-cover","fc-hide-btn":"fc-hide-btn","ivu-upload":"ivu-upload","ivu-upload-list":"ivu-upload-list"};
+  var css = ".fc-upload-btn, .fc-files {\n    display: inline-block;\n    width: 58px;\n    height: 58px;\n    text-align: center;\n    line-height: 58px;\n    border: 1px solid #c0ccda;\n    border-radius: 4px;\n    overflow: hidden;\n    background: #fff;\n    position: relative;\n    box-shadow: 2px 2px 5px rgba(0, 0, 0, .1);\n    margin-right: 4px;\n    box-sizing: border-box;\n}\n\n.form-create .__fc_h {\n    display: none;\n}\n\n.form-create .__fc_v {\n    visibility: hidden;\n}\n\n.fc-files img {\n    width: 100%;\n    height: 100%;\n    display: inline-block;\n    vertical-align: top;\n}\n\n.fc-upload-btn {\n    border: 1px dashed #c0ccda;\n    cursor: pointer;\n}\n\n.fc-upload .fc-upload-cover {\n    opacity: 0;\n    position: absolute;\n    top: 0;\n    bottom: 0;\n    left: 0;\n    right: 0;\n    background: rgba(0, 0, 0, .6);\n    transition: opacity .3s;\n}\n\n.fc-upload .fc-upload-cover i {\n    color: #fff;\n    font-size: 20px;\n    cursor: pointer;\n    margin: 0 2px;\n}\n\n.fc-files:hover .fc-upload-cover {\n    opacity: 1;\n}\n\n.fc-hide-btn .ivu-upload .ivu-upload {\n    display: none;\n}\n\n.fc-upload .ivu-upload-list {\n    margin-top: 0;\n}";
+  var style = {"fc-upload-btn":"fc-upload-btn","fc-files":"fc-files","form-create":"form-create","__fc_h":"__fc_h","__fc_v":"__fc_v","fc-upload":"fc-upload","fc-upload-cover":"fc-upload-cover","fc-hide-btn":"fc-hide-btn","ivu-upload":"ivu-upload","ivu-upload-list":"ivu-upload-list"};
   styleInject(css);
 
+  var NAME$1 = 'fc-iview-frame';
   var frame = {
-    name: 'fc-iview-frame',
+    name: NAME$1,
     props: {
       type: {
         type: String,
@@ -2367,7 +2385,7 @@
       },
       handleIcon: {
         type: [String, Boolean],
-        default: ''
+        default: undefined
       },
       title: String,
       allowRemove: {
@@ -2415,7 +2433,8 @@
     data: function data() {
       return {
         modalVm: null,
-        fileList: toArray(this.value)
+        fileList: toArray(this.value),
+        unique: uniqueId()
       };
     },
     watch: {
@@ -2428,6 +2447,9 @@
       }
     },
     methods: {
+      key: function key(unique) {
+        return NAME$1 + unique + this.unique;
+      },
       closeModel: function closeModel() {
         this.modalVm && this.modalVm.onClose();
         this.modalVm = null;
@@ -2526,37 +2548,42 @@
               return _this2.showModel();
             }
           }
+        }, {
+          "key": this.key('input')
         }]));
       },
       makeGroup: function makeGroup(children) {
         var h = this.$createElement;
         if (!this.maxLength || this.fileList.length < this.maxLength) children.push(this.makeBtn());
         return h("div", {
-          "class": style['fc-upload']
+          "class": style['fc-upload'],
+          "key": this.key('group')
         }, _toConsumableArray(children));
       },
-      makeItem: function makeItem(children) {
+      makeItem: function makeItem(index, children) {
         var h = this.$createElement;
         return h("div", {
-          "class": style['fc-files']
+          "class": style['fc-files'],
+          "key": this.key('file' + index)
         }, _toConsumableArray(children));
       },
       valid: function valid(field) {
         if (field !== this.field) throw new Error('frame 无效的字段值');
       },
-      makeIcons: function makeIcons(val) {
+      makeIcons: function makeIcons(val, index) {
         var h = this.$createElement;
 
         if (this.handleIcon !== false || this.allowRemove === true) {
           var icons = [];
-          if (this.type !== 'file' && this.handleIcon !== false || this.type === 'file' && this.handleIcon) icons.push(this.makeHandleIcon(val));
-          if (this.allowRemove) icons.push(this.makeRemoveIcon(val));
+          if (this.type !== 'file' && this.handleIcon !== false || this.type === 'file' && this.handleIcon) icons.push(this.makeHandleIcon(val, index));
+          if (this.allowRemove) icons.push(this.makeRemoveIcon(val, index));
           return h("div", {
-            "class": style['fc-upload-cover']
+            "class": style['fc-upload-cover'],
+            "key": this.key('uc')
           }, [icons]);
         }
       },
-      makeHandleIcon: function makeHandleIcon(val) {
+      makeHandleIcon: function makeHandleIcon(val, index) {
         var _this3 = this;
 
         var h = this.$createElement;
@@ -2569,10 +2596,11 @@
             "click": function click() {
               return _this3.handleClick(val);
             }
-          }
+          },
+          "key": this.key('hi' + index)
         }]));
       },
-      makeRemoveIcon: function makeRemoveIcon(val) {
+      makeRemoveIcon: function makeRemoveIcon(val, index) {
         var _this4 = this;
 
         var h = this.$createElement;
@@ -2585,15 +2613,16 @@
             "click": function click() {
               return _this4.handleRemove(val);
             }
-          }
+          },
+          "key": this.key('ri' + index)
         }]));
       },
       makeFiles: function makeFiles() {
         var _this5 = this;
 
         var h = this.$createElement;
-        return this.makeGroup(this.fileList.map(function (src) {
-          return _this5.makeItem([h("icon", helper([{}, {
+        return this.makeGroup(this.fileList.map(function (src, index) {
+          return _this5.makeItem(index, [h("icon", helper([{}, {
             "props": {
               type: iviewConfig.fileIcon,
               size: 40
@@ -2604,19 +2633,19 @@
                 return _this5.handleClick(src);
               }
             }
-          }])), _this5.makeIcons(src)]);
+          }])), _this5.makeIcons(src, index)]);
         }));
       },
       makeImages: function makeImages() {
         var _this6 = this;
 
         var h = this.$createElement;
-        return this.makeGroup(this.fileList.map(function (src) {
-          return _this6.makeItem([h("img", {
+        return this.makeGroup(this.fileList.map(function (src, index) {
+          return _this6.makeItem(index, [h("img", {
             "attrs": {
               "src": src
             }
-          }), _this6.makeIcons(src)]);
+          }), _this6.makeIcons(src, index)]);
         }));
       },
       makeBtn: function makeBtn() {
@@ -2629,7 +2658,8 @@
             "click": function click() {
               return _this7.showModel();
             }
-          }
+          },
+          "key": this.key('btn')
         }, [h("icon", helper([{}, {
           "props": {
             type: this.icon,
@@ -2656,8 +2686,9 @@
     }
   };
 
+  var NAME$2 = 'fc-iview-radio';
   var radio = {
-    name: 'fc-iview-radio',
+    name: NAME$2,
     functional: true,
     props: {
       options: {
@@ -2665,28 +2696,40 @@
         default: function _default() {
           return [];
         }
+      },
+      unique: {
+        default: function _default() {
+          return uniqueId();
+        }
       }
     },
     render: function render(h, ctx) {
-      return h("RadioGroup", helper([{}, ctx.data]), [ctx.props.options.map(function (opt) {
+      return h("RadioGroup", helper([{}, ctx.data]), [ctx.props.options.map(function (opt, index) {
         var props = _objectSpread({}, opt);
 
         delete props.value;
         return h("Radio", {
-          "props": _objectSpread({}, props)
+          "props": _objectSpread({}, props),
+          "key": NAME$2 + index + ctx.props.unique
         });
       }).concat(ctx.chlidren)]);
     }
   };
 
+  var NAME$3 = 'fc-iview-select';
   var select = {
-    name: 'fc-iview-select',
+    name: NAME$3,
     functional: true,
     props: {
       options: {
         type: Array,
         default: function _default() {
           return [];
+        }
+      },
+      unique: {
+        default: function _default() {
+          return uniqueId();
         }
       }
     },
@@ -2695,7 +2738,7 @@
         var slot = props.slot ? toDefSlot(props.slot, h) : [];
         return h("Option", {
           "props": _objectSpread({}, props),
-          "key": "t".concat(index).concat(ctx.parent._uid)
+          "key": NAME$3 + index + ctx.props.unique
         }, [slot]);
       }).concat(ctx.chlidren)]);
     }
@@ -2775,8 +2818,7 @@
       }
     },
     render: function render() {
-      var h = arguments[0];
-      return h("div", [this.makeTree()]);
+      return this.makeTree();
     },
     mounted: function mounted() {
       var _this3 = this;
@@ -2802,8 +2844,9 @@
     return toString(file).split('/').pop();
   }
 
+  var NAME$4 = 'fc-iview-upload';
   var upload = {
-    name: 'fc-iview-upload',
+    name: NAME$4,
     props: {
       ctx: {
         type: Object,
@@ -2846,7 +2889,8 @@
     },
     data: function data() {
       return {
-        uploadList: []
+        uploadList: [],
+        unique: uniqueId()
       };
     },
     created: function created() {
@@ -2867,6 +2911,9 @@
       }
     },
     methods: {
+      key: function key(unique) {
+        return NAME$4 + unique + this.unique;
+      },
       isDisabled: function isDisabled() {
         return this.ctx.props.disabled === true;
       },
@@ -2889,20 +2936,23 @@
           }
         }]))]);
       },
-      makeItem: function makeItem(file) {
+      makeItem: function makeItem(file, index) {
         var h = this.$createElement;
         return this.uploadType === 'image' ? h("img", {
           "attrs": {
             "src": file.url
-          }
+          },
+          "key": this.key('img' + index)
         }) : h("icon", helper([{}, {
           "props": {
             type: iviewConfig.fileIcon,
             size: 40
           }
+        }, {
+          "key": this.key('i' + index)
         }]));
       },
-      makeRemoveIcon: function makeRemoveIcon(file) {
+      makeRemoveIcon: function makeRemoveIcon(file, index) {
         var _this = this;
 
         var h = this.$createElement;
@@ -2914,10 +2964,11 @@
             "click": function click() {
               return _this.onRemove(file);
             }
-          }
+          },
+          "key": this.key('ri' + index)
         });
       },
-      makeHandleIcon: function makeHandleIcon(file) {
+      makeHandleIcon: function makeHandleIcon(file, index) {
         var _this2 = this;
 
         var h = this.$createElement;
@@ -2929,10 +2980,11 @@
             "click": function click() {
               return _this2.handleClick(file);
             }
-          }
+          },
+          "key": this.key('hi' + index)
         });
       },
-      makeProgress: function makeProgress(file) {
+      makeProgress: function makeProgress(file, index) {
         var h = this.$createElement;
         return h("Progress", helper([{}, {
           "props": {
@@ -2940,16 +2992,17 @@
             hideInfo: true
           }
         }, {
-          "style": "width:90%"
+          "style": "width:90%",
+          "key": this.key('pg' + index)
         }]));
       },
-      makeIcons: function makeIcons(file) {
+      makeIcons: function makeIcons(file, index) {
         var h = this.$createElement;
         var icons = [];
 
         if (this.allowRemove || this.handleIcon !== false) {
-          if (this.uploadType !== 'file' && this.handleIcon !== false || this.uploadType === 'file' && this.handleIcon) icons.push(this.makeHandleIcon(file));
-          if (this.allowRemove) icons.push(this.makeRemoveIcon(file));
+          if (this.uploadType !== 'file' && this.handleIcon !== false || this.uploadType === 'file' && this.handleIcon) icons.push(this.makeHandleIcon(file, index));
+          if (this.allowRemove) icons.push(this.makeRemoveIcon(file, index));
           return h("div", {
             "class": style['fc-upload-cover']
           }, [icons]);
@@ -2959,10 +3012,11 @@
         var _this3 = this;
 
         var h = this.$createElement;
-        return this.uploadList.map(function (file) {
+        return this.uploadList.map(function (file, index) {
           return h("div", {
+            "key": _this3.key(index),
             "class": style['fc-files']
-          }, [file.showProgress ? _this3.makeProgress(file) : [_this3.makeItem(file), _this3.makeIcons(file)]]);
+          }, [file.showProgress ? _this3.makeProgress(file, index) : [_this3.makeItem(file, index), _this3.makeIcons(file, index)]]);
         });
       },
       makeUpload: function makeUpload() {
@@ -2972,7 +3026,9 @@
           "style": {
             display: 'inline-block'
           }
-        }, this.ctx]), [this.children]);
+        }, this.ctx, {
+          "key": this.key('upload')
+        }]), [this.children]);
       },
       initChildren: function initChildren() {
         if (!hasSlot(this.children, 'default')) this.children.push(this.makeDefaultBtn());
@@ -3008,9 +3064,7 @@
       this.uploadList = this.$refs.upload.fileList;
       this.$watch(function () {
         return _this4.$refs.upload.fileList;
-      }, function (n) {
-        console.log(n);
-
+      }, function () {
         _this4.update();
       }, {
         deep: true
@@ -3083,8 +3137,14 @@
       value: function mounted() {
         var _this = this;
 
-        this.toValue = function () {
-          return _this.el.publicStringValue;
+        this.toValue = function (val) {
+          var value = _this.el.formatDate(val),
+              _this$el = _this.el,
+              type = _this$el.type,
+              separator = _this$el.separator,
+              isRange = ['daterange', 'datetimerange'].indexOf(type) !== -1;
+
+          if (!value) return isRange ? ['', ''] : value;else if (isRange) return value.split(separator);else return value;
         };
       }
     }]);
@@ -3348,37 +3408,6 @@
     }
 
     _createClass(Parser, [{
-      key: "mounted",
-      value: function mounted() {
-        var _this = this;
-
-        this.toValue = function () {
-          return _this.el.publicStringValue;
-        };
-      }
-    }]);
-
-    return Parser;
-  }(BaseParser);
-
-  var name$9 = 'timePicker';
-  var timePicker = {
-    parser: Parser$6,
-    name: name$9
-  };
-
-  var Parser$7 =
-  /*#__PURE__*/
-  function (_BaseParser) {
-    _inherits(Parser, _BaseParser);
-
-    function Parser() {
-      _classCallCheck(this, Parser);
-
-      return _possibleConstructorReturn(this, _getPrototypeOf(Parser).apply(this, arguments));
-    }
-
-    _createClass(Parser, [{
       key: "render",
       value: function render(children) {
         var _this = this;
@@ -3405,13 +3434,13 @@
     return Parser;
   }(BaseParser);
 
-  var name$a = 'tree';
+  var name$9 = 'tree';
   var tree$1 = {
-    parser: Parser$7,
-    name: name$a
+    parser: Parser$6,
+    name: name$9
   };
 
-  var Parser$8 =
+  var Parser$7 =
   /*#__PURE__*/
   function (_BaseParser) {
     _inherits(Parser, _BaseParser);
@@ -3458,13 +3487,13 @@
     return Parser;
   }(BaseParser);
 
-  var name$b = 'upload';
+  var name$a = 'upload';
   var upload$1 = {
-    parser: Parser$8,
-    name: name$b
+    parser: Parser$7,
+    name: name$a
   };
 
-  var parsers = [checkbox$1, datePicker, frame$1, hidden, input, radio$1, select$1, slider, iswitch, timePicker, tree$1, upload$1];
+  var parsers = [checkbox$1, datePicker, frame$1, hidden, input, radio$1, select$1, slider, iswitch, tree$1, upload$1];
 
   function getGlobalApi(h, baseApi) {
     function tidyFields(fields) {
@@ -3789,13 +3818,13 @@
     return Form;
   }(BaseForm);
 
-  var name$c = 'datePicker';
+  var name$b = 'datePicker';
   var datePicker$1 = ['date', 'dateRange', 'dateTime', 'dateTimeRange', 'year', 'month'].reduce(function (maker, type) {
-    maker[type] = creatorTypeFactory(name$c, type.toLowerCase());
+    maker[type] = creatorTypeFactory(name$b, type.toLowerCase());
     return maker;
   }, {});
 
-  var name$d = 'frame';
+  var name$c = 'frame';
   var types = {
     frameInputs: ['input', 0],
     frameFiles: ['file', 0],
@@ -3805,7 +3834,7 @@
     frameImageOne: ['image', 1]
   };
   var maker = Object.keys(types).reduce(function (maker, key) {
-    maker[key] = creatorTypeFactory(name$d, function (m) {
+    maker[key] = creatorTypeFactory(name$c, function (m) {
       return m.props({
         type: types[key][0],
         maxLength: types[key][1]
@@ -3817,41 +3846,41 @@
   maker.frameFile = maker.frameFiles;
   maker.frameImage = maker.frameImages;
 
-  var name$e = 'input';
+  var name$d = 'input';
   var maker$1 = ['password', 'url', 'email', 'text', 'textarea'].reduce(function (maker, type) {
-    maker[type] = creatorTypeFactory(name$e, type);
+    maker[type] = creatorTypeFactory(name$d, type);
     return maker;
   }, {});
-  maker$1.idate = creatorTypeFactory(name$e, 'date');
+  maker$1.idate = creatorTypeFactory(name$d, 'date');
 
-  var name$f = 'select';
+  var name$e = 'select';
   var select$2 = {
-    selectMultiple: creatorTypeFactory(name$f, true, 'multiple'),
-    selectOne: creatorTypeFactory(name$f, false, 'multiple')
+    selectMultiple: creatorTypeFactory(name$e, true, 'multiple'),
+    selectOne: creatorTypeFactory(name$e, false, 'multiple')
   };
 
-  var name$g = 'slider';
+  var name$f = 'slider';
   var slider$1 = {
-    sliderRange: creatorTypeFactory(name$g, true, 'range')
+    sliderRange: creatorTypeFactory(name$f, true, 'range')
   };
 
-  var name$h = 'timePicker';
-  var timePicker$1 = {
-    time: creatorTypeFactory(name$h, 'time'),
-    timeRange: creatorTypeFactory(name$h, 'timerange')
+  var name$g = 'timePicker';
+  var timePicker = {
+    time: creatorTypeFactory(name$g, 'time'),
+    timeRange: creatorTypeFactory(name$g, 'timerange')
   };
 
-  var name$i = 'tree';
+  var name$h = 'tree';
   var types$1 = {
     'treeSelected': 'selected',
     'treeChecked': 'checked'
   };
   var tree$2 = Object.keys(types$1).reduce(function (maker, key) {
-    maker[key] = creatorTypeFactory(name$i, types$1[key]);
+    maker[key] = creatorTypeFactory(name$h, types$1[key]);
     return maker;
   }, {});
 
-  var name$j = 'upload';
+  var name$i = 'upload';
   var types$2 = {
     image: ['image', 0],
     file: ['file', 0],
@@ -3859,7 +3888,7 @@
     uploadImageOne: ['image', 1]
   };
   var maker$2 = Object.keys(types$2).reduce(function (maker, key) {
-    maker[key] = creatorTypeFactory(name$j, function (m) {
+    maker[key] = creatorTypeFactory(name$i, function (m) {
       return m.props({
         uploadType: types$2[key][0],
         maxLength: types$2[key][1]
@@ -3870,8 +3899,8 @@
   maker$2.uploadImage = maker$2.image;
   maker$2.uploadFile = maker$2.file;
 
-  var maker$3 = _objectSpread({}, datePicker$1, maker, maker$1, select$2, slider$1, timePicker$1, tree$2, maker$2),
-      names = ['autoComplete', 'cascader', 'colorPicker', 'datePicker', 'frame', 'inputNumber', 'radio', 'rate'];
+  var maker$3 = _objectSpread({}, datePicker$1, maker, maker$1, select$2, slider$1, timePicker, tree$2, maker$2),
+      names = ['autoComplete', 'cascader', 'colorPicker', 'datePicker', 'frame', 'inputNumber', 'radio', 'rate', 'timePicker'];
 
   names.forEach(function (name) {
     maker$3[name] = creatorFactory(name);
@@ -3887,7 +3916,7 @@
   VNode.use(nodes);
   var drive = {
     ui: "iview",
-    version: "1.0.1",
+    version: "1.0.2",
     formRender: Form,
     components: components,
     parsers: parsers,

@@ -1,5 +1,5 @@
 /*!
- * @form-create/element-ui v1.0.1
+ * @form-create/element-ui v1.0.2
  * (c) 2018-2019 xaboy
  * Github https://github.com/xaboy/form-create
  * Released under the MIT License.
@@ -195,92 +195,6 @@
 
   var helper = mergeJsxProps;
 
-  var checkbox = {
-    name: 'fc-elm-checkbox',
-    props: {
-      options: {
-        type: Array,
-        default: function _default() {
-          return [];
-        }
-      },
-      children: {
-        type: Array,
-        default: function _default() {
-          return [];
-        }
-      },
-      ctx: {
-        type: Object,
-        default: function _default() {
-          return {};
-        }
-      },
-      value: {
-        type: Array,
-        default: function _default() {
-          return [];
-        }
-      },
-      type: String
-    },
-    watch: {
-      value: function value() {
-        this.update();
-      }
-    },
-    data: function data() {
-      return {
-        trueValue: []
-      };
-    },
-    methods: {
-      onInput: function onInput(n) {
-        this.$emit('input', this.options.filter(function (opt) {
-          return n.indexOf(opt.label) !== -1;
-        }).map(function (opt) {
-          return opt.value;
-        }));
-      },
-      update: function update() {
-        var _this = this;
-
-        this.trueValue = this.options.filter(function (opt) {
-          return _this.value.indexOf(opt.value) !== -1;
-        }).map(function (option) {
-          return option.label;
-        });
-      }
-    },
-    created: function created() {
-      this.update();
-    },
-    render: function render() {
-      var _this2 = this;
-
-      var h = arguments[0];
-      return h("ElCheckboxGroup", helper([{}, this.ctx, {
-        "on": {
-          "input": this.onInput
-        },
-        "model": {
-          value: _this2.trueValue,
-          callback: function callback($$v) {
-            _this2.trueValue = $$v;
-          }
-        }
-      }]), [this.options.map(function (opt) {
-        var props = _objectSpread({}, opt);
-
-        var Type = _this2.type === 'button' ? 'ElCheckboxButton' : 'ElCheckbox';
-        delete props.value;
-        return h(Type, {
-          "props": _objectSpread({}, props)
-        });
-      }).concat(this.chlidren)]);
-    }
-  };
-
   function $set(target, field, value) {
     Vue.set(target, field, value);
   }
@@ -420,6 +334,95 @@
   function errMsg(i) {
     return '\n\x67\x69\x74\x68\x75\x62\x3a\x68\x74\x74\x70' + '\x73\x3a\x2f\x2f\x67\x69\x74\x68\x75\x62\x2e\x63\x6f' + '\x6d\x2f\x78\x61\x62\x6f\x79\x2f\x66\x6f\x72\x6d\x2d' + '\x63\x72\x65\x61\x74\x65\n\x64\x6f\x63\x75\x6d\x65' + '\x6e\x74\x3a\x68\x74\x74\x70\x3a\x2f\x2f\x77\x77\x77' + '\x2e\x66\x6f\x72\x6d\x2d\x63\x72\x65\x61\x74\x65\x2e' + '\x63\x6f\x6d' + (i || '');
   }
+
+  var NAME = 'fc-elm-checkbox';
+  var checkbox = {
+    name: NAME,
+    props: {
+      options: {
+        type: Array,
+        default: function _default() {
+          return [];
+        }
+      },
+      children: {
+        type: Array,
+        default: function _default() {
+          return [];
+        }
+      },
+      ctx: {
+        type: Object,
+        default: function _default() {
+          return {};
+        }
+      },
+      value: {
+        type: Array,
+        default: function _default() {
+          return [];
+        }
+      },
+      type: String
+    },
+    watch: {
+      value: function value() {
+        this.update();
+      }
+    },
+    data: function data() {
+      return {
+        trueValue: [],
+        unique: uniqueId()
+      };
+    },
+    methods: {
+      onInput: function onInput(n) {
+        this.$emit('input', this.options.filter(function (opt) {
+          return n.indexOf(opt.label) !== -1;
+        }).map(function (opt) {
+          return opt.value;
+        }));
+      },
+      update: function update() {
+        var _this = this;
+
+        this.trueValue = this.options.filter(function (opt) {
+          return _this.value.indexOf(opt.value) !== -1;
+        }).map(function (option) {
+          return option.label;
+        });
+      }
+    },
+    created: function created() {
+      this.update();
+    },
+    render: function render() {
+      var _this2 = this;
+
+      var h = arguments[0];
+      return h("ElCheckboxGroup", helper([{}, this.ctx, {
+        "on": {
+          "input": this.onInput
+        },
+        "model": {
+          value: _this2.trueValue,
+          callback: function callback($$v) {
+            _this2.trueValue = $$v;
+          }
+        }
+      }]), [this.options.map(function (opt, index) {
+        var props = _objectSpread({}, opt);
+
+        var Type = _this2.type === 'button' ? 'ElCheckboxButton' : 'ElCheckbox';
+        delete props.value;
+        return h(Type, {
+          "props": _objectSpread({}, props),
+          "key": NAME + Type + index + _this2.unique
+        });
+      }).concat(this.chlidren)]);
+    }
+  };
 
   var formCreateName = 'FormCreate';
   function $FormCreate(FormCreate, components) {
@@ -1227,7 +1230,7 @@
         return h.fields();
       },
       append: function append(rule, after, isChild) {
-        var fields = h.fieldList,
+        var fields = Object.keys(h.fieldList),
             index = h.sortList.length,
             rules = h.rules;
         if (rule.field && fields.indexOf(rule.field) !== -1) return console.error("".concat(rule.field, " \u5B57\u6BB5\u5DF2\u5B58\u5728") + errMsg());
@@ -1238,14 +1241,14 @@
             rules = parser.rule.children;
             index = parser.rule.children.length;
           } else {
-            index = parser.root.indexOf(parser.rule);
+            index = parser.root.indexOf(parser.rule.__origin__);
           }
         }
 
         rules.splice(index + 1, 0, rule);
       },
       prepend: function prepend(rule, after, isChild) {
-        var fields = h.fieldList,
+        var fields = Object.keys(h.fieldList),
             index = 0,
             rules = h.rules;
         if (rule.field && fields.indexOf(rule.field) !== -1) return console.error("".concat(rule.field, " \u5B57\u6BB5\u5DF2\u5B58\u5728") + errMsg());
@@ -1255,7 +1258,7 @@
           if (isChild) {
             rules = parser.rule.children;
           } else {
-            index = parser.root.indexOf(parser.rule);
+            index = parser.root.indexOf(parser.rule.__origin__);
           }
         }
 
@@ -1435,6 +1438,21 @@
       },
       toJson: function toJson$1() {
         return toJson(this.rule);
+      },
+      on: function on() {
+        var _h$vm;
+
+        (_h$vm = h.vm).$on.apply(_h$vm, arguments);
+      },
+      once: function once() {
+        var _h$vm2;
+
+        (_h$vm2 = h.vm).$once.apply(_h$vm2, arguments);
+      },
+      off: function off() {
+        var _h$vm3;
+
+        (_h$vm3 = h.vm).$off.apply(_h$vm3, arguments);
       }
     };
   }
@@ -1560,6 +1578,9 @@
         Object.keys(parseRule).forEach(function (k) {
           $set(rule, k, parseRule[k]);
         });
+        Object.defineProperties(rule, {
+          __origin__: enumerable(_rule)
+        });
         return rule;
       }
     }, {
@@ -1656,12 +1677,8 @@
             rule = parser.rule;
         if (this.parsers[id]) return;
         this.parsers[id] = parser;
-
-        if (this.isNoVal(parser)) {
-          if (name) $set(this.customData, name, parser);
-          return;
-        }
-
+        if (name) $set(this.customData, name, parser);
+        if (this.isNoVal(parser)) return;
         this.fieldList[field] = parser;
         $set(this.formData, field, parser.toFormValue(rule.value));
         $set(this.validate, field, rule.validate || []);
@@ -2256,8 +2273,9 @@
   var style = {"fc-upload-btn":"fc-upload-btn","fc-files":"fc-files","__fc_h":"__fc_h","__fc_v":"__fc_v","fc-upload":"fc-upload","fc-upload-cover":"fc-upload-cover","el-upload":"el-upload","form-create":"form-create","el-form-item":"el-form-item","el-rate":"el-rate","el-tree":"el-tree","fc-hide-btn":"fc-hide-btn"};
   styleInject(css);
 
+  var NAME$1 = 'fc-elm-frame';
   var frame = {
-    name: 'fc-elm-frame',
+    name: NAME$1,
     props: {
       type: {
         type: String,
@@ -2309,7 +2327,7 @@
       },
       handleIcon: {
         type: [String, Boolean],
-        default: ''
+        default: undefined
       },
       title: String,
       allowRemove: {
@@ -2357,7 +2375,8 @@
     data: function data() {
       return {
         modalVm: null,
-        fileList: toArray(this.value)
+        fileList: toArray(this.value),
+        unique: uniqueId()
       };
     },
     watch: {
@@ -2370,6 +2389,9 @@
       }
     },
     methods: {
+      key: function key(unique) {
+        return NAME$1 + unique + this.unique;
+      },
       closeModel: function closeModel() {
         this.modalVm && this.modalVm.onClose();
         this.modalVm = null;
@@ -2468,37 +2490,42 @@
               return _this2.showModel();
             }
           }
+        }, {
+          "key": this.key('input')
         }]));
       },
       makeGroup: function makeGroup(children) {
         var h = this.$createElement;
         if (!this.maxLength || this.fileList.length < this.maxLength) children.push(this.makeBtn());
         return h("div", {
-          "class": style['fc-upload']
+          "class": style['fc-upload'],
+          "key": this.key('group')
         }, _toConsumableArray(children));
       },
-      makeItem: function makeItem(children) {
+      makeItem: function makeItem(index, children) {
         var h = this.$createElement;
         return h("div", {
-          "class": style['fc-files']
+          "class": style['fc-files'],
+          "key": this.key('file' + index)
         }, _toConsumableArray(children));
       },
       valid: function valid(field) {
         if (field !== this.field) throw new Error('frame 无效的字段值');
       },
-      makeIcons: function makeIcons(val) {
+      makeIcons: function makeIcons(val, index) {
         var h = this.$createElement;
 
         if (this.handleIcon !== false || this.allowRemove === true) {
           var icons = [];
-          if (this.type !== 'file' && this.handleIcon !== false || this.type === 'file' && this.handleIcon) icons.push(this.makeHandleIcon(val));
-          if (this.allowRemove) icons.push(this.makeRemoveIcon(val));
+          if (this.type !== 'file' && this.handleIcon !== false || this.type === 'file' && this.handleIcon) icons.push(this.makeHandleIcon(val, index));
+          if (this.allowRemove) icons.push(this.makeRemoveIcon(val, index));
           return h("div", {
-            "class": style['fc-upload-cover']
+            "class": style['fc-upload-cover'],
+            "key": this.key('uc')
           }, [icons]);
         }
       },
-      makeHandleIcon: function makeHandleIcon(val) {
+      makeHandleIcon: function makeHandleIcon(val, index) {
         var _this3 = this;
 
         var h = this.$createElement;
@@ -2508,10 +2535,11 @@
             "click": function click() {
               return _this3.handleClick(val);
             }
-          }
+          },
+          "key": this.key('hi' + index)
         });
       },
-      makeRemoveIcon: function makeRemoveIcon(val) {
+      makeRemoveIcon: function makeRemoveIcon(val, index) {
         var _this4 = this;
 
         var h = this.$createElement;
@@ -2521,34 +2549,35 @@
             "click": function click() {
               return _this4.handleRemove(val);
             }
-          }
+          },
+          "key": this.key('ri' + index)
         });
       },
       makeFiles: function makeFiles() {
         var _this5 = this;
 
         var h = this.$createElement;
-        return this.makeGroup(this.fileList.map(function (src) {
-          return _this5.makeItem([h("i", {
+        return this.makeGroup(this.fileList.map(function (src, index) {
+          return _this5.makeItem(index, [h("i", {
             "class": "el-icon-tickets",
             "on": {
               "click": function click() {
                 return _this5.handleClick(src);
               }
             }
-          }), _this5.makeIcons(src)]);
+          }), _this5.makeIcons(src, index)]);
         }));
       },
       makeImages: function makeImages() {
         var _this6 = this;
 
         var h = this.$createElement;
-        return this.makeGroup(this.fileList.map(function (src) {
-          return _this6.makeItem([h("img", {
+        return this.makeGroup(this.fileList.map(function (src, index) {
+          return _this6.makeItem(index, [h("img", {
             "attrs": {
               "src": src
             }
-          }), _this6.makeIcons(src)]);
+          }), _this6.makeIcons(src, index)]);
         }));
       },
       makeBtn: function makeBtn() {
@@ -2561,7 +2590,8 @@
             "click": function click() {
               return _this7.showModel();
             }
-          }
+          },
+          "key": this.key('btn')
         }, [h("i", {
           "class": this.icon
         })]);
@@ -2585,8 +2615,9 @@
     }
   };
 
+  var NAME$2 = 'fc-elm-radio';
   var radio = {
-    name: 'fc-elm-radio',
+    name: NAME$2,
     functional: true,
     props: {
       options: {
@@ -2595,30 +2626,41 @@
           return [];
         }
       },
-      type: String
+      type: String,
+      unique: {
+        default: function _default() {
+          return uniqueId();
+        }
+      }
     },
     render: function render(h, ctx) {
-      return h("ElRadioGroup", helper([{}, ctx.data]), [ctx.props.options.map(function (opt) {
+      return h("ElRadioGroup", helper([{}, ctx.data]), [ctx.props.options.map(function (opt, index) {
         var props = _objectSpread({}, opt);
 
+        var Type = ctx.props.type === 'button' ? 'ElRadioButton' : 'ElRadio';
         delete props.value;
-        return ctx.props.type === 'button' ? h("ElRadioButton", {
-          "props": _objectSpread({}, props)
-        }) : h("ElRadio", {
-          "props": _objectSpread({}, props)
+        return h(Type, {
+          "props": _objectSpread({}, props),
+          "key": NAME$2 + Type + index + ctx.unique
         });
       }).concat(ctx.chlidren)]);
     }
   };
 
+  var NAME$3 = 'fc-elm-select';
   var select = {
-    name: 'fc-elm-select',
+    name: NAME$3,
     functional: true,
     props: {
       options: {
         type: Array,
         default: function _default() {
           return [];
+        }
+      },
+      unique: {
+        default: function _default() {
+          return uniqueId();
         }
       }
     },
@@ -2627,7 +2669,7 @@
         var slot = props.slot ? toDefSlot(props.slot, h) : [];
         return h("ElOption", {
           "props": _objectSpread({}, props),
-          "key": "t".concat(index).concat(ctx.parent._uid)
+          "key": NAME$3 + index + ctx.props.unique
         }, [slot]);
       }).concat(ctx.chlidren)]);
     }
@@ -2698,8 +2740,7 @@
       }
     },
     render: function render() {
-      var h = arguments[0];
-      return h("div", [this.makeTree()]);
+      return this.makeTree();
     },
     mounted: function mounted() {
       this.setValue();
@@ -2718,8 +2759,9 @@
     return toString(file).split('/').pop();
   }
 
+  var NAME$4 = 'fc-elm-upload';
   var upload = {
-    name: 'fc-elm-upload',
+    name: NAME$4,
     props: {
       ctx: {
         type: Object,
@@ -2762,7 +2804,8 @@
     },
     data: function data() {
       return {
-        uploadList: []
+        uploadList: [],
+        unique: uniqueId()
       };
     },
     created: function created() {
@@ -2783,6 +2826,9 @@
       }
     },
     methods: {
+      key: function key(unique) {
+        return NAME$4 + unique + this.unique;
+      },
       isDisabled: function isDisabled() {
         return this.ctx.props.disabled === true;
       },
@@ -2802,17 +2848,19 @@
           "class": "el-icon-upload2"
         })]);
       },
-      makeItem: function makeItem(file) {
+      makeItem: function makeItem(file, index) {
         var h = this.$createElement;
         return this.uploadType === 'image' ? h("img", {
           "attrs": {
             "src": file.url
-          }
+          },
+          "key": this.key('img' + index)
         }) : h("i", {
-          "class": "el-icon-tickets"
+          "class": "el-icon-tickets",
+          "key": this.key('i' + index)
         });
       },
-      makeRemoveIcon: function makeRemoveIcon(file) {
+      makeRemoveIcon: function makeRemoveIcon(file, index) {
         var _this = this;
 
         var h = this.$createElement;
@@ -2822,10 +2870,11 @@
             "click": function click() {
               return _this.onRemove(file);
             }
-          }
+          },
+          "key": this.key('ri' + index)
         });
       },
-      makeHandleIcon: function makeHandleIcon(file) {
+      makeHandleIcon: function makeHandleIcon(file, index) {
         var _this2 = this;
 
         var h = this.$createElement;
@@ -2835,10 +2884,11 @@
             "click": function click() {
               return _this2.handleClick(file);
             }
-          }
+          },
+          "key": this.key('hi' + index)
         });
       },
-      makeProgress: function makeProgress(file) {
+      makeProgress: function makeProgress(file, index) {
         var h = this.$createElement;
         return h("ElProgress", helper([{}, {
           "props": {
@@ -2847,16 +2897,17 @@
             width: 52
           }
         }, {
-          "style": "margin-top:2px;"
+          "style": "margin-top:2px;",
+          "key": this.key('pg' + index)
         }]));
       },
-      makeIcons: function makeIcons(file) {
+      makeIcons: function makeIcons(file, index) {
         var h = this.$createElement;
         var icons = [];
 
         if (this.allowRemove || this.handleIcon !== false) {
-          if (this.uploadType !== 'file' && this.handleIcon !== false || this.uploadType === 'file' && this.handleIcon) icons.push(this.makeHandleIcon(file));
-          if (this.allowRemove) icons.push(this.makeRemoveIcon(file));
+          if (this.uploadType !== 'file' && this.handleIcon !== false || this.uploadType === 'file' && this.handleIcon) icons.push(this.makeHandleIcon(file, index));
+          if (this.allowRemove) icons.push(this.makeRemoveIcon(file, index));
           return h("div", {
             "class": style['fc-upload-cover']
           }, [icons]);
@@ -2866,10 +2917,11 @@
         var _this3 = this;
 
         var h = this.$createElement;
-        return this.uploadList.map(function (file) {
+        return this.uploadList.map(function (file, index) {
           return h("div", {
+            "key": _this3.key(index),
             "class": style['fc-files']
-          }, [file.percentage !== undefined && file.status !== 'success' ? _this3.makeProgress(file) : [_this3.makeItem(file), _this3.makeIcons(file)]]);
+          }, [file.percentage !== undefined && file.status !== 'success' ? _this3.makeProgress(file, index) : [_this3.makeItem(file, index), _this3.makeIcons(file, index)]]);
         });
       },
       makeUpload: function makeUpload() {
@@ -2879,7 +2931,9 @@
           "style": {
             display: 'inline-block'
           }
-        }, this.ctx]), [this.children]);
+        }, this.ctx, {
+          "key": this.key('upload')
+        }]), [this.children]);
       },
       initChildren: function initChildren() {
         if (!hasSlot(this.children, 'default')) this.children.push(this.makeDefaultBtn());
@@ -3273,7 +3327,7 @@
         var _this = this;
 
         this.toValue = function (val) {
-          return _this.el.formatToValue(val);
+          return _this.el.formatToString(val);
         };
       }
     }]);
@@ -3899,7 +3953,7 @@
   VNode.use(nodes);
   var drive = {
     ui: "element-ui",
-    version: "".concat("1.0.1"),
+    version: "".concat("1.0.2"),
     formRender: Form,
     components: components,
     parsers: parsers,

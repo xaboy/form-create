@@ -1,5 +1,5 @@
 /*!
- * @form-create/core v1.0.1
+ * @form-create/core v1.0.2
  * (c) 2018-2019 xaboy
  * Github https://github.com/xaboy/form-create
  * Released under the MIT License.
@@ -1047,7 +1047,7 @@ function baseApi(h) {
       return h.fields();
     },
     append: function append(rule, after, isChild) {
-      var fields = h.fieldList,
+      var fields = Object.keys(h.fieldList),
           index = h.sortList.length,
           rules = h.rules;
       if (rule.field && fields.indexOf(rule.field) !== -1) return console.error("".concat(rule.field, " \u5B57\u6BB5\u5DF2\u5B58\u5728") + errMsg());
@@ -1058,14 +1058,14 @@ function baseApi(h) {
           rules = parser.rule.children;
           index = parser.rule.children.length;
         } else {
-          index = parser.root.indexOf(parser.rule);
+          index = parser.root.indexOf(parser.rule.__origin__);
         }
       }
 
       rules.splice(index + 1, 0, rule);
     },
     prepend: function prepend(rule, after, isChild) {
-      var fields = h.fieldList,
+      var fields = Object.keys(h.fieldList),
           index = 0,
           rules = h.rules;
       if (rule.field && fields.indexOf(rule.field) !== -1) return console.error("".concat(rule.field, " \u5B57\u6BB5\u5DF2\u5B58\u5728") + errMsg());
@@ -1075,7 +1075,7 @@ function baseApi(h) {
         if (isChild) {
           rules = parser.rule.children;
         } else {
-          index = parser.root.indexOf(parser.rule);
+          index = parser.root.indexOf(parser.rule.__origin__);
         }
       }
 
@@ -1255,6 +1255,21 @@ function baseApi(h) {
     },
     toJson: function toJson$1() {
       return toJson(this.rule);
+    },
+    on: function on() {
+      var _h$vm;
+
+      (_h$vm = h.vm).$on.apply(_h$vm, arguments);
+    },
+    once: function once() {
+      var _h$vm2;
+
+      (_h$vm2 = h.vm).$once.apply(_h$vm2, arguments);
+    },
+    off: function off() {
+      var _h$vm3;
+
+      (_h$vm3 = h.vm).$off.apply(_h$vm3, arguments);
     }
   };
 }
@@ -1380,6 +1395,9 @@ function () {
       Object.keys(parseRule).forEach(function (k) {
         $set(rule, k, parseRule[k]);
       });
+      Object.defineProperties(rule, {
+        __origin__: enumerable(_rule)
+      });
       return rule;
     }
   }, {
@@ -1476,12 +1494,8 @@ function () {
           rule = parser.rule;
       if (this.parsers[id]) return;
       this.parsers[id] = parser;
-
-      if (this.isNoVal(parser)) {
-        if (name) $set(this.customData, name, parser);
-        return;
-      }
-
+      if (name) $set(this.customData, name, parser);
+      if (this.isNoVal(parser)) return;
       this.fieldList[field] = parser;
       $set(this.formData, field, parser.toFormValue(rule.value));
       $set(this.validate, field, rule.validate || []);
