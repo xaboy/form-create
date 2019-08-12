@@ -25,6 +25,8 @@
 - **iViewUI 3.x**
 - **ElementUI 2.8.2+**
 
+If you have a form component suitable for form-create, please feel free to [click here to leave a message](https://github.com/xaboy/form-create/issues/124)
+
 >  If it helps, you can click on "Star" in the upper right corner. Thank you!
 >  The project is still being developed and improved. If there are any 'recommendations or questions, please ask [here](https://github.com/xaboy/form-create/issues/new)
 
@@ -59,7 +61,7 @@
 
 ## Example
 
-- [In-depth use case of maker customize component](https://github.com/HeyMrLin/fc-demo) ([Demo station](http://jeekweb.pro/form-create-demo))
+- [Practical case](https://github.com/HeyMrLin/fc-demo) ([Demo station](http://jeekweb.pro/form-create-demo))
 
 - [Generate a form using the maker generator](https://jsrun.net/NQhKp/edit)
 

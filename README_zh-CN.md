@@ -24,6 +24,8 @@
 - **iViewUI 3.x**
 - **ElementUI 2.8.2+**
 
+如果您有适合 form-create 的表单组件, 欢迎[点击这里留言](https://github.com/xaboy/form-create/issues/124)
+
 > 如果对您有帮助，您可以点右上角 "Star" 支持一下 谢谢！本项目还在不断开发完善中,如有任何建议或问题[请在这里提出](https://github.com/xaboy/form-create/issues/new)
 > 本项目QQ讨论群[28963712](https://jq.qq.com/?_wv=1027&k=54aKUVw)
 
@@ -59,7 +61,7 @@
 
 - [CRMEB客户管理+电商管理系统](https://gitee.com/ZhongBangKeJi/CRMEB) ([演示站](http://demo25.crmeb.net) 账号：demo 密码：crmeb.com)
 
-- [自定义组件 案例](https://github.com/HeyMrLin/fc-demo) ([演示站](http://jeekweb.pro/form-create-demo))
+- [实战案例](https://github.com/HeyMrLin/fc-demo) ([演示站](http://jeekweb.pro/form-create-demo))
 
 - [使用生成器生成](https://jsrun.net/NQhKp/edit)
 
