@@ -30,6 +30,7 @@ export default class Handle {
     constructor(fc) {
         const {vm, rules, options} = fc;
 
+        this.watching = false;
         this.vm = vm;
         this.fc = fc;
         this.id = uniqueId();
@@ -77,6 +78,9 @@ export default class Handle {
                 if (parser.vm !== this.vm && !parser.deleted)
                     return console.error(`${_rule.type}规则正在其他的 <form-create> 中使用` + errMsg());
                 parser.update(this);
+                let rule = parser.rule;
+                this.parseOn(rule);
+                this.parseProps(rule);
             } else {
                 parser = this.createParser(this.parseRule(_rule));
             }
@@ -127,35 +131,54 @@ export default class Handle {
 
     parseRule(_rule) {
         const def = defRule(), rule = getRule(_rule);
-        Object.keys(def).forEach(k => {
-            if (isUndef(rule[k])) $set(rule, k, def[k]);
-        });
-        const parseRule = {
-            options: parseArray(rule.options)
-        };
 
-        parseRule.on = this.parseOn(rule.on || {}, this.parseEmit(rule));
-
-        Object.keys(parseRule).forEach(k => {
-            $set(rule, k, parseRule[k]);
-        });
         Object.defineProperties(rule, {
             __origin__: enumerable(_rule)
         });
+
+        Object.keys(def).forEach(k => {
+            if (isUndef(rule[k])) $set(rule, k, def[k]);
+        });
+
+
+        rule.options = parseArray(rule.options);
+        this.parseOn(rule);
+        this.parseProps(rule);
+
         return rule;
     }
 
-    parseOn(on, emit) {
-        if (this.options.injectEvent)
-            Object.keys(on).forEach(k => {
-                on[k] = this.inject(on[k])
-            });
-        return parseOn(on, emit);
+    parseOn(rule) {
+        this.parseInjectEvent(rule, rule.on || {});
+        if (!this.watching) {
+            this.margeEmit(rule);
+        }
     }
 
-    inject(_fn, inject) {
-        if (_fn.__inject)
+    margeEmit(rule) {
+        const emitEvent = this.parseEmit(rule);
+        if (Object.keys(emitEvent).length > 0) extend(rule.on, emitEvent);
+    }
+
+    parseProps(rule) {
+        this.parseInjectEvent(rule, rule.props || {});
+    }
+
+    parseInjectEvent(rule, on) {
+        if (this.options.injectEvent || rule.inject)
+            Object.keys(on).forEach(k => {
+                if (isFunction(on[k]))
+                    on[k] = this.inject(rule, on[k])
+            });
+        return on;
+    }
+
+    inject(self, _fn, inject) {
+        if (_fn.__inject) {
+            if (this.watching)
+                return _fn;
             _fn = _fn.__origin;
+        }
 
         const h = this;
 
@@ -164,10 +187,11 @@ export default class Handle {
             args.unshift({
                 $f: h.fCreateApi,
                 rule,
+                self: self.__origin__,
                 option,
-                inject
+                inject: inject || rule.inject || {}
             });
-            _fn.apply(this, args);
+            _fn(...args);
         };
         fn.__inject = true;
         fn.__origin = _fn;
@@ -180,10 +204,10 @@ export default class Handle {
         if (!Array.isArray(emit)) return event;
 
         emit.forEach(config => {
-            let inject = {}, eventName = config;
+            let inject, eventName = config;
             if (isPlainObject(config)) {
                 eventName = config.name;
-                inject = config.inject || {};
+                inject = config.inject;
             }
             if (!eventName) return;
 
@@ -194,7 +218,7 @@ export default class Handle {
                 this.vm.$emit(fieldKey, ...arg);
             };
             fn.__emit = true;
-            event[eventName] = (this.options.injectEvent || config.inject !== undefined) ? this.inject(fn, inject) : fn;
+            event[eventName] = (this.options.injectEvent || config.inject !== undefined) ? this.inject(rule, fn, inject) : fn;
         });
 
         return event;
@@ -273,9 +297,18 @@ export default class Handle {
             try {
                 parser.watch.push(vm.$watch(() => parser.rule[key], (n, o) => {
                     if (o === undefined) return;
+                    this.watching = true;
                     if (key === 'validate')
                         this.validate[parser.field] = n;
+                    else if (key === 'props')
+                        this.parseProps(parser.rule);
+                    else if (key === 'on')
+                        this.parseOn(parser.rule);
+                    else if (key === 'emit')
+                        this.margeEmit(parser.rule);
+
                     this.$render.clearCache(parser);
+                    this.watching = false;
                 }, {deep: key !== 'children', immediate: true}));
             } catch (e) {
                 //
@@ -387,11 +420,6 @@ export function delParser(parser) {
     Object.defineProperty(parser.rule, 'value', {
         value: extend({}, {value: parser.rule.value}).value
     });
-}
-
-function parseOn(on, emitEvent) {
-    if (Object.keys(emitEvent).length > 0) extend(on, emitEvent);
-    return on;
 }
 
 function parseArray(validate) {
