@@ -1,5 +1,5 @@
 import {_vue as Vue} from './index';
-import {debounce, errMsg, isString, isUndef, isValidChildren} from '@form-create/utils';
+import {debounce, errMsg, isFunction, isString, isUndef, isValidChildren} from '@form-create/utils';
 import VNode from '../factory/vNode';
 import VData from '../factory/vData';
 
@@ -95,19 +95,29 @@ export default class Render {
         }
 
         if (!this.renderList[id]) {
-            if (isUndef(rule.vm)) rule.vm = new Vue;
-            this.renderList[id] = Vue.compile(rule.template);
+            let vm = rule.vm;
+            if (isUndef(rule.vm))
+                vm = new Vue;
+            else if (isFunction(rule.vm))
+                vm = rule.vm(this.$handle.getInjectData(rule));
+
+            this.renderList[id] = {
+                vm,
+                template: Vue.compile(rule.template)
+            };
 
         }
 
-        setTemplateProps(parser, this.$handle.fCreateApi);
+        const {vm, template} = this.renderList[id];
 
-        rule.vm.$off('input');
-        rule.vm.$on('input', (value) => {
+        setTemplateProps(vm, parser, this.$handle.fCreateApi);
+
+        vm.$off('input');
+        vm.$on('input', (value) => {
             this.onInput(parser, value);
         });
 
-        const vn = this.renderList[id].render.call(rule.vm);
+        const vn = template.render.call(vm);
 
         if (vn.data === undefined) vn.data = {};
         vn.key = key;
@@ -218,18 +228,18 @@ export default class Render {
     }
 }
 
-function setTemplateProps(parser, fApi) {
-    const {rule} = parser;
-    if (!rule.vm.$props)
+function setTemplateProps(vm, parser, fApi) {
+    if (!vm.$props)
         return;
-    const keys = Object.keys(rule.vm.$props);
+    const {rule} = parser;
+    const keys = Object.keys(vm.$props);
     keys.forEach(key => {
         if (rule.props[key] !== undefined)
-            rule.vm.$props[key] = rule.props[key];
+            vm.$props[key] = rule.props[key];
     });
 
     if (keys.indexOf('value') !== -1) {
-        rule.vm.$props.value = parser.rule.value;
+        vm.$props.value = parser.rule.value;
     }
-    rule.vm.$props.formCreate = fApi;
+    vm.$props.formCreate = fApi;
 }

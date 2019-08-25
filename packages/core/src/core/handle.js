@@ -173,6 +173,17 @@ export default class Handle {
         return on;
     }
 
+    getInjectData(self, inject) {
+        const {option, rule} = this.vm.$options.propsData;
+        return {
+            $f: this.fCreateApi,
+            rule,
+            self: self.__origin__,
+            option,
+            inject: inject || rule.inject || {}
+        };
+    }
+
     inject(self, _fn, inject) {
         if (_fn.__inject) {
             if (this.watching)
@@ -183,14 +194,7 @@ export default class Handle {
         const h = this;
 
         const fn = function (...args) {
-            const {option, rule} = h.vm.$options.propsData;
-            args.unshift({
-                $f: h.fCreateApi,
-                rule,
-                self: self.__origin__,
-                option,
-                inject: inject || rule.inject || {}
-            });
+            args.unshift(h.getInjectData(self, inject));
             _fn(...args);
         };
         fn.__inject = true;
