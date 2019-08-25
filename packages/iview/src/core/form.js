@@ -100,10 +100,12 @@ export default class Form extends BaseForm {
         if (resetBtnShow)
             btn.push(this.makeResetBtn(4));
 
-        return this.propsData.props.inline === true ? btn : this.vNode.col({
-            props: {span: 24},
-            key: `${this.unique}col2`
-        }, btn);
+        return this.propsData.props.inline === true
+            ? btn
+            : (btn.length ? this.vNode.col({
+                props: {span: 24},
+                key: `${this.unique}col2`
+            }, btn) : []);
     }
 
     makeResetBtn(span) {
