@@ -251,14 +251,18 @@ export default function baseApi(h) {
         toJson() {
             return toJson(this.rule);
         },
-        on(...args){
+        on(...args) {
             h.vm.$on(...args);
         },
-        once(...args){
+        once(...args) {
             h.vm.$once(...args);
         },
-        off(...args){
+        off(...args) {
             h.vm.$off(...args);
+        },
+        trigger(id, event, ...args) {
+            const parser = h.getParser(id);
+            parser && parser.el && parser.el.$emit(event, ...args);
         }
     };
 }
