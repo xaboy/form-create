@@ -52,6 +52,8 @@ export default function baseApi(h) {
             parser.root.splice(index, 1);
             if (h.sortList.indexOf(parser.id) === -1)
                 this.reload();
+
+            return parser.rule.__origin__;
         },
         destroy: () => {
             h.vm.$el.parentNode.removeChild(h.vm.$el);
@@ -216,6 +218,7 @@ export default function baseApi(h) {
                 cover ? Object.keys(rule).forEach(key => {
                     parser.rule[key] = rule[key];
                 }) : deepExtend(parser.rule, rule);
+                return parser.rule.__origin__;
             }
         },
         getRule: (id) => {
@@ -241,11 +244,11 @@ export default function baseApi(h) {
             })
         },
         method(id, name) {
-            const parser = h.getParser(id);
-            if (!parser || !parser.el[name])
+            const el = this.el(id);
+            if (!el || !el[name])
                 throw new Error('方法不存在' + errMsg());
             return (...args) => {
-                parser.el[name](args);
+                el[name](args);
             }
         },
         toJson() {
@@ -261,8 +264,12 @@ export default function baseApi(h) {
             h.vm.$off(...args);
         },
         trigger(id, event, ...args) {
+            const el = this.el(id);
+            el && el.$emit(event, ...args);
+        },
+        el(id) {
             const parser = h.getParser(id);
-            parser && parser.el && parser.el.$emit(event, ...args);
+            if (parser) return parser.el;
         }
     };
 }
