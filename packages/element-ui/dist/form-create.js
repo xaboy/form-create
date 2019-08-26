@@ -1,5 +1,5 @@
 /*!
- * @form-create/element-ui v1.0.2
+ * @form-create/element-ui v1.0.3
  * (c) 2018-2019 xaboy
  * Github https://github.com/xaboy/form-create
  * Released under the MIT License.
@@ -713,13 +713,18 @@
 
       if (val.__inject) val = val.__origin;
       if (val.__emit) return undefined;
-      return val;
+      return '' + val;
     });
   }
   function parseJson(json) {
     return JSON.parse(json, function (k, v) {
       if (v.indexOf && v.indexOf('function') > -1) {
-        return eval('(function(){return ' + v + ' })()');
+        try {
+          return eval('(function(){return ' + v + ' })()');
+        } catch (e) {
+          console.error("[form-create]\u89E3\u6790\u5931\u8D25:".concat(v));
+          return undefined;
+        }
       }
 
       return v;
@@ -1026,16 +1031,23 @@
         }
 
         if (!this.renderList[id]) {
-          if (isUndef(rule.vm)) rule.vm = new _vue();
-          this.renderList[id] = _vue.compile(rule.template);
+          var _vm = rule.vm;
+          if (isUndef(rule.vm)) _vm = new _vue();else if (isFunction(rule.vm)) _vm = rule.vm(this.$handle.getInjectData(rule));
+          this.renderList[id] = {
+            vm: _vm,
+            template: _vue.compile(rule.template)
+          };
         }
 
-        setTemplateProps(parser, this.$handle.fCreateApi);
-        rule.vm.$off('input');
-        rule.vm.$on('input', function (value) {
+        var _this$renderList$id = this.renderList[id],
+            vm = _this$renderList$id.vm,
+            template = _this$renderList$id.template;
+        setTemplateProps(vm, parser, this.$handle.fCreateApi);
+        vm.$off('input');
+        vm.$on('input', function (value) {
           _this2.onInput(parser, value);
         });
-        var vn = this.renderList[id].render.call(rule.vm);
+        var vn = template.render.call(vm);
         if (vn.data === undefined) vn.data = {};
         vn.key = key;
         return vn;
@@ -1156,19 +1168,19 @@
     return Render;
   }();
 
-  function setTemplateProps(parser, fApi) {
+  function setTemplateProps(vm, parser, fApi) {
+    if (!vm.$props) return;
     var rule = parser.rule;
-    if (!rule.vm.$props) return;
-    var keys = Object.keys(rule.vm.$props);
+    var keys = Object.keys(vm.$props);
     keys.forEach(function (key) {
-      if (rule.props[key] !== undefined) rule.vm.$props[key] = rule.props[key];
+      if (rule.props[key] !== undefined) vm.$props[key] = rule.props[key];
     });
 
     if (keys.indexOf('value') !== -1) {
-      rule.vm.$props.value = parser.rule.value;
+      vm.$props.value = parser.rule.value;
     }
 
-    rule.vm.$props.formCreate = fApi;
+    vm.$props.formCreate = fApi;
   }
 
   function baseApi(h) {
@@ -1221,6 +1233,7 @@
         if (index === -1) return;
         parser.root.splice(index, 1);
         if (h.sortList.indexOf(parser.id) === -1) this.reload();
+        return parser.rule.__origin__;
       },
       destroy: function destroy() {
         h.vm.$el.parentNode.removeChild(h.vm.$el);
@@ -1395,6 +1408,7 @@
           cover ? Object.keys(rule).forEach(function (key) {
             parser.rule[key] = rule[key];
           }) : deepExtend(parser.rule, rule);
+          return parser.rule.__origin__;
         }
       },
       getRule: function getRule(id) {
@@ -1426,14 +1440,14 @@
         });
       },
       method: function method(id, name) {
-        var parser = h.getParser(id);
-        if (!parser || !parser.el[name]) throw new Error('方法不存在' + errMsg());
+        var el = this.el(id);
+        if (!el || !el[name]) throw new Error('方法不存在' + errMsg());
         return function () {
           for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
             args[_key] = arguments[_key];
           }
 
-          parser.el[name](args);
+          el[name](args);
         };
       },
       toJson: function toJson$1() {
@@ -1453,6 +1467,19 @@
         var _h$vm3;
 
         (_h$vm3 = h.vm).$off.apply(_h$vm3, arguments);
+      },
+      trigger: function trigger(id, event) {
+        var el = this.el(id);
+
+        for (var _len2 = arguments.length, args = new Array(_len2 > 2 ? _len2 - 2 : 0), _key2 = 2; _key2 < _len2; _key2++) {
+          args[_key2 - 2] = arguments[_key2];
+        }
+
+        el && el.$emit.apply(el, [event].concat(args));
+      },
+      el: function el(id) {
+        var parser = h.getParser(id);
+        if (parser) return parser.el;
       }
     };
   }
@@ -1470,6 +1497,7 @@
       var vm = fc.vm,
           rules = fc.rules,
           options = fc.options;
+      this.watching = false;
       this.vm = vm;
       this.fc = fc;
       this.id = uniqueId();
@@ -1513,6 +1541,11 @@
             parser = _rule.__fc__;
             if (parser.vm !== _this.vm && !parser.deleted) return console.error("".concat(_rule.type, "\u89C4\u5219\u6B63\u5728\u5176\u4ED6\u7684 <form-create> \u4E2D\u4F7F\u7528") + errMsg());
             parser.update(_this);
+            var _rule2 = parser.rule;
+
+            _this.parseOn(_rule2);
+
+            _this.parseProps(_rule2);
           } else {
             parser = _this.createParser(_this.parseRule(_rule));
           }
@@ -1568,54 +1601,79 @@
       value: function parseRule(_rule) {
         var def = defRule(),
             rule = getRule(_rule);
-        Object.keys(def).forEach(function (k) {
-          if (isUndef(rule[k])) $set(rule, k, def[k]);
-        });
-        var parseRule = {
-          options: parseArray(rule.options)
-        };
-        parseRule.on = this.parseOn(rule.on || {}, this.parseEmit(rule));
-        Object.keys(parseRule).forEach(function (k) {
-          $set(rule, k, parseRule[k]);
-        });
         Object.defineProperties(rule, {
           __origin__: enumerable(_rule)
         });
+        Object.keys(def).forEach(function (k) {
+          if (isUndef(rule[k])) $set(rule, k, def[k]);
+        });
+        rule.options = parseArray(rule.options);
+        this.parseOn(rule);
+        this.parseProps(rule);
         return rule;
       }
     }, {
       key: "parseOn",
-      value: function parseOn(on, emit) {
+      value: function parseOn(rule) {
+        this.parseInjectEvent(rule, rule.on || {});
+
+        if (!this.watching) {
+          this.margeEmit(rule);
+        }
+      }
+    }, {
+      key: "margeEmit",
+      value: function margeEmit(rule) {
+        var emitEvent = this.parseEmit(rule);
+        if (Object.keys(emitEvent).length > 0) extend(rule.on, emitEvent);
+      }
+    }, {
+      key: "parseProps",
+      value: function parseProps(rule) {
+        this.parseInjectEvent(rule, rule.props || {});
+      }
+    }, {
+      key: "parseInjectEvent",
+      value: function parseInjectEvent(rule, on) {
         var _this2 = this;
 
-        if (this.options.injectEvent) Object.keys(on).forEach(function (k) {
-          on[k] = _this2.inject(on[k]);
+        if (this.options.injectEvent || rule.inject) Object.keys(on).forEach(function (k) {
+          if (isFunction(on[k])) on[k] = _this2.inject(rule, on[k]);
         });
-        return _parseOn(on, emit);
+        return on;
+      }
+    }, {
+      key: "getInjectData",
+      value: function getInjectData(self, inject) {
+        var _this$vm$$options$pro = this.vm.$options.propsData,
+            option = _this$vm$$options$pro.option,
+            rule = _this$vm$$options$pro.rule;
+        return {
+          $f: this.fCreateApi,
+          rule: rule,
+          self: self.__origin__,
+          option: option,
+          inject: inject || rule.inject || {}
+        };
       }
     }, {
       key: "inject",
-      value: function inject(_fn, _inject) {
-        if (_fn.__inject) _fn = _fn.__origin;
+      value: function inject(self, _fn, _inject) {
+        if (_fn.__inject) {
+          if (this.watching) return _fn;
+          _fn = _fn.__origin;
+        }
+
         var h = this;
 
         var fn = function fn() {
-          var _h$vm$$options$propsD = h.vm.$options.propsData,
-              option = _h$vm$$options$propsD.option,
-              rule = _h$vm$$options$propsD.rule;
-
           for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
             args[_key] = arguments[_key];
           }
 
-          args.unshift({
-            $f: h.fCreateApi,
-            rule: rule,
-            option: option,
-            inject: _inject
-          });
+          args.unshift(h.getInjectData(self, _inject));
 
-          _fn.apply(this, args);
+          _fn.apply(void 0, args);
         };
 
         fn.__inject = true;
@@ -1633,12 +1691,12 @@
             field = rule.field;
         if (!Array.isArray(emit)) return event;
         emit.forEach(function (config) {
-          var inject = {},
+          var inject,
               eventName = config;
 
           if (isPlainObject(config)) {
             eventName = config.name;
-            inject = config.inject || {};
+            inject = config.inject;
           }
 
           if (!eventName) return;
@@ -1656,7 +1714,7 @@
           };
 
           fn.__emit = true;
-          event[eventName] = _this3.options.injectEvent || config.inject !== undefined ? _this3.inject(fn, inject) : fn;
+          event[eventName] = _this3.options.injectEvent || config.inject !== undefined ? _this3.inject(rule, fn, inject) : fn;
         });
         return event;
       }
@@ -1733,9 +1791,12 @@
               return parser.rule[key];
             }, function (n, o) {
               if (o === undefined) return;
-              if (key === 'validate') _this4.validate[parser.field] = n;
+              _this4.watching = true;
+              if (key === 'validate') _this4.validate[parser.field] = n;else if (key === 'props') _this4.parseProps(parser.rule);else if (key === 'on') _this4.parseOn(parser.rule);else if (key === 'emit') _this4.margeEmit(parser.rule);
 
               _this4.$render.clearCache(parser);
+
+              _this4.watching = false;
             }, {
               deep: key !== 'children',
               immediate: true
@@ -1866,11 +1927,6 @@
         value: parser.rule.value
       }).value
     });
-  }
-
-  function _parseOn(on, emitEvent) {
-    if (Object.keys(emitEvent).length > 0) extend(on, emitEvent);
-    return on;
   }
 
   function parseArray(validate) {
@@ -3786,12 +3842,12 @@
             resetBtnShow = false !== this.vm.resetProps && false !== this.vm.resetProps.show;
         if (submitBtnShow) btn.push(this.makeSubmitBtn(resetBtnShow ? 19 : 24));
         if (resetBtnShow) btn.push(this.makeResetBtn(4));
-        return this.propsData.props.inline === true ? btn : this.vNode.col({
+        return this.propsData.props.inline === true ? btn : btn.length ? this.vNode.col({
           props: {
             span: 24
           },
           key: "".concat(this.unique, "col2")
-        }, btn);
+        }, btn) : [];
       }
     }, {
       key: "makeResetBtn",
@@ -3953,7 +4009,7 @@
   VNode.use(nodes);
   var drive = {
     ui: "element-ui",
-    version: "".concat("1.0.2"),
+    version: "".concat("1.0.3"),
     formRender: Form,
     components: components,
     parsers: parsers,
