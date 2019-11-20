@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>form-create 示例</title>
+    <link href="https://cdn.jsdelivr.net/npm/view-design@4.0.2/dist/styles/iview.css" rel="stylesheet">
+    <script defer src="https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/view-design@4.0.2/dist/iview.js"></script>
+    <script defer src="/form-create.iview4.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/@form-create/data/dist/province_city.js"></script>
+    <script defer src="../mock.js"></script>
+</head>
+
+<body>
+<div id="app">
+    <h2>组件模式生成 / <a style="color: #999;" href="../prototype/index.html">使用Vue原型方法生成</a> / <a style="color: #999;"
+                                                                                             href="../window/index.html">使用全局方法生成</a>
+    </h2>
+    <form-create v-model="fApi" :rule="rule" :option="option" @goods-name-on-change="change"
+                 @btn-click="change"
+                 @xaboy-on-change="change" @mounted="fcMounted" @on-submit="onSubmit"></form-create>
+</div>
+<script>
+    window.onload = function () {
+        var _vm = new Vue({
+            el: '#app',
+            components: {
+                formCreate: formCreate.$form()
+            },
+            data: {
+                rule: mock(),
+                option: {
+                    global: {
+                        input: {
+                            props: {
+                                disabled: true
+                            }
+                        }
+                    },
+                    //显示表单重置按钮
+                    resetBtn: true,
+                    mounted: function ($f) {
+                        var $m = $f.model();
+                        $m.goods_name.value = "HuaWei Plus";
+                    },
+                },
+                //$f
+                fApi: {}
+            },
+            methods: {
+                change: function () {
+                    console.log(arguments);
+                },
+                //表单提交事件
+                onSubmit: function (formData) {
+                    alert(JSON.stringify(formData));
+                    this.fApi.btn.loading();
+                    //重置按钮禁用
+                    this.fApi.resetBtn.disabled();
+                },
+                fcMounted($f) {
+                    console.log('form-create mounted', $f);
+                }
+            },
+            mounted: function () {
+                console.log(this.fApi);
+            }
+        });
+    };
+</script>
+</body>
+
+</html>
