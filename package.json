@@ -11,31 +11,31 @@
         "lint": "eslint *.js"
     },
     "devDependencies": {
-        "babel-eslint": "^10.0.1",
-        "bili": "^4.7.4",
+        "babel-eslint": "^10.0.3",
+        "bili": "^4.8.1",
         "chalk": "^2.4.2",
-        "commitizen": "^3.1.1",
-        "cross-env": "^5.2.0",
+        "commitizen": "^3.1.2",
+        "cross-env": "^5.2.1",
         "css-loader": "^2.1.1",
         "cz-conventional-changelog": "^2.1.0",
         "cz-customizable": "^6.2.0",
         "eslint": "^5.16.0",
-        "eslint-plugin-vue": "^5.2.2",
+        "eslint-plugin-vue": "^5.2.3",
         "html-webpack-plugin": "^3.2.0",
-        "husky": "^2.3.0",
-        "lerna": "^3.13.4",
-        "lint-staged": "^8.1.7",
+        "husky": "^2.7.0",
+        "lerna": "^3.18.5",
+        "lint-staged": "^8.2.1",
         "npm-run-all": "^4.1.5",
-        "rimraf": "^2.6.3",
+        "rimraf": "^2.7.1",
         "vue": "^2.6.10",
-        "vue-loader": "^15.7.0",
+        "vue-loader": "^15.7.2",
         "vue-style-loader": "^4.1.2",
         "vue-template-compiler": "^2.6.10",
-        "webpack": "^4.31.0",
+        "webpack": "^4.41.2",
         "webpack-chain": "^6.0.0",
-        "webpack-cli": "^3.3.2",
-        "webpack-dev-server": "^3.3.1",
-        "webpack-merge": "^4.2.1"
+        "webpack-cli": "^3.3.10",
+        "webpack-dev-server": "^3.9.0",
+        "webpack-merge": "^4.2.2"
     },
     "config": {
         "commitizen": {
@@ -54,8 +54,8 @@
         ]
     },
     "dependencies": {
-        "@vue/cli-plugin-babel": "^3.7.0",
-        "rollup-plugin-commonjs": "^10.0.0",
-        "rollup-plugin-vue": "^5.0.0"
+        "@vue/cli-plugin-babel": "^3.12.1",
+        "rollup-plugin-commonjs": "^10.1.0",
+        "rollup-plugin-vue": "^5.1.2"
     }
 }
