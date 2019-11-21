@@ -1,5 +1,5 @@
 /*!
- * @form-create/iview v1.0.3
+ * @form-create/iview v1.0.4
  * (c) 2018-2019 xaboy
  * Github https://github.com/xaboy/form-create
  * Released under the MIT License.
@@ -8,7 +8,7 @@
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('vue'), require('iview')) :
   typeof define === 'function' && define.amd ? define(['exports', 'vue', 'iview'], factory) :
   (global = global || self, factory(global.formCreate = {}, global.Vue, global.iview));
-}(this, function (exports, Vue, iview) { 'use strict';
+}(this, (function (exports, Vue, iview) { 'use strict';
 
   Vue = Vue && Vue.hasOwnProperty('default') ? Vue['default'] : Vue;
   iview = iview && iview.hasOwnProperty('default') ? iview['default'] : iview;
@@ -64,20 +64,35 @@
     return obj;
   }
 
-  function _objectSpread(target) {
+  function ownKeys(object, enumerableOnly) {
+    var keys = Object.keys(object);
+
+    if (Object.getOwnPropertySymbols) {
+      var symbols = Object.getOwnPropertySymbols(object);
+      if (enumerableOnly) symbols = symbols.filter(function (sym) {
+        return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+      });
+      keys.push.apply(keys, symbols);
+    }
+
+    return keys;
+  }
+
+  function _objectSpread2(target) {
     for (var i = 1; i < arguments.length; i++) {
       var source = arguments[i] != null ? arguments[i] : {};
-      var ownKeys = Object.keys(source);
 
-      if (typeof Object.getOwnPropertySymbols === 'function') {
-        ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) {
-          return Object.getOwnPropertyDescriptor(source, sym).enumerable;
-        }));
+      if (i % 2) {
+        ownKeys(source, true).forEach(function (key) {
+          _defineProperty(target, key, source[key]);
+        });
+      } else if (Object.getOwnPropertyDescriptors) {
+        Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+      } else {
+        ownKeys(source).forEach(function (key) {
+          Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+        });
       }
-
-      ownKeys.forEach(function (key) {
-        _defineProperty(target, key, source[key]);
-      });
     }
 
     return target;
@@ -393,11 +408,11 @@
           }
         }
       }]), [this.options.map(function (opt, index) {
-        var props = _objectSpread({}, opt);
+        var props = _objectSpread2({}, opt);
 
         delete props.value;
         return h("Checkbox", {
-          "props": _objectSpread({}, props),
+          "props": _objectSpread2({}, props),
           "key": NAME + index + _this2.unique
         });
       }).concat(this.chlidren)]);
@@ -931,6 +946,7 @@
       this.vNode = new VNode();
       this.id = id;
       this.watch = [];
+      this.originType = rule.type;
       this.type = toString(rule.type).toLocaleLowerCase();
       this.isDef = true;
       this.el = undefined;
@@ -1134,7 +1150,7 @@
             var children = this.renderChildren(parser);
             vn = parser.render ? parser.render(children) : this.defaultRender(parser, children);
           } else {
-            vn = this.vNode.make(type, this.inputVData(parser), this.renderChildren(parser));
+            vn = this.defaultRender(parser, this.renderChildren(parser));
 
             if (parent) {
               this.setCache(parser, vn, parent);
@@ -1212,7 +1228,7 @@
             return _this4.renderParser(child.__fc__, parser);
           }
 
-          $de(function () {
+          if (child.type) $de(function () {
             return _this4.$handle.reloadRule();
           });
         });
@@ -1220,7 +1236,9 @@
     }, {
       key: "defaultRender",
       value: function defaultRender(parser, children) {
-        return this.vNode[parser.type] ? this.vNode[parser.type](this.inputVData(parser), children) : this.vNode.make(parser.type, this.inputVData(parser), children);
+        if (this.vNode[parser.type]) return this.vNode[parser.type](this.inputVData(parser), children);
+        if (this.vNode[parser.originType]) return this.vNode[parser.originType](this.inputVData(parser), children);
+        return this.vNode.make(parser.originType, this.inputVData(parser), children);
       }
     }]);
 
@@ -1666,6 +1684,7 @@
         Object.keys(def).forEach(function (k) {
           if (isUndef(rule[k])) $set(rule, k, def[k]);
         });
+        if (rule.field && this.options.formData[rule.field] !== undefined) rule.value = this.options.formData[rule.field];
         rule.options = parseArray(rule.options);
         this.parseOn(rule);
         this.parseProps(rule);
@@ -1932,7 +1951,7 @@
         if (!this.origin.length) this.fCreateApi.refresh();
         this.origin = _toConsumableArray(rules);
 
-        var parsers = _objectSpread({}, this.parsers);
+        var parsers = _objectSpread2({}, this.parsers);
 
         this.__init(rules);
 
@@ -2132,7 +2151,9 @@
         this.parsers = parsers;
         this.vm = undefined;
         this.rules = Array.isArray(rules) ? rules : [];
-        this.options = margeGlobal(deepExtend({}, globalConfig), options);
+        this.options = margeGlobal(deepExtend({
+          formData: {}
+        }, globalConfig), options);
       }
 
       _createClass(FormCreate, [{
@@ -2309,7 +2330,7 @@
     return {
       name: 'fc-modal',
       data: function data() {
-        return _objectSpread({
+        return _objectSpread2({
           value: true
         }, options);
       },
@@ -2521,7 +2542,7 @@
             title = _this$$props.title,
             okBtnText = _this$$props.okBtnText,
             closeBtnText = _this$$props.closeBtnText;
-        mount(_objectSpread({
+        mount(_objectSpread2({
           width: width,
           title: title
         }, this.modal), function (vNode, _vm) {
@@ -2761,11 +2782,11 @@
     },
     render: function render(h, ctx) {
       return h("RadioGroup", helper([{}, ctx.data]), [ctx.props.options.map(function (opt, index) {
-        var props = _objectSpread({}, opt);
+        var props = _objectSpread2({}, opt);
 
         delete props.value;
         return h("Radio", {
-          "props": _objectSpread({}, props),
+          "props": _objectSpread2({}, props),
           "key": NAME$2 + index + ctx.props.unique
         });
       }).concat(ctx.chlidren)]);
@@ -2793,7 +2814,7 @@
       return h("Select", helper([{}, ctx.data]), [ctx.props.options.map(function (props, index) {
         var slot = props.slot ? toDefSlot(props.slot, h) : [];
         return h("Option", {
-          "props": _objectSpread({}, props),
+          "props": _objectSpread2({}, props),
           "key": NAME$3 + index + ctx.props.unique
         }, [slot]);
       }).concat(ctx.chlidren)]);
@@ -3558,7 +3579,7 @@
       return fields;
     }
 
-    return _objectSpread({}, baseApi, {
+    return _objectSpread2({}, baseApi, {
       validate: function validate(callback) {
         h.$form.getFormRef().validate(function (valid) {
           callback && callback(valid);
@@ -3778,7 +3799,7 @@
 
           if (rule.info) {
             svn.push(this.vNode.make(isTooltip(info) ? 'Tooltip' : 'Poptip', {
-              props: _objectSpread({}, info, {
+              props: _objectSpread2({}, info, {
                 content: rule.info
               }),
               key: "pop".concat(unique)
@@ -3955,7 +3976,7 @@
   maker$2.uploadImage = maker$2.image;
   maker$2.uploadFile = maker$2.file;
 
-  var maker$3 = _objectSpread({}, datePicker$1, maker, maker$1, select$2, slider$1, timePicker, tree$2, maker$2),
+  var maker$3 = _objectSpread2({}, datePicker$1, {}, maker, {}, maker$1, {}, select$2, {}, slider$1, {}, timePicker, {}, tree$2, {}, maker$2),
       names = ['autoComplete', 'cascader', 'colorPicker', 'datePicker', 'frame', 'inputNumber', 'radio', 'rate', 'timePicker'];
 
   names.forEach(function (name) {
@@ -3972,7 +3993,7 @@
   VNode.use(nodes);
   var drive = {
     ui: "iview",
-    version: "1.0.3",
+    version: "1.0.4",
     formRender: Form,
     components: components,
     parsers: parsers,
@@ -4019,4 +4040,4 @@
 
   Object.defineProperty(exports, '__esModule', { value: true });
 
-}));
+})));

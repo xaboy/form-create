@@ -1,5 +1,5 @@
 /*!
- * @form-create/core v1.0.3
+ * @form-create/core v1.0.4
  * (c) 2018-2019 xaboy
  * Github https://github.com/xaboy/form-create
  * Released under the MIT License.
@@ -58,20 +58,35 @@ function _defineProperty(obj, key, value) {
   return obj;
 }
 
-function _objectSpread(target) {
+function ownKeys(object, enumerableOnly) {
+  var keys = Object.keys(object);
+
+  if (Object.getOwnPropertySymbols) {
+    var symbols = Object.getOwnPropertySymbols(object);
+    if (enumerableOnly) symbols = symbols.filter(function (sym) {
+      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+    });
+    keys.push.apply(keys, symbols);
+  }
+
+  return keys;
+}
+
+function _objectSpread2(target) {
   for (var i = 1; i < arguments.length; i++) {
     var source = arguments[i] != null ? arguments[i] : {};
-    var ownKeys = Object.keys(source);
 
-    if (typeof Object.getOwnPropertySymbols === 'function') {
-      ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) {
-        return Object.getOwnPropertyDescriptor(source, sym).enumerable;
-      }));
+    if (i % 2) {
+      ownKeys(source, true).forEach(function (key) {
+        _defineProperty(target, key, source[key]);
+      });
+    } else if (Object.getOwnPropertyDescriptors) {
+      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+    } else {
+      ownKeys(source).forEach(function (key) {
+        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+      });
     }
-
-    ownKeys.forEach(function (key) {
-      _defineProperty(target, key, source[key]);
-    });
   }
 
   return target;
@@ -689,6 +704,7 @@ function () {
     this.vNode = new VNode();
     this.id = id;
     this.watch = [];
+    this.originType = rule.type;
     this.type = toString(rule.type).toLocaleLowerCase();
     this.isDef = true;
     this.el = undefined;
@@ -892,7 +908,7 @@ function () {
           var children = this.renderChildren(parser);
           vn = parser.render ? parser.render(children) : this.defaultRender(parser, children);
         } else {
-          vn = this.vNode.make(type, this.inputVData(parser), this.renderChildren(parser));
+          vn = this.defaultRender(parser, this.renderChildren(parser));
 
           if (parent) {
             this.setCache(parser, vn, parent);
@@ -970,7 +986,7 @@ function () {
           return _this4.renderParser(child.__fc__, parser);
         }
 
-        $de(function () {
+        if (child.type) $de(function () {
           return _this4.$handle.reloadRule();
         });
       });
@@ -978,7 +994,9 @@ function () {
   }, {
     key: "defaultRender",
     value: function defaultRender(parser, children) {
-      return this.vNode[parser.type] ? this.vNode[parser.type](this.inputVData(parser), children) : this.vNode.make(parser.type, this.inputVData(parser), children);
+      if (this.vNode[parser.type]) return this.vNode[parser.type](this.inputVData(parser), children);
+      if (this.vNode[parser.originType]) return this.vNode[parser.originType](this.inputVData(parser), children);
+      return this.vNode.make(parser.originType, this.inputVData(parser), children);
     }
   }]);
 
@@ -1424,6 +1442,7 @@ function () {
       Object.keys(def).forEach(function (k) {
         if (isUndef(rule[k])) $set(rule, k, def[k]);
       });
+      if (rule.field && this.options.formData[rule.field] !== undefined) rule.value = this.options.formData[rule.field];
       rule.options = parseArray(rule.options);
       this.parseOn(rule);
       this.parseProps(rule);
@@ -1690,7 +1709,7 @@ function () {
       if (!this.origin.length) this.fCreateApi.refresh();
       this.origin = _toConsumableArray(rules);
 
-      var parsers = _objectSpread({}, this.parsers);
+      var parsers = _objectSpread2({}, this.parsers);
 
       this.__init(rules);
 
@@ -1890,7 +1909,9 @@ function createFormCreate(drive) {
       this.parsers = parsers;
       this.vm = undefined;
       this.rules = Array.isArray(rules) ? rules : [];
-      this.options = margeGlobal(deepExtend({}, globalConfig), options);
+      this.options = margeGlobal(deepExtend({
+        formData: {}
+      }, globalConfig), options);
     }
 
     _createClass(FormCreate, [{
