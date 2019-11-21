@@ -115,7 +115,7 @@ export default function createFormCreate(drive) {
             this.parsers = parsers;
             this.vm = undefined;
             this.rules = Array.isArray(rules) ? rules : [];
-            this.options = margeGlobal(deepExtend({}, globalConfig), options);
+            this.options = margeGlobal(deepExtend({formData: {}}, globalConfig), options);
         }
 
         beforeCreate(vm) {

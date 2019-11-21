@@ -140,6 +140,8 @@ export default class Handle {
             if (isUndef(rule[k])) $set(rule, k, def[k]);
         });
 
+        if (rule.field && this.options.formData[rule.field] !== undefined)
+            rule.value = this.options.formData[rule.field];
 
         rule.options = parseArray(rule.options);
         this.parseOn(rule);
