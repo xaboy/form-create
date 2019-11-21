@@ -213,12 +213,11 @@ export default class Render {
 
         return children.map(child => {
             if (isString(child)) return child;
-
             if (child.__fc__) {
                 return this.renderParser(child.__fc__, parser);
             }
-
-            $de(() => this.$handle.reloadRule());
+            if (child.type)
+                $de(() => this.$handle.reloadRule());
         });
 
     }
