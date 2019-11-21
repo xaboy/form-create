@@ -35,7 +35,7 @@
     },
     "homepage": "http://www.form-create.com",
     "dependencies": {
-        "@form-create/utils": "^1.0.0",
+        "@form-create/utils": "^1.0.4",
         "vue": "^2.6.10"
     },
     "peerDependencies": {
