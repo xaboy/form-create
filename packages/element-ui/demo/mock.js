@@ -67,12 +67,13 @@ function mock() {
 
 
         //switch 开关组件
-        maker.switch('是否上架', 'is_show', '1').slot({
-            open: "上架",
-            close: "下架",
-        }).props({
+        maker.switch('是否上架', 'is_show', '1').props({
             "activeValue": "1",
-            "inactiveValue": "0"
+            "inactiveValue": "0",
+            "slot":{
+                open: "上架",
+                close: "下架",
+            }
         }).col({span: 8, labelWidth: "100"}),
 
 
