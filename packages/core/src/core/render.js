@@ -142,7 +142,7 @@ export default class Render {
                 const children = this.renderChildren(parser);
                 vn = parser.render ? parser.render(children) : this.defaultRender(parser, children);
             } else {
-                vn = this.vNode.make(type, this.inputVData(parser), this.renderChildren(parser));
+                vn = this.defaultRender(parser, this.renderChildren(parser));
                 if (parent) {
                     this.setCache(parser, vn, parent);
                     return vn;
@@ -224,7 +224,11 @@ export default class Render {
     }
 
     defaultRender(parser, children) {
-        return this.vNode[parser.type] ? this.vNode[parser.type](this.inputVData(parser), children) : this.vNode.make(parser.type, this.inputVData(parser), children);
+        if (this.vNode[parser.type])
+            return this.vNode[parser.type](this.inputVData(parser), children);
+        if (this.vNode[parser.originType])
+            return this.vNode[parser.originType](this.inputVData(parser), children);
+        return this.vNode.make(parser.originType, this.inputVData(parser), children);
     }
 }
 
