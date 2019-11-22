@@ -22,6 +22,7 @@
 ## 支持
 - **iViewUI 2.13.0+**
 - **iViewUI 3.x**
+- **iViewUI 4.x**
 - **ElementUI 2.8.2+**
 
 如果您有适合 form-create 的表单组件, 欢迎[点击这里留言](https://github.com/xaboy/form-create/issues/124)
@@ -53,6 +54,7 @@
 | 包名             | 说明                                                |
 | ------------------ | ---------------------------------------------------------- |
 | @form-create/iview     | [iview 版本](http://form-create.com/v2/iview/) |
+| @form-create/iview4     | [iView V4 版本](http://form-create.com/v2/iview/) |
 | @form-create/element-ui | [ElementUI 版本](http://form-create.com/v2/element-ui/)        |
 
 
@@ -83,6 +85,11 @@
 iview
 ```shell
 npm install @form-create/iview
+```
+
+iview v4
+```shell
+npm install @form-create/iview4
 ```
 
 elementUI

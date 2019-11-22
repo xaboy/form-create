@@ -23,6 +23,7 @@
 ## Support
 - **iViewUI 2.13.0+**
 - **iViewUI 3.x**
+- **iViewUI 4.x**
 - **ElementUI 2.8.2+**
 
 If you have a form component suitable for form-create, please feel free to [click here to leave a message](https://github.com/xaboy/form-create/issues/124)
@@ -55,6 +56,7 @@ If you have a form component suitable for form-create, please feel free to [clic
 | Name               | Description                                                |
 | ------------------ | ---------------------------------------------------------- |
 | @form-create/iview     | [iView Version](http://form-create.com/v2/iview/) |
+| @form-create/iview4     | [iView V4 Version](http://form-create.com/v2/iview/) |
 | @form-create/element-ui | [ElementUI Version](http://form-create.com/v2/element-ui/)     |
 
 
@@ -83,6 +85,11 @@ If you have a form component suitable for form-create, please feel free to [clic
 iview
 ```shell
 npm install @form-create/iview
+```
+
+iview v4
+```shell
+npm install @form-create/iview4
 ```
 
 elementUI
