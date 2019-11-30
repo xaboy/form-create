@@ -12,8 +12,6 @@ export default class Form extends BaseForm {
     constructor(handle) {
         super(handle);
         this.refName = `cForm${this.id}`;
-        this.hidden = [];
-        this.visibility = [];
     }
 
     inputVData(parser) {
@@ -85,8 +83,8 @@ export default class Form extends BaseForm {
             col.span = 24;
         return this.vNode.col({
             props: col, 'class': {
-                [style.__fc_h]: this.hidden.indexOf(parser) !== -1,
-                [style.__fc_v]: this.visibility.indexOf(parser) !== -1
+                [style.__fc_h]: !!parser.rule.hidden,
+                [style.__fc_v]: !!parser.rule.visibility
             }, key: `${fItemUnique}col1`
         }, VNodeFn);
     }

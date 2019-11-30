@@ -1,4 +1,4 @@
-import {deepExtend, errMsg, isPlainObject} from '@form-create/utils';
+import {$set, deepExtend, errMsg, isPlainObject} from '@form-create/utils';
 import {toJson} from './util';
 
 export default function baseApi(h) {
@@ -96,43 +96,34 @@ export default function baseApi(h) {
             rules.splice(index, 0, rule);
         },
         hidden(hidden, fields) {
-            const hiddenList = h.$form.hidden;
             tidyFields(fields, true).forEach((field) => {
                 const parser = h.getParser(field);
                 if (!parser)
                     return;
-                if (hidden && hiddenList.indexOf(parser) === -1) {
-                    hiddenList.push(parser)
-                } else if (!hidden && hiddenList.indexOf(parser) !== -1) {
-                    hiddenList.splice(hiddenList.indexOf(parser), 1)
-                }
+                $set(parser.rule, 'hidden', !!hidden);
                 h.$render.clearCache(parser, true);
             });
             h.refresh();
         },
         hiddenStatus(id) {
             const parser = h.getParser(id);
-            return h.$form.hidden.indexOf(parser) !== -1;
+            if (!parser) return;
+            return !!parser.rule.hidden;
         },
         visibility(visibility, fields) {
-            const visibilityList = h.$form.visibility;
             tidyFields(fields, true).forEach((field) => {
                 const parser = h.getParser(field);
                 if (!parser)
                     return;
-
-                if (visibility && visibilityList.indexOf(parser) === -1) {
-                    visibilityList.push(parser)
-                } else if (!visibility && visibilityList.indexOf(parser) !== -1) {
-                    visibilityList.splice(visibilityList.indexOf(parser), 1)
-                }
+                $set(parser.rule, 'visibility', !!visibility);
                 h.$render.clearCache(parser, true);
             });
             h.refresh();
         },
         visibilityStatus(id) {
             const parser = h.getParser(id);
-            return h.$form.visibility.indexOf(parser) !== -1;
+            if (!parser) return;
+            return !!parser.rule.visibility;
         },
         disabled(disabled, fields) {
             tidyFields(fields, true).forEach((field) => {
