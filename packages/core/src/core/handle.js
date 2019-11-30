@@ -109,6 +109,7 @@ export default class Handle {
                     },
                     set: (value) => {
                         if (this.isChange(parser, value)) {
+                            this.refresh();
                             this.$render.clearCache(parser, true);
                             this.setFormData(parser, parser.toFormValue(value));
                         }
@@ -355,10 +356,10 @@ export default class Handle {
         this.fc.$emit('on-reload', this.fCreateApi);
     }
 
-    removeField(parser) {
+    removeField(parser, value) {
         const {id, field} = parser, index = this.sortList.indexOf(id);
 
-        delParser(parser);
+        delParser(parser, value);
         $del(this.parsers, id);
 
         if (index !== -1) {
@@ -385,10 +386,11 @@ export default class Handle {
         this.origin = [...rules];
 
         const parsers = {...this.parsers};
+        const formData = this.fCreateApi.formData();
         this.__init(rules);
         this.loadRule(rules, false);
         Object.keys(parsers).filter(id => this.parsers[id] === undefined)
-            .forEach(id => this.removeField(parsers[id]));
+            .forEach(id => this.removeField(parsers[id], formData[parsers[id].field]));
         this.$render.initOrgChildren();
         this.created();
 
@@ -402,7 +404,7 @@ export default class Handle {
     }
 
     setFormData(parser, value) {
-        this.formData[parser.field] = value;
+        $set(this.formData, parser.field, value);
     }
 
     getFormData(parser) {
@@ -419,12 +421,12 @@ export default class Handle {
 
 }
 
-export function delParser(parser) {
+export function delParser(parser, value) {
     parser.watch.forEach((unWatch) => unWatch());
     parser.watch = [];
     parser.deleted = true;
     Object.defineProperty(parser.rule, 'value', {
-        value: extend({}, {value: parser.rule.value}).value
+        value
     });
 }
 
