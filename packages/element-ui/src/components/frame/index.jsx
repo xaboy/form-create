@@ -208,7 +208,7 @@ export default {
                 clearable: false
             };
 
-            return <Input props={props} on={{'on-click': () => this.showModel()}} key={this.key('input')}/>
+            return <ElInput props={props} on={{'on-click': () => this.showModel()}} key={this.key('input')}/>
         },
 
         makeGroup(children) {
