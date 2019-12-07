@@ -82,12 +82,12 @@ If you have a form component suitable for form-create, please feel free to [clic
 
 ## Install
 
-iview
+iview 2.x|3.x
 ```shell
 npm install @form-create/iview
 ```
 
-iview v4
+iview 4.x
 ```shell
 npm install @form-create/iview4
 ```
