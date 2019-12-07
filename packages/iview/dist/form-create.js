@@ -1,5 +1,5 @@
 /*!
- * @form-create/iview v1.0.4
+ * @form-create/iview v1.0.5
  * (c) 2018-2019 xaboy
  * Github https://github.com/xaboy/form-create
  * Released under the MIT License.
@@ -750,7 +750,7 @@
 
     return Creator;
   }(VData);
-  var keyAttrs = ['emitPrefix', 'className', 'value', 'name', 'title', 'native', 'info'];
+  var keyAttrs = ['emitPrefix', 'className', 'value', 'name', 'title', 'native', 'info', 'hidden', 'visibility'];
   keyAttrs.forEach(function (attr) {
     Creator.prototype[attr] = function (value) {
       $set(this._data, attr, value);
@@ -1355,44 +1355,32 @@
         rules.splice(index, 0, rule);
       },
       hidden: function hidden(_hidden, fields) {
-        var hiddenList = h.$form.hidden;
         tidyFields(fields, true).forEach(function (field) {
           var parser = h.getParser(field);
           if (!parser) return;
-
-          if (_hidden && hiddenList.indexOf(parser) === -1) {
-            hiddenList.push(parser);
-          } else if (!_hidden && hiddenList.indexOf(parser) !== -1) {
-            hiddenList.splice(hiddenList.indexOf(parser), 1);
-          }
-
+          $set(parser.rule, 'hidden', !!_hidden);
           h.$render.clearCache(parser, true);
         });
         h.refresh();
       },
       hiddenStatus: function hiddenStatus(id) {
         var parser = h.getParser(id);
-        return h.$form.hidden.indexOf(parser) !== -1;
+        if (!parser) return;
+        return !!parser.rule.hidden;
       },
       visibility: function visibility(_visibility, fields) {
-        var visibilityList = h.$form.visibility;
         tidyFields(fields, true).forEach(function (field) {
           var parser = h.getParser(field);
           if (!parser) return;
-
-          if (_visibility && visibilityList.indexOf(parser) === -1) {
-            visibilityList.push(parser);
-          } else if (!_visibility && visibilityList.indexOf(parser) !== -1) {
-            visibilityList.splice(visibilityList.indexOf(parser), 1);
-          }
-
+          $set(parser.rule, 'visibility', !!_visibility);
           h.$render.clearCache(parser, true);
         });
         h.refresh();
       },
       visibilityStatus: function visibilityStatus(id) {
         var parser = h.getParser(id);
-        return h.$form.visibility.indexOf(parser) !== -1;
+        if (!parser) return;
+        return !!parser.rule.visibility;
       },
       disabled: function disabled(_disabled, fields) {
         tidyFields(fields, true).forEach(function (field) {
@@ -1651,6 +1639,8 @@
             },
             set: function set(value) {
               if (_this.isChange(parser, value)) {
+                _this.refresh();
+
                 _this.$render.clearCache(parser, true);
 
                 _this.setFormData(parser, parser.toFormValue(value));
@@ -1917,11 +1907,11 @@
       }
     }, {
       key: "removeField",
-      value: function removeField(parser) {
+      value: function removeField(parser, value) {
         var id = parser.id,
             field = parser.field,
             index = this.sortList.indexOf(id);
-        delParser(parser);
+        delParser(parser, value);
         $del(this.parsers, id);
 
         if (index !== -1) {
@@ -1953,13 +1943,15 @@
 
         var parsers = _objectSpread2({}, this.parsers);
 
+        var formData = this.fCreateApi.formData();
+
         this.__init(rules);
 
         this.loadRule(rules, false);
         Object.keys(parsers).filter(function (id) {
           return _this6.parsers[id] === undefined;
         }).forEach(function (id) {
-          return _this6.removeField(parsers[id]);
+          return _this6.removeField(parsers[id], formData[parsers[id].field]);
         });
         this.$render.initOrgChildren();
         this.created();
@@ -1973,7 +1965,7 @@
     }, {
       key: "setFormData",
       value: function setFormData(parser, value) {
-        this.formData[parser.field] = value;
+        $set(this.formData, parser.field, value);
       }
     }, {
       key: "getFormData",
@@ -1994,16 +1986,14 @@
 
     return Handle;
   }();
-  function delParser(parser) {
+  function delParser(parser, value) {
     parser.watch.forEach(function (unWatch) {
       return unWatch();
     });
     parser.watch = [];
     parser.deleted = true;
     Object.defineProperty(parser.rule, 'value', {
-      value: extend({}, {
-        value: parser.rule.value
-      }).value
+      value: value
     });
   }
 
@@ -3722,8 +3712,6 @@
 
       _this = _possibleConstructorReturn(this, _getPrototypeOf(Form).call(this, handle));
       _this.refName = "cForm".concat(_this.id);
-      _this.hidden = [];
-      _this.visibility = [];
       return _this;
     }
 
@@ -3824,7 +3812,7 @@
         if (col.span === undefined) col.span = 24;
         return this.vNode.col({
           props: col,
-          'class': (_class = {}, _defineProperty(_class, style.__fc_h, this.hidden.indexOf(parser) !== -1), _defineProperty(_class, style.__fc_v, this.visibility.indexOf(parser) !== -1), _class),
+          'class': (_class = {}, _defineProperty(_class, style.__fc_h, !!parser.rule.hidden), _defineProperty(_class, style.__fc_v, !!parser.rule.visibility), _class),
           key: "".concat(fItemUnique, "col1")
         }, VNodeFn);
       }
@@ -3993,7 +3981,7 @@
   VNode.use(nodes);
   var drive = {
     ui: "iview",
-    version: "1.0.4",
+    version: "1.0.5",
     formRender: Form,
     components: components,
     parsers: parsers,
