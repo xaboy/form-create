@@ -28,12 +28,15 @@ export default {
     },
     watch: {
         value(n) {
-            n = toArray(n);
-            const data = this.$refs.tree.data;
-            this.type === 'selected' ? this.selected(data, n) : this.checked(data, n);
+            this.setStatus(n);
         }
     },
     methods: {
+        setStatus(value) {
+            const n = toArray(value);
+            const data = this.$refs.tree.data;
+            this.type === 'selected' ? this.selected(data, n) : this.checked(data, n);
+        },
         selected(_data, value) {
             _data.forEach((node) => {
                 this.$set(node, 'selected', value.indexOf(node.id) !== -1);
@@ -66,6 +69,7 @@ export default {
     },
     mounted() {
         this.$nextTick(() => {
+            this.setStatus(this.value);
             this.$watch(() => this.$refs.tree.flatState, () => this.updateTreeData())
         })
 
