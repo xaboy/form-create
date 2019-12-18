@@ -283,7 +283,7 @@ function mock() {
 
 
         //tree 树形组件
-        maker.tree('权限', 'tree', []).props({
+        maker.tree('权限', 'tree', [11,12]).props({
             type: 'checked',
             multiple: true,
             showCheckbox: true,
@@ -307,7 +307,6 @@ function mock() {
                                 },
                                 {
                                     title: 'leaf 1-1-2',
-                                    selected: true,
                                     id: 12
                                 }
                             ]
@@ -319,7 +318,6 @@ function mock() {
                             children: [
                                 {
                                     title: 'leaf 1-2-1',
-                                    checked: true,
                                     id: 13,
                                 },
                                 {

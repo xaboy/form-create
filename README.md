@@ -191,6 +191,33 @@ Browser
         }
     });
 ```
+
+
+## Demo
+
+Download project
+```sh
+$ git clone https://github.com/xaboy/form-create.git
+```
+Install dependencies
+```sh
+$ npm i lerna -g
+$ npm i
+$ lerna bootstrap
+```
+Iview 2.x|3.x Demo
+```sh 
+$ npm run dev:iview
+```
+Iview 4.x Demo
+```sh 
+$ npm run dev:iview4
+```
+ElementUI Demo
+```sh 
+$ npm run dev:ele
+```
+
 ## Comparison 1.x
 
 - faster

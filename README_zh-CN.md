@@ -197,6 +197,31 @@ Browser
     });
 ```
 
+## 示例
+
+下载项目
+```sh
+$ git clone https://github.com/xaboy/form-create.git
+```
+安装依赖
+```sh
+$ npm i lerna -g
+$ npm i
+$ lerna bootstrap
+```
+查看 Iview 2.x|3.x示例
+```sh 
+$ npm run dev:iview
+```
+查看 Iview 4.x示例
+```sh 
+$ npm run dev:iview4
+```
+查看 ElementUI 示例
+```sh 
+$ npm run dev:ele
+```
+
 ## 对比 1.x
 
 - 速度更快
