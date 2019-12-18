@@ -26,8 +26,10 @@
         "package.json",
         "LICENSE",
         "src",
+        "types",
         "dist"
     ],
+    "typings": "./types/index.d.ts",
     "author": "xaboy",
     "license": "MIT",
     "bugs": {
