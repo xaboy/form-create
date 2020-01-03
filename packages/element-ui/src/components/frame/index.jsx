@@ -203,12 +203,13 @@ export default {
             const props = {
                 type: 'text',
                 value: this.fileList.toString(),
-                icon: this.icon,
                 readonly: true,
                 clearable: false
             };
 
-            return <ElInput props={props} on={{'on-click': () => this.showModel()}} key={this.key('input')}/>
+            return <ElInput props={props} key={this.key('input')}>
+                <ElButton icon={this.icon} on={{'click': () => this.showModel()}} slot="append"/>
+            </ElInput>
         },
 
         makeGroup(children) {
