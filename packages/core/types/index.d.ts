@@ -109,8 +109,8 @@ export namespace FormCreate {
         className?: any;
         defaultSlot?: any;
         children?: Array<Rule<Col, FormOption> | Creator<Rule<Col, FormOption>, Col, FormOption> | string>;
-        hidden?: false
-        visibility?: false
+        hidden?: boolean
+        visibility?: boolean
 
         [key: string]: any;
     }
