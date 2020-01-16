@@ -1,6 +1,6 @@
 /*!
- * @form-create/iview v1.0.5
- * (c) 2018-2019 xaboy
+ * @form-create/iview v1.0.6
+ * (c) 2018-2020 xaboy
  * Github https://github.com/xaboy/form-create
  * Released under the MIT License.
  */
@@ -2846,12 +2846,15 @@
     },
     watch: {
       value: function value(n) {
-        n = toArray(n);
-        var data = this.$refs.tree.data;
-        this.type === 'selected' ? this.selected(data, n) : this.checked(data, n);
+        this.setStatus(n);
       }
     },
     methods: {
+      setStatus: function setStatus(value) {
+        var n = toArray(value);
+        var data = this.$refs.tree.data;
+        this.type === 'selected' ? this.selected(data, n) : this.checked(data, n);
+      },
       selected: function selected(_data, value) {
         var _this = this;
 
@@ -2891,6 +2894,8 @@
       var _this3 = this;
 
       this.$nextTick(function () {
+        _this3.setStatus(_this3.value);
+
         _this3.$watch(function () {
           return _this3.$refs.tree.flatState;
         }, function () {
@@ -3981,7 +3986,7 @@
   VNode.use(nodes);
   var drive = {
     ui: "iview",
-    version: "1.0.5",
+    version: "1.0.6",
     formRender: Form,
     components: components,
     parsers: parsers,

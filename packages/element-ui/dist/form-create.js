@@ -1,6 +1,6 @@
 /*!
- * @form-create/element-ui v1.0.5
- * (c) 2018-2019 xaboy
+ * @form-create/element-ui v1.0.6
+ * (c) 2018-2020 xaboy
  * Github https://github.com/xaboy/form-create
  * Released under the MIT License.
  */
@@ -2545,21 +2545,26 @@
         var props = {
           type: 'text',
           value: this.fileList.toString(),
-          icon: this.icon,
           readonly: true,
           clearable: false
         };
         return h("ElInput", helper([{}, {
           "props": props
-        }, {}, {
+        }, {
+          "key": this.key('input')
+        }]), [h("ElButton", helper([{
+          "attrs": {
+            "icon": this.icon
+          }
+        }, {
           "on": {
-            'on-click': function onClick() {
+            'click': function click() {
               return _this2.showModel();
             }
           }
         }, {
-          "key": this.key('input')
-        }]));
+          "slot": "append"
+        }]))]);
       },
       makeGroup: function makeGroup(children) {
         var h = this.$createElement;
@@ -4018,7 +4023,7 @@
   VNode.use(nodes);
   var drive = {
     ui: "element-ui",
-    version: "".concat("1.0.5"),
+    version: "".concat("1.0.6"),
     formRender: Form,
     components: components,
     parsers: parsers,
