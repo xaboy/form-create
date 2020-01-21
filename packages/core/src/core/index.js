@@ -45,8 +45,8 @@ export default function createFormCreate(drive) {
     }
 
     function margeGlobal(config, _options) {
-        if (isBool(_options.sumbitBtn))
-            _options.sumbitBtn = {show: _options.sumbitBtn};
+        if (isBool(_options.submitBtn))
+            _options.submitBtn = {show: _options.submitBtn};
 
         if (isBool(_options.resetBtn))
             _options.resetBtn = {show: _options.resetBtn};
