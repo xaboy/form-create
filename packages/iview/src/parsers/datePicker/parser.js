@@ -9,6 +9,7 @@ export default class Parser extends BaseParser {
     }
 
     mounted() {
+        this.toFormValue = (val) => this.el.parseDate(val);
         this.toValue = (val) => {
             const value = this.el.formatDate(val), {type, separator} = this.el,
                 isRange = ['daterange', 'datetimerange'].indexOf(type) !== -1;
