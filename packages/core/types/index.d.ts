@@ -1,4 +1,4 @@
-import Vue, {CreateElement, VNodeDirective} from "vue";
+import Vue, {ComponentOptions, CreateElement, VNodeDirective} from "vue";
 import {ScopedSlot, ScopedSlotChildren} from "vue/types/vnode";
 import {ExtendedVue} from "vue/types/vue";
 
@@ -37,7 +37,7 @@ export namespace FormCreate {
     export interface Component {
         (id: string): ExtendedVue<Vue, {}, {}, {}, {}>;
 
-        (id: string, definition): void;
+        (id: string, definition: ComponentOptions<Vue>): void;
     }
 
     export interface BaseButton<Col> {
