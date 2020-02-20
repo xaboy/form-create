@@ -122,6 +122,9 @@ export default {
         },
         fileList(n) {
             this.$emit('input', this.maxLength === 1 ? (n[0] || '') : n);
+        },
+        src(n) {
+            this.modalVm && (this.modalVm.src = n);
         }
     },
     methods: {
@@ -138,11 +141,11 @@ export default {
 
             const {width, height, src, title, okBtnText, closeBtnText} = this.$props;
 
-            mount({width, title, ...this.modal}, (vNode, _vm) => {
+            mount({width, title, src, ...this.modal}, (vNode, _vm) => {
                 this.modalVm = _vm;
                 return [vNode.make('iframe', {
                     attrs: {
-                        src
+                        src: _vm.src
                     },
                     style: {
                         'height': height,
