@@ -78,12 +78,15 @@ export default class Render {
 
     setGlobalConfig(parser) {
         if (!this.options.global) return;
+        const global = this.options.global;
 
-        if (this.options.global['*']) {
-            this.toData(parser, this.options.global['*']);
+        if (global['*']) {
+            this.toData(parser, global['*']);
         }
-        if (this.options.global[parser.type]) {
-            this.toData(parser, this.options.global[parser.type]);
+        if (global[parser.type]) {
+            this.toData(parser, global[parser.type]);
+        } else if (global[parser.originType]) {
+            this.toData(parser, global[parser.originType]);
         }
     }
 

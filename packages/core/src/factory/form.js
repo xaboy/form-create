@@ -20,17 +20,17 @@ export default class BaseForm {
     }
 
     getGetCol(parser) {
-        let col = parser.rule.col || {}, mCol = {}, pCol = {};
+        let col = parser.rule.col || {}, mCol = {}, pCol = {}, global = this.options.global;
 
-        if (!this.options.global)
+        if (!global)
             return col;
 
-        if (this.options.global['*']) {
-            mCol = this.options.global['*'].col || {};
+        if (global['*']) {
+            mCol = global['*'].col || {};
         }
 
-        if (this.options.global[parser.type]) {
-            pCol = this.options.global[parser.type].col || {};
+        if (global[parser.type] || global[parser.originType]) {
+            pCol = global[parser.type].col || global[parser.originType].col || {};
         }
         col = deepExtend(deepExtend(deepExtend({}, mCol), pCol), col);
         return col;
