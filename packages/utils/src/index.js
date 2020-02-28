@@ -110,6 +110,13 @@ export function deepExtend(origin, target = {}) {
     return origin
 }
 
+export function deepExtendArgs(origin, ...lst) {
+    lst.forEach(target => {
+        origin = deepExtend(origin, target);
+    });
+    return origin;
+}
+
 let id = 0;
 
 export function uniqueId() {

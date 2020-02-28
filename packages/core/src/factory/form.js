@@ -1,6 +1,6 @@
 import VData from './vData';
 import VNode from './vNode';
-import {deepExtend} from '@form-create/utils';
+import {deepExtendArgs} from '@form-create/utils';
 
 
 export default class BaseForm {
@@ -32,7 +32,7 @@ export default class BaseForm {
         if (global[parser.type] || global[parser.originType]) {
             pCol = global[parser.type].col || global[parser.originType].col || {};
         }
-        col = deepExtend(deepExtend(deepExtend({}, mCol), pCol), col);
+        col = deepExtendArgs({}, mCol, pCol, col);
         return col;
     }
 
