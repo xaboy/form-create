@@ -38,8 +38,12 @@
     visibility: hidden;
 }
 
-.fc-pop {
+.fc-pop2 {
     text-align: left;
+    vertical-align: -0.2em;
+}
+
+.fc-pop3 {
     vertical-align: 0.1em;
 }
 

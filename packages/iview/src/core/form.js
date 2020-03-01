@@ -79,7 +79,7 @@ export default class Form extends BaseForm {
             if (rule.info) {
                 svn.push(this.vNode.make(isTooltip(info) ? 'Tooltip' : 'Poptip', {
                     props: {...info, content: rule.info},
-                    class: 'fc-pop',
+                    class: 'fc-pop'+iviewConfig._v,
                     key: `pop${unique}`
                 }, [
                     this.vNode.icon({props: {type: info.icon || iviewConfig.infoIcon, size: 16}})
