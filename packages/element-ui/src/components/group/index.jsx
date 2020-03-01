@@ -123,7 +123,7 @@ export default {
         },
         makeIcon(total, index, key) {
             if (index === 0) {
-                return [total >= this.max ? null : this.addIcon(key), this.min === 0 ? this.delIcon(key) : null];
+                return [(this.max !== 0 && total >= this.max) ? null : this.addIcon(key), this.min === 0 ? this.delIcon(key) : null];
             } else if (index >= this.min) {
                 return this.delIcon(key);
             }
