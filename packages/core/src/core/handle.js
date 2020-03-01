@@ -38,6 +38,7 @@ export default class Handle {
 
         this.validate = {};
         this.formData = {};
+        this.subForm = {};
 
         this.fCreateApi = undefined;
 
@@ -256,6 +257,10 @@ export default class Handle {
         $set(this.trueData, field, parser);
     }
 
+    addSubForm(parser, subForm) {
+        this.subForm[parser.field] = subForm;
+    }
+
     notField(id) {
         return this.parsers[id] === undefined;
     }
@@ -373,6 +378,9 @@ export default class Handle {
             $del(this.fieldList, field);
             $del(this.trueData, field);
         }
+
+        if (this.subForm[parser.field])
+            $del(this.subForm, field);
     }
 
     refresh() {

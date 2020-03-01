@@ -5,7 +5,7 @@ import {
     isBool,
     isElement,
     toString,
-    isPlainObject,
+    isPlainObject, isString, isFunction, isValidChildren,
 } from '@form-create/utils';
 import $FormCreate from '../components/formCreate';
 import {formCreateName} from '../components/formCreate';
@@ -67,6 +67,32 @@ export default function createFormCreate(drive) {
         return _vue.extend($FormCreate(FormCreate, components));
     }
 
+    function copyRule(rule) {
+        return copyRules([rule])[0];
+    }
+
+    function copyRules(rules) {
+        return rules.map(rule => {
+            if (isString(rule)) return rule;
+            let r;
+            if (isFunction(rule.getRule)) {
+                r = maker.create();
+                r._data = {...rule._data};
+                if (r._data.field && r._data.value === undefined)
+                    r.value(null);
+                if (isValidChildren(r._data.children)) {
+                    r._data.children = copyRules(r._data.children);
+                }
+            } else {
+                r = {...rule};
+                if (r.field && r.value === undefined) r.value = null;
+                if (isValidChildren(r.children))
+                    r.children = copyRules(r.children);
+            }
+            return r;
+        })
+    }
+
     function bindAttr(formCreate) {
         extend(formCreate, {
             version: drive.version,
@@ -76,6 +102,8 @@ export default function createFormCreate(drive) {
             setParser,
             createParser,
             data,
+            copyRules,
+            copyRule,
             $form() {
                 return get$FormCreate();
             },

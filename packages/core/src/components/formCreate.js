@@ -5,6 +5,7 @@ export const formCreateName = 'FormCreate';
 export default function $FormCreate(FormCreate, components) {
     return {
         name: formCreateName,
+        componentName: formCreateName,
         props: {
             rule: {
                 type: Array,

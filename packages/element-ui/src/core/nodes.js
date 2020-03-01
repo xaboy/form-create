@@ -22,4 +22,5 @@ export default {
     row: 'el-row',
     tree: 'fc-elm-tree',
     autoComplete: 'el-autocomplete',
+    group: 'fc-elm-group',
 }

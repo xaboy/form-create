@@ -92,7 +92,7 @@ export default class Render {
 
     renderTemplate(parser) {
         const {id, rule, key} = parser;
-        if (Vue.compile === undefined) {
+        if (isUndef(Vue.compile)) {
             console.error('使用的 Vue 版本不支持 compile' + errMsg());
             return [];
         }
@@ -122,7 +122,7 @@ export default class Render {
 
         const vn = template.render.call(vm);
 
-        if (vn.data === undefined) vn.data = {};
+        if (isUndef(vn.data)) vn.data = {};
         vn.key = key;
         return vn;
     }
@@ -137,7 +137,7 @@ export default class Render {
             if (type === 'template' && rule.template) {
                 vn = this.renderTemplate(parser);
 
-                if (parent) {
+                if (parent && isUndef(rule.native)) {
                     this.setCache(parser, vn, parent);
                     return vn;
                 }
@@ -146,7 +146,7 @@ export default class Render {
                 vn = parser.render ? parser.render(children) : this.defaultRender(parser, children);
             } else {
                 vn = this.defaultRender(parser, this.renderChildren(parser));
-                if (parent) {
+                if (parent && isUndef(rule.native)) {
                     this.setCache(parser, vn, parent);
                     return vn;
                 }
@@ -179,7 +179,8 @@ export default class Render {
         this.parserToData(parser);
 
         let data = parser.vData
-            .ref(refName).key('fc_item' + key).props('formCreate', this.$handle.fCreateApi);
+            .ref(refName).key('fc_item' + key).props('formCreate', this.$handle.fCreateApi)
+            .on('fc.subForm', (subForm) => this.$handle.addSubForm(parser, subForm));
 
         if (!custom)
             data.on('input', (value) => {
