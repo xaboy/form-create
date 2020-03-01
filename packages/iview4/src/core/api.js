@@ -12,10 +12,49 @@ export default function getGlobalApi(h, baseApi) {
 
     return {
         ...baseApi,
-        validate: (callback) => {
-            h.$form.getFormRef().validate((valid) => {
-                callback && callback(valid);
+        validate(callback) {
+            let state = false;
+            let subForm = {
+                ...{
+                    ___this: {
+                        validate(call) {
+                            h.$form.getFormRef().validate((valid) => {
+                                call && call(valid);
+                            });
+                        }
+                    }
+                }, ...h.subForm,
+            };
+            let keys = Object.keys(subForm), len = keys.length, subLen;
+
+            const validFn = (valid, field) => {
+                if (valid) {
+                    if (subLen > 1) subLen--;
+                    else if (len > 1) len--;
+                    else callback(true);
+                } else {
+                    if (!state) {
+                        callback(false);
+                        state = true;
+                    }
+                    field && this.clearValidateState(field, false);
+                }
+            };
+
+            keys.forEach(field => {
+                let sub = subForm[field];
+                if (Array.isArray(sub)) {
+                    subLen = sub.length;
+                    sub.forEach(form => {
+                        form.validate((v) => validFn(v, field))
+                    })
+                } else if (sub) {
+                    subLen = 1;
+                    sub.validate(validFn)
+                }
+
             });
+
         },
         validateField: (field, callback) => {
             if (!h.fieldList[field])
@@ -48,8 +87,9 @@ export default function getGlobalApi(h, baseApi) {
                 }
             });
         },
-        clearValidateState(fields) {
+        clearValidateState(fields, clearSub = true) {
             tidyFields(fields).forEach(field => {
+                if (clearSub) this.clearSubValidateState(fields);
                 const parser = h.fieldList[field];
                 if (!parser)
                     return;
@@ -58,8 +98,24 @@ export default function getGlobalApi(h, baseApi) {
                     fItem.validateMessage = '';
                     fItem.validateState = '';
                 }
-
             });
+        },
+        clearSubValidateState(fields) {
+            tidyFields(fields).forEach(field => {
+                const subForm = h.subForm[field];
+                if (subForm) {
+                    if (Array.isArray(subForm)) {
+                        subForm.forEach(form => {
+                            form.clearValidateState();
+                        })
+                    } else {
+                        subForm.clearValidateState();
+                    }
+                }
+            })
+        },
+        getSubForm(field) {
+            return h.subForm[field];
         },
         btn: {
             loading: (loading = true) => {

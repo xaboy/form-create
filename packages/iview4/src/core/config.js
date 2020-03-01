@@ -7,6 +7,8 @@ export const iviewConfig = {
     fileUpIcon: 'ios-folder-open',
     imgUpIcon: 'md-images',
     infoIcon: 'ios-information-circle-outline',
+    removeIcon:'ios-remove-circle-outline',
+    addIcon:'ios-add-circle-outline',
 };
 
 

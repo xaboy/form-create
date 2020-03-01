@@ -49,6 +49,48 @@ function mock() {
             placeholder: '请输入商品简介'
         }),
 
+        {
+            type:'group',
+            title:'批量添加',
+            field:'group',
+            value:[],
+            props:{
+                max:5,
+                rules:[
+                    {
+                        type:'col',
+                        children:[
+                            maker.date('','date','').native(false).col({span:12}),
+                            {
+                                type:'inputNumber',
+                                field:'field',
+                                props:{
+                                    disabled:false
+                                },
+                                validate:[
+                                    {required:true,min:10,type:'number'}
+                                ],
+                                col:{
+                                    span:12
+                                }
+                            }
+                        ]
+
+                    },
+                    {
+                        type:'input',
+                        field:'field2',
+                        validate:[
+                            {required:true}
+                        ]
+                    }
+                ]
+            },
+            validate:[
+                {required:true,min:3,type:'array',message:'最少增加3项'},
+            ]
+        },
+
 
         //radio 单选框组件
         maker.radio('是否包邮', 'is_postage', 0).options([

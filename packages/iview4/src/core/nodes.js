@@ -22,4 +22,5 @@ export default {
     row: 'row',
     tree: 'fc-ivu-tree',
     autoComplete: 'AutoComplete',
+    group: 'fc-ivu-group',
 }
