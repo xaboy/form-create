@@ -29,7 +29,7 @@ export default class Form extends BaseForm {
         });
     }
 
-    validateField(field,call){
+    validateField(field, call) {
         this.getFormRef().validateField(field, call);
     }
 
@@ -79,6 +79,7 @@ export default class Form extends BaseForm {
             if (rule.info) {
                 svn.push(this.vNode.make(isTooltip(info) ? 'Tooltip' : 'Poptip', {
                     props: {...info, content: rule.info},
+                    class: 'fc-pop',
                     key: `pop${unique}`
                 }, [
                     this.vNode.icon({props: {type: info.icon || iviewConfig.infoIcon, size: 16}})

@@ -22,11 +22,11 @@
     margin-bottom: 0px;
 }
 
-.form-create .fc-group .ivu-icon+.ivu-icon{
+.form-create .fc-group .ivu-icon + .ivu-icon {
     margin-left: 3px;
 }
 
-.form-create .fc-upload .ivu-icon{
+.form-create .fc-upload .ivu-icon {
     vertical-align: middle;
 }
 
@@ -36,6 +36,11 @@
 
 .form-create .__fc_v {
     visibility: hidden;
+}
+
+.fc-pop {
+    text-align: left;
+    vertical-align: 0.1em;
 }
 
 .fc-files img {
