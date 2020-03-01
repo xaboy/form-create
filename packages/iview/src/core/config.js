@@ -29,7 +29,7 @@ export const iview3 = {
 
 export const iviewConfig = (function () {
     if (typeof iview === 'undefined') return iview2;
-    return (iview.version && iview.version.split('.')[0] == 3) ? iview3 : iview2;
+    return (iview.version && iview.version.split('.')[0] > 2) ? iview3 : iview2;
 }());
 
 
