@@ -1,6 +1,6 @@
 import {uniqueId} from '@form-create/utils';
 
-const NAME = 'fc-iview-radio';
+const NAME = 'fc-ivu-radio';
 
 export default {
     name: NAME,

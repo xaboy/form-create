@@ -1,6 +1,6 @@
 import {uniqueId} from '@form-create/utils';
 
-const NAME = 'fc-iview-checkbox';
+const NAME = 'fc-ivu-checkbox';
 
 export default {
     name: NAME,

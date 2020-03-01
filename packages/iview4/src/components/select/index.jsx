@@ -1,6 +1,6 @@
 import {toDefSlot, uniqueId} from '@form-create/utils';
 
-const NAME = 'fc-iview-select';
+const NAME = 'fc-ivu-select';
 
 export default {
     name: NAME,
