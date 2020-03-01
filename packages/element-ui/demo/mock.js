@@ -55,6 +55,7 @@ function mock() {
             value:[],
             props:{
                 max:5,
+                min:3,
                 rules:[
                     {
                         type:'col',
@@ -317,7 +318,7 @@ function mock() {
                     // return false;
                 },
                 "allowRemove": true,
-            }).validate({required: true, type: 'array', min: 3, message: '请上传3张图片', trigger: 'change'}),
+            }),
 
         //frame 框架组件
         maker.frame('素材', 'fodder', ["http://file.lotkk.com/form-create.jpeg"]).props({

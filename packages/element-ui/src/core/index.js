@@ -1,7 +1,6 @@
 import components from '../components';
 import parsers from '../parsers';
 import getConfig from './config';
-import getGlobalApi from './api';
 import nodes from './nodes';
 import formRender from './form';
 import createFormCreate, {VNode} from '@form-create/core';
@@ -16,7 +15,6 @@ export const drive = {
     components,
     parsers,
     makers,
-    getGlobalApi,
     getConfig,
 };
 

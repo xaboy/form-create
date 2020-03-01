@@ -34,6 +34,16 @@ export default class Form extends BaseForm {
         return this.vm.$refs[this.refName];
     }
 
+    validate(call) {
+        this.getFormRef().validate((valid) => {
+            call && call(valid);
+        });
+    }
+
+    validateField(field,call){
+        this.getFormRef().validateField(field, call);
+    }
+
     beforeRender() {
         this.propsData = this.vData.props(this.options.form).props({
             model: this.$handle.formData,

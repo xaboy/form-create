@@ -14,7 +14,7 @@ import {
 } from '@form-create/utils';
 import BaseParser from '../factory/parser';
 import Render from './render';
-import baseApi from './api';
+import Api from './api';
 import {enumerable} from './util';
 
 
@@ -295,7 +295,7 @@ export default class Handle {
 
 
         if (this.fCreateApi === undefined)
-            this.fCreateApi = this.fc.drive.getGlobalApi(this, baseApi(this));
+            this.fCreateApi = Api(this);
         this.fCreateApi.rule = this.rules;
         this.fCreateApi.config = this.options;
     }
