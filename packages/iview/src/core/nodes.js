@@ -22,4 +22,5 @@ export default {
     row: 'row',
     tree: 'fc-iview-tree',
     autoComplete: 'AutoComplete',
+    group: 'fc-iview-group',
 }

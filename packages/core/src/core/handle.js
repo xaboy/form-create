@@ -452,7 +452,7 @@ function defRule() {
         on: {},
         options: [],
         title: undefined,
-        value: '',
+        value: null,
         field: '',
         name: undefined,
         className: undefined

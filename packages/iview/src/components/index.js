@@ -4,6 +4,7 @@ import radio from './radio';
 import select from './select';
 import tree from './tree';
 import upload from './upload';
+import group from './group';
 
 
 export default [
@@ -12,5 +13,6 @@ export default [
     radio,
     select,
     tree,
-    upload
+    upload,
+    group
 ]

@@ -1,0 +1,155 @@
+import {iviewConfig} from '../../core/config';
+
+const NAME = 'fc-iview-group';
+
+export default {
+    name: NAME,
+    props: {
+        rule: Object,
+        rules: Array,
+        max: {
+            type: Number,
+            default: 0
+        },
+        min: {
+            type: Number,
+            default: 0
+        },
+        value: {
+            type: Array,
+            default: () => []
+        }
+    },
+    data() {
+        return {
+            config: {
+                submitBtn: false,
+                resetBtn: false
+            },
+            len: 0,
+            cacheRule: {},
+            group$f: {},
+            fieldRule: {}
+        }
+    },
+    computed: {
+        formRule() {
+            if (this.rule) return [this.rule];
+            else if (this.rules) return this.rules;
+            return [];
+        },
+        formData() {
+            return Object.keys(this.fieldRule).map(key => {
+                const keys = Object.keys(this.fieldRule[key]);
+                return this.rule ? keys[0] === undefined ? null : this.fieldRule[key][keys[0]].value : keys.reduce((initial, field) => {
+                    initial[field] = this.fieldRule[key][field].value;
+                    return initial;
+                }, {});
+            })
+        }
+    },
+    watch: {
+        formData(n) {
+            this.$emit('input', n);
+        },
+        value(n) {
+            let keys = Object.keys(this.cacheRule), total = keys.length, len = total - n.length;
+            if (len < 0) {
+                for (let i = len; i < 0; i++) {
+                    this.addRule(keys[i]);
+                }
+                for (let i = 0; i < total; i++) {
+                    this.setValue(this.group$f[keys[i]], n[i]);
+                }
+            } else {
+                if (len > 0) {
+                    for (let i = 0; i < len; i++) {
+                        this.removeRule(keys[total - i - 1]);
+                    }
+                    this.subForm();
+                }
+
+                n.forEach((val, i) => {
+                    this.setValue(this.group$f[keys[i]], n[i]);
+                });
+            }
+        }
+    },
+    methods: {
+        setValue($f, value) {
+            if (this.rule) {
+                const fields = $f.fields();
+                if (!fields[0]) return;
+                $f.setValue(fields[0], value);
+            } else {
+                $f.setValue(value);
+            }
+        },
+        addRule() {
+            this.$set(this.cacheRule, ++this.len, this.copyRule());
+        },
+        add$f(i, key, $f) {
+            this.group$f[key] = $f;
+            this.setValue($f, this.value[i]);
+            this.syncData(key, $f);
+            this.subForm();
+        },
+        subForm() {
+            this.$emit('fc.subForm', Object.keys(this.group$f).map(k => this.group$f[k]));
+        },
+        syncData(key, $f) {
+            this.$set(this.fieldRule, key, {});
+            $f.fields().forEach(field => {
+                this.fieldRule[key][field] = $f.getRule(field);
+            });
+        },
+        removeRule(key) {
+            this.$delete(this.cacheRule, key);
+            this.$delete(this.fieldRule, key);
+            delete this.group$f[key];
+        },
+        copyRule() {
+            return this.$formCreate.copyRules(this.formRule);
+        },
+        addIcon(key) {
+            return <Icon key={`a${key}`} type={iviewConfig.addIcon} style="font-size:28px;cursor:pointer;"
+                on-click={() => this.addRule()}/>;
+        },
+        delIcon(key) {
+            return <Icon key={`d${key}`} type={iviewConfig.removeIcon}
+                style="font-size:28px;cursor:pointer;color:#606266;"
+                on-click={() => {
+                    this.removeRule(key);
+                    this.subForm();
+                }}/>;
+        },
+        makeIcon(total, index, key) {
+            if (index === 0) {
+                return [total >= this.max ? null : this.addIcon(key), this.min === 0 ? this.delIcon(key) : null];
+            } else if (index >= this.min) {
+                return this.delIcon(key);
+            }
+        }
+    },
+    created() {
+        for (let i = 0; i < this.value.length; i++) {
+            this.addRule();
+        }
+    },
+    render() {
+        const keys = Object.keys(this.cacheRule);
+        return keys.length === 0 ?
+            <Icon key={'a_def'} type={iviewConfig.addIcon}
+                style="font-size:28px;cursor:pointer;vertical-align:middle;color:#606266;"
+                on-click={() => this.addRule()}/> :
+            <div class="fc-group" key={'con'}>{keys.map((key, index) => {
+                const rule = this.cacheRule[key];
+                return <Row align="middle" type="flex" key={key}
+                    style="background-color:#f5f7fa;padding:10px;border-radius:5px;margin-bottom:10px;">
+                    <Col span={20}><FormItem><FormCreate on-mounted={($f) => this.add$f(index, key, $f)}
+                        on-reload={($f) => this.syncData(key, $f)} rule={rule}
+                        option={this.config}/></FormItem></Col>
+                    <Col span={2} pull={1} push={1}>{this.makeIcon(keys.length, index, key)}</Col></Row>
+            })}</div>
+    }
+}

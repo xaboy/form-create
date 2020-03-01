@@ -14,8 +14,20 @@
     box-sizing: border-box;
 }
 
+.form-create .form-create .ivu-form-item {
+    margin-bottom: 22px;
+}
+
 .form-create .__fc_h {
     display: none;
+}
+
+.form-create .fc-group .ivu-icon+.ivu-icon{
+    margin-left: 5px;
+}
+
+.form-create .fc-upload .ivu-icon{
+    vertical-align: middle;
 }
 
 .form-create .__fc_v {
