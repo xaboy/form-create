@@ -18,6 +18,10 @@
     margin-bottom: 22px;
 }
 
+.form-create .form-create .el-form-item .el-form-item {
+    margin-bottom: 0px;
+}
+
 .__fc_h {
     display: none;
 }
