@@ -1,6 +1,6 @@
 import {iviewConfig} from '../../core/config';
 
-const NAME = 'fc-iview-group';
+const NAME = 'fc-ivu-group';
 
 export default {
     name: NAME,
@@ -112,12 +112,12 @@ export default {
             return this.$formCreate.copyRules(this.formRule);
         },
         addIcon(key) {
-            return <Icon key={`a${key}`} type={iviewConfig.addIcon} style="font-size:28px;cursor:pointer;"
+            return <Icon key={`a${key}`} type={iviewConfig.addIcon} style="font-size:28px;cursor:pointer;color:#000;"
                 on-click={() => this.addRule()}/>;
         },
         delIcon(key) {
             return <Icon key={`d${key}`} type={iviewConfig.removeIcon}
-                style="font-size:28px;cursor:pointer;color:#606266;"
+                style="font-size:28px;cursor:pointer;"
                 on-click={() => {
                     this.removeRule(key);
                     this.subForm();
@@ -140,7 +140,7 @@ export default {
         const keys = Object.keys(this.cacheRule);
         return keys.length === 0 ?
             <Icon key={'a_def'} type={iviewConfig.addIcon}
-                style="font-size:28px;cursor:pointer;vertical-align:middle;color:#606266;"
+                style="font-size:28px;cursor:pointer;vertical-align:middle;"
                 on-click={() => this.addRule()}/> :
             <div class="fc-group" key={'con'}>{keys.map((key, index) => {
                 const rule = this.cacheRule[key];

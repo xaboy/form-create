@@ -3,7 +3,7 @@ import {defaultOnHandle, mount} from '../../core/modal';
 import style from '../../style/index.css';
 import {toArray, uniqueId} from '@form-create/utils';
 
-const NAME = 'fc-iview-frame';
+const NAME = 'fc-ivu-frame';
 
 export default {
     name: NAME,

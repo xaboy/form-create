@@ -14,7 +14,7 @@ function getFileName(file) {
     return toString(file).split('/').pop()
 }
 
-const NAME = 'fc-iview-upload';
+const NAME = 'fc-ivu-upload';
 
 
 export default {
