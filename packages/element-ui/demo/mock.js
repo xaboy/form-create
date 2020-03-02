@@ -171,7 +171,7 @@ function mock() {
             maker.create('span').domProps({
                 innerHTML: '测试自定义按钮'
             })
-        ]).emit(['click']),
+        ]).emit(['click']).emitPrefix('btn'),
 
 
         //自定义组件
