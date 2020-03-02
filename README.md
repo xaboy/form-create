@@ -34,8 +34,9 @@ If you have a form component suitable for form-create, please feel free to [clic
 > [Update log](http://www.form-create.com/en/v2/guide/update.html)
 
 
-![http://file.lotkk.com/demo-live3.gif](https://raw.githubusercontent.com/xaboy/form-create/dev/images/demo-live3.gif)
-![http://file.lotkk.com/demo-live2.gif](https://raw.githubusercontent.com/xaboy/form-create/dev/images/demo-live2.gif)
+![demo1](https://raw.githubusercontent.com/xaboy/form-create/dev/images/demo-live3.gif)
+![demo2](https://raw.githubusercontent.com/xaboy/form-create/dev/images/demo-live2.gif)
+![demo3](https://github.com/xaboy/form-create/blob/dev/images/demo-group.gif?raw=true)
 
 
 ## Docs
