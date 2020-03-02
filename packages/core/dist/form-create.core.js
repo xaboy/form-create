@@ -1,5 +1,5 @@
 /*!
- * @form-create/core v1.0.6
+ * @form-create/core v1.0.7
  * (c) 2018-2020 xaboy
  * Github https://github.com/xaboy/form-create
  * Released under the MIT License.
@@ -248,6 +248,16 @@ function deepExtend(origin) {
 
   return origin;
 }
+function deepExtendArgs(origin) {
+  for (var _len2 = arguments.length, lst = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+    lst[_key2 - 1] = arguments[_key2];
+  }
+
+  lst.forEach(function (target) {
+    origin = deepExtend(origin, target);
+  });
+  return origin;
+}
 var id = 0;
 function uniqueId() {
   return ++id;
@@ -260,6 +270,7 @@ var formCreateName = 'FormCreate';
 function $FormCreate(FormCreate, components) {
   return {
     name: formCreateName,
+    componentName: formCreateName,
     props: {
       rule: {
         type: Array,
@@ -569,27 +580,54 @@ function enumerable(value) {
     configurable: false
   };
 }
+function copyRule(rule) {
+  return copyRules([rule])[0];
+}
+function copyRules(rules) {
+  return rules.map(function (rule) {
+    if (isString(rule)) return rule;
+    var r;
 
+    if (isFunction(rule.getRule)) {
+      r = new Creator();
+      r._data = _objectSpread2({}, rule._data);
+      if (r._data.field && r._data.value === undefined) r.value(null);
+
+      if (isValidChildren(r._data.children)) {
+        r._data.children = copyRules(r._data.children);
+      }
+    } else {
+      r = _objectSpread2({}, rule);
+      if (r.field && r.value === undefined) r.value = null;
+      if (isValidChildren(r.children)) r.children = copyRules(r.children);
+    }
+
+    return r;
+  });
+}
+
+var commonMaker = creatorFactory('');
+function create(type, field, title) {
+  var make = commonMaker('', field);
+  make._data.type = type;
+  make._data.title = title;
+  return make;
+}
+function createTmp(template, vm, field, title) {
+  var make = commonMaker('', field);
+  make._data.type = 'template';
+  make._data.template = template;
+  make._data.title = title;
+  make._data.vm = vm;
+  return make;
+}
 function makerFactory() {
   var maker = {};
-  var commonMaker = creatorFactory('');
   extend(maker, {
-    create: function create(type, field, title) {
-      var make = commonMaker('', field);
-      make._data.type = type;
-      make._data.title = title;
-      return make;
-    },
-    createTmp: function createTmp(template, vm, field, title) {
-      var make = commonMaker('', field);
-      make._data.type = 'template';
-      make._data.template = template;
-      make._data.title = title;
-      make._data.vm = vm;
-      return make;
-    }
+    create: create,
+    createTmp: createTmp
   });
-  maker.template = maker.createTmp;
+  maker.template = createTmp;
   maker.parse = parse;
   return maker;
 }
@@ -840,13 +878,16 @@ function () {
     key: "setGlobalConfig",
     value: function setGlobalConfig(parser) {
       if (!this.options.global) return;
+      var global = this.options.global;
 
-      if (this.options.global['*']) {
-        this.toData(parser, this.options.global['*']);
+      if (global['*']) {
+        this.toData(parser, global['*']);
       }
 
-      if (this.options.global[parser.type]) {
-        this.toData(parser, this.options.global[parser.type]);
+      if (global[parser.type]) {
+        this.toData(parser, global[parser.type]);
+      } else if (global[parser.originType]) {
+        this.toData(parser, global[parser.originType]);
       }
     }
   }, {
@@ -858,7 +899,7 @@ function () {
           rule = parser.rule,
           key = parser.key;
 
-      if (_vue.compile === undefined) {
+      if (isUndef(_vue.compile)) {
         console.error('使用的 Vue 版本不支持 compile' + errMsg());
         return [];
       }
@@ -881,7 +922,7 @@ function () {
         _this2.onInput(parser, value);
       });
       var vn = template.render.call(vm);
-      if (vn.data === undefined) vn.data = {};
+      if (isUndef(vn.data)) vn.data = {};
       vn.key = key;
       return vn;
     }
@@ -900,7 +941,7 @@ function () {
         if (type === 'template' && rule.template) {
           vn = this.renderTemplate(parser);
 
-          if (parent) {
+          if (parent && isUndef(rule.native)) {
             this.setCache(parser, vn, parent);
             return vn;
           }
@@ -910,7 +951,7 @@ function () {
         } else {
           vn = this.defaultRender(parser, this.renderChildren(parser));
 
-          if (parent) {
+          if (parent && isUndef(rule.native)) {
             this.setCache(parser, vn, parent);
             return vn;
           }
@@ -944,7 +985,9 @@ function () {
       var refName = parser.refName,
           key = parser.key;
       this.parserToData(parser);
-      var data = parser.vData.ref(refName).key('fc_item' + key).props('formCreate', this.$handle.fCreateApi);
+      var data = parser.vData.ref(refName).key('fc_item' + key).props('formCreate', this.$handle.fCreateApi).on('fc.subForm', function (subForm) {
+        return _this3.$handle.addSubForm(parser, subForm);
+      });
       if (!custom) data.on('input', function (value) {
         _this3.onInput(parser, value);
       }).props('value', this.$handle.getFormData(parser));
@@ -1018,7 +1061,7 @@ function setTemplateProps(vm, parser, fApi) {
   vm.$props.formCreate = fApi;
 }
 
-function baseApi(h) {
+function Api(h) {
   function tidyFields(fields) {
     var all = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
     if (!fields) fields = all ? Object.keys(h.fieldList) : h.fields();else if (!Array.isArray(fields)) fields = [fields];
@@ -1303,6 +1346,168 @@ function baseApi(h) {
     el: function el(id) {
       var parser = h.getParser(id);
       if (parser) return parser.el;
+    },
+    validate: function validate(callback) {
+      var _this3 = this;
+
+      var state = false;
+
+      var subForm = _objectSpread2({}, {
+        ___this: {
+          validate: function validate(call) {
+            h.$form.validate(function (valid) {
+              call && call(valid);
+            });
+          }
+        }
+      }, {}, h.subForm);
+
+      var keys = Object.keys(subForm),
+          len = keys.length,
+          subLen;
+
+      var validFn = function validFn(valid, field) {
+        if (valid) {
+          if (subLen > 1) subLen--;else if (len > 1) len--;else callback(true);
+        } else {
+          if (!state) {
+            callback(false);
+            state = true;
+          }
+
+          field && _this3.clearValidateState(field, false);
+        }
+      };
+
+      keys.forEach(function (field) {
+        var sub = subForm[field];
+
+        if (Array.isArray(sub)) {
+          subLen = sub.length;
+          sub.forEach(function (form) {
+            form.validate(function (v) {
+              return validFn(v, field);
+            });
+          });
+        } else if (sub) {
+          subLen = 1;
+          sub.validate(validFn);
+        }
+      });
+    },
+    validateField: function validateField(field, callback) {
+      if (!h.fieldList[field]) return;
+      h.$form.validateField(field, callback);
+    },
+    resetFields: function resetFields(fields) {
+      var parsers = h.fieldList;
+      tidyFields(fields, true).forEach(function (field) {
+        var parser = parsers[field];
+        if (!parser) return;
+        if (parser.type === 'hidden') return;
+        h.vm.$refs[parser.formItemRefName].resetField();
+        h.$render.clearCache(parser, true);
+      });
+    },
+    submit: function submit(successFn, failFn) {
+      var _this4 = this;
+
+      this.validate(function (valid) {
+        if (valid) {
+          var formData = _this4.formData();
+
+          if (isFunction(successFn)) successFn(formData, _this4);else {
+            h.options.onSubmit && h.options.onSubmit(formData, _this4);
+            h.fc.$emit('on-submit', formData, _this4);
+          }
+        } else {
+          failFn && failFn(_this4);
+        }
+      });
+    },
+    clearValidateState: function clearValidateState(fields) {
+      var _this5 = this;
+
+      var clearSub = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+      tidyFields(fields).forEach(function (field) {
+        if (clearSub) _this5.clearSubValidateState(field);
+        var parser = h.fieldList[field];
+        if (!parser) return;
+        var fItem = h.vm.$refs[parser.formItemRefName];
+
+        if (fItem) {
+          fItem.validateMessage = '';
+          fItem.validateState = '';
+        }
+      });
+    },
+    clearSubValidateState: function clearSubValidateState(fields) {
+      tidyFields(fields).forEach(function (field) {
+        var subForm = h.subForm[field];
+
+        if (subForm) {
+          if (Array.isArray(subForm)) {
+            subForm.forEach(function (form) {
+              form.clearValidateState();
+            });
+          } else if (subForm) {
+            subForm.clearValidateState();
+          }
+        }
+      });
+    },
+    getSubForm: function getSubForm(field) {
+      return h.subForm[field];
+    },
+    btn: {
+      loading: function loading() {
+        var _loading = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+
+        h.vm._buttonProps({
+          loading: !!_loading
+        });
+      },
+      disabled: function disabled() {
+        var _disabled2 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+
+        h.vm._buttonProps({
+          disabled: !!_disabled2
+        });
+      },
+      show: function show() {
+        var isShow = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+
+        h.vm._buttonProps({
+          show: !!isShow
+        });
+      }
+    },
+    resetBtn: {
+      loading: function loading() {
+        var _loading2 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+
+        h.vm._resetProps({
+          loading: !!_loading2
+        });
+      },
+      disabled: function disabled() {
+        var _disabled3 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+
+        h.vm._resetProps({
+          disabled: !!_disabled3
+        });
+      },
+      show: function show() {
+        var isShow = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+
+        h.vm._resetProps({
+          show: !!isShow
+        });
+      }
+    },
+    closeModal: function closeModal(field) {
+      var parser = h.fieldList[field];
+      parser && parser.closeModel && parser.closeModel();
     }
   };
 }
@@ -1327,6 +1532,7 @@ function () {
     this.options = options;
     this.validate = {};
     this.formData = {};
+    this.subForm = {};
     this.fCreateApi = undefined;
 
     this.__init(rules);
@@ -1355,20 +1561,26 @@ function () {
     value: function loadRule(rules, child) {
       var _this = this;
 
-      rules.map(function (_rule) {
+      rules.map(function (_rule, index) {
         if (child && isString(_rule)) return;
         if (!_rule.type) return console.error('未定义生成规则的 type 字段' + errMsg());
         var parser;
 
         if (_rule.__fc__) {
-          parser = _rule.__fc__;
-          if (parser.vm !== _this.vm && !parser.deleted) return console.error("".concat(_rule.type, "\u89C4\u5219\u6B63\u5728\u5176\u4ED6\u7684 <form-create> \u4E2D\u4F7F\u7528") + errMsg());
-          parser.update(_this);
-          var _rule2 = parser.rule;
+          parser = _rule.__fc__; //规则在其他 form-create 中使用,自动浅拷贝
 
-          _this.parseOn(_rule2);
+          if (parser.vm !== _this.vm && !parser.deleted) {
+            _rule = copyRule(_rule);
+            rules[index] = _rule;
+            parser = _this.createParser(_this.parseRule(_rule));
+          } else {
+            parser.update(_this);
+            var _rule2 = parser.rule;
 
-          _this.parseProps(_rule2);
+            _this.parseOn(_rule2);
+
+            _this.parseProps(_rule2);
+          }
         } else {
           parser = _this.createParser(_this.parseRule(_rule));
         }
@@ -1569,6 +1781,11 @@ function () {
       $set(this.trueData, field, parser);
     }
   }, {
+    key: "addSubForm",
+    value: function addSubForm(parser, subForm) {
+      this.subForm[parser.field] = subForm;
+    }
+  }, {
     key: "notField",
     value: function notField(id) {
       return this.parsers[id] === undefined;
@@ -1599,7 +1816,7 @@ function () {
       vm.$set(vm, 'buttonProps', this.options.submitBtn);
       vm.$set(vm, 'resetProps', this.options.resetBtn);
       vm.$set(vm, 'formData', this.formData);
-      if (this.fCreateApi === undefined) this.fCreateApi = this.fc.drive.getGlobalApi(this, baseApi(this));
+      if (this.fCreateApi === undefined) this.fCreateApi = Api(this);
       this.fCreateApi.rule = this.rules;
       this.fCreateApi.config = this.options;
     }
@@ -1683,6 +1900,8 @@ function () {
         $del(this.fieldList, field);
         $del(this.trueData, field);
       }
+
+      if (this.subForm[parser.field]) $del(this.subForm, field);
     }
   }, {
     key: "refresh",
@@ -1768,7 +1987,7 @@ function defRule() {
     on: {},
     options: [],
     title: undefined,
-    value: '',
+    value: null,
     field: '',
     name: undefined,
     className: undefined
@@ -1823,8 +2042,8 @@ function createFormCreate(drive) {
   }
 
   function margeGlobal(config, _options) {
-    if (isBool(_options.sumbitBtn)) _options.sumbitBtn = {
-      show: _options.sumbitBtn
+    if (isBool(_options.submitBtn)) _options.submitBtn = {
+      show: _options.submitBtn
     };
     if (isBool(_options.resetBtn)) _options.resetBtn = {
       show: _options.resetBtn
@@ -1847,6 +2066,8 @@ function createFormCreate(drive) {
       setParser: setParser,
       createParser: createParser,
       data: data,
+      copyRule: copyRule,
+      copyRules: copyRules,
       $form: function $form() {
         return get$FormCreate();
       },
@@ -2044,18 +2265,19 @@ function () {
     value: function getGetCol(parser) {
       var col = parser.rule.col || {},
           mCol = {},
-          pCol = {};
-      if (!this.options.global) return col;
+          pCol = {},
+          global = this.options.global;
+      if (!global) return col;
 
-      if (this.options.global['*']) {
-        mCol = this.options.global['*'].col || {};
+      if (global['*']) {
+        mCol = global['*'].col || {};
       }
 
-      if (this.options.global[parser.type]) {
-        pCol = this.options.global[parser.type].col || {};
+      if (global[parser.type] || global[parser.originType]) {
+        pCol = global[parser.type].col || global[parser.originType].col || {};
       }
 
-      col = deepExtend(deepExtend(deepExtend({}, mCol), pCol), col);
+      col = deepExtendArgs({}, mCol, pCol, col);
       return col;
     }
   }, {
@@ -2073,4 +2295,4 @@ function () {
 }();
 
 export default createFormCreate;
-export { BaseForm, BaseParser, Creator, Handle, Render, VData, VNode, _vue as Vue, baseApi, creatorFactory, creatorTypeFactory, makerFactory, parseJson, toJson };
+export { BaseForm, BaseParser, Creator, Handle, Render, VData, VNode, _vue as Vue, Api as baseApi, creatorFactory, creatorTypeFactory, makerFactory, parseJson, toJson };

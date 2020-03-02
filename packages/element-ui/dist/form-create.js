@@ -1,5 +1,5 @@
 /*!
- * @form-create/element-ui v1.0.6
+ * @form-create/element-ui v1.0.7
  * (c) 2018-2020 xaboy
  * Github https://github.com/xaboy/form-create
  * Released under the MIT License.
@@ -223,7 +223,7 @@
   function isUndef(v) {
     return v === undefined || v === null;
   }
-  function toString(val) {
+  function toString$1(val) {
     return val == null ? '' : _typeof(val) === 'object' ? JSON.stringify(val, null, 2) : String(val);
   }
   function extend(to, _from) {
@@ -300,6 +300,16 @@
       }
     }
 
+    return origin;
+  }
+  function deepExtendArgs(origin) {
+    for (var _len2 = arguments.length, lst = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+      lst[_key2 - 1] = arguments[_key2];
+    }
+
+    lst.forEach(function (target) {
+      origin = deepExtend(origin, target);
+    });
     return origin;
   }
   var id = 0;
@@ -443,6 +453,7 @@
   function $FormCreate(FormCreate, components) {
     return {
       name: formCreateName,
+      componentName: formCreateName,
       props: {
         rule: {
           type: Array,
@@ -551,12 +562,12 @@
 
         if (Array.isArray(classList)) {
           classList.forEach(function (cls) {
-            $set(_this._data.class, toString(cls), true);
+            $set(_this._data.class, toString$1(cls), true);
           });
         } else if (isPlainObject(classList)) {
           $set(this._data, 'class', extend(this._data.class, classList));
         } else {
-          $set(this._data.class, toString(classList), status === undefined ? true : status);
+          $set(this._data.class, toString$1(classList), status === undefined ? true : status);
         }
 
         return this;
@@ -609,7 +620,7 @@
       if (isPlainObject(obj)) {
         $set(this._data, key, extend(this._data[key], obj));
       } else {
-        $set(this._data[key], toString(obj), val);
+        $set(this._data[key], toString$1(obj), val);
       }
 
       return this;
@@ -752,27 +763,54 @@
       configurable: false
     };
   }
+  function copyRule(rule) {
+    return copyRules([rule])[0];
+  }
+  function copyRules(rules) {
+    return rules.map(function (rule) {
+      if (isString(rule)) return rule;
+      var r;
 
+      if (isFunction(rule.getRule)) {
+        r = new Creator();
+        r._data = _objectSpread2({}, rule._data);
+        if (r._data.field && r._data.value === undefined) r.value(null);
+
+        if (isValidChildren(r._data.children)) {
+          r._data.children = copyRules(r._data.children);
+        }
+      } else {
+        r = _objectSpread2({}, rule);
+        if (r.field && r.value === undefined) r.value = null;
+        if (isValidChildren(r.children)) r.children = copyRules(r.children);
+      }
+
+      return r;
+    });
+  }
+
+  var commonMaker = creatorFactory('');
+  function create(type, field, title) {
+    var make = commonMaker('', field);
+    make._data.type = type;
+    make._data.title = title;
+    return make;
+  }
+  function createTmp(template, vm, field, title) {
+    var make = commonMaker('', field);
+    make._data.type = 'template';
+    make._data.template = template;
+    make._data.title = title;
+    make._data.vm = vm;
+    return make;
+  }
   function makerFactory() {
     var maker = {};
-    var commonMaker = creatorFactory('');
     extend(maker, {
-      create: function create(type, field, title) {
-        var make = commonMaker('', field);
-        make._data.type = type;
-        make._data.title = title;
-        return make;
-      },
-      createTmp: function createTmp(template, vm, field, title) {
-        var make = commonMaker('', field);
-        make._data.type = 'template';
-        make._data.template = template;
-        make._data.title = title;
-        make._data.vm = vm;
-        return make;
-      }
+      create: create,
+      createTmp: createTmp
     });
-    maker.template = maker.createTmp;
+    maker.template = createTmp;
     maker.parse = parse;
     return maker;
   }
@@ -866,7 +904,7 @@
       key: "use",
       value: function use(nodes) {
         Object.keys(nodes).forEach(function (k) {
-          VNode.prototype[toString(k).toLocaleLowerCase()] = VNode.prototype[k] = function (data, VNodeFn) {
+          VNode.prototype[toString$1(k).toLocaleLowerCase()] = VNode.prototype[k] = function (data, VNodeFn) {
             return this.make(nodes[k], data, VNodeFn);
           };
         });
@@ -888,7 +926,7 @@
       this.id = id;
       this.watch = [];
       this.originType = rule.type;
-      this.type = toString(rule.type).toLocaleLowerCase();
+      this.type = toString$1(rule.type).toLocaleLowerCase();
       this.isDef = true;
       this.el = undefined;
 
@@ -1023,13 +1061,16 @@
       key: "setGlobalConfig",
       value: function setGlobalConfig(parser) {
         if (!this.options.global) return;
+        var global = this.options.global;
 
-        if (this.options.global['*']) {
-          this.toData(parser, this.options.global['*']);
+        if (global['*']) {
+          this.toData(parser, global['*']);
         }
 
-        if (this.options.global[parser.type]) {
-          this.toData(parser, this.options.global[parser.type]);
+        if (global[parser.type]) {
+          this.toData(parser, global[parser.type]);
+        } else if (global[parser.originType]) {
+          this.toData(parser, global[parser.originType]);
         }
       }
     }, {
@@ -1041,7 +1082,7 @@
             rule = parser.rule,
             key = parser.key;
 
-        if (_vue.compile === undefined) {
+        if (isUndef(_vue.compile)) {
           console.error('使用的 Vue 版本不支持 compile' + errMsg());
           return [];
         }
@@ -1064,7 +1105,7 @@
           _this2.onInput(parser, value);
         });
         var vn = template.render.call(vm);
-        if (vn.data === undefined) vn.data = {};
+        if (isUndef(vn.data)) vn.data = {};
         vn.key = key;
         return vn;
       }
@@ -1083,7 +1124,7 @@
           if (type === 'template' && rule.template) {
             vn = this.renderTemplate(parser);
 
-            if (parent) {
+            if (parent && isUndef(rule.native)) {
               this.setCache(parser, vn, parent);
               return vn;
             }
@@ -1093,7 +1134,7 @@
           } else {
             vn = this.defaultRender(parser, this.renderChildren(parser));
 
-            if (parent) {
+            if (parent && isUndef(rule.native)) {
               this.setCache(parser, vn, parent);
               return vn;
             }
@@ -1127,7 +1168,9 @@
         var refName = parser.refName,
             key = parser.key;
         this.parserToData(parser);
-        var data = parser.vData.ref(refName).key('fc_item' + key).props('formCreate', this.$handle.fCreateApi);
+        var data = parser.vData.ref(refName).key('fc_item' + key).props('formCreate', this.$handle.fCreateApi).on('fc.subForm', function (subForm) {
+          return _this3.$handle.addSubForm(parser, subForm);
+        });
         if (!custom) data.on('input', function (value) {
           _this3.onInput(parser, value);
         }).props('value', this.$handle.getFormData(parser));
@@ -1201,7 +1244,7 @@
     vm.$props.formCreate = fApi;
   }
 
-  function baseApi(h) {
+  function Api(h) {
     function tidyFields(fields) {
       var all = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
       if (!fields) fields = all ? Object.keys(h.fieldList) : h.fields();else if (!Array.isArray(fields)) fields = [fields];
@@ -1486,6 +1529,168 @@
       el: function el(id) {
         var parser = h.getParser(id);
         if (parser) return parser.el;
+      },
+      validate: function validate(callback) {
+        var _this3 = this;
+
+        var state = false;
+
+        var subForm = _objectSpread2({}, {
+          ___this: {
+            validate: function validate(call) {
+              h.$form.validate(function (valid) {
+                call && call(valid);
+              });
+            }
+          }
+        }, {}, h.subForm);
+
+        var keys = Object.keys(subForm),
+            len = keys.length,
+            subLen;
+
+        var validFn = function validFn(valid, field) {
+          if (valid) {
+            if (subLen > 1) subLen--;else if (len > 1) len--;else callback(true);
+          } else {
+            if (!state) {
+              callback(false);
+              state = true;
+            }
+
+            field && _this3.clearValidateState(field, false);
+          }
+        };
+
+        keys.forEach(function (field) {
+          var sub = subForm[field];
+
+          if (Array.isArray(sub)) {
+            subLen = sub.length;
+            sub.forEach(function (form) {
+              form.validate(function (v) {
+                return validFn(v, field);
+              });
+            });
+          } else if (sub) {
+            subLen = 1;
+            sub.validate(validFn);
+          }
+        });
+      },
+      validateField: function validateField(field, callback) {
+        if (!h.fieldList[field]) return;
+        h.$form.validateField(field, callback);
+      },
+      resetFields: function resetFields(fields) {
+        var parsers = h.fieldList;
+        tidyFields(fields, true).forEach(function (field) {
+          var parser = parsers[field];
+          if (!parser) return;
+          if (parser.type === 'hidden') return;
+          h.vm.$refs[parser.formItemRefName].resetField();
+          h.$render.clearCache(parser, true);
+        });
+      },
+      submit: function submit(successFn, failFn) {
+        var _this4 = this;
+
+        this.validate(function (valid) {
+          if (valid) {
+            var formData = _this4.formData();
+
+            if (isFunction(successFn)) successFn(formData, _this4);else {
+              h.options.onSubmit && h.options.onSubmit(formData, _this4);
+              h.fc.$emit('on-submit', formData, _this4);
+            }
+          } else {
+            failFn && failFn(_this4);
+          }
+        });
+      },
+      clearValidateState: function clearValidateState(fields) {
+        var _this5 = this;
+
+        var clearSub = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+        tidyFields(fields).forEach(function (field) {
+          if (clearSub) _this5.clearSubValidateState(field);
+          var parser = h.fieldList[field];
+          if (!parser) return;
+          var fItem = h.vm.$refs[parser.formItemRefName];
+
+          if (fItem) {
+            fItem.validateMessage = '';
+            fItem.validateState = '';
+          }
+        });
+      },
+      clearSubValidateState: function clearSubValidateState(fields) {
+        tidyFields(fields).forEach(function (field) {
+          var subForm = h.subForm[field];
+
+          if (subForm) {
+            if (Array.isArray(subForm)) {
+              subForm.forEach(function (form) {
+                form.clearValidateState();
+              });
+            } else if (subForm) {
+              subForm.clearValidateState();
+            }
+          }
+        });
+      },
+      getSubForm: function getSubForm(field) {
+        return h.subForm[field];
+      },
+      btn: {
+        loading: function loading() {
+          var _loading = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+
+          h.vm._buttonProps({
+            loading: !!_loading
+          });
+        },
+        disabled: function disabled() {
+          var _disabled2 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+
+          h.vm._buttonProps({
+            disabled: !!_disabled2
+          });
+        },
+        show: function show() {
+          var isShow = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+
+          h.vm._buttonProps({
+            show: !!isShow
+          });
+        }
+      },
+      resetBtn: {
+        loading: function loading() {
+          var _loading2 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+
+          h.vm._resetProps({
+            loading: !!_loading2
+          });
+        },
+        disabled: function disabled() {
+          var _disabled3 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+
+          h.vm._resetProps({
+            disabled: !!_disabled3
+          });
+        },
+        show: function show() {
+          var isShow = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+
+          h.vm._resetProps({
+            show: !!isShow
+          });
+        }
+      },
+      closeModal: function closeModal(field) {
+        var parser = h.fieldList[field];
+        parser && parser.closeModel && parser.closeModel();
       }
     };
   }
@@ -1510,6 +1715,7 @@
       this.options = options;
       this.validate = {};
       this.formData = {};
+      this.subForm = {};
       this.fCreateApi = undefined;
 
       this.__init(rules);
@@ -1538,20 +1744,26 @@
       value: function loadRule(rules, child) {
         var _this = this;
 
-        rules.map(function (_rule) {
+        rules.map(function (_rule, index) {
           if (child && isString(_rule)) return;
           if (!_rule.type) return console.error('未定义生成规则的 type 字段' + errMsg());
           var parser;
 
           if (_rule.__fc__) {
-            parser = _rule.__fc__;
-            if (parser.vm !== _this.vm && !parser.deleted) return console.error("".concat(_rule.type, "\u89C4\u5219\u6B63\u5728\u5176\u4ED6\u7684 <form-create> \u4E2D\u4F7F\u7528") + errMsg());
-            parser.update(_this);
-            var _rule2 = parser.rule;
+            parser = _rule.__fc__; //规则在其他 form-create 中使用,自动浅拷贝
 
-            _this.parseOn(_rule2);
+            if (parser.vm !== _this.vm && !parser.deleted) {
+              _rule = copyRule(_rule);
+              rules[index] = _rule;
+              parser = _this.createParser(_this.parseRule(_rule));
+            } else {
+              parser.update(_this);
+              var _rule2 = parser.rule;
 
-            _this.parseProps(_rule2);
+              _this.parseOn(_rule2);
+
+              _this.parseProps(_rule2);
+            }
           } else {
             parser = _this.createParser(_this.parseRule(_rule));
           }
@@ -1600,7 +1812,7 @@
       value: function createParser(rule) {
         var id = this.id + '' + uniqueId(),
             parsers = this.fc.parsers,
-            type = toString(rule.type).toLocaleLowerCase();
+            type = toString$1(rule.type).toLocaleLowerCase();
         var Parser = parsers[type] ? parsers[type] : BaseParser;
         return new Parser(this, rule, id);
       }
@@ -1752,6 +1964,11 @@
         $set(this.trueData, field, parser);
       }
     }, {
+      key: "addSubForm",
+      value: function addSubForm(parser, subForm) {
+        this.subForm[parser.field] = subForm;
+      }
+    }, {
       key: "notField",
       value: function notField(id) {
         return this.parsers[id] === undefined;
@@ -1782,7 +1999,7 @@
         vm.$set(vm, 'buttonProps', this.options.submitBtn);
         vm.$set(vm, 'resetProps', this.options.resetBtn);
         vm.$set(vm, 'formData', this.formData);
-        if (this.fCreateApi === undefined) this.fCreateApi = this.fc.drive.getGlobalApi(this, baseApi(this));
+        if (this.fCreateApi === undefined) this.fCreateApi = Api(this);
         this.fCreateApi.rule = this.rules;
         this.fCreateApi.config = this.options;
       }
@@ -1866,6 +2083,8 @@
           $del(this.fieldList, field);
           $del(this.trueData, field);
         }
+
+        if (this.subForm[parser.field]) $del(this.subForm, field);
       }
     }, {
       key: "refresh",
@@ -1951,7 +2170,7 @@
       on: {},
       options: [],
       title: undefined,
-      value: '',
+      value: null,
       field: '',
       name: undefined,
       className: undefined
@@ -1974,7 +2193,7 @@
         data = {};
 
     function setParser(id, parser) {
-      id = toString(id);
+      id = toString$1(id);
       parsers[id.toLocaleLowerCase()] = parser;
       FormCreate.maker[id] = creatorFactory(id);
     }
@@ -1997,7 +2216,7 @@
     }
 
     function component(id, component) {
-      id = toString(id);
+      id = toString$1(id);
 
       var _id = id.toLocaleLowerCase();
 
@@ -2006,8 +2225,8 @@
     }
 
     function margeGlobal(config, _options) {
-      if (isBool(_options.sumbitBtn)) _options.sumbitBtn = {
-        show: _options.sumbitBtn
+      if (isBool(_options.submitBtn)) _options.submitBtn = {
+        show: _options.submitBtn
       };
       if (isBool(_options.resetBtn)) _options.resetBtn = {
         show: _options.resetBtn
@@ -2030,6 +2249,8 @@
         setParser: setParser,
         createParser: createParser,
         data: data,
+        copyRule: copyRule,
+        copyRules: copyRules,
         $form: function $form() {
           return get$FormCreate();
         },
@@ -2227,18 +2448,19 @@
       value: function getGetCol(parser) {
         var col = parser.rule.col || {},
             mCol = {},
-            pCol = {};
-        if (!this.options.global) return col;
+            pCol = {},
+            global = this.options.global;
+        if (!global) return col;
 
-        if (this.options.global['*']) {
-          mCol = this.options.global['*'].col || {};
+        if (global['*']) {
+          mCol = global['*'].col || {};
         }
 
-        if (this.options.global[parser.type]) {
-          pCol = this.options.global[parser.type].col || {};
+        if (global[parser.type] || global[parser.originType]) {
+          pCol = global[parser.type].col || global[parser.originType].col || {};
         }
 
-        col = deepExtend(deepExtend(deepExtend({}, mCol), pCol), col);
+        col = deepExtendArgs({}, mCol, pCol, col);
         return col;
       }
     }, {
@@ -2336,8 +2558,8 @@
     }
   }
 
-  var css = ".fc-upload-btn, .fc-files {\n    display: inline-block;\n    width: 58px;\n    height: 58px;\n    text-align: center;\n    line-height: 58px;\n    border: 1px solid #c0ccda;\n    border-radius: 4px;\n    overflow: hidden;\n    background: #fff;\n    position: relative;\n    box-shadow: 2px 2px 5px rgba(0, 0, 0, .1);\n    margin-right: 4px;\n    box-sizing: border-box;\n}\n\n.__fc_h {\n    display: none;\n}\n\n.__fc_v {\n    visibility: hidden;\n}\n\n.fc-files img {\n    width: 100%;\n    height: 100%;\n    display: inline-block;\n    vertical-align: top;\n}\n\n.fc-upload-btn {\n    border: 1px dashed #c0ccda;\n    cursor: pointer;\n}\n\n.fc-upload .fc-upload-cover {\n    opacity: 0;\n    position: absolute;\n    top: 0;\n    bottom: 0;\n    left: 0;\n    right: 0;\n    background: rgba(0, 0, 0, .6);\n    transition: opacity .3s;\n}\n\n.fc-upload .fc-upload-cover i {\n    color: #fff;\n    font-size: 20px;\n    cursor: pointer;\n    margin: 0 2px;\n}\n\n.fc-files:hover .fc-upload-cover {\n    opacity: 1;\n}\n\n.fc-upload .el-upload {\n    display: block;\n}\n\n\n.form-create .el-form-item .el-rate {\n    margin-top: 10px;\n}\n\n.form-create .el-form-item .el-tree {\n    margin-top: 7px;\n}\n\n.fc-hide-btn .el-upload {\n    display: none;\n}";
-  var style = {"fc-upload-btn":"fc-upload-btn","fc-files":"fc-files","__fc_h":"__fc_h","__fc_v":"__fc_v","fc-upload":"fc-upload","fc-upload-cover":"fc-upload-cover","el-upload":"el-upload","form-create":"form-create","el-form-item":"el-form-item","el-rate":"el-rate","el-tree":"el-tree","fc-hide-btn":"fc-hide-btn"};
+  var css = ".fc-upload-btn, .fc-files {\n    display: inline-block;\n    width: 58px;\n    height: 58px;\n    text-align: center;\n    line-height: 58px;\n    border: 1px solid #c0ccda;\n    border-radius: 4px;\n    overflow: hidden;\n    background: #fff;\n    position: relative;\n    box-shadow: 2px 2px 5px rgba(0, 0, 0, .1);\n    margin-right: 4px;\n    box-sizing: border-box;\n}\n\n.form-create .form-create .el-form-item {\n    margin-bottom: 22px;\n}\n\n.form-create .form-create .el-form-item .el-form-item {\n    margin-bottom: 0px;\n}\n\n.__fc_h {\n    display: none;\n}\n\n.__fc_v {\n    visibility: hidden;\n}\n\n.fc-files img {\n    width: 100%;\n    height: 100%;\n    display: inline-block;\n    vertical-align: top;\n}\n\n.fc-upload-btn {\n    border: 1px dashed #c0ccda;\n    cursor: pointer;\n}\n\n.fc-upload .fc-upload-cover {\n    opacity: 0;\n    position: absolute;\n    top: 0;\n    bottom: 0;\n    left: 0;\n    right: 0;\n    background: rgba(0, 0, 0, .6);\n    transition: opacity .3s;\n}\n\n.fc-upload .fc-upload-cover i {\n    color: #fff;\n    font-size: 20px;\n    cursor: pointer;\n    margin: 0 2px;\n}\n\n.fc-files:hover .fc-upload-cover {\n    opacity: 1;\n}\n\n.fc-upload .el-upload {\n    display: block;\n}\n\n\n.form-create .el-form-item .el-rate {\n    margin-top: 10px;\n}\n\n.form-create .el-form-item .el-tree {\n    margin-top: 7px;\n}\n\n.fc-hide-btn .el-upload {\n    display: none;\n}\n";
+  var style = {"fc-upload-btn":"fc-upload-btn","fc-files":"fc-files","form-create":"form-create","el-form-item":"el-form-item","__fc_h":"__fc_h","__fc_v":"__fc_v","fc-upload":"fc-upload","fc-upload-cover":"fc-upload-cover","el-upload":"el-upload","el-rate":"el-rate","el-tree":"el-tree","fc-hide-btn":"fc-hide-btn"};
   styleInject(css);
 
   var NAME$1 = 'fc-elm-frame';
@@ -2453,6 +2675,9 @@
       },
       fileList: function fileList(n) {
         this.$emit('input', this.maxLength === 1 ? n[0] || '' : n);
+      },
+      src: function src(n) {
+        this.modalVm && (this.modalVm.src = n);
       }
     },
     methods: {
@@ -2476,12 +2701,13 @@
             closeBtnText = _this$$props.closeBtnText;
         mount(_objectSpread2({
           width: width,
-          title: title
+          title: title,
+          src: src
         }, this.modal), function (vNode, _vm) {
           _this.modalVm = _vm;
           return [vNode.make('iframe', {
             attrs: {
-              src: src
+              src: _vm.src
             },
             style: {
               'height': height,
@@ -2828,7 +3054,7 @@
   }
 
   function getFileName(file) {
-    return toString(file).split('/').pop();
+    return toString$1(file).split('/').pop();
   }
 
   var NAME$4 = 'fc-elm-upload';
@@ -3049,7 +3275,247 @@
     }
   };
 
-  var components = [checkbox, frame, radio, select, tree, upload];
+  var NAME$5 = 'fc-elm-group';
+  var group = {
+    name: NAME$5,
+    props: {
+      rule: Object,
+      rules: Array,
+      max: {
+        type: Number,
+        default: 0
+      },
+      min: {
+        type: Number,
+        default: 0
+      },
+      value: {
+        type: Array,
+        default: function _default() {
+          return [];
+        }
+      },
+      disabled: {
+        type: Boolean,
+        default: false
+      }
+    },
+    data: function data() {
+      return {
+        config: {
+          submitBtn: false,
+          resetBtn: false
+        },
+        len: 0,
+        cacheRule: {},
+        group$f: {},
+        fieldRule: {}
+      };
+    },
+    computed: {
+      formRule: function formRule() {
+        if (this.rule) return [this.rule];else if (this.rules) return this.rules;
+        return [];
+      },
+      formData: function formData() {
+        var _this = this;
+
+        return Object.keys(this.fieldRule).map(function (key) {
+          var keys = Object.keys(_this.fieldRule[key]);
+          return _this.rule ? keys[0] === undefined ? null : _this.fieldRule[key][keys[0]].value : keys.reduce(function (initial, field) {
+            initial[field] = _this.fieldRule[key][field].value;
+            return initial;
+          }, {});
+        });
+      }
+    },
+    watch: {
+      disabled: function disabled(n) {
+        var lst = this.group$f;
+        Object.keys(lst).forEach(function (k) {
+          lst[k].disabled(n);
+        });
+      },
+      formData: function formData(n) {
+        this.$emit('input', n);
+      },
+      value: function value(n) {
+        var _this2 = this;
+
+        var keys = Object.keys(this.cacheRule),
+            total = keys.length,
+            len = total - n.length;
+
+        if (len < 0) {
+          for (var i = len; i < 0; i++) {
+            this.addRule(keys[i]);
+          }
+
+          for (var _i = 0; _i < total; _i++) {
+            this.setValue(this.group$f[keys[_i]], n[_i]);
+          }
+        } else {
+          if (len > 0) {
+            for (var _i2 = 0; _i2 < len; _i2++) {
+              this.removeRule(keys[total - _i2 - 1]);
+            }
+
+            this.subForm();
+          }
+
+          n.forEach(function (val, i) {
+            _this2.setValue(_this2.group$f[keys[i]], n[i]);
+          });
+        }
+      }
+    },
+    methods: {
+      setValue: function setValue($f, value) {
+        if (this.rule) {
+          var fields = $f.fields();
+          if (!fields[0]) return;
+          $f.setValue(fields[0], value);
+        } else {
+          $f.setValue(value);
+        }
+      },
+      addRule: function addRule() {
+        var rule = this.copyRule();
+        this.$set(this.cacheRule, ++this.len, rule);
+        this.$emit('add', rule);
+      },
+      add$f: function add$f(i, key, $f) {
+        this.group$f[key] = $f;
+        this.setValue($f, this.value[i]);
+        this.syncData(key, $f);
+        this.subForm();
+        this.$emit('itemMounted', $f);
+      },
+      subForm: function subForm() {
+        var _this3 = this;
+
+        this.$emit('fc.subForm', Object.keys(this.group$f).map(function (k) {
+          return _this3.group$f[k];
+        }));
+      },
+      syncData: function syncData(key, $f) {
+        var _this4 = this;
+
+        this.$set(this.fieldRule, key, {});
+        $f.fields().forEach(function (field) {
+          _this4.fieldRule[key][field] = $f.getRule(field);
+        });
+      },
+      removeRule: function removeRule(key) {
+        this.$delete(this.cacheRule, key);
+        this.$delete(this.fieldRule, key);
+        delete this.group$f[key];
+        this.$emit('remove');
+      },
+      copyRule: function copyRule() {
+        return this.$formCreate.copyRules(this.formRule);
+      },
+      addIcon: function addIcon(key) {
+        var _this5 = this;
+
+        var h = this.$createElement;
+        return h("i", {
+          "key": "a".concat(key),
+          "class": "el-icon-circle-plus-outline",
+          "style": "font-size:28px;cursor:".concat(this.disabled ? 'not-allowed;color:#c9cdd4' : 'pointer', ";"),
+          "on": {
+            "click": function click() {
+              return !_this5.disabled && _this5.addRule();
+            }
+          }
+        });
+      },
+      delIcon: function delIcon(key) {
+        var _this6 = this;
+
+        var h = this.$createElement;
+        return h("i", {
+          "key": "d".concat(key),
+          "class": "el-icon-remove-outline",
+          "style": "font-size:28px;cursor:".concat(this.disabled ? 'not-allowed;color:#c9cdd4' : 'pointer;color:#606266', ";"),
+          "on": {
+            "click": function click() {
+              if (_this6.disabled) return;
+
+              _this6.removeRule(key);
+
+              _this6.subForm();
+            }
+          }
+        });
+      },
+      makeIcon: function makeIcon(total, index, key) {
+        if (index === 0) {
+          return [this.max !== 0 && total >= this.max ? null : this.addIcon(key), this.min === 0 || total > this.min ? this.delIcon(key) : null];
+        } else if (index >= this.min) {
+          return this.delIcon(key);
+        }
+      }
+    },
+    created: function created() {
+      for (var i = 0; i < this.value.length; i++) {
+        this.addRule();
+      }
+    },
+    render: function render() {
+      var _this7 = this;
+
+      var h = arguments[0];
+      var keys = Object.keys(this.cacheRule);
+      return keys.length === 0 ? h("i", {
+        "key": 'a_def',
+        "class": "el-icon-circle-plus-outline",
+        "style": "font-size:28px;vertical-align:middle;color:".concat(this.disabled ? '#c9cdd4;cursor: not-allowed' : '#606266;cursor:pointer', ";"),
+        "on": {
+          "click": function click() {
+            return !_this7.disabled && _this7.addRule();
+          }
+        }
+      }) : h("div", {
+        "key": 'con'
+      }, [keys.map(function (key, index) {
+        var rule = _this7.cacheRule[key];
+        return h("ElRow", {
+          "attrs": {
+            "align": "middle",
+            "type": "flex"
+          },
+          "key": key,
+          "style": "background-color:#f5f7fa;padding:10px;border-radius:5px;margin-bottom:10px;"
+        }, [h("ElCol", {
+          "attrs": {
+            "span": 20
+          }
+        }, [h("ElFormItem", [h("FormCreate", {
+          "on": {
+            "mounted": function mounted($f) {
+              return _this7.add$f(index, key, $f);
+            },
+            "on-reload": function onReload($f) {
+              return _this7.syncData(key, $f);
+            }
+          },
+          "attrs": {
+            "rule": rule,
+            "option": _this7.config
+          }
+        })])]), h("ElCol", {
+          "attrs": {
+            "span": 2,
+            "pull": 1,
+            "push": 1
+          }
+        }, [_this7.makeIcon(keys.length, index, key)])]);
+      })]);
+    }
+  };
+
+  var components = [checkbox, frame, radio, select, tree, upload, group];
 
   var parser =
   /*#__PURE__*/
@@ -3106,12 +3572,41 @@
     }
 
     _createClass(Parser, [{
+      key: "toFormValue",
+      value: function toFormValue(value) {
+        var isArr = Array.isArray(value),
+            props = this.rule.props,
+            parseValue,
+            type = props.type || 'date';
+
+        if (['daterange', 'datetimerange', 'dates'].indexOf(type) !== -1) {
+          if (isArr) {
+            parseValue = value.map(function (time) {
+              return !time ? '' : timeStampToDate(time);
+            });
+          } else {
+            parseValue = ['', ''];
+          }
+        } else if ('date' === type && props.multiple === true) {
+          parseValue = toString(value);
+        } else {
+          parseValue = isArr ? value[0] || '' : value;
+          parseValue = !parseValue ? '' : timeStampToDate(parseValue);
+        }
+
+        return parseValue;
+      }
+    }, {
       key: "mounted",
       value: function mounted() {
         var _this = this;
 
         this.toValue = function (val) {
           return _this.el.formatToString(val);
+        };
+
+        this.toFormValue = function (val) {
+          return _this.el.parseString(val);
         };
       }
     }]);
@@ -3586,114 +4081,6 @@
     };
   }
 
-  function getGlobalApi(h, baseApi) {
-    function tidyFields(fields) {
-      var all = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-      if (!fields) fields = all ? Object.keys(h.fieldList) : h.fields();else if (!Array.isArray(fields)) fields = [fields];
-      return fields;
-    }
-
-    return _objectSpread2({}, baseApi, {
-      validate: function validate(callback) {
-        h.$form.getFormRef().validate(function (valid) {
-          callback && callback(valid);
-        });
-      },
-      validateField: function validateField(field, callback) {
-        if (!h.fieldList[field]) return;
-        h.$form.getFormRef().validateField(field, callback);
-      },
-      resetFields: function resetFields(fields) {
-        var parsers = h.fieldList;
-        tidyFields(fields, true).forEach(function (field) {
-          var parser = parsers[field];
-          if (!parser) return;
-          if (parser.type === 'hidden') return;
-          h.vm.$refs[parser.formItemRefName].resetField();
-          h.$render.clearCache(parser, true);
-        });
-      },
-      submit: function submit(successFn, failFn) {
-        var _this = this;
-
-        this.validate(function (valid) {
-          if (valid) {
-            var formData = _this.formData();
-
-            if (isFunction(successFn)) successFn(formData, _this);else {
-              h.options.onSubmit && h.options.onSubmit(formData, _this);
-              h.fc.$emit('on-submit', formData, _this);
-            }
-          } else {
-            failFn && failFn(_this);
-          }
-        });
-      },
-      clearValidateState: function clearValidateState(fields) {
-        tidyFields(fields).forEach(function (field) {
-          var parser = h.fieldList[field];
-          if (!parser) return;
-          var fItem = h.vm.$refs[parser.formItemRefName];
-
-          if (fItem) {
-            fItem.validateMessage = '';
-            fItem.validateState = '';
-          }
-        });
-      },
-      btn: {
-        loading: function loading() {
-          var _loading = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
-
-          h.vm._buttonProps({
-            loading: !!_loading
-          });
-        },
-        disabled: function disabled() {
-          var _disabled = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
-
-          h.vm._buttonProps({
-            disabled: !!_disabled
-          });
-        },
-        show: function show() {
-          var isShow = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
-
-          h.vm._buttonProps({
-            show: !!isShow
-          });
-        }
-      },
-      resetBtn: {
-        loading: function loading() {
-          var _loading2 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
-
-          h.vm._resetProps({
-            loading: !!_loading2
-          });
-        },
-        disabled: function disabled() {
-          var _disabled2 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
-
-          h.vm._resetProps({
-            disabled: !!_disabled2
-          });
-        },
-        show: function show() {
-          var isShow = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
-
-          h.vm._resetProps({
-            show: !!isShow
-          });
-        }
-      },
-      closeModal: function closeModal(field) {
-        var parser = h.fieldList[field];
-        parser && parser.closeModel && parser.closeModel();
-      }
-    });
-  }
-
   var nodes = {
     modal: 'el-dialog',
     button: 'el-button',
@@ -3717,7 +4104,8 @@
     col: 'el-col',
     row: 'el-row',
     tree: 'fc-elm-tree',
-    autoComplete: 'el-autocomplete'
+    autoComplete: 'el-autocomplete',
+    group: 'fc-elm-group'
   };
 
   var upperCaseReg = /[A-Z]/;
@@ -3758,6 +4146,18 @@
       key: "getFormRef",
       value: function getFormRef() {
         return this.vm.$refs[this.refName];
+      }
+    }, {
+      key: "validate",
+      value: function validate(call) {
+        this.getFormRef().validate(function (valid) {
+          call && call(valid);
+        });
+      }
+    }, {
+      key: "validateField",
+      value: function validateField(field, call) {
+        this.getFormRef().validateField(field, call);
       }
     }, {
       key: "beforeRender",
@@ -3804,7 +4204,7 @@
           // label: rule.title,
           // labelFor: unique,
           rules: rule.validate,
-          labelWidth: toString(labelWidth),
+          labelWidth: toString$1(labelWidth),
           required: rule.props.required
         }).key(fItemUnique).ref(formItemRefName).class(className).get(),
             node = this.vNode.formItem(propsData, [child, this.makeFormPop(parser, fItemUnique)]);
@@ -4023,12 +4423,11 @@
   VNode.use(nodes);
   var drive = {
     ui: "element-ui",
-    version: "".concat("1.0.6"),
+    version: "".concat("1.0.7"),
     formRender: Form,
     components: components,
     parsers: parsers,
     makers: maker$3,
-    getGlobalApi: getGlobalApi,
     getConfig: getConfig
   };
 
