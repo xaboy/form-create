@@ -10,6 +10,14 @@ export namespace FormCreate {
         (Vue: Vue): void
     }
 
+    export interface CopyRule<FormRule> {
+        (rule: FormRule | String): FormRule | String
+    }
+
+    export interface CopyRules<FormRule> {
+        (rules: Array<FormRule | String>): Array<FormRule | String>
+    }
+
     export interface Create<FormRule, FormConfig, FormButton> {
         (rules: FormRule[], config?: FormConfig): $FApi<FormRule, FormConfig, FormButton>
     }
@@ -277,6 +285,7 @@ export namespace FormCreate {
         uploadImageOne: CommonMaker<Creator>;
         url: CommonMaker<Creator>;
         year: CommonMaker<Creator>;
+        group: CommonMaker<Creator>;
     }
 
     interface ButtonHandle {
@@ -373,19 +382,19 @@ export namespace FormCreate {
 
         updateValidates(rules: { [field: string]: any[] }, merge?: boolean): void;
 
-
         validate(successFn?: Function, failFn?: Function): void;
 
         validateField(field: string, callback?: (errorMessage: string | boolean) => void): void;
 
         resetFields(field?: string | string[]): void;
 
-
         submit(successFn?: Function, failFn?: Function): void;
 
+        clearValidateState(field?: string | string[], clearSub?: boolean): void;
 
-        clearValidateState(field?: string | string[]): void;
+        clearSubValidateState(field?: string | string[]);
 
+        getSubForm(field): Array<$FApi<FormRule, FormConfig, FormButton>> | $FApi<FormRule, FormConfig, FormButton>
 
         btn: ButtonHandle;
 

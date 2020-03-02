@@ -13,6 +13,8 @@ declare class formCreate {
     static component: FormCreate.Component;
     static $form: FormCreate.$form;
     static parseJson: FormCreate.parseJson<Rule>;
+    static copyRule: FormCreate.CopyRule<FormRule>;
+    static copyRules: FormCreate.CopyRules<FormRule>;
 }
 
 
