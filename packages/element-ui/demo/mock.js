@@ -124,44 +124,46 @@ function mock() {
 
 
         //自定义组件
-        maker.createTmp('<el-button @click="onClick" style="width:100%;" :disabled="disabled">{{button}}字符串测试{{test}}-{{num}}</el-button>', new Vue({
-            data: function () {
-                return {
-                    test: 'createTmp渲染',
-                    button: '<i-button />',
-                    num: this.value,
-                }
-            },
-            props: {
-                disabled: Boolean,
-                value: Number,
-                formCreate:Object
-            },
-            watch: {
-                value(n) {
-                    this.num = n;
-                }
-            },
-            methods: {
-                onClick: function () {
-                    console.log('click');
-                    this.num++;
-                    this.$emit('input', this.num);
+        maker.createTmp('<el-button @click="onClick" style="width:100%;" :disabled="disabled">{{button}}字符串测试{{test}}-{{num}}</el-button>', function (){
+            return new Vue({
+                data: function () {
+                    return {
+                        test: 'createTmp渲染',
+                        button: '<i-button />',
+                        num: this.value,
+                    }
                 },
-                //表单禁用事件
-                onDisabled: function (disabled) {
-                    this.disabled = disabled;
+                props: {
+                    disabled: Boolean,
+                    value: Number,
+                    formCreate:Object
                 },
-                //表单重置事件
-                onResetField: function () {
-                    this.num = 0;
+                watch: {
+                    value(n) {
+                        this.num = n;
+                    }
                 },
-                //通过setValue,changeField,changeValue方法设置表单值时事件
-                onSetValue: function (val, $f) {
-                    this.num = val;
+                methods: {
+                    onClick: function () {
+                        console.log('click');
+                        this.num++;
+                        this.$emit('input', this.num);
+                    },
+                    //表单禁用事件
+                    onDisabled: function (disabled) {
+                        this.disabled = disabled;
+                    },
+                    //表单重置事件
+                    onResetField: function () {
+                        this.num = 0;
+                    },
+                    //通过setValue,changeField,changeValue方法设置表单值时事件
+                    onSetValue: function (val, $f) {
+                        this.num = val;
+                    }
                 }
-            }
-        }), 'tmp', '自定义 title').value(100).props('disabled', false),
+            })
+        }, 'tmp', '自定义 title').value(100).props('disabled', false),
 
 
         //自定义组件

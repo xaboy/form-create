@@ -15,7 +15,7 @@ import {
 import BaseParser from '../factory/parser';
 import Render from './render';
 import Api from './api';
-import {enumerable} from './util';
+import {copyRule, enumerable} from './util';
 
 
 export function getRule(rule) {
@@ -65,7 +65,7 @@ export default class Handle {
     }
 
     loadRule(rules, child) {
-        rules.map((_rule) => {
+        rules.map((_rule, index) => {
             if (child && isString(_rule)) return;
 
             if (!_rule.type)
@@ -76,12 +76,17 @@ export default class Handle {
             if (_rule.__fc__) {
                 parser = _rule.__fc__;
 
-                if (parser.vm !== this.vm && !parser.deleted)
-                    return console.error(`${_rule.type}规则正在其他的 <form-create> 中使用` + errMsg());
-                parser.update(this);
-                let rule = parser.rule;
-                this.parseOn(rule);
-                this.parseProps(rule);
+                //规则在其他 form-create 中使用,自动浅拷贝
+                if (parser.vm !== this.vm && !parser.deleted) {
+                    _rule = copyRule(_rule);
+                    rules[index] = _rule;
+                    parser = this.createParser(this.parseRule(_rule));
+                } else {
+                    parser.update(this);
+                    let rule = parser.rule;
+                    this.parseOn(rule);
+                    this.parseProps(rule);
+                }
             } else {
                 parser = this.createParser(this.parseRule(_rule));
             }

@@ -2,29 +2,33 @@ import Creator, {creatorFactory} from './creator';
 import {parseJson, enumerable} from '../core/util';
 import {extend, isPlainObject, isString, isValidChildren} from '@form-create/utils';
 
+
+const commonMaker = creatorFactory('');
+
+export function create(type, field, title) {
+    let make = commonMaker('', field);
+    make._data.type = type;
+    make._data.title = title;
+    return make;
+}
+
+export function createTmp(template, vm, field, title) {
+    let make = commonMaker('', field);
+    make._data.type = 'template';
+    make._data.template = template;
+    make._data.title = title;
+    make._data.vm = vm;
+    return make;
+}
+
 export default function makerFactory() {
     let maker = {};
 
-
-    const commonMaker = creatorFactory('');
-
     extend(maker, {
-        create(type, field, title) {
-            let make = commonMaker('', field);
-            make._data.type = type;
-            make._data.title = title;
-            return make;
-        },
-        createTmp(template, vm, field, title) {
-            let make = commonMaker('', field);
-            make._data.type = 'template';
-            make._data.template = template;
-            make._data.title = title;
-            make._data.vm = vm;
-            return make;
-        }
+        create,
+        createTmp
     });
-    maker.template = maker.createTmp;
+    maker.template = createTmp;
     maker.parse = parse;
 
     return maker;

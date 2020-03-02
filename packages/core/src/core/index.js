@@ -5,7 +5,7 @@ import {
     isBool,
     isElement,
     toString,
-    isPlainObject, isString, isFunction, isValidChildren,
+    isPlainObject
 } from '@form-create/utils';
 import $FormCreate from '../components/formCreate';
 import {formCreateName} from '../components/formCreate';
@@ -14,7 +14,7 @@ import makerFactory from '../factory/maker';
 import Handle from './handle';
 import {creatorFactory} from '../factory/creator';
 import BaseParser from '../factory/parser';
-import {parseJson} from './util';
+import {parseJson, copyRule, copyRules} from './util';
 
 export let _vue = typeof window !== 'undefined' && window.Vue ? window.Vue : Vue;
 
@@ -67,31 +67,6 @@ export default function createFormCreate(drive) {
         return _vue.extend($FormCreate(FormCreate, components));
     }
 
-    function copyRule(rule) {
-        return copyRules([rule])[0];
-    }
-
-    function copyRules(rules) {
-        return rules.map(rule => {
-            if (isString(rule)) return rule;
-            let r;
-            if (isFunction(rule.getRule)) {
-                r = maker.create();
-                r._data = {...rule._data};
-                if (r._data.field && r._data.value === undefined)
-                    r.value(null);
-                if (isValidChildren(r._data.children)) {
-                    r._data.children = copyRules(r._data.children);
-                }
-            } else {
-                r = {...rule};
-                if (r.field && r.value === undefined) r.value = null;
-                if (isValidChildren(r.children))
-                    r.children = copyRules(r.children);
-            }
-            return r;
-        })
-    }
 
     function bindAttr(formCreate) {
         extend(formCreate, {
@@ -102,8 +77,8 @@ export default function createFormCreate(drive) {
             setParser,
             createParser,
             data,
-            copyRules,
             copyRule,
+            copyRules,
             $form() {
                 return get$FormCreate();
             },
