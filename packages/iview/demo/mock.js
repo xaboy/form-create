@@ -81,6 +81,9 @@ function mock() {
                     {
                         type:'input',
                         field:'field2',
+                        props:{
+                            disabled:false,
+                        },
                         validate:[
                             {required:true}
                         ]

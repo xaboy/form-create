@@ -18,6 +18,10 @@ export default {
         value: {
             type: Array,
             default: () => []
+        },
+        disabled: {
+            type: Boolean,
+            default: false
         }
     },
     data() {
@@ -49,6 +53,12 @@ export default {
         }
     },
     watch: {
+        disabled(n) {
+            const lst = this.group$f;
+            Object.keys(lst).forEach(k => {
+                lst[k].disabled(n);
+            })
+        },
         formData(n) {
             this.$emit('input', n);
         },
@@ -112,13 +122,15 @@ export default {
             return this.$formCreate.copyRules(this.formRule);
         },
         addIcon(key) {
-            return <Icon key={`a${key}`} type={iviewConfig.addIcon} style="font-size:28px;cursor:pointer;color:#000;"
-                on-click={() => this.addRule()}/>;
+            return <Icon key={`a${key}`} type={iviewConfig.addIcon}
+                style={`font-size:28px;cursor:${this.disabled ? 'not-allowed;color:#c9cdd4' : 'pointer;color:#000'}`}
+                on-click={() => (!this.disabled) && this.addRule()}/>;
         },
         delIcon(key) {
             return <Icon key={`d${key}`} type={iviewConfig.removeIcon}
-                style="font-size:28px;cursor:pointer;"
+                style={`font-size:28px;cursor:${this.disabled ? 'not-allowed;color:#c9cdd4' : 'pointer'};`}
                 on-click={() => {
+                    if (this.disabled) return;
                     this.removeRule(key);
                     this.subForm();
                 }}/>;
@@ -140,14 +152,14 @@ export default {
         const keys = Object.keys(this.cacheRule);
         return keys.length === 0 ?
             <Icon key={'a_def'} type={iviewConfig.addIcon}
-                style="font-size:28px;cursor:pointer;vertical-align:middle;"
-                on-click={() => this.addRule()}/> :
+                style={`font-size:28px;vertical-align:middle;cursor:${this.disabled ? 'not-allowed;color:#c9cdd4' : 'pointer'};`}
+                on-click={() => (!this.disabled) && this.addRule()}/> :
             <div class="fc-group" key={'con'}>{keys.map((key, index) => {
                 const rule = this.cacheRule[key];
                 return <Row align="middle" type="flex" key={key}
                     style="background-color:#f5f7fa;padding:10px;border-radius:5px;margin-bottom:10px;">
                     <Col span={20}><FormItem><FormCreate on-mounted={($f) => this.add$f(index, key, $f)}
-                        on-reload={($f) => this.syncData(key, $f)} rule={rule}
+                        on-on-reload={($f) => this.syncData(key, $f)} rule={rule}
                         option={this.config}/></FormItem></Col>
                     <Col span={2} pull={1} push={1}>{this.makeIcon(keys.length, index, key)}</Col></Row>
             })}</div>
