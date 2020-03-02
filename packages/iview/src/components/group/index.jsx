@@ -96,13 +96,16 @@ export default {
             }
         },
         addRule() {
-            this.$set(this.cacheRule, ++this.len, this.copyRule());
+            const rule = this.copyRule();
+            this.$set(this.cacheRule, ++this.len, rule);
+            this.$emit('add', rule);
         },
         add$f(i, key, $f) {
             this.group$f[key] = $f;
             this.setValue($f, this.value[i]);
             this.syncData(key, $f);
             this.subForm();
+            this.$emit('itemMounted', $f);
         },
         subForm() {
             this.$emit('fc.subForm', Object.keys(this.group$f).map(k => this.group$f[k]));
@@ -117,6 +120,7 @@ export default {
             this.$delete(this.cacheRule, key);
             this.$delete(this.fieldRule, key);
             delete this.group$f[key];
+            this.$emit('remove');
         },
         copyRule() {
             return this.$formCreate.copyRules(this.formRule);
