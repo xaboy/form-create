@@ -8,13 +8,21 @@ export default class Parser extends BaseParser {
             $set(props, 'startDate', timeStampToDate(props.startDate));
     }
 
+    isRange() {
+        return this.el.type.includes('range') || this.el.multiple;
+    }
+
     mounted() {
-        this.toFormValue = (val) => this.el.parseDate(val);
+        this.toFormValue = (val) => {
+            let v = this.el.parseDate(val);
+            return this.isRange() ? v : v[0];
+        };
+
         this.toValue = (val) => {
-            const value = this.el.formatDate(val), {type, separator} = this.el,
-                isRange = ['daterange', 'datetimerange'].indexOf(type) !== -1;
+            const value = this.el.formatDate(val), {separator} = this.el,
+                isRange = this.isRange();
             if (!value)
-                return isRange ? ['', ''] : value;
+                return isRange ? (this.el.multiple ? [] : ['', '']) : value;
             else if (isRange)
                 return value.split(separator);
             else
