@@ -8,11 +8,11 @@ import VNode from './factory/vNode';
 import BaseParser from './factory/parser';
 import BaseForm from './factory/form';
 import baseApi from './core/api';
-import {parseJson, toJson} from './core/util';
+import {parseJson, toJson, copyRules, copyRule} from './core/util';
 
 export {
     creatorFactory, creatorTypeFactory, Creator, BaseForm,
-    Handle, makerFactory, Render, VData, VNode, Vue, BaseParser, parseJson, toJson, baseApi
+    Handle, makerFactory, Render, VData, VNode, Vue, BaseParser, parseJson, toJson, baseApi, copyRule, copyRules
 };
 
 export default createFormCreate;

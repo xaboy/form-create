@@ -1,4 +1,5 @@
 import {iviewConfig} from '../../core/config';
+import {copyRules} from '@form-create/core';
 
 const NAME = 'fc-ivu-group';
 
@@ -123,7 +124,7 @@ export default {
             this.$emit('remove');
         },
         copyRule() {
-            return this.$formCreate.copyRules(this.formRule);
+            return copyRules(this.formRule);
         },
         addIcon(key) {
             return <Icon key={`a${key}`} type={iviewConfig.addIcon}

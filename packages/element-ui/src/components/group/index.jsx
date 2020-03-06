@@ -1,3 +1,5 @@
+import {copyRules} from '@form-create/core';
+
 const NAME = 'fc-elm-group';
 
 export default {
@@ -121,7 +123,7 @@ export default {
             this.$emit('remove');
         },
         copyRule() {
-            return this.$formCreate.copyRules(this.formRule);
+            return copyRules(this.formRule);
         },
         addIcon(key) {
             return <i key={`a${key}`} class="el-icon-circle-plus-outline"
