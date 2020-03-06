@@ -29,8 +29,10 @@ export default class BaseForm {
             mCol = global['*'].col || {};
         }
 
-        if (global[parser.type] || global[parser.originType]) {
-            pCol = global[parser.type].col || global[parser.originType].col || {};
+        if (global[parser.type]) {
+            pCol = global[parser.type].col || {};
+        } else if (global[parser.originType]) {
+            pCol = global[parser.originType].col || {};
         }
         col = deepExtendArgs({}, mCol, pCol, col);
         return col;
