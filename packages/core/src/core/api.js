@@ -241,7 +241,7 @@ export default function Api(h) {
             if (!el || !el[name])
                 throw new Error('方法不存在' + errMsg());
             return (...args) => {
-                el[name](args);
+                return el[name](...args);
             }
         },
         toJson() {
