@@ -66,7 +66,7 @@ export default {
             let keys = Object.keys(this.cacheRule), total = keys.length, len = total - n.length;
             if (len < 0) {
                 for (let i = len; i < 0; i++) {
-                    this.addRule(keys[i]);
+                    this.addRule();
                 }
                 for (let i = 0; i < total; i++) {
                     this.setValue(this.group$f[keys[i]], n[i]);
@@ -95,17 +95,18 @@ export default {
                 $f.setValue(value);
             }
         },
-        addRule() {
+        addRule(emit) {
             const rule = this.copyRule();
             this.$set(this.cacheRule, ++this.len, rule);
-            this.$emit('add', rule);
+            if (emit)
+                this.$emit('add', rule, Object.keys(this.cacheRule).length - 1);
         },
         add$f(i, key, $f) {
             this.group$f[key] = $f;
             this.setValue($f, this.value[i]);
             this.syncData(key, $f);
             this.subForm();
-            this.$emit('itemMounted', $f);
+            this.$emit('itemMounted', $f, Object.keys(this.cacheRule).indexOf(key));
         },
         subForm() {
             this.$emit('fc.subForm', Object.keys(this.group$f).map(k => this.group$f[k]));
@@ -116,11 +117,13 @@ export default {
                 this.fieldRule[key][field] = $f.getRule(field);
             });
         },
-        removeRule(key) {
+        removeRule(key, emit) {
+            const index = Object.keys(this.cacheRule).indexOf(key);
             this.$delete(this.cacheRule, key);
             this.$delete(this.fieldRule, key);
-            delete this.group$f[key];
-            this.$emit('remove');
+            this.$delete(this.group$f, key);
+            if (emit)
+                this.$emit('remove', index);
         },
         copyRule() {
             return copyRules(this.formRule);
@@ -128,14 +131,14 @@ export default {
         addIcon(key) {
             return <i key={`a${key}`} class="el-icon-circle-plus-outline"
                 style={`font-size:28px;cursor:${this.disabled ? 'not-allowed;color:#c9cdd4' : 'pointer'};`}
-                on-click={() => (!this.disabled) && this.addRule()}/>;
+                on-click={() => (!this.disabled) && this.addRule(true)}/>;
         },
         delIcon(key) {
             return <i key={`d${key}`} class="el-icon-remove-outline"
                 style={`font-size:28px;cursor:${this.disabled ? 'not-allowed;color:#c9cdd4' : 'pointer;color:#606266'};`}
                 on-click={() => {
                     if (this.disabled) return;
-                    this.removeRule(key);
+                    this.removeRule(key, true);
                     this.subForm();
                 }}/>;
         },
@@ -158,7 +161,7 @@ export default {
         return keys.length === 0 ?
             <i key={'a_def'} class="el-icon-circle-plus-outline"
                 style={`font-size:28px;vertical-align:middle;color:${this.disabled ? '#c9cdd4;cursor: not-allowed' : '#606266;cursor:pointer'};`}
-                on-click={() => (!this.disabled) && this.addRule()}/> :
+                on-click={() => (!this.disabled) && this.addRule(true)}/> :
             <div key={'con'}>{keys.map((key, index) => {
                 const rule = this.cacheRule[key];
                 return <ElRow align="middle" type="flex" key={key}
