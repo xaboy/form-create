@@ -392,9 +392,9 @@ export namespace FormCreate {
 
         clearValidateState(field?: string | string[], clearSub?: boolean): void;
 
-        clearSubValidateState(field?: string | string[]);
+        clearSubValidateState(field?: string | string[]): void;
 
-        getSubForm(field): Array<$FApi<FormRule, FormConfig, FormButton>> | $FApi<FormRule, FormConfig, FormButton>
+        getSubForm(field: string): Array<$FApi<FormRule, FormConfig, FormButton>> | $FApi<FormRule, FormConfig, FormButton>
 
         btn: ButtonHandle;
 
