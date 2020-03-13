@@ -480,6 +480,7 @@ function validateControl(parser) {
             }
             const rule = {
                 type: 'div',
+                native: true,
                 children: control.rule
             };
             parser.root.splice(parser.root.indexOf(parser.rule.__origin__) + 1, 0, rule);
