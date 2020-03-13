@@ -101,7 +101,14 @@ function mock() {
             {value: 0, label: '不包邮', disabled: false},
             {value: 1, label: '包邮', disabled: false},
             {value: 2, label: '未知', disabled: true},
-        ]).props({required: true}).col({span: 8}),
+        ]).props({required: true}).col({span: 8}).control([
+            {
+                value:1,
+                rule:[
+                    maker.number('满额包邮','postage_money',0)
+                ]
+            }
+        ]),
 
 
         //checkbox 复选框付选择
@@ -276,7 +283,23 @@ function mock() {
                 'disabled': false
             })
             .validate({required: true, type: 'number', min: 3, message: '请大于3颗星', trigger: 'change'})
-            .col({span: 12}),
+            .col({span: 12}).control([
+            {
+                handle: function (val) {
+                    return val > 5;
+                },
+                rule: [
+                    maker.input('好评原因', 'goods_reason', '').props({disabled:false})
+                ]
+            }, {
+                handle: function (val) {
+                    return val < 5;
+                },
+                rule: [
+                    maker.input('差评原因', 'bad_reason', '').props({disabled:false})
+                ]
+            }
+        ]),
 
 
         //slider 滑块组件
