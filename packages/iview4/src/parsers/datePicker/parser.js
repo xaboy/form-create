@@ -13,7 +13,7 @@ export default class Parser extends BaseParser {
     }
 
     _toValue(val) {
-        const value = this.el.formatDate(val), {separator} = this.el,
+        const value = this.el.formatDate(val || ''), {separator} = this.el,
             isRange = this.isRange();
         if (!value)
             return isRange ? (this.el.multiple ? [] : ['', '']) : value;
