@@ -7,6 +7,7 @@ function baseRule() {
         options: [],
         col: {},
         children: [],
+        control: [],
         emit: [],
         template: undefined,
         emitPrefix: undefined,
@@ -69,7 +70,7 @@ objAttrs.forEach(attr => {
     };
 });
 
-const arrAttrs = ['validate', 'options', 'children', 'emit'];
+const arrAttrs = ['validate', 'options', 'children', 'emit', 'control'];
 
 arrAttrs.forEach(attr => {
     Creator.prototype[attr] = function (opt) {

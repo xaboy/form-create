@@ -27,6 +27,8 @@ export default class BaseParser {
         this.key = 'key_' + id;
         this.refName = '__' + this.field + this.id;
         this.formItemRefName = 'fi' + this.refName;
+        this.root = [];
+        this.ctrlRule = null;
 
         this.update(handle);
         this.init();

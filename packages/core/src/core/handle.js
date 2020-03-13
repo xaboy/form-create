@@ -118,6 +118,7 @@ export default class Handle {
                             this.refresh();
                             this.$render.clearCache(parser, true);
                             this.setFormData(parser, parser.toFormValue(value));
+                            this.valueChange(parser);
                         }
                     }
                 });
@@ -274,11 +275,16 @@ export default class Handle {
         return JSON.stringify(parser.rule.value) !== JSON.stringify(value);
     }
 
+    valueChange(parser) {
+        validateControl(parser);
+    }
+
     onInput(parser, value) {
         if (!this.isNoVal(parser) && this.isChange(parser, parser.toValue(value))) {
             this.$render.clearCache(parser);
             this.setFormData(parser, value);
             this.changeStatus = true;
+            this.valueChange(parser);
         }
     }
 
@@ -310,7 +316,7 @@ export default class Handle {
         const vm = this.vm;
 
         Object.keys(parser.rule).forEach((key) => {
-            if (['field', 'type', 'value', 'vm', 'template', 'name', 'config'].indexOf(key) !== -1 || parser.rule[key] === undefined) return;
+            if (['field', 'type', 'value', 'vm', 'template', 'name', 'config', 'control'].indexOf(key) !== -1 || parser.rule[key] === undefined) return;
             try {
                 parser.watch.push(vm.$watch(() => parser.rule[key], (n, o) => {
                     if (o === undefined) return;
@@ -338,7 +344,9 @@ export default class Handle {
         Object.keys(this.parsers).forEach((id) => {
             let parser = this.parsers[id];
             if (parser.watch.length === 0) this.addParserWitch(parser);
-
+            if (!this.isNoVal(parser) && parser.rule.control) {
+                validateControl(parser);
+            }
             parser.el = vm.$refs[parser.refName] || {};
 
             if (parser.defaultValue === undefined)
@@ -386,6 +394,8 @@ export default class Handle {
 
         if (this.subForm[parser.field])
             $del(this.subForm, field);
+
+        return parser;
     }
 
     refresh() {
@@ -435,9 +445,12 @@ export default class Handle {
 }
 
 export function delParser(parser, value) {
+    if (parser.ctrlRule)
+        removeControl(parser);
     parser.watch.forEach((unWatch) => unWatch());
     parser.watch = [];
     parser.deleted = true;
+    parser.root = [];
     Object.defineProperty(parser.rule, 'value', {
         value
     });
@@ -445,6 +458,45 @@ export function delParser(parser, value) {
 
 function parseArray(validate) {
     return Array.isArray(validate) ? validate : [];
+}
+
+function getControl(parser) {
+    const control = parser.rule.control || [];
+    if (isPlainObject(control)) return [control];
+    else return control;
+}
+
+function validateControl(parser) {
+    const controls = getControl(parser), len = controls.length, ctrlRule = parser.ctrlRule;
+    if (!len) return;
+    for (let i = 0; i < len; i++) {
+        const control = controls[i], validate = control.handle || (val => val === control.value);
+        if (validate(parser.rule.value)) {
+            if (ctrlRule) {
+                if (ctrlRule.children === control.rule)
+                    return;
+                else
+                    removeControl(parser);
+            }
+            const rule = {
+                type: 'div',
+                children: control.rule
+            };
+            parser.root.splice(parser.root.indexOf(parser.rule.__origin__) + 1, 0, rule);
+            parser.ctrlRule = rule;
+            return;
+        }
+    }
+    if (ctrlRule) {
+        removeControl(parser);
+    }
+}
+
+function removeControl(parser) {
+    const index = parser.root.indexOf(parser.ctrlRule);
+    if (index !== -1)
+        parser.root.splice(index, 1);
+    parser.ctrlRule = null;
 }
 
 
