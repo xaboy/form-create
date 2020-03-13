@@ -49,7 +49,7 @@ export default class Form extends BaseForm {
             model: this.$handle.formData,
             rules: this.$handle.validate,
             key: 'form' + this.unique
-        }).ref(this.refName).nativeOn({submit: preventDefault}).class('form-create', true).key(this.unique).get();
+        }).ref(this.refName).nativeOn({submit: preventDefault}).class(this.options.form.className).class('form-create', true).key(this.unique).get();
     }
 
     render(vn) {
