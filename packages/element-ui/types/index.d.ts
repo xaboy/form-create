@@ -29,6 +29,7 @@ interface ElementFormConfig {
     statusIcon?: boolean
     validateOnRuleChange?: boolean
     size?: ElementUIComponentSize
+    className: any;
 }
 
 export declare interface FormCol extends Col {
@@ -42,6 +43,10 @@ export declare interface Rule extends FormCreate.Rule<FormCol, FormOption> {
 }
 
 export declare interface Creator extends FormCreate.Creator<Rule, FormCol, FormOption> {
+
+}
+
+export declare interface Control extends FormCreate.Control<FormRule> {
 
 }
 

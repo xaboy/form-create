@@ -99,6 +99,12 @@ export namespace FormCreate {
         onSubmit?: (formData: FormData, $f: $FApi<FormRule, BaseConfig<FormConfig, Row, Button, FormRule, FormButton>, FormButton>) => void;
     }
 
+    export interface Control<FormRule> {
+        value?: any;
+        handle?: (val: any) => boolean;
+        rule: FormRule[]
+    }
+
     export interface Rule<Col, FormOption extends BaseOption<Rule<Col, FormOption>>> extends Data {
         readonly type: string;
         readonly field?: string;
@@ -117,6 +123,7 @@ export namespace FormCreate {
         className?: any;
         defaultSlot?: any;
         children?: Array<Rule<Col, FormOption> | Creator<Rule<Col, FormOption>, Col, FormOption> | string>;
+        control?: Array<Control<Rule<Col, FormOption> | Creator<Rule<Col, FormOption>, Col, FormOption> | string>> | Control<Rule<Col, FormOption> | Creator<Rule<Col, FormOption>, Col, FormOption> | string>;
         hidden?: boolean
         visibility?: boolean
 
@@ -128,8 +135,9 @@ export namespace FormCreate {
 
         private init(): this;
 
-        class(classList: any): this;
-        class(_class: string, status: boolean | any): this;
+        class(classList: string[]): this;
+        class(classList: Object): this;
+        class(_class: string, status?: boolean | any): this;
 
         directives(directives: VNodeDirective | VNodeDirective[]): this;
 
@@ -203,6 +211,8 @@ export namespace FormCreate {
         options(options: FormOption[]): this;
 
         children(children: Array<Rule | Creator<Rule, Col, FormOption> | string>): this;
+
+        control(control: Array<Control<Rule | Creator<Rule, Col, FormOption>>>): this;
 
         emit(emit: string[]): this;
 
