@@ -12,21 +12,32 @@ export default class Parser extends BaseParser {
         return this.el.type.includes('range') || this.el.multiple;
     }
 
+    _toValue(val) {
+        const value = this.el.formatDate(val), {separator} = this.el,
+            isRange = this.isRange();
+        if (!value)
+            return isRange ? (this.el.multiple ? [] : ['', '']) : value;
+        else if (isRange)
+            return value.split(separator);
+        else
+            return value;
+    }
+
+    toValue(formValue) {
+        const el = this.$handle.vm.$refs[this.refName];
+        if (el) {
+            this.el = el;
+            return this._toValue(formValue);
+        }
+        return super.toValue(formValue);
+    }
+
     mounted() {
         this.toFormValue = (val) => {
             let v = this.el.parseDate(val);
             return this.isRange() ? v : v[0];
         };
 
-        this.toValue = (val) => {
-            const value = this.el.formatDate(val), {separator} = this.el,
-                isRange = this.isRange();
-            if (!value)
-                return isRange ? (this.el.multiple ? [] : ['', '']) : value;
-            else if (isRange)
-                return value.split(separator);
-            else
-                return value;
-        };
+        this.toValue = this._toValue;
     }
 }
