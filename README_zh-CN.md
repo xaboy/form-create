@@ -237,32 +237,6 @@ $ npm run dev:iview4
 $ npm run dev:ele
 ```
 
-## 对比 1.x
-
-- 速度更快
-
-- 体积更小
-
-- 更强大的全局配置
-
-- 自定义更容易扩展
-
-- 更容易支持第三方 UI 库
-
-- 更少的 bug
-
-##  参考
-
-- [Vue](https://github.com/vuejs/vue)
-
-- [iViewUI](https://github.com/iview/iview)
-- [ElementUI](https://github.com/ElemeFE/element)
-
-- [async-validator](https://github.com/yiminghe/async-validator)
-
-- [PHP版的表单生成器:form-builder](https://github.com/xaboy/form-builder)
-
-
 ## 感谢
 
 [时光弧线](https://github.com/shiguanghuxian)  |  [wxxtqk](https://github.com/wxxtqk)  |  [williamBoss](https://github.com/williamBoss)  |  [HeyMrLin](https://github.com/HeyMrLin)  |  [djkloop](https://github.com/djkloop)

@@ -33,11 +33,25 @@ If you have a form component suitable for form-create, please feel free to [clic
 
 > [Update log](http://www.form-create.com/en/v2/guide/update.html)
 
+- **Preview**
 
 ![demo1](https://raw.githubusercontent.com/xaboy/form-create/dev/images/demo-live3.gif)
-![demo2](https://raw.githubusercontent.com/xaboy/form-create/dev/images/demo-live2.gif)
-![demo3](https://github.com/xaboy/form-create/blob/dev/images/demo-group.gif?raw=true)
 
+<details>
+<summary>**More**</summary>
+
+- **Form operations**
+
+![demo2](https://raw.githubusercontent.com/xaboy/form-create/dev/images/demo-live2.gif)
+
+- **`group` component**
+
+![demo3](https://raw.githubusercontent.com/xaboy/form-create/dev/images/demo-group.gif)
+
+- **`control` configuration**
+
+![demo2](https://raw.githubusercontent.com/xaboy/form-create/dev/images/demo-live4.gif)
+</details>
 
 ## Docs
 
@@ -74,11 +88,11 @@ If you have a form component suitable for form-create, please feel free to [clic
 
 
 
-
-## Legend
+<details>
+<summary>**Legend**</summary>
 
 ![https://raw.githubusercontent.com/xaboy/form-create/dev/images/sample110.jpg](https://raw.githubusercontent.com/xaboy/form-create/dev/images/sample110.jpg)
-
+</details>
 
 
 ## Install
@@ -218,33 +232,6 @@ ElementUI Demo
 ```sh 
 $ npm run dev:ele
 ```
-
-## Comparison 1.x
-
-- faster
-
-- Smaller size
-
-- More powerful global configuration
-
-- Customization is easier to expand
-
-- Easier support for third-party UI libraries
-
-- Less bugs
-
-
-## Reference
-
-- [Vue](https://github.com/vuejs/vue)
-
-- [iViewUI](https://github.com/iview/iview)
-- [ElementUI](https://github.com/ElemeFE/element)
-
-- [async-validator](https://github.com/yiminghe/async-validator)
-
-- [PHP form-builder](https://github.com/xaboy/form-builder)
-
 
 ## Thank
 
