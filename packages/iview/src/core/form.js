@@ -9,11 +9,6 @@ function isTooltip(info) {
 
 export default class Form extends BaseForm {
 
-    constructor(handle) {
-        super(handle);
-        this.refName = `cForm${this.id}`;
-    }
-
     inputVData(parser) {
         if (!parser.rule.props.size && this.options.form.size)
             parser.vData.props('size', this.options.form.size);

@@ -23,7 +23,6 @@ export default class BaseParser {
         }
         this.name = rule.name;
 
-        this.unique = 'fc_' + id;
         this.key = 'key_' + id;
         this.refName = '__' + this.field + this.id;
         this.formItemRefName = 'fi' + this.refName;

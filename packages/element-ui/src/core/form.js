@@ -14,11 +14,6 @@ function isTooltip(info) {
 
 export default class Form extends BaseForm {
 
-    constructor(handle) {
-        super(handle);
-        this.refName = `cForm${this.id}`;
-    }
-
     inputVData(parser) {
         const props = parser.rule.props || {};
         parser.vData.attrs(Object.keys(props).reduce((initial, val) => {

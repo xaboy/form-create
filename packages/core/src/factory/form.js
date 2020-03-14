@@ -1,6 +1,6 @@
 import VData from './vData';
 import VNode from './vNode';
-import {deepExtendArgs} from '@form-create/utils';
+import {deepExtendArgs, uniqueId} from '@form-create/utils';
 
 
 export default class BaseForm {
@@ -12,7 +12,8 @@ export default class BaseForm {
         this.options = handle.options;
         this.vNode = new VNode(this.vm);
         this.vData = new VData();
-        this.unique = handle.id;
+        this.unique = uniqueId();
+        this.refName = `cForm${this.unique}`;
     }
 
     init() {

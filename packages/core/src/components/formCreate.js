@@ -45,7 +45,7 @@ export default function $FormCreate(FormCreate, components) {
                 this.$set(this, 'resetProps', deepExtend(this.resetProps, props));
             },
             _refresh() {
-                this.unique += 1;
+                ++this.unique;
             }
         },
         watch: {

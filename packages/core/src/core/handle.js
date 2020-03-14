@@ -33,7 +33,6 @@ export default class Handle {
         this.watching = false;
         this.vm = vm;
         this.fc = fc;
-        this.id = uniqueId();
         this.options = options;
 
         this.validate = {};
@@ -43,7 +42,7 @@ export default class Handle {
         this.fCreateApi = undefined;
 
         this.__init(rules);
-        this.$form = new fc.drive.formRender(this, this.id);
+        this.$form = new fc.drive.formRender(this);
         this.$render = new Render(this);
 
         this.loadRule(this.rules, false);
@@ -115,10 +114,10 @@ export default class Handle {
                     },
                     set: (value) => {
                         if (this.isChange(parser, value)) {
-                            this.refresh();
                             this.$render.clearCache(parser, true);
                             this.setFormData(parser, parser.toFormValue(value));
                             this.valueChange(parser);
+                            this.refresh();
                         }
                     }
                 });
@@ -130,7 +129,7 @@ export default class Handle {
     }
 
     createParser(rule) {
-        const id = this.id + '' + uniqueId(), parsers = this.fc.parsers, type = toString(rule.type).toLocaleLowerCase();
+        const id = '' + uniqueId(), parsers = this.fc.parsers, type = toString(rule.type).toLocaleLowerCase();
 
         const Parser = (parsers[type]) ? parsers[type] : BaseParser;
 
