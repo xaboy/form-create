@@ -415,15 +415,17 @@ export default class Handle {
         Object.keys(parsers).filter(id => this.parsers[id] === undefined)
             .forEach(id => this.removeField(parsers[id], formData[parsers[id].field]));
         this.$render.initOrgChildren();
+        this.formData = {...this.formData};
         this.created();
+
+        vm.$f = this.fCreateApi;
+        this.$render.clearCacheAll();
+        this.refresh();
 
         vm.$nextTick(() => {
             this.reload();
         });
 
-        vm.$f = this.fCreateApi;
-        this.$render.clearCacheAll();
-        this.refresh();
     }
 
     setFormData(parser, value) {
