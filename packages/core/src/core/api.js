@@ -2,7 +2,6 @@ import {$set, deepExtend, errMsg, isFunction, isPlainObject} from '@form-create/
 import {toJson} from './util';
 
 
-
 export default function Api(h) {
 
     function tidyFields(fields, all = false) {
@@ -320,7 +319,7 @@ export default function Api(h) {
                 if (!parser) return;
 
                 if (parser.type === 'hidden') return;
-                h.vm.$refs[parser.formItemRefName].resetField();
+                h.$form.resetField(parser);
                 h.refreshControl(parser);
                 h.$render.clearCache(parser, true);
             });
@@ -346,11 +345,7 @@ export default function Api(h) {
                 const parser = h.fieldList[field];
                 if (!parser)
                     return;
-                const fItem = h.vm.$refs[parser.formItemRefName];
-                if (fItem) {
-                    fItem.validateMessage = '';
-                    fItem.validateState = '';
-                }
+                h.$form.clearValidateState(parser);
             });
         },
         clearSubValidateState(fields) {

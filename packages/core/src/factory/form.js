@@ -16,6 +16,10 @@ export default class BaseForm {
         this.refName = `cForm${this.unique}`;
     }
 
+    getFormRef() {
+        return this.vm.$refs[this.refName];
+    }
+
     init() {
         this.$render = this.$handle.$render;
     }

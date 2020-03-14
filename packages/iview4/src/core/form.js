@@ -14,10 +14,6 @@ export default class Form extends BaseForm {
             parser.vData.props('size', this.options.form.size);
     }
 
-    getFormRef() {
-        return this.vm.$refs[this.refName];
-    }
-
     validate(call) {
         this.getFormRef().validate((valid) => {
             call && call(valid);
@@ -26,6 +22,18 @@ export default class Form extends BaseForm {
 
     validateField(field, call) {
         this.getFormRef().validateField(field, call);
+    }
+
+    resetField(parser) {
+        this.vm.$refs[parser.formItemRefName].resetField();
+    }
+
+    clearValidateState(parser) {
+        const fItem = this.vm.$refs[parser.formItemRefName];
+        if (fItem) {
+            fItem.validateMessage = '';
+            fItem.validateState = '';
+        }
     }
 
     beforeRender() {
