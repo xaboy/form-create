@@ -32,10 +32,14 @@
 
 > [更新日志](http://www.form-create.com/v2/guide/update.html)
 
-
+**预览**
 ![demo1](https://raw.githubusercontent.com/xaboy/form-create/dev/images/demo-live3.gif)
+**操作表单**
 ![demo2](https://raw.githubusercontent.com/xaboy/form-create/dev/images/demo-live2.gif)
+**`group` 组件**
 ![demo3](https://github.com/xaboy/form-create/blob/dev/images/demo-group.gif?raw=true)
+**`control` 配置项**
+![demo2](https://raw.githubusercontent.com/xaboy/form-create/dev/images/demo-live4.gif)
 
 
 ## 文档
