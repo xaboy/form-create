@@ -321,6 +321,7 @@ export default function Api(h) {
 
                 if (parser.type === 'hidden') return;
                 h.vm.$refs[parser.formItemRefName].resetField();
+                h.refreshControl(parser);
                 h.$render.clearCache(parser, true);
             });
         },

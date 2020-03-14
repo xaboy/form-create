@@ -339,14 +339,18 @@ export default class Handle {
         });
     }
 
+    refreshControl(parser) {
+        if (!this.isNoVal(parser) && parser.rule.control) {
+            validateControl(parser);
+        }
+    }
+
     mountedParser() {
         const vm = this.vm;
         Object.keys(this.parsers).forEach((id) => {
             let parser = this.parsers[id];
             if (parser.watch.length === 0) this.addParserWitch(parser);
-            if (!this.isNoVal(parser) && parser.rule.control) {
-                validateControl(parser);
-            }
+            this.refreshControl(parser);
             parser.el = vm.$refs[parser.refName] || {};
 
             if (parser.defaultValue === undefined)
