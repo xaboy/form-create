@@ -29,7 +29,7 @@ export default class Parser extends BaseParser {
             this.el = el;
             return this._toValue(formValue);
         }
-        return super.toValue(formValue);
+        return formValue;
     }
 
     mounted() {
