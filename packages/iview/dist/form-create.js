@@ -1,5 +1,5 @@
 /*!
- * @form-create/iview v1.0.7
+ * @form-create/iview v1.0.8
  * (c) 2018-2020 xaboy
  * Github https://github.com/xaboy/form-create
  * Released under the MIT License.
@@ -556,7 +556,7 @@
           this.$set(this, 'resetProps', deepExtend(this.resetProps, props));
         },
         _refresh: function _refresh() {
-          this.unique += 1;
+          ++this.unique;
         }
       },
       watch: {
@@ -696,6 +696,7 @@
       options: [],
       col: {},
       children: [],
+      control: [],
       emit: [],
       template: undefined,
       emitPrefix: undefined,
@@ -779,7 +780,7 @@
       return this;
     };
   });
-  var arrAttrs = ['validate', 'options', 'children', 'emit'];
+  var arrAttrs = ['validate', 'options', 'children', 'emit', 'control'];
   arrAttrs.forEach(function (attr) {
     Creator.prototype[attr] = function (opt) {
       if (!Array.isArray(opt)) opt = [opt];
@@ -1001,10 +1002,11 @@
       }
 
       this.name = rule.name;
-      this.unique = 'fc_' + id;
       this.key = 'key_' + id;
       this.refName = '__' + this.field + this.id;
       this.formItemRefName = 'fi' + this.refName;
+      this.root = [];
+      this.ctrlRule = null;
       this.update(handle);
       this.init();
     }
@@ -1555,11 +1557,7 @@
         var el = this.el(id);
         if (!el || !el[name]) throw new Error('方法不存在' + errMsg());
         return function () {
-          for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-            args[_key] = arguments[_key];
-          }
-
-          el[name](args);
+          return el[name].apply(el, arguments);
         };
       },
       toJson: function toJson$1() {
@@ -1583,8 +1581,8 @@
       trigger: function trigger(id, event) {
         var el = this.el(id);
 
-        for (var _len2 = arguments.length, args = new Array(_len2 > 2 ? _len2 - 2 : 0), _key2 = 2; _key2 < _len2; _key2++) {
-          args[_key2 - 2] = arguments[_key2];
+        for (var _len = arguments.length, args = new Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
+          args[_key - 2] = arguments[_key];
         }
 
         el && el.$emit.apply(el, [event].concat(args));
@@ -1651,7 +1649,8 @@
           var parser = parsers[field];
           if (!parser) return;
           if (parser.type === 'hidden') return;
-          h.vm.$refs[parser.formItemRefName].resetField();
+          h.$form.resetField(parser);
+          h.refreshControl(parser);
           h.$render.clearCache(parser, true);
         });
       },
@@ -1679,12 +1678,7 @@
           if (clearSub) _this5.clearSubValidateState(field);
           var parser = h.fieldList[field];
           if (!parser) return;
-          var fItem = h.vm.$refs[parser.formItemRefName];
-
-          if (fItem) {
-            fItem.validateMessage = '';
-            fItem.validateState = '';
-          }
+          h.$form.clearValidateState(parser);
         });
       },
       clearSubValidateState: function clearSubValidateState(fields) {
@@ -1774,7 +1768,6 @@
       this.watching = false;
       this.vm = vm;
       this.fc = fc;
-      this.id = uniqueId();
       this.options = options;
       this.validate = {};
       this.formData = {};
@@ -1783,7 +1776,7 @@
 
       this.__init(rules);
 
-      this.$form = new fc.drive.formRender(this, this.id);
+      this.$form = new fc.drive.formRender(this);
       this.$render = new Render(this);
       this.loadRule(this.rules, false);
       this.$render.initOrgChildren();
@@ -1855,11 +1848,13 @@
             },
             set: function set(value) {
               if (_this.isChange(parser, value)) {
-                _this.refresh();
-
                 _this.$render.clearCache(parser, true);
 
                 _this.setFormData(parser, parser.toFormValue(value));
+
+                _this.valueChange(parser);
+
+                _this.refresh();
               }
             }
           });
@@ -1873,7 +1868,7 @@
     }, {
       key: "createParser",
       value: function createParser(rule) {
-        var id = this.id + '' + uniqueId(),
+        var id = '' + uniqueId(),
             parsers = this.fc.parsers,
             type = toString(rule.type).toLocaleLowerCase();
         var Parser = parsers[type] ? parsers[type] : BaseParser;
@@ -2042,12 +2037,18 @@
         return JSON.stringify(parser.rule.value) !== JSON.stringify(value);
       }
     }, {
+      key: "valueChange",
+      value: function valueChange(parser) {
+        validateControl(parser);
+      }
+    }, {
       key: "onInput",
       value: function onInput(parser, value) {
         if (!this.isNoVal(parser) && this.isChange(parser, parser.toValue(value))) {
           this.$render.clearCache(parser);
           this.setFormData(parser, value);
           this.changeStatus = true;
+          this.valueChange(parser);
         }
       }
     }, {
@@ -2073,7 +2074,7 @@
 
         var vm = this.vm;
         Object.keys(parser.rule).forEach(function (key) {
-          if (['field', 'type', 'value', 'vm', 'template', 'name', 'config'].indexOf(key) !== -1 || parser.rule[key] === undefined) return;
+          if (['field', 'type', 'value', 'vm', 'template', 'name', 'config', 'control'].indexOf(key) !== -1 || parser.rule[key] === undefined) return;
 
           try {
             parser.watch.push(vm.$watch(function () {
@@ -2095,6 +2096,13 @@
         });
       }
     }, {
+      key: "refreshControl",
+      value: function refreshControl(parser) {
+        if (!this.isNoVal(parser) && parser.rule.control) {
+          validateControl(parser);
+        }
+      }
+    }, {
       key: "mountedParser",
       value: function mountedParser() {
         var _this5 = this;
@@ -2103,6 +2111,9 @@
         Object.keys(this.parsers).forEach(function (id) {
           var parser = _this5.parsers[id];
           if (parser.watch.length === 0) _this5.addParserWitch(parser);
+
+          _this5.refreshControl(parser);
+
           parser.el = vm.$refs[parser.refName] || {};
           if (parser.defaultValue === undefined) parser.defaultValue = deepExtend({}, {
             value: parser.rule.value
@@ -2148,6 +2159,7 @@
         }
 
         if (this.subForm[parser.field]) $del(this.subForm, field);
+        return parser;
       }
     }, {
       key: "refresh",
@@ -2177,13 +2189,14 @@
           return _this6.removeField(parsers[id], formData[parsers[id].field]);
         });
         this.$render.initOrgChildren();
+        this.formData = _objectSpread2({}, this.formData);
         this.created();
-        vm.$nextTick(function () {
-          _this6.reload();
-        });
         vm.$f = this.fCreateApi;
         this.$render.clearCacheAll();
         this.refresh();
+        vm.$nextTick(function () {
+          _this6.reload();
+        });
       }
     }, {
       key: "setFormData",
@@ -2210,11 +2223,13 @@
     return Handle;
   }();
   function delParser(parser, value) {
+    if (parser.ctrlRule) removeControl(parser);
     parser.watch.forEach(function (unWatch) {
       return unWatch();
     });
     parser.watch = [];
     parser.deleted = true;
+    parser.root = [];
     Object.defineProperty(parser.rule, 'value', {
       value: value
     });
@@ -2222,6 +2237,60 @@
 
   function parseArray(validate) {
     return Array.isArray(validate) ? validate : [];
+  }
+
+  function getControl(parser) {
+    var control = parser.rule.control || [];
+    if (isPlainObject(control)) return [control];else return control;
+  }
+
+  function validateControl(parser) {
+    var controls = getControl(parser),
+        len = controls.length,
+        ctrlRule = parser.ctrlRule;
+    if (!len) return;
+
+    var _loop = function _loop(i) {
+      var control = controls[i],
+          validate = control.handle || function (val) {
+        return val === control.value;
+      };
+
+      if (validate(parser.rule.value)) {
+        if (ctrlRule) {
+          if (ctrlRule.children === control.rule) return {
+            v: void 0
+          };else removeControl(parser);
+        }
+
+        var rule = {
+          type: 'div',
+          native: true,
+          children: control.rule
+        };
+        parser.root.splice(parser.root.indexOf(parser.rule.__origin__) + 1, 0, rule);
+        parser.ctrlRule = rule;
+        return {
+          v: void 0
+        };
+      }
+    };
+
+    for (var i = 0; i < len; i++) {
+      var _ret = _loop(i);
+
+      if (_typeof(_ret) === "object") return _ret.v;
+    }
+
+    if (ctrlRule) {
+      removeControl(parser);
+    }
+  }
+
+  function removeControl(parser) {
+    var index = parser.root.indexOf(parser.ctrlRule);
+    if (index !== -1) parser.root.splice(index, 1);
+    parser.ctrlRule = null;
   }
 
   function defRule() {
@@ -2498,10 +2567,16 @@
       this.options = handle.options;
       this.vNode = new VNode(this.vm);
       this.vData = new VData();
-      this.unique = handle.id;
+      this.unique = uniqueId();
+      this.refName = "cForm".concat(this.unique);
     }
 
     _createClass(BaseForm, [{
+      key: "getFormRef",
+      value: function getFormRef() {
+        return this.vm.$refs[this.refName];
+      }
+    }, {
       key: "init",
       value: function init() {
         this.$render = this.$handle.$render;
@@ -2519,8 +2594,10 @@
           mCol = global['*'].col || {};
         }
 
-        if (global[parser.type] || global[parser.originType]) {
-          pCol = global[parser.type].col || global[parser.originType].col || {};
+        if (global[parser.type]) {
+          pCol = global[parser.type].col || {};
+        } else if (global[parser.originType]) {
+          pCol = global[parser.originType].col || {};
         }
 
         col = deepExtendArgs({}, mCol, pCol, col);
@@ -3447,7 +3524,7 @@
 
         if (len < 0) {
           for (var i = len; i < 0; i++) {
-            this.addRule(keys[i]);
+            this.addRule();
           }
 
           for (var _i = 0; _i < total; _i++) {
@@ -3478,17 +3555,17 @@
           $f.setValue(value);
         }
       },
-      addRule: function addRule() {
+      addRule: function addRule(emit) {
         var rule = this.copyRule();
         this.$set(this.cacheRule, ++this.len, rule);
-        this.$emit('add', rule);
+        if (emit) this.$emit('add', rule, Object.keys(this.cacheRule).length - 1);
       },
       add$f: function add$f(i, key, $f) {
         this.group$f[key] = $f;
         this.setValue($f, this.value[i]);
         this.syncData(key, $f);
         this.subForm();
-        this.$emit('itemMounted', $f);
+        this.$emit('itemMounted', $f, Object.keys(this.cacheRule).indexOf(key));
       },
       subForm: function subForm() {
         var _this3 = this;
@@ -3505,14 +3582,15 @@
           _this4.fieldRule[key][field] = $f.getRule(field);
         });
       },
-      removeRule: function removeRule(key) {
+      removeRule: function removeRule(key, emit) {
+        var index = Object.keys(this.cacheRule).indexOf(key);
         this.$delete(this.cacheRule, key);
         this.$delete(this.fieldRule, key);
-        delete this.group$f[key];
-        this.$emit('remove');
+        this.$delete(this.group$f, key);
+        if (emit) this.$emit('remove', index);
       },
       copyRule: function copyRule() {
-        return this.$formCreate.copyRules(this.formRule);
+        return copyRules(this.formRule);
       },
       addIcon: function addIcon(key) {
         var _this5 = this;
@@ -3526,7 +3604,7 @@
           "style": "font-size:28px;cursor:".concat(this.disabled ? 'not-allowed;color:#c9cdd4' : 'pointer;color:#000'),
           "on": {
             "click": function click() {
-              return !_this5.disabled && _this5.addRule();
+              return !_this5.disabled && _this5.addRule(true);
             }
           }
         });
@@ -3545,7 +3623,7 @@
             "click": function click() {
               if (_this6.disabled) return;
 
-              _this6.removeRule(key);
+              _this6.removeRule(key, true);
 
               _this6.subForm();
             }
@@ -3578,7 +3656,7 @@
         "style": "font-size:28px;vertical-align:middle;cursor:".concat(this.disabled ? 'not-allowed;color:#c9cdd4' : 'pointer', ";"),
         "on": {
           "click": function click() {
-            return !_this7.disabled && _this7.addRule();
+            return !_this7.disabled && _this7.addRule(true);
           }
         }
       }) : h("div", {
@@ -3687,6 +3765,26 @@
         return this.el.type.includes('range') || this.el.multiple;
       }
     }, {
+      key: "_toValue",
+      value: function _toValue(val) {
+        var value = this.el.formatDate(val || ''),
+            separator = this.el.separator,
+            isRange = this.isRange();
+        if (!value) return isRange ? this.el.multiple ? [] : ['', ''] : value;else if (isRange) return value.split(separator);else return value;
+      }
+    }, {
+      key: "toValue",
+      value: function toValue(formValue) {
+        var el = this.$handle.vm.$refs[this.refName];
+
+        if (el) {
+          this.el = el;
+          return this._toValue(formValue);
+        }
+
+        return formValue;
+      }
+    }, {
       key: "mounted",
       value: function mounted() {
         var _this = this;
@@ -3697,13 +3795,7 @@
           return _this.isRange() ? v : v[0];
         };
 
-        this.toValue = function (val) {
-          var value = _this.el.formatDate(val),
-              separator = _this.el.separator,
-              isRange = _this.isRange();
-
-          if (!value) return isRange ? _this.el.multiple ? [] : ['', ''] : value;else if (isRange) return value.split(separator);else return value;
-        };
+        this.toValue = this._toValue;
       }
     }]);
 
@@ -4089,25 +4181,16 @@
   function (_BaseForm) {
     _inherits(Form, _BaseForm);
 
-    function Form(handle) {
-      var _this;
-
+    function Form() {
       _classCallCheck(this, Form);
 
-      _this = _possibleConstructorReturn(this, _getPrototypeOf(Form).call(this, handle));
-      _this.refName = "cForm".concat(_this.id);
-      return _this;
+      return _possibleConstructorReturn(this, _getPrototypeOf(Form).apply(this, arguments));
     }
 
     _createClass(Form, [{
       key: "inputVData",
       value: function inputVData(parser) {
         if (!parser.rule.props.size && this.options.form.size) parser.vData.props('size', this.options.form.size);
-      }
-    }, {
-      key: "getFormRef",
-      value: function getFormRef() {
-        return this.vm.$refs[this.refName];
       }
     }, {
       key: "validate",
@@ -4122,6 +4205,21 @@
         this.getFormRef().validateField(field, call);
       }
     }, {
+      key: "resetField",
+      value: function resetField(parser) {
+        this.vm.$refs[parser.formItemRefName].resetField();
+      }
+    }, {
+      key: "clearValidateState",
+      value: function clearValidateState(parser) {
+        var fItem = this.vm.$refs[parser.formItemRefName];
+
+        if (fItem) {
+          fItem.validateMessage = '';
+          fItem.validateState = '';
+        }
+      }
+    }, {
       key: "beforeRender",
       value: function beforeRender() {
         this.propsData = this.vData.props(this.options.form).props({
@@ -4130,7 +4228,7 @@
           key: 'form' + this.unique
         }).ref(this.refName).nativeOn({
           submit: preventDefault
-        }).class('form-create', true).key(this.unique).get();
+        }).class(this.options.form.className).class('form-create', true).key(this.unique).get();
       }
     }, {
       key: "render",
@@ -4160,7 +4258,6 @@
             formItemRefName = parser.formItemRefName,
             col = this.getGetCol(parser),
             labelWidth = !col.labelWidth && !rule.title ? 0 : col.labelWidth,
-            className = rule.className,
             propsData = this.vData.props({
           prop: field,
           label: rule.title,
@@ -4168,7 +4265,7 @@
           rules: rule.validate,
           labelWidth: labelWidth,
           required: rule.props.required
-        }).key(fItemUnique).ref(formItemRefName).class(className).get(),
+        }).key(fItemUnique).ref(formItemRefName).class(rule.className).get(),
             node = this.vNode.formItem(propsData, [child, this.makeFormPop(parser, fItemUnique)]);
         return this.propsData.props.inline === true ? node : this.makeCol(col, parser, fItemUnique, [node]);
       }
@@ -4231,7 +4328,7 @@
     }, {
       key: "makeResetBtn",
       value: function makeResetBtn(span) {
-        var _this2 = this;
+        var _this = this;
 
         var resetBtn = this.vm.resetProps,
             props = resetBtn.col || {
@@ -4246,7 +4343,7 @@
           props: resetBtn,
           on: {
             'click': function click() {
-              var fApi = _this2.$handle.fCreateApi;
+              var fApi = _this.$handle.fCreateApi;
               isFunction(resetBtn.click) ? resetBtn.click(fApi) : fApi.resetFields();
             }
           }
@@ -4255,7 +4352,7 @@
     }, {
       key: "makeSubmitBtn",
       value: function makeSubmitBtn(span) {
-        var _this3 = this;
+        var _this2 = this;
 
         var submitBtn = this.vm.buttonProps,
             props = submitBtn.col || {
@@ -4269,7 +4366,7 @@
           props: submitBtn,
           on: {
             'click': function click() {
-              var fApi = _this3.$handle.fCreateApi;
+              var fApi = _this2.$handle.fCreateApi;
               isFunction(submitBtn.click) ? submitBtn.click(fApi) : fApi.submit();
             }
           }
@@ -4378,7 +4475,7 @@
   VNode.use(nodes);
   var drive = {
     ui: "iview",
-    version: "1.0.7",
+    version: "1.0.8",
     formRender: Form,
     components: components,
     parsers: parsers,
