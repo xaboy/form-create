@@ -80,11 +80,11 @@
 
 - [实战案例](https://github.com/HeyMrLin/fc-demo) ([演示站](http://jeekweb.pro/form-create-demo))
 
-- [使用生成器生成](https://jsrun.net/NQhKp/edit)
+- [使用生成器生成](https://jsrun.pro/NQhKp/edit)
 
-- [使用 json 生成](https://jsrun.net/NQhKp/edit)
+- [使用 json 生成](https://jsrun.pro/NQhKp/edit)
 
-- [各种示例](https://jsrun.net/user/xaboy)
+- [各种示例](https://jsrun.pro/user/xaboy)
 
 
 

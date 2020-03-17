@@ -80,11 +80,11 @@ If you have a form component suitable for form-create, please feel free to [clic
 
 - [Practical case](https://github.com/HeyMrLin/fc-demo) ([Demo station](http://jeekweb.pro/form-create-demo))
 
-- [Generate a form using the maker generator](https://jsrun.net/NQhKp/edit)
+- [Generate a form using the maker generator](https://jsrun.pro/NQhKp/edit)
 
-- [Generate a form using the json parameter](https://jsrun.net/NQhKp/edit)
+- [Generate a form using the json parameter](https://jsrun.pro/NQhKp/edit)
 
-- [Component example](https://jsrun.net/user/xaboy)
+- [Component example](https://jsrun.pro/user/xaboy)
 
 
 
