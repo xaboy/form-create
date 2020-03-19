@@ -266,8 +266,8 @@ export default class Handle {
         this.subForm[parser.field] = subForm;
     }
 
-    notField(id) {
-        return this.parsers[id] === undefined;
+    notField(field) {
+        return this.fieldList[field] === undefined;
     }
 
     isChange(parser, value) {
