@@ -1,5 +1,5 @@
 /*!
- * @form-create/core v1.0.8
+ * @form-create/core v1.0.9
  * (c) 2018-2020 xaboy
  * Github https://github.com/xaboy/form-create
  * Released under the MIT License.
@@ -1782,8 +1782,8 @@ function () {
     }
   }, {
     key: "notField",
-    value: function notField(id) {
-      return this.parsers[id] === undefined;
+    value: function notField(field) {
+      return this.fieldList[field] === undefined;
     }
   }, {
     key: "isChange",

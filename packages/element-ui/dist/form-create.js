@@ -1,5 +1,5 @@
 /*!
- * @form-create/element-ui v1.0.8
+ * @form-create/element-ui v1.0.9
  * (c) 2018-2020 xaboy
  * Github https://github.com/xaboy/form-create
  * Released under the MIT License.
@@ -1965,8 +1965,8 @@
       }
     }, {
       key: "notField",
-      value: function notField(id) {
-        return this.parsers[id] === undefined;
+      value: function notField(field) {
+        return this.fieldList[field] === undefined;
       }
     }, {
       key: "isChange",
@@ -4506,7 +4506,7 @@
   VNode.use(nodes);
   var drive = {
     ui: "element-ui",
-    version: "".concat("1.0.8"),
+    version: "".concat("1.0.9"),
     formRender: Form,
     components: components,
     parsers: parsers,

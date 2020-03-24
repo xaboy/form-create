@@ -1,5 +1,5 @@
 /*!
- * @form-create/iview v1.0.8
+ * @form-create/iview v1.0.9
  * (c) 2018-2020 xaboy
  * Github https://github.com/xaboy/form-create
  * Released under the MIT License.
@@ -224,7 +224,7 @@
   function isUndef(v) {
     return v === undefined || v === null;
   }
-  function toString(val) {
+  function toString$1(val) {
     return val == null ? '' : _typeof(val) === 'object' ? JSON.stringify(val, null, 2) : String(val);
   }
   function extend(to, _from) {
@@ -625,12 +625,12 @@
 
         if (Array.isArray(classList)) {
           classList.forEach(function (cls) {
-            $set(_this._data.class, toString(cls), true);
+            $set(_this._data.class, toString$1(cls), true);
           });
         } else if (isPlainObject(classList)) {
           $set(this._data, 'class', extend(this._data.class, classList));
         } else {
-          $set(this._data.class, toString(classList), status === undefined ? true : status);
+          $set(this._data.class, toString$1(classList), status === undefined ? true : status);
         }
 
         return this;
@@ -683,7 +683,7 @@
       if (isPlainObject(obj)) {
         $set(this._data, key, extend(this._data[key], obj));
       } else {
-        $set(this._data[key], toString(obj), val);
+        $set(this._data[key], toString$1(obj), val);
       }
 
       return this;
@@ -968,7 +968,7 @@
       key: "use",
       value: function use(nodes) {
         Object.keys(nodes).forEach(function (k) {
-          VNode.prototype[toString(k).toLocaleLowerCase()] = VNode.prototype[k] = function (data, VNodeFn) {
+          VNode.prototype[toString$1(k).toLocaleLowerCase()] = VNode.prototype[k] = function (data, VNodeFn) {
             return this.make(nodes[k], data, VNodeFn);
           };
         });
@@ -990,7 +990,7 @@
       this.id = id;
       this.watch = [];
       this.originType = rule.type;
-      this.type = toString(rule.type).toLocaleLowerCase();
+      this.type = toString$1(rule.type).toLocaleLowerCase();
       this.isDef = true;
       this.el = undefined;
 
@@ -1870,7 +1870,7 @@
       value: function createParser(rule) {
         var id = '' + uniqueId(),
             parsers = this.fc.parsers,
-            type = toString(rule.type).toLocaleLowerCase();
+            type = toString$1(rule.type).toLocaleLowerCase();
         var Parser = parsers[type] ? parsers[type] : BaseParser;
         return new Parser(this, rule, id);
       }
@@ -2028,8 +2028,8 @@
       }
     }, {
       key: "notField",
-      value: function notField(id) {
-        return this.parsers[id] === undefined;
+      value: function notField(field) {
+        return this.fieldList[field] === undefined;
       }
     }, {
       key: "isChange",
@@ -2325,7 +2325,7 @@
         data = {};
 
     function setParser(id, parser) {
-      id = toString(id);
+      id = toString$1(id);
       parsers[id.toLocaleLowerCase()] = parser;
       FormCreate.maker[id] = creatorFactory(id);
     }
@@ -2348,7 +2348,7 @@
     }
 
     function component(id, component) {
-      id = toString(id);
+      id = toString$1(id);
 
       var _id = id.toLocaleLowerCase();
 
@@ -3220,7 +3220,7 @@
   }
 
   function getFileName(file) {
-    return toString(file).split('/').pop();
+    return toString$1(file).split('/').pop();
   }
 
   var NAME$4 = 'fc-ivu-upload';
@@ -3783,6 +3783,31 @@
         }
 
         return formValue;
+      }
+    }, {
+      key: "toFormValue",
+      value: function toFormValue(value) {
+        var isArr = Array.isArray(value),
+            props = this.rule.props,
+            parseValue,
+            type = props.type || 'date';
+
+        if (['daterange', 'datetimerange'].indexOf(type) !== -1) {
+          if (isArr) {
+            parseValue = value.map(function (time) {
+              return !time ? '' : timeStampToDate(time);
+            });
+          } else {
+            parseValue = ['', ''];
+          }
+        } else if ('date' === type && props.multiple === true) {
+          parseValue = toString(value);
+        } else {
+          parseValue = isArr ? value[0] || '' : value;
+          parseValue = !parseValue ? '' : timeStampToDate(parseValue);
+        }
+
+        return parseValue;
       }
     }, {
       key: "mounted",
@@ -4475,7 +4500,7 @@
   VNode.use(nodes);
   var drive = {
     ui: "iview",
-    version: "1.0.8",
+    version: "1.0.9",
     formRender: Form,
     components: components,
     parsers: parsers,
@@ -4499,7 +4524,7 @@
     }
 
     Object.keys(event).forEach(function (eventName) {
-      var name = toString(eventName).indexOf('on-') === 0 ? eventName : "on-".concat(eventName);
+      var name = toString$1(eventName).indexOf('on-') === 0 ? eventName : "on-".concat(eventName);
 
       _this.on(name, event[eventName]);
     });
