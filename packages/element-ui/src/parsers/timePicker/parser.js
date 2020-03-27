@@ -18,13 +18,14 @@ export default class Parser extends BaseParser {
         let parseValue, isArr = Array.isArray(value);
         if (this.rule.props.isRange === true) {
             if (isArr) {
-                parseValue = value.map((time) => !time ? '' : toDate(getTime(timeStampToDate(time))));
+                parseValue = value.map((time) => !time ? '' : toDate(getTime(timeStampToDate(time)))).filter(n => !!n);
+                if (parseValue.length !== 2) parseValue = null;
             } else {
                 parseValue = null;
             }
         } else {
             isArr && (value = value[0]);
-            parseValue = !value ? null :  toDate(getTime(timeStampToDate(value)));
+            parseValue = !value ? null : toDate(getTime(timeStampToDate(value)));
         }
         return parseValue;
     }
