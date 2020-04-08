@@ -1,5 +1,5 @@
 import Creator from '../factory/creator';
-import {isFunction, isString, isValidChildren} from '@form-create/utils';
+import {isFunction, isString, isUndef, isValidChildren} from '@form-create/utils';
 
 export function toJson(obj) {
     return JSON.stringify(obj, function (key, val) {
@@ -26,6 +26,7 @@ export function toJson(obj) {
 
 export function parseJson(json) {
     return JSON.parse(json, function (k, v) {
+        if (isUndef(v)) return v;
         if (v.indexOf && v.indexOf('function') > -1) {
             try {
                 return eval('(function(){return ' + v + ' })()')
