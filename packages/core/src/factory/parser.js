@@ -28,6 +28,7 @@ export default class BaseParser {
         this.formItemRefName = 'fi' + this.refName;
         this.root = [];
         this.ctrlRule = null;
+        this.modelEvent = 'input';
 
         this.update(handle);
         this.init();
