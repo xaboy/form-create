@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>form-create示例</title>
+    <link href="https://cdn.jsdelivr.net/npm/element-ui@2.8.2/lib/theme-chalk/index.css" rel="stylesheet">
+    <script defer src="https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/element-ui@2.8.2/lib/index.js"></script>
+    <script defer src="/form-create.ele.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/@form-create/data/dist/province_city.js"></script>
+    <script defer src="../json.js"></script>
+</head>
+
+<body>
+<div id="app">
+    <h2 style="cursor: pointer;">使用全局方法生成 / <a style="color: #999;" href="../component/index.html">组件模式生成</a> / <a
+            style="color: #999;" href="../prototype/index.html">使用Vue原型方法生成</a></h2>
+</div>
+
+<script>
+    window.onload = function () {
+        var $f = formCreate.create(jsonMock(), {
+            //表单插入的父级元素
+            el: document.getElementById('app'),
+            //显示表单重置按钮
+            resetBtn: true,
+            //表单提交事件
+            onSubmit: function (formData) {
+                alert(JSON.stringify(formData));
+                //按钮进入提交状态
+                $f_3.btn.loading();
+                //重置按钮禁用
+                $f_3.resetBtn.disabled();
+            }
+        });
+    }
+
+</script>
+</body>
+
+</html>

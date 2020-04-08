@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>frame组件Dome</title>
+	<style>
+		.fc-files {
+			display: inline-block;
+			width: 58px;
+			height: 58px;
+			text-align: center;
+			line-height: 60px;
+			border: 1px solid transparent;
+			border-radius: 4px;
+			overflow: hidden;
+			background: #fff;
+			position: relative;
+			box-shadow: 0 1px 1px rgba(0, 0, 0, .2);
+			margin-right: 4px;
+			box-sizing: border-box;
+		}
+
+		.fc-files img {
+			width: 100%;
+			height: 100%;
+			display: block;
+		}
+
+		.fc-files.on {
+			background: #40d0c3;
+			padding: 1px;
+		}
+	</style>
+</head>
+<body>
+<div class="fc-files"><img src="http://img1.touxiang.cn/uploads/20131030/30-075657_191.jpg"></div>
+<div class="fc-files"><img src="http://img2.touxiang.cn/file/20170124/fa6adb6a55753dfca9ed16a66126cb6a.jpg"></div>
+<div class="fc-files"><img src="http://img2.touxiang.cn/file/20170124/ea5cbae08078dee1e81457da609ab1b2.jpg"></div>
+<div class="fc-files"><img src="http://img2.touxiang.cn/file/20170124/20d8c54b8843a37c240fd918a1019bd8.jpg"></div>
+<div class="fc-files"><img src="http://img2.touxiang.cn/file/20170124/014870670720c5d3403a64dcab4627be.jpg"></div>
+<div class="fc-files"><img src="http://img2.touxiang.cn/file/20180523/fc18e56fbfa47224fc7fd6a3396106d2.jpg"></div>
+<div class="fc-files"><img src="http://img2.touxiang.cn/file/20180523/8a6826b83c2ecc41c9209e2bf9ed418e.jpg"></div>
+<div class="fc-files"><img src="http://img2.touxiang.cn/file/20180523/1f8f3bc2cca236b076272a528ffe35d8.jpg"></div>
+<div class="fc-files"><img src="http://img2.touxiang.cn/file/20180608/bb63320a4658dab950690cc98def4eab.jpg"></div>
+<div class="fc-files"><img src="http://img2.touxiang.cn/file/20180523/54de7f6c590c41f727a91627190ca600.jpg"></div>
+<div class="fc-files"><img src="http://img2.touxiang.cn/file/20180523/075449b4510467ee5eb5ac5278342a8a.jpg"></div>
+<div class="fc-files"><img src="http://img2.touxiang.cn/file/20180523/78a3458334f159096e50914e418cbc30.jpg"></div>
+
+<button id="closeBtn">关闭页面</button>
+<button onclick="onUnload()">立即修改</button>
+
+<script>
+    window.onload = function(){
+
+    	setTimeout(function(){
+			//获取fodder字段值
+			var value = form_create_helper.get('fodder'),
+					images = Array.from(self.document.getElementsByTagName('img'));
+			//选中对应的图片
+			images.forEach(function (image) {
+				if (value.indexOf(image.src) !== -1) {
+					image.parentNode.classList.add('on');
+				} else {
+					image.parentNode.classList.remove('on');
+				}
+				image.addEventListener('click', onClick)
+			});
+
+			function onClick() {
+				var p = this.parentNode;
+				if (Array.from(p.classList).indexOf('on') !== -1) {
+					p.classList.remove('on');
+				} else {
+					p.classList.add('on');
+				}
+			}
+
+			document.getElementById('closeBtn').addEventListener('click', function () {
+				//手动关闭frame弹出框
+				form_create_helper.close('fodder');
+			});
+
+
+			//当页面关闭时更新frame字段的值
+			window.onUnload = function() {
+				var list = [];
+				images.forEach(function (image) {
+					if (Array.from(image.parentNode.classList).indexOf('on') !== -1) {
+						list.push(image.src);
+					}
+				});
+
+				//修改表单fodder字段的值
+				form_create_helper.set('fodder',list);
+			}
+			window.onunload = onUnload;
+		});
+	}
+</script>
+</body>
+</html>

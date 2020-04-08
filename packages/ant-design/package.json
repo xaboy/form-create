@@ -1,0 +1,52 @@
+{
+  "name": "@form-create/ant-design",
+  "version": "1.0.5",
+  "description": "ant-design-vue 版表单生成器|ant-design-vue Form builder with dynamic rendering, data collection, validation and submission capabilities, built-in 17 common form components, support for two-way data binding, event extension, and support for building built-in components and any vue components using json.",
+  "main": "./dist/form-create.min.js",
+  "module": "./dist/form-create.min.js",
+  "unpkg": "./dist/form-create.min.js",
+  "jsdelivr": "./dist/form-create.min.js",
+  "scripts": {
+    "clean": "rimraf dist/",
+    "bili": "cross-env UI_LIB=ant-design bili",
+    "build": "npm-run-all clean bili"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xaboy/form-create.git"
+  },
+  "keywords": [
+    "@form-create",
+    "form-builder",
+    "form",
+    "components",
+    "vue.js",
+    "element-ui",
+    "json-form",
+    "vue-json-form"
+  ],
+  "files": [
+    "README.md",
+    "package.json",
+    "LICENSE",
+    "src",
+    "types",
+    "dist"
+  ],
+  "typings": "./types/index.d.ts",
+  "author": "xaboy",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/xaboy/form-create/issues"
+  },
+  "homepage": "http://www.form-create.com",
+  "dependencies": {
+    "@form-create/core": "^1.0.9",
+    "@form-create/utils": "^1.0.8",
+    "ant-design-vue": "^1.5.1",
+    "moment": "^2.24.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
