@@ -128,10 +128,11 @@ export default class Render {
     }
 
     renderParser(parser, parent) {
-        parser.vData.get();
-        this.setGlobalConfig(parser);
-
         if (!this.cache[parser.id] || parser.type === 'template') {
+
+            parser.vData.get();
+            this.setGlobalConfig(parser);
+
             let {type, rule} = parser, form = this.$form, vn;
 
             if (type === 'template' && rule.template) {
