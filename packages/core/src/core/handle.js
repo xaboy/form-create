@@ -275,7 +275,7 @@ export default class Handle {
     }
 
     valueChange(parser) {
-        validateControl(parser);
+        this.validateControl(parser);
     }
 
     onInput(parser, value) {
@@ -340,7 +340,37 @@ export default class Handle {
 
     refreshControl(parser) {
         if (!this.isNoVal(parser) && parser.rule.control) {
-            validateControl(parser);
+            this.validateControl(parser);
+        }
+    }
+
+
+    validateControl(parser) {
+        const controls = getControl(parser), len = controls.length, ctrlRule = parser.ctrlRule;
+        if (!len) return;
+        for (let i = 0; i < len; i++) {
+            const control = controls[i], validate = control.handle || (val => val === control.value);
+            if (validate(parser.rule.value)) {
+                if (ctrlRule) {
+                    if (ctrlRule.children === control.rule)
+                        return;
+                    else
+                        removeControl(parser);
+                }
+                const rule = {
+                    type: 'div',
+                    native: true,
+                    children: control.rule
+                };
+                parser.root.splice(parser.root.indexOf(parser.rule.__origin__) + 1, 0, rule);
+                parser.ctrlRule = rule;
+                this.refresh();
+                return;
+            }
+        }
+        if (ctrlRule) {
+            removeControl(parser);
+            this.refresh();
         }
     }
 
@@ -469,33 +499,6 @@ function getControl(parser) {
     const control = parser.rule.control || [];
     if (isPlainObject(control)) return [control];
     else return control;
-}
-
-function validateControl(parser) {
-    const controls = getControl(parser), len = controls.length, ctrlRule = parser.ctrlRule;
-    if (!len) return;
-    for (let i = 0; i < len; i++) {
-        const control = controls[i], validate = control.handle || (val => val === control.value);
-        if (validate(parser.rule.value)) {
-            if (ctrlRule) {
-                if (ctrlRule.children === control.rule)
-                    return;
-                else
-                    removeControl(parser);
-            }
-            const rule = {
-                type: 'div',
-                native: true,
-                children: control.rule
-            };
-            parser.root.splice(parser.root.indexOf(parser.rule.__origin__) + 1, 0, rule);
-            parser.ctrlRule = rule;
-            return;
-        }
-    }
-    if (ctrlRule) {
-        removeControl(parser);
-    }
 }
 
 function removeControl(parser) {
