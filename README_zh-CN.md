@@ -37,7 +37,7 @@
 ![demo1](https://raw.githubusercontent.com/xaboy/form-create/dev/images/demo-live3.gif)
 
 <details>
-<summary>**更多**</summary>
+<summary><b>更多</b></summary>
 
 - **操作表单**
 
@@ -89,7 +89,7 @@
 
 
 <details>
-<summary>**图例**</summary>
+<summary><b>图例</b></summary>
 
 ![https://raw.githubusercontent.com/xaboy/form-create/dev/images/sample110.jpg](https://raw.githubusercontent.com/xaboy/form-create/dev/images/sample110.jpg)
 </details>
