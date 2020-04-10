@@ -204,7 +204,7 @@ export default class Handle {
 
         const fn = function (...args) {
             args.unshift(h.getInjectData(self, inject));
-            _fn(...args);
+            return _fn(...args);
         };
         fn.__inject = true;
         fn.__origin = _fn;
