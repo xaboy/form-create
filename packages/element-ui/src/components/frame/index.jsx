@@ -32,12 +32,12 @@ export default {
             default: 'el-icon-upload2'
         },
         width: {
-            type: [Number, String],
-            default: 500
+            type: String,
+            default: '500px'
         },
         height: {
-            type: [Number, String],
-            default: 370
+            type: String,
+            default: '370px'
         },
         maxLength: {
             type: Number,
