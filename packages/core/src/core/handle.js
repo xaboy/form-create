@@ -359,7 +359,7 @@ export default class Handle {
                         removeControl(parser);
                 }
                 const rule = {
-                    type: 'div',
+                    type: 'fcFragment',
                     native: true,
                     children: control.rule
                 };
