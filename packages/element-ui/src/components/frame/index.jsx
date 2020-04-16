@@ -206,11 +206,12 @@ export default {
             const props = {
                 type: 'text',
                 value: this.fileList.toString(),
-                readonly: true,
-                clearable: false
+                readonly: true
             };
 
             return <ElInput props={props} key={this.key('input')}>
+                {this.fileList.length ? <i slot="suffix" class="el-input__icon el-icon-circle-close"
+                    on-click={() => this.fileList = []}/> : null}
                 <ElButton icon={this.icon} on={{'click': () => this.showModel()}} slot="append"/>
             </ElInput>
         },
