@@ -212,9 +212,11 @@ export default class Handle {
     }
 
     parseEmit(rule) {
-        let event = {}, {emit, emitPrefix, field} = rule;
+        let event = {}, {emit, emitPrefix, field, name} = rule;
 
         if (!Array.isArray(emit)) return event;
+        const emitKey = emitPrefix ? emitPrefix : (field || name);
+        if (!emitKey) return event;
 
         emit.forEach(config => {
             let inject, eventName = config;
@@ -224,7 +226,6 @@ export default class Handle {
             }
             if (!eventName) return;
 
-            const emitKey = emitPrefix ? emitPrefix : field;
             const fieldKey = toLine(`${emitKey}-${eventName}`).replace('_', '-');
 
             const fn = (...arg) => {
