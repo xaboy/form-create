@@ -39,8 +39,8 @@ export default {
             this.$emit('input', this.options.filter((opt) => n.indexOf(opt.label) !== -1).map((opt) => opt.value));
         },
         update() {
-            this.trueValue = this.options.filter((opt) => this.value.indexOf(opt.value) !== -1)
-                .map((option) => option.label)
+            this.trueValue = this.value ? this.options.filter((opt) => this.value.indexOf(opt.value) !== -1)
+                .map((option) => option.label) : []
         }
     },
     created() {
