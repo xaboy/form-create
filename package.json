@@ -8,7 +8,10 @@
         "dev:iview4": "cross-env UI_LiB=iview4 webpack-dev-server --config=./scripts/webpack.config.iview4.js",
         "dev": "xxx",
         "commit": "git cz",
-        "lint": "eslint *.js"
+        "lint": "eslint *.js",
+        "clear-all": "rimraf package-lock.json packages/*/node_modules packages/*/package-lock.json",
+        "bootstrap": "npm run clear-all && npm i && npm-run-all bootstrap:lerna",
+        "bootstrap:lerna": "lerna bootstrap -- --ignore-engines"
     },
     "devDependencies": {
         "babel-eslint": "^10.0.3",
