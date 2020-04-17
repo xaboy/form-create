@@ -228,11 +228,12 @@ export default class Render {
     }
 
     defaultRender(parser, children) {
+        const vdata = this.inputVData(parser);
         if (this.vNode[parser.type])
-            return this.vNode[parser.type](this.inputVData(parser), children);
+            return this.vNode[parser.type](vdata, children);
         if (this.vNode[parser.originType])
-            return this.vNode[parser.originType](this.inputVData(parser), children);
-        return this.vNode.make(parser.originType, this.inputVData(parser), children);
+            return this.vNode[parser.originType](vdata, children);
+        return this.vNode.make(parser.originType, vdata, children);
     }
 }
 
