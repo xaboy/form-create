@@ -1,7 +1,7 @@
 import {_vue as Vue} from './index';
 import {debounce, errMsg, isFunction, isString, isUndef, isValidChildren} from '@form-create/utils';
 import VNode from '../factory/vNode';
-import VData from '../factory/vData';
+import VData, {vdataField} from '../factory/vData';
 
 
 const $de = debounce((fn) => fn(), 1);
@@ -162,7 +162,7 @@ export default class Render {
     }
 
     toData(parser, data) {
-        Object.keys(parser.vData._data).forEach((key) => {
+        vdataField.forEach((key) => {
             if (data[key] !== undefined)
                 parser.vData[key](data[key]);
         });

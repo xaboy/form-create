@@ -85,3 +85,4 @@ objList.forEach(key => {
     };
 });
 
+export const vdataField = objList.concat(keyList, 'class');
