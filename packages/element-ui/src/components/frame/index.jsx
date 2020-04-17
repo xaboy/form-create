@@ -119,11 +119,12 @@ export default {
     },
     watch: {
         value(n) {
-            this.$emit('on-change', n);
             this.fileList = toArray(n);
         },
         fileList(n) {
-            this.$emit('input', this.maxLength === 1 ? (n[0] || '') : n);
+            const val = this.maxLength === 1 ? (n[0] || '') : n;
+            this.$emit('input', val);
+            this.$emit('change', val);
         },
         src(n) {
             this.modalVm && (this.modalVm.src = n);
