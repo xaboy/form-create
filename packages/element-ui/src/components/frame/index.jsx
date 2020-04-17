@@ -1,6 +1,6 @@
 import {defaultOnHandle, mount} from '../../core/modal';
 import style from '../../style/index.css';
-import {toArray, uniqueId} from '@form-create/utils';
+import {isUndef, toArray, uniqueId} from '@form-create/utils';
 
 const NAME = 'fc-elm-frame';
 
@@ -104,6 +104,9 @@ export default {
             type: Object,
             default: () => ({})
         },
+        srcKey: {
+            type: [String, Number]
+        },
         value: [Array, String, Number]
 
     },
@@ -205,7 +208,7 @@ export default {
         makeInput() {
             const props = {
                 type: 'text',
-                value: this.fileList.toString(),
+                value: (this.fileList.map(v => this.getSrc(v))).toString(),
                 readonly: true
             };
 
@@ -259,7 +262,7 @@ export default {
         },
         makeImages() {
             return this.makeGroup(this.fileList.map((src, index) => {
-                return this.makeItem(index, [<img src={src}/>, this.makeIcons(src, index)])
+                return this.makeItem(index, [<img src={this.getSrc(src)}/>, this.makeIcons(src, index)])
             }))
         },
         makeBtn() {
@@ -277,6 +280,9 @@ export default {
                 this.fileList.splice(this.fileList.indexOf(src), 1);
                 this.onRemove(src);
             }
+        },
+        getSrc(src) {
+            return isUndef(this.srcKey) ? src : src[this.srcKey];
         }
     },
     render() {
