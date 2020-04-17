@@ -280,11 +280,13 @@ export default class Handle {
     }
 
     onInput(parser, value) {
-        if (!this.isNoVal(parser) && this.isChange(parser, parser.toValue(value))) {
+        let val;
+        if (!this.isNoVal(parser) && this.isChange(parser, val = parser.toValue(value))) {
             this.$render.clearCache(parser);
             this.setFormData(parser, value);
             this.changeStatus = true;
             this.valueChange(parser);
+            this.vm.$emit('change', parser.field, val);
         }
     }
 
