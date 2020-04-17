@@ -144,14 +144,12 @@ elementUI
 iviewUI
 ```js
 import formCreate from '@form-create/iview'
-import { maker } from '@form-create/iview'
 Vue.use(formCreate)
 ```
 
 ElementUI
 ```js
 import formCreate from '@form-create/element-ui'
-import { maker } from '@form-create/element-ui'
 Vue.use(formCreate)
 ```
 
@@ -213,12 +211,11 @@ Browser
 Download project
 ```sh
 $ git clone https://github.com/xaboy/form-create.git
+$ cd form-create
 ```
 Install dependencies
 ```sh
-$ npm i lerna -g
-$ npm i
-$ lerna bootstrap
+$ npm run bootstrap
 ```
 Iview 2.x|3.x Demo
 ```sh 
