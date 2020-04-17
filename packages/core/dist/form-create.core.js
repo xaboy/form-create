@@ -1,10 +1,10 @@
 /*!
- * @form-create/core v1.0.9
+ * @form-create/core v1.0.10
  * (c) 2018-2020 xaboy
  * Github https://github.com/xaboy/form-create
  * Released under the MIT License.
  */
-import _mergeJSXProps from '@vue/babel-helper-vue-jsx-merge-props';
+import _mergeJsxProps from '@vue/babel-helper-vue-jsx-merge-props';
 import Vue from 'vue';
 
 function _typeof(obj) {
@@ -215,9 +215,6 @@ function toLine(name) {
   if (line.indexOf('-') === 0) line = line.substr(1);
   return line;
 }
-function toArray(value) {
-  return Array.isArray(value) ? value : isUndef(value) || value === '' ? [] : [value];
-}
 function isElement(arg) {
   return _typeof(arg) === 'object' && arg !== null && arg.nodeType === 1 && !isPlainObject(arg);
 }
@@ -345,18 +342,18 @@ function $FormCreate(FormCreate, components) {
 
 function defVData() {
   return {
-    class: {},
-    style: {},
-    attrs: {},
+    // class: {},
+    // style: {},
+    // attrs: {},
     props: {},
-    domProps: {},
-    on: {},
-    nativeOn: {},
-    directives: [],
-    scopedSlots: {},
-    slot: undefined,
-    key: undefined,
-    ref: undefined
+    // domProps: {},
+    on: {} // nativeOn: {},
+    // directives: [],
+    // scopedSlots: {},
+    // slot: undefined,
+    // key: undefined,
+    // ref: undefined
+
   };
 }
 
@@ -370,30 +367,28 @@ function () {
   }
 
   _createClass(VData, [{
+    key: "merge",
+    value: function merge(props) {
+      this._data = _mergeJsxProps([this._data, props]);
+    }
+  }, {
     key: "class",
     value: function _class(classList) {
-      var _this = this;
-
       var status = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
       if (isUndef(classList)) return this;
 
       if (Array.isArray(classList)) {
-        classList.forEach(function (cls) {
-          $set(_this._data.class, toString(cls), true);
+        this.merge({
+          class: classList
         });
       } else if (isPlainObject(classList)) {
-        $set(this._data, 'class', extend(this._data.class, classList));
+        this.merge(classList);
       } else {
-        $set(this._data.class, toString(classList), status === undefined ? true : status);
+        this.merge({
+          class: _defineProperty({}, toString(classList), !!status)
+        });
       }
 
-      return this;
-    }
-  }, {
-    key: "directives",
-    value: function directives(_directives) {
-      if (isUndef(_directives)) return this;
-      $set(this._data, 'directives', this._data.directives.concat(toArray(_directives)));
       return this;
     }
   }, {
@@ -405,13 +400,13 @@ function () {
   }, {
     key: "get",
     value: function get() {
-      var _this2 = this;
+      var _this = this;
 
       var data = Object.keys(this._data).reduce(function (initial, key) {
-        var value = _this2._data[key];
+        var value = _this._data[key];
         if (value === undefined) return initial;
         if (Array.isArray(value) && !value.length) return initial;
-        if (!Object.keys(value).length && key !== 'props') return initial;
+        if (isPlainObject(value) && !Object.keys(value).length && key !== 'props') return initial;
         initial[key] = value;
         return initial;
       }, {});
@@ -423,10 +418,10 @@ function () {
   return VData;
 }();
 var keyList = ['ref', 'key', 'slot'];
-var objList = ['scopedSlots', 'nativeOn', 'on', 'domProps', 'props', 'attrs', 'style'];
+var objList = ['scopedSlots', 'nativeOn', 'on', 'domProps', 'props', 'attrs', 'style', 'directives'];
 keyList.forEach(function (key) {
   VData.prototype[key] = function (val) {
-    $set(this._data, key, val);
+    this.merge(_defineProperty({}, key, val));
     return this;
   };
 });
@@ -435,14 +430,15 @@ objList.forEach(function (key) {
     if (isUndef(obj)) return this;
 
     if (isPlainObject(obj)) {
-      $set(this._data, key, extend(this._data[key], obj));
+      this.merge(_defineProperty({}, key, obj));
     } else {
-      $set(this._data[key], toString(obj), val);
+      this.merge(_defineProperty({}, key, _defineProperty({}, toString(obj), val)));
     }
 
     return this;
   };
 });
+var vdataField = objList.concat(keyList, 'class');
 
 function baseRule() {
   return {
@@ -562,6 +558,8 @@ function toJson(obj) {
 }
 function parseJson(json) {
   return JSON.parse(json, function (k, v) {
+    if (isUndef(v)) return v;
+
     if (v.indexOf && v.indexOf('function') > -1) {
       try {
         return eval('(function(){return ' + v + ' })()');
@@ -931,10 +929,9 @@ function () {
   }, {
     key: "renderParser",
     value: function renderParser(parser, parent) {
-      parser.vData.get();
-      this.setGlobalConfig(parser);
-
       if (!this.cache[parser.id] || parser.type === 'template') {
+        parser.vData.get();
+        this.setGlobalConfig(parser);
         var type = parser.type,
             rule = parser.rule,
             form = this.$form,
@@ -969,7 +966,7 @@ function () {
   }, {
     key: "toData",
     value: function toData(parser, data) {
-      Object.keys(parser.vData._data).forEach(function (key) {
+      vdataField.forEach(function (key) {
         if (data[key] !== undefined) parser.vData[key](data[key]);
       });
       return parser.vData;
@@ -1039,9 +1036,10 @@ function () {
   }, {
     key: "defaultRender",
     value: function defaultRender(parser, children) {
-      if (this.vNode[parser.type]) return this.vNode[parser.type](this.inputVData(parser), children);
-      if (this.vNode[parser.originType]) return this.vNode[parser.originType](this.inputVData(parser), children);
-      return this.vNode.make(parser.originType, this.inputVData(parser), children);
+      var vdata = this.inputVData(parser);
+      if (this.vNode[parser.type]) return this.vNode[parser.type](vdata, children);
+      if (this.vNode[parser.originType]) return this.vNode[parser.originType](vdata, children);
+      return this.vNode.make(parser.originType, vdata, children);
     }
   }]);
 
@@ -1244,7 +1242,7 @@ function Api(h) {
       this.refresh(true);
     },
     onSubmit: function onSubmit(fn) {
-      this.options({
+      this.updateOptions({
         onSubmit: fn
       });
     },
@@ -1705,8 +1703,7 @@ function () {
         }
 
         args.unshift(h.getInjectData(self, _inject));
-
-        _fn.apply(void 0, args);
+        return _fn.apply(void 0, args);
       };
 
       fn.__inject = true;
@@ -1721,8 +1718,11 @@ function () {
       var event = {},
           emit = rule.emit,
           emitPrefix = rule.emitPrefix,
-          field = rule.field;
+          field = rule.field,
+          name = rule.name;
       if (!Array.isArray(emit)) return event;
+      var emitKey = emitPrefix ? emitPrefix : field || name;
+      if (!emitKey) return event;
       emit.forEach(function (config) {
         var inject,
             eventName = config;
@@ -1733,7 +1733,6 @@ function () {
         }
 
         if (!eventName) return;
-        var emitKey = emitPrefix ? emitPrefix : field;
         var fieldKey = toLine("".concat(emitKey, "-").concat(eventName)).replace('_', '-');
 
         var fn = function fn() {
@@ -1793,16 +1792,19 @@ function () {
   }, {
     key: "valueChange",
     value: function valueChange(parser) {
-      validateControl(parser);
+      this.validateControl(parser);
     }
   }, {
     key: "onInput",
     value: function onInput(parser, value) {
-      if (!this.isNoVal(parser) && this.isChange(parser, parser.toValue(value))) {
+      var val;
+
+      if (!this.isNoVal(parser) && this.isChange(parser, val = parser.toValue(value))) {
         this.$render.clearCache(parser);
         this.setFormData(parser, value);
         this.changeStatus = true;
         this.valueChange(parser);
+        this.vm.$emit('change', parser.field, val);
       }
     }
   }, {
@@ -1853,20 +1855,70 @@ function () {
     key: "refreshControl",
     value: function refreshControl(parser) {
       if (!this.isNoVal(parser) && parser.rule.control) {
-        validateControl(parser);
+        this.validateControl(parser);
+      }
+    }
+  }, {
+    key: "validateControl",
+    value: function validateControl(parser) {
+      var _this5 = this;
+
+      var controls = getControl(parser),
+          len = controls.length,
+          ctrlRule = parser.ctrlRule;
+      if (!len) return;
+
+      var _loop = function _loop(i) {
+        var control = controls[i],
+            validate = control.handle || function (val) {
+          return val === control.value;
+        };
+
+        if (validate(parser.rule.value)) {
+          if (ctrlRule) {
+            if (ctrlRule.children === control.rule) return {
+              v: void 0
+            };else removeControl(parser);
+          }
+
+          var rule = {
+            type: 'fcFragment',
+            native: true,
+            children: control.rule
+          };
+          parser.root.splice(parser.root.indexOf(parser.rule.__origin__) + 1, 0, rule);
+          parser.ctrlRule = rule;
+
+          _this5.refresh();
+
+          return {
+            v: void 0
+          };
+        }
+      };
+
+      for (var i = 0; i < len; i++) {
+        var _ret = _loop(i);
+
+        if (_typeof(_ret) === "object") return _ret.v;
+      }
+
+      if (ctrlRule) {
+        removeControl(parser);
+        this.refresh();
       }
     }
   }, {
     key: "mountedParser",
     value: function mountedParser() {
-      var _this5 = this;
+      var _this6 = this;
 
       var vm = this.vm;
       Object.keys(this.parsers).forEach(function (id) {
-        var parser = _this5.parsers[id];
-        if (parser.watch.length === 0) _this5.addParserWitch(parser);
+        var parser = _this6.parsers[id];
+        if (parser.watch.length === 0) _this6.addParserWitch(parser);
 
-        _this5.refreshControl(parser);
+        _this6.refreshControl(parser);
 
         parser.el = vm.$refs[parser.refName] || {};
         if (parser.defaultValue === undefined) parser.defaultValue = deepExtend({}, {
@@ -1923,7 +1975,7 @@ function () {
   }, {
     key: "reloadRule",
     value: function reloadRule(rules) {
-      var _this6 = this;
+      var _this7 = this;
 
       var vm = this.vm;
       if (!rules) return this.reloadRule(this.rules);
@@ -1938,9 +1990,9 @@ function () {
 
       this.loadRule(rules, false);
       Object.keys(parsers).filter(function (id) {
-        return _this6.parsers[id] === undefined;
+        return _this7.parsers[id] === undefined;
       }).forEach(function (id) {
-        return _this6.removeField(parsers[id], formData[parsers[id].field]);
+        return _this7.removeField(parsers[id], formData[parsers[id].field]);
       });
       this.$render.initOrgChildren();
       this.formData = _objectSpread2({}, this.formData);
@@ -1949,7 +2001,7 @@ function () {
       this.$render.clearCacheAll();
       this.refresh();
       vm.$nextTick(function () {
-        _this6.reload();
+        _this7.reload();
       });
     }
   }, {
@@ -1998,49 +2050,6 @@ function getControl(parser) {
   if (isPlainObject(control)) return [control];else return control;
 }
 
-function validateControl(parser) {
-  var controls = getControl(parser),
-      len = controls.length,
-      ctrlRule = parser.ctrlRule;
-  if (!len) return;
-
-  var _loop = function _loop(i) {
-    var control = controls[i],
-        validate = control.handle || function (val) {
-      return val === control.value;
-    };
-
-    if (validate(parser.rule.value)) {
-      if (ctrlRule) {
-        if (ctrlRule.children === control.rule) return {
-          v: void 0
-        };else removeControl(parser);
-      }
-
-      var rule = {
-        type: 'div',
-        native: true,
-        children: control.rule
-      };
-      parser.root.splice(parser.root.indexOf(parser.rule.__origin__) + 1, 0, rule);
-      parser.ctrlRule = rule;
-      return {
-        v: void 0
-      };
-    }
-  };
-
-  for (var i = 0; i < len; i++) {
-    var _ret = _loop(i);
-
-    if (_typeof(_ret) === "object") return _ret.v;
-  }
-
-  if (ctrlRule) {
-    removeControl(parser);
-  }
-}
-
 function removeControl(parser) {
   var index = parser.root.indexOf(parser.ctrlRule);
   if (index !== -1) parser.root.splice(index, 1);
@@ -2069,6 +2078,18 @@ function bindParser(rule, parser) {
     __fc__: enumerable(parser)
   });
 }
+
+var NAME = 'fcFragment';
+var fragment = {
+  name: NAME,
+  functional: true,
+  props: {
+    children: Array
+  },
+  render: function render(h, ctx) {
+    return ctx.children;
+  }
+};
 
 var _vue = typeof window !== 'undefined' && window.Vue ? window.Vue : Vue;
 function createFormCreate(drive) {
@@ -2165,7 +2186,7 @@ function createFormCreate(drive) {
       },
       render: function render() {
         var h = arguments[0];
-        return h("form-create", _mergeJSXProps([{
+        return h("form-create", _mergeJsxProps([{
           "ref": 'fc'
         }, {
           "props": this.$data
@@ -2260,6 +2281,7 @@ function createFormCreate(drive) {
         bindAttr($formCreate);
         Vue.prototype.$formCreate = $formCreate;
         Vue.component(formCreateName, get$FormCreate());
+        Vue.component(fragment.name, _vue.extend(fragment));
         _vue = Vue;
       }
     }, {

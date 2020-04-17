@@ -1,5 +1,5 @@
 /*!
- * @form-create/element-ui v1.0.9
+ * @form-create/element-ui v1.0.10
  * (c) 2018-2020 xaboy
  * Github https://github.com/xaboy/form-create
  * Released under the MIT License.
@@ -412,11 +412,11 @@
       update: function update() {
         var _this = this;
 
-        this.trueValue = this.options.filter(function (opt) {
+        this.trueValue = this.value ? this.options.filter(function (opt) {
           return _this.value.indexOf(opt.value) !== -1;
         }).map(function (option) {
           return option.label;
-        });
+        }) : [];
       }
     },
     created: function created() {
@@ -528,18 +528,18 @@
 
   function defVData() {
     return {
-      class: {},
-      style: {},
-      attrs: {},
+      // class: {},
+      // style: {},
+      // attrs: {},
       props: {},
-      domProps: {},
-      on: {},
-      nativeOn: {},
-      directives: [],
-      scopedSlots: {},
-      slot: undefined,
-      key: undefined,
-      ref: undefined
+      // domProps: {},
+      on: {} // nativeOn: {},
+      // directives: [],
+      // scopedSlots: {},
+      // slot: undefined,
+      // key: undefined,
+      // ref: undefined
+
     };
   }
 
@@ -553,30 +553,28 @@
     }
 
     _createClass(VData, [{
+      key: "merge",
+      value: function merge(props) {
+        this._data = helper([this._data, props]);
+      }
+    }, {
       key: "class",
       value: function _class(classList) {
-        var _this = this;
-
         var status = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
         if (isUndef(classList)) return this;
 
         if (Array.isArray(classList)) {
-          classList.forEach(function (cls) {
-            $set(_this._data.class, toString$1(cls), true);
+          this.merge({
+            class: classList
           });
         } else if (isPlainObject(classList)) {
-          $set(this._data, 'class', extend(this._data.class, classList));
+          this.merge(classList);
         } else {
-          $set(this._data.class, toString$1(classList), status === undefined ? true : status);
+          this.merge({
+            class: _defineProperty({}, toString$1(classList), !!status)
+          });
         }
 
-        return this;
-      }
-    }, {
-      key: "directives",
-      value: function directives(_directives) {
-        if (isUndef(_directives)) return this;
-        $set(this._data, 'directives', this._data.directives.concat(toArray(_directives)));
         return this;
       }
     }, {
@@ -588,13 +586,13 @@
     }, {
       key: "get",
       value: function get() {
-        var _this2 = this;
+        var _this = this;
 
         var data = Object.keys(this._data).reduce(function (initial, key) {
-          var value = _this2._data[key];
+          var value = _this._data[key];
           if (value === undefined) return initial;
           if (Array.isArray(value) && !value.length) return initial;
-          if (!Object.keys(value).length && key !== 'props') return initial;
+          if (isPlainObject(value) && !Object.keys(value).length && key !== 'props') return initial;
           initial[key] = value;
           return initial;
         }, {});
@@ -606,10 +604,10 @@
     return VData;
   }();
   var keyList = ['ref', 'key', 'slot'];
-  var objList = ['scopedSlots', 'nativeOn', 'on', 'domProps', 'props', 'attrs', 'style'];
+  var objList = ['scopedSlots', 'nativeOn', 'on', 'domProps', 'props', 'attrs', 'style', 'directives'];
   keyList.forEach(function (key) {
     VData.prototype[key] = function (val) {
-      $set(this._data, key, val);
+      this.merge(_defineProperty({}, key, val));
       return this;
     };
   });
@@ -618,14 +616,15 @@
       if (isUndef(obj)) return this;
 
       if (isPlainObject(obj)) {
-        $set(this._data, key, extend(this._data[key], obj));
+        this.merge(_defineProperty({}, key, obj));
       } else {
-        $set(this._data[key], toString$1(obj), val);
+        this.merge(_defineProperty({}, key, _defineProperty({}, toString$1(obj), val)));
       }
 
       return this;
     };
   });
+  var vdataField = objList.concat(keyList, 'class');
 
   function baseRule() {
     return {
@@ -745,6 +744,8 @@
   }
   function parseJson(json) {
     return JSON.parse(json, function (k, v) {
+      if (isUndef(v)) return v;
+
       if (v.indexOf && v.indexOf('function') > -1) {
         try {
           return eval('(function(){return ' + v + ' })()');
@@ -1114,10 +1115,9 @@
     }, {
       key: "renderParser",
       value: function renderParser(parser, parent) {
-        parser.vData.get();
-        this.setGlobalConfig(parser);
-
         if (!this.cache[parser.id] || parser.type === 'template') {
+          parser.vData.get();
+          this.setGlobalConfig(parser);
           var type = parser.type,
               rule = parser.rule,
               form = this.$form,
@@ -1152,7 +1152,7 @@
     }, {
       key: "toData",
       value: function toData(parser, data) {
-        Object.keys(parser.vData._data).forEach(function (key) {
+        vdataField.forEach(function (key) {
           if (data[key] !== undefined) parser.vData[key](data[key]);
         });
         return parser.vData;
@@ -1222,9 +1222,10 @@
     }, {
       key: "defaultRender",
       value: function defaultRender(parser, children) {
-        if (this.vNode[parser.type]) return this.vNode[parser.type](this.inputVData(parser), children);
-        if (this.vNode[parser.originType]) return this.vNode[parser.originType](this.inputVData(parser), children);
-        return this.vNode.make(parser.originType, this.inputVData(parser), children);
+        var vdata = this.inputVData(parser);
+        if (this.vNode[parser.type]) return this.vNode[parser.type](vdata, children);
+        if (this.vNode[parser.originType]) return this.vNode[parser.originType](vdata, children);
+        return this.vNode.make(parser.originType, vdata, children);
       }
     }]);
 
@@ -1427,7 +1428,7 @@
         this.refresh(true);
       },
       onSubmit: function onSubmit(fn) {
-        this.options({
+        this.updateOptions({
           onSubmit: fn
         });
       },
@@ -1888,8 +1889,7 @@
           }
 
           args.unshift(h.getInjectData(self, _inject));
-
-          _fn.apply(void 0, args);
+          return _fn.apply(void 0, args);
         };
 
         fn.__inject = true;
@@ -1904,8 +1904,11 @@
         var event = {},
             emit = rule.emit,
             emitPrefix = rule.emitPrefix,
-            field = rule.field;
+            field = rule.field,
+            name = rule.name;
         if (!Array.isArray(emit)) return event;
+        var emitKey = emitPrefix ? emitPrefix : field || name;
+        if (!emitKey) return event;
         emit.forEach(function (config) {
           var inject,
               eventName = config;
@@ -1916,7 +1919,6 @@
           }
 
           if (!eventName) return;
-          var emitKey = emitPrefix ? emitPrefix : field;
           var fieldKey = toLine("".concat(emitKey, "-").concat(eventName)).replace('_', '-');
 
           var fn = function fn() {
@@ -1976,16 +1978,19 @@
     }, {
       key: "valueChange",
       value: function valueChange(parser) {
-        validateControl(parser);
+        this.validateControl(parser);
       }
     }, {
       key: "onInput",
       value: function onInput(parser, value) {
-        if (!this.isNoVal(parser) && this.isChange(parser, parser.toValue(value))) {
+        var val;
+
+        if (!this.isNoVal(parser) && this.isChange(parser, val = parser.toValue(value))) {
           this.$render.clearCache(parser);
           this.setFormData(parser, value);
           this.changeStatus = true;
           this.valueChange(parser);
+          this.vm.$emit('change', parser.field, val);
         }
       }
     }, {
@@ -2036,20 +2041,70 @@
       key: "refreshControl",
       value: function refreshControl(parser) {
         if (!this.isNoVal(parser) && parser.rule.control) {
-          validateControl(parser);
+          this.validateControl(parser);
+        }
+      }
+    }, {
+      key: "validateControl",
+      value: function validateControl(parser) {
+        var _this5 = this;
+
+        var controls = getControl(parser),
+            len = controls.length,
+            ctrlRule = parser.ctrlRule;
+        if (!len) return;
+
+        var _loop = function _loop(i) {
+          var control = controls[i],
+              validate = control.handle || function (val) {
+            return val === control.value;
+          };
+
+          if (validate(parser.rule.value)) {
+            if (ctrlRule) {
+              if (ctrlRule.children === control.rule) return {
+                v: void 0
+              };else removeControl(parser);
+            }
+
+            var rule = {
+              type: 'fcFragment',
+              native: true,
+              children: control.rule
+            };
+            parser.root.splice(parser.root.indexOf(parser.rule.__origin__) + 1, 0, rule);
+            parser.ctrlRule = rule;
+
+            _this5.refresh();
+
+            return {
+              v: void 0
+            };
+          }
+        };
+
+        for (var i = 0; i < len; i++) {
+          var _ret = _loop(i);
+
+          if (_typeof(_ret) === "object") return _ret.v;
+        }
+
+        if (ctrlRule) {
+          removeControl(parser);
+          this.refresh();
         }
       }
     }, {
       key: "mountedParser",
       value: function mountedParser() {
-        var _this5 = this;
+        var _this6 = this;
 
         var vm = this.vm;
         Object.keys(this.parsers).forEach(function (id) {
-          var parser = _this5.parsers[id];
-          if (parser.watch.length === 0) _this5.addParserWitch(parser);
+          var parser = _this6.parsers[id];
+          if (parser.watch.length === 0) _this6.addParserWitch(parser);
 
-          _this5.refreshControl(parser);
+          _this6.refreshControl(parser);
 
           parser.el = vm.$refs[parser.refName] || {};
           if (parser.defaultValue === undefined) parser.defaultValue = deepExtend({}, {
@@ -2106,7 +2161,7 @@
     }, {
       key: "reloadRule",
       value: function reloadRule(rules) {
-        var _this6 = this;
+        var _this7 = this;
 
         var vm = this.vm;
         if (!rules) return this.reloadRule(this.rules);
@@ -2121,9 +2176,9 @@
 
         this.loadRule(rules, false);
         Object.keys(parsers).filter(function (id) {
-          return _this6.parsers[id] === undefined;
+          return _this7.parsers[id] === undefined;
         }).forEach(function (id) {
-          return _this6.removeField(parsers[id], formData[parsers[id].field]);
+          return _this7.removeField(parsers[id], formData[parsers[id].field]);
         });
         this.$render.initOrgChildren();
         this.formData = _objectSpread2({}, this.formData);
@@ -2132,7 +2187,7 @@
         this.$render.clearCacheAll();
         this.refresh();
         vm.$nextTick(function () {
-          _this6.reload();
+          _this7.reload();
         });
       }
     }, {
@@ -2181,49 +2236,6 @@
     if (isPlainObject(control)) return [control];else return control;
   }
 
-  function validateControl(parser) {
-    var controls = getControl(parser),
-        len = controls.length,
-        ctrlRule = parser.ctrlRule;
-    if (!len) return;
-
-    var _loop = function _loop(i) {
-      var control = controls[i],
-          validate = control.handle || function (val) {
-        return val === control.value;
-      };
-
-      if (validate(parser.rule.value)) {
-        if (ctrlRule) {
-          if (ctrlRule.children === control.rule) return {
-            v: void 0
-          };else removeControl(parser);
-        }
-
-        var rule = {
-          type: 'div',
-          native: true,
-          children: control.rule
-        };
-        parser.root.splice(parser.root.indexOf(parser.rule.__origin__) + 1, 0, rule);
-        parser.ctrlRule = rule;
-        return {
-          v: void 0
-        };
-      }
-    };
-
-    for (var i = 0; i < len; i++) {
-      var _ret = _loop(i);
-
-      if (_typeof(_ret) === "object") return _ret.v;
-    }
-
-    if (ctrlRule) {
-      removeControl(parser);
-    }
-  }
-
   function removeControl(parser) {
     var index = parser.root.indexOf(parser.ctrlRule);
     if (index !== -1) parser.root.splice(index, 1);
@@ -2252,6 +2264,18 @@
       __fc__: enumerable(parser)
     });
   }
+
+  var NAME$1 = 'fcFragment';
+  var fragment = {
+    name: NAME$1,
+    functional: true,
+    props: {
+      children: Array
+    },
+    render: function render(h, ctx) {
+      return ctx.children;
+    }
+  };
 
   var _vue = typeof window !== 'undefined' && window.Vue ? window.Vue : Vue;
   function createFormCreate(drive) {
@@ -2443,6 +2467,7 @@
           bindAttr($formCreate);
           Vue.prototype.$formCreate = $formCreate;
           Vue.component(formCreateName, get$FormCreate());
+          Vue.component(fragment.name, _vue.extend(fragment));
           _vue = Vue;
         }
       }, {
@@ -2635,13 +2660,13 @@
     }
   }
 
-  var css = ".fc-upload-btn, .fc-files {\n    display: inline-block;\n    width: 58px;\n    height: 58px;\n    text-align: center;\n    line-height: 58px;\n    border: 1px solid #c0ccda;\n    border-radius: 4px;\n    overflow: hidden;\n    background: #fff;\n    position: relative;\n    box-shadow: 2px 2px 5px rgba(0, 0, 0, .1);\n    margin-right: 4px;\n    box-sizing: border-box;\n}\n\n.form-create .form-create .el-form-item {\n    margin-bottom: 22px;\n}\n\n.form-create .form-create .el-form-item .el-form-item {\n    margin-bottom: 0px;\n}\n\n.__fc_h {\n    display: none;\n}\n\n.__fc_v {\n    visibility: hidden;\n}\n\n.fc-files img {\n    width: 100%;\n    height: 100%;\n    display: inline-block;\n    vertical-align: top;\n}\n\n.fc-upload-btn {\n    border: 1px dashed #c0ccda;\n    cursor: pointer;\n}\n\n.fc-upload .fc-upload-cover {\n    opacity: 0;\n    position: absolute;\n    top: 0;\n    bottom: 0;\n    left: 0;\n    right: 0;\n    background: rgba(0, 0, 0, .6);\n    transition: opacity .3s;\n}\n\n.fc-upload .fc-upload-cover i {\n    color: #fff;\n    font-size: 20px;\n    cursor: pointer;\n    margin: 0 2px;\n}\n\n.fc-files:hover .fc-upload-cover {\n    opacity: 1;\n}\n\n.fc-upload .el-upload {\n    display: block;\n}\n\n\n.form-create .el-form-item .el-rate {\n    margin-top: 10px;\n}\n\n.form-create .el-form-item .el-tree {\n    margin-top: 7px;\n}\n\n.fc-hide-btn .el-upload {\n    display: none;\n}\n";
-  var style = {"fc-upload-btn":"fc-upload-btn","fc-files":"fc-files","form-create":"form-create","el-form-item":"el-form-item","__fc_h":"__fc_h","__fc_v":"__fc_v","fc-upload":"fc-upload","fc-upload-cover":"fc-upload-cover","el-upload":"el-upload","el-rate":"el-rate","el-tree":"el-tree","fc-hide-btn":"fc-hide-btn"};
+  var css = ".fc-upload-btn, .fc-files {\n    display: inline-block;\n    width: 58px;\n    height: 58px;\n    text-align: center;\n    line-height: 58px;\n    border: 1px solid #c0ccda;\n    border-radius: 4px;\n    overflow: hidden;\n    background: #fff;\n    position: relative;\n    -webkit-box-shadow: 2px 2px 5px rgba(0, 0, 0, .1);\n    box-shadow: 2px 2px 5px rgba(0, 0, 0, .1);\n    margin-right: 4px;\n    -webkit-box-sizing: border-box;\n    box-sizing: border-box;\n}\n\n.form-create .el-form-item__label {\n    line-height: 1;\n    height: 40px;\n    display: -webkit-box;\n    display: -ms-flexbox;\n    display: flex;\n    -webkit-box-pack: end;\n    -ms-flex-pack: end;\n    justify-content: flex-end;\n    -webkit-box-align: center;\n    -ms-flex-align: center;\n    align-items: center;\n}\n\n.form-create .form-create .el-form-item {\n    margin-bottom: 22px;\n}\n\n.form-create .form-create .el-form-item .el-form-item {\n    margin-bottom: 0px;\n}\n\n.__fc_h {\n    display: none;\n}\n\n.__fc_v {\n    visibility: hidden;\n}\n\n.fc-files img {\n    width: 100%;\n    height: 100%;\n    display: inline-block;\n    vertical-align: top;\n}\n\n.fc-upload-btn {\n    border: 1px dashed #c0ccda;\n    cursor: pointer;\n}\n\n.fc-upload .fc-upload-cover {\n    opacity: 0;\n    position: absolute;\n    top: 0;\n    bottom: 0;\n    left: 0;\n    right: 0;\n    background: rgba(0, 0, 0, .6);\n    -webkit-transition: opacity .3s;\n    -o-transition: opacity .3s;\n    transition: opacity .3s;\n}\n\n.fc-upload .fc-upload-cover i {\n    color: #fff;\n    font-size: 20px;\n    cursor: pointer;\n    margin: 0 2px;\n}\n\n.fc-files:hover .fc-upload-cover {\n    opacity: 1;\n}\n\n.fc-upload .el-upload {\n    display: block;\n}\n\n\n.form-create .el-form-item .el-rate {\n    margin-top: 10px;\n}\n\n.form-create .el-form-item .el-tree {\n    margin-top: 7px;\n}\n\n.fc-hide-btn .el-upload {\n    display: none;\n}\n";
+  var style = {"fc-upload-btn":"fc-upload-btn","fc-files":"fc-files","form-create":"form-create","el-form-item__label":"el-form-item__label","el-form-item":"el-form-item","__fc_h":"__fc_h","__fc_v":"__fc_v","fc-upload":"fc-upload","fc-upload-cover":"fc-upload-cover","el-upload":"el-upload","el-rate":"el-rate","el-tree":"el-tree","fc-hide-btn":"fc-hide-btn"};
   styleInject(css);
 
-  var NAME$1 = 'fc-elm-frame';
+  var NAME$2 = 'fc-elm-frame';
   var frame = {
-    name: NAME$1,
+    name: NAME$2,
     props: {
       type: {
         type: String,
@@ -2668,12 +2693,12 @@
         default: 'el-icon-upload2'
       },
       width: {
-        type: [Number, String],
-        default: 500
+        type: String,
+        default: '500px'
       },
       height: {
-        type: [Number, String],
-        default: 370
+        type: String,
+        default: '370px'
       },
       maxLength: {
         type: Number,
@@ -2736,6 +2761,9 @@
           return {};
         }
       },
+      srcKey: {
+        type: [String, Number]
+      },
       value: [Array, String, Number]
     },
     data: function data() {
@@ -2747,11 +2775,12 @@
     },
     watch: {
       value: function value(n) {
-        this.$emit('on-change', n);
         this.fileList = toArray(n);
       },
       fileList: function fileList(n) {
-        this.$emit('input', this.maxLength === 1 ? n[0] || '' : n);
+        var val = this.maxLength === 1 ? n[0] || '' : n;
+        this.$emit('input', val);
+        this.$emit('change', val);
       },
       src: function src(n) {
         this.modalVm && (this.modalVm.src = n);
@@ -2759,7 +2788,7 @@
     },
     methods: {
       key: function key(unique) {
-        return NAME$1 + unique + this.unique;
+        return NAME$2 + unique + this.unique;
       },
       closeModel: function closeModel() {
         this.modalVm && this.modalVm.onClose();
@@ -2847,15 +2876,24 @@
         var h = this.$createElement;
         var props = {
           type: 'text',
-          value: this.fileList.toString(),
-          readonly: true,
-          clearable: false
+          value: this.fileList.map(function (v) {
+            return _this2.getSrc(v);
+          }).toString(),
+          readonly: true
         };
         return h("ElInput", helper([{}, {
           "props": props
         }, {
           "key": this.key('input')
-        }]), [h("ElButton", helper([{
+        }]), [this.fileList.length ? h("i", {
+          "slot": "suffix",
+          "class": "el-input__icon el-icon-circle-close",
+          "on": {
+            "click": function click() {
+              return _this2.fileList = [];
+            }
+          }
+        }) : null, h("ElButton", helper([{
           "attrs": {
             "icon": this.icon
           }
@@ -2950,7 +2988,7 @@
         return this.makeGroup(this.fileList.map(function (src, index) {
           return _this6.makeItem(index, [h("img", {
             "attrs": {
-              "src": src
+              "src": _this6.getSrc(src)
             }
           }), _this6.makeIcons(src, index)]);
         }));
@@ -2982,6 +3020,9 @@
           this.fileList.splice(this.fileList.indexOf(src), 1);
           this.onRemove(src);
         }
+      },
+      getSrc: function getSrc(src) {
+        return isUndef(this.srcKey) ? src : src[this.srcKey];
       }
     },
     render: function render() {
@@ -2990,9 +3031,9 @@
     }
   };
 
-  var NAME$2 = 'fc-elm-radio';
+  var NAME$3 = 'fc-elm-radio';
   var radio = {
-    name: NAME$2,
+    name: NAME$3,
     functional: true,
     props: {
       options: {
@@ -3016,15 +3057,15 @@
         delete props.value;
         return h(Type, {
           "props": _objectSpread2({}, props),
-          "key": NAME$2 + Type + index + ctx.unique
+          "key": NAME$3 + Type + index + ctx.unique
         });
       }).concat(ctx.chlidren)]);
     }
   };
 
-  var NAME$3 = 'fc-elm-select';
+  var NAME$4 = 'fc-elm-select';
   var select = {
-    name: NAME$3,
+    name: NAME$4,
     functional: true,
     props: {
       options: {
@@ -3044,7 +3085,7 @@
         var slot = props.slot ? toDefSlot(props.slot, h) : [];
         return h("ElOption", {
           "props": _objectSpread2({}, props),
-          "key": NAME$3 + index + ctx.props.unique
+          "key": NAME$4 + index + ctx.props.unique
         }, [slot]);
       }).concat(ctx.chlidren)]);
     }
@@ -3134,9 +3175,9 @@
     return toString$1(file).split('/').pop();
   }
 
-  var NAME$4 = 'fc-elm-upload';
+  var NAME$5 = 'fc-elm-upload';
   var upload = {
-    name: NAME$4,
+    name: NAME$5,
     props: {
       ctx: {
         type: Object,
@@ -3202,7 +3243,7 @@
     },
     methods: {
       key: function key(unique) {
-        return NAME$4 + unique + this.unique;
+        return NAME$5 + unique + this.unique;
       },
       isDisabled: function isDisabled() {
         return this.ctx.props.disabled === true;
@@ -3352,9 +3393,9 @@
     }
   };
 
-  var NAME$5 = 'fc-elm-group';
+  var NAME$6 = 'fc-elm-group';
   var group = {
-    name: NAME$5,
+    name: NAME$6,
     props: {
       rule: Object,
       rules: Array,
@@ -3415,6 +3456,7 @@
       },
       formData: function formData(n) {
         this.$emit('input', n);
+        this.$emit('change', n);
       },
       value: function value(n) {
         var _this2 = this;
@@ -3955,7 +3997,10 @@
           if (isArr) {
             parseValue = value.map(function (time) {
               return !time ? '' : toDate(getTime(timeStampToDate(time)));
+            }).filter(function (n) {
+              return !!n;
             });
+            if (parseValue.length !== 2) parseValue = null;
           } else {
             parseValue = null;
           }
@@ -4506,7 +4551,7 @@
   VNode.use(nodes);
   var drive = {
     ui: "element-ui",
-    version: "".concat("1.0.9"),
+    version: "".concat("1.0.10"),
     formRender: Form,
     components: components,
     parsers: parsers,
