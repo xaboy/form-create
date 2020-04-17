@@ -38,7 +38,7 @@ If you have a form component suitable for form-create, please feel free to [clic
 ![demo1](https://raw.githubusercontent.com/xaboy/form-create/dev/images/demo-live3.gif)
 
 <details>
-<summary>**More**</summary>
+<summary><b>More</b></summary>
 
 - **Form operations**
 
@@ -89,7 +89,7 @@ If you have a form component suitable for form-create, please feel free to [clic
 
 
 <details>
-<summary>**Legend**</summary>
+<summary><b>Legend</b></summary>
 
 ![https://raw.githubusercontent.com/xaboy/form-create/dev/images/sample110.jpg](https://raw.githubusercontent.com/xaboy/form-create/dev/images/sample110.jpg)
 </details>
