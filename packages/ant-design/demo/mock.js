@@ -182,7 +182,7 @@ function mock() {
 
         //自定义组件
         maker.create('a-tooltip', 'tip', '自定义 title').props({
-            content: "这里是提示文字",
+            title: "这里是提示文字",
         }).col({span: 11, push: 1}).children([
             maker.create('span').domProps({
                 innerHTML: '当鼠标经过这段文字时，会显示一个气泡框'
@@ -324,7 +324,6 @@ function mock() {
                 // "action": "http://127.0.0.1:8000/index/index/upload",
                 action:"https://www.mocky.io/v2/5cc8019d300000980a055e76",
                 "limit": 4,
-                "uploadType": "file",
                 listType: "picture-card",
                 "name": "file",
                 "allowRemove": true,
