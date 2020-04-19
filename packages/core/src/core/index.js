@@ -21,12 +21,17 @@ export let _vue = typeof window !== 'undefined' && window.Vue ? window.Vue : Vue
 
 export default function createFormCreate(drive) {
 
-    const components = {}, parsers = {}, maker = makerFactory(), globalConfig = drive.getConfig(), data = {};
+    const components = {}, parsers = {}, maker = makerFactory(), globalConfig = drive.getConfig(), data = {},
+        modelEvents = {};
 
     function setParser(id, parser) {
         id = toString(id);
         parsers[id.toLocaleLowerCase()] = parser;
         FormCreate.maker[id] = creatorFactory(id);
+    }
+
+    function setModel(id, model) {
+        modelEvents[id.toLocaleLowerCase()] = model;
     }
 
     function createParser() {
@@ -117,6 +122,7 @@ export default function createFormCreate(drive) {
             this.fCreateApi = undefined;
             this.drive = drive;
             this.parsers = parsers;
+            this.modelEvents = modelEvents;
             this.vm = undefined;
             this.rules = Array.isArray(rules) ? rules : [];
             this.options = margeGlobal(deepExtend({formData: {}}, globalConfig), options);
@@ -211,6 +217,10 @@ export default function createFormCreate(drive) {
     Object.keys(drive.makers).forEach(name => {
         FormCreate.maker[name] = drive.makers[name];
     });
+
+    if (drive.modelEvents) {
+        Object.keys(drive.modelEvents).forEach((name) => setModel(name, drive.modelEvents[name]));
+    }
 
     return {
         FormCreate,

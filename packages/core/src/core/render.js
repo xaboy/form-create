@@ -184,7 +184,7 @@ export default class Render {
             .on('fc.subForm', (subForm) => this.$handle.addSubForm(parser, subForm));
 
         if (!custom)
-            data.on(parser.modelEvent, (value) => {
+            data.on(this.$handle.modelEvent(parser), (value) => {
                 this.onInput(parser, value);
             }).props('value', this.$handle.getFormData(parser));
 

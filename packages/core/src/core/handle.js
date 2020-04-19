@@ -63,6 +63,11 @@ export default class Handle {
         this.changeStatus = false;
     }
 
+    modelEvent(parser) {
+        const modelList = this.fc.modelEvents;
+        return modelList[parser.type] || modelList[parser.originType] || parser.rule.model || parser.modelEvent;
+    }
+
     loadRule(rules, child) {
         rules.map((_rule, index) => {
             if (child && isString(_rule)) return;
