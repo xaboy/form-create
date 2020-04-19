@@ -25,7 +25,8 @@ export default class VData {
     }
 
     merge(props) {
-        this._data = _mergeJsxProps([this._data, props])
+        this._data = _mergeJsxProps([this._data, props]);
+        return this;
     }
 
     class(classList, status = true) {
