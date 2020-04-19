@@ -1,9 +1,9 @@
 .fc-upload-btn, .fc-files {
     display: inline-block;
-    width: 58px;
-    height: 58px;
+    width: 104px;
+    height: 104px;
     text-align: center;
-    line-height: 58px;
+    line-height: 104px;
     border: 1px solid #c0ccda;
     border-radius: 4px;
     overflow: hidden;
@@ -35,11 +35,6 @@
     height: 100%;
     display: inline-block;
     vertical-align: top;
-}
-
-.fc-upload-btn {
-    border: 1px dashed #c0ccda;
-    cursor: pointer;
 }
 
 .fc-upload .fc-upload-cover {
