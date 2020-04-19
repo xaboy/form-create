@@ -213,12 +213,13 @@ export default {
             const props = {
                 type: 'text',
                 value: (this.fileList.map(v => this.getSrc(v))).toString(),
-                readonly: true,
-                allowClear: false
+                readonly: true
             };
 
             return <AInput props={props} key={this.key('input')}>
                 <AIcon type={this.icon} slot="addonAfter" on-click={this.showModel}/>
+                {this.fileList.length ?
+                    <AIcon type="close-circle" slot="suffix" on-click={() => this.fileList = []}/> : null}
             </AInput>
         },
 
