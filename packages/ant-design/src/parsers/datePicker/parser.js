@@ -19,11 +19,6 @@ const toMoment = function (val) {
 
 export default class Parser extends BaseParser {
 
-    constructor(handle, rule, id) {
-        super(handle, rule, id);
-        this.modelEvent = 'change';
-    }
-
     toFormValue(value) {
         let parseValue, type = this.getType();
         const isArr = Array.isArray(value);

@@ -7,11 +7,6 @@ const toMoment = function (val, format) {
 
 export default class Parser extends BaseParser {
 
-    constructor(handle, rule, id) {
-        super(handle, rule, id);
-        this.modelEvent = 'change'
-    }
-
     toFormValue(value) {
         return value ? toMoment(value, this.getFormat()) : null;
     }

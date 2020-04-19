@@ -5,7 +5,7 @@ export default class parser extends BaseParser {
 
     constructor(handle, rule, id) {
         super(handle, rule, id);
-        this.modelEvent = 'check'
+        this.modelEvent = 'check';
         const props = this.rule.props;
         if (!props.replaceFields)
             props.replaceFields = {

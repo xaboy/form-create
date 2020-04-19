@@ -5,6 +5,7 @@ import nodes from './nodes';
 import formRender from './form';
 import createFormCreate, {VNode} from '@form-create/core';
 import makers from '../makers';
+import modelEvents from './modelEvents';
 
 VNode.use(nodes);
 
@@ -16,6 +17,7 @@ export const drive = {
     parsers,
     makers,
     getConfig,
+    modelEvents,
 };
 
 const {FormCreate, install} = createFormCreate(drive);
