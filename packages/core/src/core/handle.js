@@ -204,7 +204,7 @@ export default class Handle {
 
         const fn = function (...args) {
             args.unshift(h.getInjectData(self, inject));
-            _fn(...args);
+            return _fn(...args);
         };
         fn.__inject = true;
         fn.__origin = _fn;
@@ -212,9 +212,11 @@ export default class Handle {
     }
 
     parseEmit(rule) {
-        let event = {}, {emit, emitPrefix, field} = rule;
+        let event = {}, {emit, emitPrefix, field, name} = rule;
 
         if (!Array.isArray(emit)) return event;
+        const emitKey = emitPrefix ? emitPrefix : (field || name);
+        if (!emitKey) return event;
 
         emit.forEach(config => {
             let inject, eventName = config;
@@ -224,7 +226,6 @@ export default class Handle {
             }
             if (!eventName) return;
 
-            const emitKey = emitPrefix ? emitPrefix : field;
             const fieldKey = toLine(`${emitKey}-${eventName}`).replace('_', '-');
 
             const fn = (...arg) => {
@@ -275,15 +276,17 @@ export default class Handle {
     }
 
     valueChange(parser) {
-        validateControl(parser);
+        this.validateControl(parser);
     }
 
     onInput(parser, value) {
-        if (!this.isNoVal(parser) && this.isChange(parser, parser.toValue(value))) {
+        let val;
+        if (!this.isNoVal(parser) && this.isChange(parser, val = parser.toValue(value))) {
             this.$render.clearCache(parser);
             this.setFormData(parser, value);
             this.changeStatus = true;
             this.valueChange(parser);
+            this.vm.$emit('change', parser.field, val);
         }
     }
 
@@ -340,7 +343,37 @@ export default class Handle {
 
     refreshControl(parser) {
         if (!this.isNoVal(parser) && parser.rule.control) {
-            validateControl(parser);
+            this.validateControl(parser);
+        }
+    }
+
+
+    validateControl(parser) {
+        const controls = getControl(parser), len = controls.length, ctrlRule = parser.ctrlRule;
+        if (!len) return;
+        for (let i = 0; i < len; i++) {
+            const control = controls[i], validate = control.handle || (val => val === control.value);
+            if (validate(parser.rule.value)) {
+                if (ctrlRule) {
+                    if (ctrlRule.children === control.rule)
+                        return;
+                    else
+                        removeControl(parser);
+                }
+                const rule = {
+                    type: 'fcFragment',
+                    native: true,
+                    children: control.rule
+                };
+                parser.root.splice(parser.root.indexOf(parser.rule.__origin__) + 1, 0, rule);
+                parser.ctrlRule = rule;
+                this.refresh();
+                return;
+            }
+        }
+        if (ctrlRule) {
+            removeControl(parser);
+            this.refresh();
         }
     }
 
@@ -469,33 +502,6 @@ function getControl(parser) {
     const control = parser.rule.control || [];
     if (isPlainObject(control)) return [control];
     else return control;
-}
-
-function validateControl(parser) {
-    const controls = getControl(parser), len = controls.length, ctrlRule = parser.ctrlRule;
-    if (!len) return;
-    for (let i = 0; i < len; i++) {
-        const control = controls[i], validate = control.handle || (val => val === control.value);
-        if (validate(parser.rule.value)) {
-            if (ctrlRule) {
-                if (ctrlRule.children === control.rule)
-                    return;
-                else
-                    removeControl(parser);
-            }
-            const rule = {
-                type: 'div',
-                native: true,
-                children: control.rule
-            };
-            parser.root.splice(parser.root.indexOf(parser.rule.__origin__) + 1, 0, rule);
-            parser.ctrlRule = rule;
-            return;
-        }
-    }
-    if (ctrlRule) {
-        removeControl(parser);
-    }
 }
 
 function removeControl(parser) {

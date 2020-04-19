@@ -181,7 +181,7 @@ export default function Api(h) {
             this.refresh(true);
         },
         onSubmit(fn) {
-            this.options({onSubmit: fn});
+            this.updateOptions({onSubmit: fn});
         },
         sync: (field) => {
             const parser = h.getParser(field);

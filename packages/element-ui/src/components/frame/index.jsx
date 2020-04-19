@@ -1,6 +1,6 @@
 import {defaultOnHandle, mount} from '../../core/modal';
 import style from '../../style/index.css';
-import {toArray, uniqueId} from '@form-create/utils';
+import {isUndef, toArray, uniqueId} from '@form-create/utils';
 
 const NAME = 'fc-elm-frame';
 
@@ -32,12 +32,12 @@ export default {
             default: 'el-icon-upload2'
         },
         width: {
-            type: [Number, String],
-            default: 500
+            type: String,
+            default: '500px'
         },
         height: {
-            type: [Number, String],
-            default: 370
+            type: String,
+            default: '370px'
         },
         maxLength: {
             type: Number,
@@ -104,6 +104,9 @@ export default {
             type: Object,
             default: () => ({})
         },
+        srcKey: {
+            type: [String, Number]
+        },
         value: [Array, String, Number]
 
     },
@@ -116,11 +119,12 @@ export default {
     },
     watch: {
         value(n) {
-            this.$emit('on-change', n);
             this.fileList = toArray(n);
         },
         fileList(n) {
-            this.$emit('input', this.maxLength === 1 ? (n[0] || '') : n);
+            const val = this.maxLength === 1 ? (n[0] || '') : n;
+            this.$emit('input', val);
+            this.$emit('change', val);
         },
         src(n) {
             this.modalVm && (this.modalVm.src = n);
@@ -205,12 +209,13 @@ export default {
         makeInput() {
             const props = {
                 type: 'text',
-                value: this.fileList.toString(),
-                readonly: true,
-                clearable: false
+                value: (this.fileList.map(v => this.getSrc(v))).toString(),
+                readonly: true
             };
 
             return <ElInput props={props} key={this.key('input')}>
+                {this.fileList.length ? <i slot="suffix" class="el-input__icon el-icon-circle-close"
+                    on-click={() => this.fileList = []}/> : null}
                 <ElButton icon={this.icon} on={{'click': () => this.showModel()}} slot="append"/>
             </ElInput>
         },
@@ -258,7 +263,7 @@ export default {
         },
         makeImages() {
             return this.makeGroup(this.fileList.map((src, index) => {
-                return this.makeItem(index, [<img src={src}/>, this.makeIcons(src, index)])
+                return this.makeItem(index, [<img src={this.getSrc(src)}/>, this.makeIcons(src, index)])
             }))
         },
         makeBtn() {
@@ -276,6 +281,9 @@ export default {
                 this.fileList.splice(this.fileList.indexOf(src), 1);
                 this.onRemove(src);
             }
+        },
+        getSrc(src) {
+            return isUndef(this.srcKey) ? src : src[this.srcKey];
         }
     },
     render() {

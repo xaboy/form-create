@@ -37,7 +37,7 @@
 ![demo1](https://raw.githubusercontent.com/xaboy/form-create/dev/images/demo-live3.gif)
 
 <details>
-<summary>**更多**</summary>
+<summary><b>更多</b></summary>
 
 - **操作表单**
 
@@ -89,7 +89,7 @@
 
 
 <details>
-<summary>**图例**</summary>
+<summary><b>图例</b></summary>
 
 ![https://raw.githubusercontent.com/xaboy/form-create/dev/images/sample110.jpg](https://raw.githubusercontent.com/xaboy/form-create/dev/images/sample110.jpg)
 </details>
@@ -144,14 +144,12 @@ elementUI
 iview
 ```js
 import formCreate from '@form-create/iview'
-import { maker } from '@form-create/iview'
 Vue.use(formCreate)
 ```
 
 ElementUI
 ```js
 import formCreate from '@form-create/element-ui'
-import { maker } from '@form-create/element-ui'
 Vue.use(formCreate)
 ```
 
@@ -217,12 +215,11 @@ Browser
 下载项目
 ```sh
 $ git clone https://github.com/xaboy/form-create.git
+$ cd form-create
 ```
 安装依赖
 ```sh
-$ npm i lerna -g
-$ npm i
-$ lerna bootstrap
+$ npm run bootstrap
 ```
 查看 Iview 2.x|3.x示例
 ```sh 

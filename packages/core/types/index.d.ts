@@ -81,8 +81,8 @@ export namespace FormCreate {
     export interface BaseConfig<FormConfig, Row, Button, FormRule, FormButton> {
         form?: FormConfig;
         row?: Row;
-        submitBtn?: Button;
-        resetBtn?: Button;
+        submitBtn?: Boolean | Button;
+        resetBtn?: Boolean | Button;
         el?: Element | string;
         global?: {
             [key: string]: object

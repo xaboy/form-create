@@ -1,19 +1,20 @@
-import {$set, extend, isPlainObject, isUndef, toArray, toString} from '@form-create/utils';
+import {isPlainObject, isUndef, toString} from '@form-create/utils';
+import _mergeJsxProps from '@vue/babel-helper-vue-jsx-merge-props';
 
 function defVData() {
     return {
-        class: {},
-        style: {},
-        attrs: {},
+        // class: {},
+        // style: {},
+        // attrs: {},
         props: {},
-        domProps: {},
+        // domProps: {},
         on: {},
-        nativeOn: {},
-        directives: [],
-        scopedSlots: {},
-        slot: undefined,
-        key: undefined,
-        ref: undefined
+        // nativeOn: {},
+        // directives: [],
+        // scopedSlots: {},
+        // slot: undefined,
+        // key: undefined,
+        // ref: undefined
     };
 }
 
@@ -23,25 +24,21 @@ export default class VData {
         this.init();
     }
 
+    merge(props) {
+        this._data = _mergeJsxProps([this._data, props])
+    }
+
     class(classList, status = true) {
         if (isUndef(classList)) return this;
 
         if (Array.isArray(classList)) {
-            classList.forEach((cls) => {
-                $set(this._data.class, toString(cls), true);
-            });
+            this.merge({class: classList});
         } else if (isPlainObject(classList)) {
-            $set(this._data, 'class', extend(this._data.class, classList));
+            this.merge(classList);
         } else {
-            $set(this._data.class, toString(classList), status === undefined ? true : status);
+            this.merge({class: {[toString(classList)]: !!status}});
         }
 
-        return this;
-    }
-
-    directives(directives) {
-        if (isUndef(directives)) return this;
-        $set(this._data, 'directives', this._data.directives.concat(toArray(directives)));
         return this;
     }
 
@@ -66,11 +63,11 @@ export default class VData {
 }
 
 const keyList = ['ref', 'key', 'slot'];
-const objList = ['scopedSlots', 'nativeOn', 'on', 'domProps', 'props', 'attrs', 'style'];
+const objList = ['scopedSlots', 'nativeOn', 'on', 'domProps', 'props', 'attrs', 'style', 'directives'];
 
 keyList.forEach(key => {
     VData.prototype[key] = function (val) {
-        $set(this._data, key, val);
+        this.merge({[key]: val});
         return this;
     };
 });
@@ -78,14 +75,14 @@ keyList.forEach(key => {
 objList.forEach(key => {
     VData.prototype[key] = function (obj, val) {
         if (isUndef(obj)) return this;
-
         if (isPlainObject(obj)) {
-            $set(this._data, key, extend(this._data[key], obj));
+            this.merge({[key]: obj})
         } else {
-            $set(this._data[key], toString(obj), val);
+            this.merge({[key]: {[toString(obj)]: val}})
         }
 
         return this;
     };
 });
 
+export const vdataField = objList.concat(keyList, 'class');

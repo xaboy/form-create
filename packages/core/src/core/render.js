@@ -1,7 +1,7 @@
 import {_vue as Vue} from './index';
 import {debounce, errMsg, isFunction, isString, isUndef, isValidChildren} from '@form-create/utils';
 import VNode from '../factory/vNode';
-import VData from '../factory/vData';
+import VData, {vdataField} from '../factory/vData';
 
 
 const $de = debounce((fn) => fn(), 1);
@@ -128,10 +128,11 @@ export default class Render {
     }
 
     renderParser(parser, parent) {
-        parser.vData.get();
-        this.setGlobalConfig(parser);
-
         if (!this.cache[parser.id] || parser.type === 'template') {
+
+            parser.vData.get();
+            this.setGlobalConfig(parser);
+
             let {type, rule} = parser, form = this.$form, vn;
 
             if (type === 'template' && rule.template) {
@@ -161,7 +162,7 @@ export default class Render {
     }
 
     toData(parser, data) {
-        Object.keys(parser.vData._data).forEach((key) => {
+        vdataField.forEach((key) => {
             if (data[key] !== undefined)
                 parser.vData[key](data[key]);
         });
@@ -227,11 +228,12 @@ export default class Render {
     }
 
     defaultRender(parser, children) {
+        const vdata = this.inputVData(parser);
         if (this.vNode[parser.type])
-            return this.vNode[parser.type](this.inputVData(parser), children);
+            return this.vNode[parser.type](vdata, children);
         if (this.vNode[parser.originType])
-            return this.vNode[parser.originType](this.inputVData(parser), children);
-        return this.vNode.make(parser.originType, this.inputVData(parser), children);
+            return this.vNode[parser.originType](vdata, children);
+        return this.vNode.make(parser.originType, vdata, children);
     }
 }
 

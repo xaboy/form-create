@@ -15,6 +15,7 @@ import Handle from './handle';
 import {creatorFactory} from '../factory/creator';
 import BaseParser from '../factory/parser';
 import {parseJson, copyRule, copyRules} from './util';
+import fragment from '../components/fragment';
 
 export let _vue = typeof window !== 'undefined' && window.Vue ? window.Vue : Vue;
 
@@ -170,6 +171,7 @@ export default function createFormCreate(drive) {
             Vue.prototype.$formCreate = $formCreate;
 
             Vue.component(formCreateName, get$FormCreate());
+            Vue.component(fragment.name, _vue.extend(fragment));
             _vue = Vue;
         }
 
