@@ -64,8 +64,8 @@ export default class Form extends BaseForm {
             col = this.getGetCol(parser),
             propsData = this.vData.props({
                 prop: field,
-                // label: rule.title,
-                // labelFor: unique,
+                labelCol: rule.labelCol,
+                wrapperCol: rule.wrapperCol,
                 rules: rule.validate,
                 required: rule.props.required
             }).key(fItemUnique).ref(formItemRefName).class(rule.className).get(),
