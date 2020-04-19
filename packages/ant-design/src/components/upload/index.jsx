@@ -1,4 +1,18 @@
-import {hasSlot, toArray} from '@form-create/utils';
+import {hasSlot, toArray, toString} from '@form-create/utils';
+
+const parseFile = function (file, uid) {
+        return {
+            url: file,
+            name: getFileName(file),
+            status: 'done',
+            uid: uid + 1
+        };
+    }, getFileName = function (file) {
+        return toString(file).split('/').pop()
+    }, parseUpload = function (file) {
+        return {url: file.url, file};
+    };
+
 
 export default {
     name: 'fc-antd-update',
@@ -16,7 +30,7 @@ export default {
             default: () => []
         },
         value: {
-            type: Array,
+            type: [Array, String],
             default: () => []
         },
         onSuccess: {
@@ -25,11 +39,20 @@ export default {
         }
     },
     data() {
+        const fileList = toArray(this.value).map(parseFile);
         return {
+            defaultUploadList: fileList,
             previewImage: '',
             previewVisible: false,
-            uploadList: []
+            uploadList: fileList.map(parseUpload)
         };
+    },
+    watch: {
+        value(n) {
+            const fileList = toArray(n).map(parseFile);
+            this.$refs.upload.sFileList = fileList;
+            this.uploadList = fileList.map(parseUpload)
+        }
     },
     methods: {
         initChildren() {
@@ -42,41 +65,43 @@ export default {
             </div>
         },
         handlePreview(file) {
-            this.previewImage = file.url || file.thumbUrl;
+            this.previewImage = file.url;
             this.previewVisible = true;
         },
         handleCancel() {
             this.previewVisible = false;
         },
         handleChange({file, fileList}) {
+            const list = this.uploadList;
             if (file.status === 'done') {
                 this.onSuccess(file, fileList);
-                console.log(file, fileList)
+                if (file.url) list.push({
+                    url: file.url,
+                    file: fileList[fileList.length - 1]
+                });
+                this.input();
+            } else if (file.status === 'removed') {
+                list.forEach((v, i) => {
+                    if (v.file === file) {
+                        list.splice(i, 1);
+                    }
+                });
+                this.input();
             }
         },
-        update(fileList) {
-            if (fileList.every(file => {
-                return !file.status || file.status === 'done';
-            })) {
-                console.log('fileList', fileList);
-                this.$emit('input', fileList.map(file => file.url).filter(url => !!url));
-            }
-        }
+        input() {
+            this.$emit('input', this.uploadList.map(v => v.url));
+        },
+
     },
     render() {
-        console.log('render');
         this.initChildren();
         return <div>
             <AUpload {...this.ctx} on-preview={this.handlePreview} on-change={this.handleChange}
-                ref="upload">{this.children}</AUpload>
+                ref="upload" defaultFileList={this.defaultUploadList}>{this.children}</AUpload>
             <aModal visible={this.previewVisible} footer={null} on-cancel={this.handleCancel}>
                 <img style="width: 100%" src={this.previewImage}/>
             </aModal>
         </div>;
-    },
-    mounted() {
-        this.$watch(() => this.$refs.upload.sFileList, (n) => {
-            this.update(n);
-        }, {deep: true});
     }
 }
