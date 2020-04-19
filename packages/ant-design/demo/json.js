@@ -33,7 +33,7 @@ function jsonMock() {
         {
             type:"group",
             title:"标签",
-            field:" label",
+            field:"group",
             value:[],
             props:{
                 min:1,
@@ -243,16 +243,14 @@ function jsonMock() {
             type: "upload",
             field: "pic",
             title: "轮播图",
-            value: [{
-                uid: '-1',
-                name: 'xxx.png',
-                status: 'done',
-                url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-            }], //input值
+            value: ['https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png'], //input值
             props: {
                 listType:"picture-card",
                 action:"https://www.mocky.io/v2/5cc8019d300000980a055e76",
                 showUploadList:true,
+                onSuccess:function(file){
+                    file.url = file.response.url;
+                }
             }
         },
 

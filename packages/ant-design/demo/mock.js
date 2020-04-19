@@ -21,8 +21,6 @@ function mock() {
             placeholder: '请输入商品名称',
             clearable: true,
             disabled: false,
-            maxlength: 20,
-            prefixIcon: 'el-icon-info'
         }).validate([
             {required: true, message: '请输入商品名称', trigger: 'blur'}
         ]).event({
@@ -106,7 +104,7 @@ function mock() {
                     maker.number('满额包邮','postage_money',0)
                 ]
             }
-        ]),
+        ]).merge({labelCol:{span:12},wrapperCol:{span:12}}),
 
 
         //checkbox 复选框付选择
@@ -115,7 +113,7 @@ function mock() {
             {value: 2, label: "方便", disabled: false},
             {value: 3, label: "实用", disabled: false},
             {value: 4, label: "有效", disabled: false},
-        ]).col({span: 8}),
+        ]).col({span: 8}).merge({labelCol:{span:12},wrapperCol:{span:12}}),
 
 
         //switch 开关组件
@@ -126,7 +124,7 @@ function mock() {
                 open: "上架",
                 close: "下架",
             }
-        }).col({span: 8, labelWidth: "100"}),
+        }).col({span: 8, labelWidth: "100"}).merge({labelCol:{span:12},wrapperCol:{span:12}}),
 
 
         //自定义组件
@@ -173,7 +171,7 @@ function mock() {
 
 
         //自定义组件
-        maker.create('a-button', 'btn').props('disabled', false).col({span: 12}).children([
+        maker.create('a-button', 'btn').props('disabled', false).col({span: 12,push: 2}).children([
             maker.create('span').domProps({
                 innerHTML: '测试自定义按钮'
             })
@@ -204,7 +202,7 @@ function mock() {
 
 
         {
-            type: 'div',
+            type: 'fragment',//内置组件
             children: [
                 {
                     type: 'a-col',
@@ -235,7 +233,7 @@ function mock() {
                         //inputNumber 数组输入框组件
                         maker.number('排序', 'sort', 0).props({
                             precision: 2
-                        }).col({span: 12}).validate(
+                        }).col({span: 24}).validate(
                             [{require: true, type: 'number', min: 10}]
                         ),
                     ]
@@ -288,7 +286,7 @@ function mock() {
         //rate 评分组件
         maker.rate('推荐级别', 'rate', 2)
             .props({
-                "max": 10,
+                "count": 10,
             })
             .validate({required: true, type: 'number', min: 3, message: '请大于3颗星', trigger: 'change'})
             .col({span: 12}).control([
