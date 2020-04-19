@@ -1,4 +1,5 @@
-import {hasSlot, toArray, toString} from '@form-create/utils';
+import {hasSlot, toString} from '@form-create/utils';
+import style from '../../style/index.css';
 
 const parseFile = function (file, uid) {
         return {
@@ -30,7 +31,7 @@ export default {
             default: () => []
         },
         value: {
-            type: [Array, String],
+            type: Array,
             default: () => []
         },
         onSuccess: {
@@ -39,7 +40,7 @@ export default {
         }
     },
     data() {
-        const fileList = toArray(this.value).map(parseFile);
+        const fileList = this.value.map(parseFile);
         return {
             defaultUploadList: fileList,
             previewImage: '',
@@ -49,7 +50,7 @@ export default {
     },
     watch: {
         value(n) {
-            const fileList = toArray(n).map(parseFile);
+            const fileList = n.map(parseFile);
             this.$refs.upload.sFileList = fileList;
             this.uploadList = fileList.map(parseUpload)
         }
@@ -95,8 +96,9 @@ export default {
 
     },
     render() {
+        const isShow = (!this.limit || this.limit > this.uploadList.length);
         this.initChildren();
-        return <div>
+        return <div class={{[style['fc-hide-btn']]: !isShow}}>
             <AUpload {...this.ctx} on-preview={this.handlePreview} on-change={this.handleChange}
                 ref="upload" defaultFileList={this.defaultUploadList}>{this.children}</AUpload>
             <aModal visible={this.previewVisible} footer={null} on-cancel={this.handleCancel}>

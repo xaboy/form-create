@@ -1,4 +1,5 @@
 import {BaseParser} from '@form-create/core';
+import {toArray} from '@form-create/utils';
 
 export default class parser extends BaseParser {
 
@@ -9,7 +10,8 @@ export default class parser extends BaseParser {
                 ctx: data,
                 children,
                 value: this.$handle.getFormData(this),
-                onSuccess: data.props.onSuccess
+                onSuccess: data.props.onSuccess,
+                limit: data.props.limit
             },
             on: {
                 input: (v) => {
@@ -20,7 +22,11 @@ export default class parser extends BaseParser {
     }
 
     toFormValue(value) {
-        return this.rule.limit === 1 ? (value[0] || '') : value;
+        return toArray(value);
+    }
+
+    toValue(formValue) {
+        return this.rule.props.limit === 1 ? (formValue[0] || '') : formValue;
     }
 }
 
