@@ -16,7 +16,6 @@ export default {
     checkbox: 'a-checkbox-group',
     radio: 'a-radio-group',
     inputNumber: 'a-input-number',
-    input: 'a-input',
     search: 'a-input-search',
     textarea: 'a-textarea',
     formItem: 'a-form-model-item',
