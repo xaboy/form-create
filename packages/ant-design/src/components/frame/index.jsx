@@ -1,4 +1,4 @@
-import {toArray, uniqueId} from '@form-create/utils';
+import {toArray, uniqueId, isUndef} from '@form-create/utils';
 import style from '../../style/index.css';
 import {mount} from '../../core/modal';
 
@@ -106,6 +106,9 @@ export default {
             type: Object,
             default: () => ({})
         },
+        srcKey: {
+            type: [String, Number]
+        },
         value: [Array, String, Number]
 
     },
@@ -121,11 +124,12 @@ export default {
     },
     watch: {
         value(n) {
-            this.$emit('on-change', n);
             this.fileList = toArray(n);
         },
         fileList(n) {
-            this.$emit('input', this.maxLength === 1 ? (n[0] || '') : n);
+            const val = (this.maxLength === 1 ? (n[0] || '') : n);
+            this.$emit('input', val);
+            this.$emit('change', val);
         }
     },
     methods: {
@@ -208,7 +212,7 @@ export default {
         makeInput() {
             const props = {
                 type: 'text',
-                value: this.fileList.toString(),
+                value: (this.fileList.map(v => this.getSrc(v))).toString(),
                 readonly: true,
                 allowClear: false
             };
@@ -261,7 +265,7 @@ export default {
         },
         makeImages() {
             return this.makeGroup(this.fileList.map((src, index) => {
-                return this.makeItem(index, [<img src={src}/>, this.makeIcons(src, index)])
+                return this.makeItem(index, [<img src={this.getSrc(src)}/>, this.makeIcons(src, index)])
             }))
         },
         makeBtn() {
@@ -279,6 +283,9 @@ export default {
                 this.fileList.splice(this.fileList.indexOf(src), 1);
                 this.onRemove(src);
             }
+        },
+        getSrc(src) {
+            return isUndef(this.srcKey) ? src : src[this.srcKey];
         }
     },
     render() {
