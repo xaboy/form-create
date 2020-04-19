@@ -40,3 +40,5 @@ export default class VNode {
         });
     }
 }
+
+VNode.use({fragment: 'fcFragment'});
