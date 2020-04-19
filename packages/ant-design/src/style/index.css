@@ -22,6 +22,14 @@
     margin-bottom: 0px;
 }
 
+.form-create .form-create .ant-form-item.ant-form-item-with-help {
+    margin-bottom: 3px;
+}
+
+.form-create .form-create .ant-form-item .ant-form-item.ant-form-item-with-help {
+    margin-bottom: -22px;
+}
+
 .__fc_h {
     display: none;
 }
