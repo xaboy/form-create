@@ -17,17 +17,14 @@ const Modal = (options, cb) => {
             return vNode.modal({
                 props: this.$data,
                 on: {
-                    close: this.onClose,
-                    closed: this.onClosed,
+                    cancel: this.onClose
                 }
             }, [cb(vNode, this)])
         },
         methods: {
             onClose() {
                 this.visible = false;
-            },
-            onClosed() {
-                this.$el.parentNode.removeChild(this.$el);
+                this.$nextTick(() => this.$destroy());
             }
         }
     }
