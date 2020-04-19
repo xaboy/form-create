@@ -29,12 +29,12 @@ export default {
             config: {
                 submitBtn: false,
                 resetBtn: false,
-                form:{
+                form: {
                     labelCol: {
-                        span:3
+                        span: 3
                     },
                     wrapperCol: {
-                        span:18
+                        span: 18
                     },
                 }
             },
@@ -69,6 +69,7 @@ export default {
         },
         formData(n) {
             this.$emit('input', n);
+            this.$emit('change', n);
         },
         value(n) {
             let keys = Object.keys(this.cacheRule), total = keys.length, len = total - n.length;
