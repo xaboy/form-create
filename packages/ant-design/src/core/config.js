@@ -7,10 +7,10 @@ export default function getConfig() {
             layout: 'horizontal',
             labelAlign: 'right',
             labelCol: {
-                span: 3
+                span: 4
             },
             wrapperCol: {
-                span: 21
+                span: 20
             },
             colon: UNDEF,
             validateOnRuleChange: true
