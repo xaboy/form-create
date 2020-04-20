@@ -59,18 +59,18 @@ export default class Form extends BaseForm {
     }
 
     makeFormItem(parser, child) {
-        let fItemUnique = `fItem${parser.key}${this.unique}`,
+        let fItemUnique = `fItem${parser.key}${this.unique}`, isVertical = this.propsData.props.layout === 'vertical',
             {rule, field, formItemRefName} = parser,
             col = this.getGetCol(parser),
             propsData = this.vData.props({
                 prop: field,
-                labelCol: rule.labelCol,
-                wrapperCol: rule.wrapperCol,
+                labelCol: isVertical ? {} : rule.labelCol,
+                wrapperCol: isVertical ? {} : rule.wrapperCol,
                 rules: rule.validate,
                 required: rule.props.required
             }).key(fItemUnique).ref(formItemRefName).class(rule.className).get(),
             node = this.vNode.formItem(propsData, [child, this.makeFormPop(parser, fItemUnique)]);
-        return this.propsData.props.inline === true ? node : this.makeCol(col, parser, fItemUnique, [node]);
+        return this.propsData.props.layout === 'inline' ? node : this.makeCol(col, parser, fItemUnique, [node]);
     }
 
     makeFormPop({rule}, unique) {
@@ -108,7 +108,7 @@ export default class Form extends BaseForm {
         if (resetBtnShow)
             btn.push(this.makeResetBtn(4));
 
-        return this.propsData.props.inline === true
+        return this.propsData.props.layout === 'inline'
             ? btn
             : (btn.length ? this.vNode.col({
                 props: {span: 24},
