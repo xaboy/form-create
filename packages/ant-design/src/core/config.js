@@ -22,7 +22,7 @@ export default function getConfig() {
             justify: UNDEF
         },
         info: {
-            type: 'tooltip',
+            type: 'popover',
             placement: 'topLeft',
             icon: 'question-circle-o'
         },
