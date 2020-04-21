@@ -12,8 +12,6 @@
 [![version](https://badge.fury.io/js/@form-create%2Fcore.svg)](https://www.npmjs.com/package/@form-create/core)
 [![npm](https://img.shields.io/npm/dt/@form-create/core.svg)](https://www.npmjs.com/package/@form-create/core)
 [![document](https://img.shields.io/badge/Doc-welcome-red.svg)](http://www.form-create.com/en/v2/)
-[![iview gzip size](http://img.badgesize.io/https://cdn.jsdelivr.net/npm/@form-create/iview/dist/form-create.min.js?compression=gzip&amp;label=gzip%20size&amp;style=flat-square)](https://www.npmjs.com/package/@form-create/iview)
-[![elment-ui gzip size](http://img.badgesize.io/https://cdn.jsdelivr.net/npm/@form-create/element-ui/dist/form-create.min.js?compression=gzip&amp;label=gzip%20size&amp;style=flat-square)](https://www.npmjs.com/package/@form-create/element-ui) [![Join the chat at https://gitter.im/xaboy/form-create](https://badges.gitter.im/xaboy/form-create.svg)](https://gitter.im/xaboy/form-create?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 
 **Form-create is a form generator that can generate dynamic rendering, data collection, validation, and submission via JSON. And support for generating any Vue components. Combined with the built-in 17 common form components and custom components, complex forms can be easily handled.**
@@ -25,6 +23,7 @@
 - **iViewUI 3.x**
 - **iViewUI 4.x**
 - **ElementUI 2.8.2+**
+- **Ant-design-vue 1.5.3+**
 
 If you have a form component suitable for form-create, please feel free to [click here to leave a message](https://github.com/xaboy/form-create/issues/124)
 
@@ -70,9 +69,10 @@ If you have a form component suitable for form-create, please feel free to [clic
 
 | Name               | Description                                                |
 | ------------------ | ---------------------------------------------------------- |
-| @form-create/iview     | [iView Version](http://form-create.com/v2/iview/) |
-| @form-create/iview4     | [iView V4 Version](http://form-create.com/v2/iview/) |
-| @form-create/element-ui | [ElementUI Version](http://form-create.com/v2/element-ui/)     |
+| @form-create/iview     | [iView Version](http://form-create.com/en/v2/iview/) |
+| @form-create/iview4     | [iView V4 Version](http://form-create.com/en/v2/iview/) |
+| @form-create/element-ui | [ElementUI Version](http://form-create.com/en/v2/element-ui/)     |
+| @form-create/ant-design-vue | [Ant-design-vue Version](http://form-create.com/en/v2/ant-design-vue/)     |
 
 
 
@@ -80,11 +80,11 @@ If you have a form component suitable for form-create, please feel free to [clic
 
 - [Practical case](https://github.com/HeyMrLin/fc-demo) ([Demo station](http://jeekweb.pro/form-create-demo))
 
-- [Generate a form using the maker generator](https://jsrun.pro/NQhKp/edit)
+- [Generate a form using the maker generator](https://jsrun.net/NQhKp/edit)
 
-- [Generate a form using the json parameter](https://jsrun.pro/NQhKp/edit)
+- [Generate a form using the json parameter](https://jsrun.net/NQhKp/edit)
 
-- [Component example](https://jsrun.pro/user/xaboy)
+- [Component example](https://jsrun.net/user/xaboy)
 
 
 
@@ -112,6 +112,11 @@ elementUI
 npm install @form-create/element-ui
 ```
 
+ant-design-vue
+```shell
+npm install @form-create/ant-design-vue
+```
+
 ## Import
 
 **CDN:**
@@ -137,8 +142,24 @@ elementUI
 <!-- import element -->
 <script src="https://unpkg.com/element-ui/lib/index.js"></script>
 <!-- import form-create/element -->
-<script src="//unpkg.com/@form-create/element-ui/dist/form-create.elm.min.js"></script>
+<script src="//unpkg.com/@form-create/element-ui/dist/form-create.min.js"></script>
 ```
+
+ant-design-vue
+```html
+<!-- import Vue.js -->
+<script src="//vuejs.org/js/vue.min.js"></script>
+<!-- import stylesheet -->
+<link href="https://unpkg.com/ant-design-vue@1.5.3/dist/antd.min.css" rel="stylesheet">
+<!-- import moment -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/locale/zh-cn.js"></script>
+<!-- import ant-design-vue -->
+<script defer src="https://unpkg.com/ant-design-vue@1.5.3/dist/antd.js"></script>
+<!-- import form-create -->
+<script src="//unpkg.com/@form-create/ant-design-vue/dist/form-create.min.js"></script>
+```
+
 **NodeJs:**
 
 iviewUI
@@ -150,6 +171,12 @@ Vue.use(formCreate)
 ElementUI
 ```js
 import formCreate from '@form-create/element-ui'
+Vue.use(formCreate)
+```
+
+ant-design-vue
+```js
+import formCreate from '@form-create/ant-design-vue'
 Vue.use(formCreate)
 ```
 
@@ -228,6 +255,10 @@ $ npm run dev:iview4
 ElementUI Demo
 ```sh 
 $ npm run dev:ele
+```
+ant-design-vue Demo
+```sh 
+$ npm run dev:antd
 ```
 
 ## Thank

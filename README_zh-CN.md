@@ -12,8 +12,6 @@
 [![version](https://badge.fury.io/js/@form-create%2Fcore.svg)](https://www.npmjs.com/package/@form-create/core)
 [![npm](https://img.shields.io/npm/dt/@form-create/core.svg)](https://www.npmjs.com/package/@form-create/core)
 [![document](https://img.shields.io/badge/Doc-welcome-red.svg)](http://www.form-create.com/v2/)
-[![iview gzip size](http://img.badgesize.io/https://cdn.jsdelivr.net/npm/@form-create/iview/dist/form-create.min.js?compression=gzip&amp;label=gzip%20size&amp;style=flat-square)](https://www.npmjs.com/package/@form-create/iview)
-[![elment-ui gzip size](http://img.badgesize.io/https://cdn.jsdelivr.net/npm/@form-create/element-ui/dist/form-create.min.js?compression=gzip&amp;label=gzip%20size&amp;style=flat-square)](https://www.npmjs.com/package/@form-create/element-ui) [![Join the chat at https://gitter.im/xaboy/form-create](https://badges.gitter.im/xaboy/form-create.svg)](https://gitter.im/xaboy/form-create?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 
 **form-create 是一个可以通过 JSON 生成具有动态渲染、数据收集、验证和提交功能的表单生成器。并且支持生成任何 Vue 组件。结合内置17种常用表单组件和自定义组件，再复杂的表单都可以轻松搞定。**
@@ -24,6 +22,7 @@
 - **iViewUI 3.x**
 - **iViewUI 4.x**
 - **ElementUI 2.8.2+**
+- **Ant-design-vue 1.5.3+**
 
 如果您有适合 form-create 的表单组件, 欢迎[点击这里留言](https://github.com/xaboy/form-create/issues/124)
 
@@ -71,6 +70,7 @@
 | @form-create/iview     | [iview 版本](http://form-create.com/v2/iview/) |
 | @form-create/iview4     | [iView V4 版本](http://form-create.com/v2/iview/) |
 | @form-create/element-ui | [ElementUI 版本](http://form-create.com/v2/element-ui/)        |
+| @form-create/ant-design-vue | [Ant-design-vue 版本](http://form-create.com/v2/ant-design-vue/)     |
 
 
 
@@ -80,11 +80,11 @@
 
 - [实战案例](https://github.com/HeyMrLin/fc-demo) ([演示站](http://jeekweb.pro/form-create-demo))
 
-- [使用生成器生成](https://jsrun.pro/NQhKp/edit)
+- [使用生成器生成](https://jsrun.net/NQhKp/edit)
 
-- [使用 json 生成](https://jsrun.pro/NQhKp/edit)
+- [使用 json 生成](https://jsrun.net/NQhKp/edit)
 
-- [各种示例](https://jsrun.pro/user/xaboy)
+- [各种示例](https://jsrun.net/user/xaboy)
 
 
 
@@ -110,6 +110,11 @@ npm install @form-create/iview4
 elementUI
 ```shell
 npm install @form-create/element-ui
+```
+
+ant-design-vue
+```shell
+npm install @form-create/ant-design-vue
 ```
 
 ## 引入
@@ -139,6 +144,21 @@ elementUI
 <!-- import form-create/element -->
 <script src="//unpkg.com/@form-create/element-ui/dist/form-create.min.js"></script>
 ```
+
+ant-design-vue
+```html
+<!-- import Vue.js -->
+<script src="//vuejs.org/js/vue.min.js"></script>
+<!-- import stylesheet -->
+<link href="https://unpkg.com/ant-design-vue@1.5.3/dist/antd.min.css" rel="stylesheet">
+<!-- import moment -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/locale/zh-cn.js"></script>
+<!-- import ant-design-vue -->
+<script defer src="https://unpkg.com/ant-design-vue@1.5.3/dist/antd.js"></script>
+<!-- import form-create -->
+<script src="//unpkg.com/@form-create/ant-design-vue/dist/form-create.min.js"></script>
+```
 **NodeJs:**
 
 iview
@@ -153,6 +173,11 @@ import formCreate from '@form-create/element-ui'
 Vue.use(formCreate)
 ```
 
+ant-design-vue
+```js
+import formCreate from '@form-create/ant-design-vue'
+Vue.use(formCreate)
+```
 
 
 ##  使用
@@ -232,6 +257,10 @@ $ npm run dev:iview4
 查看 ElementUI 示例
 ```sh 
 $ npm run dev:ele
+```
+查看 ant-design-vue 示例
+```sh 
+$ npm run dev:antd
 ```
 
 ## 感谢
