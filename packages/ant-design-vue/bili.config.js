@@ -23,7 +23,8 @@ module.exports = {
     },
     globals: {
         vue: 'Vue',
-        Antd: 'ant-design-vue'
+        antd: 'ant-design-vue',
+        moment: 'moment'
     },
     externals: ['vue', 'Vue', 'Antd', 'moment'],
     output: {
