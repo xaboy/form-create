@@ -7,5 +7,5 @@ export default ['date', 'month', 'week'].reduce((initial, type) => {
     return initial
 }, {
     dateRange: creatorTypeFactory(name, 'range'),
-    dateTimeRange: creatorTypeFactory(name, m => m.props({type: 'range', showTime: true}))
+    datetimeRange: creatorTypeFactory(name, m => m.props({type: 'range', showTime: true}))
 });
