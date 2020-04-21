@@ -1,5 +1,5 @@
 import {isPlainObject, isUndef, toString} from '@form-create/utils';
-import _mergeJsxProps from '@vue/babel-helper-vue-jsx-merge-props';
+import mergeJsxProps from '../core/mergeJsxProps';
 
 function defVData() {
     return {
@@ -25,7 +25,7 @@ export default class VData {
     }
 
     merge(props) {
-        this._data = _mergeJsxProps([this._data, props]);
+        mergeJsxProps([props], this._data);
         return this;
     }
 
