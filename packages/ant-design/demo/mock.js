@@ -31,13 +31,11 @@ function mock() {
 
 
         //autoComplete 自动选择组件
-        maker.auto('自动完成', 'auto', 'xaboy').props({
-            fetchSuggestions: function (queryString, cb) {
-                cb([
-                    {value: queryString}, {value: queryString + queryString}
-                ]);
+        maker.auto('自动完成', 'auto', 'xaboy').props({dataSource:['aa','bb']}).on({
+            search: function (inject, value) {
+                inject.self.props({dataSource : !value ? [] : [value, value + value, value + value + value]});
             }
-        }).emitPrefix('xaboy').emit(['change']),
+        }).emitPrefix('xaboy').emit(['change']).merge({inject:true}),
 
 
         //textarea 组件
