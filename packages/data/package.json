@@ -30,9 +30,6 @@
     },
     "author": "xaboy",
     "license": "MIT",
-    "dependencies": {
-        "vue": "^2.5.2"
-    },
     "bugs": {
         "url": "https://github.com/xaboy/form-create/issues"
     },

@@ -41,7 +41,7 @@
   },
   "homepage": "http://www.form-create.com",
   "dependencies": {
-    "@form-create/core": "^1.0.9",
+    "@form-create/core": "^1.0.10",
     "@form-create/utils": "^1.0.8",
     "ant-design-vue": "^1.5.3",
     "moment": "^2.24.0"
