@@ -7,7 +7,7 @@ export default FormCreate;
 export namespace FormCreate {
 
     export interface Install {
-        (Vue: Vue): void
+        (vue: typeof Vue): void
     }
 
     export interface CopyRule<FormRule> {
