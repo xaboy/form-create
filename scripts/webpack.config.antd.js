@@ -14,7 +14,7 @@ const baseWebpackConfig = require('./webpack.config.base');
 const Config = require('webpack-chain');
 const config = new Config();
 
-const UI = 'ant-design';
+const UI = 'ant-design-vue';
 const basePublicPath = path.join(__dirname, '/../', `/packages/${UI}`);
 const baseSrcPath = path.join(basePublicPath + '/src/index.js');
 const baseTemplatePath = path.join(basePublicPath + '/demo/component/index.html');

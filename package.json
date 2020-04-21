@@ -6,7 +6,7 @@
         "dev:ele": "cross-env UI_LiB=element-ui webpack-dev-server --config=./scripts/webpack.config.ele.js",
         "dev:iview": "cross-env UI_LiB=iview webpack-dev-server --config=./scripts/webpack.config.iview.js",
         "dev:iview4": "cross-env UI_LiB=iview4 webpack-dev-server --config=./scripts/webpack.config.iview4.js",
-        "dev:antd": "cross-env UI_LiB=iview4 webpack-dev-server --config=./scripts/webpack.config.antd.js",
+        "dev:antd": "cross-env UI_LiB=ant-design-vue webpack-dev-server --config=./scripts/webpack.config.antd.js",
         "dev": "xxx",
         "commit": "git cz",
         "lint": "eslint *.js",

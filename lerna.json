@@ -3,7 +3,7 @@
     "packages/core",
     "packages/data",
     "packages/element-ui",
-    "packages/ant-design",
+    "packages/ant-design-vue",
     "packages/iview",
     "packages/iview4",
     "packages/utils"
