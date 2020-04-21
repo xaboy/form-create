@@ -1,12 +1,13 @@
 import {Button, Col, Option, Row} from "view-design";
 import FormCreate from "@form-create/core";
+import Vue from "vue";
 
 export default formCreate;
 
 declare class formCreate {
     static create: create;
     static maker: FormCreate.Maker<Creator, Rule>;
-    static install: install;
+    static install: (vue: typeof Vue) => void;
     static init: init;
     static component: FormCreate.Component;
     static $form: FormCreate.$form;
