@@ -116,12 +116,8 @@ function mock() {
 
         //switch 开关组件
         maker.switch('是否上架', 'is_show', '1').props({
-            "activeValue": "1",
-            "inactiveValue": "0",
-            "slot":{
-                open: "上架",
-                close: "下架",
-            }
+            "checkedChildren": "1",
+            "unCheckedChildren": "0"
         }).col({span: 8, labelWidth: "100"}).merge({labelCol:{span:12},wrapperCol:{span:12}}),
 
 
@@ -188,14 +184,8 @@ function mock() {
 
         //select 下拉选择组件
         maker.select("产品分类", "cate_id", "104").options([
-            {"value": "104", "label": "生态蔬菜", "disabled": false, "slot": "<div style:'color:#ff7271;'>自定义显示内容</div>"},
-            {
-                "value": "105", "label": "新鲜水果", "disabled": false, "slot": function ($h) {
-                    return $h("div", {
-                        style: "color:#ff7271;"
-                    }, ['新鲜水果']);
-                }
-            },
+            {"value": "104", "label": "生态蔬菜", "disabled": false},
+            {"value": "105", "label": "新鲜水果", "disabled": false},
         ]).event({change: console.log}),
 
 
@@ -210,13 +200,12 @@ function mock() {
                     children: [
 
                         //datePicker 日期选择组件
-                        maker.date('活动日期', 'section_day', ['2018-02-20 12:12:12', '2018-03-20 12:12:12']).props({
-                            "type": "datetimerange",
+                        maker.datetimeRange('活动日期', 'section_day', ['2018-02-20 12:12:12', '2018-03-20 12:12:12']).props({
+                            showTime: true
                         }),
 
                         //timePicker 时间选择组件
                         maker.time('活动时间', 'section_time', ['11:11:11', '22:22:22']).props({
-                            "isRange": true,
                             "placeholder": "请选择活动时间"
                         }),
 
@@ -239,46 +228,6 @@ function mock() {
             ],
             native: true
         },
-
-
-        //datePicker 日期选择组件
-        // maker.date('活动日期', 'section_day2', ['2018-02-20', '2019-01-01']).props({
-        //     "type": "datetimerange",
-        //     "startDate": new Date(),
-        //     "showWeekNumbers": true,
-        //     "open": false, //自定义内容时一定要预定义 open
-        // }).col({span: 12}).defaultSlot(function ($h) {
-        //     return $h('a', {
-        //         on: {
-        //             click: function () {
-        //                 this.props.open = true;
-        //             }
-        //         },
-        //     }, [mock[14].value ? mock[14].value.toString() : 'select Date']);
-        // }).event({
-        //     ok: function () {
-        //         mock[14].props.open = false;
-        //     }
-        // }),
-
-        //timePicker 时间选择组件
-        // maker.time('活动时间', 'section_time2', ['01:01:01', '12:12:12']).props({
-        //     "type": "timerange",
-        //     "placeholder": "请选择活动时间",
-        //     "open": false, //自定义内容时一定要预定义 open
-        // }).col({span: 12}).defaultSlot(function ($h) {
-        //     return $h('a', {
-        //         on: {
-        //             click: function () {
-        //                 this.props.open = true;
-        //             }
-        //         },
-        //     }, [mock[15].value ? mock[15].value.toString() : 'select Time']);
-        // }).event({
-        //     ok: function () {
-        //         mock[15].props.open = false;
-        //     }
-        // }),
 
 
         //rate 评分组件
