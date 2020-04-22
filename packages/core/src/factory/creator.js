@@ -52,7 +52,7 @@ export default class Creator extends VData {
     }
 }
 
-const keyAttrs = ['emitPrefix', 'className', 'value', 'name', 'title', 'native', 'info', 'hidden', 'visibility', 'inject'];
+const keyAttrs = ['emitPrefix', 'className', 'value', 'name', 'title', 'native', 'info', 'hidden', 'visibility', 'inject', 'model'];
 
 keyAttrs.forEach(attr => {
     Creator.prototype[attr] = function (value) {
