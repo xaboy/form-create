@@ -1,5 +1,5 @@
 /*!
- * @form-create/element-ui v1.0.10
+ * @form-create/element-ui v1.0.11
  * (c) 2018-2020 xaboy
  * Github https://github.com/xaboy/form-create
  * Released under the MIT License.
@@ -526,6 +526,59 @@
     };
   }
 
+  var normalMerge$1 = ['attrs', 'props', 'domProps'];
+  var toArrayMerge$1 = ['class', 'style', 'directives'];
+  var functionalMerge$1 = ['on', 'nativeOn'];
+
+  var mergeJsxProps$1 = function mergeJsxProps(objects, initial) {
+    return objects.reduce(function (a, b) {
+      for (var key in b) {
+        if (a[key]) {
+          if (normalMerge$1.indexOf(key) !== -1) {
+            a[key] = _objectSpread2({}, a[key], {}, b[key]);
+          } else if (toArrayMerge$1.indexOf(key) !== -1) {
+            var arrA = a[key] instanceof Array ? a[key] : [a[key]];
+            var arrB = b[key] instanceof Array ? b[key] : [b[key]];
+            a[key] = [].concat(_toConsumableArray(arrA), _toConsumableArray(arrB));
+          } else if (functionalMerge$1.indexOf(key) !== -1) {
+            for (var event in b[key]) {
+              if (a[key][event]) {
+                var _arrA = a[key][event] instanceof Array ? a[key][event] : [a[key][event]];
+
+                var _arrB = b[key][event] instanceof Array ? b[key][event] : [b[key][event]];
+
+                a[key][event] = [].concat(_toConsumableArray(_arrA), _toConsumableArray(_arrB));
+              } else {
+                a[key][event] = b[key][event];
+              }
+            }
+          } else if (key === 'hook') {
+            for (var hook in b[key]) {
+              if (a[key][hook]) {
+                a[key][hook] = mergeFn$1(a[key][hook], b[key][hook]);
+              } else {
+                a[key][hook] = b[key][hook];
+              }
+            }
+          } else {
+            a[key] = b[key];
+          }
+        } else {
+          a[key] = b[key];
+        }
+      }
+
+      return a;
+    }, initial);
+  };
+
+  var mergeFn$1 = function mergeFn(fn1, fn2) {
+    return function () {
+      fn1 && fn1.apply(this, arguments);
+      fn2 && fn2.apply(this, arguments);
+    };
+  };
+
   function defVData() {
     return {
       // class: {},
@@ -555,7 +608,8 @@
     _createClass(VData, [{
       key: "merge",
       value: function merge(props) {
-        this._data = helper([this._data, props]);
+        mergeJsxProps$1([props], this._data);
+        return this;
       }
     }, {
       key: "class",
@@ -702,7 +756,7 @@
 
     return Creator;
   }(VData);
-  var keyAttrs = ['emitPrefix', 'className', 'value', 'name', 'title', 'native', 'info', 'hidden', 'visibility'];
+  var keyAttrs = ['emitPrefix', 'className', 'value', 'name', 'title', 'native', 'info', 'hidden', 'visibility', 'inject', 'model'];
   keyAttrs.forEach(function (attr) {
     Creator.prototype[attr] = function (value) {
       $set(this._data, attr, value);
@@ -915,6 +969,9 @@
 
     return VNode;
   }();
+  VNode.use({
+    fragment: 'fcFragment'
+  });
 
   var BaseParser =
   /*#__PURE__*/
@@ -945,6 +1002,7 @@
       this.formItemRefName = 'fi' + this.refName;
       this.root = [];
       this.ctrlRule = null;
+      this.modelEvent = 'input';
       this.update(handle);
       this.init();
     }
@@ -1173,7 +1231,7 @@
         var data = parser.vData.ref(refName).key('fc_item' + key).props('formCreate', this.$handle.fCreateApi).on('fc.subForm', function (subForm) {
           return _this3.$handle.addSubForm(parser, subForm);
         });
-        if (!custom) data.on('input', function (value) {
+        if (!custom) data.on(this.$handle.modelEvent(parser), function (value) {
           _this3.onInput(parser, value);
         }).props('value', this.$handle.getFormData(parser));
         this.$form.inputVData && this.$form.inputVData(parser, custom);
@@ -1734,6 +1792,12 @@
         this.changeStatus = false;
       }
     }, {
+      key: "modelEvent",
+      value: function modelEvent(parser) {
+        var modelList = this.fc.modelEvents;
+        return modelList[parser.type] || modelList[parser.originType] || parser.rule.model || parser.modelEvent;
+      }
+    }, {
       key: "loadRule",
       value: function loadRule(rules, child) {
         var _this = this;
@@ -2283,12 +2347,17 @@
         parsers = {},
         maker = makerFactory(),
         globalConfig = drive.getConfig(),
-        data = {};
+        data = {},
+        modelEvents = {};
 
     function setParser(id, parser) {
       id = toString$1(id);
       parsers[id.toLocaleLowerCase()] = parser;
       FormCreate.maker[id] = creatorFactory(id);
+    }
+
+    function setModel(id, model) {
+      modelEvents[id.toLocaleLowerCase()] = model;
     }
 
     function createParser() {
@@ -2394,6 +2463,7 @@
         this.fCreateApi = undefined;
         this.drive = drive;
         this.parsers = parsers;
+        this.modelEvents = modelEvents;
         this.vm = undefined;
         this.rules = Array.isArray(rules) ? rules : [];
         this.options = margeGlobal(deepExtend({
@@ -2511,6 +2581,13 @@
     Object.keys(drive.makers).forEach(function (name) {
       FormCreate.maker[name] = drive.makers[name];
     });
+
+    if (drive.modelEvents) {
+      Object.keys(drive.modelEvents).forEach(function (name) {
+        return setModel(name, drive.modelEvents[name]);
+      });
+    }
+
     return {
       FormCreate: FormCreate,
       install: install
@@ -2660,8 +2737,8 @@
     }
   }
 
-  var css = ".fc-upload-btn, .fc-files {\n    display: inline-block;\n    width: 58px;\n    height: 58px;\n    text-align: center;\n    line-height: 58px;\n    border: 1px solid #c0ccda;\n    border-radius: 4px;\n    overflow: hidden;\n    background: #fff;\n    position: relative;\n    -webkit-box-shadow: 2px 2px 5px rgba(0, 0, 0, .1);\n    box-shadow: 2px 2px 5px rgba(0, 0, 0, .1);\n    margin-right: 4px;\n    -webkit-box-sizing: border-box;\n    box-sizing: border-box;\n}\n\n.form-create .el-form-item__label {\n    line-height: 1;\n    height: 40px;\n    display: -webkit-box;\n    display: -ms-flexbox;\n    display: flex;\n    -webkit-box-pack: end;\n    -ms-flex-pack: end;\n    justify-content: flex-end;\n    -webkit-box-align: center;\n    -ms-flex-align: center;\n    align-items: center;\n}\n\n.form-create .form-create .el-form-item {\n    margin-bottom: 22px;\n}\n\n.form-create .form-create .el-form-item .el-form-item {\n    margin-bottom: 0px;\n}\n\n.__fc_h {\n    display: none;\n}\n\n.__fc_v {\n    visibility: hidden;\n}\n\n.fc-files img {\n    width: 100%;\n    height: 100%;\n    display: inline-block;\n    vertical-align: top;\n}\n\n.fc-upload-btn {\n    border: 1px dashed #c0ccda;\n    cursor: pointer;\n}\n\n.fc-upload .fc-upload-cover {\n    opacity: 0;\n    position: absolute;\n    top: 0;\n    bottom: 0;\n    left: 0;\n    right: 0;\n    background: rgba(0, 0, 0, .6);\n    -webkit-transition: opacity .3s;\n    -o-transition: opacity .3s;\n    transition: opacity .3s;\n}\n\n.fc-upload .fc-upload-cover i {\n    color: #fff;\n    font-size: 20px;\n    cursor: pointer;\n    margin: 0 2px;\n}\n\n.fc-files:hover .fc-upload-cover {\n    opacity: 1;\n}\n\n.fc-upload .el-upload {\n    display: block;\n}\n\n\n.form-create .el-form-item .el-rate {\n    margin-top: 10px;\n}\n\n.form-create .el-form-item .el-tree {\n    margin-top: 7px;\n}\n\n.fc-hide-btn .el-upload {\n    display: none;\n}\n";
-  var style = {"fc-upload-btn":"fc-upload-btn","fc-files":"fc-files","form-create":"form-create","el-form-item__label":"el-form-item__label","el-form-item":"el-form-item","__fc_h":"__fc_h","__fc_v":"__fc_v","fc-upload":"fc-upload","fc-upload-cover":"fc-upload-cover","el-upload":"el-upload","el-rate":"el-rate","el-tree":"el-tree","fc-hide-btn":"fc-hide-btn"};
+  var css = ".fc-upload-btn, .fc-files {\n    display: inline-block;\n    width: 58px;\n    height: 58px;\n    text-align: center;\n    line-height: 58px;\n    border: 1px solid #c0ccda;\n    border-radius: 4px;\n    overflow: hidden;\n    background: #fff;\n    position: relative;\n    -webkit-box-shadow: 2px 2px 5px rgba(0, 0, 0, .1);\n    box-shadow: 2px 2px 5px rgba(0, 0, 0, .1);\n    margin-right: 4px;\n    -webkit-box-sizing: border-box;\n    box-sizing: border-box;\n}\n\n.form-create .form-create .el-form-item {\n    margin-bottom: 22px;\n}\n\n.form-create .form-create .el-form-item .el-form-item {\n    margin-bottom: 0px;\n}\n\n.__fc_h {\n    display: none;\n}\n\n.__fc_v {\n    visibility: hidden;\n}\n\n.fc-files img {\n    width: 100%;\n    height: 100%;\n    display: inline-block;\n    vertical-align: top;\n}\n\n.fc-upload-btn {\n    border: 1px dashed #c0ccda;\n    cursor: pointer;\n}\n\n.fc-upload .fc-upload-cover {\n    opacity: 0;\n    position: absolute;\n    top: 0;\n    bottom: 0;\n    left: 0;\n    right: 0;\n    background: rgba(0, 0, 0, .6);\n    -webkit-transition: opacity .3s;\n    -o-transition: opacity .3s;\n    transition: opacity .3s;\n}\n\n.fc-upload .fc-upload-cover i {\n    color: #fff;\n    font-size: 20px;\n    cursor: pointer;\n    margin: 0 2px;\n}\n\n.fc-files:hover .fc-upload-cover {\n    opacity: 1;\n}\n\n.fc-upload .el-upload {\n    display: block;\n}\n\n\n.form-create .el-form-item .el-rate {\n    margin-top: 10px;\n}\n\n.form-create .el-form-item .el-tree {\n    margin-top: 7px;\n}\n\n.fc-hide-btn .el-upload {\n    display: none;\n}\n";
+  var style = {"fc-upload-btn":"fc-upload-btn","fc-files":"fc-files","form-create":"form-create","el-form-item":"el-form-item","__fc_h":"__fc_h","__fc_v":"__fc_v","fc-upload":"fc-upload","fc-upload-cover":"fc-upload-cover","el-upload":"el-upload","el-rate":"el-rate","el-tree":"el-tree","fc-hide-btn":"fc-hide-btn"};
   styleInject(css);
 
   var NAME$2 = 'fc-elm-frame';
@@ -4551,7 +4628,7 @@
   VNode.use(nodes);
   var drive = {
     ui: "element-ui",
-    version: "".concat("1.0.10"),
+    version: "".concat("1.0.11"),
     formRender: Form,
     components: components,
     parsers: parsers,

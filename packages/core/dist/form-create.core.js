@@ -1,10 +1,10 @@
 /*!
- * @form-create/core v1.0.10
+ * @form-create/core v1.0.11
  * (c) 2018-2020 xaboy
  * Github https://github.com/xaboy/form-create
  * Released under the MIT License.
  */
-import _mergeJsxProps from '@vue/babel-helper-vue-jsx-merge-props';
+import _mergeJSXProps from '@vue/babel-helper-vue-jsx-merge-props';
 import Vue from 'vue';
 
 function _typeof(obj) {
@@ -340,6 +340,59 @@ function $FormCreate(FormCreate, components) {
   };
 }
 
+var normalMerge = ['attrs', 'props', 'domProps'];
+var toArrayMerge = ['class', 'style', 'directives'];
+var functionalMerge = ['on', 'nativeOn'];
+
+var mergeJsxProps = function mergeJsxProps(objects, initial) {
+  return objects.reduce(function (a, b) {
+    for (var key in b) {
+      if (a[key]) {
+        if (normalMerge.indexOf(key) !== -1) {
+          a[key] = _objectSpread2({}, a[key], {}, b[key]);
+        } else if (toArrayMerge.indexOf(key) !== -1) {
+          var arrA = a[key] instanceof Array ? a[key] : [a[key]];
+          var arrB = b[key] instanceof Array ? b[key] : [b[key]];
+          a[key] = [].concat(_toConsumableArray(arrA), _toConsumableArray(arrB));
+        } else if (functionalMerge.indexOf(key) !== -1) {
+          for (var event in b[key]) {
+            if (a[key][event]) {
+              var _arrA = a[key][event] instanceof Array ? a[key][event] : [a[key][event]];
+
+              var _arrB = b[key][event] instanceof Array ? b[key][event] : [b[key][event]];
+
+              a[key][event] = [].concat(_toConsumableArray(_arrA), _toConsumableArray(_arrB));
+            } else {
+              a[key][event] = b[key][event];
+            }
+          }
+        } else if (key === 'hook') {
+          for (var hook in b[key]) {
+            if (a[key][hook]) {
+              a[key][hook] = mergeFn(a[key][hook], b[key][hook]);
+            } else {
+              a[key][hook] = b[key][hook];
+            }
+          }
+        } else {
+          a[key] = b[key];
+        }
+      } else {
+        a[key] = b[key];
+      }
+    }
+
+    return a;
+  }, initial);
+};
+
+var mergeFn = function mergeFn(fn1, fn2) {
+  return function () {
+    fn1 && fn1.apply(this, arguments);
+    fn2 && fn2.apply(this, arguments);
+  };
+};
+
 function defVData() {
   return {
     // class: {},
@@ -369,7 +422,8 @@ function () {
   _createClass(VData, [{
     key: "merge",
     value: function merge(props) {
-      this._data = _mergeJsxProps([this._data, props]);
+      mergeJsxProps([props], this._data);
+      return this;
     }
   }, {
     key: "class",
@@ -516,7 +570,7 @@ function (_VData) {
 
   return Creator;
 }(VData);
-var keyAttrs = ['emitPrefix', 'className', 'value', 'name', 'title', 'native', 'info', 'hidden', 'visibility'];
+var keyAttrs = ['emitPrefix', 'className', 'value', 'name', 'title', 'native', 'info', 'hidden', 'visibility', 'inject', 'model'];
 keyAttrs.forEach(function (attr) {
   Creator.prototype[attr] = function (value) {
     $set(this._data, attr, value);
@@ -729,6 +783,9 @@ function () {
 
   return VNode;
 }();
+VNode.use({
+  fragment: 'fcFragment'
+});
 
 var BaseParser =
 /*#__PURE__*/
@@ -759,6 +816,7 @@ function () {
     this.formItemRefName = 'fi' + this.refName;
     this.root = [];
     this.ctrlRule = null;
+    this.modelEvent = 'input';
     this.update(handle);
     this.init();
   }
@@ -987,7 +1045,7 @@ function () {
       var data = parser.vData.ref(refName).key('fc_item' + key).props('formCreate', this.$handle.fCreateApi).on('fc.subForm', function (subForm) {
         return _this3.$handle.addSubForm(parser, subForm);
       });
-      if (!custom) data.on('input', function (value) {
+      if (!custom) data.on(this.$handle.modelEvent(parser), function (value) {
         _this3.onInput(parser, value);
       }).props('value', this.$handle.getFormData(parser));
       this.$form.inputVData && this.$form.inputVData(parser, custom);
@@ -1548,6 +1606,12 @@ function () {
       this.changeStatus = false;
     }
   }, {
+    key: "modelEvent",
+    value: function modelEvent(parser) {
+      var modelList = this.fc.modelEvents;
+      return modelList[parser.type] || modelList[parser.originType] || parser.rule.model || parser.modelEvent;
+    }
+  }, {
     key: "loadRule",
     value: function loadRule(rules, child) {
       var _this = this;
@@ -2097,12 +2161,17 @@ function createFormCreate(drive) {
       parsers = {},
       maker = makerFactory(),
       globalConfig = drive.getConfig(),
-      data = {};
+      data = {},
+      modelEvents = {};
 
   function setParser(id, parser) {
     id = toString(id);
     parsers[id.toLocaleLowerCase()] = parser;
     FormCreate.maker[id] = creatorFactory(id);
+  }
+
+  function setModel(id, model) {
+    modelEvents[id.toLocaleLowerCase()] = model;
   }
 
   function createParser() {
@@ -2186,7 +2255,7 @@ function createFormCreate(drive) {
       },
       render: function render() {
         var h = arguments[0];
-        return h("form-create", _mergeJsxProps([{
+        return h("form-create", _mergeJSXProps([{
           "ref": 'fc'
         }, {
           "props": this.$data
@@ -2208,6 +2277,7 @@ function createFormCreate(drive) {
       this.fCreateApi = undefined;
       this.drive = drive;
       this.parsers = parsers;
+      this.modelEvents = modelEvents;
       this.vm = undefined;
       this.rules = Array.isArray(rules) ? rules : [];
       this.options = margeGlobal(deepExtend({
@@ -2325,6 +2395,13 @@ function createFormCreate(drive) {
   Object.keys(drive.makers).forEach(function (name) {
     FormCreate.maker[name] = drive.makers[name];
   });
+
+  if (drive.modelEvents) {
+    Object.keys(drive.modelEvents).forEach(function (name) {
+      return setModel(name, drive.modelEvents[name]);
+    });
+  }
+
   return {
     FormCreate: FormCreate,
     install: install

@@ -1,16 +1,17 @@
 /*!
- * @form-create/iview4 v1.0.11
+ * @form-create/ant-design-vue v1.0.11
  * (c) 2018-2020 xaboy
  * Github https://github.com/xaboy/form-create
  * Released under the MIT License.
  */
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('vue')) :
-  typeof define === 'function' && define.amd ? define(['exports', 'vue'], factory) :
-  (global = global || self, factory(global.formCreate = {}, global.Vue));
-}(this, (function (exports, Vue) { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('vue'), require('moment')) :
+  typeof define === 'function' && define.amd ? define(['exports', 'vue', 'moment'], factory) :
+  (global = global || self, factory(global.formCreate = {}, global.Vue, global.moment));
+}(this, (function (exports, Vue, moment) { 'use strict';
 
   Vue = Vue && Vue.hasOwnProperty('default') ? Vue['default'] : Vue;
+  moment = moment && moment.hasOwnProperty('default') ? moment['default'] : moment;
 
   function _typeof(obj) {
     if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
@@ -223,7 +224,7 @@
   function isUndef(v) {
     return v === undefined || v === null;
   }
-  function toString$1(val) {
+  function toString(val) {
     return val == null ? '' : _typeof(val) === 'object' ? JSON.stringify(val, null, 2) : String(val);
   }
   function extend(to, _from) {
@@ -248,9 +249,6 @@
   }
   function isType(arg, type) {
     return _toString.call(arg) === '[object ' + type + ']';
-  }
-  function isDate(arg) {
-    return isType(arg, 'Date');
   }
   function isPlainObject(arg) {
     return isType(arg, 'Object');
@@ -316,15 +314,6 @@
   function uniqueId() {
     return ++id;
   }
-  function toDefSlot(slot, $h) {
-    return [slot && isFunction(slot) ? slot($h) : slot];
-  }
-  function timeStampToDate(timeStamp) {
-    if (isDate(timeStamp)) return timeStamp;else {
-      var date = new Date(timeStamp);
-      return date.toString() === 'Invalid Date' ? timeStamp : date;
-    }
-  }
   function preventDefault(e) {
     e.preventDefault();
   }
@@ -341,14 +330,70 @@
     return '\n\x67\x69\x74\x68\x75\x62\x3a\x68\x74\x74\x70' + '\x73\x3a\x2f\x2f\x67\x69\x74\x68\x75\x62\x2e\x63\x6f' + '\x6d\x2f\x78\x61\x62\x6f\x79\x2f\x66\x6f\x72\x6d\x2d' + '\x63\x72\x65\x61\x74\x65\n\x64\x6f\x63\x75\x6d\x65' + '\x6e\x74\x3a\x68\x74\x74\x70\x3a\x2f\x2f\x77\x77\x77' + '\x2e\x66\x6f\x72\x6d\x2d\x63\x72\x65\x61\x74\x65\x2e' + '\x63\x6f\x6d' + (i || '');
   }
 
-  var NAME = 'fc-ivu-checkbox';
-  var checkbox = {
-    name: NAME,
+  function styleInject(css, ref) {
+    if (ref === void 0) ref = {};
+    var insertAt = ref.insertAt;
+
+    if (!css || typeof document === 'undefined') {
+      return;
+    }
+
+    var head = document.head || document.getElementsByTagName('head')[0];
+    var style = document.createElement('style');
+    style.type = 'text/css';
+
+    if (insertAt === 'top') {
+      if (head.firstChild) {
+        head.insertBefore(style, head.firstChild);
+      } else {
+        head.appendChild(style);
+      }
+    } else {
+      head.appendChild(style);
+    }
+
+    if (style.styleSheet) {
+      style.styleSheet.cssText = css;
+    } else {
+      style.appendChild(document.createTextNode(css));
+    }
+  }
+
+  var css = ".fc-upload-btn, .fc-files {\n    display: inline-block;\n    width: 104px;\n    height: 104px;\n    text-align: center;\n    line-height: 104px;\n    border: 1px solid #c0ccda;\n    border-radius: 4px;\n    overflow: hidden;\n    background: #fff;\n    position: relative;\n    box-shadow: 2px 2px 5px rgba(0, 0, 0, .1);\n    margin-right: 4px;\n    box-sizing: border-box;\n}\n\n.form-create .form-create .ant-form-item {\n    margin-bottom: 22px;\n}\n\n.form-create .form-create .ant-form-item .ant-form-item {\n    margin-bottom: 0px;\n}\n\n.form-create .form-create .ant-form-item.ant-form-item-with-help {\n    margin-bottom: 3px;\n}\n\n.form-create .form-create .ant-form-item .ant-form-item.ant-form-item-with-help {\n    margin-bottom: -22px;\n}\n\n.__fc_h {\n    display: none;\n}\n\n.__fc_v {\n    visibility: hidden;\n}\n\n.fc-files img {\n    width: 100%;\n    height: 100%;\n    display: inline-block;\n    vertical-align: top;\n}\n\n.fc-upload .fc-upload-cover {\n    opacity: 0;\n    position: absolute;\n    top: 0;\n    bottom: 0;\n    left: 0;\n    right: 0;\n    background: rgba(0, 0, 0, .6);\n    transition: opacity .3s;\n}\n\n.fc-upload .fc-upload-cover i {\n    color: #fff;\n    font-size: 20px;\n    cursor: pointer;\n    margin: 0 2px;\n}\n\n.fc-files:hover .fc-upload-cover {\n    opacity: 1;\n}\n\n.fc-upload .ant-upload {\n    display: block;\n}\n\n.fc-hide-btn .ant-upload {\n    display: none;\n}\n";
+  var style = {"fc-upload-btn":"fc-upload-btn","fc-files":"fc-files","form-create":"form-create","ant-form-item":"ant-form-item","ant-form-item-with-help":"ant-form-item-with-help","__fc_h":"__fc_h","__fc_v":"__fc_v","fc-upload":"fc-upload","fc-upload-cover":"fc-upload-cover","ant-upload":"ant-upload","fc-hide-btn":"fc-hide-btn"};
+  styleInject(css);
+
+  var parseFile = function parseFile(file, uid) {
+    return {
+      url: file,
+      name: getFileName(file),
+      status: 'done',
+      uid: uid + 1
+    };
+  },
+      getFileName = function getFileName(file) {
+    return toString(file).split('/').pop();
+  },
+      parseUpload = function parseUpload(file) {
+    return {
+      url: file.url,
+      file: file
+    };
+  };
+
+  var upload = {
+    name: 'fc-antd-update',
     props: {
-      options: {
-        type: Array,
+      limit: {
+        type: Number,
+        default: 0
+      },
+      ctx: {
+        type: Object,
         default: function _default() {
-          return [];
+          return {
+            props: {}
+          };
         }
       },
       children: {
@@ -357,143 +402,110 @@
           return [];
         }
       },
-      ctx: {
-        type: Object,
-        default: function _default() {
-          return {};
-        }
-      },
       value: {
         type: Array,
         default: function _default() {
           return [];
         }
-      }
-    },
-    watch: {
-      value: function value() {
-        this.update();
+      },
+      onSuccess: {
+        type: Function,
+        required: true
       }
     },
     data: function data() {
+      var fileList = this.value.map(parseFile);
       return {
-        trueValue: [],
-        unique: uniqueId()
+        defaultUploadList: fileList,
+        previewImage: '',
+        previewVisible: false,
+        uploadList: fileList.map(parseUpload)
       };
     },
-    methods: {
-      onInput: function onInput(n) {
-        this.$emit('input', this.options.filter(function (opt) {
-          return n.indexOf(opt.label) !== -1;
-        }).map(function (opt) {
-          return opt.value;
-        }));
-      },
-      update: function update() {
-        var _this = this;
-
-        this.trueValue = this.value ? this.options.filter(function (opt) {
-          return _this.value.indexOf(opt.value) !== -1;
-        }).map(function (option) {
-          return option.label;
-        }) : [];
+    watch: {
+      value: function value(n) {
+        var fileList = n.map(parseFile);
+        this.$refs.upload.sFileList = fileList;
+        this.uploadList = fileList.map(parseUpload);
       }
     },
-    created: function created() {
-      this.update();
+    methods: {
+      initChildren: function initChildren() {
+        if (!hasSlot(this.children, 'default')) this.children.push(this.makeBtn());
+      },
+      makeBtn: function makeBtn() {
+        var h = this.$createElement;
+        return h("div", [h("AIcon", {
+          "attrs": {
+            "type": "plus"
+          }
+        })]);
+      },
+      handlePreview: function handlePreview(file) {
+        this.previewImage = file.url;
+        this.previewVisible = true;
+      },
+      handleCancel: function handleCancel() {
+        this.previewVisible = false;
+      },
+      handleChange: function handleChange(_ref) {
+        var file = _ref.file,
+            fileList = _ref.fileList;
+        var list = this.uploadList;
+
+        if (file.status === 'done') {
+          this.onSuccess(file, fileList);
+          if (file.url) list.push({
+            url: file.url,
+            file: fileList[fileList.length - 1]
+          });
+          this.input();
+        } else if (file.status === 'removed') {
+          list.forEach(function (v, i) {
+            if (v.file === file) {
+              list.splice(i, 1);
+            }
+          });
+          this.input();
+        }
+      },
+      input: function input() {
+        this.$emit('input', this.uploadList.map(function (v) {
+          return v.url;
+        }));
+      }
     },
     render: function render() {
-      var _this2 = this;
-
       var h = arguments[0];
-      return h("CheckboxGroup", helper([{}, this.ctx, {
+      var isShow = !this.limit || this.limit > this.uploadList.length;
+      this.initChildren();
+      return h("div", {
+        "class": _defineProperty({}, style['fc-hide-btn'], !isShow)
+      }, [h("AUpload", helper([{}, this.ctx, {
         "on": {
-          "input": this.onInput
+          "preview": this.handlePreview,
+          "change": this.handleChange
         },
-        "model": {
-          value: _this2.trueValue,
-          callback: function callback($$v) {
-            _this2.trueValue = $$v;
-          }
+        "ref": "upload",
+        "attrs": {
+          "defaultFileList": this.defaultUploadList
         }
-      }]), [this.options.map(function (opt, index) {
-        var props = _objectSpread2({}, opt);
-
-        delete props.value;
-        return h("Checkbox", {
-          "props": _objectSpread2({}, props),
-          "key": NAME + index + _this2.unique
-        });
-      }).concat(this.chlidren)]);
+      }]), [this.children]), h("aModal", {
+        "attrs": {
+          "visible": this.previewVisible,
+          "footer": null
+        },
+        "on": {
+          "cancel": this.handleCancel
+        }
+      }, [h("img", {
+        "style": "width: 100%",
+        "attrs": {
+          "src": this.previewImage
+        }
+      })])]);
     }
   };
-
-  var iviewConfig = {
-    _v: 4,
-    resetBtnType: 'default',
-    resetBtnIcon: 'md-refresh',
-    submitBtnIcon: 'ios-share',
-    fileIcon: 'md-document',
-    fileUpIcon: 'ios-folder-open',
-    imgUpIcon: 'md-images',
-    infoIcon: 'ios-information-circle-outline',
-    removeIcon: 'ios-remove-circle-outline',
-    addIcon: 'ios-add-circle-outline'
-  };
-  function getConfig() {
-    return {
-      form: {
-        inline: false,
-        labelPosition: 'right',
-        labelWidth: 125,
-        showMessage: true,
-        autocomplete: 'off',
-        size: undefined
-      },
-      row: {
-        gutter: 0,
-        type: undefined,
-        align: undefined,
-        justify: undefined,
-        className: undefined
-      },
-      info: {
-        type: 'poptip',
-        trigger: 'hover',
-        placement: 'top-start',
-        wordWrap: true,
-        icon: iviewConfig.infoIcon
-      },
-      submitBtn: {
-        type: 'primary',
-        size: 'large',
-        shape: undefined,
-        long: true,
-        htmlType: 'button',
-        disabled: false,
-        icon: iviewConfig.submitBtnIcon,
-        innerText: '提交',
-        loading: false,
-        show: true,
-        col: undefined,
-        click: undefined
-      },
-      resetBtn: {
-        type: iviewConfig.resetBtnType,
-        size: 'large',
-        shape: undefined,
-        long: true,
-        htmlType: 'button',
-        disabled: false,
-        icon: iviewConfig.resetBtnIcon,
-        innerText: '重置',
-        loading: false,
-        show: false,
-        col: undefined,
-        click: undefined
-      }
-    };
-  }
 
   var formCreateName = 'FormCreate';
   function $FormCreate(FormCreate, components) {
@@ -671,7 +683,7 @@
           this.merge(classList);
         } else {
           this.merge({
-            class: _defineProperty({}, toString$1(classList), !!status)
+            class: _defineProperty({}, toString(classList), !!status)
           });
         }
 
@@ -718,7 +730,7 @@
       if (isPlainObject(obj)) {
         this.merge(_defineProperty({}, key, obj));
       } else {
-        this.merge(_defineProperty({}, key, _defineProperty({}, toString$1(obj), val)));
+        this.merge(_defineProperty({}, key, _defineProperty({}, toString(obj), val)));
       }
 
       return this;
@@ -1006,7 +1018,7 @@
       key: "use",
       value: function use(nodes) {
         Object.keys(nodes).forEach(function (k) {
-          VNode.prototype[toString$1(k).toLocaleLowerCase()] = VNode.prototype[k] = function (data, VNodeFn) {
+          VNode.prototype[toString(k).toLocaleLowerCase()] = VNode.prototype[k] = function (data, VNodeFn) {
             return this.make(nodes[k], data, VNodeFn);
           };
         });
@@ -1031,7 +1043,7 @@
       this.id = id;
       this.watch = [];
       this.originType = rule.type;
-      this.type = toString$1(rule.type).toLocaleLowerCase();
+      this.type = toString(rule.type).toLocaleLowerCase();
       this.isDef = true;
       this.el = undefined;
 
@@ -1918,7 +1930,7 @@
       value: function createParser(rule) {
         var id = '' + uniqueId(),
             parsers = this.fc.parsers,
-            type = toString$1(rule.type).toLocaleLowerCase();
+            type = toString(rule.type).toLocaleLowerCase();
         var Parser = parsers[type] ? parsers[type] : BaseParser;
         return new Parser(this, rule, id);
       }
@@ -2375,9 +2387,9 @@
     });
   }
 
-  var NAME$1 = 'fcFragment';
+  var NAME = 'fcFragment';
   var fragment = {
-    name: NAME$1,
+    name: NAME,
     functional: true,
     props: {
       children: Array
@@ -2397,7 +2409,7 @@
         modelEvents = {};
 
     function setParser(id, parser) {
-      id = toString$1(id);
+      id = toString(id);
       parsers[id.toLocaleLowerCase()] = parser;
       FormCreate.maker[id] = creatorFactory(id);
     }
@@ -2424,7 +2436,7 @@
     }
 
     function component(id, component) {
-      id = toString$1(id);
+      id = toString(id);
 
       var _id = id.toLocaleLowerCase();
 
@@ -2702,14 +2714,15 @@
     return BaseForm;
   }();
 
-  var vNode = new VNode();
+  var vNode = new VNode({});
 
   var Modal = function Modal(options, cb) {
+    if (isUndef(options.width)) options.width = '30%';
     return {
       name: 'fc-modal',
       data: function data() {
         return _objectSpread2({
-          value: true
+          visible: true
         }, options);
       },
       render: function render() {
@@ -2717,16 +2730,18 @@
         return vNode.modal({
           props: this.$data,
           on: {
-            'on-visible-change': this.remove
+            cancel: this.onClose
           }
         }, [cb(vNode, this)]);
       },
       methods: {
         onClose: function onClose() {
-          this.value = false;
-        },
-        remove: function remove() {
-          this.$el.parentNode.removeChild(this.$el);
+          var _this = this;
+
+          this.visible = false;
+          this.$nextTick(function () {
+            return _this.$destroy();
+          });
         }
       }
     };
@@ -2737,58 +2752,10 @@
         $vm = new $modal().$mount();
     window.document.body.appendChild($vm.$el);
   }
-  function defaultOnHandle(src, title) {
-    mount({
-      title: title,
-      footerHide: true
-    }, function (vNode) {
-      return vNode.make('img', {
-        style: {
-          width: '100%'
-        },
-        attrs: {
-          src: src
-        }
-      });
-    });
-  }
 
-  function styleInject(css, ref) {
-    if (ref === void 0) ref = {};
-    var insertAt = ref.insertAt;
-
-    if (!css || typeof document === 'undefined') {
-      return;
-    }
-
-    var head = document.head || document.getElementsByTagName('head')[0];
-    var style = document.createElement('style');
-    style.type = 'text/css';
-
-    if (insertAt === 'top') {
-      if (head.firstChild) {
-        head.insertBefore(style, head.firstChild);
-      } else {
-        head.appendChild(style);
-      }
-    } else {
-      head.appendChild(style);
-    }
-
-    if (style.styleSheet) {
-      style.styleSheet.cssText = css;
-    } else {
-      style.appendChild(document.createTextNode(css));
-    }
-  }
-
-  var css = ".fc-upload-btn, .fc-files {\n    display: inline-block;\n    width: 58px;\n    height: 58px;\n    text-align: center;\n    line-height: 58px;\n    border: 1px solid #c0ccda;\n    border-radius: 4px;\n    overflow: hidden;\n    background: #fff;\n    position: relative;\n    box-shadow: 2px 2px 5px rgba(0, 0, 0, .1);\n    margin-right: 4px;\n    box-sizing: border-box;\n}\n\n.form-create .form-create .ivu-form-item {\n    margin-bottom: 24px;\n}\n.form-create .form-create .ivu-form-item .ivu-form-item {\n    margin-bottom: 0px;\n}\n\n.form-create .fc-group .ivu-icon+.ivu-icon{\n    margin-left: 3px;\n}\n\n.form-create .fc-upload .ivu-icon{\n    vertical-align: middle;\n}\n\n.form-create .__fc_h {\n    display: none;\n}\n\n.form-create .__fc_v {\n    visibility: hidden;\n}\n\n.fc-files img {\n    width: 100%;\n    height: 100%;\n    display: inline-block;\n    vertical-align: top;\n}\n\n.fc-upload-btn {\n    border: 1px dashed #c0ccda;\n    cursor: pointer;\n}\n\n.fc-upload .fc-upload-cover {\n    opacity: 0;\n    position: absolute;\n    top: 0;\n    bottom: 0;\n    left: 0;\n    right: 0;\n    background: rgba(0, 0, 0, .6);\n    transition: opacity .3s;\n}\n\n.fc-upload .fc-upload-cover i {\n    color: #fff;\n    font-size: 20px;\n    cursor: pointer;\n    margin: 0 2px;\n}\n\n.fc-files:hover .fc-upload-cover {\n    opacity: 1;\n}\n\n.fc-hide-btn .ivu-upload .ivu-upload {\n    display: none;\n}\n\n.fc-upload .ivu-upload-list {\n    margin-top: 0;\n}\n";
-  var style = {"fc-upload-btn":"fc-upload-btn","fc-files":"fc-files","form-create":"form-create","ivu-form-item":"ivu-form-item","fc-group":"fc-group","ivu-icon":"ivu-icon","fc-upload":"fc-upload","__fc_h":"__fc_h","__fc_v":"__fc_v","fc-upload-cover":"fc-upload-cover","fc-hide-btn":"fc-hide-btn","ivu-upload":"ivu-upload","ivu-upload-list":"ivu-upload-list"};
-  styleInject(css);
-
-  var NAME$2 = 'fc-ivu-frame';
+  var NAME$1 = 'fc-antd-frame';
   var frame = {
-    name: NAME$2,
+    name: NAME$1,
     props: {
       type: {
         type: String,
@@ -2812,7 +2779,7 @@
       },
       icon: {
         type: String,
-        default: iviewConfig.fileUpIcon
+        default: 'folder'
       },
       width: {
         type: [Number, String],
@@ -2874,7 +2841,8 @@
       onHandle: {
         type: Function,
         default: function _default(src) {
-          defaultOnHandle(src, this.modalTitle);
+          this.previewImage = src;
+          this.previewVisible = true; //defaultOnHandle(src, this.modalTitle)
         }
       },
       modal: {
@@ -2892,7 +2860,9 @@
       return {
         modalVm: null,
         fileList: toArray(this.value),
-        unique: uniqueId()
+        unique: uniqueId(),
+        previewVisible: false,
+        previewImage: ''
       };
     },
     watch: {
@@ -2902,19 +2872,19 @@
       fileList: function fileList(n) {
         var val = this.maxLength === 1 ? n[0] || '' : n;
         this.$emit('input', val);
-        this.$emit('on-change', val);
-      },
-      src: function src(n) {
-        this.modalVm && (this.modalVm.src = n);
+        this.$emit('change', val);
       }
     },
     methods: {
       key: function key(unique) {
-        return NAME$2 + unique + this.unique;
+        return NAME$1 + unique + this.unique;
       },
       closeModel: function closeModel() {
         this.modalVm && this.modalVm.onClose();
         this.modalVm = null;
+      },
+      handleCancel: function handleCancel() {
+        this.previewVisible = false;
       },
       showModel: function showModel() {
         var _this = this;
@@ -2929,13 +2899,12 @@
             closeBtnText = _this$$props.closeBtnText;
         mount(_objectSpread2({
           width: width,
-          title: title,
-          src: src
+          title: title
         }, this.modal), function (vNode, _vm) {
           _this.modalVm = _vm;
           return [vNode.make('iframe', {
             attrs: {
-              src: _vm.src
+              src: src
             },
             style: {
               'height': height,
@@ -3001,21 +2970,31 @@
           value: this.fileList.map(function (v) {
             return _this2.getSrc(v);
           }).toString(),
-          icon: this.icon,
-          readonly: true,
-          clearable: false
+          readonly: true
         };
-        return h("Input", helper([{}, {
+        return h("AInput", helper([{}, {
           "props": props
-        }, {}, {
-          "on": {
-            'on-click': function onClick() {
-              return _this2.showModel();
-            }
-          }
         }, {
           "key": this.key('input')
-        }]));
+        }]), [h("AIcon", {
+          "attrs": {
+            "type": this.icon
+          },
+          "slot": "addonAfter",
+          "on": {
+            "click": this.showModel
+          }
+        }), this.fileList.length ? h("AIcon", {
+          "attrs": {
+            "type": "close-circle"
+          },
+          "slot": "suffix",
+          "on": {
+            "click": function click() {
+              return _this2.fileList = [];
+            }
+          }
+        }) : null]);
       },
       makeGroup: function makeGroup(children) {
         var h = this.$createElement;
@@ -3052,53 +3031,49 @@
         var _this3 = this;
 
         var h = this.$createElement;
-        return h("icon", helper([{}, {
-          "props": {
-            type: this.handleIcon === true || this.handleIcon === undefined ? 'ios-eye-outline' : this.handleIcon
-          }
-        }, {
+        return h("AIcon", {
+          "attrs": {
+            "type": this.handleIcon === true || this.handleIcon === undefined ? 'eye-o' : this.handleIcon
+          },
           "on": {
             "click": function click() {
               return _this3.handleClick(val);
             }
           },
           "key": this.key('hi' + index)
-        }]));
+        });
       },
       makeRemoveIcon: function makeRemoveIcon(val, index) {
         var _this4 = this;
 
         var h = this.$createElement;
-        return h("icon", helper([{}, {
-          "props": {
-            type: 'ios-trash-outline'
-          }
-        }, {
+        return h("AIcon", {
+          "attrs": {
+            "type": "delete"
+          },
           "on": {
             "click": function click() {
               return _this4.handleRemove(val);
             }
           },
           "key": this.key('ri' + index)
-        }]));
+        });
       },
       makeFiles: function makeFiles() {
         var _this5 = this;
 
         var h = this.$createElement;
         return this.makeGroup(this.fileList.map(function (src, index) {
-          return _this5.makeItem(index, [h("icon", helper([{}, {
-            "props": {
-              type: iviewConfig.fileIcon,
-              size: 40
-            }
-          }, {
+          return _this5.makeItem(index, [h("AIcon", {
+            "attrs": {
+              "type": "file"
+            },
             "on": {
               "click": function click() {
                 return _this5.handleClick(src);
               }
             }
-          }])), _this5.makeIcons(src, index)]);
+          }), _this5.makeIcons(src, index)]);
         }));
       },
       makeImages: function makeImages() {
@@ -3125,12 +3100,12 @@
             }
           },
           "key": this.key('btn')
-        }, [h("icon", helper([{}, {
-          "props": {
-            type: this.icon,
-            size: 20
+        }, [h("AIcon", {
+          "attrs": {
+            "type": this.icon,
+            "theme": "filled"
           }
-        }]))]);
+        })]);
       },
       handleClick: function handleClick(src) {
         if (this.disabled) return;
@@ -3149,405 +3124,31 @@
       }
     },
     render: function render() {
-      var type = this.type;
-      if (type === 'input') return this.makeInput();else if (type === 'image') return this.makeImages();else return this.makeFiles();
-    }
-  };
-
-  var NAME$3 = 'fc-ivu-radio';
-  var radio = {
-    name: NAME$3,
-    functional: true,
-    props: {
-      options: {
-        type: Array,
-        default: function _default() {
-          return [];
-        }
-      },
-      unique: {
-        default: function _default() {
-          return uniqueId();
-        }
-      }
-    },
-    render: function render(h, ctx) {
-      return h("RadioGroup", helper([{}, ctx.data]), [ctx.props.options.map(function (opt, index) {
-        var props = _objectSpread2({}, opt);
-
-        delete props.value;
-        return h("Radio", {
-          "props": _objectSpread2({}, props),
-          "key": NAME$3 + index + ctx.props.unique
-        });
-      }).concat(ctx.chlidren)]);
-    }
-  };
-
-  var NAME$4 = 'fc-ivu-select';
-  var select = {
-    name: NAME$4,
-    functional: true,
-    props: {
-      options: {
-        type: Array,
-        default: function _default() {
-          return [];
-        }
-      },
-      unique: {
-        default: function _default() {
-          return uniqueId();
-        }
-      }
-    },
-    render: function render(h, ctx) {
-      return h("Select", helper([{}, ctx.data]), [ctx.props.options.map(function (props, index) {
-        var slot = props.slot ? toDefSlot(props.slot, h) : [];
-        return h("Option", {
-          "props": _objectSpread2({}, props),
-          "key": NAME$4 + index + ctx.props.unique
-        }, [slot]);
-      }).concat(ctx.chlidren)]);
-    }
-  };
-
-  var tree = {
-    name: 'fc-ivu-tree',
-    props: {
-      ctx: {
-        type: Object,
-        default: function _default() {
-          return {
-            props: {}
-          };
-        }
-      },
-      children: {
-        type: Array,
-        default: function _default() {
-          return [];
-        }
-      },
-      type: {
-        type: String,
-        default: 'checked'
-      },
-      value: {
-        type: [Array, String, Number],
-        default: function _default() {
-          return [];
-        }
-      }
-    },
-    data: function data() {
-      return {
-        treeData: []
-      };
-    },
-    watch: {
-      value: function value(n) {
-        this.setStatus(n);
-      }
-    },
-    methods: {
-      setStatus: function setStatus(value) {
-        var n = toArray(value);
-        var data = this.$refs.tree.data;
-        this.type === 'selected' ? this.selected(data, n) : this.checked(data, n);
-      },
-      selected: function selected(_data, value) {
-        var _this = this;
-
-        _data.forEach(function (node) {
-          _this.$set(node, 'selected', value.indexOf(node.id) !== -1);
-
-          if (node.children !== undefined && Array.isArray(node.children)) _this.selected(node.children, value);
-        });
-      },
-      checked: function checked(_data, value) {
-        var _this2 = this;
-
-        _data.forEach(function (node) {
-          _this2.$set(node, 'checked', value.indexOf(node.id) !== -1);
-
-          if (node.children !== undefined && Array.isArray(node.children)) _this2.checked(node.children, value);
-        });
-      },
-      makeTree: function makeTree() {
-        var h = this.$createElement;
-        return h("Tree", helper([{
-          "ref": "tree"
-        }, this.ctx]), [this.children]);
-      },
-      updateTreeData: function updateTreeData() {
-        var type = this.type.toLocaleLowerCase();
-        if (type === 'selected') this.treeData = this.$refs.tree.getSelectedNodes();else this.treeData = this.$refs.tree.getCheckedNodes();
-        this.$emit('input', this.treeData.map(function (node) {
-          return node.id;
-        }));
-      }
-    },
-    render: function render() {
-      return this.makeTree();
-    },
-    mounted: function mounted() {
-      var _this3 = this;
-
-      this.$nextTick(function () {
-        _this3.setStatus(_this3.value);
-
-        _this3.$watch(function () {
-          return _this3.$refs.tree.flatState;
-        }, function () {
-          return _this3.updateTreeData();
-        });
-      });
-    }
-  };
-
-  function parseFile(file) {
-    return {
-      url: file,
-      name: getFileName(file)
-    };
-  }
-
-  function getFileName(file) {
-    return toString$1(file).split('/').pop();
-  }
-
-  var NAME$5 = 'fc-ivu-upload';
-  var upload = {
-    name: NAME$5,
-    props: {
-      ctx: {
-        type: Object,
-        default: function _default() {
-          return {
-            props: {}
-          };
-        }
-      },
-      children: {
-        type: Array,
-        default: function _default() {
-          return [];
-        }
-      },
-      onHandle: {
-        type: Function,
-        default: function _default(file) {
-          defaultOnHandle(file.url, this.modalTitle);
-        }
-      },
-      uploadType: {
-        type: String,
-        default: 'file'
-      },
-      maxLength: {
-        type: Number,
-        default: 0
-      },
-      allowRemove: {
-        type: Boolean,
-        default: true
-      },
-      modalTitle: {
-        type: String,
-        default: '预览'
-      },
-      handleIcon: [String, Boolean],
-      value: [Array, String]
-    },
-    data: function data() {
-      return {
-        uploadList: [],
-        unique: uniqueId()
-      };
-    },
-    created: function created() {
-      if (this.ctx.props.showUploadList === undefined) this.ctx.props.showUploadList = false;
-      this.ctx.props.defaultFileList = toArray(this.value).map(parseFile);
-    },
-    watch: {
-      value: function value(n) {
-        if (this.$refs.upload.fileList.every(function (file) {
-          return !file.status || file.status === 'finished';
-        })) {
-          this.$refs.upload.fileList = toArray(n).map(parseFile);
-          this.uploadList = this.$refs.upload.fileList;
-        }
-      },
-      maxLength: function maxLength(n, o) {
-        if (o === 1 || n === 1) this.update();
-      }
-    },
-    methods: {
-      key: function key(unique) {
-        return NAME$5 + unique + this.unique;
-      },
-      isDisabled: function isDisabled() {
-        return this.ctx.props.disabled === true;
-      },
-      onRemove: function onRemove(file) {
-        if (this.isDisabled()) return;
-        this.$refs.upload.handleRemove(file);
-      },
-      handleClick: function handleClick(file) {
-        if (this.isDisabled()) return;
-        this.onHandle(file);
-      },
-      makeDefaultBtn: function makeDefaultBtn() {
-        var h = this.$createElement;
-        return h("div", {
-          "class": style['fc-upload-btn']
-        }, [h("icon", helper([{}, {
-          "props": {
-            type: this.uploadType === 'file' ? 'ios-cloud-upload-outline' : iviewConfig.imgUpIcon,
-            size: 20
-          }
-        }]))]);
-      },
-      makeItem: function makeItem(file, index) {
-        var h = this.$createElement;
-        return this.uploadType === 'image' ? h("img", {
-          "attrs": {
-            "src": file.url
-          },
-          "key": this.key('img' + index)
-        }) : h("icon", helper([{}, {
-          "props": {
-            type: iviewConfig.fileIcon,
-            size: 40
-          }
-        }, {
-          "key": this.key('i' + index)
-        }]));
-      },
-      makeRemoveIcon: function makeRemoveIcon(file, index) {
-        var _this = this;
-
-        var h = this.$createElement;
-        return h("icon", {
-          "attrs": {
-            "type": 'ios-trash-outline'
-          },
-          "on": {
-            "click": function click() {
-              return _this.onRemove(file);
-            }
-          },
-          "key": this.key('ri' + index)
-        });
-      },
-      makeHandleIcon: function makeHandleIcon(file, index) {
-        var _this2 = this;
-
-        var h = this.$createElement;
-        return h("icon", {
-          "attrs": {
-            "type": this.handleIcon === true || this.handleIcon === undefined ? 'ios-eye-outline' : this.handleIcon
-          },
-          "on": {
-            "click": function click() {
-              return _this2.handleClick(file);
-            }
-          },
-          "key": this.key('hi' + index)
-        });
-      },
-      makeProgress: function makeProgress(file, index) {
-        var h = this.$createElement;
-        return h("Progress", helper([{}, {
-          "props": {
-            percent: file.percentage,
-            hideInfo: true
-          }
-        }, {
-          "style": "width:90%",
-          "key": this.key('pg' + index)
-        }]));
-      },
-      makeIcons: function makeIcons(file, index) {
-        var h = this.$createElement;
-        var icons = [];
-
-        if (this.allowRemove || this.handleIcon !== false) {
-          if (this.uploadType !== 'file' && this.handleIcon !== false || this.uploadType === 'file' && this.handleIcon) icons.push(this.makeHandleIcon(file, index));
-          if (this.allowRemove) icons.push(this.makeRemoveIcon(file, index));
-          return h("div", {
-            "class": style['fc-upload-cover']
-          }, [icons]);
-        }
-      },
-      makeFiles: function makeFiles() {
-        var _this3 = this;
-
-        var h = this.$createElement;
-        return this.uploadList.map(function (file, index) {
-          return h("div", {
-            "key": _this3.key(index),
-            "class": style['fc-files']
-          }, [file.showProgress ? _this3.makeProgress(file, index) : [_this3.makeItem(file, index), _this3.makeIcons(file, index)]]);
-        });
-      },
-      makeUpload: function makeUpload() {
-        var h = this.$createElement;
-        return h("Upload", helper([{
-          "ref": "upload",
-          "style": {
-            display: 'inline-block'
-          }
-        }, this.ctx, {
-          "key": this.key('upload')
-        }]), [this.children]);
-      },
-      initChildren: function initChildren() {
-        if (!hasSlot(this.children, 'default')) this.children.push(this.makeDefaultBtn());
-      },
-      update: function update() {
-        var files = this.$refs.upload.fileList.map(function (file) {
-          return file.url;
-        }).filter(function (url) {
-          return url !== undefined;
-        });
-        this.$emit('input', this.maxLength === 1 ? files[0] || '' : files);
-      }
-    },
-    render: function render() {
-      var _class;
-
       var h = arguments[0];
-      var isShow = !this.maxLength || this.maxLength > this.uploadList.length;
-
-      if (this.$refs.upload) {
-        if (this.ctx.props.showUploadList === undefined) this.ctx.props.showUploadList = this.$refs.upload.showUploadList;
-        this.ctx.props.defaultFileList = this.$refs.upload.defaultFileList;
-      }
-
-      this.initChildren();
-      return h("div", {
-        "class": (_class = {}, _defineProperty(_class, style['fc-upload'], true), _defineProperty(_class, style['fc-hide-btn'], !isShow), _class)
-      }, [[this.ctx.props.showUploadList ? [] : this.makeFiles(), this.makeUpload()]]);
-    },
-    mounted: function mounted() {
-      var _this4 = this;
-
-      this.uploadList = this.$refs.upload.fileList;
-      this.$watch(function () {
-        return _this4.$refs.upload.fileList;
-      }, function () {
-        _this4.update();
-      }, {
-        deep: true
-      });
+      var type = this.type;
+      var Node;
+      if (type === 'input') Node = this.makeInput();else if (type === 'image') Node = this.makeImages();else Node = this.makeFiles();
+      return h("div", [Node, h("aModal", {
+        "attrs": {
+          "visible": this.previewVisible,
+          "footer": null
+        },
+        "on": {
+          "cancel": this.handleCancel
+        }
+      }, [h("img", {
+        "attrs": {
+          "alt": "example",
+          "src": this.previewImage
+        },
+        "style": "width: 100%"
+      })])]);
     }
   };
 
-  var NAME$6 = 'fc-ivu-group';
+  var NAME$2 = 'fc-antd-group';
   var group = {
-    name: NAME$6,
+    name: NAME$2,
     props: {
       rule: Object,
       rules: Array,
@@ -3574,7 +3175,15 @@
       return {
         config: {
           submitBtn: false,
-          resetBtn: false
+          resetBtn: false,
+          form: {
+            labelCol: {
+              span: 3
+            },
+            wrapperCol: {
+              span: 18
+            }
+          }
         },
         len: 0,
         cacheRule: {},
@@ -3691,12 +3300,12 @@
         var _this5 = this;
 
         var h = this.$createElement;
-        return h("Icon", {
+        return h("AIcon", {
           "key": "a".concat(key),
           "attrs": {
-            "type": iviewConfig.addIcon
+            "type": "plus-circle"
           },
-          "style": "font-size:28px;cursor:".concat(this.disabled ? 'not-allowed;color:#c9cdd4' : 'pointer;color:#000'),
+          "style": "font-size:28px;cursor:".concat(this.disabled ? 'not-allowed;color:#c9cdd4' : 'pointer', ";"),
           "on": {
             "click": function click() {
               return !_this5.disabled && _this5.addRule(true);
@@ -3708,12 +3317,12 @@
         var _this6 = this;
 
         var h = this.$createElement;
-        return h("Icon", {
+        return h("AIcon", {
           "key": "d".concat(key),
           "attrs": {
-            "type": iviewConfig.removeIcon
+            "type": "minus-circle"
           },
-          "style": "font-size:28px;cursor:".concat(this.disabled ? 'not-allowed;color:#c9cdd4' : 'pointer', ";"),
+          "style": "font-size:28px;cursor:".concat(this.disabled ? 'not-allowed;color:#c9cdd4' : 'pointer;color:#606266', ";"),
           "on": {
             "click": function click() {
               if (_this6.disabled) return;
@@ -3743,34 +3352,33 @@
 
       var h = arguments[0];
       var keys = Object.keys(this.cacheRule);
-      return keys.length === 0 ? h("Icon", {
+      return keys.length === 0 ? h("AIcon", {
         "key": 'a_def',
         "attrs": {
-          "type": iviewConfig.addIcon
+          "type": "plus-circle"
         },
-        "style": "font-size:28px;vertical-align:middle;cursor:".concat(this.disabled ? 'not-allowed;color:#c9cdd4' : 'pointer', ";"),
+        "style": "font-size:28px;vertical-align:middle;color:".concat(this.disabled ? '#c9cdd4;cursor: not-allowed' : '#606266;cursor:pointer', ";"),
         "on": {
           "click": function click() {
             return !_this7.disabled && _this7.addRule(true);
           }
         }
       }) : h("div", {
-        "class": "fc-group",
         "key": 'con'
       }, [keys.map(function (key, index) {
         var rule = _this7.cacheRule[key];
-        return h("Row", {
+        return h("ARow", {
           "attrs": {
             "align": "middle",
             "type": "flex"
           },
           "key": key,
           "style": "background-color:#f5f7fa;padding:10px;border-radius:5px;margin-bottom:10px;"
-        }, [h("Col", {
+        }, [h("ACol", {
           "attrs": {
             "span": 20
           }
-        }, [h("FormItem", [h("FormCreate", {
+        }, [h("FormCreate", {
           "on": {
             "mounted": function mounted($f) {
               return _this7.add$f(index, key, $f);
@@ -3783,7 +3391,7 @@
             "rule": rule,
             "option": _this7.config
           }
-        })])]), h("Col", {
+        })]), h("ACol", {
           "attrs": {
             "span": 2,
             "pull": 1,
@@ -3794,48 +3402,7 @@
     }
   };
 
-  var components = [checkbox, frame, radio, select, tree, upload, group];
-
-  var parser =
-  /*#__PURE__*/
-  function (_BaseParser) {
-    _inherits(parser, _BaseParser);
-
-    function parser() {
-      _classCallCheck(this, parser);
-
-      return _possibleConstructorReturn(this, _getPrototypeOf(parser).apply(this, arguments));
-    }
-
-    _createClass(parser, [{
-      key: "render",
-      value: function render(children) {
-        var _this = this;
-
-        return this.vNode.checkbox({
-          props: {
-            ctx: this.$render.inputVData(this, true).get(),
-            options: this.rule.options,
-            value: this.$handle.getFormData(this),
-            children: children
-          },
-          on: {
-            input: function input(n) {
-              _this.$render.onInput(_this, n);
-            }
-          }
-        });
-      }
-    }]);
-
-    return parser;
-  }(BaseParser);
-
-  var name = 'checkbox';
-  var checkbox$1 = {
-    parser: parser,
-    name: name
-  };
+  var components = [upload, frame, group];
 
   var Parser =
   /*#__PURE__*/
@@ -3849,73 +3416,94 @@
     }
 
     _createClass(Parser, [{
-      key: "init",
-      value: function init() {
-        var props = this.rule.props;
-        if (props.startDate) $set(props, 'startDate', timeStampToDate(props.startDate));
+      key: "render",
+      value: function render(children) {
+        return this.vNode.checkbox(this.$render.inputVData(this).props({
+          'options': this.rule.options
+        }), children);
       }
-    }, {
-      key: "isRange",
-      value: function isRange() {
-        return this.el.type.includes('range') || this.el.multiple;
-      }
-    }, {
-      key: "_toValue",
-      value: function _toValue(val) {
-        var value = this.el.formatDate(val || ''),
-            separator = this.el.separator,
-            isRange = this.isRange();
-        if (!value) return isRange ? this.el.multiple ? [] : ['', ''] : value;else if (isRange) return value.split(separator);else return value;
-      }
-    }, {
-      key: "toValue",
-      value: function toValue(formValue) {
-        var el = this.$handle.vm.$refs[this.refName];
+    }]);
 
-        if (el) {
-          this.el = el;
-          return this._toValue(formValue);
-        }
+    return Parser;
+  }(BaseParser);
 
-        return formValue;
-      }
-    }, {
+  var name = 'checkbox';
+  var checkbox = {
+    parser: Parser,
+    name: name
+  };
+
+  var FORMAT_TYPE = {
+    date: 'YYYY-MM-DD',
+    month: 'YYYY-MM',
+    week: 'YYYY-wo',
+    range: 'YYYY-MM-DD HH:mm:ss'
+  };
+
+  var _getType = function getType(type) {
+    if (['date', 'month', 'week', 'range'].indexOf(type) === -1) return 'date';
+    return type;
+  };
+
+  var toMoment = function toMoment(val) {
+    return val instanceof moment ? val : moment(val);
+  };
+
+  var Parser$1 =
+  /*#__PURE__*/
+  function (_BaseParser) {
+    _inherits(Parser, _BaseParser);
+
+    function Parser() {
+      _classCallCheck(this, Parser);
+
+      return _possibleConstructorReturn(this, _getPrototypeOf(Parser).apply(this, arguments));
+    }
+
+    _createClass(Parser, [{
       key: "toFormValue",
       value: function toFormValue(value) {
-        var isArr = Array.isArray(value),
-            props = this.rule.props,
-            parseValue,
-            type = props.type || 'date';
+        var parseValue,
+            type = this.getType();
+        var isArr = Array.isArray(value);
 
-        if (['daterange', 'datetimerange'].indexOf(type) !== -1) {
+        if (type === 'range') {
           if (isArr) {
-            parseValue = value.map(function (time) {
-              return !time ? '' : timeStampToDate(time);
+            parseValue = value.map(function (v) {
+              return v ? toMoment(v) : null;
             });
           } else {
-            parseValue = ['', ''];
+            parseValue = [];
           }
-        } else if ('date' === type && props.multiple === true) {
-          parseValue = toString(value);
         } else {
-          parseValue = isArr ? value[0] || '' : value;
-          parseValue = !parseValue ? '' : timeStampToDate(parseValue);
+          parseValue = isArr ? (value[0] ? toMoment(value[0]) : null) || null : value ? toMoment(value) : null;
         }
 
         return parseValue;
       }
     }, {
-      key: "mounted",
-      value: function mounted() {
-        var _this = this;
-
-        this.toFormValue = function (val) {
-          var v = _this.el.parseDate(val);
-
-          return _this.isRange() ? v : v[0];
-        };
-
-        this.toValue = this._toValue;
+      key: "toValue",
+      value: function toValue(formValue) {
+        var format = this.getFormat();
+        if (Array.isArray(formValue)) return formValue.map(function (v) {
+          return v ? v.format(format) : v;
+        });else return formValue ? formValue.format(format) : formValue;
+      }
+    }, {
+      key: "getFormat",
+      value: function getFormat() {
+        return this.rule.props.format || (this.el ? this.el.format : '') || FORMAT_TYPE[_getType(this.rule.props.type)];
+      }
+    }, {
+      key: "getType",
+      value: function getType() {
+        return _getType(this.rule.props.type);
+      }
+    }, {
+      key: "render",
+      value: function render(children) {
+        var type = this.getType() + 'Picker';
+        return this.vNode[type](this.$render.inputVData(this), [children]);
       }
     }]);
 
@@ -3924,11 +3512,11 @@
 
   var name$1 = 'datePicker';
   var datePicker = {
-    parser: Parser,
+    parser: Parser$1,
     name: name$1
   };
 
-  var Parser$1 =
+  var Parser$2 =
   /*#__PURE__*/
   function (_BaseParser) {
     _inherits(Parser, _BaseParser);
@@ -3957,13 +3545,13 @@
 
   var name$2 = 'frame';
   var frame$1 = {
-    parser: Parser$1,
+    parser: Parser$2,
     name: name$2
   };
 
   var name$3 = 'hidden';
 
-  var parser$1 =
+  var parser =
   /*#__PURE__*/
   function (_BaseParser) {
     _inherits(parser, _BaseParser);
@@ -3985,36 +3573,8 @@
   }(BaseParser);
 
   var hidden = {
-    parser: parser$1,
+    parser: parser,
     name: name$3
-  };
-
-  var Parser$2 =
-  /*#__PURE__*/
-  function (_BaseParser) {
-    _inherits(Parser, _BaseParser);
-
-    function Parser() {
-      _classCallCheck(this, Parser);
-
-      return _possibleConstructorReturn(this, _getPrototypeOf(Parser).apply(this, arguments));
-    }
-
-    _createClass(Parser, [{
-      key: "init",
-      value: function init() {
-        var props = this.rule.props;
-        if (props.autosize && props.autosize.minRows) $set(props, 'rows', props.autosize.minRows || 2);
-      }
-    }]);
-
-    return Parser;
-  }(BaseParser);
-
-  var name$4 = 'input';
-  var input = {
-    parser: Parser$2,
-    name: name$4
   };
 
   var Parser$3 =
@@ -4029,24 +3589,36 @@
     }
 
     _createClass(Parser, [{
-      key: "toFormValue",
-      value: function toFormValue(value) {
-        return this.rule.options.filter(function (opt) {
-          return opt.value === value;
-        }).reduce(function (initial, opt) {
-          return opt.label;
-        }, '');
+      key: "render",
+      value: function render(children) {
+        var type = this.rule.props.type;
+        if (['textarea', 'search'].indexOf(type) === -1) type = 'input';
+        var Type = type === 'textarea' ? 'ATextarea' : type === 'search' ? 'AInputSearch' : 'AInput';
+        return this.vNode.make(Type, this.$render.inputVData(this), [children]);
       }
-    }, {
-      key: "toValue",
-      value: function toValue(parseValue) {
-        return this.rule.options.filter(function (opt) {
-          return opt.label === parseValue;
-        }).reduce(function (initial, opt) {
-          return opt.value;
-        }, '');
-      }
-    }, {
+    }]);
+
+    return Parser;
+  }(BaseParser);
+
+  var name$4 = 'input';
+  var input = {
+    parser: Parser$3,
+    name: name$4
+  };
+
+  var Parser$4 =
+  /*#__PURE__*/
+  function (_BaseParser) {
+    _inherits(Parser, _BaseParser);
+
+    function Parser() {
+      _classCallCheck(this, Parser);
+
+      return _possibleConstructorReturn(this, _getPrototypeOf(Parser).apply(this, arguments));
+    }
+
+    _createClass(Parser, [{
       key: "render",
       value: function render(children) {
         return this.vNode.radio(this.$render.inputVData(this).props({
@@ -4059,12 +3631,12 @@
   }(BaseParser);
 
   var name$5 = 'radio';
-  var radio$1 = {
-    parser: Parser$3,
+  var radio = {
+    parser: Parser$4,
     name: name$5
   };
 
-  var Parser$4 =
+  var Parser$5 =
   /*#__PURE__*/
   function (_BaseParser) {
     _inherits(Parser, _BaseParser);
@@ -4086,12 +3658,16 @@
   }(BaseParser);
 
   var name$6 = 'select';
-  var select$1 = {
-    parser: Parser$4,
+  var select = {
+    parser: Parser$5,
     name: name$6
   };
 
-  var Parser$5 =
+  var toMoment$1 = function toMoment(val, format) {
+    return val instanceof moment ? val : moment(val, format);
+  };
+
+  var Parser$6 =
   /*#__PURE__*/
   function (_BaseParser) {
     _inherits(Parser, _BaseParser);
@@ -4105,29 +3681,63 @@
     _createClass(Parser, [{
       key: "toFormValue",
       value: function toFormValue(value) {
-        var rule = this.rule,
-            isArr = Array.isArray(value),
-            props = rule.props,
-            min = props.min || 0,
-            parseValue;
-
-        if (props.range === true) {
-          parseValue = isArr ? value : [min, parseFloat(value) || min];
-        } else {
-          parseValue = isArr ? parseFloat(value[0]) || min : parseFloat(value);
-        }
-
-        return parseValue;
+        return value ? toMoment$1(value, this.getFormat()) : null;
+      }
+    }, {
+      key: "toValue",
+      value: function toValue(formValue) {
+        return formValue ? formValue.format(this.getFormat()) : formValue;
+      }
+    }, {
+      key: "getFormat",
+      value: function getFormat() {
+        return this.rule.props.format || (this.el ? this.el.format : '') || 'HH:mm:ss';
       }
     }]);
 
     return Parser;
   }(BaseParser);
 
-  var name$7 = 'slider';
-  var slider = {
-    parser: Parser$5,
+  var name$7 = 'timePicker';
+  var timePicker = {
+    parser: Parser$6,
     name: name$7
+  };
+
+  var parser$1 =
+  /*#__PURE__*/
+  function (_BaseParser) {
+    _inherits(parser, _BaseParser);
+
+    function parser(handle, rule, id) {
+      var _this;
+
+      _classCallCheck(this, parser);
+
+      _this = _possibleConstructorReturn(this, _getPrototypeOf(parser).call(this, handle, rule, id));
+      _this.modelEvent = 'check';
+      var props = _this.rule.props;
+      if (!props.replaceFields) props.replaceFields = {
+        key: 'id'
+      };else if (!props.replaceFields.key) props.replaceFields.key = 'id';
+      return _this;
+    }
+
+    _createClass(parser, [{
+      key: "render",
+      value: function render(children) {
+        var data = this.$render.inputVData(this).props('checkedKeys', this.$handle.getFormData(this)).props('checkable', true).get();
+        return this.vNode.tree(data, [children]);
+      }
+    }]);
+
+    return parser;
+  }(BaseParser);
+
+  var name$8 = 'tree';
+  var tree = {
+    parser: parser$1,
+    name: name$8
   };
 
   var parser$2 =
@@ -4144,152 +3754,135 @@
     _createClass(parser, [{
       key: "render",
       value: function render(children) {
-        var rule = this.rule,
-            slot = rule.props.slot || {};
-        return this.vNode.switch(this.$render.inputVData(this).scopedSlots({
-          open: function open() {
-            return slot.open;
+        var _this = this;
+
+        var data = this.$render.inputVData(this).get();
+        return this.vNode.upload({
+          props: {
+            ctx: data,
+            children: children,
+            value: this.$handle.getFormData(this),
+            onSuccess: data.props.onSuccess,
+            limit: data.props.limit
           },
-          close: function close() {
-            return slot.close;
+          on: {
+            input: function input(v) {
+              _this.$render.onInput(_this, v);
+            }
           }
-        }).get(), children);
+        });
+      }
+    }, {
+      key: "toFormValue",
+      value: function toFormValue(value) {
+        return toArray(value);
+      }
+    }, {
+      key: "toValue",
+      value: function toValue(formValue) {
+        return this.rule.props.limit === 1 ? formValue[0] || '' : formValue;
       }
     }]);
 
     return parser;
   }(BaseParser);
 
-  var name$8 = 'switch';
-  var iswitch = {
+  var name$9 = 'upload';
+  var upload$1 = {
     parser: parser$2,
-    name: name$8
-  };
-
-  var Parser$6 =
-  /*#__PURE__*/
-  function (_BaseParser) {
-    _inherits(Parser, _BaseParser);
-
-    function Parser() {
-      _classCallCheck(this, Parser);
-
-      return _possibleConstructorReturn(this, _getPrototypeOf(Parser).apply(this, arguments));
-    }
-
-    _createClass(Parser, [{
-      key: "render",
-      value: function render(children) {
-        var _this = this;
-
-        var data = this.$render.parserToData(this).get();
-        return this.vNode.tree({
-          props: {
-            ctx: data,
-            children: children,
-            value: this.$handle.getFormData(this),
-            type: data.props.type
-          },
-          ref: this.refName,
-          key: this.key,
-          on: {
-            input: function input(value) {
-              _this.$render.onInput(_this, value);
-            }
-          }
-        });
-      }
-    }]);
-
-    return Parser;
-  }(BaseParser);
-
-  var name$9 = 'tree';
-  var tree$1 = {
-    parser: Parser$6,
     name: name$9
   };
 
-  var Parser$7 =
-  /*#__PURE__*/
-  function (_BaseParser) {
-    _inherits(Parser, _BaseParser);
+  var parsers = [checkbox, datePicker, frame$1, hidden, input, radio, select, timePicker, tree, upload$1];
 
-    function Parser() {
-      _classCallCheck(this, Parser);
-
-      return _possibleConstructorReturn(this, _getPrototypeOf(Parser).apply(this, arguments));
-    }
-
-    _createClass(Parser, [{
-      key: "render",
-      value: function render(children) {
-        var _this = this;
-
-        var ctx = this.$render.parserToData(this).get();
-        var key = this.key,
-            refName = this.refName;
-        delete ctx.props.defaultFileList;
-        var props = {
-          uploadType: ctx.props.uploadType,
-          maxLength: ctx.props.maxLength,
-          modalTitle: ctx.props.modalTitle,
-          handleIcon: ctx.props.handleIcon,
-          onHandle: ctx.props.onHandle,
-          allowRemove: ctx.props.allowRemove,
-          value: this.$handle.getFormData(this),
-          ctx: ctx,
-          children: children
-        };
-        return this.vNode.upload({
-          props: props,
-          key: key,
-          ref: refName,
-          on: {
-            input: function input(n) {
-              _this.$render.onInput(_this, n);
-            }
-          }
-        });
+  var UNDEF = undefined;
+  function getConfig() {
+    return {
+      form: {
+        hideRequiredMark: false,
+        layout: 'horizontal',
+        labelAlign: 'right',
+        labelCol: {
+          span: 4
+        },
+        wrapperCol: {
+          span: 20
+        },
+        colon: UNDEF,
+        validateOnRuleChange: true
+      },
+      row: {
+        gutter: 0,
+        type: UNDEF,
+        align: UNDEF,
+        justify: UNDEF
+      },
+      info: {
+        type: 'popover',
+        placement: 'topLeft',
+        icon: 'question-circle-o'
+      },
+      submitBtn: {
+        disabled: false,
+        ghost: false,
+        icon: 'upload',
+        loading: false,
+        shape: UNDEF,
+        size: UNDEF,
+        type: 'primary',
+        block: true,
+        innerText: '提交',
+        htmlType: UNDEF,
+        show: true,
+        col: UNDEF,
+        click: UNDEF
+      },
+      resetBtn: {
+        disabled: false,
+        ghost: false,
+        icon: 'sync',
+        loading: false,
+        shape: UNDEF,
+        size: UNDEF,
+        type: 'default',
+        block: true,
+        innerText: '重置',
+        htmlType: UNDEF,
+        show: false,
+        col: UNDEF,
+        click: UNDEF
       }
-    }]);
-
-    return Parser;
-  }(BaseParser);
-
-  var name$a = 'upload';
-  var upload$1 = {
-    parser: Parser$7,
-    name: name$a
-  };
-
-  var parsers = [checkbox$1, datePicker, frame$1, hidden, input, radio$1, select$1, slider, iswitch, tree$1, upload$1];
+    };
+  }
 
   var nodes = {
-    modal: 'Modal',
-    button: 'i-button',
-    icon: 'Icon',
-    slider: 'Slider',
-    rate: 'Rate',
-    upload: 'fc-ivu-upload',
-    cascader: 'Cascader',
-    colorPicker: 'Color-Picker',
-    timePicker: 'Time-Picker',
-    datePicker: 'Date-Picker',
-    'switch': 'i-switch',
-    select: 'fc-ivu-select',
-    checkbox: 'fc-ivu-checkbox',
-    radio: 'fc-ivu-radio',
-    inputNumber: 'Input-Number',
-    input: 'i-input',
-    formItem: 'Form-Item',
-    form: 'i-form',
-    frame: 'fc-ivu-frame',
-    col: 'i-col',
-    row: 'row',
-    tree: 'fc-ivu-tree',
-    autoComplete: 'AutoComplete',
-    group: 'fc-ivu-group'
+    modal: 'a-modal',
+    button: 'a-button',
+    icon: 'a-icon',
+    slider: 'a-slider',
+    rate: 'a-rate',
+    upload: 'fc-antd-update',
+    cascader: 'a-cascader',
+    timePicker: 'a-time-picker',
+    datePicker: 'a-date-picker',
+    rangePicker: 'a-range-picker',
+    weekPicker: 'a-week-picker',
+    monthPicker: 'a-month-picker',
+    'switch': 'a-switch',
+    select: 'a-select',
+    checkbox: 'a-checkbox-group',
+    radio: 'a-radio-group',
+    inputNumber: 'a-input-number',
+    search: 'a-input-search',
+    textarea: 'a-textarea',
+    formItem: 'a-form-model-item',
+    form: 'a-form-model',
+    frame: 'fc-antd-frame',
+    col: 'a-col',
+    row: 'a-row',
+    tree: 'a-tree',
+    autoComplete: 'a-auto-complete',
+    group: 'fc-antd-group'
   };
 
   function isTooltip(info) {
@@ -4373,21 +3966,20 @@
       key: "makeFormItem",
       value: function makeFormItem(parser, child) {
         var fItemUnique = "fItem".concat(parser.key).concat(this.unique),
+            isVertical = this.propsData.props.layout === 'vertical',
             rule = parser.rule,
             field = parser.field,
             formItemRefName = parser.formItemRefName,
             col = this.getGetCol(parser),
-            labelWidth = !col.labelWidth && !rule.title ? 0 : col.labelWidth,
             propsData = this.vData.props({
           prop: field,
-          label: rule.title,
-          // labelFor: unique,
+          labelCol: isVertical ? {} : rule.labelCol,
+          wrapperCol: isVertical ? {} : rule.wrapperCol,
           rules: rule.validate,
-          labelWidth: labelWidth,
           required: rule.props.required
         }).key(fItemUnique).ref(formItemRefName).class(rule.className).get(),
             node = this.vNode.formItem(propsData, [child, this.makeFormPop(parser, fItemUnique)]);
-        return this.propsData.props.inline === true ? node : this.makeCol(col, parser, fItemUnique, [node]);
+        return this.propsData.props.layout === 'inline' ? node : this.makeCol(col, parser, fItemUnique, [node]);
       }
     }, {
       key: "makeFormPop",
@@ -4396,17 +3988,16 @@
 
         if (rule.title) {
           var info = this.options.info || {},
-              svn = [rule.title];
+              svn = [rule.title],
+              isTool = isTooltip(info);
 
           if (rule.info) {
-            svn.push(this.vNode.make(isTooltip(info) ? 'Tooltip' : 'Poptip', {
-              props: _objectSpread2({}, info, {
-                content: rule.info
-              }),
+            svn.push(this.vNode.make(isTool ? 'ATooltip' : 'APopover', {
+              props: _objectSpread2({}, info, _defineProperty({}, isTool ? 'title' : 'content', rule.info)),
               key: "pop".concat(unique)
             }, [this.vNode.icon({
               props: {
-                type: info.icon || iviewConfig.infoIcon,
+                type: info.icon || 'question-circle-o',
                 size: 16
               }
             })]));
@@ -4437,7 +4028,7 @@
             resetBtnShow = false !== this.vm.resetProps && false !== this.vm.resetProps.show;
         if (submitBtnShow) btn.push(this.makeSubmitBtn(resetBtnShow ? 19 : 24));
         if (resetBtnShow) btn.push(this.makeResetBtn(4));
-        return this.propsData.props.inline === true ? btn : btn.length ? this.vNode.col({
+        return this.propsData.props.layout === 'inline' ? btn : btn.length ? this.vNode.col({
           props: {
             span: 24
           },
@@ -4496,13 +4087,21 @@
     return Form;
   }(BaseForm);
 
-  var name$b = 'datePicker';
-  var datePicker$1 = ['date', 'dateRange', 'dateTime', 'dateTimeRange', 'year', 'month'].reduce(function (maker, type) {
-    maker[type] = creatorTypeFactory(name$b, type.toLowerCase());
-    return maker;
-  }, {});
+  var name$a = 'datePicker';
+  var datePicker$1 = ['date', 'month', 'week'].reduce(function (initial, type) {
+    initial[type] = creatorTypeFactory(name$a, type);
+    return initial;
+  }, {
+    dateRange: creatorTypeFactory(name$a, 'range'),
+    datetimeRange: creatorTypeFactory(name$a, function (m) {
+      return m.props({
+        type: 'range',
+        showTime: true
+      });
+    })
+  });
 
-  var name$c = 'frame';
+  var name$b = 'frame';
   var types = {
     frameInputs: ['input', 0],
     frameFiles: ['file', 0],
@@ -4512,7 +4111,7 @@
     frameImageOne: ['image', 1]
   };
   var maker = Object.keys(types).reduce(function (maker, key) {
-    maker[key] = creatorTypeFactory(name$c, function (m) {
+    maker[key] = creatorTypeFactory(name$b, function (m) {
       return m.props({
         type: types[key][0],
         maxLength: types[key][1]
@@ -4524,52 +4123,37 @@
   maker.frameFile = maker.frameFiles;
   maker.frameImage = maker.frameImages;
 
-  var name$d = 'input';
-  var maker$1 = ['password', 'url', 'email', 'text', 'textarea'].reduce(function (maker, type) {
-    maker[type] = creatorTypeFactory(name$d, type);
+  var name$c = 'input';
+  var maker$1 = ['password', 'url', 'email', 'text', 'textarea', 'search'].reduce(function (maker, type) {
+    maker[type] = creatorTypeFactory(name$c, type);
     return maker;
   }, {});
-  maker$1.idate = creatorTypeFactory(name$d, 'date');
+  maker$1.idate = creatorTypeFactory(name$c, 'date');
 
-  var name$e = 'select';
-  var select$2 = {
-    selectMultiple: creatorTypeFactory(name$e, true, 'multiple'),
-    selectOne: creatorTypeFactory(name$e, false, 'multiple')
+  var name$d = 'select';
+  var select$1 = {
+    selectMultiple: creatorTypeFactory(name$d, 'multiple', 'mode'),
+    selectTags: creatorTypeFactory(name$d, 'tags', 'mode'),
+    selectCombobox: creatorTypeFactory(name$d, 'combobox', 'mode')
   };
 
-  var name$f = 'slider';
-  var slider$1 = {
-    sliderRange: creatorTypeFactory(name$f, true, 'range')
+  var name$e = 'slider';
+  var slider = {
+    sliderRange: creatorTypeFactory(name$e, true, 'range')
   };
 
-  var name$g = 'timePicker';
-  var timePicker = {
-    time: creatorTypeFactory(name$g, 'time'),
-    timeRange: creatorTypeFactory(name$g, 'timerange')
-  };
-
-  var name$h = 'tree';
+  var name$f = 'upload';
   var types$1 = {
-    'treeSelected': 'selected',
-    'treeChecked': 'checked'
-  };
-  var tree$2 = Object.keys(types$1).reduce(function (maker, key) {
-    maker[key] = creatorTypeFactory(name$h, types$1[key]);
-    return maker;
-  }, {});
-
-  var name$i = 'upload';
-  var types$2 = {
     image: ['image', 0],
     file: ['file', 0],
     uploadFileOne: ['file', 1],
     uploadImageOne: ['image', 1]
   };
-  var maker$2 = Object.keys(types$2).reduce(function (maker, key) {
-    maker[key] = creatorTypeFactory(name$i, function (m) {
+  var maker$2 = Object.keys(types$1).reduce(function (maker, key) {
+    maker[key] = creatorTypeFactory(name$f, function (m) {
       return m.props({
-        uploadType: types$2[key][0],
-        maxLength: types$2[key][1]
+        uploadType: types$1[key][0],
+        maxLength: types$1[key][1]
       });
     });
     return maker;
@@ -4577,53 +4161,42 @@
   maker$2.uploadImage = maker$2.image;
   maker$2.uploadFile = maker$2.file;
 
-  var maker$3 = _objectSpread2({}, datePicker$1, {}, maker, {}, maker$1, {}, select$2, {}, slider$1, {}, timePicker, {}, tree$2, {}, maker$2),
-      names = ['autoComplete', 'cascader', 'colorPicker', 'datePicker', 'frame', 'inputNumber', 'radio', 'rate', 'timePicker', 'group'];
+  var maker$3 = _objectSpread2({}, datePicker$1, {}, maker, {}, maker$1, {}, select$1, {}, slider, {}, maker$2),
+      names = ['autoComplete', 'cascader', 'datePicker', 'frame', 'inputNumber', 'radio', 'rate', 'switch', 'rate', 'slider', 'timePicker'];
 
   names.forEach(function (name) {
     maker$3[name] = creatorFactory(name);
   });
   maker$3.auto = maker$3.autoComplete;
   maker$3.number = maker$3.inputNumber;
-  maker$3.color = maker$3.colorPicker;
+  maker$3.time = maker$3.timePicker;
 
   maker$3.hidden = function (field, value) {
     return creatorFactory('hidden')('', field, value);
   };
 
+  var modelEvents = {
+    'input': 'change.value'
+  };
+  ['autoComplete', 'cascader', 'inputNumber', 'rate', 'slider', 'change', 'switch', 'timePicker', 'datePicker', 'select'].forEach(function (n) {
+    return modelEvents[n] = 'change';
+  });
+
   VNode.use(nodes);
   var drive = {
-    ui: "iview4",
-    version: "1.0.11",
+    ui: "ant-design-vue",
+    version: "".concat("1.0.11"),
     formRender: Form,
     components: components,
     parsers: parsers,
     makers: maker$3,
-    getConfig: getConfig
+    getConfig: getConfig,
+    modelEvents: modelEvents
   };
 
   var _createFormCreate = createFormCreate(drive),
       FormCreate = _createFormCreate.FormCreate,
       install = _createFormCreate.install;
-
-  Creator.prototype.event = function (key, value) {
-    var _this = this;
-
-    var event;
-
-    if (!isPlainObject(key)) {
-      event = _defineProperty({}, key, value);
-    } else {
-      event = key;
-    }
-
-    Object.keys(event).forEach(function (eventName) {
-      var name = toString$1(eventName).indexOf('on-') === 0 ? eventName : "on-".concat(eventName);
-
-      _this.on(name, event[eventName]);
-    });
-    return this;
-  };
 
   if (typeof window !== 'undefined') {
     window.formCreate = FormCreate;

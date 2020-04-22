@@ -1,5 +1,5 @@
 /*!
- * @form-create/data v1.0.8
+ * @form-create/data v1.0.11
  * (c) 2018-2020 xaboy
  * Github https://github.com/xaboy/form-create
  * Released under the MIT License.
