@@ -1,12 +1,12 @@
 {
   "packages": [
+    "packages/ant-design-vue",
     "packages/core",
     "packages/data",
     "packages/element-ui",
-    "packages/ant-design-vue",
     "packages/iview",
     "packages/iview4",
     "packages/utils"
   ],
-  "version": "1.0.10"
+  "version": "1.0.11"
 }
