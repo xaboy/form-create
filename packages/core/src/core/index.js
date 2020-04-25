@@ -21,7 +21,9 @@ export let _vue = typeof window !== 'undefined' && window.Vue ? window.Vue : Vue
 
 export default function createFormCreate(drive) {
 
-    const components = {}, parsers = {}, maker = makerFactory(), globalConfig = drive.getConfig(), data = {},
+    const components = {
+            [fragment.name]: fragment
+        }, parsers = {}, maker = makerFactory(), globalConfig = drive.getConfig(), data = {},
         modelEvents = {};
 
     function setParser(id, parser) {
