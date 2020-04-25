@@ -21,7 +21,7 @@
     "form",
     "components",
     "vue.js",
-    "element-ui",
+    "ant-design-vue",
     "json-form",
     "vue-json-form"
   ],
