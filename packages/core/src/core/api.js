@@ -47,7 +47,7 @@ export default function Api(h) {
             let parser = h.getParser(field);
             if (!parser)
                 return;
-            let fields = parser.root.map(rule => rule.__field__), index = fields.indexOf(field);
+            let index = parser.root.indexOf(parser.rule.__origin__);
             if (index === -1)
                 return;
             parser.root.splice(index, 1);
