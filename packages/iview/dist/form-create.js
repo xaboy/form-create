@@ -1,5 +1,5 @@
 /*!
- * @form-create/iview v1.0.11
+ * @form-create/iview v1.0.12
  * (c) 2018-2020 xaboy
  * Github https://github.com/xaboy/form-create
  * Released under the MIT License.
@@ -1411,10 +1411,7 @@
       removeField: function removeField(field) {
         var parser = h.getParser(field);
         if (!parser) return;
-        var fields = parser.root.map(function (rule) {
-          return rule.__field__;
-        }),
-            index = fields.indexOf(field);
+        var index = parser.root.indexOf(parser.rule.__origin__);
         if (index === -1) return;
         parser.root.splice(index, 1);
         if (h.sortList.indexOf(parser.id) === -1) this.reload();
@@ -1907,28 +1904,36 @@
             _this.sortList.push(parser.id);
           }
 
-          if (!_this.isNoVal(parser)) Object.defineProperty(parser.rule, 'value', {
-            get: function get() {
-              return parser.toValue(_this.getFormData(parser));
-            },
-            set: function set(value) {
-              if (_this.isChange(parser, value)) {
-                _this.$render.clearCache(parser, true);
-
-                _this.setFormData(parser, parser.toFormValue(value));
-
-                _this.valueChange(parser);
-
-                _this.refresh();
-              }
-            }
-          });
+          if (!_this.isNoVal(parser)) Object.defineProperty(parser.rule, 'value', _this.valueHandle(parser));
           return parser;
         }).filter(function (h) {
           return h;
         }).forEach(function (h) {
           h.root = rules;
         });
+      }
+    }, {
+      key: "valueHandle",
+      value: function valueHandle(parser) {
+        var _this2 = this;
+
+        return {
+          enumerable: true,
+          get: function get() {
+            return parser.toValue(_this2.getFormData(parser));
+          },
+          set: function set(value) {
+            if (_this2.isChange(parser, value)) {
+              _this2.$render.clearCache(parser, true);
+
+              _this2.setFormData(parser, parser.toFormValue(value));
+
+              _this2.valueChange(parser, value);
+
+              _this2.refresh();
+            }
+          }
+        };
       }
     }, {
       key: "createParser",
@@ -1979,10 +1984,10 @@
     }, {
       key: "parseInjectEvent",
       value: function parseInjectEvent(rule, on) {
-        var _this2 = this;
+        var _this3 = this;
 
         if (this.options.injectEvent || rule.inject) Object.keys(on).forEach(function (k) {
-          if (isFunction(on[k])) on[k] = _this2.inject(rule, on[k]);
+          if (isFunction(on[k])) on[k] = _this3.inject(rule, on[k]);
         });
         return on;
       }
@@ -2026,7 +2031,7 @@
     }, {
       key: "parseEmit",
       value: function parseEmit(rule) {
-        var _this3 = this;
+        var _this4 = this;
 
         var event = {},
             emit = rule.emit,
@@ -2049,17 +2054,17 @@
           var fieldKey = toLine("".concat(emitKey, "-").concat(eventName)).replace('_', '-');
 
           var fn = function fn() {
-            var _this3$vm;
+            var _this4$vm;
 
             for (var _len2 = arguments.length, arg = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
               arg[_key2] = arguments[_key2];
             }
 
-            (_this3$vm = _this3.vm).$emit.apply(_this3$vm, [fieldKey].concat(arg));
+            (_this4$vm = _this4.vm).$emit.apply(_this4$vm, [fieldKey].concat(arg));
           };
 
           fn.__emit = true;
-          event[eventName] = _this3.options.injectEvent || config.inject !== undefined ? _this3.inject(rule, fn, inject) : fn;
+          event[eventName] = _this4.options.injectEvent || config.inject !== undefined ? _this4.inject(rule, fn, inject) : fn;
         });
         return event;
       }
@@ -2117,7 +2122,7 @@
           this.setFormData(parser, value);
           this.changeStatus = true;
           this.valueChange(parser);
-          this.vm.$emit('change', parser.field, val);
+          this.vm.$emit('change', parser.field, val, this.fCreateApi);
         }
       }
     }, {
@@ -2128,6 +2133,8 @@
     }, {
       key: "created",
       value: function created() {
+        var _this5 = this;
+
         var vm = this.vm;
         vm.$set(vm, 'buttonProps', this.options.submitBtn);
         vm.$set(vm, 'resetProps', this.options.resetBtn);
@@ -2135,11 +2142,34 @@
         if (this.fCreateApi === undefined) this.fCreateApi = Api(this);
         this.fCreateApi.rule = this.rules;
         this.fCreateApi.config = this.options;
+
+        if (this.fCreateApi.form) {
+          var form = this.fCreateApi.form;
+          Object.keys(form).forEach(function (field) {
+            delete form[field];
+          });
+        } else {
+          Object.defineProperty(this.fCreateApi, 'form', {
+            value: {},
+            writable: false,
+            enumerable: true
+          });
+        }
+
+        Object.defineProperties(this.fCreateApi.form, Object.keys(this.fCreateApi.formData()).reduce(function (initial, field) {
+          var parser = _this5.getParser(field);
+
+          var handle = _this5.valueHandle(parser);
+
+          handle.configurable = true;
+          initial[field] = handle;
+          return initial;
+        }, {}));
       }
     }, {
       key: "addParserWitch",
       value: function addParserWitch(parser) {
-        var _this4 = this;
+        var _this6 = this;
 
         var vm = this.vm;
         Object.keys(parser.rule).forEach(function (key) {
@@ -2150,12 +2180,12 @@
               return parser.rule[key];
             }, function (n, o) {
               if (o === undefined) return;
-              _this4.watching = true;
-              if (key === 'validate') _this4.validate[parser.field] = n;else if (key === 'props') _this4.parseProps(parser.rule);else if (key === 'on') _this4.parseOn(parser.rule);else if (key === 'emit') _this4.margeEmit(parser.rule);
+              _this6.watching = true;
+              if (key === 'validate') _this6.validate[parser.field] = n;else if (key === 'props') _this6.parseProps(parser.rule);else if (key === 'on') _this6.parseOn(parser.rule);else if (key === 'emit') _this6.margeEmit(parser.rule);
 
-              _this4.$render.clearCache(parser);
+              _this6.$render.clearCache(parser);
 
-              _this4.watching = false;
+              _this6.watching = false;
             }, {
               deep: key !== 'children',
               immediate: true
@@ -2174,7 +2204,7 @@
     }, {
       key: "validateControl",
       value: function validateControl(parser) {
-        var _this5 = this;
+        var _this7 = this;
 
         var controls = getControl(parser),
             len = controls.length,
@@ -2202,7 +2232,9 @@
             parser.root.splice(parser.root.indexOf(parser.rule.__origin__) + 1, 0, rule);
             parser.ctrlRule = rule;
 
-            _this5.refresh();
+            _this7.vm.$emit('control', parser.rule.__origin__, _this7.fCreateApi);
+
+            _this7.refresh();
 
             return {
               v: void 0
@@ -2218,20 +2250,21 @@
 
         if (ctrlRule) {
           removeControl(parser);
+          this.vm.$emit('control', parser.rule.__origin__, this.fCreateApi);
           this.refresh();
         }
       }
     }, {
       key: "mountedParser",
       value: function mountedParser() {
-        var _this6 = this;
+        var _this8 = this;
 
         var vm = this.vm;
         Object.keys(this.parsers).forEach(function (id) {
-          var parser = _this6.parsers[id];
-          if (parser.watch.length === 0) _this6.addParserWitch(parser);
+          var parser = _this8.parsers[id];
+          if (parser.watch.length === 0) _this8.addParserWitch(parser);
 
-          _this6.refreshControl(parser);
+          _this8.refreshControl(parser);
 
           parser.el = vm.$refs[parser.refName] || {};
           if (parser.defaultValue === undefined) parser.defaultValue = deepExtend({}, {
@@ -2288,7 +2321,7 @@
     }, {
       key: "reloadRule",
       value: function reloadRule(rules) {
-        var _this7 = this;
+        var _this9 = this;
 
         var vm = this.vm;
         if (!rules) return this.reloadRule(this.rules);
@@ -2303,9 +2336,9 @@
 
         this.loadRule(rules, false);
         Object.keys(parsers).filter(function (id) {
-          return _this7.parsers[id] === undefined;
+          return _this9.parsers[id] === undefined;
         }).forEach(function (id) {
-          return _this7.removeField(parsers[id], formData[parsers[id].field]);
+          return _this9.removeField(parsers[id], formData[parsers[id].field]);
         });
         this.$render.initOrgChildren();
         this.formData = _objectSpread2({}, this.formData);
@@ -2314,7 +2347,7 @@
         this.$render.clearCacheAll();
         this.refresh();
         vm.$nextTick(function () {
-          _this7.reload();
+          _this9.reload();
         });
       }
     }, {
@@ -2406,7 +2439,7 @@
 
   var _vue = typeof window !== 'undefined' && window.Vue ? window.Vue : Vue;
   function createFormCreate(drive) {
-    var components = {},
+    var components = _defineProperty({}, fragment.name, fragment),
         parsers = {},
         maker = makerFactory(),
         globalConfig = drive.getConfig(),
@@ -4395,6 +4428,9 @@
             formItemRefName = parser.formItemRefName,
             col = this.getGetCol(parser),
             labelWidth = !col.labelWidth && !rule.title ? 0 : col.labelWidth,
+            _this$propsData$props = this.propsData.props,
+            inline = _this$propsData$props.inline,
+            _col = _this$propsData$props.col,
             propsData = this.vData.props({
           prop: field,
           label: rule.title,
@@ -4404,7 +4440,7 @@
           required: rule.props.required
         }).key(fItemUnique).ref(formItemRefName).class(rule.className).get(),
             node = this.vNode.formItem(propsData, [child, this.makeFormPop(parser, fItemUnique)]);
-        return this.propsData.props.inline === true ? node : this.makeCol(col, parser, fItemUnique, [node]);
+        return inline === true || _col === false ? node : this.makeCol(col, parser, fItemUnique, [node]);
       }
     }, {
       key: "makeFormPop",
@@ -4612,7 +4648,7 @@
   VNode.use(nodes);
   var drive = {
     ui: "iview",
-    version: "1.0.11",
+    version: "1.0.12",
     formRender: Form,
     components: components,
     parsers: parsers,
