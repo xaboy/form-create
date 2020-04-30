@@ -61,7 +61,7 @@ export default class Form extends BaseForm {
     makeFormItem(parser, child) {
         let fItemUnique = `fItem${parser.key}${this.unique}`, isVertical = this.propsData.props.layout === 'vertical',
             {rule, field, formItemRefName} = parser,
-            col = this.getGetCol(parser),
+            col = this.getGetCol(parser), {layout, col: _col} = this.propsData.props,
             propsData = this.vData.props({
                 prop: field,
                 labelCol: isVertical ? {} : rule.labelCol,
@@ -70,7 +70,7 @@ export default class Form extends BaseForm {
                 required: rule.props.required
             }).key(fItemUnique).ref(formItemRefName).class(rule.className).get(),
             node = this.vNode.formItem(propsData, [child, this.makeFormPop(parser, fItemUnique)]);
-        return this.propsData.props.layout === 'inline' ? node : this.makeCol(col, parser, fItemUnique, [node]);
+        return (layout === 'inline' || _col === false) ? node : this.makeCol(col, parser, fItemUnique, [node]);
     }
 
     makeFormPop({rule}, unique) {
