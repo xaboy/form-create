@@ -113,24 +113,29 @@ export default class Handle {
             }
 
             if (!this.isNoVal(parser))
-                Object.defineProperty(parser.rule, 'value', {
-                    get: () => {
-                        return parser.toValue(this.getFormData(parser));
-                    },
-                    set: (value) => {
-                        if (this.isChange(parser, value)) {
-                            this.$render.clearCache(parser, true);
-                            this.setFormData(parser, parser.toFormValue(value));
-                            this.valueChange(parser);
-                            this.refresh();
-                        }
-                    }
-                });
+                Object.defineProperty(parser.rule, 'value', this.valueHandle(parser));
 
             return parser;
         }).filter(h => h).forEach(h => {
             h.root = rules;
         });
+    }
+
+    valueHandle(parser) {
+        return {
+            enumerable: true,
+            get: () => {
+                return parser.toValue(this.getFormData(parser));
+            },
+            set: (value) => {
+                if (this.isChange(parser, value)) {
+                    this.$render.clearCache(parser, true);
+                    this.setFormData(parser, parser.toFormValue(value));
+                    this.valueChange(parser, value);
+                    this.refresh();
+                }
+            }
+        };
     }
 
     createParser(rule) {
@@ -316,8 +321,26 @@ export default class Handle {
             this.fCreateApi = Api(this);
         this.fCreateApi.rule = this.rules;
         this.fCreateApi.config = this.options;
+        if (this.fCreateApi.form) {
+            const form = this.fCreateApi.form;
+            Object.keys(form).forEach((field) => {
+                delete form[field];
+            })
+        } else {
+            Object.defineProperty(this.fCreateApi, 'form', {
+                value: {},
+                writable: false,
+                enumerable: true
+            });
+        }
+        Object.defineProperties(this.fCreateApi.form, Object.keys(this.fCreateApi.formData()).reduce((initial, field) => {
+            const parser = this.getParser(field);
+            const handle = this.valueHandle(parser);
+            handle.configurable = true;
+            initial[field] = handle;
+            return initial;
+        }, {}));
     }
-
 
     addParserWitch(parser) {
         const vm = this.vm;
