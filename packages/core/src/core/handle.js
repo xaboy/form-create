@@ -296,7 +296,7 @@ export default class Handle {
             this.setFormData(parser, value);
             this.changeStatus = true;
             this.valueChange(parser);
-            this.vm.$emit('change', parser.field, val);
+            this.vm.$emit('change', parser.field, val, this.fCreateApi);
         }
     }
 
@@ -395,12 +395,14 @@ export default class Handle {
                 };
                 parser.root.splice(parser.root.indexOf(parser.rule.__origin__) + 1, 0, rule);
                 parser.ctrlRule = rule;
+                this.vm.$emit('control', parser.rule.__origin__, this.fCreateApi);
                 this.refresh();
                 return;
             }
         }
         if (ctrlRule) {
             removeControl(parser);
+            this.vm.$emit('control', parser.rule.__origin__, this.fCreateApi);
             this.refresh();
         }
     }
