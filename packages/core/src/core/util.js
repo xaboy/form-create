@@ -1,5 +1,5 @@
 import Creator from '../factory/creator';
-import {isFunction, isString, isUndef, isValidChildren} from '@form-create/utils';
+import {deepExtendArgs, isFunction, isString, isUndef} from '@form-create/utils';
 
 export function toJson(obj) {
     return JSON.stringify(obj, function (key, val) {
@@ -54,21 +54,13 @@ export function copyRule(rule) {
 export function copyRules(rules) {
     return rules.map(rule => {
         if (isString(rule)) return rule;
-        let r;
-        if (isFunction(rule.getRule)) {
-            r = new Creator();
-            r._data = {...rule._data};
-            if (r._data.field && r._data.value === undefined)
-                r.value(null);
-            if (isValidChildren(r._data.children)) {
-                r._data.children = copyRules(r._data.children);
-            }
-        } else {
-            r = {...rule};
-            if (r.field && r.value === undefined) r.value = null;
-            if (isValidChildren(r.children))
-                r.children = copyRules(r.children);
-        }
-        return r;
+        const isCreator = isFunction(rule.getRule);
+        const data = deepExtendArgs({}, (isCreator ? rule._data : rule));
+        if (isCreator) {
+            const creator = new Creator();
+            creator._data = data;
+            return creator;
+        } else
+            return data;
     })
 }
