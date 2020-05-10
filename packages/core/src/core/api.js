@@ -62,7 +62,7 @@ export default function Api(h) {
         },
         fields: () => h.fields(),
         append: (rule, after, isChild) => {
-            let fields = Object.keys(h.fieldList), index = h.sortList.length, rules = h.rules;
+            let fields = Object.keys(h.fieldList), index = h.sortList.length, rules;
 
             if (rule.field && fields.indexOf(rule.field) !== -1)
                 return console.error(`${rule.field} 字段已存在` + errMsg());
@@ -75,12 +75,13 @@ export default function Api(h) {
                     index = parser.rule.children.length;
                 } else {
                     index = parser.root.indexOf(parser.rule.__origin__);
+                    rules = parser.root;
                 }
             }
             rules.splice(index + 1, 0, rule);
         },
         prepend: (rule, after, isChild) => {
-            let fields = Object.keys(h.fieldList), index = 0, rules = h.rules;
+            let fields = Object.keys(h.fieldList), index = 0, rules;
 
             if (rule.field && fields.indexOf(rule.field) !== -1)
                 return console.error(`${rule.field} 字段已存在` + errMsg());
@@ -92,6 +93,7 @@ export default function Api(h) {
                     rules = parser.rule.children;
                 } else {
                     index = parser.root.indexOf(parser.rule.__origin__);
+                    rules = parser.root;
                 }
             }
             rules.splice(index, 0, rule);
