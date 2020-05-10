@@ -81,7 +81,7 @@ export default class Handle {
                 parser = _rule.__fc__;
 
                 //规则在其他 form-create 中使用,自动浅拷贝
-                if (parser.vm !== this.vm && !parser.deleted) {
+                if (!parser.deleted && (parser.vm !== this.vm || this.parsers[parser.id])) {
                     _rule = copyRule(_rule);
                     rules[index] = _rule;
                     parser = this.createParser(this.parseRule(_rule));
