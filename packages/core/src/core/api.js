@@ -77,7 +77,7 @@ export default function Api(h) {
                     index = parser.root.indexOf(parser.rule.__origin__);
                     rules = parser.root;
                 }
-            }
+            } else rules = h.rules;
             rules.splice(index + 1, 0, rule);
         },
         prepend: (rule, after, isChild) => {
@@ -95,7 +95,7 @@ export default function Api(h) {
                     index = parser.root.indexOf(parser.rule.__origin__);
                     rules = parser.root;
                 }
-            }
+            } else rules = h.rules;
             rules.splice(index, 0, rule);
         },
         hidden(hidden, fields) {
