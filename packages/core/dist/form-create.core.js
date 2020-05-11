@@ -1,5 +1,5 @@
 /*!
- * @form-create/core v1.0.12
+ * @form-create/core v1.0.13
  * (c) 2018-2020 xaboy
  * Github https://github.com/xaboy/form-create
  * Released under the MIT License.
@@ -639,23 +639,14 @@ function copyRule(rule) {
 function copyRules(rules) {
   return rules.map(function (rule) {
     if (isString(rule)) return rule;
-    var r;
+    var isCreator = isFunction(rule.getRule);
+    var data = deepExtendArgs({}, isCreator ? rule._data : rule);
 
-    if (isFunction(rule.getRule)) {
-      r = new Creator();
-      r._data = _objectSpread2({}, rule._data);
-      if (r._data.field && r._data.value === undefined) r.value(null);
-
-      if (isValidChildren(r._data.children)) {
-        r._data.children = copyRules(r._data.children);
-      }
-    } else {
-      r = _objectSpread2({}, rule);
-      if (r.field && r.value === undefined) r.value = null;
-      if (isValidChildren(r.children)) r.children = copyRules(r.children);
-    }
-
-    return r;
+    if (isCreator) {
+      var creator = new Creator();
+      creator._data = data;
+      return creator;
+    } else return data;
   });
 }
 
@@ -1178,7 +1169,7 @@ function Api(h) {
     append: function append(rule, after, isChild) {
       var fields = Object.keys(h.fieldList),
           index = h.sortList.length,
-          rules = h.rules;
+          rules;
       if (rule.field && fields.indexOf(rule.field) !== -1) return console.error("".concat(rule.field, " \u5B57\u6BB5\u5DF2\u5B58\u5728") + errMsg());
       var parser = h.getParser(after);
 
@@ -1188,15 +1179,16 @@ function Api(h) {
           index = parser.rule.children.length;
         } else {
           index = parser.root.indexOf(parser.rule.__origin__);
+          rules = parser.root;
         }
-      }
+      } else rules = h.rules;
 
       rules.splice(index + 1, 0, rule);
     },
     prepend: function prepend(rule, after, isChild) {
       var fields = Object.keys(h.fieldList),
           index = 0,
-          rules = h.rules;
+          rules;
       if (rule.field && fields.indexOf(rule.field) !== -1) return console.error("".concat(rule.field, " \u5B57\u6BB5\u5DF2\u5B58\u5728") + errMsg());
       var parser = h.getParser(after);
 
@@ -1205,8 +1197,9 @@ function Api(h) {
           rules = parser.rule.children;
         } else {
           index = parser.root.indexOf(parser.rule.__origin__);
+          rules = parser.root;
         }
-      }
+      } else rules = h.rules;
 
       rules.splice(index, 0, rule);
     },
@@ -1621,7 +1614,7 @@ function () {
         if (_rule.__fc__) {
           parser = _rule.__fc__; //规则在其他 form-create 中使用,自动浅拷贝
 
-          if (parser.vm !== _this.vm && !parser.deleted) {
+          if (!parser.deleted && (parser.vm !== _this.vm || _this.parsers[parser.id])) {
             _rule = copyRule(_rule);
             rules[index] = _rule;
             parser = _this.createParser(_this.parseRule(_rule));
