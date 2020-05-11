@@ -48,11 +48,14 @@ export default class Form extends BaseForm {
         if (vn.length > 0)
             vn.push(this.makeFormBtn());
 
-        return this.vNode.form(this.propsData, [this.makeRow(vn)]);
+        return this.vNode.form(this.propsData, [this.options.row === false ? vn : this.makeRow(vn)]);
     }
 
     makeRow(vn) {
-        return this.vNode.row({props: this.options.row || {}, key: 'fr' + this.unique}, vn)
+        const _class = {}, row = this.options.row || {};
+
+        if (row.class) _class[row.class] = true;
+        return this.vNode.row({props: row || {}, key: 'fr' + this.unique, class: _class}, vn)
     }
 
     container(child, parser) {
@@ -95,11 +98,13 @@ export default class Form extends BaseForm {
     makeCol(col, parser, fItemUnique, VNodeFn) {
         if (col.span === undefined)
             col.span = 24;
+        const cls = {
+            [style.__fc_h]: !!parser.rule.hidden,
+            [style.__fc_v]: !!parser.rule.visibility
+        };
+        if (col.class) cls[col.class] = true;
         return this.vNode.col({
-            props: col, 'class': {
-                [style.__fc_h]: !!parser.rule.hidden,
-                [style.__fc_v]: !!parser.rule.visibility
-            }, key: `${fItemUnique}col1`
+            props: col, class: cls, key: `${fItemUnique}col1`
         }, VNodeFn);
     }
 
