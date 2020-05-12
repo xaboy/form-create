@@ -162,7 +162,7 @@ export default {
 
                             try {
                                 if (this.helper === true) {
-                                    let iframe = e.path[0].contentWindow;
+                                    let iframe = e.currentTarget.contentWindow;
 
                                     iframe['form_create_helper'] = {
                                         close: (field) => {
