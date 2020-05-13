@@ -109,7 +109,7 @@ export default {
         srcKey: {
             type: [String, Number]
         },
-        value: [Array, String, Number]
+        value: [Array, String, Number, Object]
 
     },
     data() {
