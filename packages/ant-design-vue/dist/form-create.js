@@ -1,5 +1,5 @@
 /*!
- * @form-create/ant-design-vue v1.0.13
+ * @form-create/ant-design-vue v1.0.14
  * (c) 2018-2020 xaboy
  * Github https://github.com/xaboy/form-create
  * Released under the MIT License.
@@ -2880,7 +2880,7 @@
       srcKey: {
         type: [String, Number]
       },
-      value: [Array, String, Number]
+      value: [Array, String, Number, Object]
     },
     data: function data() {
       return {
@@ -2943,7 +2943,7 @@
 
                 try {
                   if (_this.helper === true) {
-                    var iframe = e.path[0].contentWindow;
+                    var iframe = e.currentTarget.contentWindow;
                     iframe['form_create_helper'] = {
                       close: function close(field) {
                         _this.valid(field);
@@ -4220,7 +4220,7 @@
   VNode.use(nodes);
   var drive = {
     ui: "ant-design-vue",
-    version: "".concat("1.0.13"),
+    version: "".concat("1.0.14"),
     formRender: Form,
     components: components,
     parsers: parsers,
