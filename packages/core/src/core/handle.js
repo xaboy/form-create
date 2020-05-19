@@ -28,11 +28,10 @@ export function getRule(rule) {
 export default class Handle {
 
     constructor(fc) {
-        const {vm, rules, options} = fc;
+        const {vm, rules, options} = this.fc = fc;
 
         this.watching = false;
         this.vm = vm;
-        this.fc = fc;
         this.options = options;
 
         this.validate = {};
@@ -82,8 +81,7 @@ export default class Handle {
 
                 //规则在其他 form-create 中使用,自动浅拷贝
                 if (!parser.deleted && (parser.vm !== this.vm || this.parsers[parser.id])) {
-                    _rule = copyRule(_rule);
-                    rules[index] = _rule;
+                    rules[index] = _rule = copyRule(_rule);
                     parser = this.createParser(this.parseRule(_rule));
                 } else {
                     parser.update(this);
@@ -139,11 +137,7 @@ export default class Handle {
     }
 
     createParser(rule) {
-        const id = '' + uniqueId(), parsers = this.fc.parsers, type = toString(rule.type).toLocaleLowerCase();
-
-        const Parser = (parsers[type]) ? parsers[type] : BaseParser;
-
-        return new Parser(this, rule, id);
+        return new (this.fc.parsers[toString(rule.type).toLocaleLowerCase()] || BaseParser)(this, rule, '' + uniqueId());
     }
 
     parseRule(_rule) {
@@ -301,12 +295,7 @@ export default class Handle {
     }
 
     getParser(id) {
-        if (this.fieldList[id])
-            return this.fieldList[id];
-        else if (this.customData[id])
-            return this.customData[id];
-        else if (this.parsers[id])
-            return this.parsers[id];
+        return this.fieldList[id] || this.customData[id] || this.parsers[id];
     }
 
     created() {
@@ -393,6 +382,7 @@ export default class Handle {
                     native: true,
                     children: control.rule
                 };
+                //TODO 位置可自定义
                 parser.root.splice(parser.root.indexOf(parser.rule.__origin__) + 1, 0, rule);
                 parser.ctrlRule = rule;
                 this.vm.$emit('control', parser.rule.__origin__, this.fCreateApi);

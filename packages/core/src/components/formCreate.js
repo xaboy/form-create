@@ -9,10 +9,7 @@ export default function $FormCreate(FormCreate, components) {
         props: {
             rule: {
                 type: Array,
-                required: true,
-                default: () => {
-                    return {};
-                }
+                required: true
             },
             option: {
                 type: Object,
@@ -65,11 +62,8 @@ export default function $FormCreate(FormCreate, components) {
             this.$emit('input', this.$f);
         },
         mounted() {
-            const formCreate = this.formCreate;
-
-            formCreate.mounted();
+            this.formCreate.mounted();
             this.$emit('input', this.$f);
-
         },
         beforeDestroy() {
             this.formCreate.handle.reloadRule([]);
