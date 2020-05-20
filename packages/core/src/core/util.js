@@ -1,6 +1,9 @@
 import Creator from '../factory/creator';
 import {deepExtendArgs, isFunction, isString, isUndef} from '@form-create/utils';
 
+const PREFIX = '[[FORM-CREATE-PREFIX-';
+const SUFFIX = '-FORM-CREATE-SUFFIX]]';
+
 export function toJson(obj) {
     return JSON.stringify(obj, function (key, val) {
         if (val instanceof Creator) {
@@ -19,21 +22,26 @@ export function toJson(obj) {
         if (val.__emit)
             return undefined;
 
-        return '' + val;
+        return PREFIX + val + SUFFIX;
     });
 }
 
+function makeFn(fn) {
+    return eval('(function(){return ' + fn + ' })()')
+}
 
-export function parseJson(json) {
+export function parseJson(json, mode) {
     return JSON.parse(json, function (k, v) {
-        if (isUndef(v)) return v;
-        if (v.indexOf && v.indexOf('function') > -1) {
-            try {
-                return eval('(function(){return ' + v + ' })()')
-            } catch (e) {
-                console.error(`[form-create]解析失败:${v}`);
-                return undefined;
-            }
+        if (isUndef(v) || !v.indexOf) return v;
+        try {
+            if (v.indexOf(SUFFIX) > 0 && v.indexOf(PREFIX) === 0) {
+                v = v.replace(SUFFIX, '').replace(PREFIX, '');
+                return makeFn(v.indexOf('function') === -1 && v.indexOf('(') !== 0 ? 'function ' + v : v);
+            } else if (!mode && v.indexOf('function') > -1)
+                return makeFn(v)
+        } catch (e) {
+            console.error(`[form-create]解析失败:${v}`);
+            return undefined;
         }
         return v;
     });
