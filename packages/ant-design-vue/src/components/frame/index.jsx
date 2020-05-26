@@ -108,6 +108,10 @@ export default {
         footer: {
             type: Boolean,
             default: true
+        },
+        reload: {
+            type: Boolean,
+            default: true
         }
 
     },
@@ -118,7 +122,6 @@ export default {
             previewVisible: false,
             frameVisible: false,
             previewImage: ''
-
         }
     },
     watch: {
@@ -283,11 +286,11 @@ export default {
             </aModal>
             <aModal props={{width, title, ...this.modal}} visible={this.frameVisible}
                 on-change={(v) => (this.frameVisible = v)} footer={null}>
-                <iframe src={src} frameborder="0" style={{
+                {(this.frameVisible || !this.reload) ? <iframe src={src} frameborder="0" style={{
                     'height': height,
                     'border': '0 none',
                     'width': '100%'
-                }} on-load={this.frameLoad}/>
+                }} on-load={this.frameLoad}/> : null}
                 {this.makeFooter()}
             </aModal>
         </div>

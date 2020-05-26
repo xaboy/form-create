@@ -109,6 +109,10 @@ export default {
         footer: {
             type: Boolean,
             default: true
+        },
+        reload: {
+            type: Boolean,
+            default: true
         }
 
     },
@@ -284,11 +288,11 @@ export default {
                 <img alt="example" style="width: 100%" src={this.previewImage}/>
             </Modal>
             <Modal props={{width, title, ...this.modal}} v-model={this.frameVisible}>
-                <iframe src={src} frameBorder="0" style={{
+                {(this.frameVisible || !this.reload) ? <iframe src={src} frameBorder="0" style={{
                     'height': height,
                     'border': '0 none',
                     'width': '100%'
-                }} on-load={this.frameLoad}/>
+                }} on-load={this.frameLoad}/> : null}
                 {this.makeFooter()}
             </Modal>
         </div>

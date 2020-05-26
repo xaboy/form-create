@@ -108,6 +108,10 @@ export default {
         footer: {
             type: Boolean,
             default: true
+        },
+        reload: {
+            type: Boolean,
+            default: true
         }
 
     },
@@ -286,11 +290,11 @@ export default {
             </el-dialog>
             <el-dialog props={{width, title, ...this.modal}} visible={this.frameVisible}
                 on-close={(v) => (this.frameVisible = v)}>
-                <iframe src={src} frameBorder="0" style={{
+                {(this.frameVisible || !this.reload) ? <iframe src={src} frameBorder="0" style={{
                     'height': height,
                     'border': '0 none',
                     'width': '100%'
-                }} on-load={this.frameLoad}/>
+                }} on-load={this.frameLoad}/> : null}
                 {this.makeFooter()}
             </el-dialog>
         </div>
