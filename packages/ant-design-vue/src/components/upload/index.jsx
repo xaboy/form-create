@@ -37,7 +37,15 @@ export default {
         onSuccess: {
             type: Function,
             required: true
-        }
+        },
+        onHandle: {
+            type: Function,
+            default: function (file) {
+                this.previewImage = file.url;
+                this.previewVisible = true;
+            }
+        },
+        modalTitle: String,
     },
     data() {
         const fileList = this.value.map(parseFile);
@@ -66,8 +74,7 @@ export default {
             </div>
         },
         handlePreview(file) {
-            this.previewImage = file.url;
-            this.previewVisible = true;
+            this.onHandle(file);
         },
         handleCancel() {
             this.previewVisible = false;
@@ -101,7 +108,7 @@ export default {
         return <div class={{[style['fc-hide-btn']]: !isShow}}>
             <AUpload {...this.ctx} on-preview={this.handlePreview} on-change={this.handleChange}
                 ref="upload" defaultFileList={this.defaultUploadList}>{this.children}</AUpload>
-            <aModal visible={this.previewVisible} footer={null} on-cancel={this.handleCancel}>
+            <aModal title={this.modalTitle} visible={this.previewVisible} footer={null} on-cancel={this.handleCancel}>
                 <img style="width: 100%" src={this.previewImage}/>
             </aModal>
         </div>;

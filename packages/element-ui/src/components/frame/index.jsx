@@ -1,4 +1,3 @@
-import {defaultOnHandle, mount} from '../../core/modal';
 import style from '../../style/index.css';
 import {isUndef, toArray, uniqueId} from '@form-create/utils';
 
@@ -51,10 +50,7 @@ export default {
             type: String,
             default: '关闭'
         },
-        modalTitle: {
-            type: String,
-            default: '预览'
-        },
+        modalTitle: String,
         handleIcon: {
             type: [String, Boolean],
             default: undefined
@@ -97,7 +93,8 @@ export default {
         onHandle: {
             type: Function,
             default(src) {
-                defaultOnHandle(src, this.modalTitle)
+                this.previewImage = src;
+                this.previewVisible = true;
             }
         },
         modal: {
@@ -107,14 +104,20 @@ export default {
         srcKey: {
             type: [String, Number]
         },
-        value: [Array, String, Number, Object]
+        value: [Array, String, Number, Object],
+        footer: {
+            type: Boolean,
+            default: true
+        }
 
     },
     data() {
         return {
-            modalVm: null,
             fileList: toArray(this.value),
-            unique: uniqueId()
+            unique: uniqueId(),
+            previewVisible: false,
+            frameVisible: false,
+            previewImage: ''
         }
     },
     watch: {
@@ -135,75 +138,15 @@ export default {
             return NAME + unique + this.unique;
         },
         closeModel() {
-            this.modalVm && this.modalVm.onClose();
-            this.modalVm = null;
+            this.frameVisible = false;
+        },
+        handleCancel() {
+            this.previewVisible = false;
         },
 
         showModel() {
             if (this.disabled || false === this.onOpen()) return;
-
-            const {width, height, src, title, okBtnText, closeBtnText} = this.$props;
-
-            mount({width, title, src, ...this.modal}, (vNode, _vm) => {
-                this.modalVm = _vm;
-                return [vNode.make('iframe', {
-                    attrs: {
-                        src: _vm.src
-                    },
-                    style: {
-                        'height': height,
-                        'border': '0 none',
-                        'width': '100%'
-                    },
-                    on: {
-                        'load': (e) => {
-                            this.onLoad(e);
-
-                            try {
-                                if (this.helper === true) {
-                                    let iframe = e.currentTarget.contentWindow;
-
-                                    iframe['form_create_helper'] = {
-                                        close: (field) => {
-                                            this.valid(field);
-                                            _vm.onClose();
-                                        },
-                                        set: (field, value) => {
-                                            this.valid(field);
-                                            if (!this.disabled)
-                                                this.$emit('input', value);
-
-                                        },
-                                        get: (field) => {
-                                            this.valid(field);
-                                            return this.value;
-                                        }
-                                    };
-
-                                }
-                            } catch (e) {
-                                console.log(e);
-                            }
-                        }
-                    },
-                }), vNode.make('div', {slot: 'footer'}, [
-                    vNode.button({
-                        on: {
-                            click: () => {
-
-                                this.onCancel() !== false && _vm.onClose();
-                            }
-                        }
-                    }, [closeBtnText]),
-                    vNode.button({
-                        props: {type: 'primary'}, on: {
-                            click: () => {
-                                this.onOk() !== false && _vm.onClose();
-                            }
-                        }
-                    }, [okBtnText])
-                ])]
-            });
+            this.frameVisible = true;
         },
 
         makeInput() {
@@ -284,16 +227,72 @@ export default {
         },
         getSrc(src) {
             return isUndef(this.srcKey) ? src : src[this.srcKey];
+        },
+        frameLoad(e) {
+            this.onLoad(e);
+
+            try {
+                if (this.helper === true) {
+                    let iframe = e.currentTarget.contentWindow;
+
+                    iframe['form_create_helper'] = {
+                        close: (field) => {
+                            this.valid(field);
+                            this.closeModel();
+                        },
+                        set: (field, value) => {
+                            this.valid(field);
+                            if (!this.disabled)
+                                this.$emit('input', value);
+
+                        },
+                        get: (field) => {
+                            this.valid(field);
+                            return this.value;
+                        }
+                    };
+
+                }
+            } catch (e) {
+                console.log(e);
+            }
+        },
+        makeFooter() {
+            const {okBtnText, closeBtnText} = this.$props;
+
+            if (!this.footer) return;
+            return <div slot="footer">
+                <ElButton on-click={() => (this.onCancel() !== false && this.closeModel())}>{closeBtnText}</ElButton>
+                <ElButton type="primary"
+                    on-click={() => (this.onOk() !== false && this.closeModel())}>{okBtnText}</ElButton>
+            </div>
         }
     },
     render() {
         const type = this.type;
 
+        let node;
         if (type === 'input')
-            return this.makeInput();
+            node = this.makeInput();
         else if (type === 'image')
-            return this.makeImages();
+            node = this.makeImages();
         else
-            return this.makeFiles();
+            node = this.makeFiles();
+
+        const {width = '30%', height, src, title, modalTitle} = this.$props;
+        return <div>{node}
+            <el-dialog title={modalTitle} visible={this.previewVisible} on-close={this.handleCancel}>
+                <img alt="example" style="width: 100%" src={this.previewImage}/>
+            </el-dialog>
+            <el-dialog props={{width, title, ...this.modal}} visible={this.frameVisible}
+                on-close={(v) => (this.frameVisible = v)}>
+                <iframe src={src} frameBorder="0" style={{
+                    'height': height,
+                    'border': '0 none',
+                    'width': '100%'
+                }} on-load={this.frameLoad}/>
+                {this.makeFooter()}
+            </el-dialog>
+        </div>
     }
 }

@@ -1,6 +1,5 @@
 import {toArray, uniqueId, isUndef} from '@form-create/utils';
 import style from '../../style/index.css';
-import {mount} from '../../core/modal';
 
 const NAME = 'fc-antd-frame';
 
@@ -51,10 +50,7 @@ export default {
             type: String,
             default: '关闭'
         },
-        modalTitle: {
-            type: String,
-            default: '预览'
-        },
+        modalTitle: String,
         handleIcon: {
             type: [String, Boolean],
             default: undefined
@@ -99,7 +95,6 @@ export default {
             default(src) {
                 this.previewImage = src;
                 this.previewVisible = true;
-                //defaultOnHandle(src, this.modalTitle)
             }
         },
         modal: {
@@ -109,15 +104,19 @@ export default {
         srcKey: {
             type: [String, Number]
         },
-        value: [Array, String, Number, Object]
+        value: [Array, String, Number, Object],
+        footer: {
+            type: Boolean,
+            default: true
+        }
 
     },
     data() {
         return {
-            modalVm: null,
             fileList: toArray(this.value),
             unique: uniqueId(),
             previewVisible: false,
+            frameVisible: false,
             previewImage: ''
 
         }
@@ -137,8 +136,7 @@ export default {
             return NAME + unique + this.unique;
         },
         closeModel() {
-            this.modalVm && this.modalVm.onClose();
-            this.modalVm = null;
+            this.frameVisible = false;
         },
         handleCancel() {
             this.previewVisible = false;
@@ -146,67 +144,7 @@ export default {
 
         showModel() {
             if (this.disabled || false === this.onOpen()) return;
-
-            const {width, height, src, title, okBtnText, closeBtnText} = this.$props;
-            mount({width, title, ...this.modal}, (vNode, _vm) => {
-                this.modalVm = _vm;
-                return [vNode.make('iframe', {
-                    attrs: {
-                        src
-                    },
-                    style: {
-                        'height': height,
-                        'border': '0 none',
-                        'width': '100%'
-                    },
-                    on: {
-                        'load': (e) => {
-                            this.onLoad(e);
-
-                            try {
-                                if (this.helper === true) {
-                                    let iframe = e.currentTarget.contentWindow;
-
-                                    iframe['form_create_helper'] = {
-                                        close: (field) => {
-                                            this.valid(field);
-                                            _vm.onClose();
-                                        },
-                                        set: (field, value) => {
-                                            this.valid(field);
-                                            if (!this.disabled)
-                                                this.$emit('input', value);
-
-                                        },
-                                        get: (field) => {
-                                            this.valid(field);
-                                            return this.value;
-                                        }
-                                    };
-
-                                }
-                            } catch (e) {
-                                console.log(e);
-                            }
-                        }
-                    },
-                }), vNode.make('div', {slot: 'footer'}, [
-                    vNode.button({
-                        on: {
-                            click: () => {
-                                this.onCancel() !== false && _vm.onClose();
-                            }
-                        }
-                    }, [closeBtnText]),
-                    vNode.button({
-                        props: {type: 'primary'}, on: {
-                            click: () => {
-                                this.onOk() !== false && _vm.onClose();
-                            }
-                        }
-                    }, [okBtnText])
-                ])]
-            });
+            this.frameVisible = true;
         },
 
         makeInput() {
@@ -287,6 +225,45 @@ export default {
         },
         getSrc(src) {
             return isUndef(this.srcKey) ? src : src[this.srcKey];
+        },
+        frameLoad(e) {
+            this.onLoad(e);
+
+            try {
+                if (this.helper === true) {
+                    let iframe = e.currentTarget.contentWindow;
+
+                    iframe['form_create_helper'] = {
+                        close: (field) => {
+                            this.valid(field);
+                            this.closeModel();
+                        },
+                        set: (field, value) => {
+                            this.valid(field);
+                            if (!this.disabled)
+                                this.$emit('input', value);
+
+                        },
+                        get: (field) => {
+                            this.valid(field);
+                            return this.value;
+                        }
+                    };
+
+                }
+            } catch (e) {
+                console.log(e);
+            }
+        },
+        makeFooter() {
+            const {okBtnText, closeBtnText} = this.$props;
+
+            if (!this.footer) return;
+            return <div slot="footer">
+                <IButton on-click={() => (this.onCancel() !== false && this.closeModel())}>{closeBtnText}</IButton>
+                <IButton type="primary"
+                    on-click={() => (this.onOk() !== false && this.closeModel())}>{okBtnText}</IButton>
+            </div>
         }
     },
     render() {
@@ -299,9 +276,19 @@ export default {
         else
             Node = this.makeFiles();
 
+        const {width = '30%', height, src, title, modalTitle} = this.$props;
         return <div>{Node}
-            <aModal visible={this.previewVisible} footer={null} on-cancel={this.handleCancel}>
+            <aModal title={modalTitle} visible={this.previewVisible} footer={null} on-cancel={this.handleCancel}>
                 <img alt="example" style="width: 100%" src={this.previewImage}/>
+            </aModal>
+            <aModal props={{width, title, ...this.modal}} visible={this.frameVisible}
+                on-change={(v) => (this.frameVisible = v)} footer={null}>
+                <iframe src={src} frameborder="0" style={{
+                    'height': height,
+                    'border': '0 none',
+                    'width': '100%'
+                }} on-load={this.frameLoad}/>
+                {this.makeFooter()}
             </aModal>
         </div>
     }

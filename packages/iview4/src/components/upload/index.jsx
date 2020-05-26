@@ -1,6 +1,5 @@
 import {iviewConfig} from '../../core/config';
 import {hasSlot, toArray, toString, uniqueId} from '@form-create/utils';
-import {defaultOnHandle} from '../../core/modal';
 import style from '../../style/index.css';
 
 function parseFile(file) {
@@ -32,7 +31,8 @@ export default {
         onHandle: {
             type: Function,
             default(file) {
-                defaultOnHandle(file.url, this.modalTitle)
+                this.previewImage = file.url;
+                this.previewVisible = true;
             }
         },
         uploadType: {
@@ -47,17 +47,16 @@ export default {
             type: Boolean,
             default: true
         },
-        modalTitle: {
-            type: String,
-            default: '预览'
-        },
+        modalTitle: String,
         handleIcon: [String, Boolean],
         value: [Array, String]
     },
     data() {
         return {
             uploadList: [],
-            unique: uniqueId()
+            unique: uniqueId(),
+            previewVisible: false,
+            previewImage: ''
         }
     },
     created() {
@@ -148,7 +147,10 @@ export default {
         update() {
             let files = this.$refs.upload.fileList.map((file) => file.url).filter((url) => url !== undefined);
             this.$emit('input', this.maxLength === 1 ? (files[0] || '') : files);
-        }
+        },
+        handleCancel() {
+            this.previewVisible = false;
+        },
     },
     render() {
         const isShow = (!this.maxLength || this.maxLength > this.uploadList.length);
@@ -165,7 +167,11 @@ export default {
             <div class={{
                 [style['fc-upload']]: true,
                 [style['fc-hide-btn']]: !isShow
-            }}>{[this.ctx.props.showUploadList ? [] : this.makeFiles(), this.makeUpload()]}</div>);
+            }}>{[this.ctx.props.showUploadList ? [] : this.makeFiles(), this.makeUpload()]}
+                <Modal title={this.modalTitle} v-model={this.previewVisible} footerHide={true}>
+                    <img alt="example" style="width: 100%" src={this.previewImage}/>
+                </Modal>
+            </div>);
     },
     mounted() {
         this.uploadList = this.$refs.upload.fileList;

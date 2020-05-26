@@ -1,5 +1,4 @@
 export default {
-    modal: 'el-dialog',
     button: 'el-button',
     icon: 'i',
     slider: 'el-slider',

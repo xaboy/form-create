@@ -1,5 +1,4 @@
 export default {
-    modal: 'Modal',
     button: 'i-button',
     icon: 'Icon',
     slider: 'Slider',

@@ -6,13 +6,7 @@ export default class parser extends BaseParser {
     render(children) {
         const data = this.$render.inputVData(this).get();
         return this.vNode.upload({
-            props: {
-                ctx: data,
-                children,
-                value: this.$handle.getFormData(this),
-                onSuccess: data.props.onSuccess,
-                limit: data.props.limit
-            },
+            props: {...data.props, ctx: data, children, value: this.$handle.getFormData(this)},
             on: {
                 input: (v) => {
                     this.$render.onInput(this, v);
