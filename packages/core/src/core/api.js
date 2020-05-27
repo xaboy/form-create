@@ -1,4 +1,4 @@
-import {$set, deepExtend, errMsg, isFunction, isPlainObject} from '@form-create/utils';
+import {$set, deepExtend, errMsg, isFunction, isPlainObject, isUndef} from '@form-create/utils';
 import {toJson} from './util';
 
 
@@ -278,8 +278,10 @@ export default function Api(h) {
                     }
                 }, ...h.subForm
             };
-            let keys = Object.keys(subForm), len = keys.length, subLen;
-
+            let keys = Object.keys(subForm).filter(field => {
+                    const sub = subForm[field];
+                    return Array.isArray(sub) ? sub.length : !isUndef(sub);
+                }), len = keys.length, subLen;
             const validFn = (valid, field) => {
                 if (valid) {
                     if (subLen > 1) subLen--;
