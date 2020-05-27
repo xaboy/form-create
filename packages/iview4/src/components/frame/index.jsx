@@ -142,7 +142,12 @@ export default {
         key(unique) {
             return NAME + unique + this.unique;
         },
-        closeModel() {
+        closeModel(close) {
+            this.$emit(close ? '$close' : '$ok');
+            if (this.reload) {
+                this.$off('$ok');
+                this.$off('$close');
+            }
             this.frameVisible = false;
         },
         handleCancel() {
@@ -253,7 +258,9 @@ export default {
                         get: (field) => {
                             this.valid(field);
                             return this.value;
-                        }
+                        },
+                        onOk: fn => this.$on('$ok', fn),
+                        onClose: fn => this.$on('$close', fn)
                     };
 
                 }
@@ -266,7 +273,7 @@ export default {
 
             if (!this.footer) return;
             return <div slot="footer">
-                <Button on-click={() => (this.onCancel() !== false && this.closeModel())}>{closeBtnText}</Button>
+                <Button on-click={() => (this.onCancel() !== false && this.closeModel(true))}>{closeBtnText}</Button>
                 <Button type="primary"
                     on-click={() => (this.onOk() !== false && this.closeModel())}>{okBtnText}</Button>
             </div>
@@ -287,7 +294,8 @@ export default {
             <Modal title={modalTitle} v-model={this.previewVisible} on-close={this.handleCancel}>
                 <img alt="example" style="width: 100%" src={this.previewImage}/>
             </Modal>
-            <Modal props={{width, title, ...this.modal}} v-model={this.frameVisible}>
+            <Modal props={{width, title, ...this.modal}} v-model={this.frameVisible}
+                on-close={() => (this.closeModel(true))}>
                 {(this.frameVisible || !this.reload) ? <iframe src={src} frameBorder="0" style={{
                     'height': height,
                     'border': '0 none',

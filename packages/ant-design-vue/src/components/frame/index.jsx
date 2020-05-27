@@ -138,7 +138,12 @@ export default {
         key(unique) {
             return NAME + unique + this.unique;
         },
-        closeModel() {
+        closeModel(close) {
+            this.$emit(close ? '$close' : '$ok');
+            if (this.reload) {
+                this.$off('$ok');
+                this.$off('$close');
+            }
             this.frameVisible = false;
         },
         handleCancel() {
@@ -250,7 +255,9 @@ export default {
                         get: (field) => {
                             this.valid(field);
                             return this.value;
-                        }
+                        },
+                        onOk: fn => this.$on('$ok', fn),
+                        onClose: fn => this.$on('$close', fn)
                     };
 
                 }
@@ -263,7 +270,7 @@ export default {
 
             if (!this.footer) return;
             return <div slot="footer">
-                <IButton on-click={() => (this.onCancel() !== false && this.closeModel())}>{closeBtnText}</IButton>
+                <IButton on-click={() => (this.onCancel() !== false && this.closeModel(true))}>{closeBtnText}</IButton>
                 <IButton type="primary"
                     on-click={() => (this.onOk() !== false && this.closeModel())}>{okBtnText}</IButton>
             </div>
@@ -285,7 +292,7 @@ export default {
                 <img alt="example" style="width: 100%" src={this.previewImage}/>
             </aModal>
             <aModal props={{width, title, ...this.modal}} visible={this.frameVisible}
-                on-change={(v) => (this.frameVisible = v)} footer={null}>
+                on-cancel={() => (this.closeModel(true))} footer={null}>
                 {(this.frameVisible || !this.reload) ? <iframe src={src} frameborder="0" style={{
                     'height': height,
                     'border': '0 none',
