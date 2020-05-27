@@ -370,7 +370,7 @@ export default class Handle {
         if (!len) return;
         for (let i = 0; i < len; i++) {
             const control = controls[i], validate = control.handle || (val => val === control.value);
-            if (validate(parser.rule.value)) {
+            if (validate(parser.rule.value, this.fCreateApi)) {
                 if (ctrlRule) {
                     if (ctrlRule.children === control.rule)
                         return;
