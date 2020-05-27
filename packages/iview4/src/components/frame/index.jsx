@@ -113,7 +113,15 @@ export default {
         reload: {
             type: Boolean,
             default: true
-        }
+        },
+        closeBtn: {
+            type: Boolean,
+            default: true
+        },
+        okBtn: {
+            type: Boolean,
+            default: true
+        },
 
     },
     data() {
@@ -150,10 +158,6 @@ export default {
             }
             this.frameVisible = false;
         },
-        handleCancel() {
-            this.previewVisible = false;
-        },
-
         showModel() {
             if (this.disabled || false === this.onOpen()) return;
             this.frameVisible = true;
@@ -269,14 +273,17 @@ export default {
             }
         },
         makeFooter() {
-            const {okBtnText, closeBtnText} = this.$props;
+            const {okBtnText, closeBtnText, closeBtn, okBtn, footer} = this.$props;
+            const node = [];
 
-            if (!this.footer) return;
-            return <div slot="footer">
-                <Button on-click={() => (this.onCancel() !== false && this.closeModel(true))}>{closeBtnText}</Button>
-                <Button type="primary"
-                    on-click={() => (this.onOk() !== false && this.closeModel())}>{okBtnText}</Button>
-            </div>
+            if (!footer) return node;
+            if (closeBtn)
+                node.push(<Button
+                    on-click={() => (this.onCancel() !== false && this.closeModel(true))}>{closeBtnText}</Button>);
+            if (okBtn)
+                node.push(<Button type="primary"
+                    on-click={() => (this.onOk() !== false && this.closeModel())}>{okBtnText}</Button>);
+            return node;
         }
     },
     render() {
@@ -291,17 +298,19 @@ export default {
             node = this.makeFiles();
         const {width, height, src, title, modalTitle} = this.$props;
         return <div>{node}
-            <Modal title={modalTitle} v-model={this.previewVisible} on-close={this.handleCancel}>
+            <Modal title={modalTitle} v-model={this.previewVisible} footerHide={true}>
                 <img alt="example" style="width: 100%" src={this.previewImage}/>
             </Modal>
             <Modal props={{width, title, ...this.modal}} v-model={this.frameVisible}
-                on-close={() => (this.closeModel(true))}>
+                on-on-cancel={() => (this.closeModel(true))}>
                 {(this.frameVisible || !this.reload) ? <iframe src={src} frameBorder="0" style={{
                     'height': height,
                     'border': '0 none',
                     'width': '100%'
                 }} on-load={this.frameLoad}/> : null}
-                {this.makeFooter()}
+                <div slot="footer">
+                    {this.makeFooter()}
+                </div>
             </Modal>
         </div>
     }

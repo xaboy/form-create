@@ -112,7 +112,15 @@ export default {
         reload: {
             type: Boolean,
             default: true
-        }
+        },
+        closeBtn: {
+            type: Boolean,
+            default: true
+        },
+        okBtn: {
+            type: Boolean,
+            default: true
+        },
 
     },
     data() {
@@ -269,14 +277,14 @@ export default {
             }
         },
         makeFooter() {
-            const {okBtnText, closeBtnText} = this.$props;
+            const {okBtnText, closeBtnText, closeBtn, okBtn, footer} = this.$props;
 
-            if (!this.footer) return;
+            if (!footer) return;
             return <div slot="footer">
-                <ElButton
-                    on-click={() => (this.onCancel() !== false && this.closeModel(true))}>{closeBtnText}</ElButton>
-                <ElButton type="primary"
-                    on-click={() => (this.onOk() !== false && this.closeModel())}>{okBtnText}</ElButton>
+                {closeBtn ? <ElButton
+                    on-click={() => (this.onCancel() !== false && this.closeModel(true))}>{closeBtnText}</ElButton> : null}
+                {okBtn ? <ElButton type="primary"
+                    on-click={() => (this.onOk() !== false && this.closeModel())}>{okBtnText}</ElButton> : null}
             </div>
         }
     },

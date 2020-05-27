@@ -112,7 +112,15 @@ export default {
         reload: {
             type: Boolean,
             default: true
-        }
+        },
+        closeBtn: {
+            type: Boolean,
+            default: true
+        },
+        okBtn: {
+            type: Boolean,
+            default: true
+        },
 
     },
     data() {
@@ -145,9 +153,6 @@ export default {
                 this.$off('$close');
             }
             this.frameVisible = false;
-        },
-        handleCancel() {
-            this.previewVisible = false;
         },
 
         showModel() {
@@ -266,14 +271,18 @@ export default {
             }
         },
         makeFooter() {
-            const {okBtnText, closeBtnText} = this.$props;
+            const {okBtnText, closeBtnText, closeBtn, okBtn, footer} = this.$props;
 
-            if (!this.footer) return;
-            return <div slot="footer">
-                <IButton on-click={() => (this.onCancel() !== false && this.closeModel(true))}>{closeBtnText}</IButton>
-                <IButton type="primary"
-                    on-click={() => (this.onOk() !== false && this.closeModel())}>{okBtnText}</IButton>
-            </div>
+            const node = [];
+            if (!footer) return node;
+
+            if (closeBtn)
+                node.push(<AButton
+                    on-click={() => (this.onCancel() !== false && this.closeModel(true))}>{closeBtnText}</AButton>);
+            if (okBtn)
+                node.push(<AButton type="primary"
+                    on-click={() => (this.onOk() !== false && this.closeModel())}>{okBtnText}</AButton>);
+            return node;
         }
     },
     render() {
@@ -288,17 +297,19 @@ export default {
 
         const {width = '30%', height, src, title, modalTitle} = this.$props;
         return <div>{Node}
-            <aModal title={modalTitle} visible={this.previewVisible} footer={null} on-cancel={this.handleCancel}>
+            <aModal title={modalTitle} v-model={this.previewVisible} footer={null}>
                 <img alt="example" style="width: 100%" src={this.previewImage}/>
             </aModal>
             <aModal props={{width, title, ...this.modal}} visible={this.frameVisible}
-                on-cancel={() => (this.closeModel(true))} footer={null}>
+                on-cancel={() => (this.closeModel(true))}>
                 {(this.frameVisible || !this.reload) ? <iframe src={src} frameborder="0" style={{
                     'height': height,
                     'border': '0 none',
                     'width': '100%'
                 }} on-load={this.frameLoad}/> : null}
-                {this.makeFooter()}
+                <div slot="footer">
+                    {this.makeFooter()}
+                </div>
             </aModal>
         </div>
     }
