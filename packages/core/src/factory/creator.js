@@ -1,4 +1,4 @@
-import {$set, extend, isFunction, isPlainObject} from '@form-create/utils';
+import {$set, deepExtend, extend, isFunction, isPlainObject} from '@form-create/utils';
 import VData from './vData';
 
 function baseRule() {
@@ -40,6 +40,12 @@ export default class Creator extends VData {
     type(type) {
         this.props('type', type);
         return this;
+    }
+
+    _clone() {
+        const clone = new this.constructor();
+        clone._data = deepExtend({}, this._data);
+        return clone;
     }
 
     getRule() {

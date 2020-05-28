@@ -1,5 +1,5 @@
 import Creator from '../factory/creator';
-import {deepExtendArgs, isFunction, isString, isUndef} from '@form-create/utils';
+import {deepExtendArgs, isUndef} from '@form-create/utils';
 
 const PREFIX = '[[FORM-CREATE-PREFIX-';
 const SUFFIX = '-FORM-CREATE-SUFFIX]]';
@@ -60,15 +60,5 @@ export function copyRule(rule) {
 }
 
 export function copyRules(rules) {
-    return rules.map(rule => {
-        if (isString(rule)) return rule;
-        const isCreator = isFunction(rule.getRule);
-        const data = deepExtendArgs({}, (isCreator ? rule._data : rule));
-        if (isCreator) {
-            const creator = new Creator();
-            creator._data = data;
-            return creator;
-        } else
-            return data;
-    })
+    return deepExtendArgs([], rules);
 }

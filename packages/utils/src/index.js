@@ -98,6 +98,8 @@ export function deepExtend(origin, target = {}) {
                 if (isArr) {
                     isArr = false;
                     nst && $set(origin, key, []);
+                } else if (clone._clone) {
+                    $set(origin, key, clone._clone());
                 } else {
                     nst && $set(origin, key, {});
                 }
