@@ -88,7 +88,7 @@ export function isElement(arg) {
     return typeof arg === 'object' && arg !== null && arg.nodeType === 1 && !isPlainObject(arg)
 }
 
-export function deepExtend(origin, target = {}) {
+export function deepExtend(origin, target = {}, mode) {
     let isArr = false;
     for (let key in target) {
         if (Object.prototype.hasOwnProperty.call(target, key)) {
@@ -99,11 +99,18 @@ export function deepExtend(origin, target = {}) {
                     isArr = false;
                     nst && $set(origin, key, []);
                 } else if (clone._clone) {
-                    $set(origin, key, clone._clone());
+                    clone = clone._clone();
+                    if (mode) {
+                        clone = clone.getRule();
+                        nst && $set(origin, key, {});
+                    } else {
+                        $set(origin, key, clone);
+                        continue;
+                    }
                 } else {
                     nst && $set(origin, key, {});
                 }
-                deepExtend(origin[key], clone);
+                deepExtend(origin[key], clone, mode);
             } else {
                 $set(origin, key, clone);
             }

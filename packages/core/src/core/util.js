@@ -1,15 +1,10 @@
-import Creator from '../factory/creator';
-import {deepExtendArgs, isUndef} from '@form-create/utils';
+import {deepExtend, isUndef} from '@form-create/utils';
 
 const PREFIX = '[[FORM-CREATE-PREFIX-';
 const SUFFIX = '-FORM-CREATE-SUFFIX]]';
 
 export function toJson(obj) {
-    return JSON.stringify(obj, function (key, val) {
-        if (val instanceof Creator) {
-            return val.getRule();
-        }
-
+    return JSON.stringify(deepExtend([], obj, true), function (key, val) {
         if (val && val._isVue === true)
             return undefined;
 
@@ -60,5 +55,5 @@ export function copyRule(rule) {
 }
 
 export function copyRules(rules) {
-    return deepExtendArgs([], rules);
+    return deepExtend([], rules);
 }
