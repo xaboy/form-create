@@ -24,20 +24,20 @@ export default class BaseForm {
         this.$render = this.$handle.$render;
     }
 
-    getGetCol(parser) {
-        let col = parser.rule.col || {}, mCol = {}, pCol = {}, global = this.options.global;
+    getGetCol(parser, field = 'col') {
+        let col = parser.rule[field] || {}, mCol = {}, pCol = {}, global = this.options.global;
 
         if (!global)
             return col;
 
         if (global['*']) {
-            mCol = global['*'].col || {};
+            mCol = global['*'][field] || {};
         }
 
         if (global[parser.type]) {
-            pCol = global[parser.type].col || {};
+            pCol = global[parser.type][field] || {};
         } else if (global[parser.originType]) {
-            pCol = global[parser.originType].col || {};
+            pCol = global[parser.originType][field] || {};
         }
         col = deepExtendArgs({}, mCol, pCol, col);
         return col;

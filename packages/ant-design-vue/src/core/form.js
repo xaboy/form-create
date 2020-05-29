@@ -61,14 +61,19 @@ export default class Form extends BaseForm {
         return this.makeFormItem(parser, child);
     }
 
+    getItemCol(parser, field) {
+        const col = this.getGetCol(parser, field);
+        return Object.keys(col).length ? col : undefined
+    }
+
     makeFormItem(parser, child) {
         let fItemUnique = `fItem${parser.key}${this.unique}`, isVertical = this.propsData.props.layout === 'vertical',
             {rule, field, formItemRefName} = parser,
             col = this.getGetCol(parser), {layout, col: _col} = this.propsData.props,
             propsData = this.vData.props({
                 prop: field,
-                labelCol: isVertical ? {} : rule.labelCol,
-                wrapperCol: isVertical ? {} : rule.wrapperCol,
+                labelCol: isVertical ? {} : this.getItemCol(parser, 'labelCol'),
+                wrapperCol: isVertical ? {} : this.getItemCol(parser, 'wrapperCol'),
                 rules: rule.validate,
                 required: rule.props.required
             }).key(fItemUnique).ref(formItemRefName).class(rule.className).get(),
