@@ -50,10 +50,10 @@ export function enumerable(value) {
     }
 }
 
-export function copyRule(rule) {
-    return copyRules([rule])[0];
+export function copyRule(rule, mode) {
+    return copyRules([rule], mode)[0];
 }
 
-export function copyRules(rules) {
-    return deepExtend([], rules);
+export function copyRules(rules, mode) {
+    return deepExtend([], rules, mode);
 }
