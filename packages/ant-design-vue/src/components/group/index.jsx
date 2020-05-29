@@ -1,4 +1,5 @@
 import {copyRules} from '@form-create/core';
+import {deepExtendArgs} from '@form-create/utils';
 
 const NAME = 'fc-antd-group';
 
@@ -7,6 +8,7 @@ export default {
     props: {
         rule: Object,
         rules: Array,
+        formCreate: Object,
         max: {
             type: Number,
             default: 0
@@ -26,18 +28,12 @@ export default {
     },
     data() {
         return {
-            config: {
+            option: deepExtendArgs({}, this.formCreate.config || {}, {
                 submitBtn: false,
                 resetBtn: false,
-                form: {
-                    labelCol: {
-                        span: 3
-                    },
-                    wrapperCol: {
-                        span: 18
-                    },
-                }
-            },
+                mounted: undefined,
+                onReload: undefined
+            }),
             len: 0,
             cacheRule: {},
             group$f: {},
@@ -178,7 +174,7 @@ export default {
                     <ACol span={20}><FormCreate
                         on-mounted={($f) => this.add$f(index, key, $f)}
                         on-on-reload={($f) => this.syncData(key, $f)} rule={rule}
-                        option={this.config}/></ACol>
+                        option={this.option}/></ACol>
                     <ACol span={2} pull={1} push={1}>{this.makeIcon(keys.length, index, key)}</ACol></ARow>
             })}</div>
     }

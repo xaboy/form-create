@@ -1,5 +1,6 @@
 import {iviewConfig} from '../../core/config';
 import {copyRules} from '@form-create/core';
+import {deepExtendArgs} from '@form-create/utils';
 
 const NAME = 'fc-ivu-group';
 
@@ -8,6 +9,7 @@ export default {
     props: {
         rule: Object,
         rules: Array,
+        formCreate: Object,
         max: {
             type: Number,
             default: 0
@@ -27,10 +29,12 @@ export default {
     },
     data() {
         return {
-            config: {
+            option: deepExtendArgs({}, this.formCreate.config || {}, {
                 submitBtn: false,
-                resetBtn: false
-            },
+                resetBtn: false,
+                mounted: undefined,
+                onReload: undefined
+            }),
             len: 0,
             cacheRule: {},
             group$f: {},
@@ -169,7 +173,7 @@ export default {
                     style="background-color:#f5f7fa;padding:10px;border-radius:5px;margin-bottom:10px;">
                     <Col span={20}><FormItem><FormCreate on-mounted={($f) => this.add$f(index, key, $f)}
                         on-on-reload={($f) => this.syncData(key, $f)} rule={rule}
-                        option={this.config}/></FormItem></Col>
+                        option={this.option}/></FormItem></Col>
                     <Col span={2} pull={1} push={1}>{this.makeIcon(keys.length, index, key)}</Col></Row>
             })}</div>
     }
