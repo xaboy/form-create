@@ -68,9 +68,7 @@ export default class Render {
         this.$form.beforeRender();
 
         const vn = this.$handle.sortList.map((id) => {
-            let parser = this.$handle.parsers[id];
-            if (parser.type === 'hidden') return;
-            return this.renderParser(parser);
+            return this.renderParser(this.$handle.parsers[id]);
         }).filter((val) => val !== undefined);
 
         return this.$form.render(vn);
@@ -128,6 +126,7 @@ export default class Render {
     }
 
     renderParser(parser, parent) {
+        if (parser.type === 'hidden') return;
         if (!this.cache[parser.id] || parser.type === 'template') {
 
             parser.vData.get();
