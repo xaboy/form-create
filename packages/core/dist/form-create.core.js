@@ -1,5 +1,5 @@
 /*!
- * @form-create/core v1.0.13
+ * @form-create/core v1.0.15
  * (c) 2018-2020 xaboy
  * Github https://github.com/xaboy/form-create
  * Released under the MIT License.
@@ -220,6 +220,7 @@ function isElement(arg) {
 }
 function deepExtend(origin) {
   var target = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  var mode = arguments.length > 2 ? arguments[2] : undefined;
   var isArr = false;
 
   for (var key in target) {
@@ -232,11 +233,21 @@ function deepExtend(origin) {
         if (isArr) {
           isArr = false;
           nst && $set(origin, key, []);
+        } else if (clone._clone) {
+          clone = clone._clone();
+
+          if (mode) {
+            clone = clone.getRule();
+            nst && $set(origin, key, {});
+          } else {
+            $set(origin, key, clone);
+            continue;
+          }
         } else {
           nst && $set(origin, key, {});
         }
 
-        deepExtend(origin[key], clone);
+        deepExtend(origin[key], clone, mode);
       } else {
         $set(origin, key, clone);
       }
@@ -271,10 +282,7 @@ function $FormCreate(FormCreate, components) {
     props: {
       rule: {
         type: Array,
-        required: true,
-        default: function _default() {
-          return {};
-        }
+        required: true
       },
       option: {
         type: Object,
@@ -329,8 +337,7 @@ function $FormCreate(FormCreate, components) {
       this.$emit('input', this.$f);
     },
     mounted: function mounted() {
-      var formCreate = this.formCreate;
-      formCreate.mounted();
+      this.formCreate.mounted();
       this.$emit('input', this.$f);
     },
     beforeDestroy: function beforeDestroy() {
@@ -556,6 +563,13 @@ function (_VData) {
       return this;
     }
   }, {
+    key: "_clone",
+    value: function _clone() {
+      var clone = new this.constructor();
+      clone._data = deepExtend({}, this._data);
+      return clone;
+    }
+  }, {
     key: "getRule",
     value: function getRule() {
       return this._data;
@@ -593,12 +607,10 @@ arrAttrs.forEach(function (attr) {
   };
 });
 
+var PREFIX = '[[FORM-CREATE-PREFIX-';
+var SUFFIX = '-FORM-CREATE-SUFFIX]]';
 function toJson(obj) {
-  return JSON.stringify(obj, function (key, val) {
-    if (val instanceof Creator) {
-      return val.getRule();
-    }
-
+  return JSON.stringify(deepExtend([], obj, true), function (key, val) {
     if (val && val._isVue === true) return undefined;
 
     if (typeof val !== 'function') {
@@ -607,20 +619,26 @@ function toJson(obj) {
 
     if (val.__inject) val = val.__origin;
     if (val.__emit) return undefined;
-    return '' + val;
+    return PREFIX + val + SUFFIX;
   });
 }
-function parseJson(json) {
-  return JSON.parse(json, function (k, v) {
-    if (isUndef(v)) return v;
 
-    if (v.indexOf && v.indexOf('function') > -1) {
-      try {
-        return eval('(function(){return ' + v + ' })()');
-      } catch (e) {
-        console.error("[form-create]\u89E3\u6790\u5931\u8D25:".concat(v));
-        return undefined;
-      }
+function makeFn(fn) {
+  return eval('(function(){return ' + fn + ' })()');
+}
+
+function parseJson(json, mode) {
+  return JSON.parse(json, function (k, v) {
+    if (isUndef(v) || !v.indexOf) return v;
+
+    try {
+      if (v.indexOf(SUFFIX) > 0 && v.indexOf(PREFIX) === 0) {
+        v = v.replace(SUFFIX, '').replace(PREFIX, '');
+        return makeFn(v.indexOf('function') === -1 && v.indexOf('(') !== 0 ? 'function ' + v : v);
+      } else if (!mode && v.indexOf('function') > -1) return makeFn(v);
+    } catch (e) {
+      console.error("[form-create]\u89E3\u6790\u5931\u8D25:".concat(v));
+      return undefined;
     }
 
     return v;
@@ -633,21 +651,11 @@ function enumerable(value) {
     configurable: false
   };
 }
-function copyRule(rule) {
-  return copyRules([rule])[0];
+function copyRule(rule, mode) {
+  return copyRules([rule], mode)[0];
 }
-function copyRules(rules) {
-  return rules.map(function (rule) {
-    if (isString(rule)) return rule;
-    var isCreator = isFunction(rule.getRule);
-    var data = deepExtendArgs({}, isCreator ? rule._data : rule);
-
-    if (isCreator) {
-      var creator = new Creator();
-      creator._data = data;
-      return creator;
-    } else return data;
-  });
+function copyRules(rules, mode) {
+  return deepExtend([], rules, mode);
 }
 
 var commonMaker = creatorFactory('');
@@ -915,9 +923,7 @@ function () {
       if (!this.vm.isShow) return;
       this.$form.beforeRender();
       var vn = this.$handle.sortList.map(function (id) {
-        var parser = _this.$handle.parsers[id];
-        if (parser.type === 'hidden') return;
-        return _this.renderParser(parser);
+        return _this.renderParser(_this.$handle.parsers[id]);
       }).filter(function (val) {
         return val !== undefined;
       });
@@ -978,6 +984,8 @@ function () {
   }, {
     key: "renderParser",
     value: function renderParser(parser, parent) {
+      if (parser.type === 'hidden') return;
+
       if (!this.cache[parser.id] || parser.type === 'template') {
         parser.vData.get();
         this.setGlobalConfig(parser);
@@ -1406,7 +1414,10 @@ function Api(h) {
         }
       }, {}, h.subForm);
 
-      var keys = Object.keys(subForm),
+      var keys = Object.keys(subForm).filter(function (field) {
+        var sub = subForm[field];
+        return Array.isArray(sub) ? sub.length : !isUndef(sub);
+      }),
           len = keys.length,
           subLen;
 
@@ -1562,12 +1573,13 @@ function () {
   function Handle(fc) {
     _classCallCheck(this, Handle);
 
-    var vm = fc.vm,
-        rules = fc.rules,
-        options = fc.options;
+    var _this$fc = this.fc = fc,
+        vm = _this$fc.vm,
+        rules = _this$fc.rules,
+        options = _this$fc.options;
+
     this.watching = false;
     this.vm = vm;
-    this.fc = fc;
     this.options = options;
     this.validate = {};
     this.formData = {};
@@ -1615,8 +1627,7 @@ function () {
           parser = _rule.__fc__; //规则在其他 form-create 中使用,自动浅拷贝
 
           if (!parser.deleted && (parser.vm !== _this.vm || _this.parsers[parser.id])) {
-            _rule = copyRule(_rule);
-            rules[index] = _rule;
+            rules[index] = _rule = copyRule(_rule);
             parser = _this.createParser(_this.parseRule(_rule));
           } else {
             parser.update(_this);
@@ -1682,11 +1693,7 @@ function () {
   }, {
     key: "createParser",
     value: function createParser(rule) {
-      var id = '' + uniqueId(),
-          parsers = this.fc.parsers,
-          type = toString(rule.type).toLocaleLowerCase();
-      var Parser = parsers[type] ? parsers[type] : BaseParser;
-      return new Parser(this, rule, id);
+      return new (this.fc.parsers[toString(rule.type).toLocaleLowerCase()] || BaseParser)(this, rule, '' + uniqueId());
     }
   }, {
     key: "parseRule",
@@ -1872,7 +1879,7 @@ function () {
   }, {
     key: "getParser",
     value: function getParser(id) {
-      if (this.fieldList[id]) return this.fieldList[id];else if (this.customData[id]) return this.customData[id];else if (this.parsers[id]) return this.parsers[id];
+      return this.fieldList[id] || this.customData[id] || this.parsers[id];
     }
   }, {
     key: "created",
@@ -1961,7 +1968,7 @@ function () {
           return val === control.value;
         };
 
-        if (validate(parser.rule.value)) {
+        if (validate(parser.rule.value, _this7.fCreateApi)) {
           if (ctrlRule) {
             if (ctrlRule.children === control.rule) return {
               v: void 0
@@ -1972,7 +1979,8 @@ function () {
             type: 'fcFragment',
             native: true,
             children: control.rule
-          };
+          }; //TODO 位置可自定义
+
           parser.root.splice(parser.root.indexOf(parser.rule.__origin__) + 1, 0, rule);
           parser.ctrlRule = rule;
 
@@ -2463,20 +2471,21 @@ function () {
   }, {
     key: "getGetCol",
     value: function getGetCol(parser) {
-      var col = parser.rule.col || {},
+      var field = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'col';
+      var col = parser.rule[field] || {},
           mCol = {},
           pCol = {},
           global = this.options.global;
       if (!global) return col;
 
       if (global['*']) {
-        mCol = global['*'].col || {};
+        mCol = global['*'][field] || {};
       }
 
       if (global[parser.type]) {
-        pCol = global[parser.type].col || {};
+        pCol = global[parser.type][field] || {};
       } else if (global[parser.originType]) {
-        pCol = global[parser.originType].col || {};
+        pCol = global[parser.originType][field] || {};
       }
 
       col = deepExtendArgs({}, mCol, pCol, col);

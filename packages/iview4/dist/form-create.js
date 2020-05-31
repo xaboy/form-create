@@ -1,5 +1,5 @@
 /*!
- * @form-create/iview4 v1.0.14
+ * @form-create/iview4 v1.0.15
  * (c) 2018-2020 xaboy
  * Github https://github.com/xaboy/form-create
  * Released under the MIT License.
@@ -277,6 +277,7 @@
   }
   function deepExtend(origin) {
     var target = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+    var mode = arguments.length > 2 ? arguments[2] : undefined;
     var isArr = false;
 
     for (var key in target) {
@@ -289,11 +290,21 @@
           if (isArr) {
             isArr = false;
             nst && $set(origin, key, []);
+          } else if (clone._clone) {
+            clone = clone._clone();
+
+            if (mode) {
+              clone = clone.getRule();
+              nst && $set(origin, key, {});
+            } else {
+              $set(origin, key, clone);
+              continue;
+            }
           } else {
             nst && $set(origin, key, {});
           }
 
-          deepExtend(origin[key], clone);
+          deepExtend(origin[key], clone, mode);
         } else {
           $set(origin, key, clone);
         }
@@ -495,6 +506,896 @@
     };
   }
 
+  function styleInject(css, ref) {
+    if (ref === void 0) ref = {};
+    var insertAt = ref.insertAt;
+
+    if (!css || typeof document === 'undefined') {
+      return;
+    }
+
+    var head = document.head || document.getElementsByTagName('head')[0];
+    var style = document.createElement('style');
+    style.type = 'text/css';
+
+    if (insertAt === 'top') {
+      if (head.firstChild) {
+        head.insertBefore(style, head.firstChild);
+      } else {
+        head.appendChild(style);
+      }
+    } else {
+      head.appendChild(style);
+    }
+
+    if (style.styleSheet) {
+      style.styleSheet.cssText = css;
+    } else {
+      style.appendChild(document.createTextNode(css));
+    }
+  }
+
+  var css = ".fc-upload-btn, .fc-files {\n    display: inline-block;\n    width: 58px;\n    height: 58px;\n    text-align: center;\n    line-height: 58px;\n    border: 1px solid #c0ccda;\n    border-radius: 4px;\n    overflow: hidden;\n    background: #fff;\n    position: relative;\n    box-shadow: 2px 2px 5px rgba(0, 0, 0, .1);\n    margin-right: 4px;\n    box-sizing: border-box;\n}\n\n.form-create .form-create .ivu-form-item {\n    margin-bottom: 24px;\n}\n.form-create .form-create .ivu-form-item .ivu-form-item {\n    margin-bottom: 0px;\n}\n\n.form-create .fc-group .ivu-icon+.ivu-icon{\n    margin-left: 3px;\n}\n\n.form-create .fc-upload .ivu-icon{\n    vertical-align: middle;\n}\n\n.form-create .__fc_h {\n    display: none;\n}\n\n.form-create .__fc_v {\n    visibility: hidden;\n}\n\n.fc-files img {\n    width: 100%;\n    height: 100%;\n    display: inline-block;\n    vertical-align: top;\n}\n\n.fc-upload-btn {\n    border: 1px dashed #c0ccda;\n    cursor: pointer;\n}\n\n.fc-upload .fc-upload-cover {\n    opacity: 0;\n    position: absolute;\n    top: 0;\n    bottom: 0;\n    left: 0;\n    right: 0;\n    background: rgba(0, 0, 0, .6);\n    transition: opacity .3s;\n}\n\n.fc-upload .fc-upload-cover i {\n    color: #fff;\n    font-size: 20px;\n    cursor: pointer;\n    margin: 0 2px;\n}\n\n.fc-files:hover .fc-upload-cover {\n    opacity: 1;\n}\n\n.fc-hide-btn .ivu-upload .ivu-upload {\n    display: none;\n}\n\n.fc-upload .ivu-upload-list {\n    margin-top: 0;\n}\n";
+  var style = {"fc-upload-btn":"fc-upload-btn","fc-files":"fc-files","form-create":"form-create","ivu-form-item":"ivu-form-item","fc-group":"fc-group","ivu-icon":"ivu-icon","fc-upload":"fc-upload","__fc_h":"__fc_h","__fc_v":"__fc_v","fc-upload-cover":"fc-upload-cover","fc-hide-btn":"fc-hide-btn","ivu-upload":"ivu-upload","ivu-upload-list":"ivu-upload-list"};
+  styleInject(css);
+
+  var NAME$1 = 'fc-ivu-frame';
+  var frame = {
+    name: NAME$1,
+    props: {
+      type: {
+        type: String,
+        default: 'input'
+      },
+      field: {
+        type: String,
+        default: ''
+      },
+      helper: {
+        type: Boolean,
+        default: true
+      },
+      disabled: {
+        type: Boolean,
+        default: false
+      },
+      src: {
+        type: String,
+        required: true
+      },
+      icon: {
+        type: String,
+        default: iviewConfig.fileUpIcon
+      },
+      width: {
+        type: [Number, String],
+        default: 500
+      },
+      height: {
+        type: [Number, String],
+        default: 370
+      },
+      maxLength: {
+        type: Number,
+        default: 0
+      },
+      okBtnText: {
+        type: String,
+        default: '确定'
+      },
+      closeBtnText: {
+        type: String,
+        default: '关闭'
+      },
+      modalTitle: String,
+      handleIcon: {
+        type: [String, Boolean],
+        default: undefined
+      },
+      title: String,
+      allowRemove: {
+        type: Boolean,
+        default: true
+      },
+      onOpen: {
+        type: Function,
+        default: function _default() {}
+      },
+      onOk: {
+        type: Function,
+        default: function _default() {}
+      },
+      onCancel: {
+        type: Function,
+        default: function _default() {}
+      },
+      onLoad: {
+        type: Function,
+        default: function _default() {}
+      },
+      onBeforeRemove: {
+        type: Function,
+        default: function _default() {}
+      },
+      onRemove: {
+        type: Function,
+        default: function _default() {}
+      },
+      onHandle: {
+        type: Function,
+        default: function _default(src) {
+          this.previewImage = src;
+          this.previewVisible = true;
+        }
+      },
+      modal: {
+        type: Object,
+        default: function _default() {
+          return {};
+        }
+      },
+      srcKey: {
+        type: [String, Number]
+      },
+      value: [Array, String, Number, Object],
+      footer: {
+        type: Boolean,
+        default: true
+      },
+      reload: {
+        type: Boolean,
+        default: true
+      },
+      closeBtn: {
+        type: Boolean,
+        default: true
+      },
+      okBtn: {
+        type: Boolean,
+        default: true
+      }
+    },
+    data: function data() {
+      return {
+        fileList: toArray(this.value),
+        unique: uniqueId(),
+        previewVisible: false,
+        frameVisible: false,
+        previewImage: ''
+      };
+    },
+    watch: {
+      value: function value(n) {
+        this.fileList = toArray(n);
+      },
+      fileList: function fileList(n) {
+        var val = this.maxLength === 1 ? n[0] || '' : n;
+        this.$emit('input', val);
+        this.$emit('on-change', val);
+      },
+      src: function src(n) {
+        this.modalVm && (this.modalVm.src = n);
+      }
+    },
+    methods: {
+      key: function key(unique) {
+        return NAME$1 + unique + this.unique;
+      },
+      closeModel: function closeModel(close) {
+        this.$emit(close ? '$close' : '$ok');
+
+        if (this.reload) {
+          this.$off('$ok');
+          this.$off('$close');
+        }
+
+        this.frameVisible = false;
+      },
+      showModel: function showModel() {
+        if (this.disabled || false === this.onOpen()) return;
+        this.frameVisible = true;
+      },
+      makeInput: function makeInput() {
+        var _this = this;
+
+        var h = this.$createElement;
+        var props = {
+          type: 'text',
+          value: this.fileList.map(function (v) {
+            return _this.getSrc(v);
+          }).toString(),
+          icon: this.icon,
+          readonly: true,
+          clearable: false
+        };
+        return h("Input", helper([{}, {
+          "props": props
+        }, {}, {
+          "on": {
+            'on-click': function onClick() {
+              return _this.showModel();
+            }
+          }
+        }, {
+          "key": this.key('input')
+        }]));
+      },
+      makeGroup: function makeGroup(children) {
+        var h = this.$createElement;
+        if (!this.maxLength || this.fileList.length < this.maxLength) children.push(this.makeBtn());
+        return h("div", {
+          "class": style['fc-upload'],
+          "key": this.key('group')
+        }, _toConsumableArray(children));
+      },
+      makeItem: function makeItem(index, children) {
+        var h = this.$createElement;
+        return h("div", {
+          "class": style['fc-files'],
+          "key": this.key('file' + index)
+        }, _toConsumableArray(children));
+      },
+      valid: function valid(field) {
+        if (field !== this.field) throw new Error('frame 无效的字段值');
+      },
+      makeIcons: function makeIcons(val, index) {
+        var h = this.$createElement;
+
+        if (this.handleIcon !== false || this.allowRemove === true) {
+          var icons = [];
+          if (this.type !== 'file' && this.handleIcon !== false || this.type === 'file' && this.handleIcon) icons.push(this.makeHandleIcon(val, index));
+          if (this.allowRemove) icons.push(this.makeRemoveIcon(val, index));
+          return h("div", {
+            "class": style['fc-upload-cover'],
+            "key": this.key('uc')
+          }, [icons]);
+        }
+      },
+      makeHandleIcon: function makeHandleIcon(val, index) {
+        var _this2 = this;
+
+        var h = this.$createElement;
+        return h("icon", helper([{}, {
+          "props": {
+            type: this.handleIcon === true || this.handleIcon === undefined ? 'ios-eye-outline' : this.handleIcon
+          }
+        }, {
+          "on": {
+            "click": function click() {
+              return _this2.handleClick(val);
+            }
+          },
+          "key": this.key('hi' + index)
+        }]));
+      },
+      makeRemoveIcon: function makeRemoveIcon(val, index) {
+        var _this3 = this;
+
+        var h = this.$createElement;
+        return h("icon", helper([{}, {
+          "props": {
+            type: 'ios-trash-outline'
+          }
+        }, {
+          "on": {
+            "click": function click() {
+              return _this3.handleRemove(val);
+            }
+          },
+          "key": this.key('ri' + index)
+        }]));
+      },
+      makeFiles: function makeFiles() {
+        var _this4 = this;
+
+        var h = this.$createElement;
+        return this.makeGroup(this.fileList.map(function (src, index) {
+          return _this4.makeItem(index, [h("icon", helper([{}, {
+            "props": {
+              type: iviewConfig.fileIcon,
+              size: 40
+            }
+          }, {
+            "on": {
+              "click": function click() {
+                return _this4.handleClick(src);
+              }
+            }
+          }])), _this4.makeIcons(src, index)]);
+        }));
+      },
+      makeImages: function makeImages() {
+        var _this5 = this;
+
+        var h = this.$createElement;
+        return this.makeGroup(this.fileList.map(function (src, index) {
+          return _this5.makeItem(index, [h("img", {
+            "attrs": {
+              "src": _this5.getSrc(src)
+            }
+          }), _this5.makeIcons(src, index)]);
+        }));
+      },
+      makeBtn: function makeBtn() {
+        var _this6 = this;
+
+        var h = this.$createElement;
+        return h("div", {
+          "class": style['fc-upload-btn'],
+          "on": {
+            "click": function click() {
+              return _this6.showModel();
+            }
+          },
+          "key": this.key('btn')
+        }, [h("icon", helper([{}, {
+          "props": {
+            type: this.icon,
+            size: 20
+          }
+        }]))]);
+      },
+      handleClick: function handleClick(src) {
+        if (this.disabled) return;
+        return this.onHandle(src);
+      },
+      handleRemove: function handleRemove(src) {
+        if (this.disabled) return;
+
+        if (false !== this.onBeforeRemove(src)) {
+          this.fileList.splice(this.fileList.indexOf(src), 1);
+          this.onRemove(src);
+        }
+      },
+      getSrc: function getSrc(src) {
+        return isUndef(this.srcKey) ? src : src[this.srcKey];
+      },
+      frameLoad: function frameLoad(e) {
+        var _this7 = this;
+
+        this.onLoad(e);
+
+        try {
+          if (this.helper === true) {
+            var iframe = e.currentTarget.contentWindow;
+            iframe['form_create_helper'] = {
+              close: function close(field) {
+                _this7.valid(field);
+
+                _this7.closeModel();
+              },
+              set: function set(field, value) {
+                _this7.valid(field);
+
+                if (!_this7.disabled) _this7.$emit('input', value);
+              },
+              get: function get(field) {
+                _this7.valid(field);
+
+                return _this7.value;
+              },
+              onOk: function onOk(fn) {
+                return _this7.$on('$ok', fn);
+              },
+              onClose: function onClose(fn) {
+                return _this7.$on('$close', fn);
+              }
+            };
+          }
+        } catch (e) {
+          console.log(e);
+        }
+      },
+      makeFooter: function makeFooter() {
+        var _this8 = this;
+
+        var h = this.$createElement;
+        var _this$$props = this.$props,
+            okBtnText = _this$$props.okBtnText,
+            closeBtnText = _this$$props.closeBtnText,
+            closeBtn = _this$$props.closeBtn,
+            okBtn = _this$$props.okBtn,
+            footer = _this$$props.footer;
+        var node = [];
+        if (!footer) return node;
+        if (closeBtn) node.push(h("Button", {
+          "on": {
+            "click": function click() {
+              return _this8.onCancel() !== false && _this8.closeModel(true);
+            }
+          }
+        }, [closeBtnText]));
+        if (okBtn) node.push(h("Button", {
+          "attrs": {
+            "type": "primary"
+          },
+          "on": {
+            "click": function click() {
+              return _this8.onOk() !== false && _this8.closeModel();
+            }
+          }
+        }, [okBtnText]));
+        return node;
+      }
+    },
+    render: function render() {
+      var _this9 = this;
+
+      var h = arguments[0];
+      var type = this.type;
+      var node;
+      if (type === 'input') node = this.makeInput();else if (type === 'image') node = this.makeImages();else node = this.makeFiles();
+      var _this$$props2 = this.$props,
+          width = _this$$props2.width,
+          height = _this$$props2.height,
+          src = _this$$props2.src,
+          title = _this$$props2.title,
+          modalTitle = _this$$props2.modalTitle;
+      return h("div", [node, h("Modal", {
+        "attrs": {
+          "title": modalTitle,
+          "footerHide": true
+        },
+        "model": {
+          value: _this9.previewVisible,
+          callback: function callback($$v) {
+            _this9.previewVisible = $$v;
+          }
+        }
+      }, [h("img", {
+        "attrs": {
+          "alt": "example",
+          "src": this.previewImage
+        },
+        "style": "width: 100%"
+      })]), h("Modal", helper([{}, {
+        "props": _objectSpread2({
+          width: width,
+          title: title
+        }, this.modal)
+      }, {
+        "on": {
+          "on-cancel": function onCancel() {
+            return _this9.closeModel(true);
+          }
+        },
+        "model": {
+          value: _this9.frameVisible,
+          callback: function callback($$v) {
+            _this9.frameVisible = $$v;
+          }
+        }
+      }]), [this.frameVisible || !this.reload ? h("iframe", {
+        "attrs": {
+          "src": src,
+          "frameBorder": "0"
+        },
+        "style": {
+          'height': height,
+          'border': '0 none',
+          'width': '100%'
+        },
+        "on": {
+          "load": this.frameLoad
+        }
+      }) : null, h("div", {
+        "slot": "footer"
+      }, [this.makeFooter()])])]);
+    }
+  };
+
+  var NAME$2 = 'fc-ivu-radio';
+  var radio = {
+    name: NAME$2,
+    functional: true,
+    props: {
+      options: {
+        type: Array,
+        default: function _default() {
+          return [];
+        }
+      },
+      unique: {
+        default: function _default() {
+          return uniqueId();
+        }
+      }
+    },
+    render: function render(h, ctx) {
+      return h("RadioGroup", helper([{}, ctx.data]), [ctx.props.options.map(function (opt, index) {
+        var props = _objectSpread2({}, opt);
+
+        delete props.value;
+        return h("Radio", {
+          "props": _objectSpread2({}, props),
+          "key": NAME$2 + index + ctx.props.unique
+        });
+      }).concat(ctx.chlidren)]);
+    }
+  };
+
+  var NAME$3 = 'fc-ivu-select';
+  var select = {
+    name: NAME$3,
+    functional: true,
+    props: {
+      options: {
+        type: Array,
+        default: function _default() {
+          return [];
+        }
+      },
+      unique: {
+        default: function _default() {
+          return uniqueId();
+        }
+      }
+    },
+    render: function render(h, ctx) {
+      return h("Select", helper([{}, ctx.data]), [ctx.props.options.map(function (props, index) {
+        var slot = props.slot ? toDefSlot(props.slot, h) : [];
+        return h("Option", {
+          "props": _objectSpread2({}, props),
+          "key": NAME$3 + index + ctx.props.unique
+        }, [slot]);
+      }).concat(ctx.chlidren)]);
+    }
+  };
+
+  var tree = {
+    name: 'fc-ivu-tree',
+    props: {
+      ctx: {
+        type: Object,
+        default: function _default() {
+          return {
+            props: {}
+          };
+        }
+      },
+      children: {
+        type: Array,
+        default: function _default() {
+          return [];
+        }
+      },
+      type: {
+        type: String,
+        default: 'checked'
+      },
+      value: {
+        type: [Array, String, Number],
+        default: function _default() {
+          return [];
+        }
+      }
+    },
+    data: function data() {
+      return {
+        treeData: []
+      };
+    },
+    watch: {
+      value: function value(n) {
+        this.setStatus(n);
+      }
+    },
+    methods: {
+      setStatus: function setStatus(value) {
+        var n = toArray(value);
+        var data = this.$refs.tree.data;
+        this.type === 'selected' ? this.selected(data, n) : this.checked(data, n);
+      },
+      selected: function selected(_data, value) {
+        var _this = this;
+
+        _data.forEach(function (node) {
+          _this.$set(node, 'selected', value.indexOf(node.id) !== -1);
+
+          if (node.children !== undefined && Array.isArray(node.children)) _this.selected(node.children, value);
+        });
+      },
+      checked: function checked(_data, value) {
+        var _this2 = this;
+
+        _data.forEach(function (node) {
+          _this2.$set(node, 'checked', value.indexOf(node.id) !== -1);
+
+          if (node.children !== undefined && Array.isArray(node.children)) _this2.checked(node.children, value);
+        });
+      },
+      makeTree: function makeTree() {
+        var h = this.$createElement;
+        return h("Tree", helper([{
+          "ref": "tree"
+        }, this.ctx]), [this.children]);
+      },
+      updateTreeData: function updateTreeData() {
+        var type = this.type.toLocaleLowerCase();
+        if (type === 'selected') this.treeData = this.$refs.tree.getSelectedNodes();else this.treeData = this.$refs.tree.getCheckedNodes();
+        this.$emit('input', this.treeData.map(function (node) {
+          return node.id;
+        }));
+      }
+    },
+    render: function render() {
+      return this.makeTree();
+    },
+    mounted: function mounted() {
+      var _this3 = this;
+
+      this.$nextTick(function () {
+        _this3.setStatus(_this3.value);
+
+        _this3.$watch(function () {
+          return _this3.$refs.tree.flatState;
+        }, function () {
+          return _this3.updateTreeData();
+        });
+      });
+    }
+  };
+
+  function parseFile(file) {
+    return {
+      url: file,
+      name: getFileName(file)
+    };
+  }
+
+  function getFileName(file) {
+    return toString$1(file).split('/').pop();
+  }
+
+  var NAME$4 = 'fc-ivu-upload';
+  var upload = {
+    name: NAME$4,
+    props: {
+      ctx: {
+        type: Object,
+        default: function _default() {
+          return {
+            props: {}
+          };
+        }
+      },
+      children: {
+        type: Array,
+        default: function _default() {
+          return [];
+        }
+      },
+      onHandle: {
+        type: Function,
+        default: function _default(file) {
+          this.previewImage = file.url;
+          this.previewVisible = true;
+        }
+      },
+      uploadType: {
+        type: String,
+        default: 'file'
+      },
+      maxLength: {
+        type: Number,
+        default: 0
+      },
+      allowRemove: {
+        type: Boolean,
+        default: true
+      },
+      modalTitle: String,
+      handleIcon: [String, Boolean],
+      value: [Array, String]
+    },
+    data: function data() {
+      return {
+        uploadList: [],
+        unique: uniqueId(),
+        previewVisible: false,
+        previewImage: ''
+      };
+    },
+    created: function created() {
+      if (this.ctx.props.showUploadList === undefined) this.ctx.props.showUploadList = false;
+      this.ctx.props.defaultFileList = toArray(this.value).map(parseFile);
+    },
+    watch: {
+      value: function value(n) {
+        if (this.$refs.upload.fileList.every(function (file) {
+          return !file.status || file.status === 'finished';
+        })) {
+          this.$refs.upload.fileList = toArray(n).map(parseFile);
+          this.uploadList = this.$refs.upload.fileList;
+        }
+      },
+      maxLength: function maxLength(n, o) {
+        if (o === 1 || n === 1) this.update();
+      }
+    },
+    methods: {
+      key: function key(unique) {
+        return NAME$4 + unique + this.unique;
+      },
+      isDisabled: function isDisabled() {
+        return this.ctx.props.disabled === true;
+      },
+      onRemove: function onRemove(file) {
+        if (this.isDisabled()) return;
+        this.$refs.upload.handleRemove(file);
+      },
+      handleClick: function handleClick(file) {
+        if (this.isDisabled()) return;
+        this.onHandle(file);
+      },
+      makeDefaultBtn: function makeDefaultBtn() {
+        var h = this.$createElement;
+        return h("div", {
+          "class": style['fc-upload-btn']
+        }, [h("icon", helper([{}, {
+          "props": {
+            type: this.uploadType === 'file' ? 'ios-cloud-upload-outline' : iviewConfig.imgUpIcon,
+            size: 20
+          }
+        }]))]);
+      },
+      makeItem: function makeItem(file, index) {
+        var h = this.$createElement;
+        return this.uploadType === 'image' ? h("img", {
+          "attrs": {
+            "src": file.url
+          },
+          "key": this.key('img' + index)
+        }) : h("icon", helper([{}, {
+          "props": {
+            type: iviewConfig.fileIcon,
+            size: 40
+          }
+        }, {
+          "key": this.key('i' + index)
+        }]));
+      },
+      makeRemoveIcon: function makeRemoveIcon(file, index) {
+        var _this = this;
+
+        var h = this.$createElement;
+        return h("icon", {
+          "attrs": {
+            "type": 'ios-trash-outline'
+          },
+          "on": {
+            "click": function click() {
+              return _this.onRemove(file);
+            }
+          },
+          "key": this.key('ri' + index)
+        });
+      },
+      makeHandleIcon: function makeHandleIcon(file, index) {
+        var _this2 = this;
+
+        var h = this.$createElement;
+        return h("icon", {
+          "attrs": {
+            "type": this.handleIcon === true || this.handleIcon === undefined ? 'ios-eye-outline' : this.handleIcon
+          },
+          "on": {
+            "click": function click() {
+              return _this2.handleClick(file);
+            }
+          },
+          "key": this.key('hi' + index)
+        });
+      },
+      makeProgress: function makeProgress(file, index) {
+        var h = this.$createElement;
+        return h("Progress", helper([{}, {
+          "props": {
+            percent: file.percentage,
+            hideInfo: true
+          }
+        }, {
+          "style": "width:90%",
+          "key": this.key('pg' + index)
+        }]));
+      },
+      makeIcons: function makeIcons(file, index) {
+        var h = this.$createElement;
+        var icons = [];
+
+        if (this.allowRemove || this.handleIcon !== false) {
+          if (this.uploadType !== 'file' && this.handleIcon !== false || this.uploadType === 'file' && this.handleIcon) icons.push(this.makeHandleIcon(file, index));
+          if (this.allowRemove) icons.push(this.makeRemoveIcon(file, index));
+          return h("div", {
+            "class": style['fc-upload-cover']
+          }, [icons]);
+        }
+      },
+      makeFiles: function makeFiles() {
+        var _this3 = this;
+
+        var h = this.$createElement;
+        return this.uploadList.map(function (file, index) {
+          return h("div", {
+            "key": _this3.key(index),
+            "class": style['fc-files']
+          }, [file.showProgress ? _this3.makeProgress(file, index) : [_this3.makeItem(file, index), _this3.makeIcons(file, index)]]);
+        });
+      },
+      makeUpload: function makeUpload() {
+        var h = this.$createElement;
+        return h("Upload", helper([{
+          "ref": "upload",
+          "style": {
+            display: 'inline-block'
+          }
+        }, this.ctx, {
+          "key": this.key('upload')
+        }]), [this.children]);
+      },
+      initChildren: function initChildren() {
+        if (!hasSlot(this.children, 'default')) this.children.push(this.makeDefaultBtn());
+      },
+      update: function update() {
+        var files = this.$refs.upload.fileList.map(function (file) {
+          return file.url;
+        }).filter(function (url) {
+          return url !== undefined;
+        });
+        this.$emit('input', this.maxLength === 1 ? files[0] || '' : files);
+      },
+      handleCancel: function handleCancel() {
+        this.previewVisible = false;
+      }
+    },
+    render: function render() {
+      var _class,
+          _this4 = this;
+
+      var h = arguments[0];
+      var isShow = !this.maxLength || this.maxLength > this.uploadList.length;
+
+      if (this.$refs.upload) {
+        if (this.ctx.props.showUploadList === undefined) this.ctx.props.showUploadList = this.$refs.upload.showUploadList;
+        this.ctx.props.defaultFileList = this.$refs.upload.defaultFileList;
+      }
+
+      this.initChildren();
+      return h("div", {
+        "class": (_class = {}, _defineProperty(_class, style['fc-upload'], true), _defineProperty(_class, style['fc-hide-btn'], !isShow), _class)
+      }, [[this.ctx.props.showUploadList ? [] : this.makeFiles(), this.makeUpload()], h("Modal", {
+        "attrs": {
+          "title": this.modalTitle,
+          "footerHide": true
+        },
+        "model": {
+          value: _this4.previewVisible,
+          callback: function callback($$v) {
+            _this4.previewVisible = $$v;
+          }
+        }
+      }, [h("img", {
+        "attrs": {
+          "alt": "example",
+          "src": this.previewImage
+        },
+        "style": "width: 100%"
+      })])]);
+    },
+    mounted: function mounted() {
+      var _this5 = this;
+
+      this.uploadList = this.$refs.upload.fileList;
+      this.$watch(function () {
+        return _this5.$refs.upload.fileList;
+      }, function () {
+        _this5.update();
+      }, {
+        deep: true
+      });
+    }
+  };
+
   var formCreateName = 'FormCreate';
   function $FormCreate(FormCreate, components) {
     return {
@@ -503,10 +1404,7 @@
       props: {
         rule: {
           type: Array,
-          required: true,
-          default: function _default() {
-            return {};
-          }
+          required: true
         },
         option: {
           type: Object,
@@ -561,8 +1459,7 @@
         this.$emit('input', this.$f);
       },
       mounted: function mounted() {
-        var formCreate = this.formCreate;
-        formCreate.mounted();
+        this.formCreate.mounted();
         this.$emit('input', this.$f);
       },
       beforeDestroy: function beforeDestroy() {
@@ -788,6 +1685,13 @@
         return this;
       }
     }, {
+      key: "_clone",
+      value: function _clone() {
+        var clone = new this.constructor();
+        clone._data = deepExtend({}, this._data);
+        return clone;
+      }
+    }, {
       key: "getRule",
       value: function getRule() {
         return this._data;
@@ -825,12 +1729,10 @@
     };
   });
 
+  var PREFIX = '[[FORM-CREATE-PREFIX-';
+  var SUFFIX = '-FORM-CREATE-SUFFIX]]';
   function toJson(obj) {
-    return JSON.stringify(obj, function (key, val) {
-      if (val instanceof Creator) {
-        return val.getRule();
-      }
-
+    return JSON.stringify(deepExtend([], obj, true), function (key, val) {
       if (val && val._isVue === true) return undefined;
 
       if (typeof val !== 'function') {
@@ -839,20 +1741,26 @@
 
       if (val.__inject) val = val.__origin;
       if (val.__emit) return undefined;
-      return '' + val;
+      return PREFIX + val + SUFFIX;
     });
   }
-  function parseJson(json) {
-    return JSON.parse(json, function (k, v) {
-      if (isUndef(v)) return v;
 
-      if (v.indexOf && v.indexOf('function') > -1) {
-        try {
-          return eval('(function(){return ' + v + ' })()');
-        } catch (e) {
-          console.error("[form-create]\u89E3\u6790\u5931\u8D25:".concat(v));
-          return undefined;
-        }
+  function makeFn(fn) {
+    return eval('(function(){return ' + fn + ' })()');
+  }
+
+  function parseJson(json, mode) {
+    return JSON.parse(json, function (k, v) {
+      if (isUndef(v) || !v.indexOf) return v;
+
+      try {
+        if (v.indexOf(SUFFIX) > 0 && v.indexOf(PREFIX) === 0) {
+          v = v.replace(SUFFIX, '').replace(PREFIX, '');
+          return makeFn(v.indexOf('function') === -1 && v.indexOf('(') !== 0 ? 'function ' + v : v);
+        } else if (!mode && v.indexOf('function') > -1) return makeFn(v);
+      } catch (e) {
+        console.error("[form-create]\u89E3\u6790\u5931\u8D25:".concat(v));
+        return undefined;
       }
 
       return v;
@@ -865,21 +1773,11 @@
       configurable: false
     };
   }
-  function copyRule(rule) {
-    return copyRules([rule])[0];
+  function copyRule(rule, mode) {
+    return copyRules([rule], mode)[0];
   }
-  function copyRules(rules) {
-    return rules.map(function (rule) {
-      if (isString(rule)) return rule;
-      var isCreator = isFunction(rule.getRule);
-      var data = deepExtendArgs({}, isCreator ? rule._data : rule);
-
-      if (isCreator) {
-        var creator = new Creator();
-        creator._data = data;
-        return creator;
-      } else return data;
-    });
+  function copyRules(rules, mode) {
+    return deepExtend([], rules, mode);
   }
 
   var commonMaker = creatorFactory('');
@@ -1147,9 +2045,7 @@
         if (!this.vm.isShow) return;
         this.$form.beforeRender();
         var vn = this.$handle.sortList.map(function (id) {
-          var parser = _this.$handle.parsers[id];
-          if (parser.type === 'hidden') return;
-          return _this.renderParser(parser);
+          return _this.renderParser(_this.$handle.parsers[id]);
         }).filter(function (val) {
           return val !== undefined;
         });
@@ -1210,6 +2106,8 @@
     }, {
       key: "renderParser",
       value: function renderParser(parser, parent) {
+        if (parser.type === 'hidden') return;
+
         if (!this.cache[parser.id] || parser.type === 'template') {
           parser.vData.get();
           this.setGlobalConfig(parser);
@@ -1638,7 +2536,10 @@
           }
         }, {}, h.subForm);
 
-        var keys = Object.keys(subForm),
+        var keys = Object.keys(subForm).filter(function (field) {
+          var sub = subForm[field];
+          return Array.isArray(sub) ? sub.length : !isUndef(sub);
+        }),
             len = keys.length,
             subLen;
 
@@ -1794,12 +2695,13 @@
     function Handle(fc) {
       _classCallCheck(this, Handle);
 
-      var vm = fc.vm,
-          rules = fc.rules,
-          options = fc.options;
+      var _this$fc = this.fc = fc,
+          vm = _this$fc.vm,
+          rules = _this$fc.rules,
+          options = _this$fc.options;
+
       this.watching = false;
       this.vm = vm;
-      this.fc = fc;
       this.options = options;
       this.validate = {};
       this.formData = {};
@@ -1847,8 +2749,7 @@
             parser = _rule.__fc__; //规则在其他 form-create 中使用,自动浅拷贝
 
             if (!parser.deleted && (parser.vm !== _this.vm || _this.parsers[parser.id])) {
-              _rule = copyRule(_rule);
-              rules[index] = _rule;
+              rules[index] = _rule = copyRule(_rule);
               parser = _this.createParser(_this.parseRule(_rule));
             } else {
               parser.update(_this);
@@ -1914,11 +2815,7 @@
     }, {
       key: "createParser",
       value: function createParser(rule) {
-        var id = '' + uniqueId(),
-            parsers = this.fc.parsers,
-            type = toString$1(rule.type).toLocaleLowerCase();
-        var Parser = parsers[type] ? parsers[type] : BaseParser;
-        return new Parser(this, rule, id);
+        return new (this.fc.parsers[toString$1(rule.type).toLocaleLowerCase()] || BaseParser)(this, rule, '' + uniqueId());
       }
     }, {
       key: "parseRule",
@@ -2104,7 +3001,7 @@
     }, {
       key: "getParser",
       value: function getParser(id) {
-        if (this.fieldList[id]) return this.fieldList[id];else if (this.customData[id]) return this.customData[id];else if (this.parsers[id]) return this.parsers[id];
+        return this.fieldList[id] || this.customData[id] || this.parsers[id];
       }
     }, {
       key: "created",
@@ -2193,7 +3090,7 @@
             return val === control.value;
           };
 
-          if (validate(parser.rule.value)) {
+          if (validate(parser.rule.value, _this7.fCreateApi)) {
             if (ctrlRule) {
               if (ctrlRule.children === control.rule) return {
                 v: void 0
@@ -2204,7 +3101,8 @@
               type: 'fcFragment',
               native: true,
               children: control.rule
-            };
+            }; //TODO 位置可自定义
+
             parser.root.splice(parser.root.indexOf(parser.rule.__origin__) + 1, 0, rule);
             parser.ctrlRule = rule;
 
@@ -2401,9 +3299,9 @@
     });
   }
 
-  var NAME$1 = 'fcFragment';
+  var NAME$5 = 'fcFragment';
   var fragment = {
-    name: NAME$1,
+    name: NAME$5,
     functional: true,
     props: {
       children: Array
@@ -2695,20 +3593,21 @@
     }, {
       key: "getGetCol",
       value: function getGetCol(parser) {
-        var col = parser.rule.col || {},
+        var field = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'col';
+        var col = parser.rule[field] || {},
             mCol = {},
             pCol = {},
             global = this.options.global;
         if (!global) return col;
 
         if (global['*']) {
-          mCol = global['*'].col || {};
+          mCol = global['*'][field] || {};
         }
 
         if (global[parser.type]) {
-          pCol = global[parser.type].col || {};
+          pCol = global[parser.type][field] || {};
         } else if (global[parser.originType]) {
-          pCol = global[parser.originType].col || {};
+          pCol = global[parser.originType][field] || {};
         }
 
         col = deepExtendArgs({}, mCol, pCol, col);
@@ -2728,855 +3627,13 @@
     return BaseForm;
   }();
 
-  var vNode = new VNode();
-
-  var Modal = function Modal(options, cb) {
-    return {
-      name: 'fc-modal',
-      data: function data() {
-        return _objectSpread2({
-          value: true
-        }, options);
-      },
-      render: function render() {
-        vNode.setVm(this);
-        return vNode.modal({
-          props: this.$data,
-          on: {
-            'on-visible-change': this.remove
-          }
-        }, [cb(vNode, this)]);
-      },
-      methods: {
-        onClose: function onClose() {
-          this.value = false;
-        },
-        remove: function remove() {
-          this.$el.parentNode.removeChild(this.$el);
-        }
-      }
-    };
-  };
-
-  function mount(options, content) {
-    var $modal = _vue.extend(Modal(options, content)),
-        $vm = new $modal().$mount();
-    window.document.body.appendChild($vm.$el);
-  }
-  function defaultOnHandle(src, title) {
-    mount({
-      title: title,
-      footerHide: true
-    }, function (vNode) {
-      return vNode.make('img', {
-        style: {
-          width: '100%'
-        },
-        attrs: {
-          src: src
-        }
-      });
-    });
-  }
-
-  function styleInject(css, ref) {
-    if (ref === void 0) ref = {};
-    var insertAt = ref.insertAt;
-
-    if (!css || typeof document === 'undefined') {
-      return;
-    }
-
-    var head = document.head || document.getElementsByTagName('head')[0];
-    var style = document.createElement('style');
-    style.type = 'text/css';
-
-    if (insertAt === 'top') {
-      if (head.firstChild) {
-        head.insertBefore(style, head.firstChild);
-      } else {
-        head.appendChild(style);
-      }
-    } else {
-      head.appendChild(style);
-    }
-
-    if (style.styleSheet) {
-      style.styleSheet.cssText = css;
-    } else {
-      style.appendChild(document.createTextNode(css));
-    }
-  }
-
-  var css = ".fc-upload-btn, .fc-files {\n    display: inline-block;\n    width: 58px;\n    height: 58px;\n    text-align: center;\n    line-height: 58px;\n    border: 1px solid #c0ccda;\n    border-radius: 4px;\n    overflow: hidden;\n    background: #fff;\n    position: relative;\n    box-shadow: 2px 2px 5px rgba(0, 0, 0, .1);\n    margin-right: 4px;\n    box-sizing: border-box;\n}\n\n.form-create .form-create .ivu-form-item {\n    margin-bottom: 24px;\n}\n.form-create .form-create .ivu-form-item .ivu-form-item {\n    margin-bottom: 0px;\n}\n\n.form-create .fc-group .ivu-icon+.ivu-icon{\n    margin-left: 3px;\n}\n\n.form-create .fc-upload .ivu-icon{\n    vertical-align: middle;\n}\n\n.form-create .__fc_h {\n    display: none;\n}\n\n.form-create .__fc_v {\n    visibility: hidden;\n}\n\n.fc-files img {\n    width: 100%;\n    height: 100%;\n    display: inline-block;\n    vertical-align: top;\n}\n\n.fc-upload-btn {\n    border: 1px dashed #c0ccda;\n    cursor: pointer;\n}\n\n.fc-upload .fc-upload-cover {\n    opacity: 0;\n    position: absolute;\n    top: 0;\n    bottom: 0;\n    left: 0;\n    right: 0;\n    background: rgba(0, 0, 0, .6);\n    transition: opacity .3s;\n}\n\n.fc-upload .fc-upload-cover i {\n    color: #fff;\n    font-size: 20px;\n    cursor: pointer;\n    margin: 0 2px;\n}\n\n.fc-files:hover .fc-upload-cover {\n    opacity: 1;\n}\n\n.fc-hide-btn .ivu-upload .ivu-upload {\n    display: none;\n}\n\n.fc-upload .ivu-upload-list {\n    margin-top: 0;\n}\n";
-  var style = {"fc-upload-btn":"fc-upload-btn","fc-files":"fc-files","form-create":"form-create","ivu-form-item":"ivu-form-item","fc-group":"fc-group","ivu-icon":"ivu-icon","fc-upload":"fc-upload","__fc_h":"__fc_h","__fc_v":"__fc_v","fc-upload-cover":"fc-upload-cover","fc-hide-btn":"fc-hide-btn","ivu-upload":"ivu-upload","ivu-upload-list":"ivu-upload-list"};
-  styleInject(css);
-
-  var NAME$2 = 'fc-ivu-frame';
-  var frame = {
-    name: NAME$2,
-    props: {
-      type: {
-        type: String,
-        default: 'input'
-      },
-      field: {
-        type: String,
-        default: ''
-      },
-      helper: {
-        type: Boolean,
-        default: true
-      },
-      disabled: {
-        type: Boolean,
-        default: false
-      },
-      src: {
-        type: String,
-        required: true
-      },
-      icon: {
-        type: String,
-        default: iviewConfig.fileUpIcon
-      },
-      width: {
-        type: [Number, String],
-        default: 500
-      },
-      height: {
-        type: [Number, String],
-        default: 370
-      },
-      maxLength: {
-        type: Number,
-        default: 0
-      },
-      okBtnText: {
-        type: String,
-        default: '确定'
-      },
-      closeBtnText: {
-        type: String,
-        default: '关闭'
-      },
-      modalTitle: {
-        type: String,
-        default: '预览'
-      },
-      handleIcon: {
-        type: [String, Boolean],
-        default: undefined
-      },
-      title: String,
-      allowRemove: {
-        type: Boolean,
-        default: true
-      },
-      onOpen: {
-        type: Function,
-        default: function _default() {}
-      },
-      onOk: {
-        type: Function,
-        default: function _default() {}
-      },
-      onCancel: {
-        type: Function,
-        default: function _default() {}
-      },
-      onLoad: {
-        type: Function,
-        default: function _default() {}
-      },
-      onBeforeRemove: {
-        type: Function,
-        default: function _default() {}
-      },
-      onRemove: {
-        type: Function,
-        default: function _default() {}
-      },
-      onHandle: {
-        type: Function,
-        default: function _default(src) {
-          defaultOnHandle(src, this.modalTitle);
-        }
-      },
-      modal: {
-        type: Object,
-        default: function _default() {
-          return {};
-        }
-      },
-      srcKey: {
-        type: [String, Number]
-      },
-      value: [Array, String, Number, Object]
-    },
-    data: function data() {
-      return {
-        modalVm: null,
-        fileList: toArray(this.value),
-        unique: uniqueId()
-      };
-    },
-    watch: {
-      value: function value(n) {
-        this.fileList = toArray(n);
-      },
-      fileList: function fileList(n) {
-        var val = this.maxLength === 1 ? n[0] || '' : n;
-        this.$emit('input', val);
-        this.$emit('on-change', val);
-      },
-      src: function src(n) {
-        this.modalVm && (this.modalVm.src = n);
-      }
-    },
-    methods: {
-      key: function key(unique) {
-        return NAME$2 + unique + this.unique;
-      },
-      closeModel: function closeModel() {
-        this.modalVm && this.modalVm.onClose();
-        this.modalVm = null;
-      },
-      showModel: function showModel() {
-        var _this = this;
-
-        if (this.disabled || false === this.onOpen()) return;
-        var _this$$props = this.$props,
-            width = _this$$props.width,
-            height = _this$$props.height,
-            src = _this$$props.src,
-            title = _this$$props.title,
-            okBtnText = _this$$props.okBtnText,
-            closeBtnText = _this$$props.closeBtnText;
-        mount(_objectSpread2({
-          width: width,
-          title: title,
-          src: src
-        }, this.modal), function (vNode, _vm) {
-          _this.modalVm = _vm;
-          return [vNode.make('iframe', {
-            attrs: {
-              src: _vm.src
-            },
-            style: {
-              'height': height,
-              'border': '0 none',
-              'width': '100%'
-            },
-            on: {
-              'load': function load(e) {
-                _this.onLoad(e);
-
-                try {
-                  if (_this.helper === true) {
-                    var iframe = e.currentTarget.contentWindow;
-                    iframe['form_create_helper'] = {
-                      close: function close(field) {
-                        _this.valid(field);
-
-                        _vm.onClose();
-                      },
-                      set: function set(field, value) {
-                        _this.valid(field);
-
-                        if (!_this.disabled) _this.$emit('input', value);
-                      },
-                      get: function get(field) {
-                        _this.valid(field);
-
-                        return _this.value;
-                      }
-                    };
-                  }
-                } catch (e) {
-                  console.log(e);
-                }
-              }
-            }
-          }), vNode.make('div', {
-            slot: 'footer'
-          }, [vNode.button({
-            on: {
-              click: function click() {
-                _this.onCancel() !== false && _vm.onClose();
-              }
-            }
-          }, [closeBtnText]), vNode.button({
-            props: {
-              type: 'primary'
-            },
-            on: {
-              click: function click() {
-                _this.onOk() !== false && _vm.onClose();
-              }
-            }
-          }, [okBtnText])])];
-        });
-      },
-      makeInput: function makeInput() {
-        var _this2 = this;
-
-        var h = this.$createElement;
-        var props = {
-          type: 'text',
-          value: this.fileList.map(function (v) {
-            return _this2.getSrc(v);
-          }).toString(),
-          icon: this.icon,
-          readonly: true,
-          clearable: false
-        };
-        return h("Input", helper([{}, {
-          "props": props
-        }, {}, {
-          "on": {
-            'on-click': function onClick() {
-              return _this2.showModel();
-            }
-          }
-        }, {
-          "key": this.key('input')
-        }]));
-      },
-      makeGroup: function makeGroup(children) {
-        var h = this.$createElement;
-        if (!this.maxLength || this.fileList.length < this.maxLength) children.push(this.makeBtn());
-        return h("div", {
-          "class": style['fc-upload'],
-          "key": this.key('group')
-        }, _toConsumableArray(children));
-      },
-      makeItem: function makeItem(index, children) {
-        var h = this.$createElement;
-        return h("div", {
-          "class": style['fc-files'],
-          "key": this.key('file' + index)
-        }, _toConsumableArray(children));
-      },
-      valid: function valid(field) {
-        if (field !== this.field) throw new Error('frame 无效的字段值');
-      },
-      makeIcons: function makeIcons(val, index) {
-        var h = this.$createElement;
-
-        if (this.handleIcon !== false || this.allowRemove === true) {
-          var icons = [];
-          if (this.type !== 'file' && this.handleIcon !== false || this.type === 'file' && this.handleIcon) icons.push(this.makeHandleIcon(val, index));
-          if (this.allowRemove) icons.push(this.makeRemoveIcon(val, index));
-          return h("div", {
-            "class": style['fc-upload-cover'],
-            "key": this.key('uc')
-          }, [icons]);
-        }
-      },
-      makeHandleIcon: function makeHandleIcon(val, index) {
-        var _this3 = this;
-
-        var h = this.$createElement;
-        return h("icon", helper([{}, {
-          "props": {
-            type: this.handleIcon === true || this.handleIcon === undefined ? 'ios-eye-outline' : this.handleIcon
-          }
-        }, {
-          "on": {
-            "click": function click() {
-              return _this3.handleClick(val);
-            }
-          },
-          "key": this.key('hi' + index)
-        }]));
-      },
-      makeRemoveIcon: function makeRemoveIcon(val, index) {
-        var _this4 = this;
-
-        var h = this.$createElement;
-        return h("icon", helper([{}, {
-          "props": {
-            type: 'ios-trash-outline'
-          }
-        }, {
-          "on": {
-            "click": function click() {
-              return _this4.handleRemove(val);
-            }
-          },
-          "key": this.key('ri' + index)
-        }]));
-      },
-      makeFiles: function makeFiles() {
-        var _this5 = this;
-
-        var h = this.$createElement;
-        return this.makeGroup(this.fileList.map(function (src, index) {
-          return _this5.makeItem(index, [h("icon", helper([{}, {
-            "props": {
-              type: iviewConfig.fileIcon,
-              size: 40
-            }
-          }, {
-            "on": {
-              "click": function click() {
-                return _this5.handleClick(src);
-              }
-            }
-          }])), _this5.makeIcons(src, index)]);
-        }));
-      },
-      makeImages: function makeImages() {
-        var _this6 = this;
-
-        var h = this.$createElement;
-        return this.makeGroup(this.fileList.map(function (src, index) {
-          return _this6.makeItem(index, [h("img", {
-            "attrs": {
-              "src": _this6.getSrc(src)
-            }
-          }), _this6.makeIcons(src, index)]);
-        }));
-      },
-      makeBtn: function makeBtn() {
-        var _this7 = this;
-
-        var h = this.$createElement;
-        return h("div", {
-          "class": style['fc-upload-btn'],
-          "on": {
-            "click": function click() {
-              return _this7.showModel();
-            }
-          },
-          "key": this.key('btn')
-        }, [h("icon", helper([{}, {
-          "props": {
-            type: this.icon,
-            size: 20
-          }
-        }]))]);
-      },
-      handleClick: function handleClick(src) {
-        if (this.disabled) return;
-        return this.onHandle(src);
-      },
-      handleRemove: function handleRemove(src) {
-        if (this.disabled) return;
-
-        if (false !== this.onBeforeRemove(src)) {
-          this.fileList.splice(this.fileList.indexOf(src), 1);
-          this.onRemove(src);
-        }
-      },
-      getSrc: function getSrc(src) {
-        return isUndef(this.srcKey) ? src : src[this.srcKey];
-      }
-    },
-    render: function render() {
-      var type = this.type;
-      if (type === 'input') return this.makeInput();else if (type === 'image') return this.makeImages();else return this.makeFiles();
-    }
-  };
-
-  var NAME$3 = 'fc-ivu-radio';
-  var radio = {
-    name: NAME$3,
-    functional: true,
-    props: {
-      options: {
-        type: Array,
-        default: function _default() {
-          return [];
-        }
-      },
-      unique: {
-        default: function _default() {
-          return uniqueId();
-        }
-      }
-    },
-    render: function render(h, ctx) {
-      return h("RadioGroup", helper([{}, ctx.data]), [ctx.props.options.map(function (opt, index) {
-        var props = _objectSpread2({}, opt);
-
-        delete props.value;
-        return h("Radio", {
-          "props": _objectSpread2({}, props),
-          "key": NAME$3 + index + ctx.props.unique
-        });
-      }).concat(ctx.chlidren)]);
-    }
-  };
-
-  var NAME$4 = 'fc-ivu-select';
-  var select = {
-    name: NAME$4,
-    functional: true,
-    props: {
-      options: {
-        type: Array,
-        default: function _default() {
-          return [];
-        }
-      },
-      unique: {
-        default: function _default() {
-          return uniqueId();
-        }
-      }
-    },
-    render: function render(h, ctx) {
-      return h("Select", helper([{}, ctx.data]), [ctx.props.options.map(function (props, index) {
-        var slot = props.slot ? toDefSlot(props.slot, h) : [];
-        return h("Option", {
-          "props": _objectSpread2({}, props),
-          "key": NAME$4 + index + ctx.props.unique
-        }, [slot]);
-      }).concat(ctx.chlidren)]);
-    }
-  };
-
-  var tree = {
-    name: 'fc-ivu-tree',
-    props: {
-      ctx: {
-        type: Object,
-        default: function _default() {
-          return {
-            props: {}
-          };
-        }
-      },
-      children: {
-        type: Array,
-        default: function _default() {
-          return [];
-        }
-      },
-      type: {
-        type: String,
-        default: 'checked'
-      },
-      value: {
-        type: [Array, String, Number],
-        default: function _default() {
-          return [];
-        }
-      }
-    },
-    data: function data() {
-      return {
-        treeData: []
-      };
-    },
-    watch: {
-      value: function value(n) {
-        this.setStatus(n);
-      }
-    },
-    methods: {
-      setStatus: function setStatus(value) {
-        var n = toArray(value);
-        var data = this.$refs.tree.data;
-        this.type === 'selected' ? this.selected(data, n) : this.checked(data, n);
-      },
-      selected: function selected(_data, value) {
-        var _this = this;
-
-        _data.forEach(function (node) {
-          _this.$set(node, 'selected', value.indexOf(node.id) !== -1);
-
-          if (node.children !== undefined && Array.isArray(node.children)) _this.selected(node.children, value);
-        });
-      },
-      checked: function checked(_data, value) {
-        var _this2 = this;
-
-        _data.forEach(function (node) {
-          _this2.$set(node, 'checked', value.indexOf(node.id) !== -1);
-
-          if (node.children !== undefined && Array.isArray(node.children)) _this2.checked(node.children, value);
-        });
-      },
-      makeTree: function makeTree() {
-        var h = this.$createElement;
-        return h("Tree", helper([{
-          "ref": "tree"
-        }, this.ctx]), [this.children]);
-      },
-      updateTreeData: function updateTreeData() {
-        var type = this.type.toLocaleLowerCase();
-        if (type === 'selected') this.treeData = this.$refs.tree.getSelectedNodes();else this.treeData = this.$refs.tree.getCheckedNodes();
-        this.$emit('input', this.treeData.map(function (node) {
-          return node.id;
-        }));
-      }
-    },
-    render: function render() {
-      return this.makeTree();
-    },
-    mounted: function mounted() {
-      var _this3 = this;
-
-      this.$nextTick(function () {
-        _this3.setStatus(_this3.value);
-
-        _this3.$watch(function () {
-          return _this3.$refs.tree.flatState;
-        }, function () {
-          return _this3.updateTreeData();
-        });
-      });
-    }
-  };
-
-  function parseFile(file) {
-    return {
-      url: file,
-      name: getFileName(file)
-    };
-  }
-
-  function getFileName(file) {
-    return toString$1(file).split('/').pop();
-  }
-
-  var NAME$5 = 'fc-ivu-upload';
-  var upload = {
-    name: NAME$5,
-    props: {
-      ctx: {
-        type: Object,
-        default: function _default() {
-          return {
-            props: {}
-          };
-        }
-      },
-      children: {
-        type: Array,
-        default: function _default() {
-          return [];
-        }
-      },
-      onHandle: {
-        type: Function,
-        default: function _default(file) {
-          defaultOnHandle(file.url, this.modalTitle);
-        }
-      },
-      uploadType: {
-        type: String,
-        default: 'file'
-      },
-      maxLength: {
-        type: Number,
-        default: 0
-      },
-      allowRemove: {
-        type: Boolean,
-        default: true
-      },
-      modalTitle: {
-        type: String,
-        default: '预览'
-      },
-      handleIcon: [String, Boolean],
-      value: [Array, String]
-    },
-    data: function data() {
-      return {
-        uploadList: [],
-        unique: uniqueId()
-      };
-    },
-    created: function created() {
-      if (this.ctx.props.showUploadList === undefined) this.ctx.props.showUploadList = false;
-      this.ctx.props.defaultFileList = toArray(this.value).map(parseFile);
-    },
-    watch: {
-      value: function value(n) {
-        if (this.$refs.upload.fileList.every(function (file) {
-          return !file.status || file.status === 'finished';
-        })) {
-          this.$refs.upload.fileList = toArray(n).map(parseFile);
-          this.uploadList = this.$refs.upload.fileList;
-        }
-      },
-      maxLength: function maxLength(n, o) {
-        if (o === 1 || n === 1) this.update();
-      }
-    },
-    methods: {
-      key: function key(unique) {
-        return NAME$5 + unique + this.unique;
-      },
-      isDisabled: function isDisabled() {
-        return this.ctx.props.disabled === true;
-      },
-      onRemove: function onRemove(file) {
-        if (this.isDisabled()) return;
-        this.$refs.upload.handleRemove(file);
-      },
-      handleClick: function handleClick(file) {
-        if (this.isDisabled()) return;
-        this.onHandle(file);
-      },
-      makeDefaultBtn: function makeDefaultBtn() {
-        var h = this.$createElement;
-        return h("div", {
-          "class": style['fc-upload-btn']
-        }, [h("icon", helper([{}, {
-          "props": {
-            type: this.uploadType === 'file' ? 'ios-cloud-upload-outline' : iviewConfig.imgUpIcon,
-            size: 20
-          }
-        }]))]);
-      },
-      makeItem: function makeItem(file, index) {
-        var h = this.$createElement;
-        return this.uploadType === 'image' ? h("img", {
-          "attrs": {
-            "src": file.url
-          },
-          "key": this.key('img' + index)
-        }) : h("icon", helper([{}, {
-          "props": {
-            type: iviewConfig.fileIcon,
-            size: 40
-          }
-        }, {
-          "key": this.key('i' + index)
-        }]));
-      },
-      makeRemoveIcon: function makeRemoveIcon(file, index) {
-        var _this = this;
-
-        var h = this.$createElement;
-        return h("icon", {
-          "attrs": {
-            "type": 'ios-trash-outline'
-          },
-          "on": {
-            "click": function click() {
-              return _this.onRemove(file);
-            }
-          },
-          "key": this.key('ri' + index)
-        });
-      },
-      makeHandleIcon: function makeHandleIcon(file, index) {
-        var _this2 = this;
-
-        var h = this.$createElement;
-        return h("icon", {
-          "attrs": {
-            "type": this.handleIcon === true || this.handleIcon === undefined ? 'ios-eye-outline' : this.handleIcon
-          },
-          "on": {
-            "click": function click() {
-              return _this2.handleClick(file);
-            }
-          },
-          "key": this.key('hi' + index)
-        });
-      },
-      makeProgress: function makeProgress(file, index) {
-        var h = this.$createElement;
-        return h("Progress", helper([{}, {
-          "props": {
-            percent: file.percentage,
-            hideInfo: true
-          }
-        }, {
-          "style": "width:90%",
-          "key": this.key('pg' + index)
-        }]));
-      },
-      makeIcons: function makeIcons(file, index) {
-        var h = this.$createElement;
-        var icons = [];
-
-        if (this.allowRemove || this.handleIcon !== false) {
-          if (this.uploadType !== 'file' && this.handleIcon !== false || this.uploadType === 'file' && this.handleIcon) icons.push(this.makeHandleIcon(file, index));
-          if (this.allowRemove) icons.push(this.makeRemoveIcon(file, index));
-          return h("div", {
-            "class": style['fc-upload-cover']
-          }, [icons]);
-        }
-      },
-      makeFiles: function makeFiles() {
-        var _this3 = this;
-
-        var h = this.$createElement;
-        return this.uploadList.map(function (file, index) {
-          return h("div", {
-            "key": _this3.key(index),
-            "class": style['fc-files']
-          }, [file.showProgress ? _this3.makeProgress(file, index) : [_this3.makeItem(file, index), _this3.makeIcons(file, index)]]);
-        });
-      },
-      makeUpload: function makeUpload() {
-        var h = this.$createElement;
-        return h("Upload", helper([{
-          "ref": "upload",
-          "style": {
-            display: 'inline-block'
-          }
-        }, this.ctx, {
-          "key": this.key('upload')
-        }]), [this.children]);
-      },
-      initChildren: function initChildren() {
-        if (!hasSlot(this.children, 'default')) this.children.push(this.makeDefaultBtn());
-      },
-      update: function update() {
-        var files = this.$refs.upload.fileList.map(function (file) {
-          return file.url;
-        }).filter(function (url) {
-          return url !== undefined;
-        });
-        this.$emit('input', this.maxLength === 1 ? files[0] || '' : files);
-      }
-    },
-    render: function render() {
-      var _class;
-
-      var h = arguments[0];
-      var isShow = !this.maxLength || this.maxLength > this.uploadList.length;
-
-      if (this.$refs.upload) {
-        if (this.ctx.props.showUploadList === undefined) this.ctx.props.showUploadList = this.$refs.upload.showUploadList;
-        this.ctx.props.defaultFileList = this.$refs.upload.defaultFileList;
-      }
-
-      this.initChildren();
-      return h("div", {
-        "class": (_class = {}, _defineProperty(_class, style['fc-upload'], true), _defineProperty(_class, style['fc-hide-btn'], !isShow), _class)
-      }, [[this.ctx.props.showUploadList ? [] : this.makeFiles(), this.makeUpload()]]);
-    },
-    mounted: function mounted() {
-      var _this4 = this;
-
-      this.uploadList = this.$refs.upload.fileList;
-      this.$watch(function () {
-        return _this4.$refs.upload.fileList;
-      }, function () {
-        _this4.update();
-      }, {
-        deep: true
-      });
-    }
-  };
-
   var NAME$6 = 'fc-ivu-group';
   var group = {
     name: NAME$6,
     props: {
       rule: Object,
       rules: Array,
+      formCreate: Object,
       max: {
         type: Number,
         default: 0
@@ -3598,10 +3655,12 @@
     },
     data: function data() {
       return {
-        config: {
+        option: deepExtendArgs({}, this.formCreate.config || {}, {
           submitBtn: false,
-          resetBtn: false
-        },
+          resetBtn: false,
+          mounted: undefined,
+          onReload: undefined
+        }),
         len: 0,
         cacheRule: {},
         group$f: {},
@@ -3807,7 +3866,7 @@
           },
           "attrs": {
             "rule": rule,
-            "option": _this7.config
+            "option": _this7.option
           }
         })])]), h("Col", {
           "attrs": {
@@ -4292,7 +4351,6 @@
   var parsers = [checkbox$1, datePicker, frame$1, hidden, input, radio$1, select$1, slider, iswitch, tree$1, upload$1];
 
   var nodes = {
-    modal: 'Modal',
     button: 'i-button',
     icon: 'Icon',
     slider: 'Slider',
@@ -4629,7 +4687,7 @@
   VNode.use(nodes);
   var drive = {
     ui: "iview4",
-    version: "1.0.14",
+    version: "1.0.15",
     formRender: Form,
     components: components,
     parsers: parsers,

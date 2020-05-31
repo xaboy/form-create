@@ -1,5 +1,5 @@
 /*!
- * @form-create/ant-design-vue v1.0.14
+ * @form-create/ant-design-vue v1.0.15
  * (c) 2018-2020 xaboy
  * Github https://github.com/xaboy/form-create
  * Released under the MIT License.
@@ -275,6 +275,7 @@
   }
   function deepExtend(origin) {
     var target = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+    var mode = arguments.length > 2 ? arguments[2] : undefined;
     var isArr = false;
 
     for (var key in target) {
@@ -287,11 +288,21 @@
           if (isArr) {
             isArr = false;
             nst && $set(origin, key, []);
+          } else if (clone._clone) {
+            clone = clone._clone();
+
+            if (mode) {
+              clone = clone.getRule();
+              nst && $set(origin, key, {});
+            } else {
+              $set(origin, key, clone);
+              continue;
+            }
           } else {
             nst && $set(origin, key, {});
           }
 
-          deepExtend(origin[key], clone);
+          deepExtend(origin[key], clone, mode);
         } else {
           $set(origin, key, clone);
         }
@@ -411,7 +422,15 @@
       onSuccess: {
         type: Function,
         required: true
-      }
+      },
+      onHandle: {
+        type: Function,
+        default: function _default(file) {
+          this.previewImage = file.url;
+          this.previewVisible = true;
+        }
+      },
+      modalTitle: String
     },
     data: function data() {
       var fileList = this.value.map(parseFile);
@@ -441,13 +460,6 @@
           }
         })]);
       },
-      handlePreview: function handlePreview(file) {
-        this.previewImage = file.url;
-        this.previewVisible = true;
-      },
-      handleCancel: function handleCancel() {
-        this.previewVisible = false;
-      },
       handleChange: function handleChange(_ref) {
         var file = _ref.file,
             fileList = _ref.fileList;
@@ -476,14 +488,20 @@
       }
     },
     render: function render() {
+      var _this = this;
+
       var h = arguments[0];
       var isShow = !this.limit || this.limit > this.uploadList.length;
       this.initChildren();
+
+      var ctx = _objectSpread2({}, this.ctx);
+
+      ctx.on = deepExtend({}, ctx.on || {});
       return h("div", {
         "class": _defineProperty({}, style['fc-hide-btn'], !isShow)
-      }, [h("AUpload", helper([{}, this.ctx, {
+      }, [h("AUpload", helper([{}, ctx, {
         "on": {
-          "preview": this.handlePreview,
+          "preview": this.onHandle.bind(this),
           "change": this.handleChange
         },
         "ref": "upload",
@@ -492,11 +510,14 @@
         }
       }]), [this.children]), h("aModal", {
         "attrs": {
-          "visible": this.previewVisible,
+          "title": this.modalTitle,
           "footer": null
         },
-        "on": {
-          "cancel": this.handleCancel
+        "model": {
+          value: _this.previewVisible,
+          callback: function callback($$v) {
+            _this.previewVisible = $$v;
+          }
         }
       }, [h("img", {
         "style": "width: 100%",
@@ -504,6 +525,452 @@
           "src": this.previewImage
         }
       })])]);
+    }
+  };
+
+  var NAME = 'fc-antd-frame';
+  var frame = {
+    name: NAME,
+    props: {
+      type: {
+        type: String,
+        default: 'input'
+      },
+      field: {
+        type: String,
+        default: ''
+      },
+      helper: {
+        type: Boolean,
+        default: true
+      },
+      disabled: {
+        type: Boolean,
+        default: false
+      },
+      src: {
+        type: String,
+        required: true
+      },
+      icon: {
+        type: String,
+        default: 'folder'
+      },
+      width: {
+        type: [Number, String],
+        default: 500
+      },
+      height: {
+        type: [Number, String],
+        default: 370
+      },
+      maxLength: {
+        type: Number,
+        default: 0
+      },
+      okBtnText: {
+        type: String,
+        default: '确定'
+      },
+      closeBtnText: {
+        type: String,
+        default: '关闭'
+      },
+      modalTitle: String,
+      handleIcon: {
+        type: [String, Boolean],
+        default: undefined
+      },
+      title: String,
+      allowRemove: {
+        type: Boolean,
+        default: true
+      },
+      onOpen: {
+        type: Function,
+        default: function _default() {}
+      },
+      onOk: {
+        type: Function,
+        default: function _default() {}
+      },
+      onCancel: {
+        type: Function,
+        default: function _default() {}
+      },
+      onLoad: {
+        type: Function,
+        default: function _default() {}
+      },
+      onBeforeRemove: {
+        type: Function,
+        default: function _default() {}
+      },
+      onRemove: {
+        type: Function,
+        default: function _default() {}
+      },
+      onHandle: {
+        type: Function,
+        default: function _default(src) {
+          this.previewImage = src;
+          this.previewVisible = true;
+        }
+      },
+      modal: {
+        type: Object,
+        default: function _default() {
+          return {};
+        }
+      },
+      srcKey: {
+        type: [String, Number]
+      },
+      value: [Array, String, Number, Object],
+      footer: {
+        type: Boolean,
+        default: true
+      },
+      reload: {
+        type: Boolean,
+        default: true
+      },
+      closeBtn: {
+        type: Boolean,
+        default: true
+      },
+      okBtn: {
+        type: Boolean,
+        default: true
+      }
+    },
+    data: function data() {
+      return {
+        fileList: toArray(this.value),
+        unique: uniqueId(),
+        previewVisible: false,
+        frameVisible: false,
+        previewImage: ''
+      };
+    },
+    watch: {
+      value: function value(n) {
+        this.fileList = toArray(n);
+      },
+      fileList: function fileList(n) {
+        var val = this.maxLength === 1 ? n[0] || '' : n;
+        this.$emit('input', val);
+        this.$emit('change', val);
+      }
+    },
+    methods: {
+      key: function key(unique) {
+        return NAME + unique + this.unique;
+      },
+      closeModel: function closeModel(close) {
+        this.$emit(close ? '$close' : '$ok');
+
+        if (this.reload) {
+          this.$off('$ok');
+          this.$off('$close');
+        }
+
+        this.frameVisible = false;
+      },
+      showModel: function showModel() {
+        if (this.disabled || false === this.onOpen()) return;
+        this.frameVisible = true;
+      },
+      makeInput: function makeInput() {
+        var _this = this;
+
+        var h = this.$createElement;
+        var props = {
+          type: 'text',
+          value: this.fileList.map(function (v) {
+            return _this.getSrc(v);
+          }).toString(),
+          readonly: true
+        };
+        return h("AInput", helper([{}, {
+          "props": props
+        }, {
+          "key": this.key('input')
+        }]), [h("AIcon", {
+          "attrs": {
+            "type": this.icon
+          },
+          "slot": "addonAfter",
+          "on": {
+            "click": this.showModel
+          }
+        }), this.fileList.length ? h("AIcon", {
+          "attrs": {
+            "type": "close-circle"
+          },
+          "slot": "suffix",
+          "on": {
+            "click": function click() {
+              return _this.fileList = [];
+            }
+          }
+        }) : null]);
+      },
+      makeGroup: function makeGroup(children) {
+        var h = this.$createElement;
+        if (!this.maxLength || this.fileList.length < this.maxLength) children.push(this.makeBtn());
+        return h("div", {
+          "class": style['fc-upload'],
+          "key": this.key('group')
+        }, _toConsumableArray(children));
+      },
+      makeItem: function makeItem(index, children) {
+        var h = this.$createElement;
+        return h("div", {
+          "class": style['fc-files'],
+          "key": this.key('file' + index)
+        }, _toConsumableArray(children));
+      },
+      valid: function valid(field) {
+        if (field !== this.field) throw new Error('frame 无效的字段值');
+      },
+      makeIcons: function makeIcons(val, index) {
+        var h = this.$createElement;
+
+        if (this.handleIcon !== false || this.allowRemove === true) {
+          var icons = [];
+          if (this.type !== 'file' && this.handleIcon !== false || this.type === 'file' && this.handleIcon) icons.push(this.makeHandleIcon(val, index));
+          if (this.allowRemove) icons.push(this.makeRemoveIcon(val, index));
+          return h("div", {
+            "class": style['fc-upload-cover'],
+            "key": this.key('uc')
+          }, [icons]);
+        }
+      },
+      makeHandleIcon: function makeHandleIcon(val, index) {
+        var _this2 = this;
+
+        var h = this.$createElement;
+        return h("AIcon", {
+          "attrs": {
+            "type": this.handleIcon === true || this.handleIcon === undefined ? 'eye-o' : this.handleIcon
+          },
+          "on": {
+            "click": function click() {
+              return _this2.handleClick(val);
+            }
+          },
+          "key": this.key('hi' + index)
+        });
+      },
+      makeRemoveIcon: function makeRemoveIcon(val, index) {
+        var _this3 = this;
+
+        var h = this.$createElement;
+        return h("AIcon", {
+          "attrs": {
+            "type": "delete"
+          },
+          "on": {
+            "click": function click() {
+              return _this3.handleRemove(val);
+            }
+          },
+          "key": this.key('ri' + index)
+        });
+      },
+      makeFiles: function makeFiles() {
+        var _this4 = this;
+
+        var h = this.$createElement;
+        return this.makeGroup(this.fileList.map(function (src, index) {
+          return _this4.makeItem(index, [h("AIcon", {
+            "attrs": {
+              "type": "file"
+            },
+            "on": {
+              "click": function click() {
+                return _this4.handleClick(src);
+              }
+            }
+          }), _this4.makeIcons(src, index)]);
+        }));
+      },
+      makeImages: function makeImages() {
+        var _this5 = this;
+
+        var h = this.$createElement;
+        return this.makeGroup(this.fileList.map(function (src, index) {
+          return _this5.makeItem(index, [h("img", {
+            "attrs": {
+              "src": _this5.getSrc(src)
+            }
+          }), _this5.makeIcons(src, index)]);
+        }));
+      },
+      makeBtn: function makeBtn() {
+        var _this6 = this;
+
+        var h = this.$createElement;
+        return h("div", {
+          "class": style['fc-upload-btn'],
+          "on": {
+            "click": function click() {
+              return _this6.showModel();
+            }
+          },
+          "key": this.key('btn')
+        }, [h("AIcon", {
+          "attrs": {
+            "type": this.icon,
+            "theme": "filled"
+          }
+        })]);
+      },
+      handleClick: function handleClick(src) {
+        if (this.disabled) return;
+        return this.onHandle(src);
+      },
+      handleRemove: function handleRemove(src) {
+        if (this.disabled) return;
+
+        if (false !== this.onBeforeRemove(src)) {
+          this.fileList.splice(this.fileList.indexOf(src), 1);
+          this.onRemove(src);
+        }
+      },
+      getSrc: function getSrc(src) {
+        return isUndef(this.srcKey) ? src : src[this.srcKey];
+      },
+      frameLoad: function frameLoad(e) {
+        var _this7 = this;
+
+        this.onLoad(e);
+
+        try {
+          if (this.helper === true) {
+            var iframe = e.currentTarget.contentWindow;
+            iframe['form_create_helper'] = {
+              close: function close(field) {
+                _this7.valid(field);
+
+                _this7.closeModel();
+              },
+              set: function set(field, value) {
+                _this7.valid(field);
+
+                if (!_this7.disabled) _this7.$emit('input', value);
+              },
+              get: function get(field) {
+                _this7.valid(field);
+
+                return _this7.value;
+              },
+              onOk: function onOk(fn) {
+                return _this7.$on('$ok', fn);
+              },
+              onClose: function onClose(fn) {
+                return _this7.$on('$close', fn);
+              }
+            };
+          }
+        } catch (e) {
+          console.log(e);
+        }
+      },
+      makeFooter: function makeFooter() {
+        var _this8 = this;
+
+        var h = this.$createElement;
+        var _this$$props = this.$props,
+            okBtnText = _this$$props.okBtnText,
+            closeBtnText = _this$$props.closeBtnText,
+            closeBtn = _this$$props.closeBtn,
+            okBtn = _this$$props.okBtn,
+            footer = _this$$props.footer;
+        var node = [];
+        if (!footer) return node;
+        if (closeBtn) node.push(h("AButton", {
+          "on": {
+            "click": function click() {
+              return _this8.onCancel() !== false && _this8.closeModel(true);
+            }
+          }
+        }, [closeBtnText]));
+        if (okBtn) node.push(h("AButton", {
+          "attrs": {
+            "type": "primary"
+          },
+          "on": {
+            "click": function click() {
+              return _this8.onOk() !== false && _this8.closeModel();
+            }
+          }
+        }, [okBtnText]));
+        return node;
+      }
+    },
+    render: function render() {
+      var _this9 = this;
+
+      var h = arguments[0];
+      var type = this.type;
+      var Node;
+      if (type === 'input') Node = this.makeInput();else if (type === 'image') Node = this.makeImages();else Node = this.makeFiles();
+      var _this$$props2 = this.$props,
+          _this$$props2$width = _this$$props2.width,
+          width = _this$$props2$width === void 0 ? '30%' : _this$$props2$width,
+          height = _this$$props2.height,
+          src = _this$$props2.src,
+          title = _this$$props2.title,
+          modalTitle = _this$$props2.modalTitle;
+      return h("div", [Node, h("aModal", {
+        "attrs": {
+          "title": modalTitle,
+          "footer": null
+        },
+        "model": {
+          value: _this9.previewVisible,
+          callback: function callback($$v) {
+            _this9.previewVisible = $$v;
+          }
+        }
+      }, [h("img", {
+        "attrs": {
+          "alt": "example",
+          "src": this.previewImage
+        },
+        "style": "width: 100%"
+      })]), h("aModal", helper([{}, {
+        "props": _objectSpread2({
+          width: width,
+          title: title
+        }, this.modal)
+      }, {
+        "attrs": {
+          "visible": this.frameVisible
+        },
+        "on": {
+          "cancel": function cancel() {
+            return _this9.closeModel(true);
+          }
+        }
+      }]), [this.frameVisible || !this.reload ? h("iframe", {
+        "attrs": {
+          "src": src,
+          "frameborder": "0"
+        },
+        "style": {
+          'height': height,
+          'border': '0 none',
+          'width': '100%'
+        },
+        "on": {
+          "load": this.frameLoad
+        }
+      }) : null, h("div", {
+        "slot": "footer"
+      }, [this.makeFooter()])])]);
     }
   };
 
@@ -515,10 +982,7 @@
       props: {
         rule: {
           type: Array,
-          required: true,
-          default: function _default() {
-            return {};
-          }
+          required: true
         },
         option: {
           type: Object,
@@ -573,8 +1037,7 @@
         this.$emit('input', this.$f);
       },
       mounted: function mounted() {
-        var formCreate = this.formCreate;
-        formCreate.mounted();
+        this.formCreate.mounted();
         this.$emit('input', this.$f);
       },
       beforeDestroy: function beforeDestroy() {
@@ -800,6 +1263,13 @@
         return this;
       }
     }, {
+      key: "_clone",
+      value: function _clone() {
+        var clone = new this.constructor();
+        clone._data = deepExtend({}, this._data);
+        return clone;
+      }
+    }, {
       key: "getRule",
       value: function getRule() {
         return this._data;
@@ -837,12 +1307,10 @@
     };
   });
 
+  var PREFIX = '[[FORM-CREATE-PREFIX-';
+  var SUFFIX = '-FORM-CREATE-SUFFIX]]';
   function toJson(obj) {
-    return JSON.stringify(obj, function (key, val) {
-      if (val instanceof Creator) {
-        return val.getRule();
-      }
-
+    return JSON.stringify(deepExtend([], obj, true), function (key, val) {
       if (val && val._isVue === true) return undefined;
 
       if (typeof val !== 'function') {
@@ -851,20 +1319,26 @@
 
       if (val.__inject) val = val.__origin;
       if (val.__emit) return undefined;
-      return '' + val;
+      return PREFIX + val + SUFFIX;
     });
   }
-  function parseJson(json) {
-    return JSON.parse(json, function (k, v) {
-      if (isUndef(v)) return v;
 
-      if (v.indexOf && v.indexOf('function') > -1) {
-        try {
-          return eval('(function(){return ' + v + ' })()');
-        } catch (e) {
-          console.error("[form-create]\u89E3\u6790\u5931\u8D25:".concat(v));
-          return undefined;
-        }
+  function makeFn(fn) {
+    return eval('(function(){return ' + fn + ' })()');
+  }
+
+  function parseJson(json, mode) {
+    return JSON.parse(json, function (k, v) {
+      if (isUndef(v) || !v.indexOf) return v;
+
+      try {
+        if (v.indexOf(SUFFIX) > 0 && v.indexOf(PREFIX) === 0) {
+          v = v.replace(SUFFIX, '').replace(PREFIX, '');
+          return makeFn(v.indexOf('function') === -1 && v.indexOf('(') !== 0 ? 'function ' + v : v);
+        } else if (!mode && v.indexOf('function') > -1) return makeFn(v);
+      } catch (e) {
+        console.error("[form-create]\u89E3\u6790\u5931\u8D25:".concat(v));
+        return undefined;
       }
 
       return v;
@@ -877,21 +1351,11 @@
       configurable: false
     };
   }
-  function copyRule(rule) {
-    return copyRules([rule])[0];
+  function copyRule(rule, mode) {
+    return copyRules([rule], mode)[0];
   }
-  function copyRules(rules) {
-    return rules.map(function (rule) {
-      if (isString(rule)) return rule;
-      var isCreator = isFunction(rule.getRule);
-      var data = deepExtendArgs({}, isCreator ? rule._data : rule);
-
-      if (isCreator) {
-        var creator = new Creator();
-        creator._data = data;
-        return creator;
-      } else return data;
-    });
+  function copyRules(rules, mode) {
+    return deepExtend([], rules, mode);
   }
 
   var commonMaker = creatorFactory('');
@@ -1159,9 +1623,7 @@
         if (!this.vm.isShow) return;
         this.$form.beforeRender();
         var vn = this.$handle.sortList.map(function (id) {
-          var parser = _this.$handle.parsers[id];
-          if (parser.type === 'hidden') return;
-          return _this.renderParser(parser);
+          return _this.renderParser(_this.$handle.parsers[id]);
         }).filter(function (val) {
           return val !== undefined;
         });
@@ -1222,6 +1684,8 @@
     }, {
       key: "renderParser",
       value: function renderParser(parser, parent) {
+        if (parser.type === 'hidden') return;
+
         if (!this.cache[parser.id] || parser.type === 'template') {
           parser.vData.get();
           this.setGlobalConfig(parser);
@@ -1650,7 +2114,10 @@
           }
         }, {}, h.subForm);
 
-        var keys = Object.keys(subForm),
+        var keys = Object.keys(subForm).filter(function (field) {
+          var sub = subForm[field];
+          return Array.isArray(sub) ? sub.length : !isUndef(sub);
+        }),
             len = keys.length,
             subLen;
 
@@ -1806,12 +2273,13 @@
     function Handle(fc) {
       _classCallCheck(this, Handle);
 
-      var vm = fc.vm,
-          rules = fc.rules,
-          options = fc.options;
+      var _this$fc = this.fc = fc,
+          vm = _this$fc.vm,
+          rules = _this$fc.rules,
+          options = _this$fc.options;
+
       this.watching = false;
       this.vm = vm;
-      this.fc = fc;
       this.options = options;
       this.validate = {};
       this.formData = {};
@@ -1859,8 +2327,7 @@
             parser = _rule.__fc__; //规则在其他 form-create 中使用,自动浅拷贝
 
             if (!parser.deleted && (parser.vm !== _this.vm || _this.parsers[parser.id])) {
-              _rule = copyRule(_rule);
-              rules[index] = _rule;
+              rules[index] = _rule = copyRule(_rule);
               parser = _this.createParser(_this.parseRule(_rule));
             } else {
               parser.update(_this);
@@ -1926,11 +2393,7 @@
     }, {
       key: "createParser",
       value: function createParser(rule) {
-        var id = '' + uniqueId(),
-            parsers = this.fc.parsers,
-            type = toString(rule.type).toLocaleLowerCase();
-        var Parser = parsers[type] ? parsers[type] : BaseParser;
-        return new Parser(this, rule, id);
+        return new (this.fc.parsers[toString(rule.type).toLocaleLowerCase()] || BaseParser)(this, rule, '' + uniqueId());
       }
     }, {
       key: "parseRule",
@@ -2116,7 +2579,7 @@
     }, {
       key: "getParser",
       value: function getParser(id) {
-        if (this.fieldList[id]) return this.fieldList[id];else if (this.customData[id]) return this.customData[id];else if (this.parsers[id]) return this.parsers[id];
+        return this.fieldList[id] || this.customData[id] || this.parsers[id];
       }
     }, {
       key: "created",
@@ -2205,7 +2668,7 @@
             return val === control.value;
           };
 
-          if (validate(parser.rule.value)) {
+          if (validate(parser.rule.value, _this7.fCreateApi)) {
             if (ctrlRule) {
               if (ctrlRule.children === control.rule) return {
                 v: void 0
@@ -2216,7 +2679,8 @@
               type: 'fcFragment',
               native: true,
               children: control.rule
-            };
+            }; //TODO 位置可自定义
+
             parser.root.splice(parser.root.indexOf(parser.rule.__origin__) + 1, 0, rule);
             parser.ctrlRule = rule;
 
@@ -2413,9 +2877,9 @@
     });
   }
 
-  var NAME = 'fcFragment';
+  var NAME$1 = 'fcFragment';
   var fragment = {
-    name: NAME,
+    name: NAME$1,
     functional: true,
     props: {
       children: Array
@@ -2707,20 +3171,21 @@
     }, {
       key: "getGetCol",
       value: function getGetCol(parser) {
-        var col = parser.rule.col || {},
+        var field = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'col';
+        var col = parser.rule[field] || {},
             mCol = {},
             pCol = {},
             global = this.options.global;
         if (!global) return col;
 
         if (global['*']) {
-          mCol = global['*'].col || {};
+          mCol = global['*'][field] || {};
         }
 
         if (global[parser.type]) {
-          pCol = global[parser.type].col || {};
+          pCol = global[parser.type][field] || {};
         } else if (global[parser.originType]) {
-          pCol = global[parser.originType].col || {};
+          pCol = global[parser.originType][field] || {};
         }
 
         col = deepExtendArgs({}, mCol, pCol, col);
@@ -2740,444 +3205,13 @@
     return BaseForm;
   }();
 
-  var vNode = new VNode({});
-
-  var Modal = function Modal(options, cb) {
-    if (isUndef(options.width)) options.width = '30%';
-    return {
-      name: 'fc-modal',
-      data: function data() {
-        return _objectSpread2({
-          visible: true
-        }, options);
-      },
-      render: function render() {
-        vNode.setVm(this);
-        return vNode.modal({
-          props: this.$data,
-          on: {
-            cancel: this.onClose
-          }
-        }, [cb(vNode, this)]);
-      },
-      methods: {
-        onClose: function onClose() {
-          var _this = this;
-
-          this.visible = false;
-          this.$nextTick(function () {
-            return _this.$destroy();
-          });
-        }
-      }
-    };
-  };
-
-  function mount(options, content) {
-    var $modal = _vue.extend(Modal(options, content)),
-        $vm = new $modal().$mount();
-    window.document.body.appendChild($vm.$el);
-  }
-
-  var NAME$1 = 'fc-antd-frame';
-  var frame = {
-    name: NAME$1,
-    props: {
-      type: {
-        type: String,
-        default: 'input'
-      },
-      field: {
-        type: String,
-        default: ''
-      },
-      helper: {
-        type: Boolean,
-        default: true
-      },
-      disabled: {
-        type: Boolean,
-        default: false
-      },
-      src: {
-        type: String,
-        required: true
-      },
-      icon: {
-        type: String,
-        default: 'folder'
-      },
-      width: {
-        type: [Number, String],
-        default: 500
-      },
-      height: {
-        type: [Number, String],
-        default: 370
-      },
-      maxLength: {
-        type: Number,
-        default: 0
-      },
-      okBtnText: {
-        type: String,
-        default: '确定'
-      },
-      closeBtnText: {
-        type: String,
-        default: '关闭'
-      },
-      modalTitle: {
-        type: String,
-        default: '预览'
-      },
-      handleIcon: {
-        type: [String, Boolean],
-        default: undefined
-      },
-      title: String,
-      allowRemove: {
-        type: Boolean,
-        default: true
-      },
-      onOpen: {
-        type: Function,
-        default: function _default() {}
-      },
-      onOk: {
-        type: Function,
-        default: function _default() {}
-      },
-      onCancel: {
-        type: Function,
-        default: function _default() {}
-      },
-      onLoad: {
-        type: Function,
-        default: function _default() {}
-      },
-      onBeforeRemove: {
-        type: Function,
-        default: function _default() {}
-      },
-      onRemove: {
-        type: Function,
-        default: function _default() {}
-      },
-      onHandle: {
-        type: Function,
-        default: function _default(src) {
-          this.previewImage = src;
-          this.previewVisible = true; //defaultOnHandle(src, this.modalTitle)
-        }
-      },
-      modal: {
-        type: Object,
-        default: function _default() {
-          return {};
-        }
-      },
-      srcKey: {
-        type: [String, Number]
-      },
-      value: [Array, String, Number, Object]
-    },
-    data: function data() {
-      return {
-        modalVm: null,
-        fileList: toArray(this.value),
-        unique: uniqueId(),
-        previewVisible: false,
-        previewImage: ''
-      };
-    },
-    watch: {
-      value: function value(n) {
-        this.fileList = toArray(n);
-      },
-      fileList: function fileList(n) {
-        var val = this.maxLength === 1 ? n[0] || '' : n;
-        this.$emit('input', val);
-        this.$emit('change', val);
-      }
-    },
-    methods: {
-      key: function key(unique) {
-        return NAME$1 + unique + this.unique;
-      },
-      closeModel: function closeModel() {
-        this.modalVm && this.modalVm.onClose();
-        this.modalVm = null;
-      },
-      handleCancel: function handleCancel() {
-        this.previewVisible = false;
-      },
-      showModel: function showModel() {
-        var _this = this;
-
-        if (this.disabled || false === this.onOpen()) return;
-        var _this$$props = this.$props,
-            width = _this$$props.width,
-            height = _this$$props.height,
-            src = _this$$props.src,
-            title = _this$$props.title,
-            okBtnText = _this$$props.okBtnText,
-            closeBtnText = _this$$props.closeBtnText;
-        mount(_objectSpread2({
-          width: width,
-          title: title
-        }, this.modal), function (vNode, _vm) {
-          _this.modalVm = _vm;
-          return [vNode.make('iframe', {
-            attrs: {
-              src: src
-            },
-            style: {
-              'height': height,
-              'border': '0 none',
-              'width': '100%'
-            },
-            on: {
-              'load': function load(e) {
-                _this.onLoad(e);
-
-                try {
-                  if (_this.helper === true) {
-                    var iframe = e.currentTarget.contentWindow;
-                    iframe['form_create_helper'] = {
-                      close: function close(field) {
-                        _this.valid(field);
-
-                        _vm.onClose();
-                      },
-                      set: function set(field, value) {
-                        _this.valid(field);
-
-                        if (!_this.disabled) _this.$emit('input', value);
-                      },
-                      get: function get(field) {
-                        _this.valid(field);
-
-                        return _this.value;
-                      }
-                    };
-                  }
-                } catch (e) {
-                  console.log(e);
-                }
-              }
-            }
-          }), vNode.make('div', {
-            slot: 'footer'
-          }, [vNode.button({
-            on: {
-              click: function click() {
-                _this.onCancel() !== false && _vm.onClose();
-              }
-            }
-          }, [closeBtnText]), vNode.button({
-            props: {
-              type: 'primary'
-            },
-            on: {
-              click: function click() {
-                _this.onOk() !== false && _vm.onClose();
-              }
-            }
-          }, [okBtnText])])];
-        });
-      },
-      makeInput: function makeInput() {
-        var _this2 = this;
-
-        var h = this.$createElement;
-        var props = {
-          type: 'text',
-          value: this.fileList.map(function (v) {
-            return _this2.getSrc(v);
-          }).toString(),
-          readonly: true
-        };
-        return h("AInput", helper([{}, {
-          "props": props
-        }, {
-          "key": this.key('input')
-        }]), [h("AIcon", {
-          "attrs": {
-            "type": this.icon
-          },
-          "slot": "addonAfter",
-          "on": {
-            "click": this.showModel
-          }
-        }), this.fileList.length ? h("AIcon", {
-          "attrs": {
-            "type": "close-circle"
-          },
-          "slot": "suffix",
-          "on": {
-            "click": function click() {
-              return _this2.fileList = [];
-            }
-          }
-        }) : null]);
-      },
-      makeGroup: function makeGroup(children) {
-        var h = this.$createElement;
-        if (!this.maxLength || this.fileList.length < this.maxLength) children.push(this.makeBtn());
-        return h("div", {
-          "class": style['fc-upload'],
-          "key": this.key('group')
-        }, _toConsumableArray(children));
-      },
-      makeItem: function makeItem(index, children) {
-        var h = this.$createElement;
-        return h("div", {
-          "class": style['fc-files'],
-          "key": this.key('file' + index)
-        }, _toConsumableArray(children));
-      },
-      valid: function valid(field) {
-        if (field !== this.field) throw new Error('frame 无效的字段值');
-      },
-      makeIcons: function makeIcons(val, index) {
-        var h = this.$createElement;
-
-        if (this.handleIcon !== false || this.allowRemove === true) {
-          var icons = [];
-          if (this.type !== 'file' && this.handleIcon !== false || this.type === 'file' && this.handleIcon) icons.push(this.makeHandleIcon(val, index));
-          if (this.allowRemove) icons.push(this.makeRemoveIcon(val, index));
-          return h("div", {
-            "class": style['fc-upload-cover'],
-            "key": this.key('uc')
-          }, [icons]);
-        }
-      },
-      makeHandleIcon: function makeHandleIcon(val, index) {
-        var _this3 = this;
-
-        var h = this.$createElement;
-        return h("AIcon", {
-          "attrs": {
-            "type": this.handleIcon === true || this.handleIcon === undefined ? 'eye-o' : this.handleIcon
-          },
-          "on": {
-            "click": function click() {
-              return _this3.handleClick(val);
-            }
-          },
-          "key": this.key('hi' + index)
-        });
-      },
-      makeRemoveIcon: function makeRemoveIcon(val, index) {
-        var _this4 = this;
-
-        var h = this.$createElement;
-        return h("AIcon", {
-          "attrs": {
-            "type": "delete"
-          },
-          "on": {
-            "click": function click() {
-              return _this4.handleRemove(val);
-            }
-          },
-          "key": this.key('ri' + index)
-        });
-      },
-      makeFiles: function makeFiles() {
-        var _this5 = this;
-
-        var h = this.$createElement;
-        return this.makeGroup(this.fileList.map(function (src, index) {
-          return _this5.makeItem(index, [h("AIcon", {
-            "attrs": {
-              "type": "file"
-            },
-            "on": {
-              "click": function click() {
-                return _this5.handleClick(src);
-              }
-            }
-          }), _this5.makeIcons(src, index)]);
-        }));
-      },
-      makeImages: function makeImages() {
-        var _this6 = this;
-
-        var h = this.$createElement;
-        return this.makeGroup(this.fileList.map(function (src, index) {
-          return _this6.makeItem(index, [h("img", {
-            "attrs": {
-              "src": _this6.getSrc(src)
-            }
-          }), _this6.makeIcons(src, index)]);
-        }));
-      },
-      makeBtn: function makeBtn() {
-        var _this7 = this;
-
-        var h = this.$createElement;
-        return h("div", {
-          "class": style['fc-upload-btn'],
-          "on": {
-            "click": function click() {
-              return _this7.showModel();
-            }
-          },
-          "key": this.key('btn')
-        }, [h("AIcon", {
-          "attrs": {
-            "type": this.icon,
-            "theme": "filled"
-          }
-        })]);
-      },
-      handleClick: function handleClick(src) {
-        if (this.disabled) return;
-        return this.onHandle(src);
-      },
-      handleRemove: function handleRemove(src) {
-        if (this.disabled) return;
-
-        if (false !== this.onBeforeRemove(src)) {
-          this.fileList.splice(this.fileList.indexOf(src), 1);
-          this.onRemove(src);
-        }
-      },
-      getSrc: function getSrc(src) {
-        return isUndef(this.srcKey) ? src : src[this.srcKey];
-      }
-    },
-    render: function render() {
-      var h = arguments[0];
-      var type = this.type;
-      var Node;
-      if (type === 'input') Node = this.makeInput();else if (type === 'image') Node = this.makeImages();else Node = this.makeFiles();
-      return h("div", [Node, h("aModal", {
-        "attrs": {
-          "visible": this.previewVisible,
-          "footer": null
-        },
-        "on": {
-          "cancel": this.handleCancel
-        }
-      }, [h("img", {
-        "attrs": {
-          "alt": "example",
-          "src": this.previewImage
-        },
-        "style": "width: 100%"
-      })])]);
-    }
-  };
-
   var NAME$2 = 'fc-antd-group';
   var group = {
     name: NAME$2,
     props: {
       rule: Object,
       rules: Array,
+      formCreate: Object,
       max: {
         type: Number,
         default: 0
@@ -3199,18 +3233,12 @@
     },
     data: function data() {
       return {
-        config: {
+        option: deepExtendArgs({}, this.formCreate.config || {}, {
           submitBtn: false,
           resetBtn: false,
-          form: {
-            labelCol: {
-              span: 3
-            },
-            wrapperCol: {
-              span: 18
-            }
-          }
-        },
+          mounted: undefined,
+          onReload: undefined
+        }),
         len: 0,
         cacheRule: {},
         group$f: {},
@@ -3415,7 +3443,7 @@
           },
           "attrs": {
             "rule": rule,
-            "option": _this7.config
+            "option": _this7.option
           }
         })]), h("ACol", {
           "attrs": {
@@ -3784,13 +3812,11 @@
 
         var data = this.$render.inputVData(this).get();
         return this.vNode.upload({
-          props: {
+          props: _objectSpread2({}, data.props, {
             ctx: data,
             children: children,
-            value: this.$handle.getFormData(this),
-            onSuccess: data.props.onSuccess,
-            limit: data.props.limit
-          },
+            value: this.$handle.getFormData(this)
+          }),
           on: {
             input: function input(v) {
               _this.$render.onInput(_this, v);
@@ -3882,7 +3908,6 @@
   }
 
   var nodes = {
-    modal: 'a-modal',
     button: 'a-button',
     icon: 'a-icon',
     slider: 'a-slider',
@@ -3993,6 +4018,12 @@
         return this.makeFormItem(parser, child);
       }
     }, {
+      key: "getItemCol",
+      value: function getItemCol(parser, field) {
+        var col = this.getGetCol(parser, field);
+        return Object.keys(col).length ? col : undefined;
+      }
+    }, {
       key: "makeFormItem",
       value: function makeFormItem(parser, child) {
         var fItemUnique = "fItem".concat(parser.key).concat(this.unique),
@@ -4006,8 +4037,8 @@
             _col = _this$propsData$props.col,
             propsData = this.vData.props({
           prop: field,
-          labelCol: isVertical ? {} : rule.labelCol,
-          wrapperCol: isVertical ? {} : rule.wrapperCol,
+          labelCol: isVertical ? {} : this.getItemCol(parser, 'labelCol'),
+          wrapperCol: isVertical ? {} : this.getItemCol(parser, 'wrapperCol'),
           rules: rule.validate,
           required: rule.props.required
         }).key(fItemUnique).ref(formItemRefName).class(rule.className).get(),
@@ -4220,7 +4251,7 @@
   VNode.use(nodes);
   var drive = {
     ui: "ant-design-vue",
-    version: "".concat("1.0.14"),
+    version: "".concat("1.0.15"),
     formRender: Form,
     components: components,
     parsers: parsers,
