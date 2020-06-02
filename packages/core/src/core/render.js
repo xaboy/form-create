@@ -220,7 +220,7 @@ export default class Render {
             if (child.__fc__) {
                 return this.renderParser(child.__fc__, parser);
             }
-            if (child.type)
+            if (!this.$handle.isset(child) && child.type)
                 $de(() => this.$handle.reloadRule());
         });
 

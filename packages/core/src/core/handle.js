@@ -60,11 +60,16 @@ export default class Handle {
         this.rules = rules;
         this.origin = [...this.rules];
         this.changeStatus = false;
+        this.issetRule = [];
     }
 
     modelEvent(parser) {
         const modelList = this.fc.modelEvents;
         return modelList[parser.type] || modelList[parser.originType] || parser.rule.model || parser.modelEvent;
+    }
+
+    isset(rule) {
+        return this.issetRule.indexOf(rule) > -1;
     }
 
     loadRule(rules, child) {
@@ -94,8 +99,10 @@ export default class Handle {
             }
 
             let children = parser.rule.children, rule = parser.rule;
-            if (!this.notField(parser.field))
+            if (!this.notField(parser.field)) {
+                this.issetRule.push(_rule);
                 return console.error(`${rule.field} 字段已存在` + errMsg());
+            }
 
             this.setParser(parser);
 
