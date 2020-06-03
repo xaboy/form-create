@@ -182,10 +182,11 @@ export default class Render {
             .ref(refName).key('fc_item' + key).props('formCreate', this.$handle.fCreateApi)
             .on('fc.subForm', (subForm) => this.$handle.addSubForm(parser, subForm));
 
+        const model = this.$handle.modelEvent(parser);
         if (!custom)
-            data.on(this.$handle.modelEvent(parser), (value) => {
+            data.on(model.event || model, (value) => {
                 this.onInput(parser, value);
-            }).props('value', this.$handle.getFormData(parser));
+            }).props(model.prop || 'value', this.$handle.getFormData(parser));
 
         this.$form.inputVData && this.$form.inputVData(parser, custom);
 

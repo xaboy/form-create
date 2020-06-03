@@ -115,7 +115,7 @@ function mock() {
 
 
         //switch 开关组件
-        maker.switch('是否上架', 'is_show', '1').props({
+        maker.switch('是否上架', 'is_show', true).props({
             "checkedChildren": "1",
             "unCheckedChildren": "0"
         }).col({span: 8, labelWidth: "100"}).merge({labelCol:{span:12},wrapperCol:{span:12}}),

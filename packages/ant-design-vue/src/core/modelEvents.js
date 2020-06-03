@@ -1,8 +1,12 @@
 const modelEvents = {
-    'input': 'change.value'
+    'input': 'change.value',
+    'switch': {
+        prop: 'checked',
+        event: 'change'
+    }
 };
 
-['autoComplete', 'cascader', 'inputNumber', 'rate', 'slider', 'change', 'switch', 'timePicker', 'datePicker', 'select'].forEach(n => modelEvents[n] = 'change');
+['autoComplete', 'cascader', 'inputNumber', 'rate', 'slider', 'change', 'timePicker', 'datePicker', 'select'].forEach(n => modelEvents[n] = 'change');
 
 
 export default modelEvents;
