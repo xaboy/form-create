@@ -11,11 +11,11 @@ export namespace FormCreate {
     }
 
     export interface CopyRule<FormRule> {
-        (rule: FormRule | String): FormRule | String
+        (rule: FormRule | String, mode: Boolean): FormRule | String
     }
 
     export interface CopyRules<FormRule> {
-        (rules: Array<FormRule | String>): Array<FormRule | String>
+        (rules: Array<FormRule | String>, mode: Boolean): Array<FormRule | String>
     }
 
     export interface Create<FormRule, FormConfig, FormButton> {
@@ -39,7 +39,7 @@ export namespace FormCreate {
     }
 
     export interface parseJson<FormRule> {
-        (json: string): FormRule[];
+        (json: string, mode: Boolean): FormRule[];
     }
 
     export interface Component {
@@ -101,7 +101,7 @@ export namespace FormCreate {
 
     export interface Control<FormRule> {
         value?: any;
-        handle?: (val: any) => boolean;
+        handle?: (val: any, $f) => boolean;
         rule: FormRule[]
     }
 
