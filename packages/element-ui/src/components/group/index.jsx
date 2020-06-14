@@ -8,6 +8,10 @@ export default {
     props: {
         rule: Object,
         rules: Array,
+        button: {
+            type: Boolean,
+            default: true
+        },
         formCreate: Object,
         max: {
             type: Number,
@@ -133,21 +137,33 @@ export default {
         copyRule() {
             return copyRules(this.formRule);
         },
+        add() {
+            (!this.disabled) && this.addRule(true);
+        },
+        del(key) {
+            if (this.disabled) return;
+            this.removeRule(key, true);
+            this.subForm();
+        },
         addIcon(key) {
             return <i key={`a${key}`} class="el-icon-circle-plus-outline"
                 style={`font-size:28px;cursor:${this.disabled ? 'not-allowed;color:#c9cdd4' : 'pointer'};`}
-                on-click={() => (!this.disabled) && this.addRule(true)}/>;
+                on-click={this.add}/>;
         },
         delIcon(key) {
             return <i key={`d${key}`} class="el-icon-remove-outline"
                 style={`font-size:28px;cursor:${this.disabled ? 'not-allowed;color:#c9cdd4' : 'pointer;color:#606266'};`}
-                on-click={() => {
-                    if (this.disabled) return;
-                    this.removeRule(key, true);
-                    this.subForm();
-                }}/>;
+                on-click={() => this.del(key)}/>;
         },
         makeIcon(total, index, key) {
+            if (this.$scopedSlots.button) return this.$scopedSlots.button({
+                total,
+                index,
+                vm: this,
+                key,
+                del: () => this.del(key),
+                add: this.add
+            });
             if (index === 0) {
                 return [(this.max !== 0 && total >= this.max) ? null : this.addIcon(key), (this.min === 0 || total > this.min) ? this.delIcon(key) : null];
             } else if (index >= this.min) {
@@ -163,19 +179,24 @@ export default {
     },
     render() {
         const keys = Object.keys(this.cacheRule);
+        const button = this.button;
         return keys.length === 0 ?
-            <i key={'a_def'} class="el-icon-circle-plus-outline"
+            (this.$scopedSlots.default ? (this.$scopedSlots.default({
+                vm: this,
+                add: this.add
+            })) : <i key={'a_def'} class="el-icon-circle-plus-outline"
                 style={`font-size:28px;vertical-align:middle;color:${this.disabled ? '#c9cdd4;cursor: not-allowed' : '#606266;cursor:pointer'};`}
-                on-click={() => (!this.disabled) && this.addRule(true)}/> :
+                on-click={this.add}/>) :
             <div key={'con'}>{keys.map((key, index) => {
                 const rule = this.cacheRule[key];
                 return <ElRow align="middle" type="flex" key={key}
                     style="background-color:#f5f7fa;padding:10px;border-radius:5px;margin-bottom:10px;">
-                    <ElCol span={20}><ElFormItem><FormCreate
+                    <ElCol span={button ? 20 : 24}><ElFormItem><FormCreate
                         on-mounted={($f) => this.add$f(index, key, $f)}
                         on-on-reload={($f) => this.syncData(key, $f)} rule={rule}
                         option={this.option}/></ElFormItem></ElCol>
-                    <ElCol span={2} pull={1} push={1}>{this.makeIcon(keys.length, index, key)}</ElCol></ElRow>
+                    {button ? <ElCol span={2} pull={1} push={1}>{this.makeIcon(keys.length, index, key)}</ElCol> : null}
+                </ElRow>
             })}</div>
     }
 }
