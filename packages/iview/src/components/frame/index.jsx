@@ -94,7 +94,7 @@ export default {
         onHandle: {
             type: Function,
             default(src) {
-                this.previewImage = src;
+                this.previewImage = this.getSrc(src);
                 this.previewVisible = true;
             }
         },
