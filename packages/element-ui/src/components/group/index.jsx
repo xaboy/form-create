@@ -71,27 +71,31 @@ export default {
             this.$emit('input', n);
             this.$emit('change', n);
         },
-        value(n) {
-            let keys = Object.keys(this.cacheRule), total = keys.length, len = total - n.length;
-            if (len < 0) {
-                for (let i = len; i < 0; i++) {
-                    this.addRule();
-                }
-                for (let i = 0; i < total; i++) {
-                    this.setValue(this.group$f[keys[i]], n[i]);
-                }
-            } else {
-                if (len > 0) {
-                    for (let i = 0; i < len; i++) {
-                        this.removeRule(keys[total - i - 1]);
+        value: {
+            handler(n) {
+                let keys = Object.keys(this.cacheRule), total = keys.length, len = total - n.length;
+                if (len < 0) {
+                    for (let i = len; i < 0; i++) {
+                        this.addRule();
                     }
-                    this.subForm();
-                }
+                    for (let i = 0; i < total; i++) {
+                        this.setValue(this.group$f[keys[i]], n[i]);
+                    }
+                } else {
+                    if (len > 0) {
+                        for (let i = 0; i < len; i++) {
+                            this.removeRule(keys[total - i - 1]);
+                        }
+                        this.subForm();
+                    }
 
-                n.forEach((val, i) => {
-                    this.setValue(this.group$f[keys[i]], n[i]);
-                });
-            }
+                    n.forEach((val, i) => {
+                        this.setValue(this.group$f[keys[i]], n[i]);
+                    });
+                }
+            },
+            deep:true,
+            immediate:true
         }
     },
     methods: {
@@ -108,7 +112,7 @@ export default {
             const rule = this.copyRule();
             this.$set(this.cacheRule, ++this.len, rule);
             if (emit)
-                this.$emit('add', rule, Object.keys(this.cacheRule).length - 1);
+                this.$nextTick(()=>this.$emit('add', rule, Object.keys(this.cacheRule).length - 1));
         },
         add$f(i, key, $f) {
             this.group$f[key] = $f;
@@ -132,7 +136,7 @@ export default {
             this.$delete(this.fieldRule, key);
             this.$delete(this.group$f, key);
             if (emit)
-                this.$emit('remove', index);
+                this.$nextTick(()=>this.$emit('remove', index));
         },
         copyRule() {
             return copyRules(this.formRule);
