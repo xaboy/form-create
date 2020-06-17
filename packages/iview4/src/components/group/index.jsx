@@ -29,6 +29,10 @@ export default {
         disabled: {
             type: Boolean,
             default: false
+        },
+        fontSize: {
+            type: Number,
+            default: 28
         }
     },
     data() {
@@ -152,12 +156,12 @@ export default {
         },
         addIcon(key) {
             return <Icon key={`a${key}`} type={iviewConfig.addIcon}
-                style={`font-size:28px;cursor:${this.disabled ? 'not-allowed;color:#c9cdd4' : 'pointer;color:#000'}`}
+                style={`font-size:${this.fontSize}px;cursor:${this.disabled ? 'not-allowed;color:#c9cdd4' : 'pointer;color:#000'}`}
                 on-click={this.add}/>;
         },
         delIcon(key) {
             return <Icon key={`d${key}`} type={iviewConfig.removeIcon}
-                style={`font-size:28px;cursor:${this.disabled ? 'not-allowed;color:#c9cdd4' : 'pointer'};`}
+                style={`font-size:${this.fontSize}px;cursor:${this.disabled ? 'not-allowed;color:#c9cdd4' : 'pointer'};`}
                 on-click={() => this.del(key)}/>;
         },
         makeIcon(total, index, key) {
@@ -189,7 +193,7 @@ export default {
                 vm: this,
                 add: this.add
             })) : <Icon key={'a_def'} type={iviewConfig.addIcon}
-                style={`font-size:28px;vertical-align:middle;cursor:${this.disabled ? 'not-allowed;color:#c9cdd4' : 'pointer'};`}
+                style={`font-size:${this.fontSize}px;vertical-align:middle;cursor:${this.disabled ? 'not-allowed;color:#c9cdd4' : 'pointer'};`}
                 on-click={this.add}/>) :
             <div class="fc-group" key={'con'}>{keys.map((key, index) => {
                 const rule = this.cacheRule[key];

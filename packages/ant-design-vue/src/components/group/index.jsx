@@ -28,6 +28,10 @@ export default {
         disabled: {
             type: Boolean,
             default: false
+        },
+        fontSize: {
+            type: Number,
+            default: 28
         }
     },
     data() {
@@ -71,7 +75,7 @@ export default {
             this.$emit('input', n);
             this.$emit('change', n);
         },
-        value:{
+        value: {
             handler(n) {
                 let keys = Object.keys(this.cacheRule), total = keys.length, len = total - n.length;
                 if (len < 0) {
@@ -94,8 +98,8 @@ export default {
                     });
                 }
             },
-            deep:true,
-            immediate:true
+            deep: true,
+            immediate: true
         }
     },
     methods: {
@@ -112,7 +116,7 @@ export default {
             const rule = this.copyRule();
             this.$set(this.cacheRule, ++this.len, rule);
             if (emit)
-                this.$nextTick(()=>this.$emit('add', rule, Object.keys(this.cacheRule).length - 1));
+                this.$nextTick(() => this.$emit('add', rule, Object.keys(this.cacheRule).length - 1));
         },
         add$f(i, key, $f) {
             this.group$f[key] = $f;
@@ -136,7 +140,7 @@ export default {
             this.$delete(this.fieldRule, key);
             this.$delete(this.group$f, key);
             if (emit)
-                this.$nextTick(()=>this.$emit('remove', index));
+                this.$nextTick(() => this.$emit('remove', index));
         },
         copyRule() {
             return copyRules(this.formRule);
@@ -151,12 +155,12 @@ export default {
         },
         addIcon(key) {
             return <AIcon key={`a${key}`} type="plus-circle"
-                style={`font-size:28px;cursor:${this.disabled ? 'not-allowed;color:#c9cdd4' : 'pointer'};`}
+                style={`font-size:${this.fontSize}px;cursor:${this.disabled ? 'not-allowed;color:#c9cdd4' : 'pointer'};`}
                 on-click={this.add}/>;
         },
         delIcon(key) {
             return <AIcon key={`d${key}`} type="minus-circle"
-                style={`font-size:28px;cursor:${this.disabled ? 'not-allowed;color:#c9cdd4' : 'pointer;color:#606266'};`}
+                style={`font-size:${this.fontSize}px;cursor:${this.disabled ? 'not-allowed;color:#c9cdd4' : 'pointer;color:#606266'};`}
                 on-click={() => this.del(key)}/>;
         },
         makeIcon(total, index, key) {
@@ -189,7 +193,7 @@ export default {
                 vm: this,
                 add: this.add
             })) : <AIcon key={'a_def'} type="plus-circle"
-                style={`font-size:28px;vertical-align:middle;color:${this.disabled ? '#c9cdd4;cursor: not-allowed' : '#606266;cursor:pointer'};`}
+                style={`font-size:${this.fontSize}px;vertical-align:middle;color:${this.disabled ? '#c9cdd4;cursor: not-allowed' : '#606266;cursor:pointer'};`}
                 on-click={this.add}/>) :
             <div key={'con'}>{keys.map((key, index) => {
                 const rule = this.cacheRule[key];

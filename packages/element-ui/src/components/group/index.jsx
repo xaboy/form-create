@@ -28,6 +28,10 @@ export default {
         disabled: {
             type: Boolean,
             default: false
+        },
+        fontSize: {
+            type: Number,
+            default: 28
         }
     },
     data() {
@@ -151,12 +155,12 @@ export default {
         },
         addIcon(key) {
             return <i key={`a${key}`} class="el-icon-circle-plus-outline"
-                style={`font-size:28px;cursor:${this.disabled ? 'not-allowed;color:#c9cdd4' : 'pointer'};`}
+                style={`font-size:${this.fontSize}px;cursor:${this.disabled ? 'not-allowed;color:#c9cdd4' : 'pointer'};`}
                 on-click={this.add}/>;
         },
         delIcon(key) {
             return <i key={`d${key}`} class="el-icon-remove-outline"
-                style={`font-size:28px;cursor:${this.disabled ? 'not-allowed;color:#c9cdd4' : 'pointer;color:#606266'};`}
+                style={`font-size:${this.fontSize}px;cursor:${this.disabled ? 'not-allowed;color:#c9cdd4' : 'pointer;color:#606266'};`}
                 on-click={() => this.del(key)}/>;
         },
         makeIcon(total, index, key) {
@@ -189,7 +193,7 @@ export default {
                 vm: this,
                 add: this.add
             })) : <i key={'a_def'} class="el-icon-circle-plus-outline"
-                style={`font-size:28px;vertical-align:middle;color:${this.disabled ? '#c9cdd4;cursor: not-allowed' : '#606266;cursor:pointer'};`}
+                style={`font-size:${this.fontSize}px;vertical-align:middle;color:${this.disabled ? '#c9cdd4;cursor: not-allowed' : '#606266;cursor:pointer'};`}
                 on-click={this.add}/>) :
             <div key={'con'}>{keys.map((key, index) => {
                 const rule = this.cacheRule[key];
