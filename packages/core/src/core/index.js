@@ -96,17 +96,6 @@ export default function createFormCreate(drive) {
         });
     }
 
-    function install(Vue, options) {
-
-        if (options && isPlainObject(options))
-            margeGlobal(globalConfig, options);
-
-        if (Vue._installedFormCreate === true) return;
-        Vue._installedFormCreate = true;
-
-        Vue.use(FormCreate);
-    }
-
     function create(rules, option) {
         const $vm = new _vue({
             data() {
@@ -170,7 +159,13 @@ export default function createFormCreate(drive) {
             return _this.handle.fCreateApi;
         }
 
-        static install(Vue) {
+        static install(Vue, options) {
+            if (options && isPlainObject(options))
+                margeGlobal(globalConfig, options);
+
+            if (Vue._installedFormCreate === true) return;
+            Vue._installedFormCreate = true;
+
             const $formCreate = function (rules, opt = {}) {
                 return FormCreate.create(rules, opt, this);
             };
@@ -227,6 +222,6 @@ export default function createFormCreate(drive) {
 
     return {
         FormCreate,
-        install
+        install: FormCreate.install
     };
 }
