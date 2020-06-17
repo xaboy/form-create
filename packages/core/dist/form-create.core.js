@@ -1,5 +1,5 @@
 /*!
- * @form-create/core v1.0.15
+ * @form-create/core v1.0.16
  * (c) 2018-2020 xaboy
  * Github https://github.com/xaboy/form-create
  * Released under the MIT License.
@@ -1044,9 +1044,10 @@ function () {
       var data = parser.vData.ref(refName).key('fc_item' + key).props('formCreate', this.$handle.fCreateApi).on('fc.subForm', function (subForm) {
         return _this3.$handle.addSubForm(parser, subForm);
       });
-      if (!custom) data.on(this.$handle.modelEvent(parser), function (value) {
+      var model = this.$handle.modelEvent(parser);
+      if (!custom) data.on(model.event || model, function (value) {
         _this3.onInput(parser, value);
-      }).props('value', this.$handle.getFormData(parser));
+      }).props(model.prop || 'value', this.$handle.getFormData(parser));
       this.$form.inputVData && this.$form.inputVData(parser, custom);
       return data;
     }
@@ -1085,7 +1086,7 @@ function () {
           return _this4.renderParser(child.__fc__, parser);
         }
 
-        if (child.type) $de(function () {
+        if (!_this4.$handle.isset(child) && child.type) $de(function () {
           return _this4.$handle.reloadRule();
         });
       });
@@ -1606,12 +1607,18 @@ function () {
       this.rules = rules;
       this.origin = _toConsumableArray(this.rules);
       this.changeStatus = false;
+      this.issetRule = [];
     }
   }, {
     key: "modelEvent",
     value: function modelEvent(parser) {
       var modelList = this.fc.modelEvents;
       return modelList[parser.type] || modelList[parser.originType] || parser.rule.model || parser.modelEvent;
+    }
+  }, {
+    key: "isset",
+    value: function isset(rule) {
+      return this.issetRule.indexOf(rule) > -1;
     }
   }, {
     key: "loadRule",
@@ -1643,7 +1650,12 @@ function () {
 
         var children = parser.rule.children,
             rule = parser.rule;
-        if (!_this.notField(parser.field)) return console.error("".concat(rule.field, " \u5B57\u6BB5\u5DF2\u5B58\u5728") + errMsg());
+
+        if (!_this.notField(parser.field)) {
+          _this.issetRule.push(_rule);
+
+          return console.error("".concat(rule.field, " \u5B57\u6BB5\u5DF2\u5B58\u5728") + errMsg());
+        }
 
         _this.setParser(parser);
 
@@ -2270,13 +2282,6 @@ function createFormCreate(drive) {
     });
   }
 
-  function install(Vue, options) {
-    if (Vue._installedFormCreate === true) return;
-    Vue._installedFormCreate = true;
-    if (options && isPlainObject(options)) margeGlobal(globalConfig, options);
-    Vue.use(FormCreate);
-  }
-
   function _create(rules, option) {
     var $vm = new _vue({
       data: function data() {
@@ -2376,7 +2381,11 @@ function createFormCreate(drive) {
       }
     }, {
       key: "install",
-      value: function install(Vue) {
+      value: function install(Vue, options) {
+        if (options && isPlainObject(options)) margeGlobal(globalConfig, options);
+        if (Vue._installedFormCreate === true) return;
+        Vue._installedFormCreate = true;
+
         var $formCreate = function $formCreate(rules) {
           var opt = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
           return FormCreate.create(rules, opt, this);
@@ -2438,7 +2447,7 @@ function createFormCreate(drive) {
 
   return {
     FormCreate: FormCreate,
-    install: install
+    install: FormCreate.install
   };
 }
 
