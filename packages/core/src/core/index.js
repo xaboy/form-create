@@ -97,11 +97,12 @@ export default function createFormCreate(drive) {
     }
 
     function install(Vue, options) {
-        if (Vue._installedFormCreate === true) return;
-        Vue._installedFormCreate = true;
 
         if (options && isPlainObject(options))
             margeGlobal(globalConfig, options);
+
+        if (Vue._installedFormCreate === true) return;
+        Vue._installedFormCreate = true;
 
         Vue.use(FormCreate);
     }
