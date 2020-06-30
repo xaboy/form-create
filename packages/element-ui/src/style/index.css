@@ -24,11 +24,11 @@
     margin-bottom: 0px;
 }
 
-.__fc_h {
+.form-create .__fc_h {
     display: none;
 }
 
-.__fc_v {
+.form-create .__fc_v {
     visibility: hidden;
 }
 
