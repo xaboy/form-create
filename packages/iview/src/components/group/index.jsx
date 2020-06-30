@@ -180,11 +180,6 @@ export default {
             }
         }
     },
-    created() {
-        for (let i = 0; i < this.value.length; i++) {
-            this.addRule();
-        }
-    },
     render() {
         const keys = Object.keys(this.cacheRule);
         const button = this.button;
