@@ -72,9 +72,9 @@ export default class Handle {
         return this.issetRule.indexOf(rule) > -1;
     }
 
-    loadRule(rules, child) {
+    loadRule(rules, parent) {
         rules.map((_rule, index) => {
-            if (child && isString(_rule)) return;
+            if (parent && isString(_rule)) return;
 
             if (!_rule.type)
                 return console.error('未定义生成规则的 type 字段' + errMsg());
@@ -103,17 +103,17 @@ export default class Handle {
                 this.issetRule.push(_rule);
                 return console.error(`${rule.field} 字段已存在` + errMsg());
             }
-
+            parser.parent = parent || null;
             this.setParser(parser);
 
             if (!_rule.__fc__) {
                 bindParser(_rule, parser);
             }
             if (isValidChildren(children)) {
-                this.loadRule(children, true);
+                this.loadRule(children, parser);
             }
 
-            if (!child) {
+            if (!parent) {
                 this.sortList.push(parser.id);
             }
 
@@ -393,6 +393,7 @@ export default class Handle {
                 parser.root.splice(parser.root.indexOf(parser.rule.__origin__) + 1, 0, rule);
                 parser.ctrlRule = rule;
                 this.vm.$emit('control', parser.rule.__origin__, this.fCreateApi);
+                parser.parent && this.$render.clearCache(parser.parent);
                 this.refresh();
                 return;
             }

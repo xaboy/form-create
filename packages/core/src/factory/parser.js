@@ -29,6 +29,7 @@ export default class BaseParser {
         this.root = [];
         this.ctrlRule = null;
         this.modelEvent = 'input';
+        this.parent = null;
 
         this.update(handle);
         this.init();
