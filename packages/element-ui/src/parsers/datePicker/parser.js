@@ -1,27 +1,21 @@
 import {BaseParser} from '@form-create/core';
-import {timeStampToDate} from '@form-create/utils';
+
+const DEFAULT_FORMATS = {
+    date: 'yyyy-MM-dd',
+    month: 'yyyy-MM',
+    datetime: 'yyyy-MM-dd HH:mm:ss',
+    week: 'yyyywWW',
+    timerange: 'HH:mm:ss',
+    daterange: 'yyyy-MM-dd',
+    monthrange: 'yyyy-MM',
+    datetimerange: 'yyyy-MM-dd HH:mm:ss',
+    year: 'yyyy'
+};
 
 export default class Parser extends BaseParser {
 
-    toFormValue(value) {
-        let isArr = Array.isArray(value), props = this.rule.props, parseValue, type = props.type || 'date';
-        if (['daterange', 'datetimerange', 'dates'].indexOf(type) !== -1) {
-            if (isArr) {
-                parseValue = value.map((time) => !time ? '' : timeStampToDate(time));
-            } else {
-                parseValue = ['', '']
-            }
-        } else if ('date' === type && props.multiple === true) {
-            parseValue = toString(value);
-        } else {
-            parseValue = isArr ? (value[0] || '') : value;
-            parseValue = !parseValue ? '' : timeStampToDate(parseValue);
-        }
-        return parseValue;
-    }
-
-    mounted() {
-        this.toValue = (val) => (this.el.formatToString(val) || '');
-        this.toFormValue = (val) => this.el.parseString(val);
+    init() {
+        const props = this.rule.props;
+        if (!props.valueFormat) props.valueFormat = DEFAULT_FORMATS[props.type] || DEFAULT_FORMATS['date'];
     }
 }
