@@ -49,6 +49,7 @@ export default {
         },
         modalTitle: String,
         handleIcon: [String, Boolean],
+        previewMask: undefined,
         value: [Array, String]
     },
     data() {
@@ -168,7 +169,7 @@ export default {
                 [style['fc-upload']]: true,
                 [style['fc-hide-btn']]: !isShow
             }}>{[this.ctx.props.showUploadList ? [] : this.makeFiles(), this.makeUpload()]}
-                <Modal title={this.modalTitle} v-model={this.previewVisible} footerHide={true}>
+                <Modal mask={this.previewMask} title={this.modalTitle} v-model={this.previewVisible} footerHide={true}>
                     <img alt="example" style="width: 100%" src={this.previewImage}/>
                 </Modal>
             </div>);

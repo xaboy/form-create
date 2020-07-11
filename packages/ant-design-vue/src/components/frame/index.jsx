@@ -105,6 +105,7 @@ export default {
             type: [String, Number]
         },
         value: [Array, String, Number, Object],
+        previewMask: undefined,
         footer: {
             type: Boolean,
             default: true
@@ -297,7 +298,7 @@ export default {
 
         const {width = '30%', height, src, title, modalTitle} = this.$props;
         return <div>{Node}
-            <aModal title={modalTitle} v-model={this.previewVisible} footer={null}>
+            <aModal mask={this.previewMask} title={modalTitle} v-model={this.previewVisible} footer={null}>
                 <img alt="example" style="width: 100%" src={this.previewImage}/>
             </aModal>
             <aModal props={{width, title, ...this.modal}} visible={this.frameVisible}

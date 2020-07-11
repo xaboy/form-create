@@ -105,6 +105,7 @@ export default {
             type: [String, Number]
         },
         value: [Array, String, Number, Object],
+        previewMask: undefined,
         footer: {
             type: Boolean,
             default: true
@@ -301,7 +302,8 @@ export default {
 
         const {width = '30%', height, src, title, modalTitle} = this.$props;
         return <div>{node}
-            <el-dialog title={modalTitle} visible={this.previewVisible} on-close={this.handleCancel}>
+            <el-dialog modal={this.previewMask} title={modalTitle} visible={this.previewVisible}
+                on-close={this.handleCancel}>
                 <img alt="example" style="width: 100%" src={this.previewImage}/>
             </el-dialog>
             <el-dialog props={{width, title, ...this.modal}} visible={this.frameVisible}

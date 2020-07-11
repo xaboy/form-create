@@ -45,6 +45,7 @@ export default {
             type: Boolean,
             default: true
         },
+        previewMask: undefined,
         modalTitle: String,
         handleIcon: [String, Boolean],
         value: [Array, String]
@@ -162,7 +163,8 @@ export default {
                 [style['fc-upload']]: true,
                 [style['fc-hide-btn']]: !isShow
             }}>{[this.ctx.props.showFileList ? [] : this.makeFiles(), this.makeUpload()]}
-                <el-dialog title={this.modalTitle} visible={this.previewVisible} on-close={this.handleCancel}>
+                <el-dialog modal={this.previewMask} title={this.modalTitle} visible={this.previewVisible}
+                    on-close={this.handleCancel}>
                     <img alt="example" style="width: 100%" src={this.previewImage}/>
                 </el-dialog>
             </div>);

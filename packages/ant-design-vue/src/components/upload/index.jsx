@@ -46,6 +46,7 @@ export default {
             }
         },
         modalTitle: String,
+        previewMask: undefined,
     },
     data() {
         const fileList = this.value.map(parseFile);
@@ -105,7 +106,7 @@ export default {
             <AUpload {...ctx} on-preview={this.onHandle.bind(this)}
                 on-change={this.handleChange}
                 ref="upload" defaultFileList={this.defaultUploadList}>{this.children}</AUpload>
-            <aModal title={this.modalTitle} v-model={this.previewVisible} footer={null}>
+            <aModal mask={this.previewMask} title={this.modalTitle} v-model={this.previewVisible} footer={null}>
                 <img style="width: 100%" src={this.previewImage}/>
             </aModal>
         </div>;

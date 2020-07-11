@@ -106,6 +106,7 @@ export default {
             type: [String, Number]
         },
         value: [Array, String, Number, Object],
+        previewMask: undefined,
         footer: {
             type: Boolean,
             default: true
@@ -241,7 +242,8 @@ export default {
         },
         getSrc(src) {
             return isUndef(this.srcKey) ? src : src[this.srcKey];
-        }, frameLoad(e) {
+        },
+        frameLoad(e) {
             this.onLoad(e);
 
             try {
@@ -298,7 +300,7 @@ export default {
             node = this.makeFiles();
         const {width, height, src, title, modalTitle} = this.$props;
         return <div>{node}
-            <Modal title={modalTitle} v-model={this.previewVisible} footerHide={true}>
+            <Modal mask={this.previewMask} title={modalTitle} v-model={this.previewVisible} footerHide={true}>
                 <img alt="example" style="width: 100%" src={this.previewImage}/>
             </Modal>
             <Modal props={{width, title, ...this.modal}} v-model={this.frameVisible}
