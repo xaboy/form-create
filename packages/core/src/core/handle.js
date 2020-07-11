@@ -237,10 +237,12 @@ export default class Handle {
             }
             if (!eventName) return;
 
-            const fieldKey = toLine(`${emitKey}-${eventName}`).replace('_', '-');
+            const _fieldKey = `${emitKey}-${eventName}`;
+            const fieldKey = toLine(_fieldKey).replace('_', '-');
 
             const fn = (...arg) => {
                 this.vm.$emit(fieldKey, ...arg);
+                this.vm.$emit(_fieldKey, ...arg);
             };
             fn.__emit = true;
             event[eventName] = (this.options.injectEvent || config.inject !== undefined) ? this.inject(rule, fn, inject) : fn;
