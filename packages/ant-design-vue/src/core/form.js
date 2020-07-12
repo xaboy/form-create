@@ -1,4 +1,4 @@
-import {isFunction, preventDefault} from '@form-create/utils';
+import {isFunction, isString, preventDefault} from '@form-create/utils';
 import {BaseForm} from '@form-create/core';
 import style from '../style/index.css';
 
@@ -83,7 +83,8 @@ export default class Form extends BaseForm {
 
     makeFormPop({rule}, unique) {
         if (rule.title) {
-            const info = this.options.info || {}, svn = [rule.title], isTool = isTooltip(info);
+            const titleProp = isString(rule.title) ? {title: rule.title} : rule.title;
+            const info = this.options.info || {}, svn = [titleProp.title || ''], isTool = isTooltip(info);
             if (rule.info) {
                 svn.push(this.vNode.make(isTool ? 'ATooltip' : 'APopover', {
                     props: {...info, [isTool ? 'title' : 'content']: rule.info},
@@ -92,7 +93,7 @@ export default class Form extends BaseForm {
                     this.vNode.icon({props: {type: info.icon || 'question-circle-o', size: 16}})
                 ]));
             }
-            return this.vNode.make('span', {slot: 'label'}, svn);
+            return this.vNode.make('span', {...titleProp, slot: 'label'}, svn);
         }
     }
 

@@ -92,7 +92,8 @@ export default class Form extends BaseForm {
 
     makeFormPop({rule}, unique) {
         if (rule.title) {
-            const info = this.options.info || {}, svn = [rule.title];
+            const titleProp = isString(rule.title) ? {title: rule.title} : rule.title;
+            const info = this.options.info || {}, svn = [titleProp.title || ''];
             if (rule.info) {
                 svn.push(this.vNode.make(isTooltip(info) ? 'el-tooltip' : 'el-popover', {
                     props: {...info, content: rule.info},
@@ -104,7 +105,7 @@ export default class Form extends BaseForm {
                     })
                 ]));
             }
-            return this.vNode.make('span', {slot: 'label'}, svn);
+            return this.vNode.make('span', {...titleProp, slot: 'label'}, svn);
         }
     }
 

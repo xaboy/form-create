@@ -1,4 +1,4 @@
-import {isFunction, preventDefault} from '@form-create/utils';
+import {isFunction, isString, preventDefault} from '@form-create/utils';
 import {BaseForm} from '@form-create/core';
 import style from '../style/index.css';
 import {iviewConfig} from './config';
@@ -81,7 +81,8 @@ export default class Form extends BaseForm {
 
     makeFormPop({rule}, unique) {
         if (rule.title) {
-            const info = this.options.info || {}, svn = [rule.title];
+            const titleProp = isString(rule.title) ? {title: rule.title} : rule.title;
+            const info = this.options.info || {}, svn = [titleProp.title || ''];
             if (rule.info) {
                 svn.push(this.vNode.make(isTooltip(info) ? 'Tooltip' : 'Poptip', {
                     props: {...info, content: rule.info},
@@ -91,7 +92,7 @@ export default class Form extends BaseForm {
                     this.vNode.icon({props: {type: info.icon || iviewConfig.infoIcon, size: 16}})
                 ]));
             }
-            return this.vNode.make('span', {slot: 'label'}, svn);
+            return this.vNode.make('span', {...titleProp, slot: 'label'}, svn);
         }
     }
 
