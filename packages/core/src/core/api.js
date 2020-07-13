@@ -57,7 +57,7 @@ export default function Api(h) {
             return parser.rule.__origin__;
         },
         destroy: () => {
-            h.vm.$el.parentNode.removeChild(h.vm.$el);
+            h.vm.$el.parentNode && h.vm.$el.parentNode.removeChild(h.vm.$el);
             h.vm.$destroy();
         },
         fields: () => h.fields(),
