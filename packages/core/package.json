@@ -1,6 +1,6 @@
 {
     "name": "@form-create/core",
-    "version": "1.0.16",
+    "version": "1.0.17",
     "description": "轻松搞定 form 表单,让你不在为表单而烦恼|Form builder with dynamic rendering, data collection, validation and submission capabilities, built-in 17 common form components, support for two-way data binding, event extension, and support for building built-in components and any vue components using json.",
     "main": "./src/index.js",
     "scripts": {
