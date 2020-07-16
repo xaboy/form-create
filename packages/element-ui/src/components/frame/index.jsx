@@ -246,13 +246,10 @@ export default {
         getSrc(src) {
             return isUndef(this.srcKey) ? src : src[this.srcKey];
         },
-        frameLoad(e) {
-            this.onLoad(e);
-
+        frameLoad(iframe) {
+            this.onLoad(iframe);
             try {
                 if (this.helper === true) {
-                    let iframe = e.currentTarget.contentWindow;
-
                     iframe['form_create_helper'] = {
                         close: (field) => {
                             this.valid(field);
@@ -301,6 +298,11 @@ export default {
             node = this.makeFiles();
 
         const {width = '30%', height, src, title, modalTitle} = this.$props;
+        this.$nextTick(() => {
+            if (this.$refs.frame) {
+                this.frameLoad(this.$refs.frame.contentWindow || {});
+            }
+        });
         return <div>{node}
             <el-dialog modal={this.previewMask} title={modalTitle} visible={this.previewVisible}
                 on-close={this.handleCancel}>
@@ -308,11 +310,11 @@ export default {
             </el-dialog>
             <el-dialog props={{width, title, ...this.modal}} visible={this.frameVisible}
                 on-close={() => (this.closeModel(true))}>
-                {(this.frameVisible || !this.reload) ? <iframe src={src} frameBorder="0" style={{
+                {(this.frameVisible || !this.reload) ? <iframe ref="frame" src={src} frameBorder="0" style={{
                     'height': height,
                     'border': '0 none',
                     'width': '100%'
-                }} on-load={this.frameLoad}/> : null}
+                }}/> : null}
                 {this.makeFooter()}
             </el-dialog>
         </div>

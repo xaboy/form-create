@@ -243,13 +243,10 @@ export default {
         getSrc(src) {
             return isUndef(this.srcKey) ? src : src[this.srcKey];
         },
-        frameLoad(e) {
-            this.onLoad(e);
-
+        frameLoad(iframe) {
+            this.onLoad(iframe);
             try {
                 if (this.helper === true) {
-                    let iframe = e.currentTarget.contentWindow;
-
                     iframe['form_create_helper'] = {
                         close: (field) => {
                             this.valid(field);
@@ -299,17 +296,22 @@ export default {
         else
             node = this.makeFiles();
         const {width, height, src, title, modalTitle} = this.$props;
+        this.$nextTick(() => {
+            if (this.$refs.frame) {
+                this.frameLoad(this.$refs.frame.contentWindow || {});
+            }
+        });
         return <div>{node}
             <Modal mask={this.previewMask} title={modalTitle} v-model={this.previewVisible} footerHide={true}>
                 <img alt="example" style="width: 100%" src={this.previewImage}/>
             </Modal>
             <Modal props={{width, title, ...this.modal}} v-model={this.frameVisible}
                 on-on-cancel={() => (this.closeModel(true))}>
-                {(this.frameVisible || !this.reload) ? <iframe src={src} frameBorder="0" style={{
+                {(this.frameVisible || !this.reload) ? <iframe ref="frame" src={src} frameBorder="0" style={{
                     'height': height,
                     'border': '0 none',
                     'width': '100%'
-                }} on-load={this.frameLoad}/> : null}
+                }}/> : null}
                 <div slot="footer">
                     {this.makeFooter()}
                 </div>
