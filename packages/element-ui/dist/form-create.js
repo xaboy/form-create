@@ -1,5 +1,5 @@
 /*!
- * @form-create/element-ui v1.0.16
+ * @form-create/element-ui v1.0.17
  * (c) 2018-2020 xaboy
  * Github https://github.com/xaboy/form-create
  * Released under the MIT License.
@@ -223,7 +223,7 @@
   function isUndef(v) {
     return v === undefined || v === null;
   }
-  function toString$1(val) {
+  function toString(val) {
     return val == null ? '' : _typeof(val) === 'object' ? JSON.stringify(val, null, 2) : String(val);
   }
   function extend(to, _from) {
@@ -248,9 +248,6 @@
   }
   function isType(arg, type) {
     return _toString.call(arg) === '[object ' + type + ']';
-  }
-  function isDate(arg) {
-    return isType(arg, 'Date');
   }
   function isPlainObject(arg) {
     return isType(arg, 'Object');
@@ -330,33 +327,8 @@
   function toDefSlot(slot, $h) {
     return [slot && isFunction(slot) ? slot($h) : slot];
   }
-  function timeStampToDate(timeStamp) {
-    if (isDate(timeStamp)) return timeStamp;else {
-      var date = new Date(timeStamp);
-      return date.toString() === 'Invalid Date' ? timeStamp : date;
-    }
-  }
   function preventDefault(e) {
     e.preventDefault();
-  }
-  function dateFormat(fmt) {
-    var date = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : new Date();
-    var o = {
-      'M+': date.getMonth() + 1,
-      'd+': date.getDate(),
-      'h+': date.getHours(),
-      'm+': date.getMinutes(),
-      's+': date.getSeconds(),
-      'q+': Math.floor((date.getMonth() + 3) / 3),
-      'S': date.getMilliseconds()
-    };
-    if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (date.getFullYear() + '').substr(4 - RegExp.$1.length));
-
-    for (var k in o) {
-      if (new RegExp('(' + k + ')').test(fmt)) fmt = fmt.replace(RegExp.$1, RegExp.$1.length == 1 ? o[k] : ('00' + o[k]).substr(('' + o[k]).length));
-    }
-
-    return fmt;
   }
   function hasSlot(children, slotName) {
     return children.length !== 0 && children.some(function (child) {
@@ -489,7 +461,7 @@
     }
   }
 
-  var css = ".fc-upload-btn, .fc-files {\n    display: inline-block;\n    width: 58px;\n    height: 58px;\n    text-align: center;\n    line-height: 58px;\n    border: 1px solid #c0ccda;\n    border-radius: 4px;\n    overflow: hidden;\n    background: #fff;\n    position: relative;\n    -webkit-box-shadow: 2px 2px 5px rgba(0, 0, 0, .1);\n    box-shadow: 2px 2px 5px rgba(0, 0, 0, .1);\n    margin-right: 4px;\n    -webkit-box-sizing: border-box;\n    box-sizing: border-box;\n}\n\n.form-create .form-create .el-form-item {\n    margin-bottom: 22px;\n}\n\n.form-create .form-create .el-form-item .el-form-item {\n    margin-bottom: 0px;\n}\n\n.__fc_h {\n    display: none;\n}\n\n.__fc_v {\n    visibility: hidden;\n}\n\n.fc-files img {\n    width: 100%;\n    height: 100%;\n    display: inline-block;\n    vertical-align: top;\n}\n\n.fc-upload-btn {\n    border: 1px dashed #c0ccda;\n    cursor: pointer;\n}\n\n.fc-upload .fc-upload-cover {\n    opacity: 0;\n    position: absolute;\n    top: 0;\n    bottom: 0;\n    left: 0;\n    right: 0;\n    background: rgba(0, 0, 0, .6);\n    -webkit-transition: opacity .3s;\n    -o-transition: opacity .3s;\n    transition: opacity .3s;\n}\n\n.fc-upload .fc-upload-cover i {\n    color: #fff;\n    font-size: 20px;\n    cursor: pointer;\n    margin: 0 2px;\n}\n\n.fc-files:hover .fc-upload-cover {\n    opacity: 1;\n}\n\n.fc-upload .el-upload {\n    display: block;\n}\n\n\n.form-create .el-form-item .el-rate {\n    margin-top: 10px;\n}\n\n.form-create .el-form-item .el-tree {\n    margin-top: 7px;\n}\n\n.fc-hide-btn .el-upload {\n    display: none;\n}\n";
+  var css = ".fc-upload-btn, .fc-files {\n    display: inline-block;\n    width: 58px;\n    height: 58px;\n    text-align: center;\n    line-height: 58px;\n    border: 1px solid #c0ccda;\n    border-radius: 4px;\n    overflow: hidden;\n    background: #fff;\n    position: relative;\n    -webkit-box-shadow: 2px 2px 5px rgba(0, 0, 0, .1);\n    box-shadow: 2px 2px 5px rgba(0, 0, 0, .1);\n    margin-right: 4px;\n    -webkit-box-sizing: border-box;\n    box-sizing: border-box;\n}\n\n.form-create .form-create .el-form-item {\n    margin-bottom: 22px;\n}\n\n.form-create .form-create .el-form-item .el-form-item {\n    margin-bottom: 0px;\n}\n\n.form-create .__fc_h {\n    display: none;\n}\n\n.form-create .__fc_v {\n    visibility: hidden;\n}\n\n.fc-files img {\n    width: 100%;\n    height: 100%;\n    display: inline-block;\n    vertical-align: top;\n}\n\n.fc-upload-btn {\n    border: 1px dashed #c0ccda;\n    cursor: pointer;\n}\n\n.fc-upload .fc-upload-cover {\n    opacity: 0;\n    position: absolute;\n    top: 0;\n    bottom: 0;\n    left: 0;\n    right: 0;\n    background: rgba(0, 0, 0, .6);\n    -webkit-transition: opacity .3s;\n    -o-transition: opacity .3s;\n    transition: opacity .3s;\n}\n\n.fc-upload .fc-upload-cover i {\n    color: #fff;\n    font-size: 20px;\n    cursor: pointer;\n    margin: 0 2px;\n}\n\n.fc-files:hover .fc-upload-cover {\n    opacity: 1;\n}\n\n.fc-upload .el-upload {\n    display: block;\n}\n\n\n.form-create .el-form-item .el-rate {\n    margin-top: 10px;\n}\n\n.form-create .el-form-item .el-tree {\n    margin-top: 7px;\n}\n\n.fc-hide-btn .el-upload {\n    display: none;\n}\n";
   var style = {"fc-upload-btn":"fc-upload-btn","fc-files":"fc-files","form-create":"form-create","el-form-item":"el-form-item","__fc_h":"__fc_h","__fc_v":"__fc_v","fc-upload":"fc-upload","fc-upload-cover":"fc-upload-cover","el-upload":"el-upload","el-rate":"el-rate","el-tree":"el-tree","fc-hide-btn":"fc-hide-btn"};
   styleInject(css);
 
@@ -592,6 +564,7 @@
         type: [String, Number]
       },
       value: [Array, String, Number, Object],
+      previewMask: undefined,
       footer: {
         type: Boolean,
         default: true
@@ -806,14 +779,13 @@
       getSrc: function getSrc(src) {
         return isUndef(this.srcKey) ? src : src[this.srcKey];
       },
-      frameLoad: function frameLoad(e) {
+      frameLoad: function frameLoad(iframe) {
         var _this7 = this;
 
-        this.onLoad(e);
+        this.onLoad(iframe);
 
         try {
           if (this.helper === true) {
-            var iframe = e.currentTarget.contentWindow;
             iframe['form_create_helper'] = {
               close: function close(field) {
                 _this7.valid(field);
@@ -887,8 +859,14 @@
           src = _this$$props2.src,
           title = _this$$props2.title,
           modalTitle = _this$$props2.modalTitle;
+      this.$nextTick(function () {
+        if (_this9.$refs.frame) {
+          _this9.frameLoad(_this9.$refs.frame.contentWindow || {});
+        }
+      });
       return h("div", [node, h("el-dialog", {
         "attrs": {
+          "modal": this.previewMask,
           "title": modalTitle,
           "visible": this.previewVisible
         },
@@ -916,6 +894,7 @@
           }
         }
       }]), [this.frameVisible || !this.reload ? h("iframe", {
+        "ref": "frame",
         "attrs": {
           "src": src,
           "frameBorder": "0"
@@ -924,9 +903,6 @@
           'height': height,
           'border': '0 none',
           'width': '100%'
-        },
-        "on": {
-          "load": this.frameLoad
         }
       }) : null, this.makeFooter()])]);
     }
@@ -1073,7 +1049,7 @@
   }
 
   function getFileName(file) {
-    return toString$1(file).split('/').pop();
+    return toString(file).split('/').pop();
   }
 
   var NAME$4 = 'fc-elm-upload';
@@ -1113,6 +1089,7 @@
         type: Boolean,
         default: true
       },
+      previewMask: undefined,
       modalTitle: String,
       handleIcon: [String, Boolean],
       value: [Array, String]
@@ -1283,6 +1260,7 @@
         "class": (_class = {}, _defineProperty(_class, style['fc-upload'], true), _defineProperty(_class, style['fc-hide-btn'], !isShow), _class)
       }, [[this.ctx.props.showFileList ? [] : this.makeFiles(), this.makeUpload()], h("el-dialog", {
         "attrs": {
+          "modal": this.previewMask,
           "title": this.modalTitle,
           "visible": this.previewVisible
         },
@@ -1483,7 +1461,7 @@
           this.merge(classList);
         } else {
           this.merge({
-            class: _defineProperty({}, toString$1(classList), !!status)
+            class: _defineProperty({}, toString(classList), !!status)
           });
         }
 
@@ -1530,7 +1508,7 @@
       if (isPlainObject(obj)) {
         this.merge(_defineProperty({}, key, obj));
       } else {
-        this.merge(_defineProperty({}, key, _defineProperty({}, toString$1(obj), val)));
+        this.merge(_defineProperty({}, key, _defineProperty({}, toString(obj), val)));
       }
 
       return this;
@@ -1810,7 +1788,7 @@
       key: "use",
       value: function use(nodes) {
         Object.keys(nodes).forEach(function (k) {
-          VNode.prototype[toString$1(k).toLocaleLowerCase()] = VNode.prototype[k] = function (data, VNodeFn) {
+          VNode.prototype[toString(k).toLocaleLowerCase()] = VNode.prototype[k] = function (data, VNodeFn) {
             return this.make(nodes[k], data, VNodeFn);
           };
         });
@@ -1835,7 +1813,7 @@
       this.id = id;
       this.watch = [];
       this.originType = rule.type;
-      this.type = toString$1(rule.type).toLocaleLowerCase();
+      this.type = toString(rule.type).toLocaleLowerCase();
       this.isDef = true;
       this.el = undefined;
 
@@ -1853,6 +1831,7 @@
       this.root = [];
       this.ctrlRule = null;
       this.modelEvent = 'input';
+      this.parent = null;
       this.update(handle);
       this.init();
     }
@@ -2206,7 +2185,7 @@
         return parser.rule.__origin__;
       },
       destroy: function destroy() {
-        h.vm.$el.parentNode.removeChild(h.vm.$el);
+        h.vm.$el.parentNode && h.vm.$el.parentNode.removeChild(h.vm.$el);
         h.vm.$destroy();
       },
       fields: function fields() {
@@ -2659,11 +2638,11 @@
       }
     }, {
       key: "loadRule",
-      value: function loadRule(rules, child) {
+      value: function loadRule(rules, parent) {
         var _this = this;
 
         rules.map(function (_rule, index) {
-          if (child && isString(_rule)) return;
+          if (parent && isString(_rule)) return;
           if (!_rule.type) return console.error('未定义生成规则的 type 字段' + errMsg());
           var parser;
 
@@ -2694,6 +2673,8 @@
             return console.error("".concat(rule.field, " \u5B57\u6BB5\u5DF2\u5B58\u5728") + errMsg());
           }
 
+          parser.parent = parent || null;
+
           _this.setParser(parser);
 
           if (!_rule.__fc__) {
@@ -2701,10 +2682,10 @@
           }
 
           if (isValidChildren(children)) {
-            _this.loadRule(children, true);
+            _this.loadRule(children, parser);
           }
 
-          if (!child) {
+          if (!parent) {
             _this.sortList.push(parser.id);
           }
 
@@ -2742,7 +2723,7 @@
     }, {
       key: "createParser",
       value: function createParser(rule) {
-        return new (this.fc.parsers[toString$1(rule.type).toLocaleLowerCase()] || BaseParser)(this, rule, '' + uniqueId());
+        return new (this.fc.parsers[toString(rule.type).toLocaleLowerCase()] || BaseParser)(this, rule, '' + uniqueId());
       }
     }, {
       key: "parseRule",
@@ -2851,16 +2832,21 @@
           }
 
           if (!eventName) return;
-          var fieldKey = toLine("".concat(emitKey, "-").concat(eventName)).replace('_', '-');
+
+          var _fieldKey = "".concat(emitKey, "-").concat(eventName);
+
+          var fieldKey = toLine(_fieldKey).replace('_', '-');
 
           var fn = function fn() {
-            var _this4$vm;
+            var _this4$vm, _this4$vm2;
 
             for (var _len2 = arguments.length, arg = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
               arg[_key2] = arguments[_key2];
             }
 
             (_this4$vm = _this4.vm).$emit.apply(_this4$vm, [fieldKey].concat(arg));
+
+            (_this4$vm2 = _this4.vm).$emit.apply(_this4$vm2, [_fieldKey].concat(arg));
           };
 
           fn.__emit = true;
@@ -3034,6 +3020,8 @@
             parser.ctrlRule = rule;
 
             _this7.vm.$emit('control', parser.rule.__origin__, _this7.fCreateApi);
+
+            parser.parent && _this7.$render.clearCache(parser.parent);
 
             _this7.refresh();
 
@@ -3248,7 +3236,7 @@
         modelEvents = {};
 
     function setParser(id, parser) {
-      id = toString$1(id);
+      id = toString(id);
       parsers[id.toLocaleLowerCase()] = parser;
       FormCreate.maker[id] = creatorFactory(id);
     }
@@ -3275,7 +3263,7 @@
     }
 
     function component(id, component) {
-      id = toString$1(id);
+      id = toString(id);
 
       var _id = id.toLocaleLowerCase();
 
@@ -3771,11 +3759,6 @@
         }
       }
     },
-    created: function created() {
-      for (var i = 0; i < this.value.length; i++) {
-        this.addRule();
-      }
-    },
     render: function render() {
       var _this9 = this;
 
@@ -3876,6 +3859,18 @@
     name: name
   };
 
+  var DEFAULT_FORMATS = {
+    date: 'yyyy-MM-dd',
+    month: 'yyyy-MM',
+    datetime: 'yyyy-MM-dd HH:mm:ss',
+    week: 'yyyywWW',
+    timerange: 'HH:mm:ss',
+    daterange: 'yyyy-MM-dd',
+    monthrange: 'yyyy-MM',
+    datetimerange: 'yyyy-MM-dd HH:mm:ss',
+    year: 'yyyy'
+  };
+
   var Parser =
   /*#__PURE__*/
   function (_BaseParser) {
@@ -3888,42 +3883,10 @@
     }
 
     _createClass(Parser, [{
-      key: "toFormValue",
-      value: function toFormValue(value) {
-        var isArr = Array.isArray(value),
-            props = this.rule.props,
-            parseValue,
-            type = props.type || 'date';
-
-        if (['daterange', 'datetimerange', 'dates'].indexOf(type) !== -1) {
-          if (isArr) {
-            parseValue = value.map(function (time) {
-              return !time ? '' : timeStampToDate(time);
-            });
-          } else {
-            parseValue = ['', ''];
-          }
-        } else if ('date' === type && props.multiple === true) {
-          parseValue = toString(value);
-        } else {
-          parseValue = isArr ? value[0] || '' : value;
-          parseValue = !parseValue ? '' : timeStampToDate(parseValue);
-        }
-
-        return parseValue;
-      }
-    }, {
-      key: "mounted",
-      value: function mounted() {
-        var _this = this;
-
-        this.toValue = function (val) {
-          return _this.el.formatToString(val) || '';
-        };
-
-        this.toFormValue = function (val) {
-          return _this.el.parseString(val);
-        };
+      key: "init",
+      value: function init() {
+        var props = this.rule.props;
+        if (!props.valueFormat) props.valueFormat = DEFAULT_FORMATS[props.type] || DEFAULT_FORMATS['date'];
       }
     }]);
 
@@ -4165,13 +4128,6 @@
     name: name$8
   };
 
-  function getTime(date) {
-    return isDate(date) ? dateFormat('hh:mm:ss', date) : date;
-  }
-  function toDate(time) {
-    return new Date('2018/02/14 ' + time);
-  }
-
   var Parser$6 =
   /*#__PURE__*/
   function (_BaseParser) {
@@ -4184,37 +4140,10 @@
     }
 
     _createClass(Parser, [{
-      key: "toFormValue",
-      value: function toFormValue(value) {
-        var parseValue,
-            isArr = Array.isArray(value);
-
-        if (this.rule.props.isRange === true) {
-          if (isArr) {
-            parseValue = value.map(function (time) {
-              return !time ? '' : toDate(getTime(timeStampToDate(time)));
-            }).filter(function (n) {
-              return !!n;
-            });
-            if (parseValue.length !== 2) parseValue = null;
-          } else {
-            parseValue = null;
-          }
-        } else {
-          isArr && (value = value[0]);
-          parseValue = !value ? null : toDate(getTime(timeStampToDate(value)));
-        }
-
-        return parseValue;
-      }
-    }, {
-      key: "mounted",
-      value: function mounted() {
-        var _this = this;
-
-        this.toValue = function (val) {
-          return _this.el.formatToString(val);
-        };
+      key: "init",
+      value: function init() {
+        var props = this.rule.props;
+        if (!props.valueFormat) props.valueFormat = 'HH:mm:ss';
       }
     }]);
 
@@ -4534,7 +4463,7 @@
           // label: rule.title,
           // labelFor: unique,
           rules: rule.validate,
-          labelWidth: toString$1(labelWidth),
+          labelWidth: toString(labelWidth),
           required: rule.props.required
         }).key(fItemUnique).ref(formItemRefName).class(rule.className).get(),
             node = this.vNode.formItem(propsData, [child, this.makeFormPop(parser, fItemUnique)]);
@@ -4546,8 +4475,11 @@
         var rule = _ref.rule;
 
         if (rule.title) {
+          var titleProp = isString(rule.title) ? {
+            title: rule.title
+          } : rule.title;
           var info = this.options.info || {},
-              svn = [rule.title];
+              svn = [titleProp.title || ''];
 
           if (rule.info) {
             svn.push(this.vNode.make(isTooltip(info) ? 'el-tooltip' : 'el-popover', {
@@ -4561,9 +4493,9 @@
             })]));
           }
 
-          return this.vNode.make('span', {
+          return this.vNode.make('span', _objectSpread2({}, titleProp, {
             slot: 'label'
-          }, svn);
+          }), svn);
         }
       }
     }, {
@@ -4755,7 +4687,7 @@
   VNode.use(nodes);
   var drive = {
     ui: "element-ui",
-    version: "".concat("1.0.16"),
+    version: "".concat("1.0.17"),
     formRender: Form,
     components: components,
     parsers: parsers,

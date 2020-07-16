@@ -1,5 +1,5 @@
 /*!
- * @form-create/ant-design-vue v1.0.16
+ * @form-create/ant-design-vue v1.0.17
  * (c) 2018-2020 xaboy
  * Github https://github.com/xaboy/form-create
  * Released under the MIT License.
@@ -370,7 +370,7 @@
     }
   }
 
-  var css = ".fc-upload-btn, .fc-files {\n    display: inline-block;\n    width: 104px;\n    height: 104px;\n    text-align: center;\n    line-height: 104px;\n    border: 1px solid #c0ccda;\n    border-radius: 4px;\n    overflow: hidden;\n    background: #fff;\n    position: relative;\n    box-shadow: 2px 2px 5px rgba(0, 0, 0, .1);\n    margin-right: 4px;\n    box-sizing: border-box;\n}\n\n.form-create .form-create .ant-form-item {\n    margin-bottom: 22px;\n}\n\n.form-create .form-create .ant-form-item .ant-form-item {\n    margin-bottom: 0px;\n}\n\n.form-create .form-create .ant-form-item.ant-form-item-with-help {\n    margin-bottom: 3px;\n}\n\n.form-create .form-create .ant-form-item .ant-form-item.ant-form-item-with-help {\n    margin-bottom: -22px;\n}\n\n.__fc_h {\n    display: none;\n}\n\n.__fc_v {\n    visibility: hidden;\n}\n\n.fc-files img {\n    width: 100%;\n    height: 100%;\n    display: inline-block;\n    vertical-align: top;\n}\n\n.fc-upload .fc-upload-cover {\n    opacity: 0;\n    position: absolute;\n    top: 0;\n    bottom: 0;\n    left: 0;\n    right: 0;\n    background: rgba(0, 0, 0, .6);\n    transition: opacity .3s;\n}\n\n.fc-upload .fc-upload-cover i {\n    color: #fff;\n    font-size: 20px;\n    cursor: pointer;\n    margin: 0 2px;\n}\n\n.fc-files:hover .fc-upload-cover {\n    opacity: 1;\n}\n\n.fc-upload .ant-upload {\n    display: block;\n}\n\n.fc-hide-btn .ant-upload {\n    display: none;\n}\n";
+  var css = ".fc-upload-btn, .fc-files {\n    display: inline-block;\n    width: 104px;\n    height: 104px;\n    text-align: center;\n    line-height: 104px;\n    border: 1px solid #c0ccda;\n    border-radius: 4px;\n    overflow: hidden;\n    background: #fff;\n    position: relative;\n    box-shadow: 2px 2px 5px rgba(0, 0, 0, .1);\n    margin-right: 4px;\n    box-sizing: border-box;\n}\n\n.form-create .form-create .ant-form-item {\n    margin-bottom: 22px;\n}\n\n.form-create .form-create .ant-form-item .ant-form-item {\n    margin-bottom: 0px;\n}\n\n.form-create .form-create .ant-form-item.ant-form-item-with-help {\n    margin-bottom: 3px;\n}\n\n.form-create .form-create .ant-form-item .ant-form-item.ant-form-item-with-help {\n    margin-bottom: -22px;\n}\n\n.form-create .__fc_h {\n    display: none;\n}\n\n.form-create .__fc_v {\n    visibility: hidden;\n}\n\n.fc-files img {\n    width: 100%;\n    height: 100%;\n    display: inline-block;\n    vertical-align: top;\n}\n\n.fc-upload .fc-upload-cover {\n    opacity: 0;\n    position: absolute;\n    top: 0;\n    bottom: 0;\n    left: 0;\n    right: 0;\n    background: rgba(0, 0, 0, .6);\n    transition: opacity .3s;\n}\n\n.fc-upload .fc-upload-cover i {\n    color: #fff;\n    font-size: 20px;\n    cursor: pointer;\n    margin: 0 2px;\n}\n\n.fc-files:hover .fc-upload-cover {\n    opacity: 1;\n}\n\n.fc-upload .ant-upload {\n    display: block;\n}\n\n.fc-hide-btn .ant-upload {\n    display: none;\n}\n";
   var style = {"fc-upload-btn":"fc-upload-btn","fc-files":"fc-files","form-create":"form-create","ant-form-item":"ant-form-item","ant-form-item-with-help":"ant-form-item-with-help","__fc_h":"__fc_h","__fc_v":"__fc_v","fc-upload":"fc-upload","fc-upload-cover":"fc-upload-cover","ant-upload":"ant-upload","fc-hide-btn":"fc-hide-btn"};
   styleInject(css);
 
@@ -430,7 +430,8 @@
           this.previewVisible = true;
         }
       },
-      modalTitle: String
+      modalTitle: String,
+      previewMask: undefined
     },
     data: function data() {
       var fileList = this.value.map(parseFile);
@@ -510,6 +511,7 @@
         }
       }]), [this.children]), h("aModal", {
         "attrs": {
+          "mask": this.previewMask,
           "title": this.modalTitle,
           "footer": null
         },
@@ -627,6 +629,7 @@
         type: [String, Number]
       },
       value: [Array, String, Number, Object],
+      previewMask: undefined,
       footer: {
         type: Boolean,
         default: true
@@ -842,14 +845,13 @@
       getSrc: function getSrc(src) {
         return isUndef(this.srcKey) ? src : src[this.srcKey];
       },
-      frameLoad: function frameLoad(e) {
+      frameLoad: function frameLoad(iframe) {
         var _this7 = this;
 
-        this.onLoad(e);
+        this.onLoad(iframe);
 
         try {
           if (this.helper === true) {
-            var iframe = e.currentTarget.contentWindow;
             iframe['form_create_helper'] = {
               close: function close(field) {
                 _this7.valid(field);
@@ -924,8 +926,14 @@
           src = _this$$props2.src,
           title = _this$$props2.title,
           modalTitle = _this$$props2.modalTitle;
+      this.$nextTick(function () {
+        if (_this9.$refs.frame) {
+          _this9.frameLoad(_this9.$refs.frame.contentWindow || {});
+        }
+      });
       return h("div", [Node, h("aModal", {
         "attrs": {
+          "mask": this.previewMask,
           "title": modalTitle,
           "footer": null
         },
@@ -956,6 +964,7 @@
           }
         }
       }]), [this.frameVisible || !this.reload ? h("iframe", {
+        "ref": "frame",
         "attrs": {
           "src": src,
           "frameborder": "0"
@@ -964,9 +973,6 @@
           'height': height,
           'border': '0 none',
           'width': '100%'
-        },
-        "on": {
-          "load": this.frameLoad
         }
       }) : null, h("div", {
         "slot": "footer"
@@ -1516,6 +1522,7 @@
       this.root = [];
       this.ctrlRule = null;
       this.modelEvent = 'input';
+      this.parent = null;
       this.update(handle);
       this.init();
     }
@@ -1869,7 +1876,7 @@
         return parser.rule.__origin__;
       },
       destroy: function destroy() {
-        h.vm.$el.parentNode.removeChild(h.vm.$el);
+        h.vm.$el.parentNode && h.vm.$el.parentNode.removeChild(h.vm.$el);
         h.vm.$destroy();
       },
       fields: function fields() {
@@ -2322,11 +2329,11 @@
       }
     }, {
       key: "loadRule",
-      value: function loadRule(rules, child) {
+      value: function loadRule(rules, parent) {
         var _this = this;
 
         rules.map(function (_rule, index) {
-          if (child && isString(_rule)) return;
+          if (parent && isString(_rule)) return;
           if (!_rule.type) return console.error('未定义生成规则的 type 字段' + errMsg());
           var parser;
 
@@ -2357,6 +2364,8 @@
             return console.error("".concat(rule.field, " \u5B57\u6BB5\u5DF2\u5B58\u5728") + errMsg());
           }
 
+          parser.parent = parent || null;
+
           _this.setParser(parser);
 
           if (!_rule.__fc__) {
@@ -2364,10 +2373,10 @@
           }
 
           if (isValidChildren(children)) {
-            _this.loadRule(children, true);
+            _this.loadRule(children, parser);
           }
 
-          if (!child) {
+          if (!parent) {
             _this.sortList.push(parser.id);
           }
 
@@ -2514,16 +2523,21 @@
           }
 
           if (!eventName) return;
-          var fieldKey = toLine("".concat(emitKey, "-").concat(eventName)).replace('_', '-');
+
+          var _fieldKey = "".concat(emitKey, "-").concat(eventName);
+
+          var fieldKey = toLine(_fieldKey).replace('_', '-');
 
           var fn = function fn() {
-            var _this4$vm;
+            var _this4$vm, _this4$vm2;
 
             for (var _len2 = arguments.length, arg = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
               arg[_key2] = arguments[_key2];
             }
 
             (_this4$vm = _this4.vm).$emit.apply(_this4$vm, [fieldKey].concat(arg));
+
+            (_this4$vm2 = _this4.vm).$emit.apply(_this4$vm2, [_fieldKey].concat(arg));
           };
 
           fn.__emit = true;
@@ -2697,6 +2711,8 @@
             parser.ctrlRule = rule;
 
             _this7.vm.$emit('control', parser.rule.__origin__, _this7.fCreateApi);
+
+            parser.parent && _this7.$render.clearCache(parser.parent);
 
             _this7.refresh();
 
@@ -3438,11 +3454,6 @@
         }
       }
     },
-    created: function created() {
-      for (var i = 0; i < this.value.length; i++) {
-        this.addRule();
-      }
-    },
     render: function render() {
       var _this9 = this;
 
@@ -4100,8 +4111,11 @@
         var rule = _ref.rule;
 
         if (rule.title) {
+          var titleProp = isString(rule.title) ? {
+            title: rule.title
+          } : rule.title;
           var info = this.options.info || {},
-              svn = [rule.title],
+              svn = [titleProp.title || ''],
               isTool = isTooltip(info);
 
           if (rule.info) {
@@ -4116,9 +4130,9 @@
             })]));
           }
 
-          return this.vNode.make('span', {
+          return this.vNode.make('span', _objectSpread2({}, titleProp, {
             slot: 'label'
-          }, svn);
+          }), svn);
         }
       }
     }, {
@@ -4304,7 +4318,7 @@
   VNode.use(nodes);
   var drive = {
     ui: "ant-design-vue",
-    version: "".concat("1.0.16"),
+    version: "".concat("1.0.17"),
     formRender: Form,
     components: components,
     parsers: parsers,

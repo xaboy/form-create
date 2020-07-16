@@ -1,5 +1,5 @@
 /*!
- * @form-create/core v1.0.16
+ * @form-create/core v1.0.17
  * (c) 2018-2020 xaboy
  * Github https://github.com/xaboy/form-create
  * Released under the MIT License.
@@ -816,6 +816,7 @@ function () {
     this.root = [];
     this.ctrlRule = null;
     this.modelEvent = 'input';
+    this.parent = null;
     this.update(handle);
     this.init();
   }
@@ -1169,7 +1170,7 @@ function Api(h) {
       return parser.rule.__origin__;
     },
     destroy: function destroy() {
-      h.vm.$el.parentNode.removeChild(h.vm.$el);
+      h.vm.$el.parentNode && h.vm.$el.parentNode.removeChild(h.vm.$el);
       h.vm.$destroy();
     },
     fields: function fields() {
@@ -1622,11 +1623,11 @@ function () {
     }
   }, {
     key: "loadRule",
-    value: function loadRule(rules, child) {
+    value: function loadRule(rules, parent) {
       var _this = this;
 
       rules.map(function (_rule, index) {
-        if (child && isString(_rule)) return;
+        if (parent && isString(_rule)) return;
         if (!_rule.type) return console.error('未定义生成规则的 type 字段' + errMsg());
         var parser;
 
@@ -1657,6 +1658,8 @@ function () {
           return console.error("".concat(rule.field, " \u5B57\u6BB5\u5DF2\u5B58\u5728") + errMsg());
         }
 
+        parser.parent = parent || null;
+
         _this.setParser(parser);
 
         if (!_rule.__fc__) {
@@ -1664,10 +1667,10 @@ function () {
         }
 
         if (isValidChildren(children)) {
-          _this.loadRule(children, true);
+          _this.loadRule(children, parser);
         }
 
-        if (!child) {
+        if (!parent) {
           _this.sortList.push(parser.id);
         }
 
@@ -1814,16 +1817,21 @@ function () {
         }
 
         if (!eventName) return;
-        var fieldKey = toLine("".concat(emitKey, "-").concat(eventName)).replace('_', '-');
+
+        var _fieldKey = "".concat(emitKey, "-").concat(eventName);
+
+        var fieldKey = toLine(_fieldKey).replace('_', '-');
 
         var fn = function fn() {
-          var _this4$vm;
+          var _this4$vm, _this4$vm2;
 
           for (var _len2 = arguments.length, arg = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
             arg[_key2] = arguments[_key2];
           }
 
           (_this4$vm = _this4.vm).$emit.apply(_this4$vm, [fieldKey].concat(arg));
+
+          (_this4$vm2 = _this4.vm).$emit.apply(_this4$vm2, [_fieldKey].concat(arg));
         };
 
         fn.__emit = true;
@@ -1997,6 +2005,8 @@ function () {
           parser.ctrlRule = rule;
 
           _this7.vm.$emit('control', parser.rule.__origin__, _this7.fCreateApi);
+
+          parser.parent && _this7.$render.clearCache(parser.parent);
 
           _this7.refresh();
 
