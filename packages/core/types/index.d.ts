@@ -39,7 +39,7 @@ export namespace FormCreate {
     }
 
     export interface parseJson<FormRule> {
-        (json: string, mode: Boolean): FormRule[];
+        (json: string, mode?: Boolean): FormRule[];
     }
 
     export interface Component {
@@ -56,18 +56,21 @@ export namespace FormCreate {
     }
 
     export interface Data {
-        key?: string | number;
         slot?: string;
         scopedSlots?: { [key: string]: ScopedSlot | undefined };
         ref?: string;
         class?: any;
-        style?: object[] | object;
+        style?: object[] | object | string;
         props?: { [key: string]: any };
         attrs?: { [key: string]: any };
         domProps?: { [key: string]: any };
         on?: { [key: string]: Function | Function[] };
         nativeOn?: { [key: string]: Function | Function[] };
         directives?: VNodeDirective[];
+    }
+
+    export interface Title extends Data {
+        title: string;
     }
 
     export interface DefaultSlot<Rule> {
@@ -99,13 +102,13 @@ export namespace FormCreate {
         onSubmit?: (formData: FormData, $f: $FApi<FormRule, BaseConfig<FormConfig, Row, Button, FormRule, FormButton>, FormButton>) => void;
     }
 
-    export interface Control<FormRule> {
+    export interface Control<FormRule, FApi> {
         value?: any;
-        handle?: (val: any, $f) => boolean;
+        handle?: (val: any, $f: FApi) => boolean;
         rule: FormRule[]
     }
 
-    export interface Rule<Col, FormOption extends BaseOption<Rule<Col, FormOption>>> extends Data {
+    export interface Rule<FApi, Col, FormOption extends BaseOption<Rule<FApi, Col, FormOption>>> extends Data {
         readonly type: string;
         readonly field?: string;
         readonly name?: string;
@@ -115,15 +118,15 @@ export namespace FormCreate {
         emit?: string[];
         template?: string;
         emitPrefix?: string;
-        title?: string;
+        title?: string | Title;
         info?: string;
         native?: boolean;
         inject?: boolean;
         value?: any;
         className?: any;
         defaultSlot?: any;
-        children?: Array<Rule<Col, FormOption> | Creator<Rule<Col, FormOption>, Col, FormOption> | string>;
-        control?: Array<Control<Rule<Col, FormOption> | Creator<Rule<Col, FormOption>, Col, FormOption> | string>> | Control<Rule<Col, FormOption> | Creator<Rule<Col, FormOption>, Col, FormOption> | string>;
+        children?: Array<Rule<FApi, Col, FormOption> | Creator<Rule<FApi, Col, FormOption>, Col, FormOption, FApi> | string>;
+        control?: Array<Control<Rule<FApi, Col, FormOption> | Creator<Rule<FApi, Col, FormOption>, Col, FormOption, FApi> | string, FApi>> | Control<Rule<FApi, Col, FormOption> | Creator<Rule<FApi, Col, FormOption>, Col, FormOption, FApi> | string, FApi>;
         hidden?: boolean
         visibility?: boolean
 
@@ -183,7 +186,7 @@ export namespace FormCreate {
     //     readonly formItemRefName: string;
     // }
 
-    export class Creator<Rule, Col, FormOption> extends VData {
+    export class Creator<Rule, Col, FormOption, FApi> extends VData {
         private rule: Rule;
 
         new(type: string, title: string, field: string, value?: any, props?: object): this;
@@ -210,9 +213,9 @@ export namespace FormCreate {
 
         options(options: FormOption[]): this;
 
-        children(children: Array<Rule | Creator<Rule, Col, FormOption> | string>): this;
+        children(children: Array<Rule | Creator<Rule, Col, FormOption, FApi> | string>): this;
 
-        control(control: Array<Control<Rule | Creator<Rule, Col, FormOption>>>): this;
+        control(control: Array<Control<Rule | Creator<Rule, Col, FormOption, FApi>, FApi>>): this;
 
         emit(emit: string[]): this;
 
@@ -317,6 +320,7 @@ export namespace FormCreate {
 
         config: FormConfig;
         rule: FormRule[];
+        form: FormData;
 
         formData(): FormData;
 

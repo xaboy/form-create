@@ -38,14 +38,16 @@ export declare interface FormOption extends FormCreate.BaseOption<Rule> {
     [key: string]: any
 }
 
-export declare interface Rule extends FormCreate.Rule<FormCol, FormOption> {
+export declare interface Rule extends FormCreate.Rule<$FApi, FormCol, FormOption> {
+    labelCol?: Col,
+    wrapperCol?: Col
 }
 
-export declare interface Creator extends FormCreate.Creator<Rule, FormCol, FormOption> {
+export declare interface Creator extends FormCreate.Creator<Rule, FormCol, FormOption, $FApi> {
 
 }
 
-export declare interface Control extends FormCreate.Control<FormRule> {
+export declare interface Control extends FormCreate.Control<FormRule, $FApi> {
 
 }
 
