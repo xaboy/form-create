@@ -53,15 +53,6 @@ export default {
             if (this.rule) return [this.rule];
             else if (this.rules) return this.rules;
             return [];
-        },
-        formData() {
-            return Object.keys(this.fieldRule).map(key => {
-                const keys = Object.keys(this.fieldRule[key]);
-                return this.rule ? keys[0] === undefined ? null : this.fieldRule[key][keys[0]].value : keys.reduce((initial, field) => {
-                    initial[field] = this.fieldRule[key][field].value;
-                    return initial;
-                }, {});
-            })
         }
     },
     watch: {
@@ -70,10 +61,6 @@ export default {
             Object.keys(lst).forEach(k => {
                 lst[k].disabled(n);
             })
-        },
-        formData(n) {
-            this.$emit('input', n);
-            this.$emit('change', n);
         },
         value: {
             handler(n) {
@@ -98,11 +85,22 @@ export default {
                     });
                 }
             },
-            deep:true,
-            immediate:true
+            deep: true
         }
     },
     methods: {
+        formData() {
+            const n = Object.keys(this.fieldRule).map(key => {
+                const keys = Object.keys(this.fieldRule[key]);
+                return this.rule ? keys[0] === undefined ? null : this.fieldRule[key][keys[0]].value : keys.reduce((initial, field) => {
+                    initial[field] = this.fieldRule[key][field].value;
+                    return initial;
+                }, {});
+            })
+
+            this.$emit('input', n);
+            this.$emit('change', n);
+        },
         setValue($f, value) {
             if (this.rule) {
                 const fields = $f.fields();
@@ -116,7 +114,7 @@ export default {
             const rule = this.copyRule();
             this.$set(this.cacheRule, ++this.len, rule);
             if (emit)
-                this.$nextTick(()=>this.$emit('add', rule, Object.keys(this.cacheRule).length - 1));
+                this.$nextTick(() => this.$emit('add', rule, Object.keys(this.cacheRule).length - 1));
         },
         add$f(i, key, $f) {
             this.group$f[key] = $f;
@@ -124,6 +122,7 @@ export default {
             this.syncData(key, $f);
             this.subForm();
             this.$emit('itemMounted', $f, Object.keys(this.cacheRule).indexOf(key));
+            this.formData();
         },
         subForm() {
             this.$emit('fc.subForm', Object.keys(this.group$f).map(k => this.group$f[k]));
@@ -140,7 +139,7 @@ export default {
             this.$delete(this.fieldRule, key);
             this.$delete(this.group$f, key);
             if (emit)
-                this.$nextTick(()=>this.$emit('remove', index));
+                this.$nextTick(() => this.$emit('remove', index));
         },
         copyRule() {
             return copyRules(this.formRule);
@@ -152,6 +151,7 @@ export default {
             if (this.disabled) return;
             this.removeRule(key, true);
             this.subForm();
+            this.formData();
         },
         addIcon(key) {
             return <i key={`a${key}`} class="el-icon-circle-plus-outline"
@@ -179,6 +179,11 @@ export default {
             }
         }
     },
+    created() {
+        for (let i = 0; i < this.value.length; i++) {
+            this.addRule();
+        }
+    },
     render() {
         const keys = Object.keys(this.cacheRule);
         const button = this.button;
@@ -194,8 +199,9 @@ export default {
                 return <ElRow align="middle" type="flex" key={key}
                     style="background-color:#f5f7fa;padding:10px;border-radius:5px;margin-bottom:10px;">
                     <ElCol span={button ? 20 : 24}><ElFormItem><FormCreate
-                        on-mounted={($f) => this.add$f(index, key, $f)}
-                        on-on-reload={($f) => this.syncData(key, $f)} rule={rule}
+                        on-change={this.formData}
+                        on-set-value={this.formData}
+                        on-mounted={($f) => this.add$f(index, key, $f)} rule={rule}
                         option={this.option}/></ElFormItem></ElCol>
                     {button ? <ElCol span={2} pull={1} push={1}>{this.makeIcon(keys.length, index, key)}</ElCol> : null}
                 </ElRow>
