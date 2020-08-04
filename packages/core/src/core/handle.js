@@ -138,6 +138,7 @@ export default class Handle {
                     this.setFormData(parser, parser.toFormValue(value));
                     this.valueChange(parser, value);
                     this.refresh();
+                    this.vm.$emit('setValue', parser.field, value, this.fCreateApi);
                 }
             }
         };
