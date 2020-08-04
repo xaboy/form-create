@@ -1,10 +1,11 @@
 import {hasSlot, toArray, toString, uniqueId} from '@form-create/utils';
 import style from '../../style/index.css';
 
-function parseFile(file) {
+function parseFile(file, i) {
     return {
         url: file,
-        name: getFileName(file)
+        name: getFileName(file),
+        uid: i
     };
 }
 
