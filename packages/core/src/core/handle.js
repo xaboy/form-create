@@ -156,7 +156,7 @@ export default class Handle {
         });
 
         Object.keys(def).forEach(k => {
-            if (isUndef(rule[k])) $set(rule, k, def[k]);
+            if (!rule.hasOwnProperty(k)) $set(rule, k, def[k]);
         });
 
         if (rule.field && this.options.formData[rule.field] !== undefined)
