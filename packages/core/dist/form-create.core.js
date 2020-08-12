@@ -1,5 +1,5 @@
 /*!
- * @form-create/core v1.0.17
+ * @form-create/core v1.0.18
  * (c) 2018-2020 xaboy
  * Github https://github.com/xaboy/form-create
  * Released under the MIT License.
@@ -1701,6 +1701,8 @@ function () {
             _this2.valueChange(parser, value);
 
             _this2.refresh();
+
+            _this2.vm.$emit('setValue', parser.field, value, _this2.fCreateApi);
           }
         }
       };
@@ -1719,7 +1721,7 @@ function () {
         __origin__: enumerable(_rule)
       });
       Object.keys(def).forEach(function (k) {
-        if (isUndef(rule[k])) $set(rule, k, def[k]);
+        if (!rule.hasOwnProperty(k)) $set(rule, k, def[k]);
       });
       if (rule.field && this.options.formData[rule.field] !== undefined) rule.value = this.options.formData[rule.field];
       rule.options = parseArray(rule.options);
@@ -1831,7 +1833,7 @@ function () {
 
           (_this4$vm = _this4.vm).$emit.apply(_this4$vm, [fieldKey].concat(arg));
 
-          (_this4$vm2 = _this4.vm).$emit.apply(_this4$vm2, [_fieldKey].concat(arg));
+          if (_fieldKey !== fieldKey) (_this4$vm2 = _this4.vm).$emit.apply(_this4$vm2, [_fieldKey].concat(arg));
         };
 
         fn.__emit = true;

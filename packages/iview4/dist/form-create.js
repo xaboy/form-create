@@ -1,5 +1,5 @@
 /*!
- * @form-create/iview4 v1.0.17
+ * @form-create/iview4 v1.0.18
  * (c) 2018-2020 xaboy
  * Github https://github.com/xaboy/form-create
  * Released under the MIT License.
@@ -2829,6 +2829,8 @@
               _this2.valueChange(parser, value);
 
               _this2.refresh();
+
+              _this2.vm.$emit('setValue', parser.field, value, _this2.fCreateApi);
             }
           }
         };
@@ -2847,7 +2849,7 @@
           __origin__: enumerable(_rule)
         });
         Object.keys(def).forEach(function (k) {
-          if (isUndef(rule[k])) $set(rule, k, def[k]);
+          if (!rule.hasOwnProperty(k)) $set(rule, k, def[k]);
         });
         if (rule.field && this.options.formData[rule.field] !== undefined) rule.value = this.options.formData[rule.field];
         rule.options = parseArray(rule.options);
@@ -2959,7 +2961,7 @@
 
             (_this4$vm = _this4.vm).$emit.apply(_this4$vm, [fieldKey].concat(arg));
 
-            (_this4$vm2 = _this4.vm).$emit.apply(_this4$vm2, [_fieldKey].concat(arg));
+            if (_fieldKey !== fieldKey) (_this4$vm2 = _this4.vm).$emit.apply(_this4$vm2, [_fieldKey].concat(arg));
           };
 
           fn.__emit = true;
@@ -3704,17 +3706,6 @@
       formRule: function formRule() {
         if (this.rule) return [this.rule];else if (this.rules) return this.rules;
         return [];
-      },
-      formData: function formData() {
-        var _this = this;
-
-        return Object.keys(this.fieldRule).map(function (key) {
-          var keys = Object.keys(_this.fieldRule[key]);
-          return _this.rule ? keys[0] === undefined ? null : _this.fieldRule[key][keys[0]].value : keys.reduce(function (initial, field) {
-            initial[field] = _this.fieldRule[key][field].value;
-            return initial;
-          }, {});
-        });
       }
     },
     watch: {
@@ -3724,13 +3715,9 @@
           lst[k].disabled(n);
         });
       },
-      formData: function formData(n) {
-        this.$emit('input', n);
-        this.$emit('change', n);
-      },
       value: {
         handler: function handler(n) {
-          var _this2 = this;
+          var _this = this;
 
           var keys = Object.keys(this.cacheRule),
               total = keys.length,
@@ -3754,15 +3741,27 @@
             }
 
             n.forEach(function (val, i) {
-              _this2.setValue(_this2.group$f[keys[i]], n[i]);
+              _this.setValue(_this.group$f[keys[i]], n[i]);
             });
           }
         },
-        deep: true,
-        immediate: true
+        deep: true
       }
     },
     methods: {
+      formData: function formData() {
+        var _this2 = this;
+
+        var n = Object.keys(this.fieldRule).map(function (key) {
+          var keys = Object.keys(_this2.fieldRule[key]);
+          return _this2.rule ? keys[0] === undefined ? null : _this2.fieldRule[key][keys[0]].value : keys.reduce(function (initial, field) {
+            initial[field] = _this2.fieldRule[key][field].value;
+            return initial;
+          }, {});
+        });
+        this.$emit('input', n);
+        this.$emit('change', n);
+      },
       setValue: function setValue($f, value) {
         if (this.rule) {
           var fields = $f.fields();
@@ -3787,6 +3786,7 @@
         this.syncData(key, $f);
         this.subForm();
         this.$emit('itemMounted', $f, Object.keys(this.cacheRule).indexOf(key));
+        this.formData();
       },
       subForm: function subForm() {
         var _this4 = this;
@@ -3824,6 +3824,7 @@
         if (this.disabled) return;
         this.removeRule(key, true);
         this.subForm();
+        this.formData();
       },
       addIcon: function addIcon(key) {
         var h = this.$createElement;
@@ -3876,6 +3877,11 @@
         }
       }
     },
+    created: function created() {
+      for (var i = 0; i < this.value.length; i++) {
+        this.addRule();
+      }
+    },
     render: function render() {
       var _this9 = this;
 
@@ -3912,11 +3918,10 @@
           }
         }, [h("FormItem", [h("FormCreate", {
           "on": {
+            "change": _this9.formData,
+            "set-value": _this9.formData,
             "mounted": function mounted($f) {
               return _this9.add$f(index, key, $f);
-            },
-            "on-reload": function onReload($f) {
-              return _this9.syncData(key, $f);
             }
           },
           "attrs": {
@@ -4745,7 +4750,7 @@
   VNode.use(nodes);
   var drive = {
     ui: "iview4",
-    version: "1.0.17",
+    version: "1.0.18",
     formRender: Form,
     components: components,
     parsers: parsers,
