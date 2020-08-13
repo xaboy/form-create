@@ -194,6 +194,7 @@ function mock() {
         //select 下拉选择组件
         maker.select("产品分类", "cate_id", "104").options([
             {"value": "104", "label": "生态蔬菜", "disabled": false, "slot": "<div style:'color:#ff7271;'>自定义显示内容</div>"},
+            {"value": "106", "label": "植物植物", "disabled": false},
             {
                 "value": "105", "label": "新鲜水果", "disabled": false, "slot": function ($h) {
                     return $h("div", {
@@ -330,13 +331,13 @@ function mock() {
         //upload 上传组件
         maker.upload('轮播图', 'pic', ['http://file.lotkk.com/form-create.jpeg'])
             .props({
-                "action": "http://127.0.0.1:8000/index/index/upload",
-                "limit": 4,
-                "uploadType": "file",
+                "action": "https://api.uukit.com/req/mock/48959qh",
+                "limit": 2,
+                "uploadType": "image",
                 "name": "file",
                 "onSuccess": function (res, file) {
                     console.log('upload success');
-                    file.url =  res.data.filePath;
+                    file.url =  res.thumbUrl;
                 },
                 "onRemove": function (file, fileList) {
                     console.log(file, fileList);

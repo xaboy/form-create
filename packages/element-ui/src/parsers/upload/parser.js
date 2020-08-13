@@ -20,6 +20,7 @@ export default class Parser extends BaseParser {
             children
         };
         return this.vNode.upload({
+            ...ctx,
             props,
             key,
             ref: refName,

@@ -43,6 +43,13 @@
     "dependencies": {
         "@form-create/core": "^1.0.18",
         "@form-create/utils": "^1.0.15",
+        "@form-create/component-elm-checkbox": "^0.0.1",
+        "@form-create/component-elm-frame": "^0.0.1",
+        "@form-create/component-elm-group": "^0.0.1",
+        "@form-create/component-elm-radio": "^0.0.1",
+        "@form-create/component-elm-select": "^0.0.1",
+        "@form-create/component-elm-tree": "^0.0.1",
+        "@form-create/component-elm-upload": "^0.0.1",
         "element-ui": "^2.8.2"
     },
     "publishConfig": {
