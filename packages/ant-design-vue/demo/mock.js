@@ -267,8 +267,8 @@ function mock() {
         maker.upload('轮播图', 'pic', ['http://file.lotkk.com/form-create.jpeg'])
             .props({
                 // "action": "http://127.0.0.1:8000/index/index/upload",
-                action:"https://www.mocky.io/v2/5cc8019d300000980a055e76",
-                "limit": 4,
+                action:"https://api.uukit.com/req/mock/48959qh",
+                "limit": 2,
                 listType: "picture-card",
                 "name": "file",
                 "allowRemove": true,
