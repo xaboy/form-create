@@ -1,6 +1,8 @@
 import iview from 'iview';
 
 
+export const ivuVersion = (iview.version && iview.version.split('.')[0] > 2 ? 3 : 2);
+
 export const iview2 = {
     _v: 2,
     resetBtnType: 'ghost',
