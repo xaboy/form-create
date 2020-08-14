@@ -6,7 +6,24 @@
     "packages/element-ui",
     "packages/iview",
     "packages/iview4",
-    "packages/utils"
+    "packages/utils",
+    "components/ant-design-vue/frame",
+    "components/ant-design-vue/group",
+    "components/ant-design-vue/upload",
+    "components/element-ui/checkbox",
+    "components/element-ui/frame",
+    "components/element-ui/group",
+    "components/element-ui/radio",
+    "components/element-ui/select",
+    "components/element-ui/tree",
+    "components/element-ui/upload",
+    "components/iview/checkbox",
+    "components/iview/frame",
+    "components/iview/group",
+    "components/iview/radio",
+    "components/iview/select",
+    "components/iview/tree",
+    "components/iview/upload"
   ],
-  "version": "1.0.18"
+  "version": "2.1.0"
 }
