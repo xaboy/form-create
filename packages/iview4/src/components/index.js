@@ -1,10 +1,10 @@
-import checkbox from './checkbox';
-import frame from './frame';
-import radio from './radio';
-import select from './select';
-import tree from './tree';
-import upload from './upload';
-import group from './group';
+import checkbox from '@form-create/component-ivu-checkbox';
+import frame from '@form-create/component-ivu-frame';
+import radio from '@form-create/component-ivu-radio';
+import select from '@form-create/component-ivu-select';
+import tree from '@form-create/component-ivu-tree';
+import upload from '@form-create/component-ivu-upload';
+import group from '@form-create/component-ivu-group';
 
 
 export default [

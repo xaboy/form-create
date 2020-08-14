@@ -43,6 +43,13 @@
     "dependencies": {
         "@form-create/core": "^1.0.18",
         "@form-create/utils": "^1.0.15",
+        "@form-create/component-ivu-checkbox": "^0.0.1",
+        "@form-create/component-ivu-frame": "^0.0.1",
+        "@form-create/component-ivu-group": "^0.0.1",
+        "@form-create/component-ivu-radio": "^0.0.1",
+        "@form-create/component-ivu-select": "^0.0.1",
+        "@form-create/component-ivu-tree": "^0.0.1",
+        "@form-create/component-ivu-upload": "^0.0.1",
         "view-design": "^4.0.2"
     },
     "publishConfig": {

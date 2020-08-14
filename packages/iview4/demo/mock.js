@@ -314,15 +314,15 @@ function mock() {
         //upload 上传组件
         maker.upload('轮播图', 'pic', ['http://file.lotkk.com/form-create.jpeg'])
             .props({
-                'action': 'http://127.0.0.1:8000/index/index/upload',
-                'maxLength': 4,
+                'action': 'https://api.uukit.com/req/mock/48959qh',
+                'maxLength': 2,
                 'multiple': true,
                 'showUploadList': false,
                 'type': 'select',
-                'uploadType': 'file',
+                'uploadType': 'image',
                 'name': 'file',
                 'onSuccess': function (res, file) {
-                    file.url = 'http://file.lotkk.com/form-create.jpeg';
+                    file.url = res.thumbUrl;
                 },
                 'onRemove': function (file, fileList) {
                     console.log(file, fileList);
