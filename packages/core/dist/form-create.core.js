@@ -5,9 +5,12 @@
  * Released under the MIT License.
  */
 import _mergeJSXProps from '@vue/babel-helper-vue-jsx-merge-props';
+import { deepExtend, isUndef, isPlainObject, toString, isFunction, $set, extend, isString, isValidChildren, uniqueId, debounce, errMsg, toLine, $del, isElement, isBool, deepExtendArgs } from '@form-create/utils';
 import Vue from 'vue';
 
 function _typeof(obj) {
+  "@babel/helpers - typeof";
+
   if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
     _typeof = function (obj) {
       return typeof obj;
@@ -77,13 +80,13 @@ function _objectSpread2(target) {
     var source = arguments[i] != null ? arguments[i] : {};
 
     if (i % 2) {
-      ownKeys(source, true).forEach(function (key) {
+      ownKeys(Object(source), true).forEach(function (key) {
         _defineProperty(target, key, source[key]);
       });
     } else if (Object.getOwnPropertyDescriptors) {
       Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
     } else {
-      ownKeys(source).forEach(function (key) {
+      ownKeys(Object(source)).forEach(function (key) {
         Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
       });
     }
@@ -123,6 +126,19 @@ function _setPrototypeOf(o, p) {
   return _setPrototypeOf(o, p);
 }
 
+function _isNativeReflectConstruct() {
+  if (typeof Reflect === "undefined" || !Reflect.construct) return false;
+  if (Reflect.construct.sham) return false;
+  if (typeof Proxy === "function") return true;
+
+  try {
+    Date.prototype.toString.call(Reflect.construct(Date, [], function () {}));
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
 function _assertThisInitialized(self) {
   if (self === void 0) {
     throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
@@ -139,139 +155,56 @@ function _possibleConstructorReturn(self, call) {
   return _assertThisInitialized(self);
 }
 
+function _createSuper(Derived) {
+  var hasNativeReflectConstruct = _isNativeReflectConstruct();
+
+  return function _createSuperInternal() {
+    var Super = _getPrototypeOf(Derived),
+        result;
+
+    if (hasNativeReflectConstruct) {
+      var NewTarget = _getPrototypeOf(this).constructor;
+
+      result = Reflect.construct(Super, arguments, NewTarget);
+    } else {
+      result = Super.apply(this, arguments);
+    }
+
+    return _possibleConstructorReturn(this, result);
+  };
+}
+
 function _toConsumableArray(arr) {
-  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();
+  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread();
 }
 
 function _arrayWithoutHoles(arr) {
-  if (Array.isArray(arr)) {
-    for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) arr2[i] = arr[i];
-
-    return arr2;
-  }
+  if (Array.isArray(arr)) return _arrayLikeToArray(arr);
 }
 
 function _iterableToArray(iter) {
-  if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
+  if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter);
+}
+
+function _unsupportedIterableToArray(o, minLen) {
+  if (!o) return;
+  if (typeof o === "string") return _arrayLikeToArray(o, minLen);
+  var n = Object.prototype.toString.call(o).slice(8, -1);
+  if (n === "Object" && o.constructor) n = o.constructor.name;
+  if (n === "Map" || n === "Set") return Array.from(o);
+  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
+}
+
+function _arrayLikeToArray(arr, len) {
+  if (len == null || len > arr.length) len = arr.length;
+
+  for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i];
+
+  return arr2;
 }
 
 function _nonIterableSpread() {
-  throw new TypeError("Invalid attempt to spread non-iterable instance");
-}
-
-function $set(target, field, value) {
-  Vue.set(target, field, value);
-}
-function $del(target, field) {
-  Vue.delete(target, field);
-}
-function isValidChildren(children) {
-  return Array.isArray(children) && children.length > 0;
-}
-var _toString = Object.prototype.toString;
-function isUndef(v) {
-  return v === undefined || v === null;
-}
-function toString(val) {
-  return val == null ? '' : _typeof(val) === 'object' ? JSON.stringify(val, null, 2) : String(val);
-}
-function extend(to, _from) {
-  for (var key in _from) {
-    $set(to, key, _from[key]);
-  }
-
-  return to;
-}
-function debounce(fn, wait) {
-  var timeout = null;
-  return function () {
-    for (var _len = arguments.length, arg = new Array(_len), _key = 0; _key < _len; _key++) {
-      arg[_key] = arguments[_key];
-    }
-
-    if (timeout !== null) clearTimeout(timeout);
-    timeout = setTimeout(function () {
-      return fn.apply(void 0, arg);
-    }, wait);
-  };
-}
-function isType(arg, type) {
-  return _toString.call(arg) === '[object ' + type + ']';
-}
-function isPlainObject(arg) {
-  return isType(arg, 'Object');
-}
-function isFunction(arg) {
-  return isType(arg, 'Function');
-}
-function isString(arg) {
-  return isType(arg, 'String');
-}
-function isBool(arg) {
-  return isType(arg, 'Boolean');
-}
-function toLine(name) {
-  var line = name.replace(/([A-Z])/g, '-$1').toLowerCase();
-  if (line.indexOf('-') === 0) line = line.substr(1);
-  return line;
-}
-function isElement(arg) {
-  return _typeof(arg) === 'object' && arg !== null && arg.nodeType === 1 && !isPlainObject(arg);
-}
-function deepExtend(origin) {
-  var target = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-  var mode = arguments.length > 2 ? arguments[2] : undefined;
-  var isArr = false;
-
-  for (var key in target) {
-    if (Object.prototype.hasOwnProperty.call(target, key)) {
-      var clone = target[key];
-
-      if ((isArr = Array.isArray(clone)) || isPlainObject(clone)) {
-        var nst = origin[key] === undefined;
-
-        if (isArr) {
-          isArr = false;
-          nst && $set(origin, key, []);
-        } else if (clone._clone) {
-          clone = clone._clone();
-
-          if (mode) {
-            clone = clone.getRule();
-            nst && $set(origin, key, {});
-          } else {
-            $set(origin, key, clone);
-            continue;
-          }
-        } else {
-          nst && $set(origin, key, {});
-        }
-
-        deepExtend(origin[key], clone, mode);
-      } else {
-        $set(origin, key, clone);
-      }
-    }
-  }
-
-  return origin;
-}
-function deepExtendArgs(origin) {
-  for (var _len2 = arguments.length, lst = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
-    lst[_key2 - 1] = arguments[_key2];
-  }
-
-  lst.forEach(function (target) {
-    origin = deepExtend(origin, target);
-  });
-  return origin;
-}
-var id = 0;
-function uniqueId() {
-  return ++id;
-}
-function errMsg(i) {
-  return '\n\x67\x69\x74\x68\x75\x62\x3a\x68\x74\x74\x70' + '\x73\x3a\x2f\x2f\x67\x69\x74\x68\x75\x62\x2e\x63\x6f' + '\x6d\x2f\x78\x61\x62\x6f\x79\x2f\x66\x6f\x72\x6d\x2d' + '\x63\x72\x65\x61\x74\x65\n\x64\x6f\x63\x75\x6d\x65' + '\x6e\x74\x3a\x68\x74\x74\x70\x3a\x2f\x2f\x77\x77\x77' + '\x2e\x66\x6f\x72\x6d\x2d\x63\x72\x65\x61\x74\x65\x2e' + '\x63\x6f\x6d' + (i || '');
+  throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
 }
 
 var formCreateName = 'FormCreate';
@@ -286,7 +219,7 @@ function $FormCreate(FormCreate, components) {
       },
       option: {
         type: Object,
-        default: function _default() {
+        "default": function _default() {
           return {};
         },
         required: false
@@ -356,7 +289,7 @@ var mergeJsxProps = function mergeJsxProps(objects, initial) {
     for (var key in b) {
       if (a[key]) {
         if (normalMerge.indexOf(key) !== -1) {
-          a[key] = _objectSpread2({}, a[key], {}, b[key]);
+          a[key] = _objectSpread2(_objectSpread2({}, a[key]), b[key]);
         } else if (toArrayMerge.indexOf(key) !== -1) {
           var arrA = a[key] instanceof Array ? a[key] : [a[key]];
           var arrB = b[key] instanceof Array ? b[key] : [b[key]];
@@ -417,9 +350,7 @@ function defVData() {
   };
 }
 
-var VData =
-/*#__PURE__*/
-function () {
+var VData = /*#__PURE__*/function () {
   function VData() {
     _classCallCheck(this, VData);
 
@@ -440,13 +371,13 @@ function () {
 
       if (Array.isArray(classList)) {
         this.merge({
-          class: classList
+          "class": classList
         });
       } else if (isPlainObject(classList)) {
         this.merge(classList);
       } else {
         this.merge({
-          class: _defineProperty({}, toString(classList), !!status)
+          "class": _defineProperty({}, toString(classList), !!status)
         });
       }
 
@@ -511,7 +442,7 @@ function baseRule() {
     emit: [],
     template: undefined,
     emitPrefix: undefined,
-    native: undefined,
+    "native": undefined,
     info: undefined
   };
 }
@@ -532,10 +463,10 @@ function creatorTypeFactory(name, type) {
   };
 }
 
-var Creator =
-/*#__PURE__*/
-function (_VData) {
+var Creator = /*#__PURE__*/function (_VData) {
   _inherits(Creator, _VData);
+
+  var _super = _createSuper(Creator);
 
   function Creator(type, title, field, value) {
     var _this;
@@ -544,7 +475,7 @@ function (_VData) {
 
     _classCallCheck(this, Creator);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(Creator).call(this));
+    _this = _super.call(this);
     extend(_this._data, baseRule());
     extend(_this._data, {
       type: type,
@@ -747,9 +678,7 @@ function getVNode(VNode) {
   return isFunction(VNode) ? VNode() : VNode || [];
 }
 
-var VNode =
-/*#__PURE__*/
-function () {
+var VNode = /*#__PURE__*/function () {
   function VNode(vm) {
     _classCallCheck(this, VNode);
 
@@ -786,9 +715,7 @@ VNode.use({
   fragment: 'fcFragment'
 });
 
-var BaseParser =
-/*#__PURE__*/
-function () {
+var BaseParser = /*#__PURE__*/function () {
   function BaseParser(handle, rule, id) {
     _classCallCheck(this, BaseParser);
 
@@ -853,9 +780,7 @@ var $de = debounce(function (fn) {
   return fn();
 }, 1);
 
-var Render =
-/*#__PURE__*/
-function () {
+var Render = /*#__PURE__*/function () {
   function Render(handle) {
     _classCallCheck(this, Render);
 
@@ -998,7 +923,7 @@ function () {
         if (type === 'template' && rule.template) {
           vn = this.renderTemplate(parser);
 
-          if (parent && isUndef(rule.native)) {
+          if (parent && isUndef(rule["native"])) {
             this.setCache(parser, vn, parent);
             return vn;
           }
@@ -1008,13 +933,13 @@ function () {
         } else {
           vn = this.defaultRender(parser, this.renderChildren(parser));
 
-          if (parent && isUndef(rule.native)) {
+          if (parent && isUndef(rule["native"])) {
             this.setCache(parser, vn, parent);
             return vn;
           }
         }
 
-        if (rule.native !== true) vn = form.container(vn, parser);
+        if (rule["native"] !== true) vn = form.container(vn, parser);
         this.setCache(parser, vn, parent);
         return vn;
       }
@@ -1406,7 +1331,7 @@ function Api(h) {
 
       var state = false;
 
-      var subForm = _objectSpread2({}, {
+      var subForm = _objectSpread2(_objectSpread2({}, {
         ___this: {
           validate: function validate(call) {
             h.$form.validate(function (valid) {
@@ -1414,7 +1339,7 @@ function Api(h) {
             });
           }
         }
-      }, {}, h.subForm);
+      }), h.subForm);
 
       var keys = Object.keys(subForm).filter(function (field) {
         var sub = subForm[field];
@@ -1569,9 +1494,7 @@ function getRule(rule) {
   if (isFunction(rule.getRule)) return rule.getRule();else return rule;
 }
 
-var Handle =
-/*#__PURE__*/
-function () {
+var Handle = /*#__PURE__*/function () {
   function Handle(fc) {
     _classCallCheck(this, Handle);
 
@@ -1999,7 +1922,7 @@ function () {
 
           var rule = {
             type: 'fcFragment',
-            native: true,
+            "native": true,
             children: control.rule
           }; //TODO 位置可自定义
 
@@ -2233,20 +2156,19 @@ function createFormCreate(drive) {
   }
 
   function createParser() {
-    return (
-      /*#__PURE__*/
-      function (_BaseParser) {
-        _inherits(Parser, _BaseParser);
+    return /*#__PURE__*/function (_BaseParser) {
+      _inherits(Parser, _BaseParser);
 
-        function Parser() {
-          _classCallCheck(this, Parser);
+      var _super = _createSuper(Parser);
 
-          return _possibleConstructorReturn(this, _getPrototypeOf(Parser).apply(this, arguments));
-        }
+      function Parser() {
+        _classCallCheck(this, Parser);
 
-        return Parser;
-      }(BaseParser)
-    );
+        return _super.apply(this, arguments);
+      }
+
+      return Parser;
+    }(BaseParser);
   }
 
   function component(id, component) {
@@ -2317,9 +2239,7 @@ function createFormCreate(drive) {
     return $vm;
   }
 
-  var FormCreate =
-  /*#__PURE__*/
-  function () {
+  var FormCreate = /*#__PURE__*/function () {
     function FormCreate(rules) {
       var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
@@ -2463,9 +2383,7 @@ function createFormCreate(drive) {
   };
 }
 
-var BaseForm =
-/*#__PURE__*/
-function () {
+var BaseForm = /*#__PURE__*/function () {
   function BaseForm(handle) {
     _classCallCheck(this, BaseForm);
 

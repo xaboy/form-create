@@ -8,18 +8,24 @@
  */
 const path = require('path');
 const webpack = require('webpack');
-const webpackMergeConfig = require('webpack-merge');
+const chalk = require('chalk');
+const {merge: webpackMergeConfig} = require('webpack-merge');
 const HTMLWebpackPlugin = require('html-webpack-plugin');
 const baseWebpackConfig = require('./webpack.config.base');
 const Config = require('webpack-chain');
+const {cwd} = require('process');
+const log = console.log;
 const config = new Config();
-
+const commandExecUrl = process.cwd()
+log(chalk.green('command run path with: ', commandExecUrl))
 // TODO: Wrapped in a function
 const UI = 'element-ui';
-const basePublicPath = path.join(__dirname, '/../', `/packages/${UI}`);
+const basePublicPath = path.join(commandExecUrl, `/packages/${UI}`);
 const baseSrcPath = path.join(basePublicPath + '/src/index.js');
 const baseTemplatePath = path.join(basePublicPath + '/demo/component/index.html');
 const devServerOpenPage = path.join(`packages/${UI}/demo/component/`);
+
+console.log(baseTemplatePath,devServerOpenPage)
 
 // TODO: use webpack-chain
 config.entry('app').add(baseSrcPath).end();
@@ -28,7 +34,6 @@ config.entry('app').add(baseSrcPath).end();
 // console.log(baseDistPath)
 // console.log(baseTemplatePath)
 // console.log(config.toString());
-
 const eleConfig = webpackMergeConfig(baseWebpackConfig, {
     entry: {
         app: baseSrcPath
@@ -39,7 +44,6 @@ const eleConfig = webpackMergeConfig(baseWebpackConfig, {
     plugins: [
         new HTMLWebpackPlugin({
             template: baseTemplatePath,
-            filename: baseTemplatePath,
             inject: true
         }),
         new webpack.DefinePlugin({

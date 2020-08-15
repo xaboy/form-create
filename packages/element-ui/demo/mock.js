@@ -1,6 +1,7 @@
 var maker = formCreate.maker;
 
 
+console.log(maker)
 //使用maker 生成器生成
 function mock() {
     var mock;
