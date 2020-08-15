@@ -25,7 +25,6 @@ const baseSrcPath = path.join(basePublicPath + '/src/index.js');
 const baseTemplatePath = path.join(basePublicPath + '/demo/component/index.html');
 const devServerOpenPage = path.join(`packages/${UI}/demo/component/`);
 
-console.log(baseTemplatePath,devServerOpenPage)
 
 // TODO: use webpack-chain
 config.entry('app').add(baseSrcPath).end();

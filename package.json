@@ -3,7 +3,7 @@
     "private": true,
     "scripts": {
         "build": "node fc-tools/cli/run.js build",
-        "dev:ele": "cross-env UI_LiB=element-ui webpack-dev-server --config=./scripts/configs/webpack.config.ele.js",
+        "dev:ele": "lerna run dev:ele",
         "dev:iview": "cross-env UI_LiB=iview webpack-dev-server --config=./scripts/configs/webpack.config.iview.js",
         "dev:iview4": "cross-env UI_LiB=iview4 webpack-dev-server --config=./scripts/configs/webpack.config.iview4.js",
         "dev:antd": "cross-env UI_LiB=ant-design-vue webpack-dev-server --config=./scripts/configs/webpack.config.antd.js",
@@ -14,6 +14,7 @@
         "bootstrap:lerna": "lerna bootstrap -- --ignore-engines"
     },
     "devDependencies": {
+        "@vue/cli-service": "^4.5.3",
         "babel-eslint": "^10.1.0",
         "bili": "^5.0.5",
         "chalk": "^4.1.0",
@@ -36,12 +37,7 @@
         "vue": "^2.6.11",
         "vue-loader": "^15.9.3",
         "vue-style-loader": "^4.1.2",
-        "vue-template-compiler": "^2.6.11",
-        "webpack": "^5.0.0-beta.26",
-        "webpack-chain": "^6.5.1",
-        "webpack-cli": "^3.3.12",
-        "webpack-dev-server": "^3.11.0",
-        "webpack-merge": "^5.1.1"
+        "vue-template-compiler": "^2.6.11"
     },
     "config": {
         "commitizen": {
