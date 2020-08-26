@@ -15,6 +15,7 @@ export default class Parser extends BaseParser {
             handleIcon: ctx.props.handleIcon,
             onHandle: ctx.props.onHandle,
             allowRemove: ctx.props.allowRemove,
+            previewMask: ctx.props.previewMask,
             value: this.$handle.getFormData(this),
             ctx,
             children
