@@ -44,8 +44,7 @@ export default {
             }),
             len: 0,
             cacheRule: {},
-            group$f: {},
-            fieldRule: {}
+            group$f: {}
         }
     },
     computed: {
@@ -90,14 +89,9 @@ export default {
     },
     methods: {
         formData() {
-            const n = Object.keys(this.fieldRule).map(key => {
-                const keys = Object.keys(this.fieldRule[key]);
-                return this.rule ? keys[0] === undefined ? null : this.fieldRule[key][keys[0]].value : keys.reduce((initial, field) => {
-                    initial[field] = this.fieldRule[key][field].value;
-                    return initial;
-                }, {});
+            const n = Object.keys(this.group$f).map(key => {
+                return this.group$f[key].formData();
             })
-
             this.$emit('input', n);
             this.$emit('change', n);
         },
@@ -119,7 +113,6 @@ export default {
         add$f(i, key, $f) {
             this.group$f[key] = $f;
             this.setValue($f, this.value[i]);
-            this.syncData(key, $f);
             this.subForm();
             this.$emit('itemMounted', $f, Object.keys(this.cacheRule).indexOf(key));
             this.formData();
@@ -127,16 +120,9 @@ export default {
         subForm() {
             this.$emit('fc.subForm', Object.keys(this.group$f).map(k => this.group$f[k]));
         },
-        syncData(key, $f) {
-            this.$set(this.fieldRule, key, {});
-            $f.fields().forEach(field => {
-                this.fieldRule[key][field] = $f.getRule(field);
-            });
-        },
         removeRule(key, emit) {
             const index = Object.keys(this.cacheRule).indexOf(key);
             this.$delete(this.cacheRule, key);
-            this.$delete(this.fieldRule, key);
             this.$delete(this.group$f, key);
             if (emit)
                 this.$nextTick(() => this.$emit('remove', index));
@@ -200,6 +186,7 @@ export default {
                     style="background-color:#f5f7fa;padding:10px;border-radius:5px;margin-bottom:10px;">
                     <ACol span={button ? 20 : 24}><FormCreate
                         on-change={this.formData}
+                        on-on-reload={this.formData}
                         on-set-value={this.formData}
                         on-mounted={($f) => this.add$f(index, key, $f)} rule={rule}
                         option={this.option}/></ACol>
