@@ -6,6 +6,10 @@ const NAME = 'fc-frame';
 export default {
     name: NAME,
     props: {
+        formCreateParser: {
+            type: Object,
+            default: () => ({})
+        },
         type: {
             type: String,
             default: 'input'
@@ -146,7 +150,7 @@ export default {
         key(unique) {
             return unique;
         },
-        closeModel(close) {
+        closeModal(close) {
             this.$emit(close ? '$close' : '$ok');
             if (this.reload) {
                 this.$off('$ok');
@@ -155,7 +159,7 @@ export default {
             this.frameVisible = false;
         },
 
-        showModel() {
+        showModal() {
             if (this.disabled || false === this.onOpen()) return;
             this.frameVisible = true;
         },
@@ -168,7 +172,7 @@ export default {
             };
 
             return <AInput props={props} key={this.key('input')}>
-                <AIcon type={this.icon} slot="addonAfter" on-click={this.showModel}/>
+                <AIcon type={this.icon} slot="addonAfter" on-click={this.showModal}/>
                 {this.fileList.length ?
                     <AIcon type="close-circle" slot="suffix" on-click={() => this.fileList = []}/> : null}
             </AInput>
@@ -183,8 +187,9 @@ export default {
         makeItem(index, children) {
             return <div class='fc-files' key={this.key('file' + index)}>{...children}</div>;
         },
-        valid(field) {
-            if (field !== this.field)
+        valid(f) {
+            const field = this.formCreateParser.field || this.field;
+            if (f !== field)
                 throw new Error('frame 无效的字段值');
         },
 
@@ -221,7 +226,7 @@ export default {
             }))
         },
         makeBtn() {
-            return <div class='fc-upload-btn' on-click={() => this.showModel()} key={this.key('btn')}>
+            return <div class='fc-upload-btn' on-click={() => this.showModal()} key={this.key('btn')}>
                 <AIcon type={this.icon} theme="filled"/>
             </div>
         },
@@ -246,7 +251,7 @@ export default {
                     iframe['form_create_helper'] = {
                         close: (field) => {
                             this.valid(field);
-                            this.closeModel();
+                            this.closeModal();
                         },
                         set: (field, value) => {
                             this.valid(field);
@@ -275,10 +280,10 @@ export default {
 
             if (closeBtn)
                 node.push(<AButton
-                    on-click={() => (this.onCancel() !== false && this.closeModel(true))}>{closeBtnText}</AButton>);
+                    on-click={() => (this.onCancel() !== false && this.closeModal(true))}>{closeBtnText}</AButton>);
             if (okBtn)
                 node.push(<AButton type="primary"
-                    on-click={() => (this.onOk() !== false && this.closeModel())}>{okBtnText}</AButton>);
+                    on-click={() => (this.onOk() !== false && this.closeModal())}>{okBtnText}</AButton>);
             return node;
         }
     },
@@ -303,7 +308,7 @@ export default {
                 <img alt="example" style="width: 100%" src={this.previewImage}/>
             </aModal>
             <aModal props={{width, title, ...this.modal}} visible={this.frameVisible}
-                on-cancel={() => (this.closeModel(true))}>
+                on-cancel={() => (this.closeModal(true))}>
                 {(this.frameVisible || !this.reload) ? <iframe ref="frame" src={src} frameborder="0" style={{
                     'height': height,
                     'border': '0 none',
@@ -314,5 +319,8 @@ export default {
                 </div>
             </aModal>
         </div>
+    },
+    mounted() {
+        this.$on('fc.closeModal', this.closeModal);
     }
 }

@@ -1,5 +1,6 @@
 import toString from '@form-create/utils/lib/tostring';
 import deepExtend from '@form-create/utils/lib/deepextend';
+import toArray from '@form-create/utils/lib/toarray';
 
 const parseFile = function (file, uid) {
         return {
@@ -14,16 +15,24 @@ const parseFile = function (file, uid) {
         return {url: file.url, file};
     };
 
-const NAME = 'fc-update';
+const NAME = 'fc-upload';
 
 export default {
     name: NAME,
+    formCreateParser: {
+        toFormValue(value) {
+            return toArray(value);
+        },
+        toValue(formValue) {
+            return this.rule.props.limit === 1 ? (formValue[0] || '') : formValue;
+        }
+    },
     props: {
         limit: {
             type: Number,
             default: 0
         },
-        ctx: {
+        formCreateRule: {
             type: Object,
             default: () => ({props: {}})
         },
@@ -87,7 +96,7 @@ export default {
     },
     render() {
         const isShow = (!this.limit || this.limit > this.uploadList.length);
-        const ctx = {...this.ctx};
+        const ctx = {...this.formCreateRule};
         ctx.on = deepExtend({}, ctx.on || {});
         return <div>
             <AUpload {...ctx} on-preview={this.onHandle.bind(this)}

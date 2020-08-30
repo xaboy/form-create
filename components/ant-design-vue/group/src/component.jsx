@@ -1,4 +1,5 @@
 import {deepExtendArgs} from '@form-create/utils/lib/deepextend';
+
 const NAME = 'fc-group';
 
 export default {
@@ -10,7 +11,10 @@ export default {
             type: Boolean,
             default: true
         },
-        formCreate: Object,
+        formCreate: {
+            type: Object,
+            default: () => ({})
+        },
         max: {
             type: Number,
             default: 0
