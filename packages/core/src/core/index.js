@@ -36,9 +36,12 @@ export default function createFormCreate(drive) {
         modelEvents[id.toLocaleLowerCase()] = model;
     }
 
-    function createParser() {
-        return class Parser extends BaseParser {
+    function createParser(proto) {
+        class Parser extends BaseParser {
+
         }
+        Object.assign(Parser.prototype, proto);
+        return Parser;
     }
 
     function component(id, component) {
@@ -48,8 +51,10 @@ export default function createFormCreate(drive) {
             return get$FormCreate();
         if (component === undefined)
             return components[id];
-        else
+        else {
+            if (component.formCreateParser) setParser(id, createParser(component.formCreateParser));
             components[id] = component;
+        }
     }
 
     function margeGlobal(config, _options) {

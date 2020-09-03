@@ -2,6 +2,7 @@ import {_vue as Vue} from './index';
 import {debounce, errMsg, isFunction, isString, isUndef, isValidChildren} from '@form-create/utils';
 import VNode from '../factory/vNode';
 import VData, {vdataField} from '../factory/vData';
+import deepextend from '@form-create/utils/lib/deepextend';
 
 
 const $de = debounce((fn) => fn(), 1);
@@ -182,6 +183,12 @@ export default class Render {
             .ref(refName).key('fc_item' + key).props('formCreate', this.$handle.fCreateApi)
             .on('fc.subForm', (subForm) => this.$handle.addSubForm(parser, subForm));
 
+        data.props({
+            formCreate: this.$handle.fCreateApi,
+            formCreateParser: parser,
+            formCreateRule: deepextend({},data._data),
+            formCreateOptions: parser.rule.options
+        })
         const model = this.$handle.modelEvent(parser);
         if (!custom)
             data.on(model.event || model, (value) => {
@@ -189,7 +196,6 @@ export default class Render {
             }).props(model.prop || 'value', this.$handle.getFormData(parser));
 
         this.$form.inputVData && this.$form.inputVData(parser, custom);
-
         return data;
     }
 

@@ -6,6 +6,10 @@ const NAME = 'fc-frame';
 export default {
     name: NAME,
     props: {
+        formCreateParser: {
+            type: Object,
+            default: () => ({})
+        },
         type: {
             type: String,
             default: 'input'
@@ -189,8 +193,9 @@ export default {
         makeItem(index, children) {
             return <div class='fc-files' key={this.key('file' + index)}>{...children}</div>;
         },
-        valid(field) {
-            if (field !== this.field)
+        valid(f) {
+            const field = this.formCreateParser.field || this.field;
+            if (f !== field)
                 throw new Error('frame 无效的字段值');
         },
 
@@ -317,5 +322,8 @@ export default {
                 {this.makeFooter()}
             </el-dialog>
         </div>
+    },
+    mounted() {
+        this.$on('fc.closeModal', this.closeModal);
     }
 }

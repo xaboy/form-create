@@ -116,7 +116,13 @@ function mock() {
             {value: 2, label: "方便", disabled: false},
             {value: 3, label: "实用", disabled: false},
             {value: 4, label: "有效", disabled: false},
-        ]).col({span: 8}),
+        ]).col({span: 8}).children([
+            {
+                type:'el-checkbox',
+                children:['asdf'],
+                slot:'default'
+            }
+        ]),
 
 
         //switch 开关组件

@@ -1,9 +1,11 @@
 import toArray from '@form-create/utils/lib/toarray';
+import TreeParser from './parser';
 
 const NAME = 'fc-tree';
 
 export default {
     name: NAME,
+    parser: TreeParser,
     props: {
         ctx: {
             type: Object,

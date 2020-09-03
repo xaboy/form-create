@@ -1,9 +1,11 @@
 import {toSlot} from '@form-create/utils/lib/toslot';
+import SelectParser from './parser';
 
 const NAME = 'fc-select';
 export default {
     name: NAME,
     functional: true,
+    parser: SelectParser,
     props: {
         options: {
             type: Array,

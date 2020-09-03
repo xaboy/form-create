@@ -18,6 +18,7 @@ export const drive = {
     makers,
     getConfig,
     modelEvents,
+    nodes
 };
 
 const {FormCreate, install} = createFormCreate(drive);

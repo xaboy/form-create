@@ -393,7 +393,7 @@ export default function Api(h) {
         },
         closeModal: (field) => {
             const parser = h.fieldList[field];
-            parser && parser.closeModel && parser.closeModel();
+            parser && parser.el.$emit && parser.el.$emit('fc.closeModal');
         }
     };
 }

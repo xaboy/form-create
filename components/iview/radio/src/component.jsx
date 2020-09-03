@@ -1,7 +1,10 @@
+import RadioParser from './parser';
+
 const NAME = 'fc-radio';
 
 export default {
     name: NAME,
+    parser: RadioParser,
     functional: true,
     props: {
         options: {

@@ -3,7 +3,7 @@ export default {
     icon: 'a-icon',
     slider: 'a-slider',
     rate: 'a-rate',
-    upload: 'fc-update',
+    upload: 'fc-upload',
     cascader: 'a-cascader',
     timePicker: 'a-time-picker',
     datePicker: 'a-date-picker',

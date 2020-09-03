@@ -145,7 +145,8 @@ export default class Handle {
     }
 
     createParser(rule) {
-        return new (this.fc.parsers[toString(rule.type).toLocaleLowerCase()] || BaseParser)(this, rule, '' + uniqueId());
+        //TODO 优化
+        return new (this.fc.parsers[toString(rule.type).toLocaleLowerCase()] || this.fc.parsers[this.fc.drive.nodes[rule.type]] || BaseParser)(this, rule, '' + uniqueId());
     }
 
     parseRule(_rule) {

@@ -1,17 +1,19 @@
+import RadioParser from './parser';
+
 const NAME = 'fc-radio';
 
 export default {
     name: NAME,
     functional: true,
     props: {
-        options: {
+        formCreateOptions: {
             type: Array,
             default: () => ([])
         },
         type: String
     },
     render(h, ctx) {
-        return <ElRadioGroup {...ctx.data}>{ctx.props.options.map((opt, index) => {
+        return <ElRadioGroup {...ctx.data}>{ctx.props.formCreateOptions.map((opt, index) => {
             const props = {...opt};
             const Type = ctx.props.type === 'button' ? 'ElRadioButton' : 'ElRadio';
             delete props.value;

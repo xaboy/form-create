@@ -1,5 +1,6 @@
 import toArray from '@form-create/utils/lib/toarray';
 import './style.css';
+import UploadParser from './parser';
 
 function parseFile(file, i) {
     return {
@@ -17,7 +18,7 @@ const NAME = 'fc-upload';
 
 export default {
     name: NAME,
-
+    parser: UploadParser,
     props: {
         ctx: {
             type: Object,

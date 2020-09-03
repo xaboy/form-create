@@ -1,7 +1,10 @@
+import CheckboxParser from './parser';
+
 const NAME = 'fc-checkbox';
 
 export default {
     name: NAME,
+    parser: CheckboxParser,
     props: {
         options: {
             type: Array,

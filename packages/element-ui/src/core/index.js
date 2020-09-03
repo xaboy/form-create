@@ -16,6 +16,7 @@ export const drive = {
     parsers,
     makers,
     getConfig,
+    nodes,
 };
 
 const {FormCreate, install} = createFormCreate(drive);
