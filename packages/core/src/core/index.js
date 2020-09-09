@@ -170,6 +170,7 @@ export default function createFormCreate(drive) {
 
             if (Vue._installedFormCreate === true) return;
             Vue._installedFormCreate = true;
+            _vue = Vue;
 
             const $formCreate = function (rules, opt = {}) {
                 return FormCreate.create(rules, opt, this);
@@ -181,7 +182,6 @@ export default function createFormCreate(drive) {
 
             Vue.component(formCreateName, get$FormCreate());
             Vue.component(fragment.name, _vue.extend(fragment));
-            _vue = Vue;
         }
 
         static init(rules, _opt = {}) {

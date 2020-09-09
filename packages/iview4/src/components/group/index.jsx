@@ -9,6 +9,7 @@ export default {
     props: {
         rule: Object,
         rules: Array,
+        expand: Number,
         button: {
             type: Boolean,
             default: true
@@ -164,10 +165,14 @@ export default {
             } else if (index >= this.min) {
                 return this.delIcon(key);
             }
+        },
+        emitEvent(name, args, index, key) {
+            this.$emit(name, ...args, this.group$f[key], index);
         }
     },
     created() {
-        for (let i = 0; i < this.value.length; i++) {
+        const len = this.value.length > this.expand ? this.value.length : (this.expand || 0);
+        for (let i = 0; i < len; i++) {
             this.addRule();
         }
     },
@@ -189,6 +194,7 @@ export default {
                         on-change={this.formData}
                         on-set-value={this.formData}
                         on-on-reload={this.formData}
+                        on-emit-event={(name, ...args) => this.emitEvent(name, args, index, key)}
                         on-mounted={($f) => this.add$f(index, key, $f)} rule={rule}
                         option={this.option}/></FormItem></Col>
                     {button ? <Col span={2} pull={1} push={1}>{this.makeIcon(keys.length, index, key)}</Col> : null}

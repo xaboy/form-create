@@ -239,13 +239,16 @@ export default class Handle {
             }
             if (!eventName) return;
 
-            const _fieldKey = `${emitKey}-${eventName}`;
-            const fieldKey = toLine(_fieldKey).replace('_', '-');
+            const _fieldKey = toLine(`${emitKey}-${eventName}`);
+            const fieldKey = _fieldKey.replace('_', '-');
 
             const fn = (...arg) => {
                 this.vm.$emit(fieldKey, ...arg);
-                if (_fieldKey !== fieldKey)
+                this.vm.$emit('emit-event', fieldKey, ...arg);
+                if (_fieldKey !== fieldKey) {
                     this.vm.$emit(_fieldKey, ...arg);
+                    this.vm.$emit('emit-event', fieldKey, ...arg);
+                }
             };
             fn.__emit = true;
             event[eventName] = (this.options.injectEvent || config.inject !== undefined) ? this.inject(rule, fn, inject) : fn;
@@ -444,7 +447,7 @@ export default class Handle {
     }
 
     removeField(parser, value) {
-        const {id, field} = parser, index = this.sortList.indexOf(id);
+        const {id, field, name} = parser, index = this.sortList.indexOf(id);
 
         delParser(parser, value);
         $del(this.parsers, id);
@@ -456,9 +459,12 @@ export default class Handle {
         if (!this.fieldList[field]) {
             $del(this.validate, field);
             $del(this.formData, field);
-            $del(this.customData, field);
             $del(this.fieldList, field);
             $del(this.trueData, field);
+        }
+
+        if (name && this.customData[name]) {
+            $del(this.customData, name);
         }
 
         if (this.subForm[parser.field])
