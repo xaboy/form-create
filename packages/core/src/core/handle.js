@@ -243,8 +243,11 @@ export default class Handle {
 
             const fn = (...arg) => {
                 this.vm.$emit(fieldKey, ...arg);
-                if (_fieldKey !== fieldKey)
+                this.vm.$emit('emit-event', fieldKey, ...arg);
+                if (_fieldKey !== fieldKey) {
                     this.vm.$emit(_fieldKey, ...arg);
+                    this.vm.$emit('emit-event', fieldKey, ...arg);
+                }
             };
             fn.__emit = true;
             event[eventName] = (this.options.injectEvent || config.inject !== undefined) ? this.inject(rule, fn, inject) : fn;

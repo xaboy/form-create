@@ -164,6 +164,9 @@ export default {
             } else if (index >= this.min) {
                 return this.delIcon(key);
             }
+        },
+        emitEvent(name, args, index, key) {
+            this.$emit(name, ...args, this.group$f[key], index);
         }
     },
     created() {
@@ -189,6 +192,7 @@ export default {
                         on-change={this.formData}
                         on-set-value={this.formData}
                         on-on-reload={this.formData}
+                        on-emit-event={(name, ...args) => this.emitEvent(name, args, index, key)}
                         on-mounted={($f) => this.add$f(index, key, $f)} rule={rule}
                         option={this.option}/></FormItem></Col>
                     {button ? <Col span={2} pull={1} push={1}>{this.makeIcon(keys.length, index, key)}</Col> : null}
