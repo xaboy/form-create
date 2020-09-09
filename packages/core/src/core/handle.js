@@ -238,8 +238,8 @@ export default class Handle {
             }
             if (!eventName) return;
 
-            const _fieldKey = `${emitKey}-${eventName}`;
-            const fieldKey = toLine(_fieldKey).replace('_', '-');
+            const _fieldKey = toLine(`${emitKey}-${eventName}`);
+            const fieldKey = _fieldKey.replace('_', '-');
 
             const fn = (...arg) => {
                 this.vm.$emit(fieldKey, ...arg);
