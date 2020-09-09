@@ -446,7 +446,7 @@ export default class Handle {
     }
 
     removeField(parser, value) {
-        const {id, field} = parser, index = this.sortList.indexOf(id);
+        const {id, field, name} = parser, index = this.sortList.indexOf(id);
 
         delParser(parser, value);
         $del(this.parsers, id);
@@ -458,9 +458,12 @@ export default class Handle {
         if (!this.fieldList[field]) {
             $del(this.validate, field);
             $del(this.formData, field);
-            $del(this.customData, field);
             $del(this.fieldList, field);
             $del(this.trueData, field);
+        }
+
+        if (name && this.customData[name]) {
+            $del(this.customData, name);
         }
 
         if (this.subForm[parser.field])
