@@ -186,7 +186,8 @@ export default class Render {
         data.props({
             formCreate: this.$handle.fCreateApi,
             formCreateParser: parser,
-            formCreateRule: deepextend({},data._data),
+            formCreateField: parser.isDef ? parser.field : undefined,
+            formCreateRule: deepextend({}, data._data),
             formCreateOptions: parser.rule.options
         })
         const model = this.$handle.modelEvent(parser);

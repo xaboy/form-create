@@ -6,18 +6,12 @@ const NAME = 'fc-frame';
 export default {
     name: NAME,
     props: {
-        formCreateParser: {
-            type: Object,
-            default: () => ({})
-        },
+        formCreateField: String,
         type: {
             type: String,
             default: 'input'
         },
-        field: {
-            type: String,
-            default: ''
-        },
+        field: String,
         helper: {
             type: Boolean,
             default: true
@@ -194,9 +188,9 @@ export default {
             return <div class='fc-files' key={this.key('file' + index)}>{...children}</div>;
         },
         valid(f) {
-            const field = this.formCreateParser.field || this.field;
-            if (f !== field)
-                throw new Error('frame 无效的字段值');
+            const field = this.formCreateField || this.field;
+            if (field && f !== field)
+                throw new Error('[frame]无效的字段值');
         },
 
         makeIcons(val, index) {

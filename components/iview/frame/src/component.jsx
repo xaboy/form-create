@@ -9,14 +9,12 @@ export default function createFrame(config) {
         name: NAME,
         parser: FrameParser,
         props: {
+            formCreateField: String,
             type: {
                 type: String,
                 default: 'input'
             },
-            field: {
-                type: String,
-                default: ''
-            },
+            field: String,
             helper: {
                 type: Boolean,
                 default: true
@@ -186,9 +184,10 @@ export default function createFrame(config) {
             makeItem(index, children) {
                 return <div class='fc-files' key={this.key('file' + index)}>{...children}</div>;
             },
-            valid(field) {
-                if (field !== this.field)
-                    throw new Error('frame 无效的字段值');
+            valid(f) {
+                const field = this.formCreateField || this.field;
+                if (field && f !== field)
+                    throw new Error('[frame]无效的字段值');
             },
 
             makeIcons(val, index) {
