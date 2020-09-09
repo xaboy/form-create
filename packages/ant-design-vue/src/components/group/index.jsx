@@ -8,6 +8,7 @@ export default {
     props: {
         rule: Object,
         rules: Array,
+        expand: Number,
         button: {
             type: Boolean,
             default: true
@@ -169,7 +170,8 @@ export default {
         }
     },
     created() {
-        for (let i = 0; i < this.value.length; i++) {
+        const len = this.value.length > this.expand ? this.value.length : (this.expand || 0);
+        for (let i = 0; i < len; i++) {
             this.addRule();
         }
     },
