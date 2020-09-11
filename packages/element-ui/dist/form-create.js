@@ -1,5 +1,5 @@
 /*!
- * @form-create/element-ui v1.0.18
+ * @form-create/element-ui v1.0.19
  * (c) 2018-2020 xaboy
  * Github https://github.com/xaboy/form-create
  * Released under the MIT License.
@@ -2737,7 +2737,7 @@
           __origin__: enumerable(_rule)
         });
         Object.keys(def).forEach(function (k) {
-          if (!rule.hasOwnProperty(k)) $set(rule, k, def[k]);
+          if (!{}.hasOwnProperty.call(rule, k)) $set(rule, k, def[k]);
         });
         if (rule.field && this.options.formData[rule.field] !== undefined) rule.value = this.options.formData[rule.field];
         rule.options = parseArray(rule.options);
@@ -2836,9 +2836,9 @@
 
           if (!eventName) return;
 
-          var _fieldKey = "".concat(emitKey, "-").concat(eventName);
+          var _fieldKey = toLine("".concat(emitKey, "-").concat(eventName));
 
-          var fieldKey = toLine(_fieldKey).replace('_', '-');
+          var fieldKey = _fieldKey.replace('_', '-');
 
           var fn = function fn() {
             var _this4$vm, _this4$vm2;
@@ -2849,7 +2849,15 @@
 
             (_this4$vm = _this4.vm).$emit.apply(_this4$vm, [fieldKey].concat(arg));
 
-            if (_fieldKey !== fieldKey) (_this4$vm2 = _this4.vm).$emit.apply(_this4$vm2, [_fieldKey].concat(arg));
+            (_this4$vm2 = _this4.vm).$emit.apply(_this4$vm2, ['emit-event', fieldKey].concat(arg));
+
+            if (_fieldKey !== fieldKey) {
+              var _this4$vm3, _this4$vm4;
+
+              (_this4$vm3 = _this4.vm).$emit.apply(_this4$vm3, [_fieldKey].concat(arg));
+
+              (_this4$vm4 = _this4.vm).$emit.apply(_this4$vm4, ['emit-event', fieldKey].concat(arg));
+            }
           };
 
           fn.__emit = true;
@@ -3086,6 +3094,7 @@
       value: function removeField(parser, value) {
         var id = parser.id,
             field = parser.field,
+            name = parser.name,
             index = this.sortList.indexOf(id);
         delParser(parser, value);
         $del(this.parsers, id);
@@ -3097,9 +3106,12 @@
         if (!this.fieldList[field]) {
           $del(this.validate, field);
           $del(this.formData, field);
-          $del(this.customData, field);
           $del(this.fieldList, field);
           $del(this.trueData, field);
+        }
+
+        if (name && this.customData[name]) {
+          $del(this.customData, name);
         }
 
         if (this.subForm[parser.field]) $del(this.subForm, field);
@@ -3413,6 +3425,7 @@
           if (options && isPlainObject(options)) margeGlobal(globalConfig, options);
           if (Vue._installedFormCreate === true) return;
           Vue._installedFormCreate = true;
+          _vue = Vue;
 
           var $formCreate = function $formCreate(rules) {
             var opt = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
@@ -3423,7 +3436,6 @@
           Vue.prototype.$formCreate = $formCreate;
           Vue.component(formCreateName, get$FormCreate());
           Vue.component(fragment.name, _vue.extend(fragment));
-          _vue = Vue;
         }
       }, {
         key: "init",
@@ -3548,6 +3560,7 @@
     props: {
       rule: Object,
       rules: Array,
+      expand: Number,
       button: {
         type: Boolean,
         default: true
@@ -3586,8 +3599,7 @@
         }),
         len: 0,
         cacheRule: {},
-        group$f: {},
-        fieldRule: {}
+        group$f: {}
       };
     },
     computed: {
@@ -3640,12 +3652,8 @@
       formData: function formData() {
         var _this2 = this;
 
-        var n = Object.keys(this.fieldRule).map(function (key) {
-          var keys = Object.keys(_this2.fieldRule[key]);
-          return _this2.rule ? keys[0] === undefined ? null : _this2.fieldRule[key][keys[0]].value : keys.reduce(function (initial, field) {
-            initial[field] = _this2.fieldRule[key][field].value;
-            return initial;
-          }, {});
+        var n = Object.keys(this.group$f).map(function (key) {
+          return _this2.group$f[key].formData();
         });
         this.$emit('input', n);
         this.$emit('change', n);
@@ -3671,7 +3679,6 @@
       add$f: function add$f(i, key, $f) {
         this.group$f[key] = $f;
         this.setValue($f, this.value[i]);
-        this.syncData(key, $f);
         this.subForm();
         this.$emit('itemMounted', $f, Object.keys(this.cacheRule).indexOf(key));
         this.formData();
@@ -3683,23 +3690,14 @@
           return _this4.group$f[k];
         }));
       },
-      syncData: function syncData(key, $f) {
-        var _this5 = this;
-
-        this.$set(this.fieldRule, key, {});
-        $f.fields().forEach(function (field) {
-          _this5.fieldRule[key][field] = $f.getRule(field);
-        });
-      },
       removeRule: function removeRule(key, emit) {
-        var _this6 = this;
+        var _this5 = this;
 
         var index = Object.keys(this.cacheRule).indexOf(key);
         this.$delete(this.cacheRule, key);
-        this.$delete(this.fieldRule, key);
         this.$delete(this.group$f, key);
         if (emit) this.$nextTick(function () {
-          return _this6.$emit('remove', index);
+          return _this5.$emit('remove', index);
         });
       },
       copyRule: function copyRule() {
@@ -3726,7 +3724,7 @@
         });
       },
       delIcon: function delIcon(key) {
-        var _this7 = this;
+        var _this6 = this;
 
         var h = this.$createElement;
         return h("i", {
@@ -3735,13 +3733,13 @@
           "style": "font-size:".concat(this.fontSize, "px;cursor:").concat(this.disabled ? 'not-allowed;color:#c9cdd4' : 'pointer;color:#606266', ";"),
           "on": {
             "click": function click() {
-              return _this7.del(key);
+              return _this6.del(key);
             }
           }
         });
       },
       makeIcon: function makeIcon(total, index, key) {
-        var _this8 = this;
+        var _this7 = this;
 
         if (this.$scopedSlots.button) return this.$scopedSlots.button({
           total: total,
@@ -3749,7 +3747,7 @@
           vm: this,
           key: key,
           del: function del() {
-            return _this8.del(key);
+            return _this7.del(key);
           },
           add: this.add
         });
@@ -3759,15 +3757,20 @@
         } else if (index >= this.min) {
           return this.delIcon(key);
         }
+      },
+      emitEvent: function emitEvent(name, args, index, key) {
+        this.$emit.apply(this, [name].concat(_toConsumableArray(args), [this.group$f[key], index]));
       }
     },
     created: function created() {
-      for (var i = 0; i < this.value.length; i++) {
+      var len = this.value.length > this.expand ? this.value.length : this.expand || 0;
+
+      for (var i = 0; i < len; i++) {
         this.addRule();
       }
     },
     render: function render() {
-      var _this9 = this;
+      var _this8 = this;
 
       var h = arguments[0];
       var keys = Object.keys(this.cacheRule);
@@ -3785,7 +3788,7 @@
       }) : h("div", {
         "key": 'con'
       }, [keys.map(function (key, index) {
-        var rule = _this9.cacheRule[key];
+        var rule = _this8.cacheRule[key];
         return h("ElRow", {
           "attrs": {
             "align": "middle",
@@ -3799,15 +3802,23 @@
           }
         }, [h("ElFormItem", [h("FormCreate", {
           "on": {
-            "change": _this9.formData,
-            "set-value": _this9.formData,
+            "change": _this8.formData,
+            "set-value": _this8.formData,
+            "on-reload": _this8.formData,
+            "emit-event": function emitEvent(name) {
+              for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+                args[_key - 1] = arguments[_key];
+              }
+
+              return _this8.emitEvent(name, args, index, key);
+            },
             "mounted": function mounted($f) {
-              return _this9.add$f(index, key, $f);
+              return _this8.add$f(index, key, $f);
             }
           },
           "attrs": {
             "rule": rule,
-            "option": _this9.option
+            "option": _this8.option
           }
         })])]), button ? h("ElCol", {
           "attrs": {
@@ -3815,7 +3826,7 @@
             "pull": 1,
             "push": 1
           }
-        }, [_this9.makeIcon(keys.length, index, key)]) : null]);
+        }, [_this8.makeIcon(keys.length, index, key)]) : null]);
       })]);
     }
   };
@@ -3981,7 +3992,7 @@
       key: "init",
       value: function init() {
         var props = this.rule.props;
-        if (props.autosize && props.autosize.minRows) $set(props, 'rows', props.autosize.minRows || 2);
+        if (props && props.autosize && props.autosize.minRows) $set(props, 'rows', props.autosize.minRows || 2);
       }
     }]);
 
@@ -4242,6 +4253,7 @@
           handleIcon: ctx.props.handleIcon,
           onHandle: ctx.props.onHandle,
           allowRemove: ctx.props.allowRemove,
+          previewMask: ctx.props.previewMask,
           value: this.$handle.getFormData(this),
           ctx: ctx,
           children: children
@@ -4693,7 +4705,7 @@
   VNode.use(nodes);
   var drive = {
     ui: "element-ui",
-    version: "".concat("1.0.18"),
+    version: "".concat("1.0.19"),
     formRender: Form,
     components: components,
     parsers: parsers,
