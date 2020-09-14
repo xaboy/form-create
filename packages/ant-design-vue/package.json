@@ -1,6 +1,6 @@
 {
   "name": "@form-create/ant-design-vue",
-  "version": "1.0.18",
+  "version": "1.0.19",
   "description": "ant-design-vue 版表单生成器|ant-design-vue Form builder with dynamic rendering, data collection, validation and submission capabilities, built-in 17 common form components, support for two-way data binding, event extension, and support for building built-in components and any vue components using json.",
   "main": "./src/core/index.js",
   "module": "./src/core/index.js",
@@ -41,7 +41,7 @@
   },
   "homepage": "http://www.form-create.com",
   "dependencies": {
-    "@form-create/core": "^1.0.18",
+    "@form-create/core": "^1.0.19",
     "@form-create/utils": "^1.0.15",
     "@form-create/component-antdv-group": "^0.0.1",
     "@form-create/component-antdv-upload": "^0.0.1",

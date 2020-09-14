@@ -138,7 +138,7 @@ export default class Handle {
                     this.setFormData(parser, parser.toFormValue(value));
                     this.valueChange(parser, value);
                     this.refresh();
-                    this.vm.$emit('setValue', parser.field, value, this.fCreateApi);
+                    this.vm.$emit('set-value', parser.field, value, this.fCreateApi);
                 }
             }
         };
@@ -157,7 +157,7 @@ export default class Handle {
         });
 
         Object.keys(def).forEach(k => {
-            if (!rule.hasOwnProperty(k)) $set(rule, k, def[k]);
+            if (!({}).hasOwnProperty.call(rule, k)) $set(rule, k, def[k]);
         });
 
         if (rule.field && this.options.formData[rule.field] !== undefined)

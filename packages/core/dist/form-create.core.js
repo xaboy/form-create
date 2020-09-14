@@ -1,5 +1,5 @@
 /*!
- * @form-create/core v1.0.18
+ * @form-create/core v1.0.19
  * (c) 2018-2020 xaboy
  * Github https://github.com/xaboy/form-create
  * Released under the MIT License.
@@ -1721,7 +1721,7 @@ function () {
         __origin__: enumerable(_rule)
       });
       Object.keys(def).forEach(function (k) {
-        if (!rule.hasOwnProperty(k)) $set(rule, k, def[k]);
+        if (!{}.hasOwnProperty.call(rule, k)) $set(rule, k, def[k]);
       });
       if (rule.field && this.options.formData[rule.field] !== undefined) rule.value = this.options.formData[rule.field];
       rule.options = parseArray(rule.options);
@@ -1820,9 +1820,9 @@ function () {
 
         if (!eventName) return;
 
-        var _fieldKey = "".concat(emitKey, "-").concat(eventName);
+        var _fieldKey = toLine("".concat(emitKey, "-").concat(eventName));
 
-        var fieldKey = toLine(_fieldKey).replace('_', '-');
+        var fieldKey = _fieldKey.replace('_', '-');
 
         var fn = function fn() {
           var _this4$vm, _this4$vm2;
@@ -1833,7 +1833,15 @@ function () {
 
           (_this4$vm = _this4.vm).$emit.apply(_this4$vm, [fieldKey].concat(arg));
 
-          if (_fieldKey !== fieldKey) (_this4$vm2 = _this4.vm).$emit.apply(_this4$vm2, [_fieldKey].concat(arg));
+          (_this4$vm2 = _this4.vm).$emit.apply(_this4$vm2, ['emit-event', fieldKey].concat(arg));
+
+          if (_fieldKey !== fieldKey) {
+            var _this4$vm3, _this4$vm4;
+
+            (_this4$vm3 = _this4.vm).$emit.apply(_this4$vm3, [_fieldKey].concat(arg));
+
+            (_this4$vm4 = _this4.vm).$emit.apply(_this4$vm4, ['emit-event', fieldKey].concat(arg));
+          }
         };
 
         fn.__emit = true;
@@ -2070,6 +2078,7 @@ function () {
     value: function removeField(parser, value) {
       var id = parser.id,
           field = parser.field,
+          name = parser.name,
           index = this.sortList.indexOf(id);
       delParser(parser, value);
       $del(this.parsers, id);
@@ -2081,9 +2090,12 @@ function () {
       if (!this.fieldList[field]) {
         $del(this.validate, field);
         $del(this.formData, field);
-        $del(this.customData, field);
         $del(this.fieldList, field);
         $del(this.trueData, field);
+      }
+
+      if (name && this.customData[name]) {
+        $del(this.customData, name);
       }
 
       if (this.subForm[parser.field]) $del(this.subForm, field);
@@ -2397,6 +2409,7 @@ function createFormCreate(drive) {
         if (options && isPlainObject(options)) margeGlobal(globalConfig, options);
         if (Vue._installedFormCreate === true) return;
         Vue._installedFormCreate = true;
+        _vue = Vue;
 
         var $formCreate = function $formCreate(rules) {
           var opt = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
@@ -2407,7 +2420,6 @@ function createFormCreate(drive) {
         Vue.prototype.$formCreate = $formCreate;
         Vue.component(formCreateName, get$FormCreate());
         Vue.component(fragment.name, _vue.extend(fragment));
-        _vue = Vue;
       }
     }, {
       key: "init",
