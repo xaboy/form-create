@@ -1,22 +1,45 @@
-import RadioParser from './parser';
-
 const NAME = 'fc-radio';
 
 export default {
     name: NAME,
-    parser: RadioParser,
-    functional: true,
     props: {
-        options: {
+        formCreateRule: {
+            type: Object,
+            default: () => ({})
+        },
+        formCreateOptions: {
             type: Array,
-            default: () => ([])
+            default: () => []
+        },
+        value: {}
+    },
+    watch: {
+        value() {
+            this.update();
         }
     },
-    render(h, ctx) {
-        return <RadioGroup {...ctx.data}>{ctx.props.options.map((opt, index) => {
-            const props = {...opt};
-            delete props.value;
-            return <Radio {...{props}} key={'' + index + props.value}/>
-        }).concat(ctx.chlidren)}</RadioGroup>
+    data() {
+        return {
+            trueValue: []
+        }
+    },
+    methods: {
+        onInput(n) {
+            this.$emit('input', this.formCreateOptions.filter((opt) => opt.label === n).reduce((initial, opt) => opt.value, ''));
+        },
+        update() {
+            this.trueValue = this.formCreateOptions.filter((opt) => opt.value === this.value).reduce((initial, opt) => opt.label, '');
+        }
+    },
+    created() {
+        this.update();
+    },
+    render() {
+        return <RadioGroup {...this.formCreateRule} value={this.trueValue}
+            on-input={this.onInput}>{this.formCreateOptions.map((opt, index) => {
+                const props = {...opt};
+                delete props.value;
+                return <Radio {...{props}} key={'' + index + props.value}/>
+            })}{this.$slots.default}</RadioGroup>
     }
 }

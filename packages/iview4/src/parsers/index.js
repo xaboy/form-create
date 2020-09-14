@@ -11,15 +11,15 @@ import tree from './tree';
 import upload from './upload';
 
 export default [
-    checkbox,
+    // checkbox,
     datePicker,
     frame,
     hidden,
     input,
-    radio,
-    select,
+    // radio,
+    // select,
     slider,
     iswitch,
-    tree,
-    upload
+    // tree,
+    // upload
 ]

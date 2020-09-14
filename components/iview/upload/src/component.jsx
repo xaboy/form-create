@@ -1,7 +1,5 @@
 import toArray from '@form-create/utils/lib/toarray';
 import './style.css';
-import '../../frame/src/style.css';
-import UploadParser from './parser';
 
 function parseFile(file) {
     return {
@@ -20,9 +18,8 @@ const NAME = 'fc-upload';
 export default function createUpload(config) {
     return {
         name: NAME,
-        parser: UploadParser,
         props: {
-            ctx: {
+            formCreateRule: {
                 type: Object,
                 default: () => ({props: {}})
             },
@@ -57,9 +54,9 @@ export default function createUpload(config) {
             }
         },
         created() {
-            if (this.ctx.props.showUploadList === undefined)
-                this.ctx.props.showUploadList = false;
-            this.ctx.props.defaultFileList = toArray(this.value).map(parseFile);
+            if (this.formCreateRule.props.showUploadList === undefined)
+                this.formCreateRule.props.showUploadList = false;
+            this.formCreateRule.props.defaultFileList = toArray(this.value).map(parseFile);
         },
         watch: {
             value(n) {
@@ -80,7 +77,7 @@ export default function createUpload(config) {
                 return unique;
             },
             isDisabled() {
-                return this.ctx.props.disabled === true;
+                return this.formCreateRule.props.disabled === true;
             },
             onRemove(file) {
                 if (this.isDisabled()) return;
@@ -129,16 +126,16 @@ export default function createUpload(config) {
             },
             makeUpload() {
                 const isShow = (!this.maxLength || this.maxLength > this.uploadList.length);
-                return <Upload ref="upload"
-                    style={{display: 'inline-block'}} {...this.ctx}
+                return <Upload {...this.formCreateRule} ref="upload"
+                    style={{display: 'inline-block'}}
                     key={this.key('upload')}>
                     {isShow ? <template slot="default">
-                        <div class="fc-upload-btn">
+                        {this.$slots.default ? this.$slots.default : <div class="fc-upload-btn">
                             <icon props={{
                                 type: this.uploadType === 'file' ? 'ios-cloud-upload-outline' : config.imgUpIcon,
                                 size: 20
                             }}/>
-                        </div>
+                        </div>}
                     </template> : null}
                 </Upload>;
             },
@@ -152,14 +149,14 @@ export default function createUpload(config) {
         },
         render() {
             if (this.$refs.upload) {
-                if (this.ctx.props.showUploadList === undefined)
-                    this.ctx.props.showUploadList = this.$refs.upload.showUploadList;
-                this.ctx.props.defaultFileList = this.$refs.upload.defaultFileList;
+                if (this.formCreateRule.props.showUploadList === undefined)
+                    this.formCreateRule.props.showUploadList = this.$refs.upload.showUploadList;
+                this.formCreateRule.props.defaultFileList = this.$refs.upload.defaultFileList;
             }
             return (
                 <div class={{
                     '_fc-upload': true
-                }}>{[this.ctx.props.showUploadList ? [] : this.makeFiles(), this.makeUpload()]}
+                }}>{[this.formCreateRule.props.showUploadList ? [] : this.makeFiles(), this.makeUpload()]}
                     <Modal title={this.modalTitle} v-model={this.previewVisible} footerHide={true}>
                         <img alt="example" style="width: 100%" src={this.previewImage}/>
                     </Modal>

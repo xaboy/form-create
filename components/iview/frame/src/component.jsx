@@ -1,13 +1,11 @@
 import toArray from '@form-create/utils/lib/toarray';
 import './style.css'
-import FrameParser from './parser';
 
 const NAME = 'fc-frame';
 
 export default function createFrame(config) {
     return {
         name: NAME,
-        parser: FrameParser,
         props: {
             formCreateField: String,
             type: {
@@ -317,6 +315,9 @@ export default function createFrame(config) {
                     </div>
                 </Modal>
             </div>
+        },
+        mounted() {
+            this.$on('fc.closeModal', this.closeModal);
         }
     };
 }

@@ -1,19 +1,13 @@
 import toArray from '@form-create/utils/lib/toarray';
-import TreeParser from './parser';
 
 const NAME = 'fc-tree';
 
 export default {
     name: NAME,
-    parser: TreeParser,
     props: {
-        ctx: {
+        formCreateRule: {
             type: Object,
             default: () => ({props: {}})
-        },
-        children: {
-            type: Array,
-            default: () => []
         },
         type: {
             type: String,
@@ -37,41 +31,31 @@ export default {
     methods: {
         setStatus(value) {
             const n = toArray(value);
-            const data = this.$refs.tree.data;
-            this.type === 'selected' ? this.selected(data, n) : this.checked(data, n);
+            const data = this.formCreateRule.props.data;
+            this.type === 'selected' ? this.checked(data, n, 'selected') : this.checked(data, n, 'checked');
+            this.$forceUpdate();
         },
-        selected(_data, value) {
+        checked(_data, value, type) {
             _data.forEach((node) => {
-                this.$set(node, 'selected', value.indexOf(node.id) !== -1);
+                this.$set(node, type, value.indexOf(node.id) !== -1);
                 if (node.children !== undefined && Array.isArray(node.children))
-                    this.selected(node.children, value);
+                    this.checked(node.children, value, type);
             });
         },
-        checked(_data, value) {
-            _data.forEach((node) => {
-                this.$set(node, 'checked', value.indexOf(node.id) !== -1);
-                if (node.children !== undefined && Array.isArray(node.children))
-                    this.checked(node.children, value);
-            });
-        },
-        updateTreeData() {
-            const type = (this.type).toLocaleLowerCase();
-
-            if (type === 'selected')
-                this.treeData = this.$refs.tree.getSelectedNodes();
-            else
-                this.treeData = this.$refs.tree.getCheckedNodes();
-            this.$emit('input', this.treeData.map(node => node.id));
+        onInput(list) {
+            this.$emit('input', list.map(node => node.id));
         }
     },
     render() {
-        return <Tree ref="tree" {...this.ctx}>{this.children}</Tree>;
+        const on = {};
+        if (this.type === 'selected') {
+            on['on-select-change'] = this.onInput;
+        } else {
+            on['on-check-change'] = this.onInput;
+        }
+        return <Tree {...this.formCreateRule} ref="tree" on={on}>{this.$slots.default}</Tree>;
     },
     mounted() {
-        this.$nextTick(() => {
-            this.setStatus(this.value);
-            this.$watch(() => this.$refs.tree.flatState, () => this.updateTreeData())
-        })
-
+        this.onInput(this.type === 'selected' ? this.$refs.tree.getSelectedNodes() : this.$refs.tree.getCheckedNodes());
     }
 }
