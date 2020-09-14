@@ -29,7 +29,7 @@ export default {
     },
     methods: {
         onInput(n) {
-            this.$emit('input', this.formCreateOptions.filter((opt) => n.indexOf(opt.label) !== -1).map((opt) => opt.value));
+            this.$emit('input', this.formCreateOptions.filter((opt) => n.indexOf(opt.label) !== -1).map((opt) => opt.value).filter(v => v !== undefined));
         },
         update() {
             this.trueValue = this.value ? this.formCreateOptions.filter((opt) => this.value.indexOf(opt.value) !== -1)
@@ -40,7 +40,7 @@ export default {
         this.update();
     },
     render() {
-        return <ElCheckboxGroup {...this.formCreateRule} v-model={this.trueValue}
+        return <ElCheckboxGroup {...this.formCreateRule} value={this.trueValue}
             on-input={this.onInput}>{this.formCreateOptions.map((opt, index) => {
                 const props = {...opt};
                 const Type = this.type === 'button' ? 'ElCheckboxButton' : 'ElCheckbox';

@@ -17,11 +17,11 @@ export default [
     frame,
     hidden,
     input,
-    radio,
-    select,
+    // radio,
+    // select,
     slider,
     iswitch,
     timePicker,
-    tree,
-    upload
+    // tree,
+    // upload
 ]

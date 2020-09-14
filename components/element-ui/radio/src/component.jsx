@@ -1,23 +1,47 @@
-import RadioParser from './parser';
-
 const NAME = 'fc-radio';
 
 export default {
     name: NAME,
-    functional: true,
     props: {
+        formCreateRule: {
+            type: Object,
+            default: () => ({})
+        },
         formCreateOptions: {
             type: Array,
-            default: () => ([])
+            default: () => []
         },
+        value: {},
         type: String
     },
-    render(h, ctx) {
-        return <ElRadioGroup {...ctx.data}>{ctx.props.formCreateOptions.map((opt, index) => {
-            const props = {...opt};
-            const Type = ctx.props.type === 'button' ? 'ElRadioButton' : 'ElRadio';
-            delete props.value;
-            return <Type {...{props}} key={Type + index + props.value}/>;
-        }).concat(ctx.chlidren)}</ElRadioGroup>
+    watch: {
+        value() {
+            this.update();
+        }
+    },
+    data() {
+        return {
+            trueValue: []
+        }
+    },
+    methods: {
+        onInput(n) {
+            this.$emit('input', this.formCreateOptions.filter((opt) => opt.label === n).reduce((initial, opt) => opt.value, ''));
+        },
+        update() {
+            this.trueValue = this.formCreateOptions.filter((opt) => opt.value === this.value).reduce((initial, opt) => opt.label, '');
+        }
+    },
+    created() {
+        this.update();
+    },
+    render() {
+        return <ElRadioGroup {...this.formCreateRule} value={this.trueValue}
+            on-input={this.onInput}>{this.formCreateOptions.map((opt, index) => {
+                const props = {...opt};
+                const Type = this.type === 'button' ? 'ElRadioButton' : 'ElRadio';
+                delete props.value;
+                return <Type {...{props}} key={Type + index + props.value}/>
+            })}{this.$slots.default}</ElRadioGroup>
     }
 }

@@ -9,7 +9,7 @@ import tree from './tree';
 import upload from './upload';
 
 const maker = {...datePicker, ...frame, ...input, ...select, ...slider, ...timePicker, ...tree, ...upload},
-    names = ['autoComplete','checkbox', 'cascader', 'colorPicker', 'datePicker', 'frame', 'inputNumber', 'radio', 'rate'];
+    names = ['tree', 'upload','autoComplete', 'checkbox', 'cascader', 'colorPicker', 'datePicker', 'frame', 'inputNumber', 'radio', 'rate', 'select'];
 
 names.forEach(name => {
     maker[name] = creatorFactory(name);

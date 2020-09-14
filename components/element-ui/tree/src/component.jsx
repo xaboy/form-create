@@ -1,19 +1,23 @@
 import toArray from '@form-create/utils/lib/toarray';
-import TreeParser from './parser';
+import {$set} from '@form-create/utils/lib/modify';
 
 const NAME = 'fc-tree';
 
 export default {
     name: NAME,
-    parser: TreeParser,
+    formCreateParser: {
+        init() {
+            const props = this.rule.props;
+            if (!(props.nodeKey)) $set(props, 'nodeKey', 'id');
+            if (!(props.props)) $set(props, 'props', {
+                label: 'title'
+            });
+        }
+    },
     props: {
-        ctx: {
+        formCreateRule: {
             type: Object,
             default: () => ({props: {}})
-        },
-        children: {
-            type: Array,
-            default: () => ([])
         },
         type: {
             type: String,
@@ -54,8 +58,8 @@ export default {
         }
     },
     render() {
-        return <ElTree ref="tree" on-check-change={() => this.updateValue()}
-            on-node-click={() => this.updateValue()} {...this.ctx}>{this.children}</ElTree>;
+        return <ElTree {...this.formCreateRule} ref="tree" on-check-change={() => this.updateValue()}
+            on-node-click={() => this.updateValue()}>{this.$slots.default}</ElTree>;
     },
     mounted() {
         this.setValue();

@@ -1,6 +1,5 @@
 import toArray from '@form-create/utils/lib/toarray';
 import './style.css';
-import UploadParser from './parser';
 
 function parseFile(file, i) {
     return {
@@ -18,9 +17,8 @@ const NAME = 'fc-upload';
 
 export default {
     name: NAME,
-    parser: UploadParser,
     props: {
-        ctx: {
+        formCreateRule: {
             type: Object,
             default: () => ({props: {}})
         },
@@ -35,7 +33,7 @@ export default {
             type: String,
             default: 'file'
         },
-        maxLength: {
+        limit: {
             type: Number,
             default: 0
         },
@@ -56,9 +54,9 @@ export default {
         }
     },
     created() {
-        if (this.ctx.props.showFileList === undefined)
-            this.ctx.props.showFileList = false;
-        this.ctx.props.fileList = toArray(this.value).map(parseFile);
+        if (this.formCreateRule.props.showFileList === undefined)
+            this.formCreateRule.props.showFileList = false;
+        this.formCreateRule.props.fileList = toArray(this.value).map(parseFile);
     },
     watch: {
         value(n) {
@@ -69,7 +67,7 @@ export default {
                 this.uploadList = this.$refs.upload.uploadFiles;
             }
         },
-        maxLength(n, o) {
+        limit(n, o) {
             if (o === 1 || n === 1)
                 this.update();
         }
@@ -79,7 +77,7 @@ export default {
             return unique;
         },
         isDisabled() {
-            return this.ctx.props.disabled === true;
+            return this.formCreateRule.props.disabled === true;
         },
         onRemove(file) {
             if (this.isDisabled()) return;
@@ -126,20 +124,20 @@ export default {
                 class='fc-files'>{(file.percentage !== undefined && file.status !== 'success') ? this.makeProgress(file, index) : [this.makeItem(file, index), this.makeIcons(file, index)]}</div>);
         },
         makeUpload() {
-            const isShow = (!this.maxLength || this.maxLength > this.uploadList.length);
-            return <ElUpload ref="upload"
-                style={{display: 'inline-block'}} {...this.ctx}
+            const isShow = (!this.limit || this.limit > this.uploadList.length);
+            return <ElUpload {...this.formCreateRule} ref="upload"
+                style={{display: 'inline-block'}}
                 key={this.key('upload')}>
                 {isShow ? <template slot="default">
-                    <div class='fc-upload-btn'>
+                    {this.$slots.default ? this.$slots.default : <div class='fc-upload-btn'>
                         <i class="el-icon-upload2"/>
-                    </div>
+                    </div>}
                 </template> : null}
             </ElUpload>;
         },
         update() {
             let files = this.$refs.upload.uploadFiles.map((file) => file.url).filter((url) => url !== undefined);
-            this.$emit('input', this.maxLength === 1 ? (files[0] || '') : files);
+            this.$emit('input', this.limit === 1 ? (files[0] || '') : files);
         },
         handleCancel() {
             this.previewVisible = false;
@@ -147,12 +145,13 @@ export default {
     },
     render() {
         if (this.$refs.upload) {
-            if (this.ctx.props.showFileList === undefined)
-                this.ctx.props.showFileList = this.$refs.upload.showFileList;
-            this.ctx.props.fileList = this.$refs.upload.fileList;
+            if (this.formCreateRule.props.showFileList === undefined)
+                this.formCreateRule.props.showFileList = this.$refs.upload.showFileList;
+            this.formCreateRule.props.fileList = this.$refs.upload.fileList;
         }
         return (
-            <div class='_fc-upload'>{[this.ctx.props.showFileList ? [] : this.makeFiles(), this.makeUpload()]}
+            <div
+                class='_fc-upload'>{[this.formCreateRule.props.showFileList ? [] : this.makeFiles(), this.makeUpload()]}
                 <el-dialog modal={this.previewMask} title={this.modalTitle} visible={this.previewVisible}
                     on-close={this.handleCancel}>
                     <img alt="example" style="width: 100%" src={this.previewImage}/>
