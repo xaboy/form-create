@@ -80,10 +80,10 @@ export default class Form extends BaseForm {
             labelWidth = (!col.labelWidth && !rule.title) ? 0 : col.labelWidth, {inline, col: _col} = this.propsData.props,
             propsData = this.vData.props({
                 prop: field,
-                // label: rule.title,
+                label: rule.title,
                 // labelFor: unique,
                 rules: rule.validate,
-                labelWidth: toString(labelWidth),
+                labelWidth: labelWidth === void 0 ? labelWidth : toString(labelWidth),
                 required: rule.props.required
             }).key(fItemUnique).ref(formItemRefName).class(rule.className).get(),
             node = this.vNode.formItem(propsData, [child, this.makeFormPop(parser, fItemUnique)]);
