@@ -242,6 +242,10 @@ export default class Render {
             return this.vNode[parser.originType](vdata, children);
         return this.vNode.make(parser.originType, vdata, children);
     }
+
+    renderRule(rule, children) {
+        return this.vm.$createElement(rule.type, rule, children);
+    }
 }
 
 function setTemplateProps(vm, parser, fApi) {

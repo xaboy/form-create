@@ -385,6 +385,8 @@ function mock() {
             multiple: true,
             showCheckbox: true,
             emptyText: '暂无数据',
+            defaultExpandAll: true,
+            expandOnClickNode: false,
             data: [
                 {
                     title: 'parent 1',

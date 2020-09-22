@@ -14,6 +14,7 @@ export default function getConfig() {
             size: undefined,
         },
         row: {
+            valid:true,
             gutter: 0,
             type: undefined,
             align: undefined,
