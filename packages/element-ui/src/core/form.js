@@ -1,4 +1,4 @@
-import {isFunction, preventDefault, toString, isString, isType} from '@form-create/utils';
+import {isFunction, preventDefault, toString, isString, isType, isPlainObject, isUndef} from '@form-create/utils';
 import {BaseForm} from '@form-create/core';
 import style from '../style/index.css';
 
@@ -85,25 +85,48 @@ export default class Form extends BaseForm {
                 rules: rule.validate,
                 labelWidth: labelWidth === void 0 ? labelWidth : toString(labelWidth),
                 required: rule.props.required
-            }).key(fItemUnique).ref(formItemRefName).class(rule.className).get(),
+            }).key(fItemUnique).ref(formItemRefName).class(rule.className).get();
+        let node = null
+        /// if rule.info && rule.props.info  && rule.props.info.isWrap === true
+        /// 不要影响以前的逻辑
+        if (isPlainObject(rule.props) && rule.props.info && rule.props.info.isWrap === true) {
+            node = this.vNode.formItem(propsData, [this.makeFormPop(parser, fItemUnique, true), child])
+        } else {
             node = this.vNode.formItem(propsData, [child, this.makeFormPop(parser, fItemUnique)]);
+        }
         return (inline === true || _col === false) ? node : this.makeCol(col, parser, fItemUnique, [node]);
     }
 
-    makeFormPop({rule}, unique) {
+    makeFormPop({rule}, unique, isWrap) {
         if (rule.title) {
             const titleProp = isString(rule.title) ? {title: rule.title} : rule.title;
             const info = this.options.info || {}, svn = [titleProp.title || ''];
             if (rule.info) {
-                svn.push(this.vNode.make(isTooltip(info) ? 'el-tooltip' : 'el-popover', {
-                    props: {...info, content: rule.info},
-                    key: `pop${unique}`
-                }, [
-                    this.vNode.icon({
-                        class: [info.icon || 'el-icon-warning'],
-                        slot: isTooltip(info) ? 'default' : 'reference'
-                    })
-                ]));
+                if (isWrap) {
+                    console.log(titleProp)
+                    const labelSlotNode = this.vNode.make(
+                        isTooltip(info) ? 'el-tooltip' : 'el-popover',
+                        {
+                            props: {...info, content: rule.info},
+                            key: `pop${unique}`,
+                            slot: 'label'
+                        },
+                        [
+                            this.vNode.make('span', {slot: isTooltip(info) ? 'default' : 'reference'}, titleProp.title)
+                        ]
+                    )
+                    return labelSlotNode
+                } else {
+                    svn.push(this.vNode.make(isTooltip(info) ? 'el-tooltip' : 'el-popover', {
+                        props: {...info, content: rule.info},
+                        key: `pop${unique}`
+                    }, [
+                        this.vNode.icon({
+                            class: [info.icon || 'el-icon-warning'],
+                            slot: isTooltip(info) ? 'default' : 'reference'
+                        })
+                    ]));
+                }
             }
             return this.vNode.make('span', {...titleProp, slot: 'label'}, svn);
         }

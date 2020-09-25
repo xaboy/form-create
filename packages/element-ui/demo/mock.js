@@ -22,7 +22,11 @@ function mock() {
             clearable: true,
             disabled: false,
             maxlength: 20,
-            prefixIcon: 'el-icon-info'
+            prefixIcon: 'el-icon-info',
+            /// 需要设置是否是包裹label
+            info: {
+                isWrap: true
+            }
         }).validate([
             {required: true, message: '请输入商品名称', trigger: 'blur'}
         ]).event({
@@ -39,7 +43,7 @@ function mock() {
                     {value: queryString}, {value: queryString + queryString}
                 ]);
             }
-        }).emitPrefix('xaboy').emit(['change']),
+        }).emitPrefix('xaboy').emit(['change']).info('请输入自动完成!!!!!'),
 
 
         //textarea 组件
