@@ -103,7 +103,6 @@ export default class Form extends BaseForm {
             const info = this.options.info || {}, svn = [titleProp.title || ''];
             if (rule.info) {
                 if (isWrap) {
-                    console.log(titleProp)
                     const labelSlotNode = this.vNode.make(
                         isTooltip(info) ? 'el-tooltip' : 'el-popover',
                         {
