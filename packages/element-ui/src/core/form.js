@@ -75,7 +75,7 @@ export default class Form extends BaseForm {
 
     makeFormItem(parser, child) {
         let fItemUnique = `fItem${parser.key}${this.unique}`,
-            {rule, field, formItemRefName} = parser,
+            {rule, field, formItemRefName, options} = parser,
             col = this.getGetCol(parser),
             labelWidth = (!col.labelWidth && !rule.title) ? 0 : col.labelWidth, {inline, col: _col} = this.propsData.props,
             propsData = this.vData.props({
@@ -87,9 +87,9 @@ export default class Form extends BaseForm {
                 required: rule.props.required
             }).key(fItemUnique).ref(formItemRefName).class(rule.className).get();
         let node = null
-        /// if rule.info && rule.props.info  && rule.props.info.isWrap === true
+        /// if rule.info is object && options.info.icon === false
         /// 不要影响以前的逻辑
-        if (isPlainObject(rule.props) && rule.props.info && rule.props.info.isWrap === true) {
+        if (options.info.icon === false) {
             node = this.vNode.formItem(propsData, [this.makeFormPop(parser, fItemUnique, true), child])
         } else {
             node = this.vNode.formItem(propsData, [child, this.makeFormPop(parser, fItemUnique)]);

@@ -23,10 +23,6 @@ function mock() {
             disabled: false,
             maxlength: 20,
             prefixIcon: 'el-icon-info',
-            /// 需要设置是否是包裹label
-            info: {
-                isWrap: true
-            }
         }).validate([
             {required: true, message: '请输入商品名称', trigger: 'blur'}
         ]).event({
