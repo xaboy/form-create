@@ -85,15 +85,8 @@ export default class Form extends BaseForm {
                 rules: rule.validate,
                 labelWidth: labelWidth === void 0 ? labelWidth : toString(labelWidth),
                 required: rule.props.required
-            }).key(fItemUnique).ref(formItemRefName).class(rule.className).get();
-        let node = null
-        /// if rule.info is object && options.info.icon === false
-        /// 不要影响以前的逻辑
-        if (options.info.icon === false) {
-            node = this.vNode.formItem(propsData, [this.makeFormPop(parser, fItemUnique, true), child])
-        } else {
-            node = this.vNode.formItem(propsData, [child, this.makeFormPop(parser, fItemUnique)]);
-        }
+            }).key(fItemUnique).ref(formItemRefName).class(rule.className).get(),
+            node = this.vNode.formItem(propsData, [this.makeFormPop(parser, fItemUnique, options.info.icon === false), child])
         return (inline === true || _col === false) ? node : this.makeCol(col, parser, fItemUnique, [node]);
     }
 
