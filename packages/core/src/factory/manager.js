@@ -4,11 +4,14 @@ import unique from '@form-create/utils/lib/unique';
 export default class Manager {
     constructor(handle) {
         this.$handle = handle;
-        this.$render = handle.$render;
         this.vm = handle.vm;
         this.options = {};
         this.key = unique();
         this.ref = 'fcForm';
+    }
+
+    init() {
+        this.$render = this.$handle.$render;
     }
 
     form() {
@@ -16,7 +19,7 @@ export default class Manager {
     }
 
     updateOptions(options) {
-        this.options = mergeProps(this.tidyOptions(options), this.getDefaultOptions(), {
+        this.options = mergeProps([this.tidyOptions(options)], this.getDefaultOptions(), {
             normal: ['form', 'row', 'info', 'submitBtn', 'resetBtn']
         })
     }
@@ -29,11 +32,12 @@ export default class Manager {
         return rule;
     }
 
-    getDefaultOptions() {
-        return {};
+    mergeRule(rule) {
+        return rule;
     }
 
-    process() {
+    getDefaultOptions() {
+        return {};
     }
 
     render(children) {

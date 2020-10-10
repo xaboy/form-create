@@ -1,6 +1,7 @@
-import {$set, deepExtend, errMsg, isFunction, isPlainObject, isUndef} from '@form-create/utils';
 import {toJson} from './util';
-
+import {$set} from '@form-create/utils/lib/modify';
+import deepExtend from '@form-create/utils/lib/deepextend';
+import is from '@form-create/utils/lib/type';
 
 export default function Api(h) {
 
@@ -29,7 +30,7 @@ export default function Api(h) {
         },
         setValue(field, value) {
             let formData = field;
-            if (!isPlainObject(field))
+            if (!is.Object(field))
                 formData = {[field]: value};
             Object.keys(formData).forEach(key => {
                 const parser = h.fieldList[key];
@@ -65,7 +66,7 @@ export default function Api(h) {
             let fields = Object.keys(h.fieldList), index = h.sortList.length, rules;
 
             if (rule.field && fields.indexOf(rule.field) !== -1)
-                return console.error(`${rule.field} 字段已存在` + errMsg());
+                return console.error(`${rule.field} 字段已存在`);
 
             const parser = h.getParser(after);
 
@@ -84,7 +85,7 @@ export default function Api(h) {
             let fields = Object.keys(h.fieldList), index = 0, rules;
 
             if (rule.field && fields.indexOf(rule.field) !== -1)
-                return console.error(`${rule.field} 字段已存在` + errMsg());
+                return console.error(`${rule.field} 字段已存在`);
 
             const parser = h.getParser(after);
 
@@ -240,7 +241,7 @@ export default function Api(h) {
         method(id, name) {
             const el = this.el(id);
             if (!el || !el[name])
-                throw new Error('方法不存在' + errMsg());
+                throw new Error('方法不存在');
             return (...args) => {
                 return el[name](...args);
             }
@@ -271,7 +272,7 @@ export default function Api(h) {
                 ...{
                     ___this: {
                         validate(call) {
-                            h.$form.validate((valid) => {
+                            h.$manager.validate((valid) => {
                                 call && call(valid);
                             });
                         }
@@ -280,7 +281,7 @@ export default function Api(h) {
             };
             let keys = Object.keys(subForm).filter(field => {
                     const sub = subForm[field];
-                    return Array.isArray(sub) ? sub.length : !isUndef(sub);
+                    return Array.isArray(sub) ? sub.length : !is.Undef(sub);
                 }), len = keys.length, subLen;
             const validFn = (valid, field) => {
                 if (valid) {
@@ -314,7 +315,7 @@ export default function Api(h) {
         validateField: (field, callback) => {
             if (!h.fieldList[field])
                 return;
-            h.$form.validateField(field, callback);
+            h.$manager.validateField(field, callback);
         },
         resetFields(fields) {
             let parsers = h.fieldList;
@@ -323,7 +324,7 @@ export default function Api(h) {
                 if (!parser) return;
 
                 if (parser.type === 'hidden') return;
-                h.$form.resetField(parser);
+                h.$manager.resetField(parser);
                 h.refreshControl(parser);
                 h.$render.clearCache(parser, true);
             });
@@ -332,11 +333,11 @@ export default function Api(h) {
             this.validate((valid) => {
                 if (valid) {
                     let formData = this.formData();
-                    if (isFunction(successFn))
+                    if (is.Function(successFn))
                         successFn(formData, this);
                     else {
                         h.options.onSubmit && h.options.onSubmit(formData, this);
-                        h.fc.$emit('on-submit', formData, this);
+                        h.fc.$emit('submit', formData, this);
                     }
                 } else {
                     failFn && failFn(this)
@@ -349,7 +350,7 @@ export default function Api(h) {
                 const parser = h.fieldList[field];
                 if (!parser)
                     return;
-                h.$form.clearValidateState(parser);
+                h.$manager.clearValidateState(parser);
             });
         },
         clearSubValidateState(fields) {

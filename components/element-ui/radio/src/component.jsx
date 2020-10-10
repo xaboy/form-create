@@ -1,4 +1,4 @@
-const NAME = 'fc-radio';
+const NAME = 'fcRadio';
 
 export default {
     name: NAME,

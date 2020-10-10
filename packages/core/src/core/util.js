@@ -1,4 +1,5 @@
-import {deepExtend, isUndef} from '@form-create/utils';
+import deepExtend from '@form-create/utils/lib/deepextend';
+import is from '@form-create/utils/lib/type';
 
 const PREFIX = '[[FORM-CREATE-PREFIX-';
 const SUFFIX = '-FORM-CREATE-SUFFIX]]';
@@ -27,7 +28,7 @@ function makeFn(fn) {
 
 export function parseJson(json, mode) {
     return JSON.parse(json, function (k, v) {
-        if (isUndef(v) || !v.indexOf) return v;
+        if (is.Undef(v) || !v.indexOf) return v;
         try {
             if (v.indexOf(SUFFIX) > 0 && v.indexOf(PREFIX) === 0) {
                 v = v.replace(SUFFIX, '').replace(PREFIX, '');

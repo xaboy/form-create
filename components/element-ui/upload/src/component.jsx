@@ -13,7 +13,7 @@ function getFileName(file) {
     return ('' + file).split('/').pop()
 }
 
-const NAME = 'fc-upload';
+const NAME = 'fcUpload';
 
 export default {
     name: NAME,

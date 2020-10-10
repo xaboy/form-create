@@ -13,6 +13,7 @@ export default function deepExtend(origin, target = {}, mode) {
                     nst && $set(origin, key, []);
                 } else if (clone._clone) {
                     clone = clone._clone();
+                    //todo 检查逻辑
                     if (mode) {
                         clone = clone.getRule();
                         nst && $set(origin, key, {});

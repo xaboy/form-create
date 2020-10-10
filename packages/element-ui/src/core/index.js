@@ -1,31 +1,31 @@
 import components from '../components';
 import parsers from '../parsers';
-import getConfig from './config';
-import nodes from './nodes';
-import formRender from './form';
+import alias from './alias';
+import manager from './manager';
 import createFormCreate, {VNode} from '@form-create/core';
 import makers from '../makers';
 
-VNode.use(nodes);
+export default function createElmFormCreate() {
 
-export const drive = {
-    ui: process.env.UI,
-    version: `${process.env.VERSION}`,
-    formRender,
-    components,
-    parsers,
-    makers,
-    getConfig,
-    nodes,
-};
+    VNode.use(alias);
 
-const {FormCreate, install} = createFormCreate(drive);
+    const FormCreate = createFormCreate({
+        ui: process.env.UI,
+        version: `${process.env.VERSION}`,
+        manager
+    });
 
-if (typeof window !== 'undefined') {
-    window.formCreate = FormCreate;
-    if (window.Vue) {
-        install(window.Vue);
-    }
+    components.forEach(component => {
+        FormCreate.component(component.name, component);
+    });
+
+    parsers.forEach(({name, parser}) => {
+        FormCreate.setParser(name, parser);
+    });
+
+    Object.keys(makers).forEach(name => {
+        FormCreate.maker[name] = makers[name];
+    });
+
+    return FormCreate;
 }
-
-export default FormCreate;

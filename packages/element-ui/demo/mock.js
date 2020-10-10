@@ -11,8 +11,8 @@ function mock() {
 
 
         //cascader 多级联动组件
-        maker.cascader('所在区域', 'address', ['陕西省', '西安市', '新城区']).props({
-            options: window.province_city || []
+        maker.cascader('所在区域', 'address', ['陕西省', '西安市']).props({
+            options: formCreate.data.province_city || []
         }),
 
 

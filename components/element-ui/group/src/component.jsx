@@ -1,6 +1,6 @@
 import {deepExtendArgs} from '@form-create/utils/lib/deepextend';
 
-const NAME = 'fc-group';
+const NAME = 'fcGroup';
 
 export default {
     name: NAME,

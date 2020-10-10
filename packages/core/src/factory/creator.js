@@ -1,18 +1,26 @@
-import {$set, deepExtend, extend, isFunction, isPlainObject} from '@form-create/utils';
-import VData from './vData';
+import extend from '@form-create/utils/lib/extend';
+import deepExtend from '@form-create/utils/lib/deepextend';
+import mergeProps from '@form-create/utils/lib/mergeprops';
+import is from '@form-create/utils/lib/type';
+import {attrs, arrayAttrs} from '../core/attrs';
 
-function baseRule() {
-    return {
-        validate: [],
-        options: [],
-        col: {},
-        children: [],
-        control: [],
-        emit: [],
-        template: undefined,
-        emitPrefix: undefined,
-        native: undefined,
-        info: undefined,
+const baseRule = () => ({
+    props: {},
+    on: {},
+    validate: [],
+    options: [],
+    col: {},
+    children: [],
+    control: [],
+    emit: [],
+    type: undefined,
+})
+
+export function factory(name, init) {
+    return (title, field, value) => {
+        var creator = new Creator(name, title, field, value);
+        init && init(creator);
+        return creator;
     };
 }
 
@@ -23,65 +31,39 @@ export function creatorFactory(name) {
 export function creatorTypeFactory(name, type, typeName = 'type') {
     return (title, field, value, props = {}) => {
         const maker = new Creator(name, title, field, value, props);
-        if (isFunction(type)) type(maker);
+        if (is.Function(type)) type(maker);
         else maker.props(typeName, type);
         return maker;
     };
 }
 
-export default class Creator extends VData {
-    constructor(type, title, field, value, props = {}) {
-        super();
-        extend(this._data, baseRule());
-        extend(this._data, {type, title, field, value});
-        if (isPlainObject(props)) this.props(props);
-    }
+export default function Creator(type, title, field, value, props) {
+    this._data = baseRule();
+    extend(this._data, {type, title, field, value, props: props || {}});
+}
 
-    type(type) {
-        this.props('type', type);
+extend(Creator.prototype, {
+    getRule() {
+        return this._data;
+    },
+    setProp(key, value) {
+        this._data[key] = value;
         return this;
-    }
-
+    },
+    event(...args) {
+        this.on(...args);
+        return this;
+    },
     _clone() {
         const clone = new this.constructor();
         clone._data = deepExtend({}, this._data);
         return clone;
-    }
+    },
+})
 
-    getRule() {
-        return this._data;
-    }
-
-    event(...args) {
-        this.on(...args);
-        return this;
-    }
-}
-
-const keyAttrs = ['emitPrefix', 'className', 'value', 'name', 'title', 'native', 'info', 'hidden', 'visibility', 'inject', 'model'];
-
-keyAttrs.forEach(attr => {
-    Creator.prototype[attr] = function (value) {
-        $set(this._data, attr, value);
-        return this;
-    };
-});
-
-const objAttrs = ['col'];
-
-objAttrs.forEach(attr => {
-    Creator.prototype[attr] = function (opt) {
-        $set(this._data, attr, extend(this._data[attr], opt));
-        return this;
-    };
-});
-
-const arrAttrs = ['validate', 'options', 'children', 'emit', 'control'];
-
-arrAttrs.forEach(attr => {
-    Creator.prototype[attr] = function (opt) {
-        if (!Array.isArray(opt)) opt = [opt];
-        $set(this._data, attr, this._data[attr].concat(opt));
+attrs.forEach(name => {
+    Creator.prototype[name] = function (key, value) {
+        mergeProps([{[name]: value === undefined ? key : {[key]: value}}], this._data, {array: arrayAttrs});
         return this;
     };
 });

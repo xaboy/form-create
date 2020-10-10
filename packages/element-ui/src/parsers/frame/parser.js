@@ -3,8 +3,13 @@ import {BaseParser} from '@form-create/core';
 
 export default class Parser extends BaseParser {
 
+    inputVData(){
+        //todo 优化
+        this.prop.props.field = this.field;
+    }
+
     render(children) {
-        const data = this.$render.inputVData(this).props('field', this.field);
+        const data = this.$render.inputVData(this);
 
         return this.vNode.frame(data, children);
     }

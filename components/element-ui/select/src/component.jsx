@@ -1,6 +1,6 @@
 import {toSlot} from '@form-create/utils/lib/toslot';
 
-const NAME = 'fc-select';
+const NAME = 'fcSelect';
 export default {
     name: NAME,
     functional: true,

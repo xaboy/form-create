@@ -1,7 +1,7 @@
 import toArray from '@form-create/utils/lib/toarray';
 import {$set} from '@form-create/utils/lib/modify';
 
-const NAME = 'fc-tree';
+const NAME = 'fcTree';
 
 export default {
     name: NAME,

@@ -1,4 +1,4 @@
-const NAME = 'fc-checkbox';
+const NAME = 'fcCheckbox';
 
 export default {
     name: NAME,

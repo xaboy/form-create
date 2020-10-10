@@ -1,6 +1,6 @@
 import Creator, {creatorFactory} from './creator';
 import {parseJson, enumerable} from '../core/util';
-import {extend, isPlainObject, isString, isValidChildren} from '@form-create/utils';
+import is from '@form-create/utils/lib/type';
 
 
 const commonMaker = creatorFactory('');
@@ -22,23 +22,19 @@ export function createTmp(template, vm, field, title) {
 }
 
 export default function makerFactory() {
-    let maker = {};
-
-    extend(maker, {
+    return {
         create,
-        createTmp
-    });
-    maker.template = createTmp;
-    maker.parse = parse;
-
-    return maker;
+        createTmp,
+        template: createTmp,
+        parse: parse,
+    };
 }
 
 function parse(rule, toMaker = false) {
-    if (isString(rule)) rule = parseJson(rule);
+    if (is.String(rule)) rule = parseJson(rule);
 
     if (rule instanceof Creator) return toMaker ? rule : rule.getRule();
-    if (isPlainObject(rule)) {
+    if (is.Object(rule)) {
         const maker = ruleToMaker(rule);
         return toMaker ? maker : maker.getRule();
     } else if (!Array.isArray(rule)) return rule;
@@ -58,7 +54,7 @@ function findField(field, origin) {
     for (let i in this) {
         const rule = this[i] instanceof Creator ? this[i]._data : this[i];
         if (rule.field === field) return origin === true ? rule : this[i];
-        if (isValidChildren(rule.children)) children = children.concat(rule.children);
+        if (is.trueArray(rule.children)) children = children.concat(rule.children);
     }
     if (children.length > 0) return findField.call(children, field);
 }

@@ -1,11 +1,12 @@
 import {deepExtend} from '@form-create/utils';
+import extend from '@form-create/utils/lib/extend';
 
-export const formCreateName = 'FormCreate';
+const NAME = 'FormCreate';
 
-export default function $FormCreate(FormCreate, components) {
+export default function $FormCreate(FormCreate) {
     return {
-        name: formCreateName,
-        componentName: formCreateName,
+        name: NAME,
+        componentName: NAME,
         props: {
             rule: {
                 type: Array,
@@ -15,10 +16,9 @@ export default function $FormCreate(FormCreate, components) {
                 type: Object,
                 default: () => {
                     return {};
-                },
-                required: false
+                }
             },
-            value: Object
+            value: {}
         },
         data: () => {
             return {
@@ -30,7 +30,6 @@ export default function $FormCreate(FormCreate, components) {
                 unique: 1,
             };
         },
-        components,
         render() {
             return this.formCreate.render();
         },
@@ -54,6 +53,7 @@ export default function $FormCreate(FormCreate, components) {
         beforeCreate() {
             const {rule, option} = this.$options.propsData;
             this.formCreate = new FormCreate(rule, option);
+            extend(this.$options.components, this.formCreate.components);
             this.formCreate.beforeCreate(this);
         },
         created() {

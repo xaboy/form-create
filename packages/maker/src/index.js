@@ -1,6 +1,7 @@
 import extend from '@form-create/utils/lib/extend';
 import deepExtend from '@form-create/utils/lib/deepextend';
 import mergeProps, {normalMerge, toArrayMerge, functionalMerge} from '@form-create/utils/lib/mergeprops';
+import is from '@form-create/utils/lib/type';
 
 
 const baseRule = () => ({
@@ -14,21 +15,37 @@ const baseRule = () => ({
     emit: [],
 })
 
-const keyAttrs = ['slot', 'emitPrefix', 'className', 'value', 'name', 'title', 'native', 'info', 'hidden', 'visibility', 'inject', 'model', 'options', 'emit'];
+const keyAttrs = ['type', 'slot', 'emitPrefix', 'className', 'value', 'name', 'title', 'native', 'info', 'hidden', 'visibility', 'inject', 'model', 'options', 'emit'];
 
-export const allMerge = [...keyAttrs, ...normalMerge, ...toArrayMerge, ...functionalMerge, 'ref', 'key'];
+const arrayAttrs = ['validate', 'children', 'control'];
 
-export function factory(name, init) {
-    return (title, field, value) => {
-        var creator = new Maker(name, title, field, value);
-        init && init(creator);
-        return creator;
+export const allAttrs = [...keyAttrs, ...normalMerge, ...toArrayMerge, ...functionalMerge, ...arrayAttrs, 'ref', 'key'];
+//
+// export function factory(name, init) {
+//     return (title, field, value) => {
+//         var creator = new Maker(name, title, field, value);
+//         init && init(creator);
+//         return creator;
+//     };
+// }
+
+
+export function creatorFactory(name) {
+    return (title, field, value, props = {}) => new Maker(name, title, field, value, props);
+}
+
+export function creatorTypeFactory(name, type, typeName = 'type') {
+    return (title, field, value, props = {}) => {
+        const maker = new Maker(name, title, field, value, props);
+        if (is.Function(type)) type(maker);
+        else maker.props(typeName, type);
+        return maker;
     };
 }
 
-export default function Maker(type, title, field, value) {
+export default function Maker(type, title, field, value, props) {
     this._data = baseRule();
-    extend(this._data, {type, title, field, value});
+    extend(this._data, {type, title, field, value, props: props || {}});
 }
 
 Maker.prototype = {
@@ -40,16 +57,16 @@ Maker.prototype = {
         this.on(...args);
         return this;
     },
-    clone() {
+    _clone() {
         const clone = new this.constructor();
         clone._data = deepExtend({}, this._data);
         return clone;
     },
 };
 
-[...keyAttrs, ...normalMerge, ...toArrayMerge, ...functionalMerge].forEach(name => {
+[...keyAttrs, ...normalMerge, ...toArrayMerge, ...functionalMerge, ...arrayAttrs].forEach(name => {
     Maker.prototype[name] = function (value) {
-        mergeProps([{[name]: value}], this._data);
+        mergeProps([{[name]: value}], this._data, {array: arrayAttrs});
         return this;
     };
 });
