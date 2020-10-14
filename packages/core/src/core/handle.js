@@ -1,24 +1,14 @@
 import BaseParser from '../factory/parser';
 import Render from './render';
 import Api from './api';
-import {copyRule, enumerable} from './util';
+import {enumerable, mergeRule} from './util';
 import vNode from '../factory/vNode';
 import toLine from '@form-create/utils/lib/toline';
-import uniqueId from '@form-create/utils/lib/unique';
 import toCase from '@form-create/utils/lib/tocase';
 import {$del, $set} from '@form-create/utils/lib/modify';
-import extend from '@form-create/utils/lib/extend';
-import deepExtend from '@form-create/utils/lib/deepextend';
 import is from '@form-create/utils/lib/type';
 import {err} from '@form-create/utils/lib/console';
-
-
-export function getRule(rule) {
-    if (is.Function(rule.getRule))
-        return rule.getRule();
-    else
-        return rule;
-}
+import debounce from '@form-create/utils/lib/debounce';
 
 export default class Handle {
 
@@ -33,7 +23,7 @@ export default class Handle {
         this.formData = {};
         this.subForm = {};
 
-        this.fCreateApi = undefined;
+        this.api = undefined;
 
         this.__init(rules);
         this.$manager = new fc.manager(this);
@@ -43,12 +33,11 @@ export default class Handle {
 
         this.$render.initOrgChildren();
 
-        this.$manager.init();
+        this.$manager.__init();
     }
 
     __init(rules) {
         this.fieldList = {};
-        this.trueData = {};
         this.parsers = {};
         this.customData = {};
         this.sortList = [];
@@ -72,22 +61,22 @@ export default class Handle {
             if (parent && is.String(_rule)) return;
 
             if ((_rule.getRule && !_rule._data.type) || !_rule.type)
-                return err('未定义生成规则的 type 字段', _rule.getRule ? _rule._data : _rule);
+                return err('未定义生成规则的 type 字段', _rule);
 
             let parser;
-
+            //TODO 优化: 如果存在__fc__ 直接返回
             if (_rule.__fc__) {
                 parser = _rule.__fc__;
-                //规则在其他 form-create 中使用,自动浅拷贝
-                if (!parser.deleted && (parser.vm !== this.vm || this.parsers[parser.id])) {
-                    //todo 检查复制规则
-                    rules[index] = _rule = copyRule(_rule);
-                    parser = this.createParser(this.parseRule(_rule));
+                if (parser.deleted) {
+                    if (!parser._check(this)) {
+                        parser.update(this);
+                    }
                 } else {
-                    parser.update(this);
-                    let rule = parser.rule;
-                    this.parseOn(rule);
-                    this.parseProps(rule);
+                    if (!parser._check(this) || this.parsers[parser.id]) {
+                        //todo 检查复制规则
+                        rules[index] = _rule = _rule._clone ? _rule._clone() : mergeRule({}, _rule);
+                        parser = this.createParser(this.parseRule(_rule));
+                    }
                 }
             } else {
                 parser = this.createParser(this.parseRule(_rule));
@@ -95,14 +84,13 @@ export default class Handle {
             let children = parser.rule.children, rule = parser.rule;
             if (this.fieldList[parser.field] !== undefined) {
                 this.issetRule.push(_rule);
-                return err(`${rule.field} 字段已存在`, rule);
+                return err(`${parser.field} 字段已存在`, rule);
             }
+
+            [false, true].forEach(b => this.parseEmit(parser, b));
             parser.parent = parent || null;
             this.setParser(parser);
 
-            if (!_rule.__fc__) {
-                bindParser(_rule, parser);
-            }
             if (is.trueArray(children)) {
                 this.loadRule(children, parser);
             }
@@ -110,7 +98,7 @@ export default class Handle {
             if (!parent) {
                 this.sortList.push(parser.id);
             }
-
+            //todo 优化 children 渲染,避免监听 vue 的 value
             if (parser.input)
                 Object.defineProperty(parser.rule, 'value', this.valueHandle(parser));
 
@@ -132,18 +120,18 @@ export default class Handle {
                     this.setFormData(parser, parser.toFormValue(value));
                     this.valueChange(parser, value);
                     this.refresh();
-                    this.vm.$emit('set-value', parser.field, value, this.fCreateApi);
+                    this.vm.$emit('set-value', parser.field, value, this.api);
                 }
             }
         };
     }
 
     createParser(rule) {
-        return new (this.fc.parsers[rule.type] || this.fc.parsers[toCase(rule.type)] || this.fc.parsers[toCase('' + vNode.aliasMap[toCase(rule.type)])] || BaseParser)(this, rule, uniqueId());
+        return new (this.fc.parsers[rule.type] || this.fc.parsers[toCase(rule.type)] || this.fc.parsers[toCase('' + vNode.aliasMap[toCase(rule.type)])] || BaseParser)(this, rule);
     }
 
     parseRule(_rule) {
-        const def = defRule(), rule = getRule(_rule);
+        const def = defRule(), rule = is.Function(_rule.getRule) ? _rule.getRule() : _rule;
 
         Object.defineProperties(rule, {
             __origin__: enumerable(_rule)
@@ -157,45 +145,32 @@ export default class Handle {
             rule.value = this.options.formData[rule.field];
 
         rule.options = parseArray(rule.options);
-        this.parseOn(rule);
-        this.parseProps(rule);
+        ['on', 'props'].forEach(n => {
+            this.parseInjectEvent(rule, n || {});
+        })
 
         return rule;
     }
 
-    parseOn(rule) {
-        this.parseInjectEvent(rule, rule.on || {});
-        if (!this.watching) {
-            this.margeEmit(rule);
-        }
-    }
-
-    margeEmit(rule) {
-        const emitEvent = this.parseEmit(rule);
-        if (Object.keys(emitEvent).length > 0) extend(rule.on, emitEvent);
-    }
-
-    parseProps(rule) {
-        this.parseInjectEvent(rule, rule.props || {});
-    }
-
     parseInjectEvent(rule, on) {
-        if (this.options.injectEvent || rule.inject)
-            Object.keys(on).forEach(k => {
-                if (is.Function(on[k]))
-                    on[k] = this.inject(rule, on[k])
-            });
+        if (rule.inject === false) return;
+        const inject = rule.inject || this.options.injectEvent;
+        if (!is.Undef(inject)) return;
+        Object.keys(on).forEach(k => {
+            if (is.Function(on[k]))
+                on[k] = this.inject(rule, on[k], inject)
+        });
         return on;
     }
 
     getInjectData(self, inject) {
         const {option, rule} = this.vm.$options.propsData;
         return {
-            $f: this.fCreateApi,
+            $f: this.api,
             rule,
             self: self.__origin__,
             option,
-            inject: inject || rule.inject || {}
+            inject
         };
     }
 
@@ -217,37 +192,33 @@ export default class Handle {
         return fn;
     }
 
-    parseEmit(rule) {
-        //TODO 避免修改原始 rule
-        let event = {}, {emit, emitPrefix, field, name} = rule;
+    parseEmit(parser, on) {
+        let event = {}, rule = parser.rule, {emitPrefix, field, name, inject} = rule;
+        let emit = rule[on ? 'emit' : 'nativeEmit'] || [];
+        if (Array.isArray(emit)) {
+            let emitKey = emitPrefix || field || name;
+            if (emitKey) {
+                if (!on) emitKey = `native-${emitKey}`;
+                emit.forEach(eventName => {
+                    if (!eventName) return;
+                    const fieldKey = toLine(`${emitKey}-${eventName}`);
+                    const fn = (...arg) => {
+                        this.vm.$emit(fieldKey, ...arg);
+                        this.vm.$emit('emit-event', fieldKey, ...arg);
+                    };
+                    fn.__emit = true;
 
-        if (!Array.isArray(emit)) return event;
-        const emitKey = emitPrefix ? emitPrefix : (field || name);
-        if (!emitKey) return event;
-
-        emit.forEach(config => {
-            let inject, eventName = config;
-            if (is.Object(config)) {
-                eventName = config.name;
-                inject = config.inject;
+                    if (inject === false) {
+                        event[eventName] = fn;
+                    } else {
+                        inject = rule.inject || this.options.injectEvent;
+                        event[eventName] = is.Undef(inject) ? fn : this.inject(rule, fn, inject);
+                    }
+                });
             }
-            if (!eventName) return;
 
-            const _fieldKey = toLine(`${emitKey}-${eventName}`);
-            const fieldKey = _fieldKey.replace('_', '-');
-
-            const fn = (...arg) => {
-                this.vm.$emit(fieldKey, ...arg);
-                this.vm.$emit('emit-event', fieldKey, ...arg);
-                if (_fieldKey !== fieldKey) {
-                    this.vm.$emit(_fieldKey, ...arg);
-                    this.vm.$emit('emit-event', fieldKey, ...arg);
-                }
-            };
-            fn.__emit = true;
-            event[eventName] = (this.options.injectEvent || config.inject !== undefined) ? this.inject(rule, fn, inject) : fn;
-        });
-
+        }
+        parser.computed[on ? 'on' : 'nativeOn'] = event;
         return event;
     }
 
@@ -262,18 +233,12 @@ export default class Handle {
 
     setParser(parser) {
         let {id, field, name, rule} = parser;
-        if (this.parsers[id])
-            return;
         this.parsers[id] = parser;
-
-        if (name)
-            $set(this.customData, name, parser);
-
+        if (name) $set(this.customData, name, parser);
         if (!parser.input) return;
         this.fieldList[field] = parser;
         $set(this.formData, field, parser.toFormValue(rule.value));
         $set(this.validate, field, rule.validate || []);
-        $set(this.trueData, field, parser);
     }
 
     addSubForm(parser, subForm) {
@@ -295,7 +260,7 @@ export default class Handle {
             this.setFormData(parser, value);
             this.changeStatus = true;
             this.valueChange(parser);
-            this.vm.$emit('change', parser.field, val, this.fCreateApi);
+            this.vm.$emit('change', parser.field, val, this.api);
         }
     }
 
@@ -306,28 +271,27 @@ export default class Handle {
     created() {
         const vm = this.vm;
 
-        vm.$set(vm, 'buttonProps', this.options.submitBtn);
-        vm.$set(vm, 'resetProps', this.options.resetBtn);
         vm.$set(vm, 'formData', this.formData);
 
+        if (this.api === undefined)
+            this.api = Api(this);
 
-        if (this.fCreateApi === undefined)
-            this.fCreateApi = Api(this);
-        this.fCreateApi.rule = this.rules;
-        this.fCreateApi.config = this.options;
-        if (this.fCreateApi.form) {
-            const form = this.fCreateApi.form;
+        //todo 优化 formData
+        this.api.rule = this.rules;
+        this.api.config = this.options;
+        if (this.api.form) {
+            const form = this.api.form;
             Object.keys(form).forEach((field) => {
                 delete form[field];
             })
         } else {
-            Object.defineProperty(this.fCreateApi, 'form', {
+            Object.defineProperty(this.api, 'form', {
                 value: {},
                 writable: false,
                 enumerable: true
             });
         }
-        Object.defineProperties(this.fCreateApi.form, Object.keys(this.fCreateApi.formData()).reduce((initial, field) => {
+        Object.defineProperties(this.api.form, Object.keys(this.api.formData()).reduce((initial, field) => {
             const parser = this.getParser(field);
             const handle = this.valueHandle(parser);
             handle.configurable = true;
@@ -338,7 +302,7 @@ export default class Handle {
 
     addParserWitch(parser) {
         const vm = this.vm;
-
+        //TODO 提高 watch 复用
         Object.keys(parser.rule).forEach((key) => {
             if (['field', 'type', 'value', 'vm', 'template', 'name', 'config', 'control'].indexOf(key) !== -1 || parser.rule[key] === undefined) return;
             try {
@@ -346,17 +310,15 @@ export default class Handle {
                     this.watching = true;
                     if (key === 'validate')
                         this.validate[parser.field] = n;
-                    else if (key === 'props')
-                        this.parseProps(parser.rule);
-                    else if (key === 'on')
-                        this.parseOn(parser.rule);
-                    else if (key === 'emit')
-                        this.margeEmit(parser.rule);
-
+                    else if (['props', 'on', 'nativeOn'].indexOf(key) > -1)
+                        this.parseInjectEvent(parser.rule, n || {});
+                    else if (['emit', 'nativeEmit'].indexOf(key) > -1)
+                        this.parseEmit(parser, key === 'emit');
                     this.$render.clearCache(parser);
                     this.watching = false;
                 }, {deep: key !== 'children'}));
             } catch (e) {
+                console.error(e);
                 //
             }
         });
@@ -368,77 +330,91 @@ export default class Handle {
         }
     }
 
-
+    //todo 优化删除 rule
+    //todo 检查表单重置
+    //todo 检查深拷贝运行机制
+    //todo 减少 reload
+    //todo 优化 options 获取方式
     validateControl(parser) {
-        const controls = getControl(parser), len = controls.length, ctrlRule = parser.ctrlRule;
-        if (!len) return;
-        for (let i = 0; i < len; i++) {
-            const control = controls[i], validate = control.handle || (val => val === control.value);
-            if (validate(parser.rule.value, this.fCreateApi)) {
-                if (ctrlRule) {
-                    if (ctrlRule.children === control.rule)
-                        return;
-                    else
-                        removeControl(parser);
-                }
-                const rule = {
+        const controls = getControl(parser), validate = [], api = this.api;
+        if (!controls.length) return;
+        for (let i = 0; i < controls.length; i++) {
+            const control = controls[i], handleFn = control.handle || (val => val === control.value);
+            const data = {
+                ...control,
+                valid: handleFn(parser.rule.value, api),
+                ctrl: findControl(parser, control.rule),
+            };
+            if ((data.valid && data.ctrl) || (!data.valid && !data.ctrl)) continue;
+            validate.push(data);
+        }
+        if (!validate.length) return;
+        validate.forEach(({valid, rule, prepend, append, child, ctrl}) => {
+            if (valid) {
+                const ruleCon = {
                     type: 'fcFragment',
                     native: true,
-                    children: control.rule
-                };
-                //TODO 位置可自定义
-                parser.root.splice(parser.root.indexOf(parser.rule.__origin__) + 1, 0, rule);
-                parser.ctrlRule = rule;
-                this.vm.$emit('control', parser.rule.__origin__, this.fCreateApi);
-                parser.parent && this.$render.clearCache(parser.parent);
-                this.refresh();
-                return;
+                    children: rule
+                }
+                parser.ctrlRule.push(ruleCon);
+                if (prepend) {
+                    api.prepend(ruleCon, prepend, child)
+                } else if (append) {
+                    api.append(ruleCon, append, child)
+                } else {
+                    parser.root.splice(parser.root.indexOf(parser.rule.__origin__) + 1, 0, ruleCon);
+                }
+            } else {
+                parser.ctrlRule.splice(parser.ctrlRule.indexOf(ctrl), 1);
+                api.removeRule(ctrl);
             }
-        }
-        if (ctrlRule) {
-            removeControl(parser);
-            this.vm.$emit('control', parser.rule.__origin__, this.fCreateApi);
-            this.refresh();
-        }
+        });
+        parser.parent && this.$render.clearCache(parser.parent);
+        this.refresh();
     }
 
-    mountedParser() {
-        const vm = this.vm;
+    refreshControls() {
         Object.keys(this.parsers).forEach((id) => {
-            let parser = this.parsers[id];
-            if (parser.watch.length === 0) this.addParserWitch(parser);
-            this.refreshControl(parser);
-            parser.el = vm.$refs[parser.refName] || {};
-
-            if (parser.defaultValue === undefined)
-                parser.defaultValue = deepExtend({}, {value: parser.rule.value}).value;
-
-            parser.mounted && parser.mounted();
+            this.refreshControl(this.parsers[id]);
         });
     }
 
-    mounted() {
-        const mounted = this.options.mounted;
-
-        this.mountedParser();
-
-        mounted && mounted(this.fCreateApi);
-        this.fc.$emit('mounted', this.fCreateApi);
+    lifecycle(name) {
+        const fn = this.options[name];
+        this.refreshControls();
+        fn && fn(this.api);
+        this.fc.$emit(name, this.api);
     }
 
-    reload() {
-        const onReload = this.options.onReload;
-
-        this.mountedParser();
-
-        onReload && onReload(this.fCreateApi);
-        this.fc.$emit('reload', this.fCreateApi);
+    removeCtrl(parser) {
+        parser.ctrlRule.forEach(ctrl => this.api.removeRule(ctrl));
+        parser.ctrlRule = [];
     }
 
     removeParser(parser) {
+        let index = parser.root.indexOf(parser.rule.__origin__);
+        if (index === -1) return;
+        parser.root.splice(index, 1);
+        this.removeCtrl(parser);
+        //todo 优化 reloadRule
+        // if (this.sortList.indexOf(parser.id) === -1)
+        //     this.reloadRule();
+
+        return parser.rule.__origin__;
+    }
+
+    deleteParser(parser) {
         const {id, field, name} = parser, index = this.sortList.indexOf(id);
 
-        delParser(parser);
+        this.removeCtrl(parser);
+        parser._delete();
+
+        if (parser.input) {
+            Object.defineProperty(parser.rule, 'value', {
+                value: parser.rule.value
+            });
+        }
+
         $del(this.parsers, id);
 
         if (index > -1) {
@@ -449,7 +425,6 @@ export default class Handle {
             $del(this.validate, field);
             $del(this.formData, field);
             $del(this.fieldList, field);
-            $del(this.trueData, field);
         }
 
         if (name && this.customData[name]) {
@@ -466,31 +441,6 @@ export default class Handle {
         this.vm._refresh();
     }
 
-    reloadRule(rules) {
-        const vm = this.vm;
-        if (!rules) return this.reloadRule(this.rules);
-        if (!this.origin.length) this.fCreateApi.refresh();
-        this.origin = [...rules];
-
-        const parsers = {...this.parsers};
-        this.__init(rules);
-        this.loadRule(rules, false);
-        Object.keys(parsers).filter(id => this.parsers[id] === undefined)
-            .forEach(id => this.removeParser(parsers[id]));
-        this.$render.initOrgChildren();
-        this.formData = {...this.formData};
-        this.created();
-
-        vm.$f = this.fCreateApi;
-        this.$render.clearCacheAll();
-        this.refresh();
-
-        vm.$nextTick(() => {
-            this.reload();
-        });
-
-    }
-
     setFormData(parser, value) {
         $set(this.formData, parser.field, value);
     }
@@ -505,17 +455,36 @@ export default class Handle {
 
 }
 
-function delParser(parser) {
-    if (parser.ctrlRule)
-        removeControl(parser);
-    parser.watch.forEach((unWatch) => unWatch());
-    parser.watch = [];
-    parser.deleted = true;
-    parser.root = [];
-    if (parser.input) {
-        Object.defineProperty(parser.rule, 'value', {
-            value: parser.rule.value
-        });
+Handle.prototype.reloadRule = debounce(function (rules) {
+    const vm = this.vm;
+    if (!rules) return this.reloadRule(this.rules);
+    if (!this.origin.length) this.api.refresh();
+    this.origin = [...rules];
+
+    const parsers = {...this.parsers};
+    this.__init(rules);
+    this.loadRule(rules, false);
+    // todo 移除已删除规则可能会导致 reload,考虑内部用 origin 渲染
+    Object.keys(parsers).filter(id => this.parsers[id] === undefined)
+        .forEach(id => this.deleteParser(parsers[id]));
+    this.$render.initOrgChildren();
+    this.formData = {...this.formData};
+    this.created();
+
+    vm.$f = this.api;
+    this.$render.clearCacheAll();
+    this.refresh();
+
+    vm.$nextTick(() => {
+        this.lifecycle('reload');
+    });
+}, 100);
+
+function findControl(parser, rule) {
+    for (let i = 0; i < parser.ctrlRule.length; i++) {
+        const ctrl = parser.ctrlRule[i];
+        if (ctrl.children === rule)
+            return ctrl;
     }
 }
 
@@ -529,14 +498,6 @@ function getControl(parser) {
     else return control;
 }
 
-function removeControl(parser) {
-    const index = parser.root.indexOf(parser.ctrlRule);
-    if (index !== -1)
-        parser.root.splice(index, 1);
-    parser.ctrlRule = null;
-}
-
-
 function defRule() {
     return {
         validate: [],
@@ -545,16 +506,6 @@ function defRule() {
         props: {},
         on: {},
         options: [],
-        title: undefined,
         value: null,
-        field: '',
-        name: undefined,
-        className: undefined
     };
-}
-
-function bindParser(rule, parser) {
-    Object.defineProperties(rule, {
-        __fc__: enumerable(parser)
-    });
 }
