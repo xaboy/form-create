@@ -1,4 +1,5 @@
 import deepExtend from './deepextend';
+import {err} from './console';
 
 const PREFIX = '[[FORM-CREATE-PREFIX-';
 const SUFFIX = '-FORM-CREATE-SUFFIX]]';
@@ -35,7 +36,7 @@ export function parseJson(json, mode) {
             } else if (!mode && v.indexOf('function') > -1)
                 return makeFn(v)
         } catch (e) {
-            console.error(`[form-create]解析失败:${v}`);
+            err(`json 解析失败:${v}`);
             return undefined;
         }
         return v;

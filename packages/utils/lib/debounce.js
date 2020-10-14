@@ -3,7 +3,7 @@ export default function debounce(fn, wait) {
     return function (...arg) {
         if (timeout !== null)
             clearTimeout(timeout);
-        timeout = setTimeout(() => fn(...arg), wait);
+        timeout = setTimeout(() => fn.call(this, ...arg), wait);
     }
 }
 

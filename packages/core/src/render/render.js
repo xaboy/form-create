@@ -60,7 +60,7 @@ export default function useRender(Render) {
 
             const {vm, template} = this.renderList[id];
 
-            setTemplateProps(vm, parser, this.$handle.fCreateApi);
+            setTemplateProps(vm, parser, this.$handle.api);
 
             const vn = template.render.call(vm);
 
@@ -104,11 +104,11 @@ export default function useRender(Render) {
         },
         inputVData(parser, custom) {
             const {refName, key} = parser;
-
+            //todo 优化下面一大块
             const props = [
                 {
                     props: {
-                        formCreate: this.$handle.fCreateApi,
+                        formCreate: this.$handle.api,
                         formCreateParser: parser,
                         formCreateField: parser.isDef ? parser.field : undefined,
                         formCreateOptions: parser.rule.options
@@ -132,6 +132,11 @@ export default function useRender(Render) {
                     on: {
                         [model.event || model]: (value) => {
                             this.onInput(parser, value);
+                        },
+                        ['hook:mounted']: () => {
+                            parser.el = this.vm.$refs[refName] || {};
+                            parser.mounted();
+                            console.log('mounted', parser.field);
                         }
                     },
                     props: {
@@ -157,7 +162,7 @@ export default function useRender(Render) {
             if (!is.trueArray(children)) {
                 orgChildren.forEach(child => {
                     if (!is.String(child) && child.__fc__) {
-                        this.$handle.removeParser(child.__fc__);
+                        this.$handle.deleteParser(child.__fc__);
                     }
                 });
                 this.orgChildren[parser.id] = [];
@@ -166,7 +171,7 @@ export default function useRender(Render) {
             //TODO 规则变化后组件重新渲染
             this.orgChildren[parser.id].forEach(child => {
                 if (children.indexOf(child) === -1 && !is.String(child) && child.__fc__) {
-                    this.$handle.removeParser(child.__fc__);
+                    this.$handle.deleteParser(child.__fc__);
                 }
             });
 
@@ -175,7 +180,7 @@ export default function useRender(Render) {
                 if (child.__fc__) {
                     return this.renderParser(child.__fc__, parser);
                 }
-                if (!this.$handle.isset(child) && child.type)
+                if (!this.$handle.isset(child.__origin__ || child) && child.type)
                     $de(() => this.$handle.reloadRule());
             });
 

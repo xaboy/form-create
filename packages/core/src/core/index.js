@@ -105,9 +105,59 @@ export default function createFormCreate(config) {
         return $vm;
     }
 
+
+    function useStatic(FormCreate) {
+        extend(FormCreate, {
+            create(rules, _opt = {}, parent) {
+                let $vm = create(rules, _opt);
+                const _this = $vm.$refs.fc.formCreate;
+                _this.$parent = parent;
+                getEl(_this.options).appendChild($vm.$el);
+                return _this.handle.api;
+            },
+            install(Vue, options) {
+                if (options && is.Object(options))
+                    deepExtend(options, globalConfig);
+
+                if (Vue._installedFormCreate === true) return;
+                Vue._installedFormCreate = true;
+                _vue = Vue;
+
+                const $formCreate = function (rules, opt = {}) {
+                    return FormCreate.create(rules, opt, this);
+                };
+
+                useAttr($formCreate);
+
+                Vue.prototype.$formCreate = $formCreate;
+                Vue.component('FormCreate', $form());
+                Vue.component(fragment.name, _vue.extend(fragment));
+            },
+            init(rules, _opt = {}) {
+                let $vm = create(rules, _opt), formCreate = $vm.$refs.fc.formCreate;
+                return {
+                    mount($el) {
+                        if ($el && is.Element($el))
+                            formCreate.options.el = $el;
+                        getEl(formCreate.options).appendChild($vm.$el);
+                        return formCreate.handle.api;
+                    },
+                    remove() {
+                        $vm.$el.parentNode && $vm.$el.parentNode.removeChild($vm.$el);
+                    },
+                    destroy() {
+                        this.remove();
+                        $vm.$destroy();
+                    },
+                    $f: formCreate.handle.api
+                };
+            }
+        })
+    }
+
+
     class FormCreate {
         constructor(rules, options = {}) {
-            this.fCreateApi = undefined;
             this.vm = undefined;
             this.manager = config.manager;
             this.parsers = parsers;
@@ -121,17 +171,14 @@ export default function createFormCreate(config) {
             this.options = deepExtendArgs({formData: {}}, globalConfig, options);
         }
 
-        beforeCreate(vm) {
+        created(vm) {
             this.vm = vm;
             this.handle = new Handle(this);
-        }
-
-        created() {
             this.handle.created();
         }
 
         api() {
-            return this.handle.fCreateApi;
+            return this.handle.api;
         }
 
         render() {
@@ -139,7 +186,7 @@ export default function createFormCreate(config) {
         }
 
         mounted() {
-            this.handle.mounted();
+            this.handle.lifecycle('mounted');
         }
 
         $emit(eventName, ...params) {
@@ -147,59 +194,10 @@ export default function createFormCreate(config) {
                 this.$parent.$emit(`fc:${eventName}`, ...params);
             this.vm.$emit(eventName, ...params);
         }
-
-        static create(rules, _opt = {}, parent) {
-
-            let $vm = create(rules, _opt);
-
-            const _this = $vm.$refs.fc.formCreate;
-            _this.$parent = parent;
-            getEl(_this.options).appendChild($vm.$el);
-
-            return _this.handle.fCreateApi;
-        }
-
-        static install(Vue, options) {
-            if (options && is.Object(options))
-                deepExtend(options, globalConfig);
-
-            if (Vue._installedFormCreate === true) return;
-            Vue._installedFormCreate = true;
-            _vue = Vue;
-
-            const $formCreate = function (rules, opt = {}) {
-                return FormCreate.create(rules, opt, this);
-            };
-
-            useAttr($formCreate);
-
-            Vue.prototype.$formCreate = $formCreate;
-            Vue.component('FormCreate', $form());
-            Vue.component(fragment.name, _vue.extend(fragment));
-        }
-
-        static init(rules, _opt = {}) {
-            let $vm = create(rules, _opt), formCreate = $vm.$refs.fc.formCreate;
-            return {
-                mount($el) {
-                    if ($el && is.Element($el))
-                        formCreate.options.el = $el;
-                    getEl(formCreate.options).appendChild($vm.$el);
-                    return formCreate.handle.fCreateApi;
-                },
-                remove() {
-                    $vm.$el.parentElement.removeChild($vm.$el);
-                },
-                destroy() {
-                    this.remove();
-                    $vm.$destroy();
-                },
-                $f: formCreate.handle.fCreateApi
-            };
-        }
     }
 
     useAttr(FormCreate);
+    useStatic(FormCreate);
 
     // if (drive.modelEvents) {
     //     Object.keys(drive.modelEvents).forEach((name) => setModel(name, drive.modelEvents[name]));

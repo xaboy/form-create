@@ -1,5 +1,8 @@
 import deepExtend from '@form-create/utils/lib/deepextend';
 import is from '@form-create/utils/lib/type';
+import mergeProps from '@form-create/utils/lib/mergeprops';
+import {arrayAttrs} from './attrs';
+import {err} from '@form-create/utils/lib/console';
 
 const PREFIX = '[[FORM-CREATE-PREFIX-';
 const SUFFIX = '-FORM-CREATE-SUFFIX]]';
@@ -36,7 +39,7 @@ export function parseJson(json, mode) {
             } else if (!mode && v.indexOf('function') > -1)
                 return makeFn(v)
         } catch (e) {
-            console.error(`[form-create]解析失败:${v}`);
+            err(`解析失败:${v}`);
             return undefined;
         }
         return v;
@@ -57,4 +60,8 @@ export function copyRule(rule, mode) {
 
 export function copyRules(rules, mode) {
     return deepExtend([], rules, mode);
+}
+
+export function mergeRule(rule, merge) {
+    mergeProps([merge], rule, {array: arrayAttrs});
 }

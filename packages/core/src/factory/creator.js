@@ -1,8 +1,7 @@
 import extend from '@form-create/utils/lib/extend';
-import deepExtend from '@form-create/utils/lib/deepextend';
-import mergeProps from '@form-create/utils/lib/mergeprops';
 import is from '@form-create/utils/lib/type';
-import {attrs, arrayAttrs} from '../core/attrs';
+import {attrs} from '../core/attrs';
+import {mergeRule} from '../core/util';
 
 const baseRule = () => ({
     props: {},
@@ -13,7 +12,6 @@ const baseRule = () => ({
     children: [],
     control: [],
     emit: [],
-    type: undefined,
 })
 
 export function factory(name, init) {
@@ -56,14 +54,14 @@ extend(Creator.prototype, {
     },
     _clone() {
         const clone = new this.constructor();
-        clone._data = deepExtend({}, this._data);
+        clone._data = mergeRule({}, this._data);
         return clone;
     },
 })
 
 attrs.forEach(name => {
-    Creator.prototype[name] = function (key, value) {
-        mergeProps([{[name]: value === undefined ? key : {[key]: value}}], this._data, {array: arrayAttrs});
+    Creator.prototype[name] = function (key) {
+        mergeRule(this._data, {[name]: arguments.length < 2 ? key : {[key]: arguments[1]}})
         return this;
     };
 });

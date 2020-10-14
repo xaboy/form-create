@@ -38,7 +38,12 @@ const mergeProps = (objects, initial = {}, opt = {}) => {
                     a[key] = b[key]
                 }
             } else {
-                a[key] = b[key]
+                if (_normalMerge.indexOf(key) !== -1 || _functionalMerge.indexOf(key) !== -1) {
+                    a[key] = {...b[key] || {}}
+                } else if (_toArrayMerge.indexOf(key) !== -1) {
+                    a[key] = [...b[key] || []];
+                } else
+                    a[key] = b[key];
             }
         }
         return a

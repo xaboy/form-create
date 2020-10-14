@@ -1,77 +1,98 @@
-import {toJson} from './util';
+import {mergeRule, toJson} from './util';
 import {$set} from '@form-create/utils/lib/modify';
-import deepExtend from '@form-create/utils/lib/deepextend';
+import deepExtend, {deepCopy} from '@form-create/utils/lib/deepextend';
 import is from '@form-create/utils/lib/type';
+import extend from '@form-create/utils/lib/extend';
+import {err} from '@form-create/utils/lib/console';
 
 export default function Api(h) {
 
-    function tidyFields(fields, all = false) {
-        if (!fields)
-            fields = all ? Object.keys(h.fieldList) : h.fields();
+    function tidyFields(fields) {
+        if (is.Undef(fields))
+            fields = h.fields();
         else if (!Array.isArray(fields))
             fields = [fields];
         return fields;
     }
 
-    return {
-        formData() {
-            const parsers = h.fieldList;
+    function copy(value) {
+        return deepCopy(value);
+    }
 
-            return Object.keys(parsers).reduce((initial, id) => {
-                const parser = parsers[id];
-                initial[parser.field] = deepExtend({}, {value: parser.rule.value}).value;
+    function props(fields, key, val) {
+        tidyFields(fields).forEach(field => {
+            const parser = h.getParser(field);
+            if (!parser)
+                return;
+            $set(parser.rule, key, val);
+            h.$render.clearCache(parser, true);
+        })
+    }
+
+    function byRules(parsers, origin) {
+        return Object.keys(parsers).reduce((initial, key) => {
+            initial[key] = parsers[key].rule;
+            if (origin && initial[key].__origin__) initial[key] = initial[key].__origin__
+            return initial;
+        }, {});
+    }
+
+    function tidyBtnProp(btn, def) {
+        if (is.Boolean(btn))
+            btn = {show: btn};
+        else if (!is.Undef(btn) && !is.Object(btn)) btn = {show: def};
+        return btn;
+    }
+
+    const api = {
+        formData(fields) {
+            return tidyFields(fields).reduce((initial, id) => {
+                const parser = h.fieldList[id];
+                initial[parser.field] = copy(parser.rule.value);
                 return initial;
             }, {});
         },
         getValue(field) {
             const parser = h.fieldList[field];
             if (!parser) return;
-            return deepExtend({}, {value: parser.rule.value}).value;
+            return copy(parser.rule.value);
         },
-        setValue(field, value) {
+        setValue(field) {
             let formData = field;
-            if (!is.Object(field))
-                formData = {[field]: value};
+            if (arguments.length >= 2)
+                formData = {[field]: arguments[1]};
             Object.keys(formData).forEach(key => {
                 const parser = h.fieldList[key];
                 if (!parser) return;
                 parser.rule.value = formData[key];
             });
         },
-        changeValue(field, value) {
-            this.setValue(field, value);
-        },
-        changeField(field, value) {
-            this.setValue(field, value);
-        },
         removeField(field) {
             let parser = h.getParser(field);
-            if (!parser)
-                return;
-            let index = parser.root.indexOf(parser.rule.__origin__);
-            if (index === -1)
-                return;
-            parser.root.splice(index, 1);
-            if (h.sortList.indexOf(parser.id) === -1)
-                this.reload();
-
-            return parser.rule.__origin__;
+            if (!parser) return;
+            return h.removeParser(parser);
+        },
+        removeRule(rule) {
+            const parser = rule.__fc__;
+            //TODO 参考是否当时使用
+            if (!parser) return;
+            return h.removeParser(parser);
         },
         destroy: () => {
             h.vm.$el.parentNode && h.vm.$el.parentNode.removeChild(h.vm.$el);
             h.vm.$destroy();
         },
         fields: () => h.fields(),
-        append: (rule, after, isChild) => {
+        append: (rule, after, child) => {
             let fields = Object.keys(h.fieldList), index = h.sortList.length, rules;
 
             if (rule.field && fields.indexOf(rule.field) !== -1)
-                return console.error(`${rule.field} 字段已存在`);
+                return err(`${rule.field} 字段已存在`, rule);
 
             const parser = h.getParser(after);
 
             if (parser) {
-                if (isChild) {
+                if (child) {
                     rules = parser.rule.children;
                     index = parser.rule.children.length;
                 } else {
@@ -81,16 +102,16 @@ export default function Api(h) {
             } else rules = h.rules;
             rules.splice(index + 1, 0, rule);
         },
-        prepend: (rule, after, isChild) => {
+        prepend: (rule, after, child) => {
             let fields = Object.keys(h.fieldList), index = 0, rules;
 
             if (rule.field && fields.indexOf(rule.field) !== -1)
-                return console.error(`${rule.field} 字段已存在`);
+                return err(`${rule.field} 字段已存在`, rule);
 
             const parser = h.getParser(after);
 
             if (parser) {
-                if (isChild) {
+                if (child) {
                     rules = parser.rule.children;
                 } else {
                     index = parser.root.indexOf(parser.rule.__origin__);
@@ -100,13 +121,7 @@ export default function Api(h) {
             rules.splice(index, 0, rule);
         },
         hidden(hidden, fields) {
-            tidyFields(fields, true).forEach((field) => {
-                const parser = h.getParser(field);
-                if (!parser)
-                    return;
-                $set(parser.rule, 'hidden', !!hidden);
-                h.$render.clearCache(parser, true);
-            });
+            props(fields, 'hidden', !!hidden);
             h.refresh();
         },
         hiddenStatus(id) {
@@ -114,46 +129,24 @@ export default function Api(h) {
             if (!parser) return;
             return !!parser.rule.hidden;
         },
-        visibility(visibility, fields) {
-            tidyFields(fields, true).forEach((field) => {
-                const parser = h.getParser(field);
-                if (!parser)
-                    return;
-                $set(parser.rule, 'visibility', !!visibility);
-                h.$render.clearCache(parser, true);
+        disabled(disabled, fields) {
+            tidyFields(fields).forEach((field) => {
+                const parser = h.fieldList[field];
+                if (!parser) return;
+                h.vm.$set(parser.rule.props, 'disabled', !!disabled);
             });
             h.refresh();
         },
-        visibilityStatus(id) {
-            const parser = h.getParser(id);
-            if (!parser) return;
-            return !!parser.rule.visibility;
+        model(origin) {
+            return byRules(h.fieldList, origin);
         },
-        disabled(disabled, fields) {
-            tidyFields(fields, true).forEach((field) => {
-                const parser = h.fieldList[field];
-                if (!parser)
-                    return;
-                h.vm.$set(parser.rule.props, 'disabled', !!disabled);
-            });
-        },
-        model() {
-            return Object.keys(h.trueData).reduce((initial, key) => {
-                initial[key] = h.trueData[key].rule;
-                return initial;
-            }, {});
-        },
-        component() {
-            return Object.keys(h.customData).reduce((initial, key) => {
-                initial[key] = h.customData[key].rule;
-                return initial;
-            }, {});
+        component(origin) {
+            return byRules(h.customData, origin);
         },
         bind() {
-            let bind = {}, properties = {};
-            Object.keys(h.fieldList).forEach((field) => {
+            return Object.defineProperties({}, Object.keys(h.fieldList).reduce((initial, field) => {
                 const parser = h.fieldList[field];
-                properties[field] = {
+                initial[field] = {
                     get() {
                         return parser.rule.value;
                     },
@@ -163,25 +156,31 @@ export default function Api(h) {
                     enumerable: true,
                     configurable: true
                 };
-            });
-            Object.defineProperties(bind, properties);
-            return bind;
+                return initial;
+            }, {}))
         },
         submitBtnProps: (props = {}) => {
-            h.vm._buttonProps(props);
+            let btn = tidyBtnProp(h.options.submitBtn, true);
+            extend(btn, props);
+            h.options.submitBtn = btn;
+            api.refresh();
         },
         resetBtnProps: (props = {}) => {
-            h.vm._resetProps(props);
+            let btn = tidyBtnProp(h.options.resetProps, false);
+            extend(btn, props);
+            h.options.resetProps = btn;
+            api.refresh();
         },
         set: (node, field, value) => {
-            h.vm.$set(node, field, value);
+            $set(node, field, value);
         },
         reload: (rules) => {
             h.reloadRule(rules)
         },
         updateOptions(options) {
+            //todo 检查 options 设置
             deepExtend(h.options, options);
-            this.refresh(true);
+            api.refresh(true);
         },
         onSubmit(fn) {
             this.updateOptions({onSubmit: fn});
@@ -207,13 +206,10 @@ export default function Api(h) {
         clearChangeStatus: () => {
             h.changeStatus = false;
         },
-        updateRule: (id, rule, cover) => {
+        updateRule: (id, rule) => {
             const parser = h.getParser(id);
             if (parser) {
-                cover ? Object.keys(rule).forEach(key => {
-                    parser.rule[key] = rule[key];
-                }) : deepExtend(parser.rule, rule);
-                return parser.rule.__origin__;
+                mergeRule(parser.rule, rule);
             }
         },
         getRule: (id) => {
@@ -222,15 +218,16 @@ export default function Api(h) {
                 return parser.rule;
             }
         },
-        updateRules(rules, cover) {
+        updateRules(rules) {
             Object.keys(rules).forEach(id => {
-                this.updateRule(id, rules[id], cover);
+                this.updateRule(id, rules[id]);
             })
         },
         updateValidate(id, validate, merge) {
-            const parser = h.getParser(id);
-            if (parser) {
-                parser.rule.validate = merge ? parser.rule.validate.concat(validate) : validate;
+            if (merge) {
+                this.updateRule(id, {validate})
+            } else {
+                props(id, 'validate', validate);
             }
         },
         updateValidates(validates, merge) {
@@ -319,11 +316,9 @@ export default function Api(h) {
         },
         resetFields(fields) {
             let parsers = h.fieldList;
-            tidyFields(fields, true).forEach(field => {
+            tidyFields(fields).forEach(field => {
                 let parser = parsers[field];
-                if (!parser) return;
-
-                if (parser.type === 'hidden') return;
+                if (!parser || parser.type === 'hidden') return;
                 h.$manager.resetField(parser);
                 h.refreshControl(parser);
                 h.$render.clearCache(parser, true);
@@ -348,8 +343,7 @@ export default function Api(h) {
             tidyFields(fields).forEach(field => {
                 if (clearSub) this.clearSubValidateState(field);
                 const parser = h.fieldList[field];
-                if (!parser)
-                    return;
+                if (!parser) return;
                 h.$manager.clearValidateState(parser);
             });
         },
@@ -372,24 +366,24 @@ export default function Api(h) {
         },
         btn: {
             loading: (loading = true) => {
-                h.vm._buttonProps({loading: !!loading});
+                api.submitBtnProps({loading: !!loading});
             },
             disabled: (disabled = true) => {
-                h.vm._buttonProps({disabled: !!disabled});
+                api.submitBtnProps({disabled: !!disabled});
             },
             show: (isShow = true) => {
-                h.vm._buttonProps({show: !!isShow});
+                api.submitBtnProps({show: !!isShow});
             }
         },
         resetBtn: {
             loading: (loading = true) => {
-                h.vm._resetProps({loading: !!loading});
+                api.resetBtnProps({loading: !!loading});
             },
             disabled: (disabled = true) => {
-                h.vm._resetProps({disabled: !!disabled});
+                api.resetBtnProps({disabled: !!disabled});
             },
             show: (isShow = true) => {
-                h.vm._resetProps({show: !!isShow});
+                api.resetBtnProps({show: !!isShow});
             }
         },
         closeModal: (field) => {
@@ -397,4 +391,8 @@ export default function Api(h) {
             parser && parser.el.$emit && parser.el.$emit('fc.closeModal');
         }
     };
+
+    api.changeValue = api.changeField = api.setValue;
+
+    return api;
 }

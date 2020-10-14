@@ -33,6 +33,10 @@ export default function deepExtend(origin, target = {}, mode) {
     return origin
 }
 
+export function deepCopy(value) {
+    return deepExtend({}, {value}).value;
+}
+
 export function deepExtendArgs(origin, ...lst) {
     lst.forEach(target => {
         origin = deepExtend(origin, target);

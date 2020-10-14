@@ -23,8 +23,6 @@ export default function $FormCreate(FormCreate) {
         data: () => {
             return {
                 formData: undefined,
-                buttonProps: undefined,
-                resetProps: undefined,
                 $f: undefined,
                 isShow: true,
                 unique: 1,
@@ -34,18 +32,15 @@ export default function $FormCreate(FormCreate) {
             return this.formCreate.render();
         },
         methods: {
-            _buttonProps(props) {
-                this.$set(this, 'buttonProps', deepExtend(this.buttonProps, props));
-            },
-            _resetProps(props) {
-                this.$set(this, 'resetProps', deepExtend(this.resetProps, props));
-            },
             _refresh() {
                 ++this.unique;
             }
         },
         watch: {
-            option: '_refresh',
+            option(n) {
+                this.formCreate.options = n;
+                this._refresh();
+            },
             rule(n) {
                 this.formCreate.handle.reloadRule(n);
             }
@@ -54,10 +49,9 @@ export default function $FormCreate(FormCreate) {
             const {rule, option} = this.$options.propsData;
             this.formCreate = new FormCreate(rule, option);
             extend(this.$options.components, this.formCreate.components);
-            this.formCreate.beforeCreate(this);
         },
         created() {
-            this.formCreate.created();
+            this.formCreate.created(this);
             this.$f = this.formCreate.api();
             this.$emit('input', this.$f);
         },
