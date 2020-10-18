@@ -13,17 +13,17 @@ import debounce from '@form-create/utils/lib/debounce';
 export default class Handle {
 
     constructor(fc) {
-        const {vm, rules, options} = this.fc = fc;
+        const {vm, rules} = this.fc = fc;
 
         this.watching = false;
         this.vm = vm;
-        this.options = options;
+        //this.options = options;
 
         this.validate = {};
         this.formData = {};
         this.subForm = {};
 
-        this.api = undefined;
+        this.api = Api(this);
 
         this.__init(rules);
         this.$manager = new fc.manager(this);
@@ -34,6 +34,39 @@ export default class Handle {
         this.$render.initOrgChildren();
 
         this.$manager.__init();
+    }
+
+    created() {
+        const vm = this.vm;
+
+        vm.$set(vm, 'formData', this.formData);
+
+        //todo 优化 formData
+        this.api.rule = this.rules;
+        this.api.config = this.options;
+        if (this.api.form) {
+            const form = this.api.form;
+            Object.keys(form).forEach((field) => {
+                delete form[field];
+            })
+        } else {
+            Object.defineProperty(this.api, 'form', {
+                value: {},
+                writable: false,
+                enumerable: true
+            });
+        }
+        Object.defineProperties(this.api.form, Object.keys(this.api.formData()).reduce((initial, field) => {
+            const parser = this.getParser(field);
+            const handle = this.valueHandle(parser);
+            handle.configurable = true;
+            initial[field] = handle;
+            return initial;
+        }, {}));
+    }
+
+    get options() {
+        return this.fc.options || {};
     }
 
     __init(rules) {
@@ -63,6 +96,7 @@ export default class Handle {
             if ((_rule.getRule && !_rule._data.type) || !_rule.type)
                 return err('未定义生成规则的 type 字段', _rule);
 
+            //todo 提高 parser 复用
             let parser;
             //TODO 优化: 如果存在__fc__ 直接返回
             if (_rule.__fc__) {
@@ -131,15 +165,13 @@ export default class Handle {
     }
 
     parseRule(_rule) {
-        const def = defRule(), rule = is.Function(_rule.getRule) ? _rule.getRule() : _rule;
+        const rule = is.Function(_rule.getRule) ? _rule.getRule() : _rule;
 
         Object.defineProperties(rule, {
             __origin__: enumerable(_rule)
         });
 
-        Object.keys(def).forEach(k => {
-            if (!({}).hasOwnProperty.call(rule, k)) $set(rule, k, def[k]);
-        });
+        fullRule(rule);
 
         if (rule.field && this.options.formData[rule.field] !== undefined)
             rule.value = this.options.formData[rule.field];
@@ -249,13 +281,17 @@ export default class Handle {
         return JSON.stringify(parser.rule.value) !== JSON.stringify(value);
     }
 
+    isQuote(parser, value) {
+        return (is.Object(value) || Array.isArray(value)) && value === parser.rule.value;
+    }
+
     valueChange(parser) {
         this.validateControl(parser);
     }
 
     onInput(parser, value) {
         let val;
-        if (parser.input && this.isChange(parser, val = parser.toValue(value))) {
+        if (parser.input && (this.isQuote(parser, val = parser.toValue(value)) || this.isChange(parser, val))) {
             this.$render.clearCache(parser);
             this.setFormData(parser, value);
             this.changeStatus = true;
@@ -266,38 +302,6 @@ export default class Handle {
 
     getParser(id) {
         return this.fieldList[id] || this.customData[id] || this.parsers[id];
-    }
-
-    created() {
-        const vm = this.vm;
-
-        vm.$set(vm, 'formData', this.formData);
-
-        if (this.api === undefined)
-            this.api = Api(this);
-
-        //todo 优化 formData
-        this.api.rule = this.rules;
-        this.api.config = this.options;
-        if (this.api.form) {
-            const form = this.api.form;
-            Object.keys(form).forEach((field) => {
-                delete form[field];
-            })
-        } else {
-            Object.defineProperty(this.api, 'form', {
-                value: {},
-                writable: false,
-                enumerable: true
-            });
-        }
-        Object.defineProperties(this.api.form, Object.keys(this.api.formData()).reduce((initial, field) => {
-            const parser = this.getParser(field);
-            const handle = this.valueHandle(parser);
-            handle.configurable = true;
-            initial[field] = handle;
-            return initial;
-        }, {}));
     }
 
     addParserWitch(parser) {
@@ -336,41 +340,10 @@ export default class Handle {
     //todo 减少 reload
     //todo 优化 options 获取方式
     validateControl(parser) {
-        const controls = getControl(parser), validate = [], api = this.api;
-        if (!controls.length) return;
-        for (let i = 0; i < controls.length; i++) {
-            const control = controls[i], handleFn = control.handle || (val => val === control.value);
-            const data = {
-                ...control,
-                valid: handleFn(parser.rule.value, api),
-                ctrl: findControl(parser, control.rule),
-            };
-            if ((data.valid && data.ctrl) || (!data.valid && !data.ctrl)) continue;
-            validate.push(data);
+        if (parser._useCtrl()) {
+            parser.parent && this.$render.clearCache(parser.parent);
+            this.refresh();
         }
-        if (!validate.length) return;
-        validate.forEach(({valid, rule, prepend, append, child, ctrl}) => {
-            if (valid) {
-                const ruleCon = {
-                    type: 'fcFragment',
-                    native: true,
-                    children: rule
-                }
-                parser.ctrlRule.push(ruleCon);
-                if (prepend) {
-                    api.prepend(ruleCon, prepend, child)
-                } else if (append) {
-                    api.append(ruleCon, append, child)
-                } else {
-                    parser.root.splice(parser.root.indexOf(parser.rule.__origin__) + 1, 0, ruleCon);
-                }
-            } else {
-                parser.ctrlRule.splice(parser.ctrlRule.indexOf(ctrl), 1);
-                api.removeRule(ctrl);
-            }
-        });
-        parser.parent && this.$render.clearCache(parser.parent);
-        this.refresh();
     }
 
     refreshControls() {
@@ -386,29 +359,10 @@ export default class Handle {
         this.fc.$emit(name, this.api);
     }
 
-    removeCtrl(parser) {
-        parser.ctrlRule.forEach(ctrl => this.api.removeRule(ctrl));
-        parser.ctrlRule = [];
-    }
-
-    removeParser(parser) {
-        let index = parser.root.indexOf(parser.rule.__origin__);
-        if (index === -1) return;
-        parser.root.splice(index, 1);
-        this.removeCtrl(parser);
-        //todo 优化 reloadRule
-        // if (this.sortList.indexOf(parser.id) === -1)
-        //     this.reloadRule();
-
-        return parser.rule.__origin__;
-    }
-
     deleteParser(parser) {
         const {id, field, name} = parser, index = this.sortList.indexOf(id);
 
-        this.removeCtrl(parser);
         parser._delete();
-
         if (parser.input) {
             Object.defineProperty(parser.rule, 'value', {
                 value: parser.rule.value
@@ -480,24 +434,20 @@ Handle.prototype.reloadRule = debounce(function (rules) {
     });
 }, 100);
 
-function findControl(parser, rule) {
-    for (let i = 0; i < parser.ctrlRule.length; i++) {
-        const ctrl = parser.ctrlRule[i];
-        if (ctrl.children === rule)
-            return ctrl;
-    }
-}
-
 function parseArray(validate) {
     return Array.isArray(validate) ? validate : [];
 }
 
-function getControl(parser) {
-    const control = parser.rule.control || [];
-    if (is.Object(control)) return [control];
-    else return control;
+function fullRule(rule) {
+    const def = defRule();
+
+    Object.keys(def).forEach(k => {
+        if (!({}).hasOwnProperty.call(rule, k)) $set(rule, k, def[k]);
+    });
+    return rule;
 }
 
+//todo 合并
 function defRule() {
     return {
         validate: [],
@@ -507,5 +457,6 @@ function defRule() {
         on: {},
         options: [],
         value: null,
+        hidden: false,
     };
 }

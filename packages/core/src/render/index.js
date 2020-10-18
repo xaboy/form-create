@@ -7,7 +7,6 @@ export default function Render(handle) {
     this.$handle = handle;
     this.fc = handle.fc;
     this.vm = handle.vm;
-    this.options = handle.options;
     this.$manager = handle.$manager;
     this.vNode = new VNode(this.vm);
     this.cache = {};

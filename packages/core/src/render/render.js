@@ -29,9 +29,9 @@ function setTemplateProps(vm, parser, fApi) {
 export default function useRender(Render) {
     extend(Render.prototype, {
         mergeGlobal(parser) {
-            const g = this.options.global;
+            const g = this.$handle.options.global;
             if (!g) return;
-            mergeProps([global['*'], global[parser.type] || global[parser.originType] || {}], parser.prop);
+            mergeProps([g['*'], g[parser.type] || g[parser.originType] || {}], parser.prop);
         },
         renderTemplate(parser) {
             if (!Vue.compile) {
@@ -76,6 +76,7 @@ export default function useRender(Render) {
                 form.tidyRule(parser);
                 this.mergeGlobal(parser);
                 let {type, prop: rule} = parser, vn;
+                if (is.Boolean(rule.hidden) && rule.hidden) return;
 
                 if (type === 'template' && rule.template) {
                     vn = this.renderTemplate(parser);
@@ -130,24 +131,34 @@ export default function useRender(Render) {
                 const model = this.$handle.modelEvent(parser);
                 props.push({
                     on: {
-                        [model.event || model]: (value) => {
-                            this.onInput(parser, value);
-                        },
+                        // [model.event || model]: (value) => {
+                        //     console.log('asdf');
+                        //     this.onInput(parser, value);
+                        // },
                         ['hook:mounted']: () => {
                             parser.el = this.vm.$refs[refName] || {};
                             parser.mounted();
                             console.log('mounted', parser.field);
                         }
                     },
-                    props: {
-                        [model.prop || 'value']: this.$handle.getFormData(parser)
-                    }
+                    model: {
+                        //todo 优化获取 formData
+                        value: this.$handle.getFormData(parser),
+                        callback: (value) => {
+                            this.onInput(parser, value);
+                        },
+                        expression: `formData.${parser.field}`
+                    },
+                    // props: {
+                    //     [model.prop || 'value']: this.$handle.getFormData(parser)
+                    // }
                 })
 
             }
             mergeProps(props, parser.prop);
             this.$manager.mergeRule && this.$manager.mergeRule(parser, custom);
             parser.inputVdata && parser.inputVdata(custom);
+            //todo 优化 get
             parser.prop.get = function () {
                 return parser.prop;
             }

@@ -3,7 +3,7 @@ import {$set} from '@form-create/utils/lib/modify';
 import deepExtend, {deepCopy} from '@form-create/utils/lib/deepextend';
 import is from '@form-create/utils/lib/type';
 import extend from '@form-create/utils/lib/extend';
-import {err} from '@form-create/utils/lib/console';
+import {err, format} from '@form-create/utils/lib/console';
 
 export default function Api(h) {
 
@@ -44,6 +44,7 @@ export default function Api(h) {
         return btn;
     }
 
+    //todo 优化 css
     const api = {
         formData(fields) {
             return tidyFields(fields).reduce((initial, id) => {
@@ -70,13 +71,15 @@ export default function Api(h) {
         removeField(field) {
             let parser = h.getParser(field);
             if (!parser) return;
-            return h.removeParser(parser);
+            parser._remove();
+            return parser.rule.__origin__;
         },
         removeRule(rule) {
             const parser = rule.__fc__;
             //TODO 参考是否当时使用
             if (!parser) return;
-            return h.removeParser(parser);
+            parser._remove();
+            return parser.rule.__origin__;
         },
         destroy: () => {
             h.vm.$el.parentNode && h.vm.$el.parentNode.removeChild(h.vm.$el);
@@ -171,15 +174,11 @@ export default function Api(h) {
             h.options.resetProps = btn;
             api.refresh();
         },
-        set: (node, field, value) => {
-            $set(node, field, value);
-        },
         reload: (rules) => {
             h.reloadRule(rules)
         },
         updateOptions(options) {
-            //todo 检查 options 设置
-            deepExtend(h.options, options);
+            h.fc.updateOptions(options);
             api.refresh(true);
         },
         onSubmit(fn) {
@@ -198,7 +197,7 @@ export default function Api(h) {
             h.refresh();
         },
         hideForm: (isShow) => {
-            h.vm.isShow = !isShow;
+            $set(h.vm, 'isShow', !isShow);
         },
         changeStatus: () => {
             return h.changeStatus;
@@ -212,10 +211,10 @@ export default function Api(h) {
                 mergeRule(parser.rule, rule);
             }
         },
-        getRule: (id) => {
+        getRule: (id, origin) => {
             const parser = h.getParser(id);
             if (parser) {
-                return parser.rule;
+                return origin ? parser.rule.__origin__ : parser.rule;
             }
         },
         updateRules(rules) {
@@ -238,22 +237,16 @@ export default function Api(h) {
         method(id, name) {
             const el = this.el(id);
             if (!el || !el[name])
-                throw new Error('方法不存在');
+                throw new Error(format('err', `${name}方法不存在`));
             return (...args) => {
                 return el[name](...args);
             }
         },
+        exec(id, name, ...args) {
+            return this.method(id, name)(...args);
+        },
         toJson() {
             return toJson(this.rule);
-        },
-        on(...args) {
-            h.vm.$on(...args);
-        },
-        once(...args) {
-            h.vm.$once(...args);
-        },
-        off(...args) {
-            h.vm.$off(...args);
         },
         trigger(id, event, ...args) {
             const el = this.el(id);
@@ -263,6 +256,11 @@ export default function Api(h) {
             const parser = h.getParser(id);
             if (parser) return parser.el;
         },
+        closeModal: (field) => {
+            const parser = h.fieldList[field];
+            parser && parser.el.$emit && parser.el.$emit('fc.closeModal');
+        },
+        //todo 移动到ui组件 中
         validate(callback) {
             let state = false;
             let subForm = {
@@ -386,11 +384,14 @@ export default function Api(h) {
                 api.resetBtnProps({show: !!isShow});
             }
         },
-        closeModal: (field) => {
-            const parser = h.fieldList[field];
-            parser && parser.el.$emit && parser.el.$emit('fc.closeModal');
-        }
+        //todo 以上
     };
+
+    ['on', 'once', 'off', 'set'].forEach(n => {
+        api[n] = function (...args) {
+            h.vm[`$${n}`](...args);
+        }
+    });
 
     api.changeValue = api.changeField = api.setValue;
 

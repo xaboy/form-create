@@ -17,7 +17,7 @@ export default function useInit(Render) {
             if (!this.vm.isShow)
                 return;
 
-            this.$manager.updateOptions(this.options);
+            this.$manager.updateOptions(this.$handle.options);
             this.$manager.beforeRender();
 
             const vn = this.$handle.sortList.map((id) => {

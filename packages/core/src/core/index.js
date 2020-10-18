@@ -4,7 +4,7 @@ import makerFactory from '../factory/maker';
 import Handle from './handle';
 import {creatorFactory} from '../factory/creator';
 import BaseParser from '../factory/parser';
-import {parseJson, copyRule, copyRules} from './util';
+import {copyRule, copyRules, parseJson} from './util';
 import fragment from '../components/fragment';
 import is from '@form-create/utils/lib/type';
 import toCase from '@form-create/utils/lib/tocase';
@@ -157,22 +157,23 @@ export default function createFormCreate(config) {
 
 
     class FormCreate {
-        constructor(rules, options = {}) {
-            this.vm = undefined;
+        constructor(vm, rules, options = {}) {
+            this.vm = vm;
             this.manager = config.manager;
             this.parsers = parsers;
             this.modelEvents = modelEvents;
             this.rules = Array.isArray(rules) ? rules : [];
+            this.options = deepExtend({formData: {}}, globalConfig);
             this.updateOptions(options);
             this.components = components;
         }
 
         updateOptions(options) {
-            this.options = deepExtendArgs({formData: {}}, globalConfig, options);
+            //todo 继承方式,检查全局配置污染
+            this.options = deepExtendArgs(this.options, options);
         }
 
-        created(vm) {
-            this.vm = vm;
+        created() {
             this.handle = new Handle(this);
             this.handle.created();
         }

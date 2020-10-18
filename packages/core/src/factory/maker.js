@@ -1,5 +1,5 @@
 import Creator, {creatorFactory} from './creator';
-import {parseJson, enumerable} from '../core/util';
+import {enumerable, parseJson} from '../core/util';
 import is from '@form-create/utils/lib/type';
 
 
@@ -26,7 +26,7 @@ export default function makerFactory() {
         create,
         createTmp,
         template: createTmp,
-        parse: parse,
+        parse,
     };
 }
 

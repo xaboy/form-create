@@ -2,6 +2,8 @@ import extend from '@form-create/utils/lib/extend';
 import is from '@form-create/utils/lib/type';
 import {attrs} from '../core/attrs';
 import {mergeRule} from '../core/util';
+import {_vue} from '../core';
+import {$set} from '@form-create/utils/lib';
 
 const baseRule = () => ({
     props: {},
@@ -12,6 +14,7 @@ const baseRule = () => ({
     children: [],
     control: [],
     emit: [],
+    hidden: false,
 })
 
 export function factory(name, init) {
@@ -36,8 +39,7 @@ export function creatorTypeFactory(name, type, typeName = 'type') {
 }
 
 export default function Creator(type, title, field, value, props) {
-    this._data = baseRule();
-    extend(this._data, {type, title, field, value, props: props || {}});
+    this._data = _vue.observable(extend(baseRule(), {type, title, field, value, props: props || {}}))
 }
 
 extend(Creator.prototype, {
@@ -45,7 +47,7 @@ extend(Creator.prototype, {
         return this._data;
     },
     setProp(key, value) {
-        this._data[key] = value;
+        $set(this._data, key, value);
         return this;
     },
     event(...args) {
@@ -54,7 +56,7 @@ extend(Creator.prototype, {
     },
     _clone() {
         const clone = new this.constructor();
-        clone._data = mergeRule({}, this._data);
+        mergeRule(clone._data, this._data);
         return clone;
     },
 })

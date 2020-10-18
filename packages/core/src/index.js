@@ -7,7 +7,7 @@ import VNode from './factory/vNode';
 import BaseParser from './factory/parser';
 import baseApi from './core/api';
 import Manager from './factory/manager';
-import {parseJson, toJson, copyRules, copyRule} from './core/util';
+import {copyRule, copyRules, parseJson, toJson} from './core/util';
 
 export {
     creatorFactory, creatorTypeFactory, Creator, Manager,

@@ -1,4 +1,3 @@
-import {deepExtend} from '@form-create/utils';
 import extend from '@form-create/utils/lib/extend';
 
 const NAME = 'FormCreate';
@@ -39,7 +38,7 @@ export default function $FormCreate(FormCreate) {
         watch: {
             option(n) {
                 this.formCreate.options = n;
-                this._refresh();
+                this.$f.refresh(true);
             },
             rule(n) {
                 this.formCreate.handle.reloadRule(n);
@@ -47,17 +46,16 @@ export default function $FormCreate(FormCreate) {
         },
         beforeCreate() {
             const {rule, option} = this.$options.propsData;
-            this.formCreate = new FormCreate(rule, option);
+            this.formCreate = new FormCreate(this, rule, option);
             extend(this.$options.components, this.formCreate.components);
         },
         created() {
-            this.formCreate.created(this);
+            this.formCreate.created();
             this.$f = this.formCreate.api();
             this.$emit('input', this.$f);
         },
         mounted() {
             this.formCreate.mounted();
-            this.$emit('input', this.$f);
         },
         beforeDestroy() {
             this.formCreate.handle.reloadRule([]);
