@@ -354,7 +354,9 @@ export default class Handle {
                 parser.watch.push(vm.$watch(() => parser.rule[key], (n, o) => {
                     if (o === undefined) return;
                     this.watching = true;
-                    if (key === 'validate')
+                    if (key === 'hidden' && (!parser.isDef || parser.rule.native !== false))
+                        parser.updateKey(uniqueId(), true);
+                    else if (key === 'validate')
                         this.validate[parser.field] = n;
                     else if (key === 'props')
                         this.parseProps(parser.rule);

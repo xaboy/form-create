@@ -20,7 +20,11 @@ export default class Render {
     }
 
     clearCache(parser, clear = true) {
-        if (!this.cache[parser.id]) return;
+        if (!this.cache[parser.id]) {
+            if (clear && parser.parent)
+                this.clearCache(parser.parent, clear);
+            return;
+        }
         if (this.cacheStatus(parser))
             this.$handle.refresh();
         const parent = this.cache[parser.id].parent;
@@ -127,6 +131,7 @@ export default class Render {
 
     renderParser(parser, parent) {
         if (parser.type === 'hidden') return;
+        if ((!parser.isDef || parser.rule.native !== false) && parser.rule.hidden) return;
         if (!this.cache[parser.id] || parser.type === 'template') {
 
             parser.vData.get();
