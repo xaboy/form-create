@@ -42,11 +42,12 @@ export function parseJson(json, mode) {
     });
 }
 
-export function enumerable(value) {
+export function enumerable(value, writable) {
     return {
         value,
         enumerable: false,
-        configurable: false
+        configurable: false,
+        writable: !!writable
     }
 }
 

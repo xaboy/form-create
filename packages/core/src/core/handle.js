@@ -569,6 +569,6 @@ function defRule() {
 function bindParser(rule, parser) {
     Object.defineProperties(rule, {
         __field__: enumerable(parser.field),
-        __fc__: enumerable(parser)
+        __fc__: enumerable(parser, true)
     });
 }
