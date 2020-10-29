@@ -170,8 +170,13 @@ export default {
         }
     },
     created() {
-        const len = this.value.length > this.expand ? this.value.length : (this.expand || 0);
-        for (let i = 0; i < len; i++) {
+        const d = (this.expand || 0) - this.value.length;
+        if (d > 0) {
+            for (let i = 0; i < d; i++) {
+                this.value.push({});
+            }
+        }
+        for (let i = 0; i < this.value.length; i++) {
             this.addRule();
         }
     },
