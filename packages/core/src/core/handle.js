@@ -76,8 +76,8 @@ export default class Handle {
         rules.map((_rule, index) => {
             if (parent && isString(_rule)) return;
 
-            if (!_rule.type)
-                return console.error('未定义生成规则的 type 字段' + errMsg());
+            if (!_rule || !_rule.type)
+                return console.error('未定义生成规则的 type 字段\nrule: ' + JSON.stringify(_rule ? getRule(_rule) : _rule) + errMsg());
 
             let parser;
 
@@ -101,7 +101,7 @@ export default class Handle {
             let children = parser.rule.children, rule = parser.rule;
             if (!this.notField(parser.field)) {
                 this.issetRule.push(_rule);
-                return console.error(`${rule.field} 字段已存在` + errMsg());
+                return console.error(`${rule.field} 字段已存在\nrule: ` + JSON.stringify(rule) + errMsg());
             }
             parser.parent = parent || null;
             this.setParser(parser);

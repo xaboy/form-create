@@ -1,5 +1,6 @@
 import {$set, deepExtend, errMsg, isFunction, isPlainObject, isUndef} from '@form-create/utils';
 import {toJson} from './util';
+import {getRule} from './handle';
 
 
 export default function Api(h) {
@@ -65,7 +66,7 @@ export default function Api(h) {
             let fields = Object.keys(h.fieldList), index = h.sortList.length, rules;
 
             if (rule.field && fields.indexOf(rule.field) !== -1)
-                return console.error(`${rule.field} 字段已存在` + errMsg());
+                return console.error(`${rule.field} 字段已存在\nrule: ` + JSON.stringify(getRule(rule)) + errMsg());
 
             const parser = h.getParser(after);
 
@@ -84,7 +85,7 @@ export default function Api(h) {
             let fields = Object.keys(h.fieldList), index = 0, rules;
 
             if (rule.field && fields.indexOf(rule.field) !== -1)
-                return console.error(`${rule.field} 字段已存在` + errMsg());
+                return console.error(`${rule.field} 字段已存在\nrule: ` + JSON.stringify(getRule(rule)) + errMsg());
 
             const parser = h.getParser(after);
 
