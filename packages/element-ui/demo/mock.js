@@ -13,7 +13,7 @@ function mock() {
         //cascader 多级联动组件
         maker.cascader('所在区域', 'address', ['陕西省', '西安市']).props({
             options: formCreate.data.province_city || []
-        }),
+        }).hidden(true),
 
 
         //input 输入框组件
@@ -27,7 +27,7 @@ function mock() {
             {required: true, message: '请输入商品名称', trigger: 'blur'}
         ]).event({
             //    change: console.log
-        }).emit([{name:'change',inject:[1,2,3]}]).className('goods-name').children([
+        }).emit(['change']).className('goods-name').children([
             maker.create('template').children(['append']).slot('append')
         ]).info('请输入商品名称!!!!!'),
 
@@ -103,6 +103,7 @@ function mock() {
         ]).col({span: 8}).control([
             {
                 value:1,
+                prepend: 'is_postage',
                 rule:[
                     maker.number('满额包邮','postage_money',0)
                 ]

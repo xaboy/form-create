@@ -13,7 +13,7 @@ const is = {
     }
 };
 
-['Date', 'Object', 'Function', 'String', 'Boolean'].forEach(t => {
+['Date', 'Object', 'Function', 'String', 'Boolean',' Array'].forEach(t => {
     is[t] = function (arg) {
         return is.type(arg, t);
     }

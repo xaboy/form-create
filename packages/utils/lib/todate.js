@@ -1,6 +1,6 @@
 import is from './type';
 
-export function toDate(timeStamp) {
+export default function toDate(timeStamp) {
     if (is.Date(timeStamp))
         return timeStamp;
     else {

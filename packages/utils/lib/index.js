@@ -4,7 +4,7 @@ export {default as toString} from './tostring';
 export {default as toLine} from './toline';
 export {default as toDate} from './todate';
 export {toSlot, hasSlot} from './toslot';
-export {default as deepExtend, edeepExtendArgs} from './deepextend';
+export {default as deepExtend, deepExtendArgs, deepCopy} from './deepextend';
 export {default as extend, copy} from './extend';
 export {parseJson, toJson} from './json';
 export {$set, $del} from './modify';

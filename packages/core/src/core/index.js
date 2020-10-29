@@ -33,10 +33,19 @@ export default function createFormCreate(config) {
         return Parser;
     }
 
-    function setParser(id, parser) {
+    function parser(id) {
+        let parser;
+        if (arguments.length === 1) {
+            parser = id;
+            id = parser.name;
+        } else {
+            parser = arguments[1];
+        }
         var name = toCase(id);
+        //todo 浅拷贝
         parsers[name] = is.Function(parser) ? parser : createParser(parser);
-        FormCreate.maker[name] = creatorFactory(name);
+        maker[name] = creatorFactory(name);
+        parser.maker && extend(maker, parser.maker);
     }
 
     function setModel(id, model) {
@@ -58,7 +67,7 @@ export default function createFormCreate(config) {
             component = id;
             components[name] = component;
         }
-        if (component.formCreateParser) setParser(name, createParser(component.formCreateParser));
+        if (component.formCreateParser) parser(name, component.formCreateParser);
     }
 
     function $form() {
@@ -81,7 +90,7 @@ export default function createFormCreate(config) {
             data,
             maker,
             component,
-            setParser,
+            parser,
             setModel,
             createParser,
             copyRule,

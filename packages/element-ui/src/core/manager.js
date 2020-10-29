@@ -227,7 +227,7 @@ export default class ElmManager extends Manager {
             style: {width: resetBtn.width},
             on: {
                 click: () => {
-                    const fApi = this.$handle.fCreateApi;
+                    const fApi = this.$handle.api;
                     resetBtn.click
                         ? resetBtn.click(fApi)
                         : fApi.resetFields();
@@ -246,7 +246,7 @@ export default class ElmManager extends Manager {
             style: {width: submitBtn.width},
             on: {
                 click: () => {
-                    const fApi = this.$handle.fCreateApi;
+                    const fApi = this.$handle.api;
                     submitBtn.click
                         ? submitBtn.click(fApi)
                         : fApi.submit();
