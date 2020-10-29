@@ -7,7 +7,7 @@ import slider from './slider';
 import upload from './upload';
 
 const maker = {...datePicker, ...frame, ...input, ...select, ...slider, ...upload},
-    names = ['autoComplete', 'cascader', 'datePicker', 'frame', 'inputNumber', 'radio', 'rate', 'switch', 'rate', 'slider', 'timePicker'];
+    names = ['autoComplete', 'cascader', 'datePicker', 'frame', 'inputNumber', 'radio', 'rate', 'switch', 'rate', 'slider', 'timePicker', 'group'];
 
 names.forEach(name => {
     maker[name] = creatorFactory(name);
