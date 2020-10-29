@@ -322,8 +322,10 @@ export default function Api(h) {
             tidyFields(fields, true).forEach(field => {
                 let parser = parsers[field];
                 if (!parser) return;
-
-                if (parser.type === 'hidden') return;
+                if (parser.type === 'hidden') {
+                    parser.rule.value = parser.defaultValue;
+                    return;
+                }
                 h.$form.resetField(parser);
                 h.refreshControl(parser);
                 h.$render.clearCache(parser, true);
