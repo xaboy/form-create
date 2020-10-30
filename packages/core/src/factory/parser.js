@@ -22,6 +22,8 @@ export default class BaseParser {
             this.field = rule.field;
         }
         this.name = rule.name;
+        this.refName = '__' + this.field + this.id;
+        this.formItemRefName = 'fi' + this.refName;
         this.updateKey(id);
         this.root = [];
         this.ctrlRule = null;
@@ -34,8 +36,6 @@ export default class BaseParser {
 
     updateKey(id, parent) {
         this.key = 'key_' + id;
-        this.refName = '__' + this.field + this.id;
-        this.formItemRefName = 'fi' + this.refName;
         parent && this.parent && this.parent.updateKey(uniqueId(), parent);
     }
 
