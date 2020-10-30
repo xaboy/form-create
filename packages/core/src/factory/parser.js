@@ -27,12 +27,11 @@ function findControl(parser, rule) {
 }
 
 export default function Parser(handle, rule) {
-    const id = unique()
-
+    const id = unique();
     this.id = id;
-    this.key = id;
     this.refName = id;
     this.formItemRefName = id + 'fi';
+    this.updateKey();
     this.modelEvent = 'input';
 
     this.rule = rule;
@@ -51,13 +50,17 @@ export default function Parser(handle, rule) {
     this.el = undefined;
 
     this.defaultValue = rule.field ? deepCopy(rule.value) : undefined;
-    this.field = rule.field ? rule.field : (`_def_${id}`);
+    this.field = rule.field ? rule.field : (`_def_${this.id}`);
 
     bindParser(this.origin, this);
     this.update(handle, true);
     this.init();
 }
 extend(Parser.prototype, {
+    updateKey(parent) {
+        this.key = unique();
+        parent && this.parent && this.parent.updateKey(parent);
+    },
     initProp() {
         this.prop = mergeProps([this.rule, this.computed]);
     },
@@ -103,7 +106,7 @@ extend(Parser.prototype, {
     _useCtrl() {
         const controls = getControl(this), validate = [], api = this.$handle.api;
         if (!controls.length) return false;
-        //todo 优化 root,优化 control.parser
+        //todo 优化 root,优化 control.parser, control 事件
         for (let i = 0; i < controls.length; i++) {
             const control = controls[i], handleFn = control.handle || (val => val === control.value);
             const data = {

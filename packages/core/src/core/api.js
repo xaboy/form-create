@@ -1,6 +1,6 @@
 import {mergeRule, toJson} from './util';
 import {$set} from '@form-create/utils/lib/modify';
-import deepExtend, {deepCopy} from '@form-create/utils/lib/deepextend';
+import {deepCopy} from '@form-create/utils/lib/deepextend';
 import is from '@form-create/utils/lib/type';
 import extend from '@form-create/utils/lib/extend';
 import {err, format} from '@form-create/utils/lib/console';
@@ -22,8 +22,7 @@ export default function Api(h) {
     function props(fields, key, val) {
         tidyFields(fields).forEach(field => {
             const parser = h.getParser(field);
-            if (!parser)
-                return;
+            if (!parser) return;
             $set(parser.rule, key, val);
             h.$render.clearCache(parser, true);
         })
@@ -49,6 +48,7 @@ export default function Api(h) {
         formData(fields) {
             return tidyFields(fields).reduce((initial, id) => {
                 const parser = h.fieldList[id];
+                if (!parser) return initial;
                 initial[parser.field] = copy(parser.rule.value);
                 return initial;
             }, {});
@@ -185,15 +185,20 @@ export default function Api(h) {
             this.updateOptions({onSubmit: fn});
         },
         sync: (field) => {
-            const parser = h.getParser(field);
+            const parser = is.Object(field) ? (field.__fc__ || (field.__origin__ ? field.__origin__.__fc__ : null)) : h.getParser(field);
             if (parser) {
+                parser.updateKey(true);
                 h.$render.clearCache(parser, true);
                 h.refresh();
             }
         },
         refresh: (clear) => {
-            if (clear)
+            if (clear) {
                 h.$render.clearCacheAll();
+                h.sortList.forEach(id => {
+                    h.parsers[id].updateKey(true);
+                })
+            }
             h.refresh();
         },
         hideForm: (isShow) => {
@@ -316,8 +321,8 @@ export default function Api(h) {
             let parsers = h.fieldList;
             tidyFields(fields).forEach(field => {
                 let parser = parsers[field];
-                if (!parser || parser.type === 'hidden') return;
-                h.$manager.resetField(parser);
+                if (!parser || !parser.input) return;
+                parser.rule.value = copy(parser.defaultValue);
                 h.refreshControl(parser);
                 h.$render.clearCache(parser, true);
             });
@@ -348,14 +353,13 @@ export default function Api(h) {
         clearSubValidateState(fields) {
             tidyFields(fields).forEach(field => {
                 const subForm = h.subForm[field];
-                if (subForm) {
-                    if (Array.isArray(subForm)) {
-                        subForm.forEach(form => {
-                            form.clearValidateState();
-                        })
-                    } else if (subForm) {
-                        subForm.clearValidateState();
-                    }
+                if (!subForm) return;
+                if (Array.isArray(subForm)) {
+                    subForm.forEach(form => {
+                        form.clearValidateState();
+                    })
+                } else if (subForm) {
+                    subForm.clearValidateState();
                 }
             })
         },

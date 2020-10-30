@@ -312,6 +312,8 @@ export default class Handle {
             try {
                 parser.watch.push(vm.$watch(() => parser.rule[key], n => {
                     this.watching = true;
+                    if (key === 'hidden')
+                        parser.updateKey(true);
                     if (key === 'validate')
                         this.validate[parser.field] = n;
                     else if (['props', 'on', 'nativeOn'].indexOf(key) > -1)
@@ -339,6 +341,7 @@ export default class Handle {
     //todo 检查深拷贝运行机制
     //todo 减少 reload
     //todo 优化 options 获取方式
+    //todo control 中有插槽,检查缓存
     validateControl(parser) {
         if (parser._useCtrl()) {
             parser.parent && this.$render.clearCache(parser.parent);

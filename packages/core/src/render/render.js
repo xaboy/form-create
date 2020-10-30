@@ -171,7 +171,7 @@ export default function useRender(Render) {
             const {children} = parser.rule, orgChildren = this.orgChildren[parser.id];
 
             if (!is.trueArray(children)) {
-                orgChildren.forEach(child => {
+                orgChildren && orgChildren.forEach(child => {
                     if (!is.String(child) && child.__fc__) {
                         this.$handle.deleteParser(child.__fc__);
                     }
@@ -180,7 +180,7 @@ export default function useRender(Render) {
                 return [];
             }
             //TODO 规则变化后组件重新渲染
-            this.orgChildren[parser.id].forEach(child => {
+            orgChildren && orgChildren.forEach(child => {
                 if (children.indexOf(child) === -1 && !is.String(child) && child.__fc__) {
                     this.$handle.deleteParser(child.__fc__);
                 }
