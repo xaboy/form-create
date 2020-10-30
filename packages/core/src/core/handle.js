@@ -93,8 +93,13 @@ export default class Handle {
         rules.map((_rule, index) => {
             if (parent && is.String(_rule)) return;
 
-            if ((_rule.getRule && !_rule._data.type) || !_rule.type)
+            if (!_rule || (_rule.getRule && !_rule._data.type) || !_rule.type)
                 return err('未定义生成规则的 type 字段', _rule);
+
+            if (_rule.field && this.fieldList[_rule.field] !== undefined) {
+                this.issetRule.push(_rule);
+                return err(`${_rule.field} 字段已存在`, _rule);
+            }
 
             //todo 提高 parser 复用
             let parser;
@@ -115,11 +120,12 @@ export default class Handle {
             } else {
                 parser = this.createParser(this.parseRule(_rule));
             }
-            let children = parser.rule.children, rule = parser.rule;
-            if (this.fieldList[parser.field] !== undefined) {
-                this.issetRule.push(_rule);
-                return err(`${parser.field} 字段已存在`, rule);
+
+            if (parser.originType !== parser.rule.type) {
+                parser = this.createParser(parser.rule);
             }
+
+            let children = parser.rule.children;
 
             [false, true].forEach(b => this.parseEmit(parser, b));
             parser.parent = parent || null;
@@ -306,27 +312,22 @@ export default class Handle {
 
     addParserWitch(parser) {
         const vm = this.vm;
-        //TODO 提高 watch 复用
-        Object.keys(parser.rule).forEach((key) => {
-            if (['field', 'type', 'value', 'vm', 'template', 'name', 'config', 'control'].indexOf(key) !== -1 || parser.rule[key] === undefined) return;
-            try {
-                parser.watch.push(vm.$watch(() => parser.rule[key], n => {
-                    this.watching = true;
-                    if (key === 'hidden')
-                        parser.updateKey(true);
-                    if (key === 'validate')
-                        this.validate[parser.field] = n;
-                    else if (['props', 'on', 'nativeOn'].indexOf(key) > -1)
-                        this.parseInjectEvent(parser.rule, n || {});
-                    else if (['emit', 'nativeEmit'].indexOf(key) > -1)
-                        this.parseEmit(parser, key === 'emit');
-                    this.$render.clearCache(parser);
-                    this.watching = false;
-                }, {deep: key !== 'children'}));
-            } catch (e) {
-                console.error(e);
-                //
-            }
+        //todo 支持单个组件 reload
+        const none = ['field', 'type', 'value', 'vm', 'template', 'name', 'config', 'control'];
+        Object.keys(parser.rule).filter(k => none.indexOf(k) === -1).forEach((key) => {
+            parser.watch.push(vm.$watch(() => parser.rule[key], n => {
+                this.watching = true;
+                if (key === 'hidden')
+                    parser.updateKey(true);
+                if (key === 'validate')
+                    this.validate[parser.field] = n || [];
+                else if (['props', 'on', 'nativeOn'].indexOf(key) > -1)
+                    this.parseInjectEvent(parser.rule, n || {});
+                else if (['emit', 'nativeEmit'].indexOf(key) > -1)
+                    this.parseEmit(parser, key === 'emit');
+                this.$render.clearCache(parser);
+                this.watching = false;
+            }, {deep: key !== 'children'}));
         });
     }
 
@@ -454,6 +455,7 @@ function fullRule(rule) {
 function defRule() {
     return {
         validate: [],
+        children: [],
         col: {},
         emit: [],
         props: {},

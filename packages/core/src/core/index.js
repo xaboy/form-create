@@ -42,6 +42,7 @@ export default function createFormCreate(config) {
             parser = arguments[1];
         }
         var name = toCase(id);
+        if (!parser || !name) return;
         //todo 浅拷贝
         parsers[name] = is.Function(parser) ? parser : createParser(parser);
         maker[name] = creatorFactory(name);

@@ -8,7 +8,7 @@ import is from '@form-create/utils/lib/type';
 
 function bindParser(rule, parser) {
     Object.defineProperties(rule, {
-        __fc__: enumerable(parser)
+        __fc__: enumerable(parser, true)
     });
 }
 
