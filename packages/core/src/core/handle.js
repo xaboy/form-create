@@ -1,7 +1,7 @@
 import BaseParser from '../factory/parser';
 import Render from './render';
 import Api from './api';
-import {enumerable, mergeRule} from './util';
+import {enumerable, getRule, mergeRule} from './util';
 import vNode from '../factory/vNode';
 import toLine from '@form-create/utils/lib/toline';
 import toCase from '@form-create/utils/lib/tocase';
@@ -9,6 +9,7 @@ import {$del, $set} from '@form-create/utils/lib/modify';
 import is from '@form-create/utils/lib/type';
 import {err} from '@form-create/utils/lib/console';
 import debounce from '@form-create/utils/lib/debounce';
+import {isValidChildren} from '@form-create/utils';
 
 export default class Handle {
 
@@ -23,17 +24,39 @@ export default class Handle {
         this.formData = {};
         this.subForm = {};
 
+        this.nextTick;
+        this.appendData = {};
+        this.reloadFlag;
+
+        this.nextReload = () => {
+            this.lifecycle('reload');
+            console.log('reload');
+        };
+
         this.api = Api(this);
+        this.api.rule = this.rules;
+        this.api.config = this.options;
 
         this.__init(rules);
         this.$manager = new fc.manager(this);
         this.$render = new Render(this);
 
-        this.loadRule(this.rules, false);
-
-        this.$render.initOrgChildren();
+        this.loadRule();
 
         this.$manager.__init();
+    }
+
+    clearNextTick() {
+        this.nextTick && clearTimeout(this.nextTick);
+        this.nextTick = null;
+    }
+
+    bindNextTick(fn) {
+        this.clearNextTick();
+        this.nextTick = setTimeout(() => {
+            fn()
+            this.nextTick = null;
+        }, 10);
     }
 
     created() {
@@ -89,16 +112,39 @@ export default class Handle {
         return this.issetRule.indexOf(rule) > -1;
     }
 
-    loadRule(rules, parent) {
+    loadRule() {
+        this.reloadFlag = false;
+        this._loadRule(this.rules);
+        if (this.reloadFlag) this.loadRule();
+        this.vm._renderRule();
+    }
+
+    loadChildren(children, parent) {
+        this.reloadFlag = false;
+        this._loadRule(children, parent);
+        if (this.reloadFlag) this.loadChildren(children, parent);
+    }
+
+    _loadRule(rules, parent) {
         rules.map((_rule, index) => {
             if (parent && is.String(_rule)) return;
 
-            if (!_rule || (_rule.getRule && !_rule._data.type) || !_rule.type)
+            if (!is.Object(_rule) || !getRule(_rule).type)
                 return err('未定义生成规则的 type 字段', _rule);
 
-            if (_rule.field && this.fieldList[_rule.field] !== undefined) {
+            if (_rule.__fc__ && _rule.__fc__.root === rules && this.parsers[_rule.__fc__.id]) {
+                const rule = _rule.__fc__.rule.children;
+                if (is.trueArray(rule)) {
+                    this._loadRule(rule, _rule.__fc__);
+                }
+                return _rule.__fc__;
+            }
+
+            let rule = getRule(_rule);
+
+            if (rule.field && this.fieldList[rule.field]) {
                 this.issetRule.push(_rule);
-                return err(`${_rule.field} 字段已存在`, _rule);
+                return err(`${rule.field} 字段已存在`, _rule);
             }
 
             //todo 提高 parser 复用
@@ -117,23 +163,24 @@ export default class Handle {
                         parser = this.createParser(this.parseRule(_rule));
                     }
                 }
+                if (parser.originType !== parser.rule.type) {
+                    parser = this.createParser(parser.rule);
+                }
             } else {
                 parser = this.createParser(this.parseRule(_rule));
             }
-
-            if (parser.originType !== parser.rule.type) {
-                parser = this.createParser(parser.rule);
-            }
-
+            this.appendValue(parser.rule);
             let children = parser.rule.children;
 
             [false, true].forEach(b => this.parseEmit(parser, b));
             parser.parent = parent || null;
+            parser.root = rules;
             this.setParser(parser);
 
             if (is.trueArray(children)) {
-                this.loadRule(children, parser);
+                this._loadRule(children, parser);
             }
+            this.$render.setOrgChildren(parser);
 
             if (!parent) {
                 this.sortList.push(parser.id);
@@ -142,9 +189,8 @@ export default class Handle {
             if (parser.input)
                 Object.defineProperty(parser.rule, 'value', this.valueHandle(parser));
 
+            if (this.refreshControl(parser)) this.reloadFlag = true;
             return parser;
-        }).filter(h => h).forEach(h => {
-            h.root = rules;
         });
     }
 
@@ -170,16 +216,21 @@ export default class Handle {
         return new (this.fc.parsers[rule.type] || this.fc.parsers[toCase(rule.type)] || this.fc.parsers[toCase('' + vNode.aliasMap[toCase(rule.type)])] || BaseParser)(this, rule);
     }
 
-    parseRule(_rule) {
-        const rule = is.Function(_rule.getRule) ? _rule.getRule() : _rule;
+    appendValue(rule) {
+        if (!rule.field || !hasProperty(this.appendData, rule.field)) return;
+        rule.value = this.appendData[rule.field];
+        delete this.appendData[rule.field];
+    }
 
+    parseRule(_rule) {
+        const rule = getRule(_rule);
         Object.defineProperties(rule, {
             __origin__: enumerable(_rule)
         });
 
         fullRule(rule);
 
-        if (rule.field && this.options.formData[rule.field] !== undefined)
+        if (rule.field && hasProperty(this.options.formData || {}, rule.field))
             rule.value = this.options.formData[rule.field];
 
         rule.options = parseArray(rule.options);
@@ -261,6 +312,11 @@ export default class Handle {
     }
 
     run() {
+        console.warn('render');
+        this.vm.$nextTick(() => {
+            this.bindNextTick(() => this.vm.$emit('fc.nextTick'));
+        })
+
         if (this.vm.unique > 0)
             return this.$render.run();
         else {
@@ -292,7 +348,9 @@ export default class Handle {
     }
 
     valueChange(parser) {
-        this.validateControl(parser);
+        this.refreshControl(parser);
+        //todo 待优化
+        this.vm && this.vm.$emit('update:value', this.api.formData());
     }
 
     onInput(parser, value) {
@@ -331,11 +389,6 @@ export default class Handle {
         });
     }
 
-    refreshControl(parser) {
-        if (parser.input && parser.rule.control) {
-            this.validateControl(parser);
-        }
-    }
 
     //todo 优化删除 rule
     //todo 检查表单重置
@@ -343,34 +396,32 @@ export default class Handle {
     //todo 减少 reload
     //todo 优化 options 获取方式
     //todo control 中有插槽,检查缓存
-    validateControl(parser) {
-        if (parser._useCtrl()) {
+    //TODO 增量 reload
+    refreshControl(parser) {
+        if (parser.input && parser.rule.control && parser._useCtrl()) {
             parser.parent && this.$render.clearCache(parser.parent);
             this.refresh();
+            return true;
         }
-    }
-
-    refreshControls() {
-        Object.keys(this.parsers).forEach((id) => {
-            this.refreshControl(this.parsers[id]);
-        });
     }
 
     lifecycle(name) {
         const fn = this.options[name];
-        this.refreshControls();
         fn && fn(this.api);
         this.fc.$emit(name, this.api);
     }
 
     deleteParser(parser) {
         const {id, field, name} = parser, index = this.sortList.indexOf(id);
-
         parser._delete();
         if (parser.input) {
             Object.defineProperty(parser.rule, 'value', {
                 value: parser.rule.value
             });
+        }
+
+        if (isValidChildren(parser.rule.children)) {
+            parser.rule.children.forEach(h => h.__fc__ && this.deleteParser(h.__fc__, true));
         }
 
         $del(this.parsers, id);
@@ -379,10 +430,14 @@ export default class Handle {
             this.sortList.splice(index, 1);
         }
 
-        if (!this.fieldList[field]) {
+        if (this.fieldList[field]) {
             $del(this.validate, field);
             $del(this.formData, field);
             $del(this.fieldList, field);
+        }
+
+        if (this.$render.renderList[id]) {
+            $del(this.$render.renderList, id);
         }
 
         if (name && this.customData[name]) {
@@ -414,18 +469,26 @@ export default class Handle {
 }
 
 Handle.prototype.reloadRule = debounce(function (rules) {
-    const vm = this.vm;
-    if (!rules) return this.reloadRule(this.rules);
-    if (!this.origin.length) this.api.refresh();
-    this.origin = [...rules];
+    return this._reloadRule(rules);
+}, 1);
 
+Handle.prototype._reloadRule = function (rules) {
+    console.warn('reload');
+    const vm = this.vm;
+    if (!rules) rules = this.rules;
+    if (!this.origin.length) this.api.refresh();
+
+    this.clearNextTick();
+    this.$render.clearOrgChildren();
+
+    this.origin = [...rules];
     const parsers = {...this.parsers};
+
     this.__init(rules);
-    this.loadRule(rules, false);
+    this.loadRule();
     // todo 移除已删除规则可能会导致 reload,考虑内部用 origin 渲染
     Object.keys(parsers).filter(id => this.parsers[id] === undefined)
         .forEach(id => this.deleteParser(parsers[id]));
-    this.$render.initOrgChildren();
     this.formData = {...this.formData};
     this.created();
 
@@ -433,20 +496,24 @@ Handle.prototype.reloadRule = debounce(function (rules) {
     this.$render.clearCacheAll();
     this.refresh();
 
-    vm.$nextTick(() => {
-        this.lifecycle('reload');
-    });
-}, 100);
+    this.vm.$off('fc.nextTick', this.nextReload);
+    this.vm.$once('fc.nextTick', this.nextReload);
+};
+
 
 function parseArray(validate) {
     return Array.isArray(validate) ? validate : [];
+}
+
+function hasProperty(rule, k) {
+    return ({}).hasOwnProperty.call(rule, k)
 }
 
 function fullRule(rule) {
     const def = defRule();
 
     Object.keys(def).forEach(k => {
-        if (!({}).hasOwnProperty.call(rule, k)) $set(rule, k, def[k]);
+        if (!hasProperty(rule, k)) $set(rule, k, def[k]);
     });
     return rule;
 }

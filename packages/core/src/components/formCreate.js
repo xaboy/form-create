@@ -19,12 +19,13 @@ export default function $FormCreate(FormCreate) {
             },
             value: {}
         },
-        data: () => {
+        data() {
             return {
                 formData: undefined,
                 $f: undefined,
                 isShow: true,
                 unique: 1,
+                renderRule: [...this.rule || []]
             };
         },
         render() {
@@ -33,6 +34,9 @@ export default function $FormCreate(FormCreate) {
         methods: {
             _refresh() {
                 ++this.unique;
+            },
+            _renderRule() {
+                this.renderRule = [...this.rule || []];
             }
         },
         watch: {
@@ -41,7 +45,9 @@ export default function $FormCreate(FormCreate) {
                 this.$f.refresh(true);
             },
             rule(n) {
+                if (n.length === this.renderRule.length && n.every(v => this.renderRule.indexOf(v) > -1)) return;
                 this.formCreate.handle.reloadRule(n);
+                this._renderRule();
             }
         },
         beforeCreate() {

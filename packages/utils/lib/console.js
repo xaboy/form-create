@@ -1,5 +1,5 @@
 export function format(type, msg, rule) {
-    return (`[form-create ${type}]: ${msg}` + (rule ? ('\n\n' + JSON.stringify(rule.getRule ? rule.getRule() : rule)) : ''))
+    return (`[form-create ${type}]: ${msg}` + (rule ? ('\n\nrule: ' + JSON.stringify(rule.getRule ? rule.getRule() : rule)) : ''))
 }
 
 export function tip(msg, rule) {

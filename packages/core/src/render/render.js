@@ -2,11 +2,7 @@ import extend from '@form-create/utils/lib/extend';
 import mergeProps from '@form-create/utils/lib/mergeprops';
 import is from '@form-create/utils/lib/type';
 import {_vue as Vue} from '../core';
-import deepExtend from '@form-create/utils/lib/deepextend';
-import debounce from '@form-create/utils/lib/debounce';
 import {tip} from '@form-create/utils/lib/console';
-
-const $de = debounce((fn) => fn(), 1);
 
 function setTemplateProps(vm, parser, fApi) {
     if (!vm.$props)
@@ -122,19 +118,17 @@ export default function useRender(Render) {
                 },
                 {
                     props: {
-                        formCreateRule: deepExtend({}, parser.prop),
+                        formCreateRule: (function () {
+                            const temp = {...parser.prop};
+                            return temp.on = temp.on ? {...temp.on} : {}, temp;
+                        }()),
                     }
                 }
             ]
 
             if (!custom) {
-                const model = this.$handle.modelEvent(parser);
                 props.push({
                     on: {
-                        // [model.event || model]: (value) => {
-                        //     console.log('asdf');
-                        //     this.onInput(parser, value);
-                        // },
                         ['hook:mounted']: () => {
                             parser.el = this.vm.$refs[refName] || {};
                             parser.mounted();
@@ -145,13 +139,11 @@ export default function useRender(Render) {
                         //todo 优化获取 formData
                         value: this.$handle.getFormData(parser),
                         callback: (value) => {
+                            console.log(parser.field, value);
                             this.onInput(parser, value);
                         },
                         expression: `formData.${parser.field}`
                     },
-                    // props: {
-                    //     [model.prop || 'value']: this.$handle.getFormData(parser)
-                    // }
                 })
 
             }
@@ -170,10 +162,10 @@ export default function useRender(Render) {
         renderChildren(parser) {
             const {children} = parser.rule, orgChildren = this.orgChildren[parser.id];
 
-            if (!is.trueArray(children)) {
-                orgChildren && orgChildren.forEach(child => {
+            if (!is.trueArray(children) && orgChildren) {
+                orgChildren.forEach(child => {
                     if (!is.String(child) && child.__fc__) {
-                        this.$handle.deleteParser(child.__fc__);
+                        this.vm.$nextTick(() => this.$handle.deleteParser(child.__fc__));
                     }
                 });
                 this.orgChildren[parser.id] = [];
@@ -182,7 +174,7 @@ export default function useRender(Render) {
             //TODO 规则变化后组件重新渲染
             orgChildren && orgChildren.forEach(child => {
                 if (children.indexOf(child) === -1 && !is.String(child) && child.__fc__) {
-                    this.$handle.deleteParser(child.__fc__);
+                    this.vm.$nextTick(() => this.$handle.deleteParser(child.__fc__));
                 }
             });
 
@@ -191,8 +183,12 @@ export default function useRender(Render) {
                 if (child.__fc__) {
                     return this.renderParser(child.__fc__, parser);
                 }
-                if (!this.$handle.isset(child.__origin__ || child) && child.type)
-                    $de(() => this.$handle.reloadRule());
+                if (!this.$handle.isset(child.__origin__ || child) && child.type) {
+                    this.vm.$nextTick(() => {
+                        this.$handle.loadChildren(children, parser);
+                        this.$handle.refresh();
+                    });
+                }
             });
 
         },

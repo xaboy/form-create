@@ -86,7 +86,8 @@ extend(Parser.prototype, {
             $handle: undef,
             $render: undef,
             vm: undef,
-            vNode: undef
+            vNode: undef,
+            parent: null,
         })
     },
     _removeCtrl() {
@@ -99,7 +100,6 @@ extend(Parser.prototype, {
         this.root.splice(index, 1);
         this._removeCtrl();
         extend(this, {
-            parent: null,
             root: []
         });
     },

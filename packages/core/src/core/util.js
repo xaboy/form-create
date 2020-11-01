@@ -66,3 +66,7 @@ export function copyRules(rules, mode) {
 export function mergeRule(rule, merge) {
     mergeProps([merge], rule, {array: arrayAttrs});
 }
+
+export function getRule(rule) {
+    return is.Function(rule.getRule) ? rule.getRule() : rule;
+}

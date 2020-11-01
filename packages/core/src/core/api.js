@@ -64,7 +64,7 @@ export default function Api(h) {
                 formData = {[field]: arguments[1]};
             Object.keys(formData).forEach(key => {
                 const parser = h.fieldList[key];
-                if (!parser) return;
+                if (!parser) return h.appendData[key] = formData[key];
                 parser.rule.value = formData[key];
             });
         },
@@ -195,6 +195,7 @@ export default function Api(h) {
         refresh: (clear) => {
             if (clear) {
                 h.$render.clearCacheAll();
+                //todo 直接刷新 form 的 key
                 h.sortList.forEach(id => {
                     h.parsers[id].updateKey(true);
                 })
@@ -388,6 +389,10 @@ export default function Api(h) {
                 api.resetBtnProps({show: !!isShow});
             }
         },
+        nextTick(fn) {
+            h.vm.$once('fc.nextTick', fn);
+            h.refresh();
+        }
         //todo 以上
     };
 

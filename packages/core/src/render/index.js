@@ -9,8 +9,10 @@ export default function Render(handle) {
     this.vm = handle.vm;
     this.$manager = handle.$manager;
     this.vNode = new VNode(this.vm);
+    //todo 数据回收
     this.cache = {};
     this.renderList = {};
+    this.orgChildren = {};
 }
 
 useInit(Render);
