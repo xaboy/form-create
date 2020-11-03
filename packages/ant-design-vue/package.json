@@ -43,7 +43,7 @@
   "dependencies": {
     "@form-create/core": "^1.0.19",
     "@form-create/utils": "^1.0.15",
-    "ant-design-vue": "^1.5.3",
+    "ant-design-vue": "^1.7.1",
     "moment": "^2.24.0"
   },
   "publishConfig": {
