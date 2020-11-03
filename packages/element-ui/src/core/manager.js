@@ -100,7 +100,8 @@ export default class ElmManager extends Manager {
             key: this.key,
             ref: this.ref,
             class: 'form-create',
-            type: 'ElForm'
+            type: 'ElForm',
+            tag:'component'
         }])
     }
 

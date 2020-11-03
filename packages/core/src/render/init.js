@@ -5,6 +5,17 @@ import {isValidChildren} from '@form-create/utils';
 
 export default function useInit(Render) {
     extend(Render.prototype, {
+        initOrgChildren() {
+            this.orgChildren = {};
+            const parsers = this.$handle.parsers;
+            this.orgChildren = Object.keys(parsers).reduce((initial, id) => {
+                const children = parsers[id].rule.children;
+                initial[id] = is.trueArray(children) ? [...children] : [];
+
+                return initial;
+            }, {});
+
+        },
         setOrgChildren(parser) {
             this.orgChildren[parser.id] = is.trueArray(parser.rule.children) ? [...parser.rule.children] : [];
         },

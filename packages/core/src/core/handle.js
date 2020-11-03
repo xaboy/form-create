@@ -356,11 +356,11 @@ export default class Handle {
     onInput(parser, value) {
         let val;
         if (parser.input && (this.isQuote(parser, val = parser.toValue(value)) || this.isChange(parser, val))) {
-            this.$render.clearCache(parser);
             this.setFormData(parser, value);
             this.changeStatus = true;
             this.valueChange(parser);
             this.vm.$emit('change', parser.field, val, this.api);
+            this.$render.clearCache(parser);
         }
     }
 
@@ -399,7 +399,7 @@ export default class Handle {
     //TODO 增量 reload
     refreshControl(parser) {
         if (parser.input && parser.rule.control && parser._useCtrl()) {
-            parser.parent && this.$render.clearCache(parser.parent);
+            this.$render.clearCacheAll();
             this.refresh();
             return true;
         }
@@ -413,7 +413,6 @@ export default class Handle {
 
     deleteParser(parser) {
         const {id, field, name} = parser, index = this.sortList.indexOf(id);
-        parser._delete();
         if (parser.input) {
             Object.defineProperty(parser.rule, 'value', {
                 value: parser.rule.value
@@ -446,7 +445,8 @@ export default class Handle {
 
         if (this.subForm[parser.field])
             $del(this.subForm, field);
-
+        parser._delete();
+        // this.$render.initOrgChildren();
         return parser;
     }
 
