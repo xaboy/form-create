@@ -1,5 +1,5 @@
 /*!
- * @form-create/core v1.0.19
+ * @form-create/core v1.0.20
  * (c) 2018-2020 xaboy
  * Github https://github.com/xaboy/form-create
  * Released under the MIT License.
@@ -644,11 +644,12 @@ function parseJson(json, mode) {
     return v;
   });
 }
-function enumerable(value) {
+function enumerable(value, writable) {
   return {
     value: value,
     enumerable: false,
-    configurable: false
+    configurable: false,
+    writable: !!writable
   };
 }
 function copyRule(rule, mode) {
@@ -810,9 +811,9 @@ function () {
     }
 
     this.name = rule.name;
-    this.key = 'key_' + id;
     this.refName = '__' + this.field + this.id;
     this.formItemRefName = 'fi' + this.refName;
+    this.updateKey(id);
     this.root = [];
     this.ctrlRule = null;
     this.modelEvent = 'input';
@@ -822,6 +823,12 @@ function () {
   }
 
   _createClass(BaseParser, [{
+    key: "updateKey",
+    value: function updateKey(id, parent) {
+      this.key = 'key_' + id;
+      parent && this.parent && this.parent.updateKey(uniqueId(), parent);
+    }
+  }, {
     key: "update",
     value: function update(handle) {
       this.$handle = handle;
@@ -874,7 +881,12 @@ function () {
     key: "clearCache",
     value: function clearCache(parser) {
       var clear = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
-      if (!this.cache[parser.id]) return;
+
+      if (!this.cache[parser.id]) {
+        if (clear && parser.parent) this.clearCache(parser.parent, clear);
+        return;
+      }
+
       if (this.cacheStatus(parser)) this.$handle.refresh();
       var parent = this.cache[parser.id].parent;
       this.cache[parser.id] = null;
@@ -986,6 +998,7 @@ function () {
     key: "renderParser",
     value: function renderParser(parser, parent) {
       if (parser.type === 'hidden') return;
+      if ((!parser.isDef || parser.rule.native !== false) && parser.rule.hidden) return;
 
       if (!this.cache[parser.id] || parser.type === 'template') {
         parser.vData.get();
@@ -1180,7 +1193,7 @@ function Api(h) {
       var fields = Object.keys(h.fieldList),
           index = h.sortList.length,
           rules;
-      if (rule.field && fields.indexOf(rule.field) !== -1) return console.error("".concat(rule.field, " \u5B57\u6BB5\u5DF2\u5B58\u5728") + errMsg());
+      if (rule.field && fields.indexOf(rule.field) !== -1) return console.error("".concat(rule.field, " \u5B57\u6BB5\u5DF2\u5B58\u5728\nrule: ") + JSON.stringify(getRule(rule)) + errMsg());
       var parser = h.getParser(after);
 
       if (parser) {
@@ -1199,7 +1212,7 @@ function Api(h) {
       var fields = Object.keys(h.fieldList),
           index = 0,
           rules;
-      if (rule.field && fields.indexOf(rule.field) !== -1) return console.error("".concat(rule.field, " \u5B57\u6BB5\u5DF2\u5B58\u5728") + errMsg());
+      if (rule.field && fields.indexOf(rule.field) !== -1) return console.error("".concat(rule.field, " \u5B57\u6BB5\u5DF2\u5B58\u5728\nrule: ") + JSON.stringify(getRule(rule)) + errMsg());
       var parser = h.getParser(after);
 
       if (parser) {
@@ -1461,7 +1474,12 @@ function Api(h) {
       tidyFields(fields, true).forEach(function (field) {
         var parser = parsers[field];
         if (!parser) return;
-        if (parser.type === 'hidden') return;
+
+        if (parser.type === 'hidden') {
+          parser.rule.value = parser.defaultValue;
+          return;
+        }
+
         h.$form.resetField(parser);
         h.refreshControl(parser);
         h.$render.clearCache(parser, true);
@@ -1628,7 +1646,7 @@ function () {
 
       rules.map(function (_rule, index) {
         if (parent && isString(_rule)) return;
-        if (!_rule.type) return console.error('未定义生成规则的 type 字段' + errMsg());
+        if (!_rule || !_rule.type) return console.error('未定义生成规则的 type 字段\nrule: ' + JSON.stringify(_rule ? getRule(_rule) : _rule) + errMsg());
         var parser;
 
         if (_rule.__fc__) {
@@ -1655,7 +1673,7 @@ function () {
         if (!_this.notField(parser.field)) {
           _this.issetRule.push(_rule);
 
-          return console.error("".concat(rule.field, " \u5B57\u6BB5\u5DF2\u5B58\u5728") + errMsg());
+          return console.error("".concat(rule.field, " \u5B57\u6BB5\u5DF2\u5B58\u5728\nrule: ") + JSON.stringify(rule) + errMsg());
         }
 
         parser.parent = parent || null;
@@ -1702,7 +1720,7 @@ function () {
 
             _this2.refresh();
 
-            _this2.vm.$emit('setValue', parser.field, value, _this2.fCreateApi);
+            _this2.vm.$emit('set-value', parser.field, value, _this2.fCreateApi);
           }
         }
       };
@@ -1962,7 +1980,7 @@ function () {
           }, function (n, o) {
             if (o === undefined) return;
             _this6.watching = true;
-            if (key === 'validate') _this6.validate[parser.field] = n;else if (key === 'props') _this6.parseProps(parser.rule);else if (key === 'on') _this6.parseOn(parser.rule);else if (key === 'emit') _this6.margeEmit(parser.rule);
+            if (key === 'hidden' && (!parser.isDef || parser.rule.native !== false)) parser.updateKey(uniqueId(), true);else if (key === 'validate') _this6.validate[parser.field] = n;else if (key === 'props') _this6.parseProps(parser.rule);else if (key === 'on') _this6.parseOn(parser.rule);else if (key === 'emit') _this6.margeEmit(parser.rule);
 
             _this6.$render.clearCache(parser);
 
@@ -2209,7 +2227,7 @@ function defRule() {
 function bindParser(rule, parser) {
   Object.defineProperties(rule, {
     __field__: enumerable(parser.field),
-    __fc__: enumerable(parser)
+    __fc__: enumerable(parser, true)
   });
 }
 
