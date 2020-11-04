@@ -100,7 +100,7 @@ export default class Handle {
         this.rules = rules;
         this.origin = [...this.rules];
         this.changeStatus = false;
-        this.issetRule = [];
+        this.repeatRule = [];
     }
 
     modelEvent(parser) {
@@ -108,8 +108,8 @@ export default class Handle {
         return modelList[parser.originType] || modelList[toCase(parser.type)] || parser.rule.model || parser.modelEvent;
     }
 
-    isset(rule) {
-        return this.issetRule.indexOf(rule) > -1;
+    isRepeatRule(rule) {
+        return this.repeatRule.indexOf(rule) > -1;
     }
 
     loadRule() {
@@ -117,12 +117,13 @@ export default class Handle {
         this._loadRule(this.rules);
         if (this.reloadFlag) this.loadRule();
         this.vm._renderRule();
+        this.$render.initOrgChildren();
     }
 
     loadChildren(children, parent) {
         this.reloadFlag = false;
         this._loadRule(children, parent);
-        if (this.reloadFlag) this.loadChildren(children, parent);
+        if (this.reloadFlag) this.loadRule();
     }
 
     _loadRule(rules, parent) {
@@ -133,7 +134,7 @@ export default class Handle {
                 return err('未定义生成规则的 type 字段', _rule);
 
             if (_rule.__fc__ && _rule.__fc__.root === rules && this.parsers[_rule.__fc__.id]) {
-                const rule = _rule.__fc__.rule.children;
+                let rule = _rule.__fc__.rule.children;
                 if (is.trueArray(rule)) {
                     this._loadRule(rule, _rule.__fc__);
                 }
@@ -143,7 +144,7 @@ export default class Handle {
             let rule = getRule(_rule);
 
             if (rule.field && this.fieldList[rule.field]) {
-                this.issetRule.push(_rule);
+                this.repeatRule.push(_rule);
                 return err(`${rule.field} 字段已存在`, _rule);
             }
 
@@ -170,17 +171,16 @@ export default class Handle {
                 parser = this.createParser(this.parseRule(_rule));
             }
             this.appendValue(parser.rule);
-            let children = parser.rule.children;
-
             [false, true].forEach(b => this.parseEmit(parser, b));
             parser.parent = parent || null;
             parser.root = rules;
             this.setParser(parser);
 
+            let children = parser.rule.children;
+
             if (is.trueArray(children)) {
                 this._loadRule(children, parser);
             }
-            this.$render.setOrgChildren(parser);
 
             if (!parent) {
                 this.sortList.push(parser.id);
@@ -202,10 +202,12 @@ export default class Handle {
             },
             set: (value) => {
                 if (this.isChange(parser, value)) {
-                    this.$render.clearCache(parser, true);
+                    //todo 优化 initOrgChildren
+                    this.$render.initOrgChildren();
                     this.setFormData(parser, parser.toFormValue(value));
                     this.valueChange(parser, value);
                     this.refresh();
+                    this.$render.clearCache(parser, true);
                     this.vm.$emit('set-value', parser.field, value, this.api);
                 }
             }
@@ -348,7 +350,11 @@ export default class Handle {
     }
 
     valueChange(parser) {
-        this.refreshControl(parser);
+        if (this.refreshControl(parser)) {
+            //todo 直接 reload
+            this.$render.clearCacheAll();
+            this.refresh();
+        }
         //todo 待优化
         this.vm && this.vm.$emit('update:value', this.api.formData());
     }
@@ -398,11 +404,45 @@ export default class Handle {
     //todo control 中有插槽,检查缓存
     //TODO 增量 reload
     refreshControl(parser) {
-        if (parser.input && parser.rule.control && parser._useCtrl()) {
-            this.$render.clearCacheAll();
-            this.refresh();
-            return true;
+        return parser.input && parser.rule.control && this.useCtrl(parser);
+    }
+
+    useCtrl(parser) {
+        const controls = getControl(parser), validate = [], api = this.api;
+        if (!controls.length) return false;
+        //todo 优化 root,优化 control.parser, control 事件
+        for (let i = 0; i < controls.length; i++) {
+            const control = controls[i], handleFn = control.handle || (val => val === control.value);
+            const data = {
+                ...control,
+                valid: handleFn(parser.rule.value, api),
+                ctrl: findControl(parser, control.rule),
+            };
+            if ((data.valid && data.ctrl) || (!data.valid && !data.ctrl)) continue;
+            validate.push(data);
         }
+        if (!validate.length) return false;
+        validate.forEach(({valid, rule, prepend, append, child, ctrl}) => {
+            if (valid) {
+                const ruleCon = {
+                    type: 'fcFragment',
+                    native: true,
+                    children: rule
+                }
+                parser.ctrlRule.push(ruleCon);
+                if (prepend) {
+                    api.prepend(ruleCon, prepend, child)
+                } else if (append) {
+                    api.append(ruleCon, append, child)
+                } else {
+                    parser.root.splice(parser.root.indexOf(parser.rule.__origin__) + 1, 0, ruleCon);
+                }
+            } else {
+                parser.ctrlRule.splice(parser.ctrlRule.indexOf(ctrl), 1);
+                api.removeRule(ctrl);
+            }
+        });
+        return true;
     }
 
     lifecycle(name) {
@@ -411,8 +451,11 @@ export default class Handle {
         this.fc.$emit(name, this.api);
     }
 
-    deleteParser(parser) {
+    deleteParser(parser, flag) {
+        if (parser.delete) return;
+
         const {id, field, name} = parser, index = this.sortList.indexOf(id);
+        console.warn(parser);
         if (parser.input) {
             Object.defineProperty(parser.rule, 'value', {
                 value: parser.rule.value
@@ -428,6 +471,7 @@ export default class Handle {
         if (index > -1) {
             this.sortList.splice(index, 1);
         }
+        delete this.$render.renderList[parser.id];
 
         if (this.fieldList[field]) {
             $del(this.validate, field);
@@ -446,7 +490,7 @@ export default class Handle {
         if (this.subForm[parser.field])
             $del(this.subForm, field);
         parser._delete();
-        // this.$render.initOrgChildren();
+        if (!flag) this.$render.initOrgChildren();
         return parser;
     }
 
@@ -516,6 +560,20 @@ function fullRule(rule) {
         if (!hasProperty(rule, k)) $set(rule, k, def[k]);
     });
     return rule;
+}
+
+function getControl(parser) {
+    const control = parser.rule.control || [];
+    if (is.Object(control)) return [control];
+    else return control;
+}
+
+function findControl(parser, rule) {
+    for (let i = 0; i < parser.ctrlRule.length; i++) {
+        const ctrl = parser.ctrlRule[i];
+        if (ctrl.children === rule)
+            return ctrl;
+    }
 }
 
 //todo 合并

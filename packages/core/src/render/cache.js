@@ -2,6 +2,9 @@ import extend from '@form-create/utils/lib/extend';
 
 export default function useCache(Render) {
     extend(Render.prototype, {
+        initCache() {
+            this.clearCacheAll();
+        },
         clearCache(parser, clear = true) {
             if (!this.cache[parser.id]) {
                 clear && parser.parent && this.clearCache(parser.parent, clear);

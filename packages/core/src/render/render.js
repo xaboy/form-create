@@ -24,6 +24,36 @@ function setTemplateProps(vm, parser, fApi) {
 
 export default function useRender(Render) {
     extend(Render.prototype, {
+        initRender() {
+            //todo 数据回收
+            this.renderList = {};
+            this.clearOrgChildren();
+        },
+        initOrgChildren() {
+            const parsers = this.$handle.parsers;
+            this.orgChildren = Object.keys(parsers).reduce((initial, id) => {
+                const children = parsers[id].rule.children;
+                initial[id] = is.trueArray(children) ? [...children] : [];
+
+                return initial;
+            }, {});
+
+        },
+        clearOrgChildren() {
+            this.orgChildren = {};
+        },
+        run() {
+            if (!this.vm.isShow) return;
+
+            this.$manager.updateOptions(this.$handle.options);
+            this.$manager.beforeRender();
+
+            const vn = this.$handle.sortList.map((id) => {
+                return this.renderParser(this.$handle.parsers[id]);
+            }).filter((val) => val !== undefined);
+
+            return this.$manager.render(vn);
+        },
         mergeGlobal(parser) {
             const g = this.$handle.options.global;
             if (!g) return;
@@ -31,7 +61,7 @@ export default function useRender(Render) {
         },
         renderTemplate(parser) {
             if (!Vue.compile) {
-                tip('当前使用的Vue版本不支持compile,无法使用template功能');
+                tip('当前使用的Vue构建版本不支持compile,无法使用template功能');
                 return [];
             }
             const rule = this.inputVData(parser);
@@ -165,7 +195,7 @@ export default function useRender(Render) {
             if (!is.trueArray(children) && orgChildren) {
                 orgChildren.forEach(child => {
                     if (!is.String(child) && child.__fc__) {
-                        this.vm.$nextTick(() => this.$handle.deleteParser(child.__fc__));
+                        this.$handle.deleteParser(child.__fc__);
                     }
                 });
                 this.orgChildren[parser.id] = [];
@@ -174,7 +204,7 @@ export default function useRender(Render) {
             //TODO 规则变化后组件重新渲染
             orgChildren && orgChildren.forEach(child => {
                 if (children.indexOf(child) === -1 && !is.String(child) && child.__fc__) {
-                    this.vm.$nextTick(() => this.$handle.deleteParser(child.__fc__));
+                    this.$handle.deleteParser(child.__fc__);
                 }
             });
 
@@ -183,7 +213,7 @@ export default function useRender(Render) {
                 if (child.__fc__) {
                     return this.renderParser(child.__fc__, parser);
                 }
-                if (!this.$handle.isset(child.__origin__ || child) && child.type) {
+                if (!this.$handle.isRepeatRule(child.__origin__ || child) && child.type) {
                     this.vm.$nextTick(() => {
                         this.$handle.loadChildren(children, parser);
                         this.$handle.refresh();

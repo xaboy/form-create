@@ -1,7 +1,6 @@
 import VNode from '../factory/vNode';
 import useCache from './cache';
 import useRender from './render';
-import useInit from './init';
 
 export default function Render(handle) {
     this.$handle = handle;
@@ -9,12 +8,10 @@ export default function Render(handle) {
     this.vm = handle.vm;
     this.$manager = handle.$manager;
     this.vNode = new VNode(this.vm);
-    //todo 数据回收
-    this.cache = {};
-    this.renderList = {};
-    this.orgChildren = {};
+
+    this.initCache();
+    this.initRender();
 }
 
-useInit(Render);
 useCache(Render);
 useRender(Render)
