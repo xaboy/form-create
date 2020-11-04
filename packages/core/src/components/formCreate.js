@@ -54,6 +54,7 @@ export default function $FormCreate(FormCreate) {
             const {rule, option} = this.$options.propsData;
             this.formCreate = new FormCreate(this, rule, option);
             extend(this.$options.components, this.formCreate.components);
+            extend(this.$options.filters, this.formCreate.filters);
         },
         created() {
             this.formCreate.created();

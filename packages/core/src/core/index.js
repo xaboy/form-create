@@ -18,6 +18,7 @@ export default function createFormCreate(config) {
     const components = {
             [fragment.name]: fragment
         },
+        filters = {},
         parsers = {},
         maker = makerFactory(),
         globalConfig = {},
@@ -31,6 +32,17 @@ export default function createFormCreate(config) {
 
         Object.assign(Parser.prototype, proto);
         return Parser;
+    }
+
+    function filter(id) {
+        let filter;
+        if (arguments.length === 1) {
+            filter = id;
+            id = filter.name;
+        } else {
+            filter = arguments[1];
+        }
+        if (id && filter) filters[id] = filter;
     }
 
     function parser(id) {
@@ -68,7 +80,7 @@ export default function createFormCreate(config) {
             component = id;
             components[name] = component;
         }
-        if (component.formCreateParser) parser(name, component.formCreateParser);
+        if (component.formCreateParser && name) parser(name, component.formCreateParser);
     }
 
     function $form() {
@@ -91,6 +103,7 @@ export default function createFormCreate(config) {
             data,
             maker,
             component,
+            filter,
             parser,
             setModel,
             createParser,
@@ -176,6 +189,7 @@ export default function createFormCreate(config) {
             this.options = deepExtend({formData: {}}, globalConfig);
             this.updateOptions(options);
             this.components = components;
+            this.filters = filters;
         }
 
         updateOptions(options) {

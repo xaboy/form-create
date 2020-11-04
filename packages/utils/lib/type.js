@@ -13,10 +13,14 @@ const is = {
     }
 };
 
-['Date', 'Object', 'Function', 'String', 'Boolean',' Array'].forEach(t => {
+['Date', 'Object', 'Function', 'String', 'Boolean', ' Array'].forEach(t => {
     is[t] = function (arg) {
         return is.type(arg, t);
     }
 })
+
+export function hasProperty(rule, k) {
+    return ({}).hasOwnProperty.call(rule, k)
+}
 
 export default is;

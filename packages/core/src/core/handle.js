@@ -10,6 +10,7 @@ import is from '@form-create/utils/lib/type';
 import {err} from '@form-create/utils/lib/console';
 import debounce from '@form-create/utils/lib/debounce';
 import {isValidChildren} from '@form-create/utils';
+import {hasProperty} from '@form-create/utils/lib/type';
 
 export default class Handle {
 
@@ -37,7 +38,7 @@ export default class Handle {
         this.api.rule = this.rules;
         this.api.config = this.options;
 
-        this.__init(rules);
+        this.initData(rules);
         this.$manager = new fc.manager(this);
         this.$render = new Render(this);
 
@@ -92,7 +93,7 @@ export default class Handle {
         return this.fc.options || {};
     }
 
-    __init(rules) {
+    initData(rules) {
         this.fieldList = {};
         this.parsers = {};
         this.customData = {};
@@ -528,7 +529,7 @@ Handle.prototype._reloadRule = function (rules) {
     this.origin = [...rules];
     const parsers = {...this.parsers};
 
-    this.__init(rules);
+    this.initData(rules);
     this.loadRule();
     // todo 移除已删除规则可能会导致 reload,考虑内部用 origin 渲染
     Object.keys(parsers).filter(id => this.parsers[id] === undefined)
@@ -547,10 +548,6 @@ Handle.prototype._reloadRule = function (rules) {
 
 function parseArray(validate) {
     return Array.isArray(validate) ? validate : [];
-}
-
-function hasProperty(rule, k) {
-    return ({}).hasOwnProperty.call(rule, k)
 }
 
 function fullRule(rule) {
