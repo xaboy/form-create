@@ -10,7 +10,7 @@ import is from '@form-create/utils/lib/type';
 import toCase from '@form-create/utils/lib/tocase';
 import extend from '@form-create/utils/lib/extend';
 import deepExtend, {deepExtendArgs} from '@form-create/utils/lib/deepextend';
-import {CreateNodeFactory} from '../factory/vNode';
+import {CreateNodeFactory} from '../factory/node';
 
 export let _vue = typeof window !== 'undefined' && window.Vue ? window.Vue : Vue;
 
@@ -170,13 +170,13 @@ export default function createFormCreate(config) {
                 Vue.component('FormCreate', $form());
             },
             init(rules, _opt = {}) {
-                let $vm = mountForm(rules, _opt), formCreate = $vm.$refs.fc.formCreate;
+                let $vm = mountForm(rules, _opt), _this = $vm.$refs.fc.formCreate;
                 return {
                     mount($el) {
                         if ($el && is.Element($el))
-                            formCreate.options.el = $el;
-                        _getEl(formCreate.options).appendChild($vm.$el);
-                        return formCreate.handle.api;
+                            _this.options.el = $el;
+                        _getEl(_this.options).appendChild($vm.$el);
+                        return _this.api();
                     },
                     remove() {
                         $vm.$el.parentNode && $vm.$el.parentNode.removeChild($vm.$el);
@@ -185,7 +185,7 @@ export default function createFormCreate(config) {
                         this.remove();
                         $vm.$destroy();
                     },
-                    $f: formCreate.handle.api
+                    $f: _this.api()
                 };
             }
         })
@@ -199,16 +199,34 @@ export default function createFormCreate(config) {
         this.modelEvents = modelEvents;
         this.rules = Array.isArray(rules) ? rules : [];
         this.options = deepExtend({formData: {}}, globalConfig);
-        this.updateOptions(options || {});
         this.prop = {
             components,
             filters,
             directives,
         }
         this.CreateNode = CreateNode;
+
+        this.updateOptions(options || {});
+        this.init();
     }
 
+    //todo 使用事件优化流程
     extend(FormCreate.prototype, {
+        init() {
+            const vm = this.vm;
+            vm.$on('hook:created', () => {
+                this.created();
+                vm.$f = this.api();
+                vm.$emit('input', vm.$f);
+            })
+            vm.$on('hook:mounted', () => {
+                this.mounted();
+            });
+            vm.$on('hook:beforeDestroy', () => {
+                this.handle.reloadRule([]);
+                this.handle.$render.clearCacheAll();
+            });
+        },
         updateOptions(options) {
             //todo 继承方式,检查全局配置污染
             this.options = deepExtendArgs(this.options, options);
@@ -227,8 +245,7 @@ export default function createFormCreate(config) {
             this.handle.lifecycle('mounted');
         },
         $emit(eventName, ...params) {
-            if (this.$parent)
-                this.$parent.$emit(`fc:${eventName}`, ...params);
+            this.$paren && this.$parent.$emit(`fc:${eventName}`, ...params);
             this.vm.$emit(eventName, ...params);
         }
     })

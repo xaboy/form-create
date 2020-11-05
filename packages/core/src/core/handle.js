@@ -8,7 +8,6 @@ import {$del, $set} from '@form-create/utils/lib/modify';
 import is from '@form-create/utils/lib/type';
 import {err} from '@form-create/utils/lib/console';
 import debounce from '@form-create/utils/lib/debounce';
-import {isValidChildren} from '@form-create/utils';
 import {hasProperty} from '@form-create/utils/lib/type';
 import {baseRule} from '../factory/creator';
 
@@ -485,7 +484,7 @@ export default class Handle {
             });
         }
 
-        if (isValidChildren(parser.rule.children)) {
+        if (is.trueArray(parser.rule.children)) {
             parser.rule.children.forEach(h => h.__fc__ && this.deleteParser(h.__fc__, true));
         }
 

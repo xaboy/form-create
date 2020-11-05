@@ -57,17 +57,5 @@ export default function $FormCreate(FormCreate) {
                 extend(this.$options[k], this.formCreate.prop[k]);
             })
         },
-        created() {
-            this.formCreate.created();
-            this.$f = this.formCreate.api();
-            this.$emit('input', this.$f);
-        },
-        mounted() {
-            this.formCreate.mounted();
-        },
-        beforeDestroy() {
-            this.formCreate.handle.reloadRule([]);
-            this.formCreate.handle.$render.clearCacheAll();
-        },
     }
 }
