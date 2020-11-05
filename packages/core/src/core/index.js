@@ -16,14 +16,15 @@ export let _vue = typeof window !== 'undefined' && window.Vue ? window.Vue : Vue
 export default function createFormCreate(config) {
 
     const components = {
-            [fragment.name]: fragment
-        },
-        filters = {},
-        parsers = {},
-        maker = makerFactory(),
-        globalConfig = {},
-        data = {},
-        modelEvents = {};
+        [fragment.name]: fragment
+    };
+    const filters = {};
+    const parsers = {};
+    const directives = {};
+    const maker = makerFactory();
+    const globalConfig = {};
+    const data = {};
+    const modelEvents = {};
 
     function createParser(proto) {
         class Parser extends BaseParser {
@@ -34,27 +35,32 @@ export default function createFormCreate(config) {
         return Parser;
     }
 
-    function filter(id) {
-        let filter;
+    function _parseProp(id) {
+        let prop;
         if (arguments.length === 1) {
-            filter = id;
-            id = filter.name;
+            prop = arguments[0];
+            id = prop.name;
         } else {
-            filter = arguments[1];
+            prop = arguments[1];
         }
-        if (id && filter) filters[id] = filter;
+        return {id, prop};
     }
 
-    function parser(id) {
-        let parser;
-        if (arguments.length === 1) {
-            parser = id;
-            id = parser.name;
-        } else {
-            parser = arguments[1];
-        }
-        var name = toCase(id);
-        if (!parser || !name) return;
+    function filter() {
+        const data = _parseProp(...arguments);
+        if (data.id && data.prop) filters[data.id] = data.prop;
+    }
+
+    function directive() {
+        const data = _parseProp(...arguments);
+        if (data.id && data.prop) directives[data.id] = data.prop;
+    }
+
+    function parser() {
+        const data = _parseProp(...arguments);
+        if (!data.id || !data.prop) return;
+        const name = toCase(data.id);
+        const parser = data.prop;
         //todo 浅拷贝
         parsers[name] = is.Function(parser) ? parser : createParser(parser);
         maker[name] = creatorFactory(name);
@@ -73,45 +79,27 @@ export default function createFormCreate(config) {
                 return $form();
             } else if (component === undefined) {
                 return components[name];
-            } else
-                components[name] = component;
+            }
         } else {
             name = toCase(id.name);
             component = id;
-            components[name] = component;
         }
-        if (component.formCreateParser && name) parser(name, component.formCreateParser);
+        if (!name || !component) return;
+        components[name] = component;
+        if (component.formCreateParser) parser(name, component.formCreateParser);
     }
 
     function $form() {
         return _vue.extend($FormCreate(FormCreate));
     }
 
-    function getEl(options) {
+    function _getEl(options) {
         return (!options || !options.el)
             ? window.document.body
             : (is.Element(options.el)
                 ? options.el
                 : document.querySelector(options.el)
             );
-    }
-
-    function useAttr(formCreate) {
-        extend(formCreate, {
-            version: config.version,
-            ui: config.ui,
-            data,
-            maker,
-            component,
-            filter,
-            parser,
-            setModel,
-            createParser,
-            copyRule,
-            copyRules,
-            $form,
-            parseJson
-        });
     }
 
     function create(rules, option) {
@@ -128,6 +116,24 @@ export default function createFormCreate(config) {
         return $vm;
     }
 
+    function useAttr(formCreate) {
+        extend(formCreate, {
+            version: config.version,
+            ui: config.ui,
+            data,
+            maker,
+            component,
+            filter,
+            directive,
+            parser,
+            setModel,
+            createParser,
+            copyRule,
+            copyRules,
+            $form,
+            parseJson
+        });
+    }
 
     function useStatic(FormCreate) {
         extend(FormCreate, {
@@ -135,7 +141,7 @@ export default function createFormCreate(config) {
                 let $vm = create(rules, _opt);
                 const _this = $vm.$refs.fc.formCreate;
                 _this.$parent = parent;
-                getEl(_this.options).appendChild($vm.$el);
+                _getEl(_this.options).appendChild($vm.$el);
                 return _this.handle.api;
             },
             install(Vue, options) {
@@ -162,7 +168,7 @@ export default function createFormCreate(config) {
                     mount($el) {
                         if ($el && is.Element($el))
                             formCreate.options.el = $el;
-                        getEl(formCreate.options).appendChild($vm.$el);
+                        _getEl(formCreate.options).appendChild($vm.$el);
                         return formCreate.handle.api;
                     },
                     remove() {
@@ -188,8 +194,11 @@ export default function createFormCreate(config) {
             this.rules = Array.isArray(rules) ? rules : [];
             this.options = deepExtend({formData: {}}, globalConfig);
             this.updateOptions(options);
-            this.components = components;
-            this.filters = filters;
+            this.prop = {
+                components,
+                filters,
+                directives,
+            }
         }
 
         updateOptions(options) {

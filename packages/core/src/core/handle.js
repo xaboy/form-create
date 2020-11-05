@@ -11,6 +11,7 @@ import {err} from '@form-create/utils/lib/console';
 import debounce from '@form-create/utils/lib/debounce';
 import {isValidChildren} from '@form-create/utils';
 import {hasProperty} from '@form-create/utils/lib/type';
+import {baseRule} from '../factory/creator';
 
 export default class Handle {
 
@@ -551,7 +552,7 @@ function parseArray(validate) {
 }
 
 function fullRule(rule) {
-    const def = defRule();
+    const def = baseRule();
 
     Object.keys(def).forEach(k => {
         if (!hasProperty(rule, k)) $set(rule, k, def[k]);
@@ -571,19 +572,4 @@ function findControl(parser, rule) {
         if (ctrl.children === rule)
             return ctrl;
     }
-}
-
-//todo 合并
-function defRule() {
-    return {
-        validate: [],
-        children: [],
-        col: {},
-        emit: [],
-        props: {},
-        on: {},
-        options: [],
-        value: null,
-        hidden: false,
-    };
 }

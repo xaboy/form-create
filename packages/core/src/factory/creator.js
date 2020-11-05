@@ -5,17 +5,20 @@ import {mergeRule} from '../core/util';
 import {_vue} from '../core';
 import {$set} from '@form-create/utils/lib';
 
-const baseRule = () => ({
-    props: {},
-    on: {},
-    validate: [],
-    options: [],
-    col: {},
-    children: [],
-    control: [],
-    emit: [],
-    hidden: false,
-})
+export function baseRule() {
+    return {
+        props: {},
+        on: {},
+        validate: [],
+        options: [],
+        col: {},
+        children: [],
+        control: [],
+        emit: [],
+        hidden: false,
+        value: null,
+    };
+}
 
 export function factory(name, init) {
     return (title, field, value) => {
