@@ -1,7 +1,7 @@
 import extend from '@form-create/utils/lib/extend';
 import is from '@form-create/utils/lib/type';
 import {attrs} from '../core/attrs';
-import {mergeRule} from '../core/util';
+import {copyRule, mergeRule} from '../core/util';
 import {_vue} from '../core';
 import {$set} from '@form-create/utils/lib';
 
@@ -60,7 +60,7 @@ extend(Creator.prototype, {
     },
     _clone() {
         const clone = new this.constructor();
-        mergeRule(clone._data, this._data);
+        clone._data = copyRule(this._data);
         return clone;
     },
 })

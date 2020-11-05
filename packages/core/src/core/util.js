@@ -60,11 +60,12 @@ export function copyRule(rule, mode) {
 }
 
 export function copyRules(rules, mode) {
-    return deepExtend([], rules, mode);
+    return deepExtend([], [...rules], mode);
 }
 
 export function mergeRule(rule, merge) {
     mergeProps([merge], rule, {array: arrayAttrs});
+    return rule;
 }
 
 export function getRule(rule) {

@@ -36,6 +36,10 @@ export default function Api(h) {
         }, {});
     }
 
+    function byParser(rule) {
+        return rule.__fc__ || (rule.__origin__ ? rule.__origin__.__fc__ : null)
+    }
+
     function tidyBtnProp(btn, def) {
         if (is.Boolean(btn))
             btn = {show: btn};
@@ -75,8 +79,7 @@ export default function Api(h) {
             return parser.rule.__origin__;
         },
         removeRule(rule) {
-            const parser = rule.__fc__;
-            //TODO 参考是否当时使用
+            const parser = rule && byParser(rule);
             if (!parser) return;
             parser._remove();
             return parser.rule.__origin__;
@@ -136,7 +139,7 @@ export default function Api(h) {
             tidyFields(fields).forEach((field) => {
                 const parser = h.fieldList[field];
                 if (!parser) return;
-                h.vm.$set(parser.rule.props, 'disabled', !!disabled);
+                $set(parser.rule.props, 'disabled', !!disabled);
             });
             h.refresh();
         },
@@ -185,7 +188,7 @@ export default function Api(h) {
             this.updateOptions({onSubmit: fn});
         },
         sync: (field) => {
-            const parser = is.Object(field) ? (field.__fc__ || (field.__origin__ ? field.__origin__.__fc__ : null)) : h.getParser(field);
+            const parser = is.Object(field) ? byParser(field) : h.getParser(field);
             if (parser) {
                 parser.updateKey(true);
                 h.$render.clearCache(parser, true);

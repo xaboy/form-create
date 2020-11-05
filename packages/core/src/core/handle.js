@@ -1,7 +1,7 @@
 import BaseParser from '../factory/parser';
 import Render from './render';
 import Api from './api';
-import {enumerable, getRule, mergeRule} from './util';
+import {copyRule, enumerable, getRule, mergeRule} from './util';
 import toLine from '@form-create/utils/lib/toline';
 import toCase from '@form-create/utils/lib/tocase';
 import {$del, $set} from '@form-create/utils/lib/modify';
@@ -148,9 +148,7 @@ export default class Handle {
                 return err(`${rule.field} 字段已存在`, _rule);
             }
 
-            //todo 提高 parser 复用
             let parser;
-            //TODO 优化: 如果存在__fc__ 直接返回
             if (_rule.__fc__) {
                 parser = _rule.__fc__;
                 if (parser.deleted) {
@@ -160,7 +158,7 @@ export default class Handle {
                 } else {
                     if (!parser._check(this) || this.parsers[parser.id]) {
                         //todo 检查复制规则
-                        rules[index] = _rule = _rule._clone ? _rule._clone() : mergeRule({}, _rule);
+                        rules[index] = _rule = _rule._clone ? _rule._clone() : copyRule(_rule);
                         parser = this.createParser(this.parseRule(_rule));
                     }
                 }
@@ -206,7 +204,7 @@ export default class Handle {
                     this.valueChange(parser, value);
                     this.refresh();
                     this.$render.clearCache(parser, true);
-                    this.updateValue();
+                    this.syncValue();
                     this.vm.$emit('set-value', parser.field, value, this.api);
                 }
             }
@@ -226,7 +224,7 @@ export default class Handle {
     parseRule(_rule) {
         const rule = getRule(_rule);
         Object.defineProperties(rule, {
-            __origin__: enumerable(_rule)
+            __origin__: enumerable(_rule, true)
         });
 
         fullRule(rule);
@@ -369,14 +367,13 @@ export default class Handle {
         this.refreshVisible(parser, val);
         this.refreshLink(parser);
         if (this.refreshControl(parser)) {
-            //todo 直接 reload
             this.$render.clearCacheAll();
+            this._reloadRule();
             this.refresh();
         }
     }
 
-    updateValue() {
-        //todo 待优化
+    syncValue() {
         this.vm && this.vm.$emit('update:value', this.api.formData());
     }
 
@@ -387,7 +384,7 @@ export default class Handle {
             this.changeStatus = true;
             this.valueChange(parser, val);
             this.$render.clearCache(parser);
-            this.updateValue();
+            this.syncValue();
             this.vm.$emit('change', parser.field, val, this.api);
         }
     }
@@ -398,7 +395,6 @@ export default class Handle {
 
     addParserWitch(parser) {
         const vm = this.vm;
-        //todo 支持单个组件 reload
         const none = ['field', 'type', 'value', 'vm', 'template', 'name', 'config', 'control', 'link', 'visible'];
         Object.keys(parser.rule).filter(k => none.indexOf(k) === -1).forEach((key) => {
             parser.watch.push(vm.$watch(() => parser.rule[key], n => {
