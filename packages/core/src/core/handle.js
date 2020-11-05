@@ -208,6 +208,7 @@ export default class Handle {
                     this.valueChange(parser, value);
                     this.refresh();
                     this.$render.clearCache(parser, true);
+                    this.updateValue();
                     this.vm.$emit('set-value', parser.field, value, this.api);
                 }
             }
@@ -349,15 +350,34 @@ export default class Handle {
         return (is.Object(value) || Array.isArray(value)) && value === parser.rule.value;
     }
 
-    valueChange(parser, val) {
+    refreshVisible(parser, val) {
         if (is.Function(parser.rule.visible)) {
             parser.rule.hidden = parser.rule.visible(val, this.api) === true;
         }
+    }
+
+    refreshLink(parser) {
+        if (is.trueArray(parser.rule.link)) {
+            parser.rule.link.forEach(id => {
+                const p = this.getParser(id);
+                if (p) {
+                    this.valueChange(p, p.rule.value);
+                }
+            })
+        }
+    }
+
+    valueChange(parser, val) {
+        this.refreshVisible(parser, val);
+        this.refreshLink(parser);
         if (this.refreshControl(parser)) {
             //todo 直接 reload
             this.$render.clearCacheAll();
             this.refresh();
         }
+    }
+
+    updateValue() {
         //todo 待优化
         this.vm && this.vm.$emit('update:value', this.api.formData());
     }
@@ -368,8 +388,9 @@ export default class Handle {
             this.setFormData(parser, value);
             this.changeStatus = true;
             this.valueChange(parser, val);
-            this.vm.$emit('change', parser.field, val, this.api);
             this.$render.clearCache(parser);
+            this.updateValue();
+            this.vm.$emit('change', parser.field, val, this.api);
         }
     }
 

@@ -15,6 +15,7 @@ export function baseRule() {
         children: [],
         control: [],
         emit: [],
+        link: [],
         hidden: false,
         value: null,
     };
