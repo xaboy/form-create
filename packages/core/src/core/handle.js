@@ -204,8 +204,6 @@ export default class Handle {
             },
             set: (value) => {
                 if (this.isChange(parser, value)) {
-                    //todo 优化 initOrgChildren
-                    this.$render.initOrgChildren();
                     this.setFormData(parser, parser.toFormValue(value));
                     this.valueChange(parser, value);
                     this.refresh();
@@ -351,7 +349,10 @@ export default class Handle {
         return (is.Object(value) || Array.isArray(value)) && value === parser.rule.value;
     }
 
-    valueChange(parser) {
+    valueChange(parser, val) {
+        if (is.Function(parser.rule.visible)) {
+            parser.rule.hidden = parser.rule.visible(val, this.api) === true;
+        }
         if (this.refreshControl(parser)) {
             //todo 直接 reload
             this.$render.clearCacheAll();
@@ -366,7 +367,7 @@ export default class Handle {
         if (parser.input && (this.isQuote(parser, val = parser.toValue(value)) || this.isChange(parser, val))) {
             this.setFormData(parser, value);
             this.changeStatus = true;
-            this.valueChange(parser);
+            this.valueChange(parser, val);
             this.vm.$emit('change', parser.field, val, this.api);
             this.$render.clearCache(parser);
         }

@@ -88,6 +88,7 @@ export default function createFormCreate(config) {
         parser.maker && extend(maker, parser.maker);
     }
 
+    //Todo 删除
     function setModel(id, model) {
         modelEvents[toCase(id)] = model;
     }
