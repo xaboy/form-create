@@ -1,6 +1,7 @@
 import toLine from '@form-create/utils/lib/toline';
 import is from '@form-create/utils/lib/type';
 import toString from '@form-create/utils/lib/tostring';
+import extend from '@form-create/utils/lib/extend';
 
 function parseVData(data) {
     if (is.String(data))
@@ -11,44 +12,45 @@ function parseVData(data) {
     return data;
 }
 
-export default class VNode {
+export function CreateNodeFactory() {
 
-    static aliasMap = {};
+    const aliasMap = {};
 
-    constructor(vm) {
-        if (vm)
-            this.setVm(vm);
+    function CreateNode(vm) {
+        vm && this.setVm(vm);
     }
 
-    setVm(vm) {
-        this.vm = vm;
-        this.$h = vm.$createElement;
-    }
+    extend(CreateNode.prototype, {
+        setVm(vm) {
+            this.vm = vm;
+            this.$h = vm.$createElement;
+        },
+        make(nodeName, data, VNodeFn) {
+            let Node = this.$h(nodeName, parseVData(data), VNodeFn || []);
+            Node.context = this.vm;
+            return Node;
+        }
+    });
 
-    make(nodeName, data, VNodeFn) {
-        let Node = this.$h(nodeName, parseVData(data), VNodeFn || []);
-        Node.context = this.vm;
-
-        return Node;
-    }
-
-    static alias(alias, name) {
-        VNode.aliasMap[alias] = name;
-    }
-
-    static use(nodes) {
-        Object.keys(nodes).forEach((k) => {
-            const line = toLine(k);
-            const lower = toString(k).toLocaleLowerCase();
-            const v = nodes[k];
-            [k, line, lower].forEach(n => {
-                VNode.alias(k, v);
-                VNode.prototype[n] = function (data, VNodeFn) {
-                    return this.make(v, data, VNodeFn);
-                };
+    extend(CreateNode, {
+        aliasMap,
+        alias(alias, name) {
+            aliasMap[alias] = name;
+        },
+        use(nodes) {
+            Object.keys(nodes).forEach((k) => {
+                const line = toLine(k);
+                const lower = toString(k).toLocaleLowerCase();
+                const v = nodes[k];
+                [k, line, lower].forEach(n => {
+                    CreateNode.alias(k, v);
+                    CreateNode.prototype[n] = function (data, VNodeFn) {
+                        return this.make(v, data, VNodeFn);
+                    };
+                });
             });
-        });
-    }
-}
+        }
+    })
 
-VNode.use({fragment: 'fcFragment'});
+    return CreateNode;
+}

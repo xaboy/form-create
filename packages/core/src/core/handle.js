@@ -2,7 +2,6 @@ import BaseParser from '../factory/parser';
 import Render from './render';
 import Api from './api';
 import {enumerable, getRule, mergeRule} from './util';
-import vNode from '../factory/vNode';
 import toLine from '@form-create/utils/lib/toline';
 import toCase from '@form-create/utils/lib/tocase';
 import {$del, $set} from '@form-create/utils/lib/modify';
@@ -216,7 +215,7 @@ export default class Handle {
     }
 
     createParser(rule) {
-        return new (this.fc.parsers[rule.type] || this.fc.parsers[toCase(rule.type)] || this.fc.parsers[toCase('' + vNode.aliasMap[toCase(rule.type)])] || BaseParser)(this, rule);
+        return new (this.fc.parsers[rule.type] || this.fc.parsers[toCase(rule.type)] || this.fc.parsers[toCase('' + this.fc.CreateNode.aliasMap[toCase(rule.type)])] || BaseParser)(this, rule);
     }
 
     appendValue(rule) {
@@ -401,7 +400,7 @@ export default class Handle {
     addParserWitch(parser) {
         const vm = this.vm;
         //todo 支持单个组件 reload
-        const none = ['field', 'type', 'value', 'vm', 'template', 'name', 'config', 'control'];
+        const none = ['field', 'type', 'value', 'vm', 'template', 'name', 'config', 'control', 'link', 'visible'];
         Object.keys(parser.rule).filter(k => none.indexOf(k) === -1).forEach((key) => {
             parser.watch.push(vm.$watch(() => parser.rule[key], n => {
                 this.watching = true;

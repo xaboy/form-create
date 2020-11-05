@@ -2,18 +2,18 @@ import components from '../components';
 import parsers from '../parser';
 import alias from './alias';
 import manager from './manager';
-import createFormCreate, {VNode} from '@form-create/core';
+import createFormCreate from '@form-create/core';
 import makers from './maker';
 
 export default function createElmFormCreate() {
-
-    VNode.use(alias);
 
     const FormCreate = createFormCreate({
         ui: process.env.UI,
         version: `${process.env.VERSION}`,
         manager
     });
+
+    FormCreate.componentAlias(alias);
 
     components.forEach(component => {
         FormCreate.component(component.name, component);

@@ -10,6 +10,7 @@ import is from '@form-create/utils/lib/type';
 import toCase from '@form-create/utils/lib/tocase';
 import extend from '@form-create/utils/lib/extend';
 import deepExtend, {deepExtendArgs} from '@form-create/utils/lib/deepextend';
+import {CreateNodeFactory} from '../factory/vNode';
 
 export let _vue = typeof window !== 'undefined' && window.Vue ? window.Vue : Vue;
 
@@ -66,6 +67,7 @@ export default function createFormCreate(config) {
     const globalConfig = {};
     const data = {};
     const modelEvents = {};
+    const CreateNode = CreateNodeFactory();
 
     function filter() {
         const data = _parseProp(...arguments);
@@ -75,6 +77,10 @@ export default function createFormCreate(config) {
     function directive() {
         const data = _parseProp(...arguments);
         if (data.id && data.prop) directives[data.id] = data.prop;
+    }
+
+    function componentAlias(alias) {
+        CreateNode.use(alias);
     }
 
     function parser() {
@@ -135,6 +141,7 @@ export default function createFormCreate(config) {
             parser,
             setModel,
             createParser,
+            componentAlias,
             copyRule,
             copyRules,
             $form,
@@ -198,6 +205,7 @@ export default function createFormCreate(config) {
             filters,
             directives,
         }
+        this.CreateNode = CreateNode;
     }
 
     extend(FormCreate.prototype, {
@@ -227,6 +235,8 @@ export default function createFormCreate(config) {
 
     useAttr(create);
     useStatic(create);
+
+    CreateNode.use({fragment: 'fcFragment'});
 
     return create;
 }
