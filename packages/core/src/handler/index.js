@@ -87,10 +87,6 @@ extend(Handler.prototype, {
             return initial;
         }, {}));
     },
-    modelEvent(parser) {
-        const modelList = this.fc.modelEvents;
-        return modelList[parser.originType] || modelList[toCase(parser.type)] || parser.rule.model || parser.modelEvent;
-    },
     isRepeatRule(rule) {
         return this.repeatRule.indexOf(rule) > -1;
     },

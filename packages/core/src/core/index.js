@@ -55,6 +55,7 @@ function createParser(proto) {
     return Parser;
 }
 
+//todo 表单嵌套
 export default function createFormCreate(config) {
 
     const components = {
@@ -66,7 +67,6 @@ export default function createFormCreate(config) {
     const maker = makerFactory();
     const globalConfig = {};
     const data = {};
-    const modelEvents = {};
     const CreateNode = CreateNodeFactory();
 
     function filter() {
@@ -92,11 +92,6 @@ export default function createFormCreate(config) {
         parsers[name] = is.Function(parser) ? parser : createParser(parser);
         maker[name] = creatorFactory(name);
         parser.maker && extend(maker, parser.maker);
-    }
-
-    //Todo 删除
-    function setModel(id, model) {
-        modelEvents[toCase(id)] = model;
     }
 
     function component(id, component) {
@@ -139,7 +134,6 @@ export default function createFormCreate(config) {
             filter,
             directive,
             parser,
-            setModel,
             createParser,
             componentAlias,
             copyRule,
@@ -196,7 +190,6 @@ export default function createFormCreate(config) {
         this.vm = vm;
         this.manager = config.manager;
         this.parsers = parsers;
-        this.modelEvents = modelEvents;
         this.rules = Array.isArray(rules) ? rules : [];
         this.options = deepExtend({formData: {}}, globalConfig);
         this.prop = {
