@@ -209,8 +209,6 @@ export default function createFormCreate(config) {
             const vm = this.vm;
             vm.$on('hook:created', () => {
                 this.created();
-                vm.$f = this.api();
-                vm.$emit('input', vm.$f);
             })
             vm.$on('hook:mounted', () => {
                 this.mounted();
@@ -225,14 +223,16 @@ export default function createFormCreate(config) {
             this.options = deepExtendArgs(this.options, options);
         },
         created() {
+            const vm = this.vm;
             this.handle = new Handle(this);
-            this.handle.created();
+            vm.$f = this.api();
+            vm.$emit('input', vm.$f);
         },
         api() {
             return this.handle.api;
         },
         render() {
-            return this.handle.run();
+            return this.handle.render();
         },
         mounted() {
             this.handle.lifecycle('mounted');

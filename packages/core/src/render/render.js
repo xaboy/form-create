@@ -42,7 +42,7 @@ export default function useRender(Render) {
         clearOrgChildren() {
             this.orgChildren = {};
         },
-        run() {
+        render() {
             if (!this.vm.isShow) return;
 
             this.$manager.updateOptions(this.$handle.options);

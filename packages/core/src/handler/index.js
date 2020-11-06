@@ -20,6 +20,7 @@ export default function Handler(fc) {
         fc,
         vm: fc.vm,
         watching: false,
+        isMounted: false,
         validate: {},
         formData: {},
         subForm: {},
@@ -35,6 +36,7 @@ export default function Handler(fc) {
     this.$render = new Render(this);
     this.api = Api(this);
     this.loadRule();
+    this.initVm();
     this.$manager.__init();
 }
 
@@ -61,7 +63,7 @@ extend(Handler.prototype, {
             this.nextTick = null;
         }, 10);
     },
-    created() {
+    initVm() {
         const vm = this.vm;
 
         vm.$set(vm, 'formData', this.formData);
@@ -277,14 +279,14 @@ extend(Handler.prototype, {
         parser.computed[on ? 'on' : 'nativeOn'] = event;
         return event;
     },
-    run() {
+    render() {
         console.warn('render');
         this.vm.$nextTick(() => {
             this.bindNextTick(() => this.vm.$emit('fc.nextTick'));
         })
 
         if (this.vm.unique > 0)
-            return this.$render.run();
+            return this.$render.render();
         else {
             this.vm.unique = 1;
             return [];
@@ -333,7 +335,7 @@ extend(Handler.prototype, {
         }
     },
     syncValue() {
-        this.vm && this.vm.$emit('update:value', this.api.formData());
+        this.isMounted && this.vm && this.vm.$emit('update:value', this.api.formData());
     },
     onInput(parser, value) {
         let val;
@@ -415,6 +417,10 @@ extend(Handler.prototype, {
         });
         return true;
     },
+    mounted() {
+        this.isMounted = true;
+        this.lifecycle('mounted');
+    },
     lifecycle(name) {
         const fn = this.options[name];
         fn && fn(this.api);
@@ -495,7 +501,7 @@ extend(Handler.prototype, {
         Object.keys(parsers).filter(id => this.parsers[id] === undefined)
             .forEach(id => this.deleteParser(parsers[id]));
         this.formData = {...this.formData};
-        this.created();
+        this.initVm();
 
         vm.$f = this.api;
         this.$render.clearCacheAll();
