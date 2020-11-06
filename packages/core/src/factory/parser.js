@@ -13,34 +13,35 @@ function bindParser(rule, parser) {
 
 export default function Parser(handle, rule) {
     const id = unique();
-    this.id = id;
-    this.refName = id;
-    this.formItemRefName = id + 'fi';
+
+    extend(this, {
+        id,
+        refName: id,
+        formItemRefName: id + 'fi',
+        rule,
+        origin: rule.__origin__ || rule,
+        name: rule.name,
+        originType: rule.type,
+        type: toCase(rule.type),
+
+        watch: [],
+        root: [],
+        ctrlRule: [],
+        parent: null,
+        prop: {},
+        computed: {},
+        input: !!rule.field,
+        el: undefined,
+        defaultValue: rule.field ? deepCopy(rule.value) : undefined,
+        field: rule.field ? rule.field : (`_def_${this.id}`)
+    })
+
     this.updateKey();
-    this.modelEvent = 'input';
-
-    this.rule = rule;
-    this.origin = rule.__origin__ || rule;
-    this.name = rule.name;
-    this.originType = rule.type;
-    this.type = toCase(rule.type);
-
-    this.watch = [];
-    this.root = [];
-    this.ctrlRule = [];
-    this.parent = null;
-    this.prop = {};
-    this.computed = {};
-    this.input = !!rule.field;
-    this.el = undefined;
-
-    this.defaultValue = rule.field ? deepCopy(rule.value) : undefined;
-    this.field = rule.field ? rule.field : (`_def_${this.id}`);
-
     bindParser(this.origin, this);
     this.update(handle, true);
     this.init();
 }
+
 extend(Parser.prototype, {
     updateKey(parent) {
         this.key = unique();
