@@ -49,6 +49,15 @@ export default function Api(h) {
 
     //todo 优化 css
     const api = {
+        get config() {
+            return h.options
+        },
+        get options() {
+            return h.options
+        },
+        get rule() {
+            return h.rules
+        },
         formData(fields) {
             return tidyFields(fields).reduce((initial, id) => {
                 const parser = h.fieldList[id];
