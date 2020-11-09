@@ -5,8 +5,8 @@ import mergeProps from '@form-create/utils/lib/mergeprops';
 import {enumerable} from '../core/util';
 import {deepCopy} from '@form-create/utils/lib/deepextend';
 
-function bindParser(rule, parser) {
-    Object.defineProperties(rule, {
+function bindParser(parser) {
+    Object.defineProperties(parser.origin, {
         __fc__: enumerable(parser, true)
     });
 }
@@ -33,11 +33,11 @@ export default function Parser(handle, rule) {
         input: !!rule.field,
         el: undefined,
         defaultValue: rule.field ? deepCopy(rule.value) : undefined,
-        field: rule.field ? rule.field : (`_def_${this.id}`)
+        field: rule.field ? rule.field : (`_def_${id}`)
     })
 
     this.updateKey();
-    bindParser(this.origin, this);
+    bindParser(this);
     this.update(handle, true);
     this.init();
 }

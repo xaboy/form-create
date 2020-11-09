@@ -27,6 +27,7 @@ export default function Handler(fc) {
         appendData: {},
         reloadFlag: null,
         nextTick: null,
+        changeStatus: false,
         nextReload: () => {
             this.lifecycle('reload');
         }
@@ -40,17 +41,16 @@ export default function Handler(fc) {
     this.$manager.__init();
 }
 
-
 extend(Handler.prototype, {
     initData(rules) {
-        this.fieldList = {};
-        this.parsers = {};
-        this.customData = {};
-        this.sortList = [];
-        this.rules = rules;
-        this.origin = [...this.rules];
-        this.changeStatus = false;
-        this.repeatRule = [];
+        extend(this, {
+            fieldList: {},
+            parsers: {},
+            customData: {},
+            sortList: [],
+            rules,
+            repeatRule: [],
+        });
     },
     clearNextTick() {
         this.nextTick && clearTimeout(this.nextTick);
@@ -106,6 +106,7 @@ extend(Handler.prototype, {
     },
     _loadRule(rules, parent) {
         rules.map((_rule, index) => {
+            //todo 允许字符串
             if (parent && is.String(_rule)) return;
 
             if (!is.Object(_rule) || !getRule(_rule).type)
@@ -197,6 +198,7 @@ extend(Handler.prototype, {
     },
     parseRule(_rule) {
         const rule = getRule(_rule);
+
         Object.defineProperties(rule, {
             __origin__: enumerable(_rule, true)
         });
@@ -207,6 +209,7 @@ extend(Handler.prototype, {
             rule.value = this.options.formData[rule.field];
 
         rule.options = parseArray(rule.options);
+
         ['on', 'props'].forEach(n => {
             this.parseInjectEvent(rule, n || {});
         })
@@ -446,7 +449,6 @@ extend(Handler.prototype, {
         if (index > -1) {
             this.sortList.splice(index, 1);
         }
-        delete this.$render.renderList[parser.id];
 
         if (this.fieldList[field]) {
             $del(this.validate, field);
@@ -485,25 +487,20 @@ extend(Handler.prototype, {
     }, 1),
     _reloadRule(rules) {
         console.warn('reload');
-        const vm = this.vm;
         if (!rules) rules = this.rules;
-        if (!this.origin.length) this.api.refresh();
+
+        const parsers = {...this.parsers};
 
         this.clearNextTick();
         this.$render.clearOrgChildren();
-
-        this.origin = [...rules];
-        const parsers = {...this.parsers};
-
         this.initData(rules);
         this.loadRule();
         // todo 移除已删除规则可能会导致 reload,考虑内部用 origin 渲染
         Object.keys(parsers).filter(id => this.parsers[id] === undefined)
             .forEach(id => this.deleteParser(parsers[id]));
-        this.formData = {...this.formData};
+
         this.initVm();
 
-        vm.$f = this.api;
         this.$render.clearCacheAll();
         this.refresh();
 

@@ -162,6 +162,8 @@ export default function createFormCreate(config) {
 
                 Vue.prototype.$formCreate = $formCreate;
                 Vue.component('FormCreate', $form());
+
+                config.install && config.install(FormCreate, Vue, options);
             },
             init(rules, _opt = {}) {
                 let $vm = mountForm(rules, _opt), _this = $vm.$refs.fc.formCreate;
@@ -215,7 +217,6 @@ export default function createFormCreate(config) {
             });
             vm.$on('hook:beforeDestroy', () => {
                 this.handle.reloadRule([]);
-                this.handle.$render.clearCacheAll();
             });
         },
         updateOptions(options) {
@@ -235,7 +236,7 @@ export default function createFormCreate(config) {
             return this.handle.render();
         },
         mounted() {
-            this.handle.lifecycle('mounted');
+            this.handle.mounted();
         },
         $emit(eventName, ...params) {
             this.$paren && this.$parent.$emit(`fc:${eventName}`, ...params);

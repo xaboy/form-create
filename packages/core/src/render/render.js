@@ -1,24 +1,39 @@
 import extend from '@form-create/utils/lib/extend';
 import mergeProps from '@form-create/utils/lib/mergeprops';
-import is from '@form-create/utils/lib/type';
+import is, {hasProperty} from '@form-create/utils/lib/type';
 import {_vue as Vue} from '../core';
 import {tip} from '@form-create/utils/lib/console';
 
-function setTemplateProps(vm, parser, fApi) {
-    if (!vm.$props)
-        return;
+function setTemplateProps(vm, parser, api) {
+    if (!vm.$props) return;
     //todo 检查 props 设置
-    const {prop: rule} = parser;
+    const {prop} = parser;
     const keys = Object.keys(vm.$props);
+    const inject = injectProp(parser, api);
+    const injectKeys = Object.keys(inject);
+
     keys.forEach(key => {
-        if (rule.props[key] !== undefined)
-            vm.$props[key] = rule.props[key];
+        if (hasProperty(prop.props, key))
+            vm.$props[key] = prop.props[key];
+        else if (injectKeys.indexOf(key) > -1) vm.$props[key] = inject[key];
     });
 
-    if (keys.indexOf('value') !== -1) {
-        vm.$props.value = rule.value;
+    const key = (vm.$options.model && vm.$options.model.prop) || 'value';
+    if (keys.indexOf(key) !== -1) {
+        vm.$props[key] = prop.value;
     }
-    vm.$props.formCreate = fApi;
+}
+
+function injectProp(parser, api) {
+    return {
+        formCreate: api,
+        formCreateField: parser.input ? parser.field : undefined,
+        formCreateOptions: parser.rule.options,
+        formCreateRule: (function () {
+            const temp = {...parser.prop};
+            return temp.on = temp.on ? {...temp.on} : {}, temp;
+        }()),
+    }
 }
 
 
@@ -54,6 +69,16 @@ export default function useRender(Render) {
 
             return this.$manager.render(vn);
         },
+        makeVm(rule) {
+            const vm = rule.vm;
+            if (!vm)
+                return new Vue;
+            else if (is.Function(vm))
+                return vm(this.$handle.getInjectData(rule));
+            else if (!vm._isVue)
+                return new Vue(vm);
+            return vm;
+        },
         mergeGlobal(parser) {
             const g = this.$handle.options.global;
             if (!g) return;
@@ -68,20 +93,19 @@ export default function useRender(Render) {
             const {id, key} = parser;
 
             if (!this.renderList[id]) {
-                let vm = rule.vm;
-                if (!vm)
-                    vm = new Vue;
-                else if (is.Function(rule.vm))
-                    vm = rule.vm(this.$handle.getInjectData(rule));
+                let vm = this.makeVm(rule);
+
+                if (parser.input)
+                    vm.$on((vm.$options.model && vm.$options.model.event) || 'input', (value) => {
+                        this.onInput(parser, value);
+                    });
 
                 this.renderList[id] = {
                     vm,
                     template: Vue.compile(rule.template)
                 };
 
-                vm.$on('input', (value) => {
-                    this.onInput(parser, value);
-                });
+                parser.el = vm;
             }
 
             const {vm, template} = this.renderList[id];
@@ -92,6 +116,8 @@ export default function useRender(Render) {
 
             if (is.Undef(vn.data)) vn.data = {};
             vn.key = key;
+            vn.data.ref = parser.refName;
+            vn.data.key = key;
             return vn;
         },
         renderParser(parser, parent) {
@@ -134,25 +160,12 @@ export default function useRender(Render) {
             //todo 优化下面一大块
             const props = [
                 {
-                    props: {
-                        formCreate: this.$handle.api,
-                        formCreateParser: parser,
-                        formCreateField: parser.isDef ? parser.field : undefined,
-                        formCreateOptions: parser.rule.options
-                    },
+                    props: injectProp(parser, this.$handle.api),
                     on: {
                         'fc.subForm': (subForm) => this.$handle.addSubForm(parser, subForm)
                     },
                     ref: refName,
-                    key: `${key}fc`
-                },
-                {
-                    props: {
-                        formCreateRule: (function () {
-                            const temp = {...parser.prop};
-                            return temp.on = temp.on ? {...temp.on} : {}, temp;
-                        }()),
-                    }
+                    key: `${key}fc`,
                 }
             ]
 
@@ -160,12 +173,12 @@ export default function useRender(Render) {
                 props.push({
                     on: {
                         ['hook:mounted']: () => {
-                            parser.el = this.vm.$refs[refName] || {};
+                            parser.el = this.vm.$refs[refName];
                             parser.mounted();
                             console.log('mounted', parser.field);
                         }
                     },
-                    model: {
+                    model: parser.input ? {
                         //todo 优化获取 formData
                         value: this.$handle.getFormData(parser),
                         callback: (value) => {
@@ -173,7 +186,7 @@ export default function useRender(Render) {
                             this.onInput(parser, value);
                         },
                         expression: `formData.${parser.field}`
-                    },
+                    } : undefined,
                 })
 
             }

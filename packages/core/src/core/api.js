@@ -272,7 +272,7 @@ export default function Api(h) {
         },
         el(id) {
             const parser = h.getParser(id);
-            if (parser) return parser.el;
+            if (parser) return parser.el || h.vm.$refs[parser.refName];
         },
         closeModal: (field) => {
             const parser = h.fieldList[field];
