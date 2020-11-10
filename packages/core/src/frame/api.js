@@ -55,6 +55,9 @@ export default function Api(h) {
         get options() {
             return h.options
         },
+        get form() {
+            return h.form
+        },
         get rule() {
             return h.rules
         },

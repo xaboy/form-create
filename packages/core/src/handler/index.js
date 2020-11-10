@@ -21,6 +21,7 @@ export default function Handler(fc) {
         validate: {},
         formData: {},
         subForm: {},
+        form: {},
         appendData: {},
         reloadFlag: null,
         nextTick: null,
@@ -68,31 +69,19 @@ extend(Handler.prototype, {
             this.nextTick = null;
         }, 10);
     },
-    initVm() {
-        const vm = this.vm;
-
-        vm.$set(vm, 'formData', this.formData);
-
-        //todo 优化 formData
-        if (this.api.form) {
-            const form = this.api.form;
-            Object.keys(form).forEach((field) => {
-                delete form[field];
-            })
-        } else {
-            Object.defineProperty(this.api, 'form', {
-                value: {},
-                writable: false,
-                enumerable: true
-            });
-        }
-        Object.defineProperties(this.api.form, Object.keys(this.api.formData()).reduce((initial, field) => {
+    syncForm() {
+        Object.keys(this.form).forEach(k => delete this.form[k]);
+        Object.defineProperties(this.form, Object.keys(this.formData).reduce((initial, field) => {
             const parser = this.getParser(field);
             const handle = this.valueHandle(parser);
             handle.configurable = true;
             initial[field] = handle;
             return initial;
         }, {}));
+    },
+    initVm() {
+        this.vm.$set(this.vm, 'formData', this.formData);
+        this.syncForm();
     },
     isRepeatRule(rule) {
         return this.repeatRule.indexOf(rule) > -1;
@@ -429,7 +418,7 @@ extend(Handler.prototype, {
         this.fc.$emit(name, this.api);
     },
     deleteParser(parser, flag) {
-        if (parser.delete) return;
+        if (parser.deleted) return;
 
         const {id, field, name} = parser, index = this.sortList.indexOf(id);
         console.warn(parser);
@@ -444,27 +433,16 @@ extend(Handler.prototype, {
         }
 
         $del(this.parsers, id);
+        $del(this.validate, field);
+        $del(this.formData, field);
+        $del(this.$render.renderList, id);
+        $del(this.customData, name);
+        $del(this.subForm, field);
 
         if (index > -1) {
             this.sortList.splice(index, 1);
         }
 
-        if (this.fieldList[field]) {
-            $del(this.validate, field);
-            $del(this.formData, field);
-            $del(this.fieldList, field);
-        }
-
-        if (this.$render.renderList[id]) {
-            $del(this.$render.renderList, id);
-        }
-
-        if (name && this.customData[name]) {
-            $del(this.customData, name);
-        }
-
-        if (this.subForm[parser.field])
-            $del(this.subForm, field);
         parser._delete();
         if (!flag) this.$render.initOrgChildren();
         return parser;
@@ -494,11 +472,12 @@ extend(Handler.prototype, {
         this.$render.clearOrgChildren();
         this.initData(rules);
         this.loadRule();
+
         //todo 优化规则复用,避免重复 reload
         Object.keys(parsers).filter(id => this.parsers[id] === undefined)
             .forEach(id => this.deleteParser(parsers[id]));
 
-        this.initVm();
+        this.syncForm();
 
         this.$render.clearCacheAll();
         this.refresh();
