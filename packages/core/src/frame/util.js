@@ -54,7 +54,7 @@ export function enumerable(value, writable) {
         writable: !!writable
     }
 }
-
+//todo 优化位置
 export function copyRule(rule, mode) {
     return copyRules([rule], mode)[0];
 }

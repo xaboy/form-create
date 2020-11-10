@@ -1,7 +1,7 @@
 import $FormCreate from '../components/formCreate';
 import Vue from 'vue';
 import makerFactory from '../factory/maker';
-import Handle from './handle';
+import Handle from '../handler';
 import {creatorFactory} from '../factory/creator';
 import BaseParser from '../factory/parser';
 import {copyRule, copyRules, parseJson} from './util';

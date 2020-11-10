@@ -1,16 +1,12 @@
-import createFormCreate, {_vue as Vue} from './core/index';
+import createFormCreate, {_vue as Vue} from './frame';
 import Creator, {creatorFactory, creatorTypeFactory} from './factory/creator';
-import Handle from './core/handle';
-import makerFactory from './factory/maker';
-import Render from './core/render';
-import BaseParser from './factory/parser';
-import baseApi from './core/api';
+import Parser from './factory/parser';
 import Manager from './factory/manager';
-import {copyRule, copyRules, parseJson, toJson} from './core/util';
+import {copyRule, copyRules, parseJson, toJson, mergeRule} from './frame/util';
 
 export {
     creatorFactory, creatorTypeFactory, Creator, Manager,
-    Handle, makerFactory, Render, Vue, BaseParser, parseJson, toJson, baseApi, copyRule, copyRules
+    Vue, Parser, parseJson, toJson, copyRule, copyRules, mergeRule
 };
 
 export default createFormCreate;

@@ -1,9 +1,9 @@
-import Api from '../core/api';
-import Render from '../core/render';
+import Api from '../frame/api';
+import Render from '../render';
 import extend from '@form-create/utils/lib/extend';
 import toCase from '@form-create/utils/lib/tocase';
 import is, {hasProperty} from '@form-create/utils/lib/type';
-import {copyRule, enumerable, getRule} from '../core/util';
+import {copyRule, enumerable, getRule} from '../frame/util';
 import {err} from '@form-create/utils/lib/console';
 import BaseParser from '../factory/parser';
 import toLine from '@form-create/utils/lib/toline';

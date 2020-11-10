@@ -1,8 +1,8 @@
 import extend from '@form-create/utils/lib/extend';
 import is from '@form-create/utils/lib/type';
-import {attrs} from '../core/attrs';
-import {copyRule, mergeRule} from '../core/util';
-import {_vue} from '../core';
+import {attrs} from '../frame/attrs';
+import {copyRule, mergeRule} from '../frame/util';
+import {_vue} from '../frame';
 import {$set} from '@form-create/utils/lib';
 
 export function baseRule() {

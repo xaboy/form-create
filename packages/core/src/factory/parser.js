@@ -2,7 +2,7 @@ import unique from '@form-create/utils/lib/unique';
 import toCase from '@form-create/utils/lib/tocase';
 import extend from '@form-create/utils/lib/extend';
 import mergeProps from '@form-create/utils/lib/mergeprops';
-import {enumerable} from '../core/util';
+import {enumerable} from '../frame/util';
 import {deepCopy} from '@form-create/utils/lib/deepextend';
 
 function bindParser(parser) {

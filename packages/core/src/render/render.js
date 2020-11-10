@@ -1,7 +1,7 @@
 import extend from '@form-create/utils/lib/extend';
 import mergeProps from '@form-create/utils/lib/mergeprops';
 import is, {hasProperty} from '@form-create/utils/lib/type';
-import {_vue as Vue} from '../core';
+import {_vue as Vue} from '../frame';
 import {tip} from '@form-create/utils/lib/console';
 
 function setTemplateProps(vm, parser, api) {
