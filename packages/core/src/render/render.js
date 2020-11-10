@@ -40,7 +40,6 @@ function injectProp(parser, api) {
 export default function useRender(Render) {
     extend(Render.prototype, {
         initRender() {
-            //todo 数据回收
             this.renderList = {};
             this.clearOrgChildren();
         },
@@ -89,12 +88,14 @@ export default function useRender(Render) {
                 tip('当前使用的Vue构建版本不支持compile,无法使用template功能');
                 return [];
             }
-            const rule = this.inputVData(parser);
+            const rule = this.mergeProp(parser);
             const {id, key} = parser;
 
             if (!this.renderList[id]) {
-                let vm = this.makeVm(rule);
+                if (!parser.el)
+                    parser.el = this.makeVm(rule);
 
+                let vm = parser.el;
                 if (parser.input)
                     vm.$on((vm.$options.model && vm.$options.model.event) || 'input', (value) => {
                         this.onInput(parser, value);
@@ -104,8 +105,6 @@ export default function useRender(Render) {
                     vm,
                     template: Vue.compile(rule.template)
                 };
-
-                parser.el = vm;
             }
 
             const {vm, template} = this.renderList[id];
@@ -155,7 +154,7 @@ export default function useRender(Render) {
 
             return this.getCache(parser);
         },
-        inputVData(parser, custom) {
+        mergeProp(parser, custom) {
             const {refName, key} = parser;
             const props = [
                 {
@@ -190,9 +189,9 @@ export default function useRender(Render) {
 
             }
             mergeProps(props, parser.prop);
-            //todo 检查合并全局配置,修改 inputVData 名称
-            this.$manager.mergeRule && this.$manager.mergeRule(parser, custom);
-            parser.inputVdata && parser.inputVdata(custom);
+
+            this.$manager.mergeProp && this.$manager.mergeProp(parser, custom);
+            parser.mergeProp && parser.mergeProp(custom);
             return parser.prop;
         },
         onInput(parser, value) {
@@ -232,7 +231,7 @@ export default function useRender(Render) {
 
         },
         defaultRender(parser, children) {
-            const prop = this.inputVData(parser);
+            const prop = this.mergeProp(parser);
             if (this.vNode[parser.type])
                 return this.vNode[parser.type](prop, children);
             if (this.vNode[parser.originType])

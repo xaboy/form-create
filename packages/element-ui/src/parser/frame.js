@@ -24,7 +24,7 @@ export default {
         maker.frameImage = maker.frameImages;
         return maker;
     }()),
-    inputVData() {
+    mergeProp() {
         //todo 优化
         this.prop.props.field = this.field;
     }

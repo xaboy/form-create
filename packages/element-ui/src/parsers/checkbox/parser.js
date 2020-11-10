@@ -3,7 +3,7 @@ import {BaseParser} from '@form-create/core';
 export default class parser extends BaseParser {
 
     render(children) {
-        const data = this.$render.inputVData(this, true).get();
+        const data = this.$render.mergeProp(this, true).get();
         return this.vNode.checkbox({
             props: {
                 ctx: data,

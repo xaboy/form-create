@@ -37,7 +37,7 @@ extend(Manager.prototype, {
     tidyRule(rule) {
         return rule;
     },
-    mergeRule(rule) {
+    mergeProp(rule) {
         return rule;
     },
     getDefaultOptions() {

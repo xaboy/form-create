@@ -88,7 +88,6 @@ export default function createFormCreate(config) {
         if (!data.id || !data.prop) return;
         const name = toCase(data.id);
         const parser = data.prop;
-        //todo 浅拷贝
         parsers[name] = is.Function(parser) ? parser : createParser(parser);
         maker[name] = creatorFactory(name);
         parser.maker && extend(maker, parser.maker);

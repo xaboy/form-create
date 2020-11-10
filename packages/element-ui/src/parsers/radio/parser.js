@@ -10,7 +10,7 @@ export default class Parser extends BaseParser {
     }
 
     render(children) {
-        return this.vNode.radio(this.$render.inputVData(this).props({
+        return this.vNode.radio(this.$render.mergeProp(this).props({
             'options': this.rule.options,
         }), children);
     }

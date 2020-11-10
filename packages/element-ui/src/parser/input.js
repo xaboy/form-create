@@ -13,7 +13,7 @@ export default {
         maker.idate = creatorTypeFactory(name, 'date');
         return maker;
     }()),
-    inputVdata() {
+    mergeProp() {
         let {props} = this.prop;
         if (props && props.autosize && props.autosize.minRows)
             $set(props, 'rows', props.autosize.minRows || 2);

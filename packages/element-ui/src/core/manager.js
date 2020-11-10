@@ -60,7 +60,7 @@ export default class ElmManager extends Manager {
         return prop;
     }
 
-    mergeRule(parser) {
+    mergeProp(parser) {
         let props = parser.prop.props;
         parser.prop = mergeProps([{
             attrs: Object.keys(props).reduce((initial, val) => {
