@@ -3,7 +3,7 @@ import Render from '../render';
 import extend from '@form-create/utils/lib/extend';
 import toCase from '@form-create/utils/lib/tocase';
 import is, {hasProperty} from '@form-create/utils/lib/type';
-import {copyRule, enumerable, getRule} from '../frame/util';
+import {copyRule, enumerable, funcProxy, getRule} from '../frame/util';
 import {err} from '@form-create/utils/lib/console';
 import BaseParser from '../factory/parser';
 import toLine from '@form-create/utils/lib/toline';
@@ -14,9 +14,6 @@ import {baseRule} from '../factory/creator';
 
 export default function Handler(fc) {
     extend(this, {
-        get options() {
-            return fc.options || {};
-        },
         fc,
         vm: fc.vm,
         watching: false,
@@ -33,6 +30,13 @@ export default function Handler(fc) {
         }
     });
     this.initData(fc.rules);
+
+    funcProxy(this, {
+        options() {
+            return fc.options || {};
+        }
+    })
+
     this.$manager = new fc.manager(this);
     this.$render = new Render(this);
     this.api = Api(this);

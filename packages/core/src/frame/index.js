@@ -2,7 +2,7 @@ import $FormCreate from '../components/formCreate';
 import Vue from 'vue';
 import makerFactory from '../factory/maker';
 import Handle from '../handler';
-import {creatorFactory} from '../factory/creator';
+import {creatorFactory} from '..';
 import BaseParser from '../factory/parser';
 import {copyRule, copyRules, parseJson} from './util';
 import fragment from '../components/fragment';
@@ -120,7 +120,7 @@ export default function createFormCreate(config) {
         const _this = $vm.$refs.fc.formCreate;
         _this.$parent = parent;
         _getEl(_this.options).appendChild($vm.$el);
-        return _this.handle.api;
+        return _this.api();
     }
 
     function useAttr(formCreate) {
@@ -214,7 +214,7 @@ export default function createFormCreate(config) {
                 this.mounted();
             });
             vm.$on('hook:beforeDestroy', () => {
-                this.handle.reloadRule([]);
+                this.$handle.reloadRule([]);
             });
         },
         initOptions(options) {
@@ -226,18 +226,18 @@ export default function createFormCreate(config) {
         },
         created() {
             const vm = this.vm;
-            this.handle = new Handle(this);
+            this.$handle = new Handle(this);
             vm.$f = this.api();
             vm.$emit('input', vm.$f);
         },
         api() {
-            return this.handle.api;
+            return this.$handle.api;
         },
         render() {
-            return this.handle.render();
+            return this.$handle.render();
         },
         mounted() {
-            this.handle.mounted();
+            this.$handle.mounted();
         },
         $emit(eventName, ...params) {
             this.$paren && this.$parent.$emit(`fc:${eventName}`, ...params);

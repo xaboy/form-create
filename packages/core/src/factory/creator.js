@@ -1,7 +1,7 @@
 import extend from '@form-create/utils/lib/extend';
 import is from '@form-create/utils/lib/type';
 import {attrs} from '../frame/attrs';
-import {copyRule, mergeRule} from '../frame/util';
+import {copyRule, mergeRule} from '..';
 import {_vue} from '../frame';
 import {$set} from '@form-create/utils/lib';
 
@@ -18,14 +18,6 @@ export function baseRule() {
         link: [],
         hidden: false,
         value: null,
-    };
-}
-
-export function factory(name, init) {
-    return (title, field, value) => {
-        var creator = new Creator(name, title, field, value);
-        init && init(creator);
-        return creator;
     };
 }
 

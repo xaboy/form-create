@@ -1,12 +1,25 @@
 import useCache from './cache';
 import useRender from './render';
+import extend from '@form-create/utils/lib/extend';
+import {funcProxy} from '../frame/util';
 
 export default function Render(handle) {
-    this.$handle = handle;
-    this.fc = handle.fc;
-    this.vm = handle.vm;
-    this.$manager = handle.$manager;
-    this.vNode = new this.fc.CreateNode(this.vm);
+    extend(this, {
+        $handle: handle,
+        fc: handle.fc,
+        vm: handle.vm,
+        $manager: handle.$manager,
+        vNode: new handle.fc.CreateNode(handle.vm),
+    });
+
+    funcProxy(this, {
+        options() {
+            return handle.options || {};
+        },
+        sortList() {
+            return handle.sortList || [];
+        }
+    })
 
     this.initCache();
     this.initRender();

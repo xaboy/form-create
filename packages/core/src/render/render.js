@@ -62,7 +62,7 @@ export default function useRender(Render) {
             this.$manager.updateOptions(this.$handle.options);
             this.$manager.beforeRender();
 
-            const vn = this.$handle.sortList.map((id) => {
+            const vn = this.sortList.map((id) => {
                 return this.renderParser(this.$handle.parsers[id]);
             }).filter((val) => val !== undefined);
 

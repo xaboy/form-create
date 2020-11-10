@@ -54,6 +54,7 @@ export function enumerable(value, writable) {
         writable: !!writable
     }
 }
+
 //todo 优化位置
 export function copyRule(rule, mode) {
     return copyRules([rule], mode)[0];
@@ -70,4 +71,15 @@ export function mergeRule(rule, merge) {
 
 export function getRule(rule) {
     return is.Function(rule.getRule) ? rule.getRule() : rule;
+}
+
+export function funcProxy(that, proxy) {
+    Object.defineProperties(that, Object.keys(proxy).reduce((initial, k) => {
+        initial[k] = {
+            get() {
+                return proxy[k]();
+            }
+        }
+        return initial;
+    }, {}))
 }
