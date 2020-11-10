@@ -3,13 +3,10 @@ import is from '@form-create/utils/lib/type';
 import toString from '@form-create/utils/lib/tostring';
 import extend from '@form-create/utils/lib/extend';
 
-function parseVData(data) {
-    if (is.String(data))
-        data = {domProps: {innerHTML: data}};
-    else if (data && is.Function(data.get))
-        data = data.get();
-
-    return data;
+function parseProp(prop) {
+    if (is.String(prop))
+        return {domProps: {innerHTML: prop}};
+    return prop;
 }
 
 export function CreateNodeFactory() {
@@ -26,7 +23,7 @@ export function CreateNodeFactory() {
             this.$h = vm.$createElement;
         },
         make(nodeName, data, VNodeFn) {
-            let Node = this.$h(nodeName, parseVData(data), VNodeFn || []);
+            let Node = this.$h(nodeName, parseProp(data), VNodeFn || []);
             Node.context = this.vm;
             return Node;
         }

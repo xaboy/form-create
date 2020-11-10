@@ -6,7 +6,7 @@ import {tip} from '@form-create/utils/lib/console';
 
 function setTemplateProps(vm, parser, api) {
     if (!vm.$props) return;
-    //todo 检查 props 设置
+
     const {prop} = parser;
     const keys = Object.keys(vm.$props);
     const inject = injectProp(parser, api);
@@ -157,7 +157,6 @@ export default function useRender(Render) {
         },
         inputVData(parser, custom) {
             const {refName, key} = parser;
-            //todo 优化下面一大块
             const props = [
                 {
                     props: injectProp(parser, this.$handle.api),
@@ -191,12 +190,9 @@ export default function useRender(Render) {
 
             }
             mergeProps(props, parser.prop);
+            //todo 检查合并全局配置,修改 inputVData 名称
             this.$manager.mergeRule && this.$manager.mergeRule(parser, custom);
             parser.inputVdata && parser.inputVdata(custom);
-            //todo 优化 get
-            parser.prop.get = function () {
-                return parser.prop;
-            }
             return parser.prop;
         },
         onInput(parser, value) {
@@ -214,7 +210,7 @@ export default function useRender(Render) {
                 this.orgChildren[parser.id] = [];
                 return [];
             }
-            //TODO 规则变化后组件重新渲染
+
             orgChildren && orgChildren.forEach(child => {
                 if (children.indexOf(child) === -1 && !is.String(child) && child.__fc__) {
                     this.$handle.deleteParser(child.__fc__);
@@ -236,12 +232,12 @@ export default function useRender(Render) {
 
         },
         defaultRender(parser, children) {
-            const vdata = this.inputVData(parser);
+            const prop = this.inputVData(parser);
             if (this.vNode[parser.type])
-                return this.vNode[parser.type](vdata, children);
+                return this.vNode[parser.type](prop, children);
             if (this.vNode[parser.originType])
-                return this.vNode[parser.originType](vdata, children);
-            return this.vNode.make(parser.originType, vdata, children);
+                return this.vNode[parser.originType](prop, children);
+            return this.vNode.make(parser.originType, prop, children);
         },
         renderRule(rule, children = []) {
             return this.vm.$createElement(rule.type, rule, children);

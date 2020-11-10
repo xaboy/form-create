@@ -51,6 +51,7 @@ extend(Handler.prototype, {
             rules,
             repeatRule: [],
         });
+        useHelper(rules);
     },
     clearNextTick() {
         this.nextTick && clearTimeout(this.nextTick);
@@ -106,7 +107,6 @@ extend(Handler.prototype, {
     },
     _loadRule(rules, parent) {
         rules.map((_rule, index) => {
-            //todo 允许字符串
             if (parent && is.String(_rule)) return;
 
             if (!is.Object(_rule) || !getRule(_rule).type)
@@ -136,7 +136,7 @@ extend(Handler.prototype, {
                     }
                 } else {
                     if (!parser._check(this) || this.parsers[parser.id]) {
-                        //todo 检查复制规则
+                        //todo 检查复制规则,规则复用
                         rules[index] = _rule = _rule._clone ? _rule._clone() : copyRule(_rule);
                         parser = this.createParser(this.parseRule(_rule));
                     }
@@ -162,7 +162,7 @@ extend(Handler.prototype, {
             if (!parent) {
                 this.sortList.push(parser.id);
             }
-            //todo 优化 children 渲染,避免监听 vue 的 value
+
             if (parser.input)
                 Object.defineProperty(parser.rule, 'value', this.valueHandle(parser));
 
@@ -373,20 +373,14 @@ extend(Handler.prototype, {
             }, {deep: key !== 'children'}));
         });
     },
-    //todo 优化删除 rule
-    //todo 检查表单重置
     //todo 检查深拷贝运行机制
-    //todo 减少 reload
-    //todo 优化 options 获取方式
-    //todo control 中有插槽,检查缓存
-    //TODO 增量 reload
     refreshControl(parser) {
         return parser.input && parser.rule.control && this.useCtrl(parser);
     },
     useCtrl(parser) {
         const controls = getControl(parser), validate = [], api = this.api;
         if (!controls.length) return false;
-        //todo 优化 root,优化 control.parser, control 事件
+
         for (let i = 0; i < controls.length; i++) {
             const control = controls[i], handleFn = control.handle || (val => val === control.value);
             const data = {
@@ -418,6 +412,7 @@ extend(Handler.prototype, {
                 api.removeRule(ctrl);
             }
         });
+        this.vm.$emit('control', parser.rule.__origin__, this.api);
         return true;
     },
     mounted() {
@@ -495,7 +490,7 @@ extend(Handler.prototype, {
         this.$render.clearOrgChildren();
         this.initData(rules);
         this.loadRule();
-        // todo 移除已删除规则可能会导致 reload,考虑内部用 origin 渲染
+        //todo 优化规则复用,避免重复 reload
         Object.keys(parsers).filter(id => this.parsers[id] === undefined)
             .forEach(id => this.deleteParser(parsers[id]));
 
@@ -535,4 +530,43 @@ function findControl(parser, rule) {
         if (ctrl.children === rule)
             return ctrl;
     }
+}
+
+function useHelper(rule) {
+    if (!Array.isArray(rule) || rule.findField) return;
+    Object.defineProperties(rule, {
+        findField: enumerable(findField),
+        findName: enumerable(findName),
+        setValue: enumerable(setValue),
+    })
+}
+
+function find(field, name, origin) {
+    if (!this.length) return;
+    let children = [];
+    for (let i = 0; i < this.length; i++) {
+        if (!is.Object(this[i])) continue;
+        let rule = getRule(this[i]);
+        if (rule[name] === field) return origin ? rule : this[i];
+        if (is.trueArray(rule.children)) children = children.concat(rule.children);
+        is.trueArray(rule.control) && rule.control.forEach(r => {
+            children = children.concat(r.rule);
+        })
+    }
+    return find.call(children, field, name, origin);
+}
+
+function findField(field) {
+    return find.call(this, field, 'field');
+}
+
+function findName(field) {
+    return find.call(this, field, 'name');
+}
+
+function setValue(formData) {
+    Object.keys(formData).forEach(field => {
+        const rule = find.call(this, field, 'field', true);
+        if (rule) rule.value = formData[field];
+    });
 }
