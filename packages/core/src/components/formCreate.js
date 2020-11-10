@@ -41,7 +41,7 @@ export default function $FormCreate(FormCreate) {
         },
         watch: {
             option(n) {
-                this.formCreate.options = n;
+                this.formCreate.initOptions(n);
                 this.$f.refresh(true);
             },
             rule(n) {

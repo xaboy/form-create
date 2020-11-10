@@ -44,9 +44,9 @@ export default class ElmManager extends Manager {
     }
 
     tidyOptions(options) {
-        if (options.submitBtn && is.Boolean(options.submitBtn)) options.submitBtn = {show: options.submitBtn};
-        if (options.resetBtn && is.Boolean(options.resetBtn)) options.resetBtn = {show: options.resetBtn};
-        if (options.row && is.Boolean(options.row)) options.row = {show: options.row};
+        if (is.Boolean(options.submitBtn)) options.submitBtn = {show: options.submitBtn};
+        if (is.Boolean(options.resetBtn)) options.resetBtn = {show: options.resetBtn};
+        if (is.Boolean(options.row)) options.row = {show: options.row};
         return options;
     }
 

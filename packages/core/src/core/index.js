@@ -9,7 +9,7 @@ import fragment from '../components/fragment';
 import is from '@form-create/utils/lib/type';
 import toCase from '@form-create/utils/lib/tocase';
 import extend from '@form-create/utils/lib/extend';
-import deepExtend, {deepExtendArgs} from '@form-create/utils/lib/deepextend';
+import deepExtend from '@form-create/utils/lib/deepextend';
 import {CreateNodeFactory} from '../factory/node';
 
 export let _vue = typeof window !== 'undefined' && window.Vue ? window.Vue : Vue;
@@ -193,7 +193,6 @@ export default function createFormCreate(config) {
         this.manager = config.manager;
         this.parsers = parsers;
         this.rules = Array.isArray(rules) ? rules : [];
-        this.options = deepExtend({formData: {}}, globalConfig);
         this.prop = {
             components,
             filters,
@@ -201,7 +200,7 @@ export default function createFormCreate(config) {
         }
         this.CreateNode = CreateNode;
 
-        this.updateOptions(options || {});
+        this.initOptions(options || {});
         this.init();
     }
 
@@ -219,9 +218,12 @@ export default function createFormCreate(config) {
                 this.handle.reloadRule([]);
             });
         },
+        initOptions(options) {
+            this.options = deepExtend({formData: {}}, globalConfig);
+            this.updateOptions(options || {});
+        },
         updateOptions(options) {
-            //todo 继承方式,检查全局配置污染
-            this.options = deepExtendArgs(this.options, options);
+            deepExtend(this.options, options);
         },
         created() {
             const vm = this.vm;
