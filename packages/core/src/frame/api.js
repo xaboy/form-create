@@ -30,8 +30,7 @@ export default function Api(h) {
 
     function byRules(parsers, origin) {
         return Object.keys(parsers).reduce((initial, key) => {
-            initial[key] = parsers[key].rule;
-            if (origin && initial[key].__origin__) initial[key] = initial[key].__origin__
+            initial[key] = origin ? parsers[key].origin : parsers[key].rule;
             return initial;
         }, {});
     }
@@ -88,13 +87,13 @@ export default function Api(h) {
             let parser = h.getParser(field);
             if (!parser) return;
             parser._remove();
-            return parser.rule.__origin__;
+            return parser.origin;
         },
         removeRule(rule) {
             const parser = rule && byParser(rule);
             if (!parser) return;
             parser._remove();
-            return parser.rule.__origin__;
+            return parser.origin;
         },
         destroy: () => {
             h.vm.$el.parentNode && h.vm.$el.parentNode.removeChild(h.vm.$el);
@@ -114,7 +113,7 @@ export default function Api(h) {
                     rules = parser.rule.children;
                     index = parser.rule.children.length;
                 } else {
-                    index = parser.root.indexOf(parser.rule.__origin__);
+                    index = parser.root.indexOf(parser.origin);
                     rules = parser.root;
                 }
             } else rules = h.rules;
@@ -132,7 +131,7 @@ export default function Api(h) {
                 if (child) {
                     rules = parser.rule.children;
                 } else {
-                    index = parser.root.indexOf(parser.rule.__origin__);
+                    index = parser.root.indexOf(parser.origin);
                     rules = parser.root;
                 }
             } else rules = h.rules;
@@ -235,7 +234,7 @@ export default function Api(h) {
         getRule: (id, origin) => {
             const parser = h.getParser(id);
             if (parser) {
-                return origin ? parser.rule.__origin__ : parser.rule;
+                return origin ? parser.origin : parser.rule;
             }
         },
         updateRules(rules) {

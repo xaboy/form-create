@@ -81,7 +81,7 @@ extend(Parser.prototype, {
         this.ctrlRule = [];
     },
     _remove() {
-        let index = this.root.indexOf(this.rule.__origin__);
+        let index = this.root.indexOf(this.origin);
         if (index === -1) return;
         this.root.splice(index, 1);
         this._removeCtrl();

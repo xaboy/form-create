@@ -46,7 +46,7 @@ export default function $FormCreate(FormCreate) {
             },
             rule(n) {
                 if (n.length === this.renderRule.length && n.every(v => this.renderRule.indexOf(v) > -1)) return;
-                this.formCreate.handle.reloadRule(n);
+                this.formCreate.$handle.reloadRule(n);
                 this._renderRule();
             }
         },

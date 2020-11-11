@@ -173,14 +173,11 @@ export default function useRender(Render) {
                         ['hook:mounted']: () => {
                             parser.el = this.vm.$refs[refName];
                             parser.mounted();
-                            console.log('mounted', parser.field);
                         }
                     },
                     model: parser.input ? {
-                        //todo 优化获取 formData
                         value: this.$handle.getFormData(parser),
                         callback: (value) => {
-                            console.log(parser.field, value);
                             this.onInput(parser, value);
                         },
                         expression: `formData.${parser.field}`
@@ -203,7 +200,7 @@ export default function useRender(Render) {
             if (!is.trueArray(children) && orgChildren) {
                 orgChildren.forEach(child => {
                     if (!is.String(child) && child.__fc__) {
-                        this.$handle.deleteParser(child.__fc__);
+                        this.$handle.rmParser(child.__fc__);
                     }
                 });
                 this.orgChildren[parser.id] = [];
@@ -212,7 +209,7 @@ export default function useRender(Render) {
 
             orgChildren && orgChildren.forEach(child => {
                 if (children.indexOf(child) === -1 && !is.String(child) && child.__fc__) {
-                    this.$handle.deleteParser(child.__fc__);
+                    this.$handle.rmParser(child.__fc__);
                 }
             });
 
