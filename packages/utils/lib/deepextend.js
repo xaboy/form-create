@@ -3,6 +3,7 @@ import is from './type';
 
 export default function deepExtend(origin, target = {}, mode) {
     let isArr = false;
+    let flag = false;
     for (let key in target) {
         if (Object.prototype.hasOwnProperty.call(target, key)) {
             let clone = target[key];
@@ -24,13 +25,18 @@ export default function deepExtend(origin, target = {}, mode) {
                 } else {
                     nst && $set(origin, key, {});
                 }
-                deepExtend(origin[key], clone, mode);
+                if (mode && clone.__ctrl) {
+                    Array.isArray(origin) ? origin.splice(key, 1) : delete origin[key];
+                    flag = true;
+                    continue;
+                }
+                origin[key] = deepExtend(origin[key], clone, mode);
             } else {
                 $set(origin, key, clone);
             }
         }
     }
-    return origin
+    return (mode && flag && Array.isArray(origin)) ? origin.filter(v => v) : origin
 }
 
 export function deepCopy(value) {

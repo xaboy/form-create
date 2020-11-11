@@ -147,7 +147,7 @@ extend(Handler.prototype, {
                         if (parser.rule.__ctrl) {
                             return;
                         }
-                        //todo 检查复制规则,规则复用
+                        //todo 检查复制规则,规则复用,复用后顺序错乱
                         rules[index] = _rule = _rule._clone ? _rule._clone() : copyRule(_rule);
                         parser = this.createParser(this.parseRule(_rule));
                     }
@@ -422,7 +422,7 @@ extend(Handler.prototype, {
                 const ruleCon = {
                     type: 'fcFragment',
                     native: true,
-                    children: rule
+                    children: rule,
                 }
                 Object.defineProperty(ruleCon, '__ctrl', enumerable(true))
                 parser.ctrlRule.push(ruleCon);
