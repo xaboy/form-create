@@ -188,16 +188,19 @@ export default function createFormCreate(config) {
 
 
     function FormCreate(vm, rules, options) {
-        this.vm = vm;
-        this.manager = config.manager;
-        this.parsers = parsers;
-        this.rules = Array.isArray(rules) ? rules : [];
-        this.prop = {
-            components,
-            filters,
-            directives,
-        }
-        this.CreateNode = CreateNode;
+        extend(this, {
+            vm,
+            manager: config.manager,
+            parsers,
+            rules: Array.isArray(rules) ? rules : [],
+            prop: {
+                components,
+                filters,
+                directives,
+            },
+            CreateNode,
+            bus: new _vue
+        })
 
         this.initOptions(options || {});
         this.init();

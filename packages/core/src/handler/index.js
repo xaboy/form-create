@@ -3,7 +3,7 @@ import Render from '../render';
 import extend from '@form-create/utils/lib/extend';
 import toCase from '@form-create/utils/lib/tocase';
 import is, {hasProperty} from '@form-create/utils/lib/type';
-import {copyRule, enumerable, funcProxy, getRule} from '../frame/util';
+import {byParser, copyRule, enumerable, funcProxy, getRule} from '../frame/util';
 import {err} from '@form-create/utils/lib/console';
 import BaseParser from '../factory/parser';
 import toLine from '@form-create/utils/lib/toline';
@@ -23,7 +23,8 @@ export default function Handler(fc) {
         subForm: {},
         form: {},
         appendData: {},
-        reloadFlag: null,
+        cycleLoad: null,
+        loadedId: 1,
         nextTick: null,
         changeStatus: false,
         nextReload: () => {
@@ -35,7 +36,10 @@ export default function Handler(fc) {
     funcProxy(this, {
         options() {
             return fc.options || {};
-        }
+        },
+        bus() {
+            return fc.bus;
+        },
     })
 
     this.$manager = new fc.manager(this);
@@ -87,16 +91,24 @@ extend(Handler.prototype, {
         return this.repeatRule.indexOf(rule) > -1;
     },
     loadRule() {
-        this.reloadFlag = false;
+        console.warn('%c load', 'color:blue');
+        this.cycleLoad = false;
+        this.bus.$emit('beforeLoad');
         this._loadRule(this.rules);
-        if (this.reloadFlag) this.loadRule();
+        if (this.cycleLoad) {
+            return this.loadRule();
+        }
         this.vm._renderRule();
         this.$render.initOrgChildren();
     },
     loadChildren(children, parent) {
-        this.reloadFlag = false;
+        this.cycleLoad = false;
+        this.bus.$emit('beforeLoad');
         this._loadRule(children, parent);
-        if (this.reloadFlag) this.loadRule();
+        if (this.cycleLoad) {
+            return this.loadRule();
+        }
+        this.$render.clearCache(parent, true);
     },
     _loadRule(rules, parent) {
         rules.map((_rule, index) => {
@@ -125,10 +137,16 @@ extend(Handler.prototype, {
                 parser = _rule.__fc__;
                 if (parser.deleted) {
                     if (!parser._check(this)) {
+                        if (parser.rule.__ctrl) {
+                            return;
+                        }
                         parser.update(this);
                     }
                 } else {
                     if (!parser._check(this) || this.parsers[parser.id]) {
+                        if (parser.rule.__ctrl) {
+                            return;
+                        }
                         //todo 检查复制规则,规则复用
                         rules[index] = _rule = _rule._clone ? _rule._clone() : copyRule(_rule);
                         parser = this.createParser(this.parseRule(_rule));
@@ -153,13 +171,18 @@ extend(Handler.prototype, {
             }
 
             if (!parent) {
-                this.sortList.push(parser.id);
+                const pre = rules[index - 1];
+                if (pre) {
+                    this.sortList.splice(this.sortList.indexOf(pre.__fc__.id) + 1, 0, parser.id);
+                } else {
+                    this.sortList.push(parser.id);
+                }
             }
 
             if (parser.input)
                 Object.defineProperty(parser.rule, 'value', this.valueHandle(parser));
 
-            if (this.refreshControl(parser)) this.reloadFlag = true;
+            if (this.refreshControl(parser)) this.cycleLoad = true;
             return parser;
         });
     },
@@ -276,7 +299,8 @@ extend(Handler.prototype, {
         return event;
     },
     render() {
-        console.warn('render');
+        console.warn('%c render', 'color:green');
+        ++this.loadedId;
         this.vm.$nextTick(() => {
             this.bindNextTick(() => this.vm.$emit('fc.nextTick'));
         })
@@ -322,13 +346,13 @@ extend(Handler.prototype, {
         }
     },
     valueChange(parser, val) {
-        this.refreshVisible(parser, val);
-        this.refreshLink(parser);
         if (this.refreshControl(parser)) {
             this.$render.clearCacheAll();
-            this._reloadRule();
+            this.loadRule();
             this.refresh();
         }
+        this.refreshVisible(parser, val);
+        this.refreshLink(parser);
     },
     syncValue() {
         this.isMounted && this.vm && this.vm.$emit('update:value', this.api.formData());
@@ -336,13 +360,20 @@ extend(Handler.prototype, {
     onInput(parser, value) {
         let val;
         if (parser.input && (this.isQuote(parser, val = parser.toValue(value)) || this.isChange(parser, val))) {
+            this.$render.clearCache(parser);
             this.setFormData(parser, value);
             this.changeStatus = true;
             this.valueChange(parser, val);
-            this.$render.clearCache(parser);
             this.syncValue();
             this.vm.$emit('change', parser.field, val, this.api);
+            this.nextLoad();
         }
+    },
+    nextLoad() {
+        const id = this.loadedId;
+        this.vm.$nextTick(() => {
+            id === this.loadedId && this.refresh();
+        });
     },
     getParser(id) {
         return this.fieldList[id] || this.customData[id] || this.parsers[id];
@@ -385,24 +416,32 @@ extend(Handler.prototype, {
             validate.push(data);
         }
         if (!validate.length) return false;
-        validate.forEach(({valid, rule, prepend, append, child, ctrl}) => {
+
+        validate.reverse().forEach(({valid, rule, prepend, append, child, ctrl}) => {
             if (valid) {
                 const ruleCon = {
                     type: 'fcFragment',
                     native: true,
                     children: rule
                 }
+                Object.defineProperty(ruleCon, '__ctrl', enumerable(true))
                 parser.ctrlRule.push(ruleCon);
-                if (prepend) {
-                    api.prepend(ruleCon, prepend, child)
-                } else if (append) {
-                    api.append(ruleCon, append, child)
-                } else {
-                    parser.root.splice(parser.root.indexOf(parser.rule.__origin__) + 1, 0, ruleCon);
-                }
+                this.bus.$once('beforeLoad', () => {
+                    this.cycleLoad = true;
+                    if (prepend) {
+                        api.prepend(ruleCon, prepend, child)
+                    } else if (append) {
+                        api.append(ruleCon, append, child)
+                    } else {
+                        parser.root.splice(parser.root.indexOf(parser.origin) + 1, 0, ruleCon);
+                    }
+                });
             } else {
                 parser.ctrlRule.splice(parser.ctrlRule.indexOf(ctrl), 1);
-                api.removeRule(ctrl);
+                const ctrlParser = byParser(ctrl);
+                if (ctrlParser) {
+                    ctrlParser._remove();
+                }
             }
         });
         this.vm.$emit('control', parser.rule.__origin__, this.api);
@@ -417,11 +456,10 @@ extend(Handler.prototype, {
         fn && fn(this.api);
         this.fc.$emit(name, this.api);
     },
-    deleteParser(parser, flag) {
+    rmParser(parser, flag) {
         if (parser.deleted) return;
-
-        const {id, field, name} = parser, index = this.sortList.indexOf(id);
-        console.warn(parser);
+        const {id, field, name} = parser;
+        // console.warn(parser);
         if (parser.input) {
             Object.defineProperty(parser.rule, 'value', {
                 value: parser.rule.value
@@ -429,16 +467,18 @@ extend(Handler.prototype, {
         }
 
         if (is.trueArray(parser.rule.children)) {
-            parser.rule.children.forEach(h => h.__fc__ && this.deleteParser(h.__fc__, true));
+            parser.rule.children.forEach(h => h.__fc__ && this.rmParser(h.__fc__, true));
         }
 
         $del(this.parsers, id);
         $del(this.validate, field);
         $del(this.formData, field);
+        $del(this.fieldList, field);
         $del(this.$render.renderList, id);
         $del(this.customData, name);
         $del(this.subForm, field);
 
+        const index = this.sortList.indexOf(id);
         if (index > -1) {
             this.sortList.splice(index, 1);
         }
@@ -463,7 +503,7 @@ extend(Handler.prototype, {
         return this._reloadRule(rules);
     }, 1),
     _reloadRule(rules) {
-        console.warn('reload');
+        console.warn('%c reload', 'color:red');
         if (!rules) rules = this.rules;
 
         const parsers = {...this.parsers};
@@ -473,9 +513,8 @@ extend(Handler.prototype, {
         this.initData(rules);
         this.loadRule();
 
-        //todo 优化规则复用,避免重复 reload
         Object.keys(parsers).filter(id => this.parsers[id] === undefined)
-            .forEach(id => this.deleteParser(parsers[id]));
+            .forEach(id => this.rmParser(parsers[id]));
 
         this.syncForm();
 

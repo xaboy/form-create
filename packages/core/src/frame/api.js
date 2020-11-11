@@ -1,4 +1,4 @@
-import {mergeRule, toJson} from './util';
+import {byParser, mergeRule, toJson} from './util';
 import {$set} from '@form-create/utils/lib/modify';
 import {deepCopy} from '@form-create/utils/lib/deepextend';
 import is from '@form-create/utils/lib/type';
@@ -33,10 +33,6 @@ export default function Api(h) {
             initial[key] = origin ? parsers[key].origin : parsers[key].rule;
             return initial;
         }, {});
-    }
-
-    function byParser(rule) {
-        return rule.__fc__ || (rule.__origin__ ? rule.__origin__.__fc__ : null)
     }
 
     function tidyBtnProp(btn, def) {

@@ -85,6 +85,7 @@ extend(Parser.prototype, {
         if (index === -1) return;
         this.root.splice(index, 1);
         this._removeCtrl();
+        this.$handle.rmParser(this);
         extend(this, {
             root: []
         });

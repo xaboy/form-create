@@ -83,3 +83,7 @@ export function funcProxy(that, proxy) {
         return initial;
     }, {}))
 }
+
+export function byParser(rule) {
+    return rule.__fc__ || (rule.__origin__ ? rule.__origin__.__fc__ : null)
+}
