@@ -119,6 +119,10 @@ export default function useRender(Render) {
             vn.data.key = key;
             return vn;
         },
+        renderAround(vn, parser) {
+            const prop = parser.prop;
+            return [prop.prefix || undefined, vn, prop.suffix || undefined];
+        },
         renderParser(parser, parent) {
             if (parser.type === 'hidden') return;
             if (!this.cache[parser.id] || parser.type === 'template') {
@@ -133,6 +137,7 @@ export default function useRender(Render) {
                     vn = this.renderTemplate(parser);
 
                     if (parent && is.Undef(rule.native)) {
+                        vn = this.renderAround(vn, parser);
                         this.setCache(parser, vn, parent);
                         return vn;
                     }
@@ -142,10 +147,12 @@ export default function useRender(Render) {
                 } else {
                     vn = this.defaultRender(parser, this.renderChildren(parser));
                     if (parent && is.Undef(rule.native)) {
+                        vn = this.renderAround(vn, parser);
                         this.setCache(parser, vn, parent);
                         return vn;
                     }
                 }
+                vn = this.renderAround(vn, parser);
                 if (rule.native !== true)
                     vn = form.makeFormItem(parser, vn);
                 this.setCache(parser, vn, parent);
@@ -236,6 +243,7 @@ export default function useRender(Render) {
             return this.vNode.make(parser.originType, prop, children);
         },
         renderRule(rule, children = []) {
+            //todo 优化 rule 渲染
             return this.vm.$createElement(rule.type, rule, children);
         }
     })
