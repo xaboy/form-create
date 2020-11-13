@@ -228,11 +228,7 @@ export default function createFormCreate(config) {
             deepExtend(this.options, options);
         },
         created() {
-            const vm = this.vm;
             this.$handle = new Handle(this);
-            vm.$f = this.api();
-            vm.$emit('input', vm.$f);
-            vm._updateValue(this.$handle.form);
         },
         api() {
             return this.$handle.api;

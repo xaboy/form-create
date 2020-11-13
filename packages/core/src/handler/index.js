@@ -46,7 +46,7 @@ export default function Handler(fc) {
     this.$render = new Render(this);
     this.api = Api(this);
     this.loadRule();
-    this.initVm();
+    this.init();
     this.$manager.__init();
 }
 
@@ -84,8 +84,18 @@ extend(Handler.prototype, {
         }, {}));
         this.syncValue();
     },
-    initVm() {
-        this.vm.$set(this.vm, 'formData', this.formData);
+    init() {
+        const vm = this.vm;
+        vm.$set(vm, 'formData', this.formData);
+        vm.$f = this.api;
+        vm.$emit('input', this.api);
+        vm._updateValue(this.form);
+
+        const f = this.fieldList;
+        Object.keys(f).forEach(k => {
+            const p = f[k];
+            this.refreshVisible(p, p.rule.value);
+        })
     },
     isRepeatRule(rule) {
         return this.repeatRule.indexOf(rule) > -1;
