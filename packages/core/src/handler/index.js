@@ -385,10 +385,13 @@ extend(Handler.prototype, {
         const none = ['field', 'type', 'value', 'vm', 'template', 'name', 'config', 'control', 'link', 'visible'];
         Object.keys(parser.rule).filter(k => none.indexOf(k) === -1).forEach((key) => {
             parser.watch.push(vm.$watch(() => parser.rule[key], n => {
+                //todo 检查所以配置的回调逻辑
                 this.watching = true;
                 if (key === 'hidden')
                     parser.updateKey(true);
-                if (key === 'validate')
+                else if (key === 'link')
+                    parser._link();
+                else if (key === 'validate')
                     this.validate[parser.field] = n || [];
                 else if (['props', 'on', 'nativeOn'].indexOf(key) > -1)
                     this.parseInjectEvent(parser.rule, n || {});

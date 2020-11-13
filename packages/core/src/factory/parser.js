@@ -63,6 +63,7 @@ extend(Parser.prototype, {
         this.linkOn = [];
     },
     _link() {
+        this._unLink();
         this.$handle.appendLink(this);
     },
     _watch() {
