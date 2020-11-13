@@ -82,10 +82,10 @@ extend(Handler.prototype, {
             initial[field] = handle;
             return initial;
         }, {}));
+        this.syncValue();
     },
     initVm() {
         this.vm.$set(this.vm, 'formData', this.formData);
-        this.syncForm();
     },
     isRepeatRule(rule) {
         return this.repeatRule.indexOf(rule) > -1;
@@ -100,6 +100,7 @@ extend(Handler.prototype, {
         }
         this.vm._renderRule();
         this.$render.initOrgChildren();
+        this.syncForm();
     },
     loadChildren(children, parent) {
         this.cycleLoad = false;
@@ -357,7 +358,7 @@ extend(Handler.prototype, {
         });
     },
     syncValue() {
-        this.isMounted && this.vm && this.vm.$emit('update:value', this.api.formData());
+        this.vm && this.vm._updateValue(this.form);
     },
     onInput(parser, value) {
         let val;
@@ -478,6 +479,7 @@ extend(Handler.prototype, {
         $del(this.parsers, id);
         $del(this.validate, field);
         $del(this.formData, field);
+        $del(this.form, field);
         $del(this.fieldList, field);
         $del(this.$render.renderList, id);
         $del(this.customData, name);
@@ -499,6 +501,7 @@ extend(Handler.prototype, {
     //todo 组件生成全部通过 alias
     //todo value.sync 同步
     //todo refresh 作用于为 rule
+    //todo 缓存 value,变化后更新
     refresh() {
         this.vm._refresh();
     },
@@ -527,8 +530,6 @@ extend(Handler.prototype, {
 
         Object.keys(parsers).filter(id => this.parsers[id] === undefined)
             .forEach(id => this.rmParser(parsers[id]));
-
-        this.syncForm();
 
         this.$render.clearCacheAll();
         this.refresh();

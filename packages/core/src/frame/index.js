@@ -232,6 +232,7 @@ export default function createFormCreate(config) {
             this.$handle = new Handle(this);
             vm.$f = this.api();
             vm.$emit('input', vm.$f);
+            vm._updateValue(this.$handle.form);
         },
         api() {
             return this.$handle.api;
