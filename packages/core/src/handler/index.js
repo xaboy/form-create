@@ -199,7 +199,7 @@ extend(Handler.prototype, {
                     this.refresh();
                     this.$render.clearCache(parser, true);
                     this.syncValue();
-                    this.vm.$emit('set-value', parser.field, value, this.api);
+                    this.vm.$emit('change', parser.field, value, this.api, true);
                 }
             }
         };
@@ -335,24 +335,26 @@ extend(Handler.prototype, {
             parser.rule.hidden = parser.rule.visible(val, this.api) === true;
         }
     },
-    refreshLink(parser) {
-        if (is.trueArray(parser.rule.link)) {
-            parser.rule.link.forEach(id => {
-                const p = this.getParser(id);
-                if (p) {
-                    this.valueChange(p, p.rule.value);
-                }
-            })
-        }
-    },
     valueChange(parser, val) {
+        this.refreshRule(parser, val);
+        this.bus.$emit('change-' + parser.field, val);
+    },
+    refreshRule(parser, val) {
         if (this.refreshControl(parser)) {
             this.$render.clearCacheAll();
             this.loadRule();
             this.refresh();
         }
         this.refreshVisible(parser, val);
-        this.refreshLink(parser);
+    },
+    appendLink(parser) {
+        const link = parser.rule.link;
+        is.trueArray(link) && link.forEach(field => {
+            const fn = () => this.refreshRule(parser, parser.rule.value);
+
+            this.bus.$on('change-' + field, fn);
+            parser.linkOn.push(() => this.bus.$off('change-' + field, fn));
+        });
     },
     syncValue() {
         this.isMounted && this.vm && this.vm.$emit('update:value', this.api.formData());
@@ -397,7 +399,7 @@ extend(Handler.prototype, {
             }, {deep: key !== 'children'}));
         });
     },
-    //todo 检查深拷贝运行机制
+    //todo 检查复用排序错误问题
     refreshControl(parser) {
         return parser.input && parser.rule.control && this.useCtrl(parser);
     },
@@ -487,6 +489,13 @@ extend(Handler.prototype, {
         if (!flag) this.$render.initOrgChildren();
         return parser;
     },
+    //todo 检查调用,考虑是否用 nextLoad 代替
+    //todo 主动联动,目前是被动联动
+    //todo created 赋值优化,目前赋值无效
+    //todo 区分规则拷贝和合并
+    //todo 组件生成全部通过 alias
+    //todo value.sync 同步
+    //todo refresh 作用于为 rule
     refresh() {
         this.vm._refresh();
     },

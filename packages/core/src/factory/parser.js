@@ -25,6 +25,7 @@ export default function Parser(handle, rule) {
         type: toCase(rule.type),
 
         watch: [],
+        linkOn: [],
         root: [],
         ctrlRule: [],
         parent: null,
@@ -57,12 +58,20 @@ extend(Parser.prototype, {
         this.watch.forEach(un => un());
         this.watch = [];
     },
+    _unLink() {
+        this.linkOn.forEach(un => un());
+        this.linkOn = [];
+    },
+    _link() {
+        this.$handle.appendLink(this);
+    },
     _watch() {
         this.$handle.addParserWitch(this);
     },
     _delete() {
         const undef = void 0;
         this._unwatch();
+        this._unLink();
         this._removeCtrl();
         extend(this, {
             deleted: true,
@@ -102,6 +111,7 @@ extend(Parser.prototype, {
             this._unwatch();
         }
         this._watch();
+        this._link();
     }
 })
 
