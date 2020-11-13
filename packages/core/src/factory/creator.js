@@ -1,8 +1,7 @@
 import extend from '@form-create/utils/lib/extend';
 import is from '@form-create/utils/lib/type';
 import {attrs} from '../frame/attrs';
-import {copyRule, mergeRule} from '..';
-import {_vue} from '../frame';
+import {copyRule, mergeRule} from '../frame/util';
 import {$set} from '@form-create/utils/lib';
 
 export function baseRule() {
@@ -35,7 +34,7 @@ export function creatorTypeFactory(name, type, typeName = 'type') {
 }
 
 export default function Creator(type, title, field, value, props) {
-    this._data = _vue.observable(extend(baseRule(), {type, title, field, value, props: props || {}}))
+    this._data = extend(baseRule(), {type, title, field, value, props: props || {}});
 }
 
 extend(Creator.prototype, {
