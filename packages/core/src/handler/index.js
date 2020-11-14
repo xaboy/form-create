@@ -201,16 +201,11 @@ extend(Handler.prototype, {
         return {
             enumerable: true,
             get: () => {
-                return parser.toValue(this.getFormData(parser));
+                return this.getValue(parser);
             },
             set: (value) => {
                 if (this.isChange(parser, value)) {
-                    this.setFormData(parser, parser.toFormValue(value));
-                    this.valueChange(parser, value);
-                    this.refresh();
-                    this.$render.clearCache(parser, true);
-                    this.syncValue();
-                    this.vm.$emit('change', parser.field, value, this.api, true);
+                    this.setValue(parser, value, parser.toFormValue(value), true);
                 }
             }
         };
@@ -373,14 +368,24 @@ extend(Handler.prototype, {
     onInput(parser, value) {
         let val;
         if (parser.input && (this.isQuote(parser, val = parser.toValue(value)) || this.isChange(parser, val))) {
-            this.$render.clearCache(parser);
-            this.setFormData(parser, value);
-            this.changeStatus = true;
-            this.valueChange(parser, val);
-            this.syncValue();
-            this.vm.$emit('change', parser.field, val, this.api);
-            this.nextLoad();
+            this.setValue(parser, val, value);
         }
+    },
+    getValue(parser) {
+        if (!hasProperty(parser, 'cacheValue')) {
+            parser.cacheValue = parser.toValue(this.getFormData(parser));
+        }
+        return parser.cacheValue;
+    },
+    setValue(parser, value, formValue, setFlag) {
+        parser.cacheValue = value;
+        this.nextLoad();
+        this.$render.clearCache(parser);
+        this.setFormData(parser, formValue);
+        this.changeStatus = true;
+        this.valueChange(parser, value);
+        this.syncValue();
+        this.vm.$emit('change', parser.field, value, this.api, setFlag);
     },
     nextLoad() {
         const id = this.loadedId;
@@ -485,7 +490,8 @@ extend(Handler.prototype, {
         // console.warn(parser);
         if (parser.input) {
             Object.defineProperty(parser.rule, 'value', {
-                value: parser.rule.value
+                value: parser.rule.value,
+                writable: true
             });
         }
 
@@ -501,6 +507,7 @@ extend(Handler.prototype, {
         $del(this.$render.renderList, id);
         $del(this.customData, name);
         $del(this.subForm, field);
+        $del(parser, 'cacheValue');
 
         const index = this.sortList.indexOf(id);
         if (index > -1) {
