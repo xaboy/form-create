@@ -346,7 +346,7 @@ export default function Api(h) {
                         successFn(formData, this);
                     else {
                         h.options.onSubmit && h.options.onSubmit(formData, this);
-                        h.fc.$emit('submit', formData, this);
+                        h.vm.$emit('submit', formData, this);
                     }
                 } else {
                     failFn && failFn(this)
@@ -400,7 +400,7 @@ export default function Api(h) {
             }
         },
         nextTick(fn) {
-            h.vm.$once('fc.nextTick', fn);
+            h.bus.$once('fc.nextTick', fn);
             h.refresh();
         }
         //todo 以上

@@ -239,10 +239,6 @@ export default function createFormCreate(config) {
         mounted() {
             this.$handle.mounted();
         },
-        $emit(eventName, ...params) {
-            this.$paren && this.$parent.$emit(`fc:${eventName}`, ...params);
-            this.vm.$emit(eventName, ...params);
-        }
     })
 
     useAttr(create);

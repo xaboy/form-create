@@ -308,7 +308,7 @@ extend(Handler.prototype, {
         console.warn('%c render', 'color:green');
         ++this.loadedId;
         this.vm.$nextTick(() => {
-            this.bindNextTick(() => this.vm.$emit('fc.nextTick'));
+            this.bindNextTick(() => this.bus.$emit('fc.nextTick'));
         })
 
         if (this.vm.unique > 0)
@@ -475,7 +475,7 @@ extend(Handler.prototype, {
     lifecycle(name) {
         const fn = this.options[name];
         fn && fn(this.api);
-        this.fc.$emit(name, this.api);
+        this.vm.$emit(name, this.api);
     },
     rmParser(parser, reloadFlag) {
         this._rmParser(parser);
@@ -518,13 +518,9 @@ extend(Handler.prototype, {
         return parser;
     },
     //todo 检查调用,考虑是否用 nextLoad 代替
-    //todo 主动联动,目前是被动联动
-    //todo created 赋值优化,目前赋值无效
     //todo 区分规则拷贝和合并
     //todo 组件生成全部通过 alias
-    //todo value.sync 同步
-    //todo refresh 作用于为 rule
-    //todo 缓存 value,变化后更新
+    //todo refresh函数 作用域为 rule
     refresh() {
         this.vm._refresh();
     },
@@ -557,8 +553,8 @@ extend(Handler.prototype, {
         this.$render.clearCacheAll();
         this.refresh();
 
-        this.vm.$off('fc.nextTick', this.nextReload);
-        this.vm.$once('fc.nextTick', this.nextReload);
+        this.bus.$off('fc.nextTick', this.nextReload);
+        this.bus.$once('fc.nextTick', this.nextReload);
     }
 })
 
