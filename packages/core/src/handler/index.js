@@ -94,7 +94,7 @@ extend(Handler.prototype, {
         const f = this.fieldList;
         Object.keys(f).forEach(k => {
             const p = f[k];
-            this.refreshVisible(p, p.rule.value);
+            this.valueRefresh(p, p.rule.value);
         })
     },
     isRepeatRule(rule) {
@@ -336,13 +336,16 @@ extend(Handler.prototype, {
     isQuote(parser, value) {
         return (is.Object(value) || Array.isArray(value)) && value === parser.rule.value;
     },
+    valueRefresh(parser, val) {
+        this.refreshVisible(parser, val);
+        this.refreshUpdate(parser);
+    },
     refreshVisible(parser, val) {
         if (is.Function(parser.rule.visible)) {
             const hidden = parser.rule.visible(val, parser.origin, this.api);
             if (hidden === undefined) return;
             parser.rule.hidden = hidden === true;
         }
-        this.refreshUpdate(parser);
     },
     refreshUpdate(parser) {
         if (is.Function(parser.rule.update)) {
@@ -360,7 +363,7 @@ extend(Handler.prototype, {
             this.loadRule();
             this.refresh();
         }
-        this.refreshVisible(parser, val);
+        this.valueRefresh(parser, val);
     },
     appendLink(parser) {
         const link = parser.rule.link;
@@ -422,6 +425,7 @@ extend(Handler.prototype, {
                     this.parseInjectEvent(parser.rule, n || {});
                 else if (['emit', 'nativeEmit'].indexOf(key) > -1)
                     this.parseEmit(parser, key === 'emit');
+                this.refreshUpdate(parser);
                 this.$render.clearCache(parser);
                 this.watching = false;
             }, {deep: key !== 'children'}));
