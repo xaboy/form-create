@@ -425,7 +425,6 @@ extend(Handler.prototype, {
                     this.parseInjectEvent(parser.rule, n || {});
                 else if (['emit', 'nativeEmit'].indexOf(key) > -1)
                     this.parseEmit(parser, key === 'emit');
-                this.refreshUpdate(parser);
                 this.$render.clearCache(parser);
                 this.watching = false;
             }, {deep: key !== 'children'}));
