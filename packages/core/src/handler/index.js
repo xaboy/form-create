@@ -472,7 +472,14 @@ extend(Handler.prototype, {
         fn && fn(this.api);
         this.fc.$emit(name, this.api);
     },
-    rmParser(parser, flag) {
+    rmParser(parser, reloadFlag) {
+        this._rmParser(parser);
+        if (!reloadFlag) {
+            this.$render.initOrgChildren();
+            this.syncValue();
+        }
+    },
+    _rmParser(parser) {
         if (parser.deleted) return;
         const {id, field, name} = parser;
         // console.warn(parser);
@@ -483,7 +490,7 @@ extend(Handler.prototype, {
         }
 
         if (is.trueArray(parser.rule.children)) {
-            parser.rule.children.forEach(h => h.__fc__ && this.rmParser(h.__fc__, true));
+            parser.rule.children.forEach(h => h.__fc__ && this._rmParser(h.__fc__));
         }
 
         $del(this.parsers, id);
@@ -501,7 +508,6 @@ extend(Handler.prototype, {
         }
 
         parser._delete();
-        if (!flag) this.$render.initOrgChildren();
         return parser;
     },
     //todo 检查调用,考虑是否用 nextLoad 代替
@@ -539,7 +545,7 @@ extend(Handler.prototype, {
         this.loadRule();
 
         Object.keys(parsers).filter(id => this.parsers[id] === undefined)
-            .forEach(id => this.rmParser(parsers[id]));
+            .forEach(id => this.rmParser(parsers[id], true));
 
         this.$render.clearCacheAll();
         this.refresh();
