@@ -338,7 +338,16 @@ extend(Handler.prototype, {
     },
     refreshVisible(parser, val) {
         if (is.Function(parser.rule.visible)) {
-            parser.rule.hidden = parser.rule.visible(val, this.api) === true;
+            const hidden = parser.rule.visible(val, parser.origin, this.api);
+            if (hidden === undefined) return;
+            parser.rule.hidden = hidden === true;
+        }
+        this.refreshUpdate(parser);
+    },
+    refreshUpdate(parser) {
+        if (is.Function(parser.rule.update)) {
+            const refresh = parser.rule.update(parser.origin, this.api);
+            refresh === true && this.nextLoad();
         }
     },
     valueChange(parser, val) {
@@ -385,7 +394,7 @@ extend(Handler.prototype, {
         this.changeStatus = true;
         this.valueChange(parser, value);
         this.syncValue();
-        this.vm.$emit('change', parser.field, value, this.api, setFlag);
+        this.vm.$emit('change', parser.field, value, parser.origin, this.api, setFlag);
     },
     nextLoad() {
         const id = this.loadedId;
@@ -465,7 +474,7 @@ extend(Handler.prototype, {
                 }
             }
         });
-        this.vm.$emit('control', parser.rule.__origin__, this.api);
+        this.vm.$emit('control', parser.origin, this.api);
         return true;
     },
     mounted() {
@@ -517,10 +526,9 @@ extend(Handler.prototype, {
         parser._delete();
         return parser;
     },
-    //todo 检查调用,考虑是否用 nextLoad 代替
     //todo 区分规则拷贝和合并
     //todo 组件生成全部通过 alias
-    //todo refresh函数 作用域为 rule
+    //todo 优化 mergeRule
     refresh() {
         this.vm._refresh();
     },
