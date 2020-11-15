@@ -27,6 +27,7 @@ export default function Handler(fc) {
         loadedId: 1,
         nextTick: null,
         changeStatus: false,
+        pageEnd: true,
         nextReload: () => {
             this.lifecycle('reload');
         }
@@ -45,6 +46,7 @@ export default function Handler(fc) {
     this.$manager = new fc.manager(this);
     this.$render = new Render(this);
     this.api = Api(this);
+    this.usePage();
     this.loadRule();
     this.init();
     this.$manager.__init();
@@ -61,6 +63,37 @@ extend(Handler.prototype, {
             repeatRule: [],
         });
         useHelper(rules);
+    },
+    usePage() {
+        const page = this.options.page;
+        if (!page) return;
+        let first = 18;
+        let limit = getLimit(this.rules);
+        if (is.Object(page)) {
+            if (page.first) first = parseInt(page.first, 10) || first;
+            if (page.limit) limit = parseInt(page.limit, 10) || limit;
+        }
+        extend(this, {
+            first,
+            limit,
+            pageEnd: this.rules.length <= first,
+        })
+
+        this.bus.$on('page-end', () => this.vm.$emit('page-end', this.api));
+        this.pageLoad();
+    },
+    pageLoad() {
+        this.api.nextTick(() => {
+            if (this.pageEnd) {
+                this.bus.$emit('page-end');
+            } else {
+                this.first += this.limit;
+                this.pageEnd = this.rules.length <= this.first;
+                this.loadRule();
+                this.pageLoad();
+                this.refresh();
+            }
+        });
     },
     clearNextTick() {
         this.nextTick && clearTimeout(this.nextTick);
@@ -103,9 +136,11 @@ extend(Handler.prototype, {
     loadRule() {
         console.warn('%c load', 'color:blue');
         this.cycleLoad = false;
-        this.bus.$emit('beforeLoad');
+        if (this.pageEnd) {
+            this.bus.$emit('beforeLoad');
+        }
         this._loadRule(this.rules);
-        if (this.cycleLoad) {
+        if (this.cycleLoad && this.pageEnd) {
             return this.loadRule();
         }
         this.vm._renderRule();
@@ -124,6 +159,7 @@ extend(Handler.prototype, {
     _loadRule(rules, parent) {
         rules.map((_rule, index) => {
             if (parent && is.String(_rule)) return;
+            if (!this.pageEnd && !parent && index >= this.first) return;
 
             if (!is.Object(_rule) || !getRule(_rule).type)
                 return err('未定义生成规则的 type 字段', _rule);
@@ -308,7 +344,7 @@ extend(Handler.prototype, {
         console.warn('%c render', 'color:green');
         ++this.loadedId;
         this.vm.$nextTick(() => {
-            this.bindNextTick(() => this.bus.$emit('fc.nextTick'));
+            this.bindNextTick(() => this.bus.$emit('fc.nextTick', this.api));
         })
 
         if (this.vm.unique > 0)
@@ -450,8 +486,10 @@ extend(Handler.prototype, {
         }
         if (!validate.length) return false;
 
+        let flag = false;
         validate.reverse().forEach(({valid, rule, prepend, append, child, ctrl}) => {
             if (valid) {
+                flag = true;
                 const ruleCon = {
                     type: 'fcFragment',
                     native: true,
@@ -460,7 +498,7 @@ extend(Handler.prototype, {
                 Object.defineProperty(ruleCon, '__ctrl', enumerable(true))
                 parser.ctrlRule.push(ruleCon);
                 this.bus.$once('beforeLoad', () => {
-                    this.cycleLoad = true;
+                    // this.cycleLoad = true;
                     if (prepend) {
                         api.prepend(ruleCon, prepend, child)
                     } else if (append) {
@@ -478,11 +516,18 @@ extend(Handler.prototype, {
             }
         });
         this.vm.$emit('control', parser.origin, this.api);
-        return true;
+        return flag;
     },
     mounted() {
-        this.isMounted = true;
-        this.lifecycle('mounted');
+        const _mounted = () => {
+            this.isMounted = true;
+            this.lifecycle('mounted');
+        }
+        if (this.pageEnd) {
+            _mounted();
+        } else {
+            this.bus.$on('page-end', _mounted);
+        }
     },
     lifecycle(name) {
         const fn = this.options[name];
@@ -634,4 +679,8 @@ function setValue(formData) {
         const rule = find.call(this, field, 'field', true);
         if (rule) rule.value = formData[field];
     });
+}
+
+function getLimit(rules) {
+    return rules.length < 31 ? 31 : Math.ceil(rules.length / 3);
 }
