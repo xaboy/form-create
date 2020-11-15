@@ -2,7 +2,7 @@ import deepExtend from '@form-create/utils/lib/deepextend';
 import is from '@form-create/utils/lib/type';
 import mergeProps from '@form-create/utils/lib/mergeprops';
 import {arrayAttrs} from './attrs';
-import {err} from '@form-create/utils/lib/console';
+import {err, logError} from '@form-create/utils/lib/console';
 
 const PREFIX = '[[FORM-CREATE-PREFIX-';
 const SUFFIX = '-FORM-CREATE-SUFFIX]]';
@@ -86,4 +86,13 @@ export function funcProxy(that, proxy) {
 
 export function byParser(rule) {
     return rule.__fc__ || (rule.__origin__ ? rule.__origin__.__fc__ : null)
+}
+
+export function invoke(fn, def) {
+    try {
+        def = fn()
+    } catch (e) {
+        logError(e);
+    }
+    return def;
 }

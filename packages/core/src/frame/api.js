@@ -1,4 +1,4 @@
-import {byParser, mergeRule, toJson} from './util';
+import {byParser, invoke, mergeRule, toJson} from './util';
 import {$set} from '@form-create/utils/lib/modify';
 import {deepCopy} from '@form-create/utils/lib/deepextend';
 import is from '@form-create/utils/lib/type';
@@ -259,7 +259,7 @@ export default function Api(h) {
             }
         },
         exec(id, name, ...args) {
-            return this.method(id, name)(...args);
+            return invoke(() => this.method(id, name)(...args));
         },
         toJson() {
             return toJson(this.rule);
@@ -274,7 +274,8 @@ export default function Api(h) {
         },
         closeModal: (field) => {
             const parser = h.fieldList[field];
-            parser && parser.el.$emit && parser.el.$emit('fc.closeModal');
+            if (!parser) return;
+            parser.el && parser.el.$emit && parser.el.$emit('close-modal');
         },
         //todo 移动到ui组件 中
         validate(callback) {
@@ -333,9 +334,9 @@ export default function Api(h) {
             tidyFields(fields).forEach(field => {
                 let parser = parsers[field];
                 if (!parser || !parser.input) return;
+                h.$render.clearCache(parser, true);
                 parser.rule.value = copy(parser.defaultValue);
                 h.refreshControl(parser);
-                h.$render.clearCache(parser, true);
             });
         },
         submit(successFn, failFn) {
@@ -345,11 +346,11 @@ export default function Api(h) {
                     if (is.Function(successFn))
                         successFn(formData, this);
                     else {
-                        h.options.onSubmit && h.options.onSubmit(formData, this);
+                        is.Function(h.options.onSubmit) && invoke(() => h.options.onSubmit(formData, this));
                         h.vm.$emit('submit', formData, this);
                     }
                 } else {
-                    failFn && failFn(this)
+                    is.Function(failFn) && invoke(() => failFn(this));
                 }
             });
         },
@@ -400,7 +401,7 @@ export default function Api(h) {
             }
         },
         nextTick(fn) {
-            h.bus.$once('fc.nextTick', fn);
+            h.bus.$once('next-tick', fn);
             h.refresh();
         }
         //todo 以上

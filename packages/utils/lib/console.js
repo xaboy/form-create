@@ -9,3 +9,8 @@ export function tip(msg, rule) {
 export function err(msg, rule) {
     console.error(format('err', msg, rule));
 }
+
+export function logError(e) {
+    err(e.toString());
+    console.error(e);
+}

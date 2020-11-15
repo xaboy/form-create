@@ -3,7 +3,7 @@ import Render from '../render';
 import extend from '@form-create/utils/lib/extend';
 import toCase from '@form-create/utils/lib/tocase';
 import is, {hasProperty} from '@form-create/utils/lib/type';
-import {byParser, copyRule, enumerable, funcProxy, getRule} from '../frame/util';
+import {byParser, copyRule, enumerable, funcProxy, getRule, invoke} from '../frame/util';
 import {err} from '@form-create/utils/lib/console';
 import BaseParser from '../factory/parser';
 import toLine from '@form-create/utils/lib/toline';
@@ -137,7 +137,7 @@ extend(Handler.prototype, {
         console.warn('%c load', 'color:blue');
         this.cycleLoad = false;
         if (this.pageEnd) {
-            this.bus.$emit('beforeLoad');
+            this.bus.$emit('use-ctrl');
         }
         this._loadRule(this.rules);
         if (this.cycleLoad && this.pageEnd) {
@@ -149,7 +149,7 @@ extend(Handler.prototype, {
     },
     loadChildren(children, parent) {
         this.cycleLoad = false;
-        this.bus.$emit('beforeLoad');
+        this.bus.$emit('use-ctrl');
         this._loadRule(children, parent);
         if (this.cycleLoad) {
             return this.loadRule();
@@ -269,7 +269,7 @@ extend(Handler.prototype, {
         rule.options = parseArray(rule.options);
 
         ['on', 'props'].forEach(n => {
-            this.parseInjectEvent(rule, n || {});
+            this.parseInjectEvent(rule, n);
         })
 
         return rule;
@@ -344,7 +344,7 @@ extend(Handler.prototype, {
         console.warn('%c render', 'color:green');
         ++this.loadedId;
         this.vm.$nextTick(() => {
-            this.bindNextTick(() => this.bus.$emit('fc.nextTick', this.api));
+            this.bindNextTick(() => this.bus.$emit('next-tick', this.api));
         })
 
         if (this.vm.unique > 0)
@@ -377,16 +377,17 @@ extend(Handler.prototype, {
         this.refreshUpdate(parser);
     },
     refreshVisible(parser, val) {
-        if (is.Function(parser.rule.visible)) {
-            const hidden = parser.rule.visible(val, parser.origin, this.api);
-            if (hidden === undefined) return;
-            parser.rule.hidden = hidden === true;
+        const fn = parser.rule.visible;
+        if (is.Function(fn)) {
+            const state = invoke(() => fn(val, parser.origin, this.api));
+            if (state === undefined) return;
+            parser.rule.hidden = state === true;
         }
     },
     refreshUpdate(parser) {
-        if (is.Function(parser.rule.update)) {
-            const refresh = parser.rule.update(parser.origin, this.api);
-            refresh === true && this.nextLoad();
+        const fn = parser.rule.update;
+        if (is.Function(fn)) {
+            invoke(() => fn(parser.origin, this.api)) === true && this.nextLoad();
         }
     },
     valueChange(parser, val) {
@@ -497,7 +498,7 @@ extend(Handler.prototype, {
                 }
                 Object.defineProperty(ruleCon, '__ctrl', enumerable(true))
                 parser.ctrlRule.push(ruleCon);
-                this.bus.$once('beforeLoad', () => {
+                this.bus.$once('use-ctrl', () => {
                     // this.cycleLoad = true;
                     if (prepend) {
                         api.prepend(ruleCon, prepend, child)
@@ -531,7 +532,7 @@ extend(Handler.prototype, {
     },
     lifecycle(name) {
         const fn = this.options[name];
-        fn && fn(this.api);
+        is.Function(fn) && invoke(() => fn(this.api));
         this.vm.$emit(name, this.api);
     },
     rmParser(parser, reloadFlag) {
@@ -609,8 +610,8 @@ extend(Handler.prototype, {
         this.$render.clearCacheAll();
         this.refresh();
 
-        this.bus.$off('fc.nextTick', this.nextReload);
-        this.bus.$once('fc.nextTick', this.nextReload);
+        this.bus.$off('next-tick', this.nextReload);
+        this.bus.$once('next-tick', this.nextReload);
     }
 })
 

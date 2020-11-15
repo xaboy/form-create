@@ -3,6 +3,7 @@ import mergeProps from '@form-create/utils/lib/mergeprops';
 import is, {hasProperty} from '@form-create/utils/lib/type';
 import {_vue as Vue} from '../frame';
 import {tip} from '@form-create/utils/lib/console';
+import {invoke} from '../frame/util';
 
 function setTemplateProps(vm, parser, api) {
     if (!vm.$props) return;
@@ -73,7 +74,7 @@ export default function useRender(Render) {
             if (!vm)
                 return new Vue;
             else if (is.Function(vm))
-                return vm(this.$handle.getInjectData(rule));
+                return invoke(() => vm(this.$handle.getInjectData(rule)));
             else if (!vm._isVue)
                 return new Vue(vm);
             return vm;
@@ -167,7 +168,7 @@ export default function useRender(Render) {
                 {
                     props: injectProp(parser, this.$handle.api),
                     on: {
-                        'fc.subForm': (subForm) => this.$handle.addSubForm(parser, subForm)
+                        'fc.sub-form': (subForm) => this.$handle.addSubForm(parser, subForm)
                     },
                     ref: refName,
                     key: `${key}fc`,
