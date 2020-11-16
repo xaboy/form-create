@@ -14,10 +14,10 @@ export default function Render(handle) {
 
     funcProxy(this, {
         options() {
-            return handle.options || {};
+            return handle.options;
         },
         sortList() {
-            return handle.sortList || [];
+            return handle.sortList;
         }
     })
 

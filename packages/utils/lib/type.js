@@ -8,8 +8,8 @@ const is = {
     Element(arg) {
         return typeof arg === 'object' && arg !== null && arg.nodeType === 1 && !is.Object(arg)
     },
-    trueArray(children) {
-        return Array.isArray(children) && children.length > 0;
+    trueArray(data) {
+        return Array.isArray(data) && data.length > 0;
     }
 };
 

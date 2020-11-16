@@ -36,7 +36,7 @@ export default function Handler(fc) {
 
     funcProxy(this, {
         options() {
-            return fc.options || {};
+            return fc.options;
         },
         bus() {
             return fc.bus;
@@ -314,7 +314,7 @@ extend(Handler.prototype, {
     parseEmit(parser, on) {
         let event = {}, rule = parser.rule, {emitPrefix, field, name, inject} = rule;
         let emit = rule[on ? 'emit' : 'nativeEmit'] || [];
-        if (Array.isArray(emit)) {
+        if (is.trueArray(emit)) {
             let emitKey = emitPrefix || field || name;
             if (emitKey) {
                 if (!on) emitKey = `native-${emitKey}`;
@@ -376,6 +376,7 @@ extend(Handler.prototype, {
         this.refreshVisible(parser, val);
         this.refreshUpdate(parser);
     },
+    //todo 合并 update 和 visible, 可以return state
     refreshVisible(parser, val) {
         const fn = parser.rule.visible;
         if (is.Function(fn)) {
@@ -479,7 +480,7 @@ extend(Handler.prototype, {
             const control = controls[i], handleFn = control.handle || (val => val === control.value);
             const data = {
                 ...control,
-                valid: handleFn(parser.rule.value, api),
+                valid: invoke(() => handleFn(parser.rule.value, api)),
                 ctrl: findControl(parser, control.rule),
             };
             if ((data.valid && data.ctrl) || (!data.valid && !data.ctrl)) continue;
@@ -643,9 +644,9 @@ function findControl(parser, rule) {
     }
 }
 
-function useHelper(rule) {
-    if (!Array.isArray(rule) || rule.findField) return;
-    Object.defineProperties(rule, {
+function useHelper(rules) {
+    if (!Array.isArray(rules) || rules.findField) return;
+    Object.defineProperties(rules, {
         findField: enumerable(findField),
         findName: enumerable(findName),
         setValue: enumerable(setValue),
