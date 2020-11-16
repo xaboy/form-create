@@ -127,7 +127,7 @@ extend(Handler.prototype, {
         const f = this.fieldList;
         Object.keys(f).forEach(k => {
             const p = f[k];
-            this.valueRefresh(p, p.rule.value);
+            this.refreshUpdate(p, p.rule.value);
         })
     },
     isRepeatRule(rule) {
@@ -194,7 +194,6 @@ extend(Handler.prototype, {
                         if (parser.rule.__ctrl) {
                             return;
                         }
-                        //todo 检查复制规则,规则复用,复用后顺序错乱
                         rules[index] = _rule = _rule._clone ? _rule._clone() : copyRule(_rule);
                         parser = this.createParser(this.parseRule(_rule));
                     }
@@ -372,23 +371,13 @@ extend(Handler.prototype, {
     isQuote(parser, value) {
         return (is.Object(value) || Array.isArray(value)) && value === parser.rule.value;
     },
-    valueRefresh(parser, val) {
-        this.refreshVisible(parser, val);
-        this.refreshUpdate(parser);
-    },
-    //todo 合并 update 和 visible, 可以return state
-    refreshVisible(parser, val) {
-        const fn = parser.rule.visible;
+    //todo control 添加到内部可能有问题
+    refreshUpdate(parser, val) {
+        const fn = parser.rule.update;
         if (is.Function(fn)) {
             const state = invoke(() => fn(val, parser.origin, this.api));
             if (state === undefined) return;
             parser.rule.hidden = state === true;
-        }
-    },
-    refreshUpdate(parser) {
-        const fn = parser.rule.update;
-        if (is.Function(fn)) {
-            invoke(() => fn(parser.origin, this.api)) === true && this.nextLoad();
         }
     },
     valueChange(parser, val) {
@@ -401,7 +390,7 @@ extend(Handler.prototype, {
             this.loadRule();
             this.refresh();
         }
-        this.valueRefresh(parser, val);
+        this.refreshUpdate(parser, val);
     },
     appendLink(parser) {
         const link = parser.rule.link;
@@ -448,7 +437,7 @@ extend(Handler.prototype, {
     },
     addParserWitch(parser) {
         const vm = this.vm;
-        const none = ['field', 'type', 'value', 'vm', 'template', 'name', 'config', 'control', 'link', 'visible'];
+        const none = ['field', 'type', 'value', 'vm', 'template', 'name', 'config', 'control'];
         Object.keys(parser.rule).filter(k => none.indexOf(k) === -1).forEach((key) => {
             parser.watch.push(vm.$watch(() => parser.rule[key], n => {
                 //todo 检查所以配置的回调逻辑
@@ -576,9 +565,8 @@ extend(Handler.prototype, {
         parser._delete();
         return parser;
     },
-    //todo 区分规则拷贝和合并
     //todo 组件生成全部通过 alias
-    //todo 优化 mergeRule
+    //todo 优化 mergeProp update
     refresh() {
         this.vm._refresh();
     },
