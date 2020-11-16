@@ -1,7 +1,7 @@
 import deepExtend from '@form-create/utils/lib/deepextend';
 import is from '@form-create/utils/lib/type';
 import mergeProps from '@form-create/utils/lib/mergeprops';
-import {arrayAttrs} from './attrs';
+import {arrayAttrs, normalAttrs} from './attrs';
 import {err, logError} from '@form-create/utils/lib/console';
 
 const PREFIX = '[[FORM-CREATE-PREFIX-';
@@ -57,15 +57,15 @@ export function enumerable(value, writable) {
 
 //todo 优化位置
 export function copyRule(rule, mode) {
-    return copyRules([rule], mode)[0];
+    return copyRules([rule], mode || false)[0];
 }
 
 export function copyRules(rules, mode) {
-    return deepExtend([], [...rules], mode);
+    return deepExtend([], [...rules], mode || false);
 }
 
 export function mergeRule(rule, merge) {
-    mergeProps([merge], rule, {array: arrayAttrs});
+    mergeProps([merge], rule, {array: arrayAttrs, normal: normalAttrs});
     return rule;
 }
 

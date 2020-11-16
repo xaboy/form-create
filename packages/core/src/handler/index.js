@@ -495,9 +495,9 @@ extend(Handler.prototype, {
                 const ruleCon = {
                     type: 'fcFragment',
                     native: true,
+                    __ctrl: true,
                     children: rule,
                 }
-                Object.defineProperty(ruleCon, '__ctrl', enumerable(true))
                 parser.ctrlRule.push(ruleCon);
                 this.bus.$once('use-ctrl', () => {
                     // this.cycleLoad = true;

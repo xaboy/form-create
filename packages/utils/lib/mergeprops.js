@@ -1,5 +1,5 @@
-export const normalMerge = ['attrs', 'props', 'domProps', 'scopedSlots',/**formCreate属性**/ 'col'];
-export const toArrayMerge = ['class', 'style', 'directives', /**formCreate属性**/ 'className'];
+export const normalMerge = ['attrs', 'props', 'domProps', 'scopedSlots'];
+export const toArrayMerge = ['class', 'style', 'directives'];
 export const functionalMerge = ['on', 'nativeOn'];
 
 const mergeProps = (objects, initial = {}, opt = {}) => {
