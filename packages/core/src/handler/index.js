@@ -291,7 +291,7 @@ extend(Handler.prototype, {
     parseInjectEvent(rule, on) {
         if (rule.inject === false) return;
         const inject = rule.inject || this.options.injectEvent;
-        if (!is.Undef(inject)) return;
+        if (is.Undef(inject)) return;
         Object.keys(on).forEach(k => {
             if (is.Function(on[k]))
                 on[k] = this.inject(rule, on[k], inject)
@@ -309,7 +309,6 @@ extend(Handler.prototype, {
         };
     },
     inject(self, _fn, inject) {
-        //todo 优化
         if (_fn.__inject) {
             if (this.watching)
                 return _fn;
@@ -320,7 +319,7 @@ extend(Handler.prototype, {
 
         const fn = function (...args) {
             args.unshift(h.getInjectData(self, inject));
-            return _fn(...args);
+            return _fn.apply(this, args);
         };
         fn.__inject = true;
         fn.__origin = _fn;
@@ -456,7 +455,6 @@ extend(Handler.prototype, {
         const none = ['field', 'value', 'vm', 'template', 'name', 'config', 'control', 'inject'];
         Object.keys(parser.rule).filter(k => none.indexOf(k) === -1).forEach((key) => {
             parser.watch.push(vm.$watch(() => parser.rule[key], n => {
-                //todo 检查所以配置的回调逻辑
                 this.watching = true;
                 if (key === 'hidden')
                     parser.updateKey(true);
