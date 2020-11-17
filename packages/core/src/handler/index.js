@@ -583,7 +583,6 @@ extend(Handler.prototype, {
         return parser;
     },
     //todo 组件生成全部通过 alias
-    //todo 优化 mergeProp update
     refresh() {
         this.vm._refresh();
     },

@@ -28,7 +28,7 @@ function setTemplateProps(vm, parser, api) {
 function injectProp(parser, api) {
     return {
         formCreate: api,
-        formCreateField: parser.input ? parser.field : undefined,
+        formCreateField: parser.field,
         formCreateOptions: parser.rule.options,
         formCreateRule: (function () {
             const temp = {...parser.prop};
@@ -167,9 +167,9 @@ export default function useRender(Render) {
             const props = [
                 {
                     props: injectProp(parser, this.$handle.api),
-                    on: {
+                    on: parser.input ? {
                         'fc.sub-form': (subForm) => this.$handle.addSubForm(parser, subForm)
-                    },
+                    } : {},
                     ref: refName,
                     key: `${key}fc`,
                 }

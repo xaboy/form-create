@@ -333,7 +333,7 @@ export default function Api(h) {
             let parsers = h.fieldList;
             tidyFields(fields).forEach(field => {
                 let parser = parsers[field];
-                if (!parser || !parser.input) return;
+                if (!parser) return;
                 h.$render.clearCache(parser, true);
                 parser.rule.value = copy(parser.defaultValue);
                 h.refreshControl(parser);
