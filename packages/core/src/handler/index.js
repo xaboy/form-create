@@ -157,6 +157,22 @@ extend(Handler.prototype, {
         this.$render.clearCache(parent, true);
     },
     _loadRule(rules, parent) {
+
+        const preIndex = (i) => {
+            let pre = rules[i - 1];
+            if (!pre || !pre.__fc__) {
+                return i > 0 ? preIndex(i - 1) : -1;
+            }
+            let index = this.sortList.indexOf(pre.__fc__.id);
+            return index > -1 ? index : preIndex(i - 1);
+        }
+
+        const loadChildren = (children, parser) => {
+            if (is.trueArray(children)) {
+                this._loadRule(children, parser);
+            }
+        };
+
         rules.map((_rule, index) => {
             if (parent && is.String(_rule)) return;
             if (!this.pageEnd && !parent && index >= this.first) return;
@@ -165,10 +181,7 @@ extend(Handler.prototype, {
                 return err('未定义生成规则的 type 字段', _rule);
 
             if (_rule.__fc__ && _rule.__fc__.root === rules && this.parsers[_rule.__fc__.id]) {
-                let rule = _rule.__fc__.rule.children;
-                if (is.trueArray(rule)) {
-                    this._loadRule(rule, _rule.__fc__);
-                }
+                loadChildren(_rule.__fc__.rule.children, _rule.__fc__);
                 return _rule.__fc__;
             }
 
@@ -199,7 +212,7 @@ extend(Handler.prototype, {
                     }
                 }
                 if (parser.originType !== parser.rule.type) {
-                    parser = this.createParser(parser.rule);
+                    parser = this.transformParser(parser.rule, parser);
                 }
             } else {
                 parser = this.createParser(this.parseRule(_rule));
@@ -210,16 +223,12 @@ extend(Handler.prototype, {
             parser.root = rules;
             this.setParser(parser);
 
-            let children = parser.rule.children;
-
-            if (is.trueArray(children)) {
-                this._loadRule(children, parser);
-            }
+            loadChildren(parser.rule.children, parser);
 
             if (!parent) {
-                const pre = rules[index - 1];
-                if (pre) {
-                    this.sortList.splice(this.sortList.indexOf(pre.__fc__.id) + 1, 0, parser.id);
+                const _preIndex = preIndex(index);
+                if (_preIndex > -1) {
+                    this.sortList.splice(_preIndex + 1, 0, parser.id);
                 } else {
                     this.sortList.push(parser.id);
                 }
@@ -231,6 +240,12 @@ extend(Handler.prototype, {
             if (this.refreshControl(parser)) this.cycleLoad = true;
             return parser;
         });
+    },
+    transformParser(rule, parser) {
+        const transform = this.createParser(rule);
+        transform.id = parser.id;
+        parser._delete();
+        return transform;
     },
     valueHandle(parser) {
         return {
@@ -267,8 +282,8 @@ extend(Handler.prototype, {
 
         rule.options = parseArray(rule.options);
 
-        ['on', 'props'].forEach(n => {
-            this.parseInjectEvent(rule, n);
+        ['on', 'props', 'nativeOn'].forEach(k => {
+            this.parseInjectEvent(rule, rule[k] || {});
         })
 
         return rule;
@@ -294,6 +309,7 @@ extend(Handler.prototype, {
         };
     },
     inject(self, _fn, inject) {
+        //todo 优化
         if (_fn.__inject) {
             if (this.watching)
                 return _fn;
@@ -437,7 +453,7 @@ extend(Handler.prototype, {
     },
     addParserWitch(parser) {
         const vm = this.vm;
-        const none = ['field', 'type', 'value', 'vm', 'template', 'name', 'config', 'control'];
+        const none = ['field', 'value', 'vm', 'template', 'name', 'config', 'control', 'inject'];
         Object.keys(parser.rule).filter(k => none.indexOf(k) === -1).forEach((key) => {
             parser.watch.push(vm.$watch(() => parser.rule[key], n => {
                 //todo 检查所以配置的回调逻辑
@@ -446,18 +462,21 @@ extend(Handler.prototype, {
                     parser.updateKey(true);
                 else if (key === 'link')
                     parser._link();
-                else if (key === 'validate')
-                    this.validate[parser.field] = n || [];
-                else if (['props', 'on', 'nativeOn'].indexOf(key) > -1)
+                else if (key === 'validate') {
+                    if (parser.input) {
+                        this.validate[parser.field] = n || []
+                    } else return;
+                } else if (['props', 'on', 'nativeOn'].indexOf(key) > -1)
                     this.parseInjectEvent(parser.rule, n || {});
                 else if (['emit', 'nativeEmit'].indexOf(key) > -1)
                     this.parseEmit(parser, key === 'emit');
+                else if (key === 'type')
+                    return this.reloadRule();
                 this.$render.clearCache(parser);
                 this.watching = false;
             }, {deep: key !== 'children'}));
         });
     },
-    //todo 检查复用排序错误问题
     refreshControl(parser) {
         return parser.input && parser.rule.control && this.useCtrl(parser);
     },
@@ -562,7 +581,7 @@ extend(Handler.prototype, {
             this.sortList.splice(index, 1);
         }
 
-        parser._delete();
+        parser._delete(true);
         return parser;
     },
     //todo 组件生成全部通过 alias

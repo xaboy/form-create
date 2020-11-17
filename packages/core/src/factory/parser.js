@@ -34,7 +34,7 @@ export default function Parser(handle, rule) {
         input: !!rule.field,
         el: undefined,
         defaultValue: rule.field ? deepCopy(rule.value) : undefined,
-        field: rule.field ? rule.field : (`_def_${id}`)
+        field: rule.field || undefined
     })
 
     this.updateKey();
@@ -69,11 +69,11 @@ extend(Parser.prototype, {
     _watch() {
         this.$handle.addParserWitch(this);
     },
-    _delete() {
+    _delete(flag) {
         const undef = void 0;
         this._unwatch();
         this._unLink();
-        this._removeCtrl();
+        flag && this._removeCtrl();
         extend(this, {
             deleted: true,
             prop: {},
@@ -108,9 +108,7 @@ extend(Parser.prototype, {
             vm: handle.vm,
             vNode: handle.$render.vNode
         })
-        if (!init) {
-            this._unwatch();
-        }
+        !init && this._unwatch();
         this._watch();
         this._link();
     }
