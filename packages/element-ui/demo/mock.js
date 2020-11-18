@@ -13,23 +13,30 @@ function mock() {
         //cascader 多级联动组件
         maker.cascader('所在区域', 'address', ['陕西省', '西安市']).props({
             options: formCreate.data.province_city || []
-        }).hidden(true),
+        }),
 
 
-        //input 输入框组件
+        // input 输入框组件
         maker.input('商品名称', 'goods_name', 'iphone').props({
             placeholder: '请输入商品名称',
             clearable: true,
             disabled: false,
-            maxlength: 20,
+            maxlength: 10,
             prefixIcon: 'el-icon-info'
-        }).validate([
+        }).setProp('prefix','prefix').setProp('suffix','suffix').validate([
             {required: true, message: '请输入商品名称', trigger: 'blur'}
         ]).event({
-            //    change: console.log
+            input(v){
+                console.log(v);
+            }
         }).emit(['change']).className('goods-name').children([
             maker.create('template').children(['append']).slot('append')
-        ]).info('请输入商品名称!!!!!'),
+        ]).info('请输入商品名称!!!!!').update((val, rule) =>{
+            console.log('update');
+            // rule.__fc__.rule.props.maxlength = 11;
+            rule.prefix(rule._data.prefix+'a');
+            console.log('update-end');
+        }),
 
 
         //autoComplete 自动选择组件
@@ -39,20 +46,27 @@ function mock() {
                     {value: queryString}, {value: queryString + queryString}
                 ]);
             }
-        }).emitPrefix('xaboy').emit(['change']),
+        }).emitPrefix('xaboy').emit(['change']).link(['goods_info']).update((val,rule,$f)=>{
+            console.log(val);
+            return $f.getValue('goods_info') === 'goods_info';
+        }),
 
 
         //textarea 组件
         maker.textarea('商品简介', 'goods_info', '').props({
             autosize: {minRows: 4, maxRows: 8},
             placeholder: '请输入商品名称'
-        }),
+        }).update((val,rule,api)=>{
+            console.log('change');
+            return 'val' === api.getValue('auto');
+        }).link(['auto']),
 
         {
             type:'group',
             title:'批量添加',
             field:'group',
             value:[],
+            suffix:'suffixsuffix',
             props:{
                 max:5,
                 min:3,
@@ -96,7 +110,7 @@ function mock() {
 
 
         //radio 单选框组件
-        maker.radio('是否包邮', 'is_postage', 0).options([
+        maker.radio('是否包邮', 'is_postage', 1).options([
             {value: 0, label: "不包邮", disabled: false},
             {value: 1, label: "包邮", disabled: false},
             {value: 2, label: "未知", disabled: true},
@@ -105,7 +119,30 @@ function mock() {
                 value:1,
                 prepend: 'is_postage',
                 rule:[
-                    maker.number('满额包邮','postage_money',0)
+                    maker.number('满额包邮1','postage_money1',0).control([
+                        {
+                            value:0,
+                            prepend: 'rate',
+                            rule:[
+                                maker.number('满额包邮2','postage_money2',0)
+                            ]
+                        }
+                    ])
+                ]
+            },
+            {
+                value:0,
+                prepend: 'goods_info',
+                rule:[
+                    maker.number('满额包邮3','postage_money3',0).control([
+                        {
+                            value:0,
+                            prepend: 'goods_name',
+                            rule:[
+                                maker.number('满额包邮4','postage_money4',0)
+                            ]
+                        }
+                    ])
                 ]
             }
         ]),
@@ -177,7 +214,7 @@ function mock() {
                     }
                 }
             })
-        }, 'tmp', '自定义 title').value(100).props('disabled', false),
+        }, 'tmp', '自定义 title').prefix('prefixprefixprefix').value(100).props('disabled', false),
 
 
         //自定义组件
@@ -215,11 +252,13 @@ function mock() {
         {
             type: 'div',
             children: [
+                'asdfasf',
                 {
                     type: 'el-col',
                     props: {
                         span: 12
                     },
+                    name: 'cal',
                     children: [
 
                         //datePicker 日期选择组件

@@ -224,6 +224,7 @@ export default function createFormCreate(config) {
             this.options = deepExtend({formData: {}}, globalConfig);
             this.updateOptions(options || {});
         },
+        //todo 优化 options 合并
         updateOptions(options) {
             deepExtend(this.options, options);
         },

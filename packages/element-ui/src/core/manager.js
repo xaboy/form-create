@@ -14,6 +14,8 @@ export function isAttr(name, value) {
     return (!upperCaseReg.test(name) && (isString(value) || isType(value, 'Number')))
 }
 
+const config = getConfig();
+
 export default class ElmManager extends Manager {
 
     constructor(handle) {
@@ -69,8 +71,9 @@ export default class ElmManager extends Manager {
                 return initial;
             }, {}),
         }, parser.prop], {
-            info: {show: true},
-            title: {show: true},
+            //todo 检查合并
+            info: config.info,
+            title: {show: false},
             col: {span: 24}
         }, {normal: ['title', 'info', 'col']});
         props = parser.prop.props;
@@ -101,7 +104,6 @@ export default class ElmManager extends Manager {
             ref: this.ref,
             class: 'form-create',
             type: 'ElForm',
-            tag:'component'
         }])
     }
 

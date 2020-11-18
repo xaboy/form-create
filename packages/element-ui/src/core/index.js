@@ -8,7 +8,7 @@ import makers from './maker';
 export default function createElmFormCreate() {
 
     const FormCreate = createFormCreate({
-        ui: process.env.UI,
+        ui: `${process.env.UI}`,
         version: `${process.env.VERSION}`,
         manager
     });
