@@ -20,6 +20,13 @@ export default function useInput(Handler) {
             this.valueChange(parser, value);
             this.syncValue();
             this.vm.$emit('change', parser.field, value, parser.origin, this.api, setFlag);
+            this.parserProp(parser, 'value');
+        },
+        onInput(parser, value) {
+            let val;
+            if (parser.input && (this.isQuote(parser, val = parser.toValue(value)) || this.isChange(parser, val))) {
+                this.setValue(parser, val, value);
+            }
         },
         setFormData(parser, value) {
             $set(this.formData, parser.field, value);
@@ -59,6 +66,9 @@ export default function useInput(Handler) {
         addSubForm(parser, subForm) {
             this.subForm[parser.field] = subForm;
         },
+        syncValue() {
+            this.vm && this.vm._updateValue(this.form);
+        },
         isChange(parser, value) {
             return JSON.stringify(parser.rule.value) !== JSON.stringify(value);
         },
@@ -94,15 +104,6 @@ export default function useInput(Handler) {
                 this.bus.$on('change-' + field, fn);
                 parser.linkOn.push(() => this.bus.$off('change-' + field, fn));
             });
-        },
-        syncValue() {
-            this.vm && this.vm._updateValue(this.form);
-        },
-        onInput(parser, value) {
-            let val;
-            if (parser.input && (this.isQuote(parser, val = parser.toValue(value)) || this.isChange(parser, val))) {
-                this.setValue(parser, val, value);
-            }
         },
         fields() {
             return Object.keys(this.formData);

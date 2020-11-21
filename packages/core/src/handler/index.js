@@ -10,6 +10,7 @@ import useInput from './input';
 import useHelper from './helper';
 import useParser from './parser';
 import useLifecycle from './lifecycle';
+import useRegister from './register';
 
 
 export default function Handler(fc) {
@@ -23,6 +24,7 @@ export default function Handler(fc) {
         subForm: {},
         form: {},
         appendData: {},
+        providers: {},
         cycleLoad: null,
         loadedId: 1,
         nextTick: null,
@@ -47,8 +49,10 @@ export default function Handler(fc) {
     this.$manager = new fc.manager(this);
     this.$render = new Render(this);
     this.api = Api(this);
+    this.provider();
     this.usePage();
     this.loadRule();
+    //todo 优化分页情况
     this.init();
     this.$manager.__init();
 }
@@ -87,3 +91,4 @@ useLoader(Handler);
 useInput(Handler);
 useParser(Handler);
 useLifecycle(Handler);
+useRegister(Handler);

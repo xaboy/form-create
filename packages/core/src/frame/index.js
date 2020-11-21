@@ -14,15 +14,19 @@ import {CreateNodeFactory} from '../factory/node';
 
 export let _vue = typeof window !== 'undefined' && window.Vue ? window.Vue : Vue;
 
-function _parseProp(id) {
+function _parseProp(name, id) {
     let prop;
-    if (arguments.length === 1) {
-        prop = arguments[0];
-        id = prop.name;
-    } else {
+    if (arguments.length === 2) {
         prop = arguments[1];
+        id = prop[name];
+    } else {
+        prop = arguments[2];
     }
     return {id, prop};
+}
+
+function nameProp() {
+    return _parseProp('name', ...arguments);
 }
 
 function _getEl(options) {
@@ -64,19 +68,25 @@ export default function createFormCreate(config) {
     const filters = {};
     const parsers = {};
     const directives = {};
+    const providers = {};
     const maker = makerFactory();
     const globalConfig = {};
     const data = {};
     const CreateNode = CreateNodeFactory();
 
     function filter() {
-        const data = _parseProp(...arguments);
+        const data = nameProp(...arguments);
         if (data.id && data.prop) filters[data.id] = data.prop;
     }
 
     function directive() {
-        const data = _parseProp(...arguments);
+        const data = nameProp(...arguments);
         if (data.id && data.prop) directives[data.id] = data.prop;
+    }
+
+    function register() {
+        const data = _parseProp('attr', ...arguments);
+        if (data.id && data.prop) providers[data.id] = {...data.prop, attr: data.id};
     }
 
     function componentAlias(alias) {
@@ -84,7 +94,7 @@ export default function createFormCreate(config) {
     }
 
     function parser() {
-        const data = _parseProp(...arguments);
+        const data = nameProp(...arguments);
         if (!data.id || !data.prop) return;
         const name = toCase(data.id);
         const parser = data.prop;
@@ -132,6 +142,7 @@ export default function createFormCreate(config) {
             component,
             filter,
             directive,
+            register,
             parser,
             createParser,
             componentAlias,
@@ -192,6 +203,7 @@ export default function createFormCreate(config) {
             vm,
             manager: config.manager,
             parsers,
+            providers,
             rules: Array.isArray(rules) ? rules : [],
             prop: {
                 components,

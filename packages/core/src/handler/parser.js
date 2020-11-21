@@ -52,6 +52,7 @@ export default function useParser(Handler) {
                     this.watching = false;
                 }, {deep: key !== 'children'}));
             });
+            this.watchEffect(parser);
         },
         rmParser(parser, reloadFlag) {
             this._rmParser(parser);
@@ -91,6 +92,7 @@ export default function useParser(Handler) {
             }
 
             parser._delete(true);
+            this.parserProp(parser, 'deleted');
             return parser;
         },
     })

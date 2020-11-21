@@ -181,6 +181,7 @@ export default function useRender(Render) {
                         ['hook:mounted']: () => {
                             parser.el = this.vm.$refs[refName];
                             parser.mounted();
+                            this.$handle.parserProp(parser, 'mounted');
                         }
                     },
                     model: parser.input ? {

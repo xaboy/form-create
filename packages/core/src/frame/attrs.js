@@ -6,7 +6,7 @@ export const keyAttrs = ['type', 'slot', 'emitPrefix', 'value', 'name', 'title',
 //todo 移除 className
 export const arrayAttrs = ['validate', 'children', 'control', 'className'];
 
-export const normalAttrs = ['col'];
+export const normalAttrs = ['col', 'effect'];
 
 export const attrs = [...keyAttrs, ...normalMerge, ...toArrayMerge, ...functionalMerge, ...arrayAttrs, ...normalAttrs];
 
