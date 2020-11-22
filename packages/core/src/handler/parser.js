@@ -98,7 +98,7 @@ export default function useParser(Handler) {
             }
 
             parser._delete(true);
-            this.parserProp(parser, 'deleted');
+            this.effect(parser, 'deleted');
             return parser;
         },
     })

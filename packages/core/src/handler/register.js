@@ -4,16 +4,16 @@ import is from '@form-create/utils/lib/type';
 
 export default function useRegister(Handler) {
     extend(Handler.prototype, {
-        provider() {
+        useProvider() {
             const ps = this.fc.providers;
             Object.keys(ps).forEach(k => {
                 const prop = ps[k];
                 prop._c = getComponent(prop);
-                this.useProvider(prop);
+                this.onEffect(prop);
                 this.providers[k] = prop;
             });
         },
-        useProvider(provider) {
+        onEffect(provider) {
             const used = [];
             (provider._c || ['*']).forEach(name => {
                 const type = name === '*' ? '*' : this.getType(name);
@@ -29,26 +29,26 @@ export default function useRegister(Handler) {
             const vm = this.vm;
             Object.keys(parser.rule.effect || {}).forEach(k => {
                 parser.watch.push(vm.$watch(() => parser.rule.effect[k], (n) => {
-                    this.parserProp(parser, 'watch', {[k]: n});
+                    this.effect(parser, 'watch', {[k]: n});
                 }));
             });
         },
-        parserProp(parser, event, custom) {
-            this.emitProp({
+        effect(parser, event, custom) {
+            this.emitEffect({
                 rule: parser.rule,
                 input: parser.input,
                 type: parser.trueType,
                 custom
             }, event);
         },
-        ruleProp(rule, event) {
-            this.emitProp({
+        ruleEffect(rule, event) {
+            this.emitEffect({
                 rule,
                 input: !!rule.field,
                 type: this.getType(rule.type)
             }, event);
         },
-        emitProp({rule, input, type, custom}, event) {
+        emitEffect({rule, input, type, custom}, event) {
             if (!type || type === 'fcFragment') return;
             const effect = custom ? custom : (rule.effect || {});
             Object.keys(effect).forEach(attr => {

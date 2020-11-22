@@ -20,7 +20,7 @@ export default function useInput(Handler) {
             this.valueChange(parser, value);
             this.syncValue();
             this.vm.$emit('change', parser.field, value, parser.origin, this.api, setFlag);
-            this.parserProp(parser, 'value');
+            this.effect(parser, 'value');
         },
         onInput(parser, value) {
             let val;

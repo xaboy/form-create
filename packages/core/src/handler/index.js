@@ -49,7 +49,7 @@ export default function Handler(fc) {
     this.$manager = new fc.manager(this);
     this.$render = new Render(this);
     this.api = Api(this);
-    this.provider();
+    this.useProvider();
     this.usePage();
     this.loadRule();
     //todo 优化分页情况

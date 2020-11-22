@@ -28,7 +28,7 @@ export default function useLoader(Handler) {
 
             rule.options = parseArray(rule.options);
 
-            this.ruleProp(rule, 'init');
+            this.ruleEffect(rule, 'init');
 
             ['on', 'props', 'nativeOn'].forEach(k => {
                 this.parseInjectEvent(rule, rule[k] || {});
@@ -142,7 +142,7 @@ export default function useLoader(Handler) {
 
                 if (parser.input)
                     Object.defineProperty(parser.rule, 'value', this.valueHandle(parser));
-                this.parserProp(parser, 'loaded');
+                this.effect(parser, 'loaded');
                 if (this.refreshControl(parser)) this.cycleLoad = true;
                 return parser;
             });
@@ -196,7 +196,7 @@ export default function useLoader(Handler) {
                 }
             });
             this.vm.$emit('control', parser.origin, this.api);
-            this.parserProp(parser, 'control');
+            this.effect(parser, 'control');
             return flag;
         },
         reloadRule: debounce(function (rules) {
