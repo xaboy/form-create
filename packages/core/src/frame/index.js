@@ -133,6 +133,13 @@ export default function createFormCreate(config) {
         return _this.api();
     }
 
+    //todo 检查回调函数作用域
+    function use(fn) {
+        if (is.Function(fn.install)) fn.install(fn, FormCreate);
+        else if (is.Function(fn)) fn(FormCreate);
+        return this;
+    }
+
     function useAttr(formCreate) {
         extend(formCreate, {
             version: config.version,
@@ -144,6 +151,7 @@ export default function createFormCreate(config) {
             directive,
             register,
             parser,
+            use,
             createParser,
             componentAlias,
             copyRule,
