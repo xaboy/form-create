@@ -109,7 +109,6 @@ extend(Parser.prototype, {
             $render: handle.$render,
             vm: handle.vm,
             trueType: handle.getType(this.type),
-            //todo 删除
             vNode: handle.$render.vNode,
         });
         !init && this._unwatch();

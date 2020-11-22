@@ -22,8 +22,8 @@ export function CreateNodeFactory() {
             this.vm = vm;
             this.$h = vm.$createElement;
         },
-        make(nodeName, data, VNodeFn) {
-            let Node = this.$h(nodeName, parseProp(data), VNodeFn || []);
+        make(nodeName, data, children) {
+            let Node = this.$h(nodeName, parseProp(data), children || []);
             Node.context = this.vm;
             return Node;
         }
@@ -41,8 +41,8 @@ export function CreateNodeFactory() {
                 const v = nodes[k];
                 [k, line, lower].forEach(n => {
                     CreateNode.alias(k, v);
-                    CreateNode.prototype[n] = function (data, VNodeFn) {
-                        return this.make(v, data, VNodeFn);
+                    CreateNode.prototype[n] = function (data, children) {
+                        return this.make(v, data, children);
                     };
                 });
             });
