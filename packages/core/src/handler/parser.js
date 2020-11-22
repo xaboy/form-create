@@ -20,7 +20,13 @@ export default function useParser(Handler) {
             $set(this.validate, field, rule.validate || []);
         },
         createParser(rule) {
-            return new (this.fc.parsers[rule.type] || this.fc.parsers[toCase(rule.type)] || this.fc.parsers[toCase('' + this.fc.CreateNode.aliasMap[toCase(rule.type)])] || BaseParser)(this, rule);
+            const list = this.fc.parsers;
+            return new (list[rule.type] || list[toCase(rule.type)] || list[this.getType(rule.type)] || BaseParser)(this, rule);
+        },
+        getType(alias) {
+            const map = this.fc.CreateNode.aliasMap;
+            const type = map[alias] || map[toCase(alias)] || alias;
+            return toCase(type);
         },
         transformParser(rule, parser) {
             const transform = this.createParser(rule);

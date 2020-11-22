@@ -82,7 +82,9 @@ export default function useRender(Render) {
         mergeGlobal(parser) {
             const g = this.$handle.options.global;
             if (!g) return;
-            mergeProps([g['*'], g[parser.type] || g[parser.originType] || {}], parser.prop);
+            if (!parser.cacheConfig)
+                parser.cacheConfig = g[parser.originType] || g[parser.type] || g[parser.trueType] || {};
+            mergeProps([g['*'], parser.cacheConfig], parser.prop);
         },
         renderTemplate(parser) {
             if (!Vue.compile) {

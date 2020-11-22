@@ -29,6 +29,7 @@ export default function Parser(handle, rule) {
         root: [],
         ctrlRule: [],
         parent: null,
+        cacheConfig: null,
         prop: {},
         computed: {},
         input: !!rule.field,
@@ -84,6 +85,7 @@ extend(Parser.prototype, {
             vm: undef,
             vNode: undef,
             parent: null,
+            cacheConfig: null,
         })
     },
     _removeCtrl() {
@@ -106,8 +108,10 @@ extend(Parser.prototype, {
             $handle: handle,
             $render: handle.$render,
             vm: handle.vm,
-            vNode: handle.$render.vNode
-        })
+            trueType: handle.getType(this.type),
+            //todo 删除
+            vNode: handle.$render.vNode,
+        });
         !init && this._unwatch();
         this._watch();
         this._link();

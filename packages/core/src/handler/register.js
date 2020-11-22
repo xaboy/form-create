@@ -1,6 +1,5 @@
 import extend from '@form-create/utils/lib/extend';
 import is from '@form-create/utils/lib/type';
-import toCase from '@form-create/utils/lib/tocase';
 
 
 export default function useRegister(Handler) {
@@ -15,11 +14,16 @@ export default function useRegister(Handler) {
             });
         },
         useProvider(provider) {
+            const used = [];
             (provider._c || ['*']).forEach(name => {
-                this.bus.$on(`p:${provider.attr}:${name}:${provider.input ? 1 : 0}`, (event, args) => {
+                const type = name === '*' ? '*' : this.getType(name);
+                if (used.indexOf(type) > -1) return;
+                used.push(type);
+                this.bus.$on(`p:${provider.attr}:${type}:${provider.input ? 1 : 0}`, (event, args) => {
                     provider[event] && provider[event](...args);
                 });
             });
+            provider._used = used;
         },
         watchEffect(parser) {
             const vm = this.vm;
@@ -33,7 +37,7 @@ export default function useRegister(Handler) {
             this.emitProp({
                 rule: parser.rule,
                 input: parser.input,
-                type: parser.type,
+                type: parser.trueType,
                 custom
             }, event);
         },
@@ -41,7 +45,7 @@ export default function useRegister(Handler) {
             this.emitProp({
                 rule,
                 input: !!rule.field,
-                type: toCase(rule.type)
+                type: this.getType(rule.type)
             }, event);
         },
         emitProp({rule, input, type, custom}, event) {
@@ -53,7 +57,7 @@ export default function useRegister(Handler) {
                 let _type;
                 if (!p._c) {
                     _type = '*';
-                } else if (p._c.indexOf(type) > -1) {
+                } else if (p._used.indexOf(type) > -1) {
                     _type = type;
                 } else {
                     return;
@@ -72,7 +76,7 @@ function unique(arr) {
 
 function getComponent(p) {
     const c = p.components;
-    if (Array.isArray(c)) return unique(c.map((n) => toCase(n)));
-    else if (is.String(c)) return [toCase(c)];
+    if (Array.isArray(c)) return unique(c.filter(v => v !== '*'));
+    else if (is.String(c)) return [c];
     else return false;
 }
