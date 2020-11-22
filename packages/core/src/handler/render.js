@@ -17,9 +17,6 @@ export default function useRender(Handler) {
         render() {
             console.warn('%c render', 'color:green');
             ++this.loadedId;
-            this.vm.$nextTick(() => {
-                this.bindNextTick(() => this.bus.$emit('next-tick', this.api));
-            })
 
             if (this.vm.unique > 0)
                 return this.$render.render();

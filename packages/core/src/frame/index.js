@@ -231,6 +231,9 @@ export default function createFormCreate(config) {
             vm.$on('hook:beforeDestroy', () => {
                 this.$handle.reloadRule([]);
             });
+            vm.$on('hook:updated', () => {
+                this.$handle.bindNextTick(() => this.bus.$emit('next-tick', this.api()));
+            });
         },
         initOptions(options) {
             this.options = deepExtend({formData: {}}, globalConfig);
