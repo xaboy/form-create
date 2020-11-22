@@ -13,7 +13,7 @@ export default function useLifecycle(Handler) {
             if (this.pageEnd) {
                 _mounted();
             } else {
-                this.bus.$on('page-end', _mounted);
+                this.bus.$once('page-end', _mounted);
             }
         },
         lifecycle(name) {

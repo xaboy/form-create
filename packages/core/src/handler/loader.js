@@ -43,11 +43,14 @@ export default function useLoader(Handler) {
             console.warn('%c load', 'color:blue');
             this.cycleLoad = false;
             if (this.pageEnd) {
-                this.bus.$emit('use-ctrl');
+                this.bus.$emit('load-start');
             }
             this._loadRule(this.rules);
             if (this.cycleLoad && this.pageEnd) {
                 return this.loadRule();
+            }
+            if (this.pageEnd) {
+                this.bus.$emit('load-end');
             }
             this.vm._renderRule();
             this.$render.initOrgChildren();
@@ -55,7 +58,7 @@ export default function useLoader(Handler) {
         },
         loadChildren(children, parent) {
             this.cycleLoad = false;
-            this.bus.$emit('use-ctrl');
+            this.bus.$emit('load-start');
             this._loadRule(children, parent);
             if (this.cycleLoad) {
                 return this.loadRule();
@@ -140,8 +143,18 @@ export default function useLoader(Handler) {
                     }
                 }
 
+                const r = parser.rule;
+                if (!parser.updated) {
+                    parser.updated = true;
+                    if (is.Function(r.update)) {
+                        this.bus.$once('load-end', () => {
+                            this.refreshUpdate(parser, r.value);
+                        });
+                    }
+                }
+
                 if (parser.input)
-                    Object.defineProperty(parser.rule, 'value', this.valueHandle(parser));
+                    Object.defineProperty(r, 'value', this.valueHandle(parser));
                 this.effect(parser, 'loaded');
                 if (this.refreshControl(parser)) this.cycleLoad = true;
                 return parser;
@@ -177,7 +190,7 @@ export default function useLoader(Handler) {
                         children: rule,
                     }
                     parser.ctrlRule.push(ruleCon);
-                    this.bus.$once('use-ctrl', () => {
+                    this.bus.$once('load-start', () => {
                         // this.cycleLoad = true;
                         if (prepend) {
                             api.prepend(ruleCon, prepend, child)

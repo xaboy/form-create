@@ -35,7 +35,7 @@ export default function Parser(handle, rule) {
         input: !!rule.field,
         el: undefined,
         defaultValue: rule.field ? deepCopy(rule.value) : undefined,
-        field: rule.field || undefined
+        field: rule.field || undefined,
     })
 
     this.updateKey();
@@ -45,9 +45,9 @@ export default function Parser(handle, rule) {
 }
 
 extend(Parser.prototype, {
-    updateKey(parent) {
+    updateKey(flag) {
         this.key = unique();
-        parent && this.parent && this.parent.updateKey(parent);
+        flag && this.parent && this.parent.updateKey(parent);
     },
     initProp() {
         this.prop = mergeProps([this.rule, this.computed]);
@@ -110,6 +110,7 @@ extend(Parser.prototype, {
             vm: handle.vm,
             trueType: handle.getType(this.type),
             vNode: handle.$render.vNode,
+            updated: false,
         });
         !init && this._unwatch();
         this._watch();

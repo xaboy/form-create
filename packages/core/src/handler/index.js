@@ -70,17 +70,10 @@ extend(Handler.prototype, {
         useHelper(rules);
     },
     init() {
-        const vm = this.vm;
+        const {vm, api} = this;
         vm.$set(vm, 'formData', this.formData);
-        vm.$f = this.api;
-        vm.$emit('input', this.api);
-        vm._updateValue(this.form);
-
-        const f = this.fieldList;
-        Object.keys(f).forEach(k => {
-            const p = f[k];
-            this.refreshUpdate(p, p.rule.value);
-        })
+        vm.$f = api;
+        vm.$emit('input', api);
     },
 })
 

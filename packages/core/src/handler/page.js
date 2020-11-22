@@ -7,7 +7,7 @@ export default function usePage(Handler) {
         usePage() {
             const page = this.options.page;
             if (!page) return;
-            let first = 18;
+            let first = 25;
             let limit = getLimit(this.rules);
             if (is.Object(page)) {
                 if (page.first) first = parseInt(page.first, 10) || first;

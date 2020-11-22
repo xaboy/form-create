@@ -272,10 +272,9 @@ export default function Api(h) {
             const parser = h.getParser(id);
             if (parser) return parser.el || h.vm.$refs[parser.refName];
         },
-        closeModal: (field) => {
-            const parser = h.fieldList[field];
-            if (!parser) return;
-            parser.el && parser.el.$emit && parser.el.$emit('close-modal');
+        closeModal: (id) => {
+            const el = api.el(id);
+            el && el.$emit && el.$emit('close-modal');
         },
         //todo 移动到ui组件 中
         validate(callback) {

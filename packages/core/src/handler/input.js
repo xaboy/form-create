@@ -67,7 +67,7 @@ export default function useInput(Handler) {
             this.subForm[parser.field] = subForm;
         },
         syncValue() {
-            this.vm && this.vm._updateValue(this.form);
+            this.vm._updateValue(this.form);
         },
         isChange(parser, value) {
             return JSON.stringify(parser.rule.value) !== JSON.stringify(value);
