@@ -1,5 +1,6 @@
 import extend from '@form-create/utils/lib/extend';
 import is from '@form-create/utils/lib/type';
+import Vue from 'vue';
 
 const NAME = 'FormCreate';
 
@@ -68,7 +69,7 @@ export default function $FormCreate(FormCreate) {
         },
         beforeCreate() {
             const {rule, option, value} = this.$options.propsData;
-            this.formCreate = new FormCreate(this, rule, option);
+            this.formCreate = new FormCreate(this, Vue.observable(rule), Vue.observable(option));
             value && is.Object(value) && this.formCreate.updateOptions({formData: value});
             Object.keys(this.formCreate.prop).forEach(k => {
                 extend(this.$options[k], this.formCreate.prop[k]);

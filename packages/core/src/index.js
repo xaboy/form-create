@@ -1,4 +1,4 @@
-import createFormCreate, {_vue as Vue} from './frame';
+import formCreateFactory, {_vue as Vue} from './frame';
 import Creator, {creatorFactory, creatorTypeFactory} from './factory/creator';
 import Parser from './factory/parser';
 import Manager from './factory/manager';
@@ -9,4 +9,4 @@ export {
     Vue, Parser, parseJson, toJson, copyRule, copyRules, mergeRule
 };
 
-export default createFormCreate;
+export default formCreateFactory;

@@ -60,7 +60,7 @@ function createParser(proto) {
 }
 
 //todo 表单嵌套
-export default function createFormCreate(config) {
+export default function formCreateFactory(config) {
 
     const components = {
         [fragment.name]: fragment

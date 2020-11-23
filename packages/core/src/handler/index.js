@@ -52,7 +52,6 @@ export default function Handler(fc) {
     this.useProvider();
     this.usePage();
     this.loadRule();
-    //todo 优化分页情况
     this.init();
     this.$manager.__init();
 }
