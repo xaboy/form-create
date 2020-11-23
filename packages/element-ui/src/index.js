@@ -1,7 +1,6 @@
-import createElmFormCreate from './core/index';
+import elmFormCreate from './core/index';
 
-
-const FormCreate = createElmFormCreate();
+const FormCreate = elmFormCreate();
 
 if (typeof window !== 'undefined') {
     window.formCreate = FormCreate;

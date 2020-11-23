@@ -2,17 +2,10 @@ import components from '../components';
 import parsers from '../parser';
 import alias from './alias';
 import manager from './manager';
-import createFormCreate from '@form-create/core';
+import FormCreateFactory from '@form-create/core';
 import makers from './maker';
 
-export default function createElmFormCreate() {
-
-    const FormCreate = createFormCreate({
-        ui: `${process.env.UI}`,
-        version: `${process.env.VERSION}`,
-        manager
-    });
-
+function install(FormCreate) {
     FormCreate.componentAlias(alias);
 
     components.forEach(component => {
@@ -26,6 +19,13 @@ export default function createElmFormCreate() {
     Object.keys(makers).forEach(name => {
         FormCreate.maker[name] = makers[name];
     });
+}
 
-    return FormCreate;
+export default function elmFormCreate() {
+    return  FormCreateFactory({
+        ui: `${process.env.UI}`,
+        version: `${process.env.VERSION}`,
+        manager,
+        install
+    });
 }

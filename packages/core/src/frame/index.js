@@ -60,7 +60,7 @@ function createParser(proto) {
 }
 
 //todo 表单嵌套
-export default function formCreateFactory(config) {
+export default function FormCreateFactory(config) {
 
     const components = {
         [fragment.name]: fragment
@@ -125,6 +125,13 @@ export default function formCreateFactory(config) {
         return _vue.extend($FormCreate(FormCreate));
     }
 
+    //todo 检查回调函数作用域
+    function use(fn) {
+        if (is.Function(fn.install)) fn.install(create);
+        else if (is.Function(fn)) fn(create);
+        return this;
+    }
+
     function create(rules, _opt, parent) {
         let $vm = mountForm(rules, _opt || {});
         const _this = $vm.$refs.fc.formCreate;
@@ -132,79 +139,6 @@ export default function formCreateFactory(config) {
         _getEl(_this.options).appendChild($vm.$el);
         return _this.api();
     }
-
-    //todo 检查回调函数作用域
-    function use(fn) {
-        if (is.Function(fn.install)) fn.install(fn, FormCreate);
-        else if (is.Function(fn)) fn(FormCreate);
-        return this;
-    }
-
-    function useAttr(formCreate) {
-        extend(formCreate, {
-            version: config.version,
-            ui: config.ui,
-            data,
-            maker,
-            component,
-            filter,
-            directive,
-            register,
-            parser,
-            use,
-            createParser,
-            componentAlias,
-            copyRule,
-            copyRules,
-            $form,
-            parseJson
-        });
-    }
-
-    function useStatic(FormCreate) {
-        extend(FormCreate, {
-            create,
-            install(Vue, options) {
-                if (options && is.Object(options))
-                    deepExtend(options, globalConfig);
-
-                if (Vue._installedFormCreate === true) return;
-                Vue._installedFormCreate = true;
-                _vue = Vue;
-
-                const $formCreate = function (rules, opt = {}) {
-                    return create(rules, opt, this);
-                };
-
-                useAttr($formCreate);
-
-                Vue.prototype.$formCreate = $formCreate;
-                Vue.component('FormCreate', $form());
-
-                config.install && config.install(FormCreate, Vue, options);
-            },
-            init(rules, _opt = {}) {
-                let $vm = mountForm(rules, _opt), _this = $vm.$refs.fc.formCreate;
-                return {
-                    mount($el) {
-                        if ($el && is.Element($el))
-                            _this.options.el = $el;
-                        _getEl(_this.options).appendChild($vm.$el);
-                        return _this.api();
-                    },
-                    remove() {
-                        $vm.$el.parentNode && $vm.$el.parentNode.removeChild($vm.$el);
-                    },
-                    destroy() {
-                        this.remove();
-                        $vm.$destroy();
-                    },
-                    $f: _this.api()
-                };
-            }
-        })
-    }
-
 
     function FormCreate(vm, rules, options) {
         extend(this, {
@@ -265,10 +199,76 @@ export default function formCreateFactory(config) {
         },
     })
 
+
+    function useAttr(formCreate) {
+        extend(formCreate, {
+            version: config.version,
+            ui: config.ui,
+            data,
+            maker,
+            component,
+            filter,
+            directive,
+            register,
+            parser,
+            use,
+            createParser,
+            componentAlias,
+            copyRule,
+            copyRules,
+            $form,
+            parseJson
+        });
+    }
+
+    function useStatic(FormCreate) {
+        extend(FormCreate, {
+            create,
+            install(Vue, options) {
+                if (options && is.Object(options))
+                    deepExtend(options, globalConfig);
+
+                if (Vue._installedFormCreate === true) return;
+                Vue._installedFormCreate = true;
+                _vue = Vue;
+
+                const $formCreate = function (rules, opt = {}) {
+                    return create(rules, opt, this);
+                };
+
+                useAttr($formCreate);
+
+                Vue.prototype.$formCreate = $formCreate;
+                Vue.component('FormCreate', $form());
+            },
+            init(rules, _opt = {}) {
+                let $vm = mountForm(rules, _opt), _this = $vm.$refs.fc.formCreate;
+                return {
+                    mount($el) {
+                        if ($el && is.Element($el))
+                            _this.options.el = $el;
+                        _getEl(_this.options).appendChild($vm.$el);
+                        return _this.api();
+                    },
+                    remove() {
+                        $vm.$el.parentNode && $vm.$el.parentNode.removeChild($vm.$el);
+                    },
+                    destroy() {
+                        this.remove();
+                        $vm.$destroy();
+                    },
+                    $f: _this.api()
+                };
+            }
+        })
+    }
+
     useAttr(create);
     useStatic(create);
 
     CreateNode.use({fragment: 'fcFragment'});
+
+    if (config.install) create.use(config);
 
     return create;
 }
