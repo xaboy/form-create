@@ -2,6 +2,14 @@ import mergeProps from '@form-create/utils/lib/mergeprops';
 import unique from '@form-create/utils/lib/unique';
 import extend from '@form-create/utils/lib/extend';
 
+export function createManager(proto) {
+    class CustomManager extends Manager {
+    }
+
+    Object.assign(CustomManager.prototype, proto);
+    return CustomManager;
+}
+
 export default function Manager(handler) {
     extend(this, {
         $handle: handler,

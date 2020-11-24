@@ -11,6 +11,7 @@ import toCase from '@form-create/utils/lib/tocase';
 import extend from '@form-create/utils/lib/extend';
 import deepExtend from '@form-create/utils/lib/deepextend';
 import {CreateNodeFactory} from '../factory/node';
+import {createManager} from '../factory/manager';
 
 export let _vue = typeof window !== 'undefined' && window.Vue ? window.Vue : Vue;
 
@@ -143,7 +144,7 @@ export default function FormCreateFactory(config) {
     function FormCreate(vm, rules, options) {
         extend(this, {
             vm,
-            manager: config.manager,
+            manager: createManager(config.manager),
             parsers,
             providers,
             rules: Array.isArray(rules) ? rules : [],
