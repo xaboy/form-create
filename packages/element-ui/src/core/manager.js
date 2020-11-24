@@ -1,8 +1,8 @@
 import Manager from '@form-create/core/src/factory/manager';
 import getConfig from './config';
 import mergeProps from '@form-create/utils/lib/mergeprops';
-import is from '@form-create/utils/lib/type';
-import {isString, isType, toString} from '@form-create/utils';
+import is, {hasProperty} from '@form-create/utils/lib/type';
+import toString from '@form-create/utils/lib/tostring';
 
 function isTooltip(info) {
     return info.type === 'tooltip';
@@ -11,10 +11,17 @@ function isTooltip(info) {
 const upperCaseReg = /[A-Z]/;
 
 export function isAttr(name, value) {
-    return (!upperCaseReg.test(name) && (isString(value) || isType(value, 'Number')))
+    return (!upperCaseReg.test(name) && (is.String(value) || is.Number(value)))
 }
 
-const config = getConfig();
+function tidy(name, title) {
+    if (is.String(title)) {
+        return {[name]: title, show: true};
+    } else if (is.Object(title) && title.title && !hasProperty(title, 'show')) {
+        title.show = true;
+    }
+    return title;
+}
 
 export default class ElmManager extends Manager {
 
@@ -53,12 +60,8 @@ export default class ElmManager extends Manager {
     }
 
     tidyRule({prop}) {
-        if (!is.Object(prop.title) && isString(prop.title)) {
-            prop.title = {title: prop.title, show: true};
-        }
-        if (!is.Object(prop.info) && isString(prop.info)) {
-            prop.info = {info: prop.info, show: true};
-        }
+        prop.title = tidy('title', prop.title);
+        prop.info = tidy('info', prop.info);
         return prop;
     }
 
@@ -71,8 +74,12 @@ export default class ElmManager extends Manager {
                 return initial;
             }, {}),
         }, parser.prop], {
-            //todo 检查合并
-            info: config.info,
+            info: {
+                trigger: 'hover',
+                placement: 'top-start',
+                icon: 'el-icon-warning',
+                show: false,
+            },
             title: {show: false},
             col: {span: 24}
         }, {normal: ['title', 'info', 'col']});
@@ -86,15 +93,16 @@ export default class ElmManager extends Manager {
     }
 
     beforeRender() {
-        //TODO 优化 options
+        const form = this.options.form;
         this.rule = mergeProps([{
-            props: this.options.form,
+            props: form,
             nativeOn: {
                 submit: (e) => {
                     e.preventDefault();
                 }
             },
-            class: this.options.form.className
+            class: [form.className, form.class],
+            style: form.style
         }, {
             props: {
                 model: this.$handle.formData,
@@ -103,7 +111,7 @@ export default class ElmManager extends Manager {
             key: this.key,
             ref: this.ref,
             class: 'form-create',
-            type: 'ElForm',
+            type: 'form',
         }])
     }
 
@@ -114,25 +122,25 @@ export default class ElmManager extends Manager {
     }
 
     makeFormItem(parser, children) {
-        //TODO 优化 formItem 配置项和事件
         const rule = parser.prop;
         const uni = `${this.key}${parser.key}`;
         const col = rule.col;
         const labelWidth = (!col.labelWidth && !rule.title.show) ? 0 : col.labelWidth, {inline, col: _col} = this.rule.props;
-        const item = this.$render.renderRule({
-            type: 'ElFormItem',
+        const item = this.$render.renderRule(mergeProps([{
+            props: {
+                title: rule.title.title,
+                labelWidth: labelWidth === void 0 ? labelWidth : toString(labelWidth),
+            }
+        }, rule.formItem || {}, {
+            type: 'formItem',
             props: {
                 prop: parser.field,
-                title: rule.title.title,
                 rules: rule.validate,
-                labelWidth: labelWidth === void 0 ? labelWidth : toString(labelWidth),
-                //todo 优化 required 参数
-                required: rule.props.required
             },
             class: rule.className,
             key: `${uni}fi`,
             ref: parser.formItemRefName
-        }, [children, this.makeInfo(rule, uni)]);
+        }]), [children, this.makeInfo(rule, uni)]);
         return (inline === true || _col === false) ? item : this.makeCol(rule, uni, [item]);
     }
 
@@ -140,58 +148,50 @@ export default class ElmManager extends Manager {
         const titleProp = rule.title;
         const infoProp = rule.info;
         if (!titleProp.title || titleProp.show === false) return;
-        const children = [titleProp.title];
         const isTip = isTooltip(infoProp);
+        const children = [titleProp.title];
 
         const titleFn = (pop) => this.$render.renderRule({
             ...titleProp,
-            slot: pop ? (isTip ? 'default' : 'reference') : (titleProp.slot || 'label'),
+            slot: titleProp.slot || (pop ? (isTip ? 'default' : 'reference') : 'label'),
             key: `${uni}tit`,
             type: titleProp.type || 'span',
         }, children);
 
         if (infoProp.show !== false && infoProp.info) {
-            if (infoProp.icon === false) {
-                return this.$render.renderRule({
-                    type: isTip ? 'ElTooltip' : 'ElPopover',
-                    props: {...infoProp, content: infoProp.info},
-                    key: `${uni}pop`,
-                    slot: 'label'
-                }, [
-                    titleFn()
-                ])
-            } else {
+            if (infoProp.icon !== false) {
                 children.push(this.$render.renderRule({
-                    type: isTip ? 'ElTooltip' : 'ElPopover',
-                    props: {...infoProp, content: infoProp.info},
-                    key: `${uni}popi`
-                }, [
-                    this.$render.renderRule({
-                        type: 'i',
-                        class: [infoProp.icon || 'el-icon-warning'],
-                        slot: isTip ? 'default' : 'reference',
-                        key: `${uni}i`
-                    })
-                ]));
+                    type: 'i',
+                    class: infoProp.icon === true ? 'el-icon-warning' : infoProp.icon,
+                    key: `${uni}i`
+                }));
             }
+            return this.$render.renderRule({
+                type: infoProp.type || 'popover',
+                props: {...infoProp, content: infoProp.info},
+                key: `${uni}pop`,
+                slot: 'label'
+            }, [
+                titleFn(true)
+            ])
         }
         return titleFn();
     }
 
     makeCol(rule, uni, children) {
         const col = rule.col;
-        return this.$render.renderRule(mergeProps([{class: col.class, type: 'ElCol', key: `${uni}col`}], {
+        return this.$render.renderRule({
+            class: col.class,
+            type: 'col',
             props: col || {span: 24},
-            class: {
-                ['__fc_h']: !!rule.hidden
-            }
-        }), children);
+            key: `${uni}col`
+        }, children);
     }
 
     makeRow(children) {
         const row = this.options.row;
         return this.$render.renderRule({
-            type: 'ElRow',
+            type: 'row',
             props: row,
             class: row.class,
             key: `${this.key}row`
@@ -208,14 +208,14 @@ export default class ElmManager extends Manager {
         }
         if (!vn.length) return;
         const item = this.$render.renderRule({
-            type: 'ElFormItem',
+            type: 'formItem',
             key: `${this.key}fb`
         }, vn);
 
         return this.rule.props.inline === true
             ? item
             : this.$render.renderRule({
-                type: 'ElCol',
+                type: 'col',
                 props: {span: 24},
                 key: `${this.key}fc`
             }, [item]);
@@ -225,7 +225,7 @@ export default class ElmManager extends Manager {
         const resetBtn = this.options.resetBtn;
 
         return this.$render.renderRule({
-            type: 'ElButton',
+            type: 'button',
             props: resetBtn,
             style: {width: resetBtn.width},
             on: {
@@ -244,7 +244,7 @@ export default class ElmManager extends Manager {
         const submitBtn = this.options.submitBtn;
 
         return this.$render.renderRule({
-            type: 'ElButton',
+            type: 'button',
             props: submitBtn,
             style: {width: submitBtn.width},
             on: {

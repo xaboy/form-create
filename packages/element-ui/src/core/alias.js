@@ -5,6 +5,8 @@ export default {
     rate: 'elRate',
     upload: 'fcUpload',
     cascader: 'elCascader',
+    popover: 'elPopover',
+    tooltip: 'elTooltip',
     colorPicker: 'elColorPicker',
     color: 'elColorPicker',
     timePicker: 'elTimePicker',

@@ -21,12 +21,6 @@ export default function getConfig() {
             justify: undefined,
             tag: 'div'
         },
-        info: {
-            type: 'popover',
-            trigger: 'hover',
-            placement: 'top-start',
-            icon: 'el-icon-warning'
-        },
         submitBtn: {
             type: 'primary',
             size: 'medium',

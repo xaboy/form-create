@@ -4,6 +4,7 @@ import is, {hasProperty} from '@form-create/utils/lib/type';
 import {_vue as Vue} from '../frame';
 import {tip} from '@form-create/utils/lib/console';
 import {invoke} from '../frame/util';
+import toCase from '@form-create/utils/lib/tocase';
 
 function setTemplateProps(vm, parser, api) {
     if (!vm.$props) return;
@@ -247,8 +248,10 @@ export default function useRender(Render) {
             return this.vNode.make(parser.originType, prop, children);
         },
         renderRule(rule, children = []) {
-            //todo 优化 rule 渲染
-            return this.vm.$createElement(rule.type, rule, children);
+            let type = toCase(rule.type);
+            const alias = this.vNode.aliasMap[type];
+            if (alias) type = toCase(alias);
+            return this.vm.$createElement(type, rule, children);
         }
     })
 }

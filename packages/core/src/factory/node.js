@@ -26,7 +26,8 @@ export function CreateNodeFactory() {
             let Node = this.$h(nodeName, parseProp(data), children || []);
             Node.context = this.vm;
             return Node;
-        }
+        },
+        aliasMap
     });
 
     extend(CreateNode, {
