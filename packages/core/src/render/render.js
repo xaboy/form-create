@@ -170,7 +170,6 @@ export default function useRender(Render) {
             const {refName, key} = parser;
             const props = [
                 {
-                    props: injectProp(parser, this.$handle.api),
                     on: parser.input ? {
                         'fc.sub-form': (subForm) => this.$handle.addSubForm(parser, subForm)
                     } : {},
@@ -199,9 +198,11 @@ export default function useRender(Render) {
 
             }
             mergeProps(props, parser.prop);
-
             this.$manager.mergeProp && this.$manager.mergeProp(parser, custom);
             parser.mergeProp && parser.mergeProp(custom);
+            mergeProps([{
+                props: injectProp(parser, this.$handle.api),
+            }], parser.prop);
             return parser.prop;
         },
         onInput(parser, value) {

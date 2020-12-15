@@ -15,18 +15,21 @@ export default function Manager(handler) {
         $handle: handler,
         vm: handler.vm,
         options: {},
-        key: unique(),
         ref: 'fcForm',
         mergeOptionsRule: {
             normal: ['form', 'row', 'info', 'submitBtn', 'resetBtn']
         }
     });
+    this.updateKey();
     this.init();
 }
 
 extend(Manager.prototype, {
     __init() {
         this.$render = this.$handle.$render;
+    },
+    updateKey() {
+        this.key = unique();
     },
     //TODO interface
     init() {

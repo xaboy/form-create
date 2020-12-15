@@ -212,12 +212,7 @@ export default function Api(h) {
         //todo 优化
         refresh: (clear) => {
             h.$render.clearCacheAll();
-            if (clear) {
-                //todo 直接刷新 form 的 key
-                h.sortList.forEach(id => {
-                    h.parsers[id].updateKey(true);
-                })
-            }
+            clear && h.$manager.updateKey();
             h.refresh();
         },
         refreshOptions() {

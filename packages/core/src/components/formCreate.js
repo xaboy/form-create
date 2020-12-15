@@ -8,12 +8,6 @@ export default function $FormCreate(FormCreate) {
     return {
         name: NAME,
         componentName: NAME,
-        provide() {
-            return {
-                parent$f: this.$f,
-            }
-        },
-        inject: {parent$f: {default: null}},
         model: {
             prop: 'api'
         },
