@@ -58,10 +58,11 @@ export default function useRender(Render) {
         clearOrgChildren() {
             this.orgChildren = {};
         },
+        //todo 简化 render 和 input
         render() {
-            if (!this.vm.isShow) return;
-
-            this.$manager.updateOptions(this.$handle.options);
+            if (!this.vm.isShow) {
+                return;
+            }
             this.$manager.beforeRender();
 
             const vn = this.sortList.map((id) => {

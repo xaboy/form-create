@@ -73,6 +73,13 @@ export function getRule(rule) {
     return is.Function(rule.getRule) ? rule.getRule() : rule;
 }
 
+export function mergeGlobal(target, merge) {
+    if (!target) return merge;
+    Object.keys(merge || {}).forEach((k) => {
+        mergeRule(target[k], merge[k] || {})
+    });
+}
+
 export function funcProxy(that, proxy) {
     Object.defineProperties(that, Object.keys(proxy).reduce((initial, k) => {
         initial[k] = {

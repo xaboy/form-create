@@ -4,12 +4,11 @@ import makerFactory from '../factory/maker';
 import Handle from '../handler';
 import {creatorFactory} from '..';
 import BaseParser from '../factory/parser';
-import {copyRule, copyRules, parseJson} from './util';
+import {copyRule, copyRules, mergeGlobal, parseJson} from './util';
 import fragment from '../components/fragment';
 import is from '@form-create/utils/lib/type';
 import toCase from '@form-create/utils/lib/tocase';
 import extend from '@form-create/utils/lib/extend';
-import deepExtend from '@form-create/utils/lib/deepextend';
 import {CreateNodeFactory} from '../factory/node';
 import {createManager} from '../factory/manager';
 
@@ -71,7 +70,7 @@ export default function FormCreateFactory(config) {
     const directives = {};
     const providers = {};
     const maker = makerFactory();
-    const globalConfig = {};
+    let globalConfig = {global: {}};
     const data = {};
     const CreateNode = CreateNodeFactory();
 
@@ -156,9 +155,8 @@ export default function FormCreateFactory(config) {
             CreateNode,
             bus: new _vue
         })
-
-        this.initOptions(options || {});
         this.init();
+        this.initOptions(options || {});
     }
 
     //todo 使用事件优化流程
@@ -184,12 +182,15 @@ export default function FormCreateFactory(config) {
             });
         },
         initOptions(options) {
-            this.options = deepExtend({formData: {}}, globalConfig);
-            this.updateOptions(options || {});
+            this.options = {formData: {}, ...globalConfig};
+            this.updateOptions(options);
         },
-        //todo 优化 options 合并
         updateOptions(options) {
-            deepExtend(this.options, options);
+            if (options.global) {
+                this.options.global = mergeGlobal(this.options.global, options.global);
+            }
+            this.$handle.$manager.mergeOptions([options], this.options);
+            this.$handle.$manager.updateOptions(this.options);
         },
         created() {
             this.$handle.init();
@@ -231,9 +232,7 @@ export default function FormCreateFactory(config) {
         extend(FormCreate, {
             create,
             install(Vue, options) {
-                if (options && is.Object(options))
-                    deepExtend(options, globalConfig);
-
+                globalConfig = {...globalConfig, ...(options || {})}
                 if (Vue._installedFormCreate === true) return;
                 Vue._installedFormCreate = true;
                 _vue = Vue;

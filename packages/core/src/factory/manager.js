@@ -16,7 +16,10 @@ export default function Manager(handler) {
         vm: handler.vm,
         options: {},
         key: unique(),
-        ref: 'fcForm'
+        ref: 'fcForm',
+        mergeOptionsRule: {
+            normal: ['form', 'row', 'info', 'submitBtn', 'resetBtn']
+        }
     });
     this.init();
 }
@@ -31,10 +34,11 @@ extend(Manager.prototype, {
     form() {
         return this.vm.$refs[this.ref];
     },
+    mergeOptions(args, opt) {
+        return mergeProps(args.map(v => this.tidyOptions(v)), opt, this.mergeOptionsRule);
+    },
     updateOptions(options) {
-        this.options = mergeProps([this.tidyOptions(options)], this.getDefaultOptions(), {
-            normal: ['form', 'row', 'info', 'submitBtn', 'resetBtn']
-        })
+        this.options = this.mergeOptions([options], this.getDefaultOptions());
     },
     tidyOptions(options) {
         return options;

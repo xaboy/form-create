@@ -196,7 +196,7 @@ export default function Api(h) {
         },
         updateOptions(options) {
             h.fc.updateOptions(options);
-            api.refresh();
+            api.refreshOptions();
         },
         onSubmit(fn) {
             this.updateOptions({onSubmit: fn});
@@ -219,6 +219,10 @@ export default function Api(h) {
                 })
             }
             h.refresh();
+        },
+        refreshOptions() {
+            h.$manager.updateOptions(h.options);
+            this.refresh();
         },
         hideForm: (isShow) => {
             $set(h.vm, 'isShow', !isShow);
