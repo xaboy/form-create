@@ -9,7 +9,7 @@ export default {
         timeRange: creatorTypeFactory(name, (m) => m.props.isRange = true)
     },
     mergeProp() {
-        const props = this.prop;
+        const props = this.prop.props;
         if (!props.valueFormat) props.valueFormat = 'HH:mm:ss';
     }
 }

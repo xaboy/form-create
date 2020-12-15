@@ -13,13 +13,19 @@ export function isAttr(name, value) {
     return (!upperCaseReg.test(name) && (is.String(value) || is.Number(value)))
 }
 
-function tidy(name, title) {
-    if (is.String(title)) {
-        return {[name]: title, show: true};
-    } else if (is.Object(title) && title.title && !hasProperty(title, 'show')) {
-        title.show = true;
+function tidy(props, name) {
+    const value = props[name];
+    if (is.String(value)) {
+        props[name] = {[name]: value, show: true};
+    } else if (is.Object(value) && value[name] && !hasProperty(value, 'show')) {
+        value.show = true;
     }
-    return title;
+}
+
+function tidyBool(opt, name) {
+    if (is.Boolean(opt[name])) {
+        opt[name] = {show: opt[name]};
+    }
 }
 
 export default {
@@ -42,14 +48,14 @@ export default {
         }
     },
     tidyOptions(options) {
-        if (is.Boolean(options.submitBtn)) options.submitBtn = {show: options.submitBtn};
-        if (is.Boolean(options.resetBtn)) options.resetBtn = {show: options.resetBtn};
-        if (is.Boolean(options.row)) options.row = {show: options.row};
+        tidyBool(options, 'submitBtn');
+        tidyBool(options, 'resetBtn');
+        tidyBool(options, 'row');
         return options;
     },
     tidyRule({prop}) {
-        prop.title = tidy('title', prop.title);
-        prop.info = tidy('info', prop.info);
+        tidy(prop, 'title');
+        tidy(prop, 'info');
         return prop;
     },
     mergeProp(parser) {

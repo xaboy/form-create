@@ -1,18 +1,20 @@
-import {deepExtendArgs} from '@form-create/utils/lib/deepextend';
+import {hasProperty} from '@form-create/utils/lib/type';
 
 const NAME = 'fcGroup';
 
 export default {
     name: NAME,
     props: {
+        field: String,
         rule: Object,
         rules: Array,
         expand: Number,
+        options: Object,
+        formCreate: Object,
         button: {
             type: Boolean,
             default: true
         },
-        formCreate: Object,
         max: {
             type: Number,
             default: 0
@@ -36,15 +38,9 @@ export default {
     },
     data() {
         return {
-            option: deepExtendArgs({}, this.formCreate.config || {}, {
-                submitBtn: false,
-                resetBtn: false,
-                mounted: undefined,
-                onReload: undefined
-            }),
             len: 0,
             cacheRule: {},
-            group$f: {}
+            cacheValue: {},
         }
     },
     computed: {
@@ -56,98 +52,112 @@ export default {
     },
     watch: {
         disabled(n) {
-            const lst = this.group$f;
+            const lst = this.cacheRule;
             Object.keys(lst).forEach(k => {
-                lst[k].disabled(n);
+                lst[k].$f.disabled(n);
             })
         },
-        value: {
-            handler(n) {
-                let keys = Object.keys(this.cacheRule), total = keys.length, len = total - n.length;
-                if (len < 0) {
-                    for (let i = len; i < 0; i++) {
-                        this.addRule();
-                    }
-                    for (let i = 0; i < total; i++) {
-                        this.setValue(this.group$f[keys[i]], n[i]);
-                    }
-                } else {
-                    if (len > 0) {
-                        for (let i = 0; i < len; i++) {
-                            this.removeRule(keys[total - i - 1]);
-                        }
-                        this.subForm();
-                    }
-
-                    n.forEach((val, i) => {
-                        this.setValue(this.group$f[keys[i]], n[i]);
-                    });
+        value(n) {
+            n = n || [];
+            let keys = Object.keys(this.cacheRule), total = keys.length, len = total - n.length;
+            if (len < 0) {
+                for (let i = len; i < 0; i++) {
+                    this.addRule(n.length + i);
                 }
-            },
-            deep: true
+                this.$forceUpdate();
+                for (let i = 0; i < total; i++) {
+                    this.setValue(keys[i], n[i]);
+                }
+            } else {
+                if (len > 0) {
+                    for (let i = 0; i < len; i++) {
+                        this.removeRule(keys[total - i - 1]);
+                    }
+                    this.subForm();
+                }
+                n.forEach((val, i) => {
+                    this.setValue(keys[i], n[i]);
+                });
+            }
         }
     },
     methods: {
-        formData() {
-            const n = Object.keys(this.group$f).map(key => {
-                return this.group$f[key].formData();
-            })
-            this.$emit('input', n);
-            this.$emit('change', n);
+        _value(v) {
+            return (v && hasProperty(v, this.field)) ? v[this.field] : v;
         },
-        setValue($f, value) {
-            if (this.rule) {
-                const fields = $f.fields();
-                if (!fields[0]) return;
-                $f.setValue(fields[0], value);
-            } else {
-                $f.setValue(value);
+        cache(k, val) {
+            this.cacheValue[k] = JSON.stringify(val);
+        },
+        formData(key, formData) {
+            const cacheRule = this.cacheRule;
+            const keys = Object.keys(cacheRule);
+            if (keys.filter(k => cacheRule[k].$f).length !== keys.length) return;
+            const value = keys.map(k => {
+                const data = key === k ? formData : {...this.cacheRule[k].$f.form};
+                const value = this.field ? data[this.field] || null : data;
+                this.cache(k, value);
+                return value;
+            });
+            this.$emit('input', value);
+            this.$emit('change', value);
+        },
+        setValue(key, value) {
+            const field = this.field, $f = this.cacheRule[key].$f;
+            if (field) {
+                value = {[field]: this._value(value)};
             }
+            if (this.cacheValue[key] === JSON.stringify(field ? value[field] : value)) return;
+            this.cache(key, value);
+            $f.coverValue(value || {});
         },
-        addRule(emit) {
+        addRule(i, emit) {
             const rule = this.copyRule();
-            this.$set(this.cacheRule, ++this.len, rule);
+            const options = this.options ? this.options : {
+                submitBtn: false,
+                resetBtn: false,
+                formData: this.field ? ({[this.field]: this._value(this.value[i])}) : (this.value[i] || {})
+            };
+            this.$set(this.cacheRule, ++this.len, {rule, options});
             if (emit)
                 this.$nextTick(() => this.$emit('add', rule, Object.keys(this.cacheRule).length - 1));
         },
         add$f(i, key, $f) {
-            this.group$f[key] = $f;
-            this.setValue($f, this.value[i]);
+            this.cacheRule[key].$f = $f;
             this.subForm();
             this.$emit('itemMounted', $f, Object.keys(this.cacheRule).indexOf(key));
-            this.formData();
         },
         subForm() {
-            this.$emit('fc.subForm', Object.keys(this.group$f).map(k => this.group$f[k]));
+            this.$emit('fc.subForm', Object.keys(this.cacheRule).map(k => this.cacheRule[k].$f));
         },
         removeRule(key, emit) {
             const index = Object.keys(this.cacheRule).indexOf(key);
             this.$delete(this.cacheRule, key);
-            this.$delete(this.group$f, key);
+            this.$delete(this.cacheValue, key);
             if (emit)
                 this.$nextTick(() => this.$emit('remove', index));
         },
         copyRule() {
             return this.$formCreate.copyRules(this.formRule);
         },
-        add() {
-            (!this.disabled) && this.addRule(true);
+        add(i) {
+            (!this.disabled) && this.addRule(i, true);
         },
-        del(key) {
+        del(index, key) {
             if (this.disabled) return;
             this.removeRule(key, true);
             this.subForm();
-            this.formData();
+            this.value.splice(index, 1);
+            this.$emit('input', this.value);
         },
         addIcon(key) {
             return <i key={`a${key}`} class="el-icon-circle-plus-outline"
                 style={`font-size:${this.fontSize}px;cursor:${this.disabled ? 'not-allowed;color:#c9cdd4' : 'pointer'};`}
                 on-click={this.add}/>;
         },
-        delIcon(key) {
+        delIcon(index, key) {
             return <i key={`d${key}`} class="el-icon-remove-outline"
                 style={`font-size:${this.fontSize}px;cursor:${this.disabled ? 'not-allowed;color:#c9cdd4' : 'pointer;color:#606266'};`}
-                on-click={() => this.del(key)}/>;
+                on-click={() => this.del(index, key)}/>;
         },
         makeIcon(total, index, key) {
             if (this.$scopedSlots.button) return this.$scopedSlots.button({
@@ -155,23 +165,28 @@ export default {
                 index,
                 vm: this,
                 key,
-                del: () => this.del(key),
+                del: () => this.del(index, key),
                 add: this.add
             });
             if (index === 0) {
-                return [(this.max !== 0 && total >= this.max) ? null : this.addIcon(key), (this.min === 0 || total > this.min) ? this.delIcon(key) : null];
+                return [(this.max !== 0 && total >= this.max) ? null : this.addIcon(key), (this.min === 0 || total > this.min) ? this.delIcon(index, key) : null];
             } else if (index >= this.min) {
-                return this.delIcon(key);
+                return this.delIcon(index, key);
             }
         },
         emitEvent(name, args, index, key) {
-            this.$emit(name, ...args, this.group$f[key], index);
+            this.$emit(name, ...args, this.cacheRule[key].$f, index);
         }
     },
     created() {
-        const len = this.value.length > this.expand ? this.value.length : (this.expand || 0);
-        for (let i = 0; i < len; i++) {
-            this.addRule();
+        const d = (this.expand || 0) - this.value.length;
+        if (d > 0) {
+            for (let i = 0; i < d; i++) {
+                this.value.push(this.field ? null : {});
+            }
+        }
+        for (let i = 0; i < this.value.length; i++) {
+            this.addRule(i);
         }
     },
     render() {
@@ -185,16 +200,18 @@ export default {
                 style={`font-size:${this.fontSize}px;vertical-align:middle;color:${this.disabled ? '#c9cdd4;cursor: not-allowed' : '#606266;cursor:pointer'};`}
                 on-click={this.add}/>) :
             <div key={'con'}>{keys.map((key, index) => {
-                const rule = this.cacheRule[key];
+                const {rule, options} = this.cacheRule[key];
                 return <ElRow align="middle" type="flex" key={key}
                     style="border-bottom:1px dashed #DCDFE6;padding:10px;margin-bottom:10px;">
                     <ElCol span={button ? 20 : 24}><ElFormItem><FormCreate
-                        on-change={this.formData}
-                        on-set-value={this.formData}
-                        on-on-reload={this.formData}
-                        on-emit-event={(name, ...args) => this.emitEvent(name, args, index, key)}
-                        on-mounted={($f) => this.add$f(index, key, $f)} rule={rule}
-                        option={this.option}/></ElFormItem></ElCol>
+                        key={key}
+                        on={{
+                            'update:value': (formData) => this.formData(key, formData),
+                            'emit-event': (name, ...args) => this.emitEvent(name, args, index, key),
+                            input: ($f) => this.add$f(index, key, $f)
+                        }}
+                        rule={rule}
+                        option={options}/></ElFormItem></ElCol>
                     {button ? <ElCol span={2} pull={1} push={1}>{this.makeIcon(keys.length, index, key)}</ElCol> : null}
                 </ElRow>
             })}</div>

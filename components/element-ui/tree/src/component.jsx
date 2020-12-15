@@ -1,17 +1,16 @@
 import toArray from '@form-create/utils/lib/toarray';
-import {$set} from '@form-create/utils/lib/modify';
 
 const NAME = 'fcTree';
 
 export default {
     name: NAME,
     formCreateParser: {
-        init() {
-            const props = this.rule.props;
-            if (!(props.nodeKey)) $set(props, 'nodeKey', 'id');
-            if (!(props.props)) $set(props, 'props', {
+        mergeProp() {
+            const props = this.prop.props;
+            if (!props.nodeKey) props.nodeKey = 'id';
+            if (!props.props) props.props = {
                 label: 'title'
-            });
+            };
         }
     },
     props: {

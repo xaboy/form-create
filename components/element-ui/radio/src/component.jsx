@@ -12,7 +12,8 @@ export default {
             default: () => []
         },
         value: {},
-        type: String
+        type: String,
+        props: Object,
     },
     watch: {
         value() {
@@ -24,12 +25,20 @@ export default {
             trueValue: []
         }
     },
+    computed: {
+        propLabel() {
+            return (this.props || {}).label || 'label';
+        },
+        propValue() {
+            return (this.props || {}).value || 'value';
+        },
+    },
     methods: {
         onInput(n) {
-            this.$emit('input', this.formCreateOptions.filter((opt) => opt.label === n).reduce((initial, opt) => opt.value, ''));
+            this.$emit('input', this.formCreateOptions.filter((opt) => opt[this.propLabel] === n).reduce((initial, opt) => opt[this.propValue], ''));
         },
         update() {
-            this.trueValue = this.formCreateOptions.filter((opt) => opt.value === this.value).reduce((initial, opt) => opt.label, '');
+            this.trueValue = this.formCreateOptions.filter((opt) => opt[this.propValue] === this.value).reduce((initial, opt) => opt[this.propLabel], '');
         }
     },
     created() {
@@ -41,7 +50,7 @@ export default {
                 const props = {...opt};
                 const Type = this.type === 'button' ? 'ElRadioButton' : 'ElRadio';
                 delete props.value;
-                return <Type {...{props}} key={Type + index + props.value}/>
+                return <Type {...{props}} key={Type + index + opt.value}/>
             })}{this.$slots.default}</ElRadioGroup>
     }
 }

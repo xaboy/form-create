@@ -1,9 +1,10 @@
 import components from '../components';
-import parsers from '../parser';
+import parsers from '../parsers';
 import alias from './alias';
 import manager from './manager';
 import FormCreateFactory from '@form-create/core';
 import makers from './maker';
+import '../style/index.css';
 
 function install(FormCreate) {
     FormCreate.componentAlias(alias);
