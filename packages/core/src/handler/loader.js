@@ -224,12 +224,14 @@ export default function useLoader(Handler) {
             this.clearNextTick();
             this.$render.clearOrgChildren();
             this.initData(rules);
+
+            this.bus.$once('load-end', () => {
+                Object.keys(parsers).filter(id => this.parsers[id] === undefined)
+                    .forEach(id => this.rmParser(parsers[id], true));
+                this.$render.clearCacheAll();
+            });
+
             this.loadRule();
-
-            Object.keys(parsers).filter(id => this.parsers[id] === undefined)
-                .forEach(id => this.rmParser(parsers[id], true));
-
-            this.$render.clearCacheAll();
             this.refresh();
 
             this.bus.$off('next-tick', this.nextReload);

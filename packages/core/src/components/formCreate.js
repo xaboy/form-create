@@ -8,6 +8,12 @@ export default function $FormCreate(FormCreate) {
     return {
         name: NAME,
         componentName: NAME,
+        provide() {
+            return {
+                parent$f: this.$f,
+            }
+        },
+        inject: {parent$f: {default: null}},
         model: {
             prop: 'api'
         },
@@ -45,8 +51,9 @@ export default function $FormCreate(FormCreate) {
                 this.renderRule = [...this.rule || []];
             },
             _updateValue(value) {
+                if (this._isDestroyed) return;
                 this.updateValue = JSON.stringify(value);
-                this.$emit('update:value', {...value});
+                this.$emit('update:value', value);
             }
         },
         watch: {
@@ -59,7 +66,7 @@ export default function $FormCreate(FormCreate) {
             },
             option(n) {
                 this.formCreate.initOptions(n);
-                this.$f.refresh(true);
+                this.$f.refresh();
             },
             rule(n) {
                 if (n.length === this.renderRule.length && n.every(v => this.renderRule.indexOf(v) > -1)) return;

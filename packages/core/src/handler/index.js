@@ -49,11 +49,6 @@ export default function Handler(fc) {
     this.$manager = new fc.manager(this);
     this.$render = new Render(this);
     this.api = Api(this);
-    this.useProvider();
-    this.usePage();
-    this.loadRule();
-    this.init();
-    this.$manager.__init();
 }
 
 extend(Handler.prototype, {
@@ -69,10 +64,11 @@ extend(Handler.prototype, {
         useHelper(rules);
     },
     init() {
-        const {vm, api} = this;
-        vm.$set(vm, 'formData', this.formData);
-        vm.$f = api;
-        vm.$emit('input', api);
+        this.useProvider();
+        this.usePage();
+        this.loadRule();
+        this.$manager.__init();
+        this.vm.$set(this.vm, 'formData', this.formData);
     },
 })
 

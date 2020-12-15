@@ -165,6 +165,11 @@ export default function FormCreateFactory(config) {
     extend(FormCreate.prototype, {
         init() {
             const vm = this.vm;
+            const h = new Handle(this);
+            this.$handle = h;
+            vm.$f = h.api;
+            vm.$emit('input', h.api);
+
             vm.$on('hook:created', () => {
                 this.created();
             })
@@ -172,10 +177,10 @@ export default function FormCreateFactory(config) {
                 this.mounted();
             });
             vm.$on('hook:beforeDestroy', () => {
-                this.$handle.reloadRule([]);
+                h.reloadRule([]);
             });
             vm.$on('hook:updated', () => {
-                this.$handle.bindNextTick(() => this.bus.$emit('next-tick', this.api()));
+                h.bindNextTick(() => this.bus.$emit('next-tick', h.api));
             });
         },
         initOptions(options) {
@@ -187,7 +192,7 @@ export default function FormCreateFactory(config) {
             deepExtend(this.options, options);
         },
         created() {
-            this.$handle = new Handle(this);
+            this.$handle.init();
         },
         api() {
             return this.$handle.api;

@@ -17,8 +17,8 @@ export default function useInput(Handler) {
             this.$render.clearCache(parser);
             this.setFormData(parser, formValue);
             this.changeStatus = true;
-            this.valueChange(parser, value);
             this.syncValue();
+            this.valueChange(parser, value);
             this.vm.$emit('change', parser.field, value, parser.origin, this.api, setFlag);
             this.effect(parser, 'value');
         },
@@ -67,7 +67,7 @@ export default function useInput(Handler) {
             this.subForm[parser.field] = subForm;
         },
         syncValue() {
-            this.vm._updateValue(this.form);
+            this.vm._updateValue({...this.form});
         },
         isChange(parser, value) {
             return JSON.stringify(parser.rule.value) !== JSON.stringify(value);
