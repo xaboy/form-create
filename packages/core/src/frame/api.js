@@ -1,7 +1,7 @@
 import {byParser, invoke, mergeRule, toJson} from './util';
 import {$set} from '@form-create/utils/lib/modify';
 import {deepCopy} from '@form-create/utils/lib/deepextend';
-import is from '@form-create/utils/lib/type';
+import is, {hasProperty} from '@form-create/utils/lib/type';
 import extend from '@form-create/utils/lib/extend';
 import {err, format} from '@form-create/utils/lib/console';
 
@@ -68,6 +68,13 @@ export default function Api(h) {
             const parser = h.fieldList[field];
             if (!parser) return;
             return copy(parser.rule.value);
+        },
+        coverValue(formData) {
+            Object.keys(h.fieldList).forEach(key => {
+                const parser = h.fieldList[key];
+                if (!parser) return h.appendData[key] = formData[key];
+                parser.rule.value = hasProperty(formData, key) ? formData[key] : undefined;
+            });
         },
         setValue(field) {
             let formData = field;
@@ -189,7 +196,7 @@ export default function Api(h) {
         },
         updateOptions(options) {
             h.fc.updateOptions(options);
-            api.refresh(true);
+            api.refresh();
         },
         onSubmit(fn) {
             this.updateOptions({onSubmit: fn});
@@ -202,9 +209,10 @@ export default function Api(h) {
                 h.refresh();
             }
         },
+        //todo 优化
         refresh: (clear) => {
+            h.$render.clearCacheAll();
             if (clear) {
-                h.$render.clearCacheAll();
                 //todo 直接刷新 form 的 key
                 h.sortList.forEach(id => {
                     h.parsers[id].updateKey(true);
