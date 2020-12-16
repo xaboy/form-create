@@ -23,7 +23,7 @@ export default function useContext(Handler) {
             const list = this.fc.parsers;
             return list[ctx.originType] || list[toCase(ctx.type)] || list[this.getType(ctx.originType)] || BaseParser;
         },
-        bindParser(ctx){
+        bindParser(ctx) {
             ctx.setParser(this.getParser(ctx));
         },
         getType(alias) {
@@ -39,9 +39,10 @@ export default function useContext(Handler) {
                     this.watching = true;
                     if (key === 'hidden')
                         ctx.updateKey(true);
-                    else if (key === 'link')
-                        ctx._link();
-                    else if (key === 'validate') {
+                    else if (key === 'link') {
+                        ctx.link();
+                        return;
+                    } else if (key === 'validate') {
                         if (ctx.input) {
                             this.validate[ctx.field] = n || []
                         } else return;
@@ -52,6 +53,8 @@ export default function useContext(Handler) {
                     else if (key === 'type') {
                         ctx.updateType();
                         this.bindParser(ctx);
+                    } else if (key === 'children') {
+                        this.loadChildren(n, ctx);
                     }
                     this.$render.clearCache(ctx);
                     this.watching = false;

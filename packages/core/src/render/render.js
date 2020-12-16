@@ -92,7 +92,7 @@ export default function useRender(Render) {
                 tip('当前使用的Vue构建版本不支持compile,无法使用template功能');
                 return [];
             }
-            const rule = this.mergeProp(ctx);
+            const rule = ctx.prop;
             const {id, key} = ctx;
 
             if (!this.renderList[id]) {
@@ -132,52 +132,44 @@ export default function useRender(Render) {
         renderCtx(ctx, parent) {
             if (ctx.type === 'hidden') return;
             if (!this.cache[ctx.id] || ctx.type === 'template') {
-                const form = this.$manager;
                 ctx.initProp();
-                form.tidyRule(ctx);
                 this.mergeGlobal(ctx);
-                let {type, prop: rule} = ctx, vn;
-                if (rule.hidden) return;
+                this.$manager.tidyRule(ctx);
+                this.ctxProp(ctx);
+                let {type, prop} = ctx, vn;
+                if (prop.hidden) return;
 
-                if (type === 'template' && rule.template) {
+                if (type === 'template' && prop.template) {
                     vn = this.renderTemp(ctx);
-
-                    if (parent && is.Undef(rule.native)) {
+                    if (parent && is.Undef(prop.native)) {
                         vn = this.renderAround(vn, ctx);
                         this.setCache(ctx, vn, parent);
                         return vn;
                     }
-                } else if (ctx.input) {
-                    const children = this.renderChildren(ctx);
-                    vn = ctx.render ? ctx.render(children) : this.defaultRender(ctx, children);
                 } else {
-                    vn = this.defaultRender(ctx, this.renderChildren(ctx));
-                    if (parent && is.Undef(rule.native)) {
+                    vn = ctx.parser.render(this.renderChildren(ctx), ctx);
+                    if (!ctx.input && parent && is.Undef(prop.native)) {
                         vn = this.renderAround(vn, ctx);
                         this.setCache(ctx, vn, parent);
                         return vn;
                     }
                 }
                 vn = this.renderAround(vn, ctx);
-                if (rule.native !== true)
-                    vn = form.makeFormItem(ctx, vn);
+                if (prop.native !== true)
+                    vn = this.$manager.makeFormItem(ctx, vn);
                 this.setCache(ctx, vn, parent);
                 return vn;
             }
 
             return this.getCache(ctx);
         },
-        //todo 优化调用
-        mergeProp(ctx, custom) {
+        ctxProp(ctx, custom) {
             const {refName, key} = ctx;
             this.$manager.mergeProp(ctx, custom);
             ctx.parser.mergeProp(ctx, custom);
             const props = [
                 {
                     props: injectProp(ctx, this.$handle.api),
-                    on: ctx.input ? {
-                        'fc.sub-form': (subForm) => this.$handle.addSubForm(ctx, subForm)
-                    } : {},
                     ref: refName,
                     key: `${key}fc`,
                 }
@@ -186,10 +178,11 @@ export default function useRender(Render) {
             if (!custom) {
                 props.push({
                     on: {
-                        ['hook:mounted']: () => {
-                            ctx.el = this.vm.$refs[refName];
-                            ctx.parser.mounted(ctx);
-                            this.$handle.effect(ctx, 'mounted');
+                        'hook:mounted': () => {
+                            this.onMounted(ctx);
+                        },
+                        'fc.sub-form': (subForm) => {
+                            this.$handle.addSubForm(ctx, subForm);
                         }
                     },
                     model: ctx.input ? {
@@ -203,6 +196,11 @@ export default function useRender(Render) {
             }
             mergeProps(props, ctx.prop);
             return ctx.prop;
+        },
+        onMounted(ctx) {
+            ctx.el = this.vm.$refs[ctx.refName];
+            ctx.parser.mounted(ctx);
+            this.$handle.effect(ctx, 'mounted');
         },
         onInput(ctx, value) {
             this.$handle.onInput(ctx, value);
@@ -241,7 +239,7 @@ export default function useRender(Render) {
 
         },
         defaultRender(ctx, children) {
-            const prop = this.mergeProp(ctx);
+            const prop = ctx.prop;
             if (this.vNode[ctx.type])
                 return this.vNode[ctx.type](prop, children);
             if (this.vNode[ctx.originType])

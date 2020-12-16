@@ -10,7 +10,7 @@ const BaseParser = {
     mounted(ctx) {
     },
     render(children, ctx) {
-        ctx.$render.defaultRender(ctx, children);
+        return ctx.$render.defaultRender(ctx, children);
     },
     mergeProp(ctx) {
     }
