@@ -38,11 +38,11 @@ export default {
     validateField(field, call) {
         this.form().validateField(field, call);
     },
-    resetField(parser) {
-        this.vm.$refs[parser.formItemRefName].resetField();
+    resetField(ctx) {
+        this.vm.$refs[ctx.wrapRef].resetField();
     },
-    clearValidateState(parser) {
-        const fItem = this.vm.$refs[parser.formItemRefName];
+    clearValidateState(ctx) {
+        const fItem = this.vm.$refs[ctx.wrapRef];
         if (fItem) {
             fItem.validateMessage = '';
             fItem.validateState = '';
@@ -59,15 +59,15 @@ export default {
         tidy(prop, 'info');
         return prop;
     },
-    mergeProp(parser) {
-        let props = parser.prop.props;
-        parser.prop = mergeProps([{
+    mergeProp(ctx) {
+        let props = ctx.prop.props;
+        ctx.prop = mergeProps([{
             attrs: Object.keys(props).reduce((initial, val) => {
                 if (isAttr(val, props[val]))
                     initial[val] = props[val];
                 return initial;
             }, {}),
-        }, parser.prop], {
+        }, ctx.prop], {
             info: {
                 trigger: 'hover',
                 placement: 'top-start',
@@ -77,7 +77,7 @@ export default {
             title: {show: false},
             col: {span: 24}
         }, {normal: ['title', 'info', 'col']});
-        props = parser.prop.props;
+        props = ctx.prop.props;
         if (!props.size && this.options.form.size) {
             props.size = this.options.form.size;
         }
@@ -114,9 +114,9 @@ export default {
         }
         return this.$render.renderRule(this.rule, this.options.row.show ? [this.makeRow(children)] : children);
     },
-    makeFormItem(parser, children) {
-        const rule = parser.prop;
-        const uni = `${this.key}${parser.key}`;
+    makeWrap(ctx, children) {
+        const rule = ctx.prop;
+        const uni = `${this.key}${ctx.key}`;
         const col = rule.col;
         const labelWidth = (!col.labelWidth && !rule.title.show) ? 0 : col.labelWidth, {inline, col: _col} = this.rule.props;
         const item = this.$render.renderRule(mergeProps([{
@@ -124,15 +124,15 @@ export default {
                 title: rule.title.title,
                 labelWidth: labelWidth === void 0 ? labelWidth : toString(labelWidth),
             }
-        }, rule.formItem || {}, {
+        }, rule.wrap || {}, {
             type: 'formItem',
             props: {
-                prop: parser.field,
+                prop: ctx.field,
                 rules: rule.validate,
             },
             class: rule.className,
             key: `${uni}fi`,
-            ref: parser.formItemRefName
+            ref: ctx.wrapRef
         }]), [children, this.makeInfo(rule, uni)]);
         return (inline === true || _col === false) ? item : this.makeCol(rule, uni, [item]);
     },

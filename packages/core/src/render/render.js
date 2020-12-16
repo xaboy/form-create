@@ -121,7 +121,7 @@ export default function useRender(Render) {
 
             if (is.Undef(vn.data)) vn.data = {};
             vn.key = key;
-            vn.data.ref = ctx.refName;
+            vn.data.ref = ctx.ref;
             vn.data.key = key;
             return vn;
         },
@@ -156,7 +156,7 @@ export default function useRender(Render) {
                 }
                 vn = this.renderAround(vn, ctx);
                 if (prop.native !== true)
-                    vn = this.$manager.makeFormItem(ctx, vn);
+                    vn = this.$manager.makeWrap(ctx, vn);
                 this.setCache(ctx, vn, parent);
                 return vn;
             }
@@ -164,13 +164,13 @@ export default function useRender(Render) {
             return this.getCache(ctx);
         },
         ctxProp(ctx, custom) {
-            const {refName, key} = ctx;
+            const {ref, key} = ctx;
             this.$manager.mergeProp(ctx, custom);
             ctx.parser.mergeProp(ctx, custom);
             const props = [
                 {
                     props: injectProp(ctx, this.$handle.api),
-                    ref: refName,
+                    ref: ref,
                     key: `${key}fc`,
                 }
             ]
@@ -198,7 +198,7 @@ export default function useRender(Render) {
             return ctx.prop;
         },
         onMounted(ctx) {
-            ctx.el = this.vm.$refs[ctx.refName];
+            ctx.el = this.vm.$refs[ctx.ref];
             ctx.parser.mounted(ctx);
             this.$handle.effect(ctx, 'mounted');
         },

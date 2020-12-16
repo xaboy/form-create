@@ -16,8 +16,8 @@ export default function RuleContext(handle, rule) {
 
     extend(this, {
         id,
-        refName: id,
-        formItemRefName: id + 'fi',
+        ref: id,
+        wrapRef: id + 'fi',
         rule,
         origin: rule.__origin__ || rule,
         name: rule.name,

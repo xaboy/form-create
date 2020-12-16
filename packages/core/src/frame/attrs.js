@@ -5,7 +5,7 @@ export const keyAttrs = ['type', 'slot', 'emitPrefix', 'value', 'name', 'title',
 
 export const arrayAttrs = ['validate', 'children', 'control', 'className'];
 
-export const normalAttrs = ['col', 'effect', 'formItem'];
+export const normalAttrs = ['col', 'effect', 'wrap'];
 
 export const attrs = [...keyAttrs, ...normalMerge, ...toArrayMerge, ...functionalMerge, ...arrayAttrs, ...normalAttrs];
 
