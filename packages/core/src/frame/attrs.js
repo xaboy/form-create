@@ -3,10 +3,9 @@ import {functionalMerge, normalMerge, toArrayMerge} from '@form-create/utils/lib
 
 export const keyAttrs = ['type', 'slot', 'emitPrefix', 'value', 'name', 'title', 'native', 'info', 'hidden', 'inject', 'options', 'emit', 'link', 'prefix', 'suffix', 'update'];
 
-//todo 移除 className
 export const arrayAttrs = ['validate', 'children', 'control', 'className'];
 
-export const normalAttrs = ['col', 'effect'];
+export const normalAttrs = ['col', 'effect', 'formItem'];
 
 export const attrs = [...keyAttrs, ...normalMerge, ...toArrayMerge, ...functionalMerge, ...arrayAttrs, ...normalAttrs];
 

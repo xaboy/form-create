@@ -42,7 +42,6 @@ export default function Api(h) {
         return btn;
     }
 
-    //todo 优化 css
     const api = {
         get config() {
             return h.options
@@ -209,7 +208,6 @@ export default function Api(h) {
                 h.refresh();
             }
         },
-        //todo 优化
         refresh: (clear) => {
             h.$render.clearCacheAll();
             clear && h.$manager.updateKey();

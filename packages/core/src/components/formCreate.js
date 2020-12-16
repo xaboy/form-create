@@ -4,6 +4,9 @@ import Vue from 'vue';
 
 const NAME = 'FormCreate';
 
+//todo 优化 this 绑定
+//TODO 优化 slot
+//todo 拆分 parser
 export default function $FormCreate(FormCreate) {
     return {
         name: NAME,
@@ -22,7 +25,8 @@ export default function $FormCreate(FormCreate) {
                     return {};
                 }
             },
-            value: Object
+            value: Object,
+            api: Object,
         },
         data() {
             return {

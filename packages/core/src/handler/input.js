@@ -75,7 +75,6 @@ export default function useInput(Handler) {
         isQuote(parser, value) {
             return (is.Object(value) || Array.isArray(value)) && value === parser.rule.value;
         },
-        //todo control 添加到内部可能有问题
         refreshUpdate(parser, val) {
             const fn = parser.rule.update;
             if (is.Function(fn)) {

@@ -194,8 +194,8 @@ export default function useLoader(Handler) {
                         // this.cycleLoad = true;
                         if (prepend) {
                             api.prepend(ruleCon, prepend, child)
-                        } else if (append) {
-                            api.append(ruleCon, append, child)
+                        } else if (append || child) {
+                            api.append(ruleCon, append || parser.id, child)
                         } else {
                             parser.root.splice(parser.root.indexOf(parser.origin) + 1, 0, ruleCon);
                         }
