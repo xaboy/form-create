@@ -37,23 +37,26 @@ export default {
             this.updateValue()
         },
         updateValue() {
-            const type = (this.type).toLocaleLowerCase();
+            const type = this.type.toLocaleLowerCase();
             let value;
 
-            if (type === 'selected')
+            if (type === 'selected') {
                 value = this.$refs.tree.getCurrentKey();
-            else
+            } else {
                 value = this.$refs.tree.getCheckedKeys();
+            }
 
             this.$emit('input', value);
         },
         setValue() {
-            const type = (this.type).toLocaleLowerCase();
+            const type = this.type.toLocaleLowerCase();
 
-            if (type === 'selected')
+            if (type === 'selected') {
                 this.$refs.tree.setCurrentKey(this.value);
-            else
+            }
+            else {
                 this.$refs.tree.setCheckedKeys(toArray(this.value));
+            }
         }
     },
     render() {

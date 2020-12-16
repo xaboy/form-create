@@ -10,6 +10,8 @@ export default {
     },
     mergeProp() {
         const props = this.prop.props;
-        if (!props.valueFormat) props.valueFormat = 'HH:mm:ss';
+        if (!props.valueFormat) {
+            props.valueFormat = 'HH:mm:ss';
+        }
     }
 }

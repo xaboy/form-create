@@ -2,6 +2,7 @@ import getConfig from './config';
 import mergeProps from '@form-create/utils/lib/mergeprops';
 import is, {hasProperty} from '@form-create/utils/lib/type';
 import toString from '@form-create/utils/lib/tostring';
+import extend from '@form-create/utils/lib/extend';
 
 function isTooltip(info) {
     return info.type === 'tooltip';
@@ -77,37 +78,40 @@ export default {
             col: {span: 24}
         }, {normal: ['title', 'info', 'col']});
         props = parser.prop.props;
-        if (!props.size && this.options.form.size)
+        if (!props.size && this.options.form.size) {
             props.size = this.options.form.size;
+        }
     },
     getDefaultOptions() {
         return getConfig();
     },
-    beforeRender() {
+    update() {
         const form = this.options.form;
-        this.rule = mergeProps([{
-            props: form,
+        const h = this.$handle;
+        this.rule = {
+            props: {...form, model: h.formData, rules: h.validate},
             nativeOn: {
                 submit: (e) => {
                     e.preventDefault();
                 }
             },
-            class: [form.className, form.class],
-            style: form.style
-        }, {
-            props: {
-                model: this.$handle.formData,
-                rules: this.$handle.validate,
-            },
-            key: this.key,
-            ref: this.ref,
-            class: 'form-create',
+            class: [form.className, form.class, 'form-create'],
+            style: form.style,
             type: 'form',
-        }])
+        };
+    },
+    beforeRender() {
+        const {key, ref, $handle} = this;
+        extend(this.rule, {key, ref});
+        extend(this.rule.props, {
+            model: $handle.formData,
+            rules: $handle.validate,
+        });
     },
     render(children) {
-        if (children.length)
+        if (children.length) {
             children.push(this.makeFormBtn());
+        }
         return this.$render.renderRule(this.rule, this.options.row.show ? [this.makeRow(children)] : children);
     },
     makeFormItem(parser, children) {
@@ -191,7 +195,9 @@ export default {
         if (this.options.resetBtn.show) {
             vn.push(this.makeResetBtn())
         }
-        if (!vn.length) return;
+        if (!vn.length) {
+            return;
+        }
         const item = this.$render.renderRule({
             type: 'formItem',
             key: `${this.key}fb`

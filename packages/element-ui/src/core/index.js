@@ -23,7 +23,7 @@ function install(FormCreate) {
 }
 
 export default function elmFormCreate() {
-    return  FormCreateFactory({
+    return FormCreateFactory({
         ui: `${process.env.UI}`,
         version: `${process.env.VERSION}`,
         manager,

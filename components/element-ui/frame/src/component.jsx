@@ -160,7 +160,9 @@ export default {
         },
 
         showModel() {
-            if (this.disabled || false === this.onOpen()) return;
+            if (this.disabled || false === this.onOpen()) {
+                return;
+            }
             this.frameVisible = true;
         },
 
@@ -179,8 +181,9 @@ export default {
         },
 
         makeGroup(children) {
-            if (!this.maxLength || this.fileList.length < this.maxLength)
+            if (!this.maxLength || this.fileList.length < this.maxLength) {
                 children.push(this.makeBtn());
+            }
             return <div key={this.key('group')}>{...children}</div>
         },
 
@@ -189,18 +192,20 @@ export default {
         },
         valid(f) {
             const field = this.formCreateField || this.field;
-            if (field && f !== field)
+            if (field && f !== field) {
                 throw new Error('[frame]无效的字段值');
+            }
         },
 
         makeIcons(val, index) {
             if (this.handleIcon !== false || this.allowRemove === true) {
                 const icons = [];
-                if ((this.type !== 'file' && this.handleIcon !== false) || (this.type === 'file' && this.handleIcon))
+                if ((this.type !== 'file' && this.handleIcon !== false) || (this.type === 'file' && this.handleIcon)) {
                     icons.push(this.makeHandleIcon(val, index));
-                if (this.allowRemove)
+                }
+                if (this.allowRemove) {
                     icons.push(this.makeRemoveIcon(val, index));
-
+                }
                 return <div class='fc-upload-cover' key={this.key('uc')}>{icons}</div>
             }
         },
@@ -231,11 +236,15 @@ export default {
             </div>
         },
         handleClick(src) {
-            if (this.disabled) return;
+            if (this.disabled) {
+                return;
+            }
             return this.onHandle(src);
         },
         handleRemove(src) {
-            if (this.disabled) return;
+            if (this.disabled) {
+                return;
+            }
             if (false !== this.onBeforeRemove(src)) {
                 this.fileList.splice(this.fileList.indexOf(src), 1);
                 this.onRemove(src);
@@ -275,7 +284,9 @@ export default {
         makeFooter() {
             const {okBtnText, closeBtnText, closeBtn, okBtn, footer} = this.$props;
 
-            if (!footer) return;
+            if (!footer) {
+                return;
+            }
             return <div slot="footer">
                 {closeBtn ? <ElButton
                     on-click={() => (this.onCancel() !== false && this.closeModel(true))}>{closeBtnText}</ElButton> : null}
@@ -288,12 +299,13 @@ export default {
         const type = this.type;
 
         let node;
-        if (type === 'input')
+        if (type === 'input') {
             node = this.makeInput();
-        else if (type === 'image')
+        } else if (type === 'image') {
             node = this.makeImages();
-        else
+        } else {
             node = this.makeFiles();
+        }
 
         const {width = '30%', height, src, title, modalTitle} = this.$props;
         this.$nextTick(() => {

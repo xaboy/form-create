@@ -24,6 +24,8 @@ export default {
     }()),
     mergeProp() {
         const props = this.prop.props;
-        if (!props.valueFormat) props.valueFormat = DEFAULT_FORMATS[props.type] || DEFAULT_FORMATS['date'];
+        if (!props.valueFormat) {
+            props.valueFormat = DEFAULT_FORMATS[props.type] || DEFAULT_FORMATS['date'];
+        }
     }
 }

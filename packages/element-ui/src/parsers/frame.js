@@ -23,9 +23,5 @@ export default {
         maker.frameFile = maker.frameFiles;
         maker.frameImage = maker.frameImages;
         return maker;
-    }()),
-    mergeProp() {
-        //todo 优化
-        this.prop.props.field = this.field;
-    }
+    }())
 }

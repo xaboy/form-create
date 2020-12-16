@@ -30,4 +30,3 @@ export default {
     auto: 'elAutocomplete',
     group: 'fcGroup',
 }
-//todo 不走别名,直接生成

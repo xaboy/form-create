@@ -1,4 +1,3 @@
-import {$set} from '@form-create/utils/lib/modify';
 import {creatorTypeFactory} from '@form-create/core';
 
 const name = 'input';
@@ -15,7 +14,8 @@ export default {
     }()),
     mergeProp() {
         let {props} = this.prop;
-        if (props && props.autosize && props.autosize.minRows)
-            $set(props, 'rows', props.autosize.minRows || 2);
+        if (props && props.autosize && props.autosize.minRows) {
+            props.rows = props.autosize.minRows || 2;
+        }
     }
 }

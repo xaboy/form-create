@@ -45,8 +45,12 @@ export default {
     },
     computed: {
         formRule() {
-            if (this.rule) return [this.rule];
-            else if (this.rules) return this.rules;
+            if (this.rule) {
+                return [this.rule];
+            }
+            if (this.rules) {
+                return this.rules;
+            }
             return [];
         }
     },
@@ -88,25 +92,32 @@ export default {
         cache(k, val) {
             this.cacheValue[k] = JSON.stringify(val);
         },
+        input(value) {
+            this.$emit('input', value);
+            this.$emit('change', value);
+        },
         formData(key, formData) {
             const cacheRule = this.cacheRule;
             const keys = Object.keys(cacheRule);
-            if (keys.filter(k => cacheRule[k].$f).length !== keys.length) return;
+            if (keys.filter(k => cacheRule[k].$f).length !== keys.length) {
+                return;
+            }
             const value = keys.map(k => {
                 const data = key === k ? formData : {...this.cacheRule[k].$f.form};
                 const value = this.field ? data[this.field] || null : data;
                 this.cache(k, value);
                 return value;
             });
-            this.$emit('input', value);
-            this.$emit('change', value);
+            this.input(value);
         },
         setValue(key, value) {
             const field = this.field, $f = this.cacheRule[key].$f;
             if (field) {
                 value = {[field]: this._value(value)};
             }
-            if (this.cacheValue[key] === JSON.stringify(field ? value[field] : value)) return;
+            if (this.cacheValue[key] === JSON.stringify(field ? value[field] : value)) {
+                return;
+            }
             this.cache(key, value);
             $f.coverValue(value || {});
         },
@@ -118,8 +129,9 @@ export default {
                 formData: this.field ? ({[this.field]: this._value(this.value[i])}) : (this.value[i] || {})
             };
             this.$set(this.cacheRule, ++this.len, {rule, options});
-            if (emit)
+            if (emit) {
                 this.$nextTick(() => this.$emit('add', rule, Object.keys(this.cacheRule).length - 1));
+            }
         },
         add$f(i, key, $f) {
             this.cacheRule[key].$f = $f;
@@ -133,8 +145,9 @@ export default {
             const index = Object.keys(this.cacheRule).indexOf(key);
             this.$delete(this.cacheRule, key);
             this.$delete(this.cacheValue, key);
-            if (emit)
+            if (emit) {
                 this.$nextTick(() => this.$emit('remove', index));
+            }
         },
         copyRule() {
             return this.$formCreate.copyRules(this.formRule);
@@ -143,11 +156,13 @@ export default {
             (!this.disabled) && this.addRule(i, true);
         },
         del(index, key) {
-            if (this.disabled) return;
+            if (this.disabled) {
+                return;
+            }
             this.removeRule(key, true);
             this.subForm();
             this.value.splice(index, 1);
-            this.$emit('input', this.value);
+            this.input(this.value);
         },
         addIcon(key) {
             return <i key={`a${key}`} class="el-icon-circle-plus-outline"
@@ -160,17 +175,20 @@ export default {
                 on-click={() => this.del(index, key)}/>;
         },
         makeIcon(total, index, key) {
-            if (this.$scopedSlots.button) return this.$scopedSlots.button({
-                total,
-                index,
-                vm: this,
-                key,
-                del: () => this.del(index, key),
-                add: this.add
-            });
+            if (this.$scopedSlots.button) {
+                return this.$scopedSlots.button({
+                    total,
+                    index,
+                    vm: this,
+                    key,
+                    del: () => this.del(index, key),
+                    add: this.add
+                });
+            }
             if (index === 0) {
                 return [(this.max !== 0 && total >= this.max) ? null : this.addIcon(key), (this.min === 0 || total > this.min) ? this.delIcon(index, key) : null];
-            } else if (index >= this.min) {
+            }
+            if (index >= this.min) {
                 return this.delIcon(index, key);
             }
         },

@@ -54,8 +54,9 @@ export default {
         }
     },
     created() {
-        if (this.formCreateRule.props.showFileList === undefined)
+        if (this.formCreateRule.props.showFileList === undefined) {
             this.formCreateRule.props.showFileList = false;
+        }
         this.formCreateRule.props.fileList = toArray(this.value).map(parseFile);
     },
     watch: {
@@ -68,8 +69,9 @@ export default {
             }
         },
         limit(n, o) {
-            if (o === 1 || n === 1)
+            if (o === 1 || n === 1) {
                 this.update();
+            }
         }
     },
     methods: {
@@ -80,11 +82,15 @@ export default {
             return this.formCreateRule.props.disabled === true;
         },
         onRemove(file) {
-            if (this.isDisabled()) return;
+            if (this.isDisabled()) {
+                return;
+            }
             this.$refs.upload.handleRemove(file);
         },
         handleClick(file) {
-            if (this.isDisabled()) return;
+            if (this.isDisabled()) {
+                return;
+            }
             this.onHandle(file);
         },
         makeItem(file, index) {
@@ -107,10 +113,12 @@ export default {
         makeIcons(file, index) {
             const icons = [];
             if (this.allowRemove || this.handleIcon !== false) {
-                if ((this.uploadType !== 'file' && this.handleIcon !== false) || (this.uploadType === 'file' && this.handleIcon))
+                if ((this.uploadType !== 'file' && this.handleIcon !== false) || (this.uploadType === 'file' && this.handleIcon)) {
                     icons.push(this.makeHandleIcon(file, index));
-                if (this.allowRemove)
+                }
+                if (this.allowRemove) {
                     icons.push(this.makeRemoveIcon(file, index));
+                }
 
                 return <div class='fc-upload-cover'>{icons}</div>;
             }
@@ -145,8 +153,9 @@ export default {
     },
     render() {
         if (this.$refs.upload) {
-            if (this.formCreateRule.props.showFileList === undefined)
+            if (this.formCreateRule.props.showFileList === undefined) {
                 this.formCreateRule.props.showFileList = this.$refs.upload.showFileList;
+            }
             this.formCreateRule.props.fileList = this.$refs.upload.fileList;
         }
         return (
