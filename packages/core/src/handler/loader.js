@@ -121,13 +121,12 @@ export default function useLoader(Handler) {
                             ctx = null;
                         }
                     }
-                    if (ctx.originType !== ctx.rule.type) {
-                        ctx.updateType();
-                        this.bindParser(ctx);
-                    }
                 }
                 if (!ctx) {
                     ctx = new RuleContext(this, this.parseRule(_rule));
+                    this.bindParser(ctx);
+                } else if (ctx.originType !== ctx.rule.type) {
+                    ctx.updateType();
                     this.bindParser(ctx);
                 }
                 this.appendValue(ctx.rule);

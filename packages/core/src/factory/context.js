@@ -27,7 +27,6 @@ export default function RuleContext(handle, rule) {
         root: [],
         ctrlRule: [],
         parent: null,
-        //todo 待优化
         cacheConfig: null,
         prop: {},
         computed: {},
@@ -115,7 +114,7 @@ extend(RuleContext.prototype, {
             $handle: handle,
             $render: handle.$render,
             vm: handle.vm,
-            trueType: handle.getType(this.type),
+            trueType: handle.getType(this.originType),
             vNode: handle.$render.vNode,
             updated: false,
         });

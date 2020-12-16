@@ -21,7 +21,7 @@ export default function useContext(Handler) {
         },
         getParser(ctx) {
             const list = this.fc.parsers;
-            return list[ctx.originType] || list[toCase(ctx.type)] || list[this.getType(ctx.originType)] || BaseParser;
+            return list[ctx.originType] || list[toCase(ctx.type)] || list[ctx.trueType] || BaseParser;
         },
         bindParser(ctx) {
             ctx.setParser(this.getParser(ctx));
