@@ -7,8 +7,8 @@ export default {
     maker: {
         sliderRange: creatorTypeFactory(name, true, 'range')
     },
-    toFormValue(value) {
-        let rule = this.rule, isArr = Array.isArray(value), props = rule.props, min = props.min || 0,
+    toFormValue(value, ctx) {
+        let rule = ctx.rule, isArr = Array.isArray(value), props = rule.props, min = props.min || 0,
             parseValue;
         if (props.range === true) {
             parseValue = isArr ? value : [min, (parseFloat(value) || min)];

@@ -12,8 +12,8 @@ export default {
         maker.idate = creatorTypeFactory(name, 'date');
         return maker;
     }()),
-    mergeProp() {
-        let {props} = this.prop;
+    mergeProp(ctx) {
+        let {props} = ctx.prop;
         if (props && props.autosize && props.autosize.minRows) {
             props.rows = props.autosize.minRows || 2;
         }

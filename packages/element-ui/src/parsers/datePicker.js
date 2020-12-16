@@ -22,8 +22,8 @@ export default {
             return initial
         }, {});
     }()),
-    mergeProp() {
-        const props = this.prop.props;
+    mergeProp(ctx) {
+        const props = ctx.prop.props;
         if (!props.valueFormat) {
             props.valueFormat = DEFAULT_FORMATS[props.type] || DEFAULT_FORMATS['date'];
         }

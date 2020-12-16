@@ -5,8 +5,8 @@ const NAME = 'fcTree';
 export default {
     name: NAME,
     formCreateParser: {
-        mergeProp() {
-            const props = this.prop.props;
+        mergeProp(ctx) {
+            const props = ctx.prop.props;
             if (!props.nodeKey) props.nodeKey = 'id';
             if (!props.props) props.props = {
                 label: 'title'
@@ -53,8 +53,7 @@ export default {
 
             if (type === 'selected') {
                 this.$refs.tree.setCurrentKey(this.value);
-            }
-            else {
+            } else {
                 this.$refs.tree.setCheckedKeys(toArray(this.value));
             }
         }
