@@ -91,7 +91,7 @@ export function funcProxy(that, proxy) {
     }, {}))
 }
 
-export function byParser(rule) {
+export function byCtx(rule) {
     return rule.__fc__ || (rule.__origin__ ? rule.__origin__.__fc__ : null)
 }
 

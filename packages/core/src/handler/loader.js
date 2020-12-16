@@ -1,10 +1,11 @@
 import extend from '@form-create/utils/lib/extend';
 import debounce from '@form-create/utils/lib/debounce';
-import {byParser, copyRule, enumerable, getRule, invoke} from '../frame/util';
+import {byCtx, copyRule, enumerable, getRule, invoke} from '../frame/util';
 import is, {hasProperty} from '@form-create/utils/lib/type';
 import {err} from '@form-create/utils/lib/console';
 import {baseRule} from '../factory/creator';
 import {$set} from '@form-create/utils/lib';
+import RuleContext from '../factory/context';
 
 export default function useLoader(Handler) {
     extend(Handler.prototype, {
@@ -76,9 +77,9 @@ export default function useLoader(Handler) {
                 return index > -1 ? index : preIndex(i - 1);
             }
 
-            const loadChildren = (children, parser) => {
+            const loadChildren = (children, parent) => {
                 if (is.trueArray(children)) {
-                    this._loadRule(children, parser);
+                    this._loadRule(children, parent);
                 }
             };
 
@@ -89,7 +90,7 @@ export default function useLoader(Handler) {
                 if (!is.Object(_rule) || !getRule(_rule).type)
                     return err('未定义生成规则的 type 字段', _rule);
 
-                if (_rule.__fc__ && _rule.__fc__.root === rules && this.parsers[_rule.__fc__.id]) {
+                if (_rule.__fc__ && _rule.__fc__.root === rules && this.ctxs[_rule.__fc__.id]) {
                     loadChildren(_rule.__fc__.rule.children, _rule.__fc__);
                     return _rule.__fc__;
                 }
@@ -101,78 +102,81 @@ export default function useLoader(Handler) {
                     return err(`${rule.field} 字段已存在`, _rule);
                 }
 
-                let parser;
+                let ctx;
                 if (_rule.__fc__) {
-                    parser = _rule.__fc__;
-                    if (parser.deleted) {
-                        if (!parser._check(this)) {
-                            if (parser.rule.__ctrl) {
+                    ctx = _rule.__fc__;
+                    if (ctx.deleted) {
+                        if (!ctx.check(this)) {
+                            if (ctx.rule.__ctrl) {
                                 return;
                             }
-                            parser.update(this);
+                            ctx.update(this);
                         }
                     } else {
-                        if (!parser._check(this) || this.parsers[parser.id]) {
-                            if (parser.rule.__ctrl) {
+                        if (!ctx.check(this) || this.ctxs[ctx.id]) {
+                            if (ctx.rule.__ctrl) {
                                 return;
                             }
                             rules[index] = _rule = _rule._clone ? _rule._clone() : copyRule(_rule);
-                            parser = this.createParser(this.parseRule(_rule));
+                            ctx = null;
                         }
                     }
-                    if (parser.originType !== parser.rule.type) {
-                        parser = this.transformParser(parser.rule, parser);
+                    if (ctx.originType !== ctx.rule.type) {
+                        ctx.updateType();
+                        this.bindParser(ctx);
                     }
-                } else {
-                    parser = this.createParser(this.parseRule(_rule));
                 }
-                this.appendValue(parser.rule);
-                [false, true].forEach(b => this.parseEmit(parser, b));
-                parser.parent = parent || null;
-                parser.root = rules;
-                this.setParser(parser);
+                if (!ctx) {
+                    ctx = new RuleContext(this, this.parseRule(_rule));
+                    this.bindParser(ctx);
+                }
+                this.appendValue(ctx.rule);
+                [false, true].forEach(b => this.parseEmit(ctx, b));
+                ctx.parent = parent || null;
+                ctx.root = rules;
+                this.setCtx(ctx);
 
-                loadChildren(parser.rule.children, parser);
+                loadChildren(ctx.rule.children, ctx);
 
                 if (!parent) {
                     const _preIndex = preIndex(index);
                     if (_preIndex > -1) {
-                        this.sortList.splice(_preIndex + 1, 0, parser.id);
+                        this.sortList.splice(_preIndex + 1, 0, ctx.id);
                     } else {
-                        this.sortList.push(parser.id);
+                        this.sortList.push(ctx.id);
                     }
                 }
 
-                const r = parser.rule;
-                if (!parser.updated) {
-                    parser.updated = true;
+                const r = ctx.rule;
+                if (!ctx.updated) {
+                    ctx.updated = true;
                     if (is.Function(r.update)) {
                         this.bus.$once('load-end', () => {
-                            this.refreshUpdate(parser, r.value);
+                            this.refreshUpdate(ctx, r.value);
                         });
                     }
                 }
 
-                if (parser.input)
-                    Object.defineProperty(r, 'value', this.valueHandle(parser));
-                this.effect(parser, 'loaded');
-                if (this.refreshControl(parser)) this.cycleLoad = true;
-                return parser;
+                if (ctx.input)
+                    Object.defineProperty(r, 'value', this.valueHandle(ctx));
+                this.effect(ctx, 'loaded');
+                if (this.refreshControl(ctx)) this.cycleLoad = true;
+                return ctx;
             });
         },
-        refreshControl(parser) {
-            return parser.input && parser.rule.control && this.useCtrl(parser);
+        refreshControl(ctx) {
+            return ctx.input && ctx.rule.control && this.useCtrl(ctx);
         },
-        useCtrl(parser) {
-            const controls = getControl(parser), validate = [], api = this.api;
+        useCtrl(ctx) {
+            const controls = getCtrl(ctx), validate = [], api = this.api;
             if (!controls.length) return false;
 
             for (let i = 0; i < controls.length; i++) {
                 const control = controls[i], handleFn = control.handle || (val => val === control.value);
                 const data = {
                     ...control,
-                    valid: invoke(() => handleFn(parser.rule.value, api)),
-                    ctrl: findControl(parser, control.rule),
+                    valid: invoke(() => handleFn(ctx.rule.value, api)),
+                    ctrl: findCtrl(ctx, control.rule),
                 };
                 if ((data.valid && data.ctrl) || (!data.valid && !data.ctrl)) continue;
                 validate.push(data);
@@ -189,27 +193,25 @@ export default function useLoader(Handler) {
                         __ctrl: true,
                         children: rule,
                     }
-                    parser.ctrlRule.push(ruleCon);
+                    ctx.ctrlRule.push(ruleCon);
                     this.bus.$once('load-start', () => {
                         // this.cycleLoad = true;
                         if (prepend) {
                             api.prepend(ruleCon, prepend, child)
                         } else if (append || child) {
-                            api.append(ruleCon, append || parser.id, child)
+                            api.append(ruleCon, append || ctx.id, child)
                         } else {
-                            parser.root.splice(parser.root.indexOf(parser.origin) + 1, 0, ruleCon);
+                            ctx.root.splice(ctx.root.indexOf(ctx.origin) + 1, 0, ruleCon);
                         }
                     });
                 } else {
-                    parser.ctrlRule.splice(parser.ctrlRule.indexOf(ctrl), 1);
-                    const ctrlParser = byParser(ctrl);
-                    if (ctrlParser) {
-                        ctrlParser._remove();
-                    }
+                    ctx.ctrlRule.splice(ctx.ctrlRule.indexOf(ctrl), 1);
+                    const ctrlCtx = byCtx(ctrl);
+                    ctrlCtx && ctrlCtx.rm();
                 }
             });
-            this.vm.$emit('control', parser.origin, this.api);
-            this.effect(parser, 'control');
+            this.vm.$emit('control', ctx.origin, this.api);
+            this.effect(ctx, 'control');
             return flag;
         },
         reloadRule: debounce(function (rules) {
@@ -219,15 +221,15 @@ export default function useLoader(Handler) {
             console.warn('%c reload', 'color:red');
             if (!rules) rules = this.rules;
 
-            const parsers = {...this.parsers};
+            const ctxs = {...this.ctxs};
 
             this.clearNextTick();
             this.$render.clearOrgChildren();
             this.initData(rules);
 
             this.bus.$once('load-end', () => {
-                Object.keys(parsers).filter(id => this.parsers[id] === undefined)
-                    .forEach(id => this.rmParser(parsers[id], true));
+                Object.keys(ctxs).filter(id => this.ctxs[id] === undefined)
+                    .forEach(id => this.rmCtx(ctxs[id], true));
                 this.$render.clearCacheAll();
             });
 
@@ -258,15 +260,15 @@ function fullRule(rule) {
     return rule;
 }
 
-function getControl(parser) {
-    const control = parser.rule.control || [];
+function getCtrl(ctx) {
+    const control = ctx.rule.control || [];
     if (is.Object(control)) return [control];
     else return control;
 }
 
-function findControl(parser, rule) {
-    for (let i = 0; i < parser.ctrlRule.length; i++) {
-        const ctrl = parser.ctrlRule[i];
+function findCtrl(ctx, rule) {
+    for (let i = 0; i < ctx.ctrlRule.length; i++) {
+        const ctrl = ctx.ctrlRule[i];
         if (ctrl.children === rule)
             return ctrl;
     }

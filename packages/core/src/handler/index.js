@@ -8,9 +8,9 @@ import useRender from './render';
 import useLoader from './loader';
 import useInput from './input';
 import useHelper from './helper';
-import useParser from './parser';
+import useContext from './context';
 import useLifecycle from './lifecycle';
-import useRegister from './register';
+import useEffect from './effect';
 
 
 export default function Handler(fc) {
@@ -55,7 +55,7 @@ extend(Handler.prototype, {
     initData(rules) {
         extend(this, {
             fieldList: {},
-            parsers: {},
+            ctxs: {},
             customData: {},
             sortList: [],
             rules,
@@ -77,6 +77,6 @@ usePage(Handler);
 useRender(Handler);
 useLoader(Handler);
 useInput(Handler);
-useParser(Handler);
+useContext(Handler);
 useLifecycle(Handler);
-useRegister(Handler);
+useEffect(Handler);

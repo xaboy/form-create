@@ -1,4 +1,4 @@
-import {byParser, invoke, mergeRule, toJson} from './util';
+import {byCtx, invoke, mergeRule, toJson} from './util';
 import {$set} from '@form-create/utils/lib/modify';
 import {deepCopy} from '@form-create/utils/lib/deepextend';
 import is, {hasProperty} from '@form-create/utils/lib/type';
@@ -21,16 +21,16 @@ export default function Api(h) {
 
     function props(fields, key, val) {
         tidyFields(fields).forEach(field => {
-            const parser = h.getParser(field);
-            if (!parser) return;
-            $set(parser.rule, key, val);
-            h.$render.clearCache(parser);
+            const ctx = h.getCtx(field);
+            if (!ctx) return;
+            $set(ctx.rule, key, val);
+            h.$render.clearCache(ctx);
         })
     }
 
-    function byRules(parsers, origin) {
-        return Object.keys(parsers).reduce((initial, key) => {
-            initial[key] = origin ? parsers[key].origin : parsers[key].rule;
+    function byRules(ctxs, origin) {
+        return Object.keys(ctxs).reduce((initial, key) => {
+            initial[key] = origin ? ctxs[key].origin : ctxs[key].rule;
             return initial;
         }, {});
     }
@@ -57,22 +57,22 @@ export default function Api(h) {
         },
         formData(fields) {
             return tidyFields(fields).reduce((initial, id) => {
-                const parser = h.fieldList[id];
-                if (!parser) return initial;
-                initial[parser.field] = copy(parser.rule.value);
+                const ctx = h.fieldList[id];
+                if (!ctx) return initial;
+                initial[ctx.field] = copy(ctx.rule.value);
                 return initial;
             }, {});
         },
         getValue(field) {
-            const parser = h.fieldList[field];
-            if (!parser) return;
-            return copy(parser.rule.value);
+            const ctx = h.fieldList[field];
+            if (!ctx) return;
+            return copy(ctx.rule.value);
         },
         coverValue(formData) {
             Object.keys(h.fieldList).forEach(key => {
-                const parser = h.fieldList[key];
-                if (!parser) return h.appendData[key] = formData[key];
-                parser.rule.value = hasProperty(formData, key) ? formData[key] : undefined;
+                const ctx = h.fieldList[key];
+                if (!ctx) return h.appendData[key] = formData[key];
+                ctx.rule.value = hasProperty(formData, key) ? formData[key] : undefined;
             });
         },
         setValue(field) {
@@ -80,22 +80,22 @@ export default function Api(h) {
             if (arguments.length >= 2)
                 formData = {[field]: arguments[1]};
             Object.keys(formData).forEach(key => {
-                const parser = h.fieldList[key];
-                if (!parser) return h.appendData[key] = formData[key];
-                parser.rule.value = formData[key];
+                const ctx = h.fieldList[key];
+                if (!ctx) return h.appendData[key] = formData[key];
+                ctx.rule.value = formData[key];
             });
         },
         removeField(field) {
-            let parser = h.getParser(field);
-            if (!parser) return;
-            parser._remove();
-            return parser.origin;
+            let ctx = h.getCtx(field);
+            if (!ctx) return;
+            ctx.rm();
+            return ctx.origin;
         },
         removeRule(rule) {
-            const parser = rule && byParser(rule);
-            if (!parser) return;
-            parser._remove();
-            return parser.origin;
+            const ctx = rule && byCtx(rule);
+            if (!ctx) return;
+            ctx.rm();
+            return ctx.origin;
         },
         destroy: () => {
             h.vm.$el.parentNode && h.vm.$el.parentNode.removeChild(h.vm.$el);
@@ -108,15 +108,15 @@ export default function Api(h) {
             if (rule.field && fields.indexOf(rule.field) !== -1)
                 return err(`${rule.field} 字段已存在`, rule);
 
-            const parser = h.getParser(after);
+            const ctx = h.getCtx(after);
 
-            if (parser) {
+            if (ctx) {
                 if (child) {
-                    rules = parser.rule.children;
-                    index = parser.rule.children.length;
+                    rules = ctx.rule.children;
+                    index = ctx.rule.children.length;
                 } else {
-                    index = parser.root.indexOf(parser.origin);
-                    rules = parser.root;
+                    index = ctx.root.indexOf(ctx.origin);
+                    rules = ctx.root;
                 }
             } else rules = h.rules;
             rules.splice(index + 1, 0, rule);
@@ -127,14 +127,14 @@ export default function Api(h) {
             if (rule.field && fields.indexOf(rule.field) !== -1)
                 return err(`${rule.field} 字段已存在`, rule);
 
-            const parser = h.getParser(after);
+            const ctx = h.getCtx(after);
 
-            if (parser) {
+            if (ctx) {
                 if (child) {
-                    rules = parser.rule.children;
+                    rules = ctx.rule.children;
                 } else {
-                    index = parser.root.indexOf(parser.origin);
-                    rules = parser.root;
+                    index = ctx.root.indexOf(ctx.origin);
+                    rules = ctx.root;
                 }
             } else rules = h.rules;
             rules.splice(index, 0, rule);
@@ -144,15 +144,15 @@ export default function Api(h) {
             h.refresh();
         },
         hiddenStatus(id) {
-            const parser = h.getParser(id);
-            if (!parser) return;
-            return !!parser.rule.hidden;
+            const ctx = h.getCtx(id);
+            if (!ctx) return;
+            return !!ctx.rule.hidden;
         },
         disabled(disabled, fields) {
             tidyFields(fields).forEach((field) => {
-                const parser = h.fieldList[field];
-                if (!parser) return;
-                $set(parser.rule.props, 'disabled', !!disabled);
+                const ctx = h.fieldList[field];
+                if (!ctx) return;
+                $set(ctx.rule.props, 'disabled', !!disabled);
             });
             h.refresh();
         },
@@ -164,13 +164,13 @@ export default function Api(h) {
         },
         bind() {
             return Object.defineProperties({}, Object.keys(h.fieldList).reduce((initial, field) => {
-                const parser = h.fieldList[field];
+                const ctx = h.fieldList[field];
                 initial[field] = {
                     get() {
-                        return parser.rule.value;
+                        return ctx.rule.value;
                     },
                     set(value) {
-                        parser.rule.value = value;
+                        ctx.rule.value = value;
                     },
                     enumerable: true,
                     configurable: true
@@ -201,10 +201,10 @@ export default function Api(h) {
             this.updateOptions({onSubmit: fn});
         },
         sync: (field) => {
-            const parser = is.Object(field) ? byParser(field) : h.getParser(field);
-            if (parser) {
-                parser.updateKey(true);
-                h.$render.clearCache(parser);
+            const ctx = is.Object(field) ? byCtx(field) : h.getCtx(field);
+            if (ctx) {
+                ctx.updateKey(true);
+                h.$render.clearCache(ctx);
                 h.refresh();
             }
         },
@@ -227,15 +227,15 @@ export default function Api(h) {
             h.changeStatus = false;
         },
         updateRule: (id, rule) => {
-            const parser = h.getParser(id);
-            if (parser) {
-                mergeRule(parser.rule, rule);
+            const ctx = h.getCtx(id);
+            if (ctx) {
+                mergeRule(ctx.rule, rule);
             }
         },
         getRule: (id, origin) => {
-            const parser = h.getParser(id);
-            if (parser) {
-                return origin ? parser.origin : parser.rule;
+            const ctx = h.getCtx(id);
+            if (ctx) {
+                return origin ? ctx.origin : ctx.rule;
             }
         },
         updateRules(rules) {
@@ -274,8 +274,8 @@ export default function Api(h) {
             el && el.$emit(event, ...args);
         },
         el(id) {
-            const parser = h.getParser(id);
-            if (parser) return parser.el || h.vm.$refs[parser.refName];
+            const ctx = h.getCtx(id);
+            if (ctx) return ctx.el || h.vm.$refs[ctx.refName];
         },
         closeModal: (id) => {
             const el = api.el(id);
@@ -334,13 +334,13 @@ export default function Api(h) {
             h.$manager.validateField(field, callback);
         },
         resetFields(fields) {
-            let parsers = h.fieldList;
+            let ctxs = h.fieldList;
             tidyFields(fields).forEach(field => {
-                let parser = parsers[field];
-                if (!parser) return;
-                h.$render.clearCache(parser);
-                parser.rule.value = copy(parser.defaultValue);
-                h.refreshControl(parser);
+                let ctx = ctxs[field];
+                if (!ctx) return;
+                h.$render.clearCache(ctx);
+                ctx.rule.value = copy(ctx.defaultValue);
+                h.refreshControl(ctx);
             });
         },
         submit(successFn, failFn) {
@@ -361,9 +361,9 @@ export default function Api(h) {
         clearValidateState(fields, clearSub = true) {
             tidyFields(fields).forEach(field => {
                 if (clearSub) this.clearSubValidateState(field);
-                const parser = h.fieldList[field];
-                if (!parser) return;
-                h.$manager.clearValidateState(parser);
+                const ctx = h.fieldList[field];
+                if (!ctx) return;
+                h.$manager.clearValidateState(ctx);
             });
         },
         clearSubValidateState(fields) {

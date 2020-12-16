@@ -15,8 +15,8 @@ export default function useInject(Handler) {
             });
             return on;
         },
-        parseEmit(parser, on) {
-            let event = {}, rule = parser.rule, {emitPrefix, field, name, inject} = rule;
+        parseEmit(ctx, on) {
+            let event = {}, rule = ctx.rule, {emitPrefix, field, name, inject} = rule;
             let emit = rule[on ? 'emit' : 'nativeEmit'] || [];
             if (is.trueArray(emit)) {
                 let emitKey = emitPrefix || field || name;
@@ -41,7 +41,7 @@ export default function useInject(Handler) {
                 }
 
             }
-            parser.computed[on ? 'on' : 'nativeOn'] = event;
+            ctx.computed[on ? 'on' : 'nativeOn'] = event;
             return event;
         },
         getInjectData(self, inject) {

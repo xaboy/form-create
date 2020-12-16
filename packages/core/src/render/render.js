@@ -6,12 +6,12 @@ import {tip} from '@form-create/utils/lib/console';
 import {invoke} from '../frame/util';
 import toCase from '@form-create/utils/lib/tocase';
 
-function setTemplateProps(vm, parser, api) {
+function setTempProps(vm, ctx, api) {
     if (!vm.$props) return;
 
-    const {prop} = parser;
+    const {prop} = ctx;
     const keys = Object.keys(vm.$props);
-    const inject = injectProp(parser, api);
+    const inject = injectProp(ctx, api);
     const injectKeys = Object.keys(inject);
 
     keys.forEach(key => {
@@ -26,13 +26,13 @@ function setTemplateProps(vm, parser, api) {
     }
 }
 
-function injectProp(parser, api) {
+function injectProp(ctx, api) {
     return {
         formCreate: api,
-        formCreateField: parser.field,
-        formCreateOptions: parser.rule.options,
+        formCreateField: ctx.field,
+        formCreateOptions: ctx.rule.options,
         formCreateRule: (function () {
-            const temp = {...parser.prop};
+            const temp = {...ctx.prop};
             return temp.on = temp.on ? {...temp.on} : {}, temp;
         }()),
     }
@@ -46,9 +46,9 @@ export default function useRender(Render) {
             this.clearOrgChildren();
         },
         initOrgChildren() {
-            const parsers = this.$handle.parsers;
-            this.orgChildren = Object.keys(parsers).reduce((initial, id) => {
-                const children = parsers[id].rule.children;
+            const ctxs = this.$handle.ctxs;
+            this.orgChildren = Object.keys(ctxs).reduce((initial, id) => {
+                const children = ctxs[id].rule.children;
                 initial[id] = is.trueArray(children) ? [...children] : [];
 
                 return initial;
@@ -65,7 +65,7 @@ export default function useRender(Render) {
             this.$manager.beforeRender();
 
             const vn = this.sortList.map((id) => {
-                return this.renderParser(this.$handle.parsers[id]);
+                return this.renderCtx(this.$handle.ctxs[id]);
             }).filter((val) => val !== undefined);
 
             return this.$manager.render(vn);
@@ -80,29 +80,31 @@ export default function useRender(Render) {
                 return new Vue(vm);
             return vm;
         },
-        mergeGlobal(parser) {
+        mergeGlobal(ctx) {
             const g = this.$handle.options.global;
             if (!g) return;
-            if (!parser.cacheConfig)
-                parser.cacheConfig = g[parser.originType] || g[parser.type] || g[parser.trueType] || {};
-            mergeProps([g['*'], parser.cacheConfig], parser.prop);
+            if (!ctx.cacheConfig)
+                ctx.cacheConfig = g[ctx.originType] || g[ctx.type] || g[ctx.trueType] || {};
+            mergeProps([g['*'], ctx.cacheConfig], ctx.prop);
         },
-        renderTemplate(parser) {
+        renderTemp(ctx) {
             if (!Vue.compile) {
                 tip('当前使用的Vue构建版本不支持compile,无法使用template功能');
                 return [];
             }
-            const rule = this.mergeProp(parser);
-            const {id, key} = parser;
+            const rule = this.mergeProp(ctx);
+            const {id, key} = ctx;
 
             if (!this.renderList[id]) {
-                if (!parser.el)
-                    parser.el = this.makeVm(rule);
+                if (!ctx.el) {
+                    ctx.el = this.makeVm(rule);
+                    this.vm.$nextTick(() => ctx.parser.mounted(ctx));
+                }
 
-                let vm = parser.el;
-                if (parser.input)
+                let vm = ctx.el;
+                if (ctx.input)
                     vm.$on((vm.$options.model && vm.$options.model.event) || 'input', (value) => {
-                        this.onInput(parser, value);
+                        this.onInput(ctx, value);
                     });
 
                 this.renderList[id] = {
@@ -113,68 +115,68 @@ export default function useRender(Render) {
 
             const {vm, template} = this.renderList[id];
 
-            setTemplateProps(vm, parser, this.$handle.api);
+            setTempProps(vm, ctx, this.$handle.api);
 
             const vn = template.render.call(vm);
 
             if (is.Undef(vn.data)) vn.data = {};
             vn.key = key;
-            vn.data.ref = parser.refName;
+            vn.data.ref = ctx.refName;
             vn.data.key = key;
             return vn;
         },
-        renderAround(vn, parser) {
-            const prop = parser.prop;
+        renderAround(vn, ctx) {
+            const prop = ctx.prop;
             return [prop.prefix || undefined, vn, prop.suffix || undefined];
         },
-        renderParser(parser, parent) {
-            if (parser.type === 'hidden') return;
-            if (!this.cache[parser.id] || parser.type === 'template') {
+        renderCtx(ctx, parent) {
+            if (ctx.type === 'hidden') return;
+            if (!this.cache[ctx.id] || ctx.type === 'template') {
                 const form = this.$manager;
-                parser.initProp();
-                form.tidyRule(parser);
-                this.mergeGlobal(parser);
-                let {type, prop: rule} = parser, vn;
+                ctx.initProp();
+                form.tidyRule(ctx);
+                this.mergeGlobal(ctx);
+                let {type, prop: rule} = ctx, vn;
                 if (rule.hidden) return;
 
                 if (type === 'template' && rule.template) {
-                    vn = this.renderTemplate(parser);
+                    vn = this.renderTemp(ctx);
 
                     if (parent && is.Undef(rule.native)) {
-                        vn = this.renderAround(vn, parser);
-                        this.setCache(parser, vn, parent);
+                        vn = this.renderAround(vn, ctx);
+                        this.setCache(ctx, vn, parent);
                         return vn;
                     }
-                } else if (parser.input) {
-                    const children = this.renderChildren(parser);
-                    vn = parser.render ? parser.render(children) : this.defaultRender(parser, children);
+                } else if (ctx.input) {
+                    const children = this.renderChildren(ctx);
+                    vn = ctx.render ? ctx.render(children) : this.defaultRender(ctx, children);
                 } else {
-                    vn = this.defaultRender(parser, this.renderChildren(parser));
+                    vn = this.defaultRender(ctx, this.renderChildren(ctx));
                     if (parent && is.Undef(rule.native)) {
-                        vn = this.renderAround(vn, parser);
-                        this.setCache(parser, vn, parent);
+                        vn = this.renderAround(vn, ctx);
+                        this.setCache(ctx, vn, parent);
                         return vn;
                     }
                 }
-                vn = this.renderAround(vn, parser);
+                vn = this.renderAround(vn, ctx);
                 if (rule.native !== true)
-                    vn = form.makeFormItem(parser, vn);
-                this.setCache(parser, vn, parent);
+                    vn = form.makeFormItem(ctx, vn);
+                this.setCache(ctx, vn, parent);
                 return vn;
             }
 
-            return this.getCache(parser);
+            return this.getCache(ctx);
         },
         //todo 优化调用
-        mergeProp(parser, custom) {
-            const {refName, key} = parser;
-            this.$manager.mergeProp && this.$manager.mergeProp(parser, custom);
-            parser.mergeProp && parser.mergeProp(custom);
+        mergeProp(ctx, custom) {
+            const {refName, key} = ctx;
+            this.$manager.mergeProp(ctx, custom);
+            ctx.parser.mergeProp(ctx, custom);
             const props = [
                 {
-                    props: injectProp(parser, this.$handle.api),
-                    on: parser.input ? {
-                        'fc.sub-form': (subForm) => this.$handle.addSubForm(parser, subForm)
+                    props: injectProp(ctx, this.$handle.api),
+                    on: ctx.input ? {
+                        'fc.sub-form': (subForm) => this.$handle.addSubForm(ctx, subForm)
                     } : {},
                     ref: refName,
                     key: `${key}fc`,
@@ -185,66 +187,66 @@ export default function useRender(Render) {
                 props.push({
                     on: {
                         ['hook:mounted']: () => {
-                            parser.el = this.vm.$refs[refName];
-                            parser.mounted();
-                            this.$handle.effect(parser, 'mounted');
+                            ctx.el = this.vm.$refs[refName];
+                            ctx.parser.mounted(ctx);
+                            this.$handle.effect(ctx, 'mounted');
                         }
                     },
-                    model: parser.input ? {
-                        value: this.$handle.getFormData(parser),
+                    model: ctx.input ? {
+                        value: this.$handle.getFormData(ctx),
                         callback: (value) => {
-                            this.onInput(parser, value);
+                            this.onInput(ctx, value);
                         },
-                        expression: `formData.${parser.field}`
+                        expression: `formData.${ctx.field}`
                     } : undefined,
                 })
             }
-            mergeProps(props, parser.prop);
-            return parser.prop;
+            mergeProps(props, ctx.prop);
+            return ctx.prop;
         },
-        onInput(parser, value) {
-            this.$handle.onInput(parser, value);
+        onInput(ctx, value) {
+            this.$handle.onInput(ctx, value);
         },
-        renderChildren(parser) {
-            const {children} = parser.rule, orgChildren = this.orgChildren[parser.id];
+        renderChildren(ctx) {
+            const {children} = ctx.rule, orgChildren = this.orgChildren[ctx.id];
 
             if (!is.trueArray(children) && orgChildren) {
                 orgChildren.forEach(child => {
                     if (!is.String(child) && child.__fc__) {
-                        this.$handle.rmParser(child.__fc__);
+                        this.$handle.rmCtx(child.__fc__);
                     }
                 });
-                this.orgChildren[parser.id] = [];
+                this.orgChildren[ctx.id] = [];
                 return [];
             }
 
             orgChildren && orgChildren.forEach(child => {
                 if (children.indexOf(child) === -1 && !is.String(child) && child.__fc__) {
-                    this.$handle.rmParser(child.__fc__);
+                    this.$handle.rmCtx(child.__fc__);
                 }
             });
 
             return children.map(child => {
                 if (is.String(child)) return child;
                 if (child.__fc__) {
-                    return this.renderParser(child.__fc__, parser);
+                    return this.renderCtx(child.__fc__, ctx);
                 }
                 if (!this.$handle.isRepeatRule(child.__origin__ || child) && child.type) {
                     this.vm.$nextTick(() => {
-                        this.$handle.loadChildren(children, parser);
+                        this.$handle.loadChildren(children, ctx);
                         this.$handle.refresh();
                     });
                 }
             });
 
         },
-        defaultRender(parser, children) {
-            const prop = this.mergeProp(parser);
-            if (this.vNode[parser.type])
-                return this.vNode[parser.type](prop, children);
-            if (this.vNode[parser.originType])
-                return this.vNode[parser.originType](prop, children);
-            return this.vNode.make(parser.originType, prop, children);
+        defaultRender(ctx, children) {
+            const prop = this.mergeProp(ctx);
+            if (this.vNode[ctx.type])
+                return this.vNode[ctx.type](prop, children);
+            if (this.vNode[ctx.originType])
+                return this.vNode[ctx.originType](prop, children);
+            return this.vNode.make(ctx.originType, prop, children);
         },
         renderRule(rule, children = []) {
             let type = toCase(rule.type);

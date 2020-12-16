@@ -50,15 +50,6 @@ function mountForm(rules, option) {
     return $vm;
 }
 
-function createParser(proto) {
-    class Parser extends BaseParser {
-
-    }
-
-    Object.assign(Parser.prototype, proto);
-    return Parser;
-}
-
 //todo 表单嵌套
 export default function FormCreateFactory(config) {
 
@@ -98,7 +89,7 @@ export default function FormCreateFactory(config) {
         if (!data.id || !data.prop) return;
         const name = toCase(data.id);
         const parser = data.prop;
-        parsers[name] = is.Function(parser) ? parser : createParser(parser);
+        parsers[name] = {...BaseParser, ...parser};
         maker[name] = creatorFactory(name);
         parser.maker && extend(maker, parser.maker);
     }
@@ -159,7 +150,6 @@ export default function FormCreateFactory(config) {
         this.initOptions(options || {});
     }
 
-    //todo 使用事件优化流程
     extend(FormCreate.prototype, {
         init() {
             const vm = this.vm;
@@ -219,7 +209,6 @@ export default function FormCreateFactory(config) {
             register,
             parser,
             use,
-            createParser,
             componentAlias,
             copyRule,
             copyRules,

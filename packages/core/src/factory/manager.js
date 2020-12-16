@@ -51,11 +51,9 @@ extend(Manager.prototype, {
     tidyOptions(options) {
         return options;
     },
-    tidyRule(rule) {
-        return rule;
+    tidyRule(ctx) {
     },
-    mergeProp(rule) {
-        return rule;
+    mergeProp(ctx) {
     },
     getDefaultOptions() {
         return {};

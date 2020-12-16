@@ -2,7 +2,7 @@ import extend from '@form-create/utils/lib/extend';
 import is from '@form-create/utils/lib/type';
 
 
-export default function useRegister(Handler) {
+export default function useEffect(Handler) {
     extend(Handler.prototype, {
         useProvider() {
             const ps = this.fc.providers;
@@ -25,19 +25,19 @@ export default function useRegister(Handler) {
             });
             provider._used = used;
         },
-        watchEffect(parser) {
+        watchEffect(ctx) {
             const vm = this.vm;
-            Object.keys(parser.rule.effect || {}).forEach(k => {
-                parser.watch.push(vm.$watch(() => parser.rule.effect[k], (n) => {
-                    this.effect(parser, 'watch', {[k]: n});
+            Object.keys(ctx.rule.effect || {}).forEach(k => {
+                ctx.watch.push(vm.$watch(() => ctx.rule.effect[k], (n) => {
+                    this.effect(ctx, 'watch', {[k]: n});
                 }));
             });
         },
-        effect(parser, event, custom) {
+        effect(ctx, event, custom) {
             this.emitEffect({
-                rule: parser.rule,
-                input: parser.input,
-                type: parser.trueType,
+                rule: ctx.rule,
+                input: ctx.input,
+                type: ctx.trueType,
                 custom
             }, event);
         },

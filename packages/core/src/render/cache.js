@@ -5,30 +5,30 @@ export default function useCache(Render) {
         initCache() {
             this.clearCacheAll();
         },
-        clearCache(parser) {
-            if (!this.cache[parser.id]) {
-                parser.parent && this.clearCache(parser.parent);
+        clearCache(ctx) {
+            if (!this.cache[ctx.id]) {
+                ctx.parent && this.clearCache(ctx.parent);
                 return;
             }
-            if (this.cache[parser.id].use === true || this.cache[parser.id].parent) {
+            if (this.cache[ctx.id].use === true || this.cache[ctx.id].parent) {
                 this.$handle.refresh();
             }
-            const parent = this.cache[parser.id].parent;
-            this.cache[parser.id] = null;
+            const parent = this.cache[ctx.id].parent;
+            this.cache[ctx.id] = null;
             parent && this.clearCache(parent);
         },
         clearCacheAll() {
             this.cache = {};
         },
-        setCache(parser, vnode, parent) {
-            this.cache[parser.id] = {
+        setCache(ctx, vnode, parent) {
+            this.cache[ctx.id] = {
                 vnode,
                 use: false,
                 parent
             };
         },
-        getCache(parser) {
-            const cache = this.cache[parser.id];
+        getCache(ctx) {
+            const cache = this.cache[ctx.id];
             cache.use = true;
             return cache.vnode;
         }

@@ -5,55 +5,55 @@ import {invoke} from '../frame/util';
 
 export default function useInput(Handler) {
     extend(Handler.prototype, {
-        getValue(parser) {
-            if (!hasProperty(parser, 'cacheValue')) {
-                parser.cacheValue = parser.toValue(this.getFormData(parser));
+        getValue(ctx) {
+            if (!hasProperty(ctx, 'cacheValue')) {
+                ctx.cacheValue = ctx.parser.toValue(this.getFormData(ctx), ctx);
             }
-            return parser.cacheValue;
+            return ctx.cacheValue;
         },
-        setValue(parser, value, formValue, setFlag) {
-            parser.cacheValue = value;
+        setValue(ctx, value, formValue, setFlag) {
+            ctx.cacheValue = value;
             this.changeStatus = true;
             this.nextLoad();
-            this.$render.clearCache(parser);
-            this.setFormData(parser, formValue);
+            this.$render.clearCache(ctx);
+            this.setFormData(ctx, formValue);
             this.syncValue();
-            this.valueChange(parser, value);
-            this.vm.$emit('change', parser.field, value, parser.origin, this.api, setFlag);
-            this.effect(parser, 'value');
+            this.valueChange(ctx, value);
+            this.vm.$emit('change', ctx.field, value, ctx.origin, this.api, setFlag);
+            this.effect(ctx, 'value');
         },
-        onInput(parser, value) {
+        onInput(ctx, value) {
             let val;
-            if (parser.input && (this.isQuote(parser, val = parser.toValue(value)) || this.isChange(parser, val))) {
-                this.setValue(parser, val, value);
+            if (ctx.input && (this.isQuote(ctx, val = ctx.parser.toValue(value, ctx)) || this.isChange(ctx, val))) {
+                this.setValue(ctx, val, value);
             }
         },
-        setFormData(parser, value) {
-            $set(this.formData, parser.field, value);
+        setFormData(ctx, value) {
+            $set(this.formData, ctx.field, value);
         },
-        getFormData(parser) {
-            return this.formData[parser.field];
+        getFormData(ctx) {
+            return this.formData[ctx.field];
         },
         syncForm() {
             Object.keys(this.form).forEach(k => delete this.form[k]);
             Object.defineProperties(this.form, Object.keys(this.formData).reduce((initial, field) => {
-                const parser = this.getParser(field);
-                const handle = this.valueHandle(parser);
+                const ctx = this.getCtx(field);
+                const handle = this.valueHandle(ctx);
                 handle.configurable = true;
                 initial[field] = handle;
                 return initial;
             }, {}));
             this.syncValue();
         },
-        valueHandle(parser) {
+        valueHandle(ctx) {
             return {
                 enumerable: true,
                 get: () => {
-                    return this.getValue(parser);
+                    return this.getValue(ctx);
                 },
                 set: (value) => {
-                    if (this.isChange(parser, value)) {
-                        this.setValue(parser, value, parser.toFormValue(value), true);
+                    if (this.isChange(ctx, value)) {
+                        this.setValue(ctx, value, ctx.parser.toFormValue(value, ctx), true);
                     }
                 }
             };
@@ -63,45 +63,45 @@ export default function useInput(Handler) {
             rule.value = this.appendData[rule.field];
             delete this.appendData[rule.field];
         },
-        addSubForm(parser, subForm) {
-            this.subForm[parser.field] = subForm;
+        addSubForm(ctx, subForm) {
+            this.subForm[ctx.field] = subForm;
         },
         syncValue() {
             this.vm._updateValue({...this.form});
         },
-        isChange(parser, value) {
-            return JSON.stringify(parser.rule.value) !== JSON.stringify(value);
+        isChange(ctx, value) {
+            return JSON.stringify(ctx.rule.value) !== JSON.stringify(value);
         },
-        isQuote(parser, value) {
-            return (is.Object(value) || Array.isArray(value)) && value === parser.rule.value;
+        isQuote(ctx, value) {
+            return (is.Object(value) || Array.isArray(value)) && value === ctx.rule.value;
         },
-        refreshUpdate(parser, val) {
-            const fn = parser.rule.update;
+        refreshUpdate(ctx, val) {
+            const fn = ctx.rule.update;
             if (is.Function(fn)) {
-                const state = invoke(() => fn(val, parser.origin, this.api));
+                const state = invoke(() => fn(val, ctx.origin, this.api));
                 if (state === undefined) return;
-                parser.rule.hidden = state === true;
+                ctx.rule.hidden = state === true;
             }
         },
-        valueChange(parser, val) {
-            this.refreshRule(parser, val);
-            this.bus.$emit('change-' + parser.field, val);
+        valueChange(ctx, val) {
+            this.refreshRule(ctx, val);
+            this.bus.$emit('change-' + ctx.field, val);
         },
-        refreshRule(parser, val) {
-            if (this.refreshControl(parser)) {
+        refreshRule(ctx, val) {
+            if (this.refreshControl(ctx)) {
                 this.$render.clearCacheAll();
                 this.loadRule();
                 this.refresh();
             }
-            this.refreshUpdate(parser, val);
+            this.refreshUpdate(ctx, val);
         },
-        appendLink(parser) {
-            const link = parser.rule.link;
+        appendLink(ctx) {
+            const link = ctx.rule.link;
             is.trueArray(link) && link.forEach(field => {
-                const fn = () => this.refreshRule(parser, parser.rule.value);
+                const fn = () => this.refreshRule(ctx, ctx.rule.value);
 
                 this.bus.$on('change-' + field, fn);
-                parser.linkOn.push(() => this.bus.$off('change-' + field, fn));
+                ctx.linkOn.push(() => this.bus.$off('change-' + field, fn));
             });
         },
         fields() {
