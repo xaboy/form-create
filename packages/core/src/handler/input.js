@@ -13,10 +13,10 @@ export default function useInput(Handler) {
         },
         setValue(parser, value, formValue, setFlag) {
             parser.cacheValue = value;
+            this.changeStatus = true;
             this.nextLoad();
             this.$render.clearCache(parser);
             this.setFormData(parser, formValue);
-            this.changeStatus = true;
             this.syncValue();
             this.valueChange(parser, value);
             this.vm.$emit('change', parser.field, value, parser.origin, this.api, setFlag);

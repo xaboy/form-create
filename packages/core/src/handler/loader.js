@@ -63,7 +63,7 @@ export default function useLoader(Handler) {
             if (this.cycleLoad) {
                 return this.loadRule();
             }
-            this.$render.clearCache(parent, true);
+            this.$render.clearCache(parent);
         },
         _loadRule(rules, parent) {
 

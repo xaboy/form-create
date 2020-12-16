@@ -35,6 +35,7 @@ export function creatorTypeFactory(name, type, typeName = 'type') {
 
 export default function Creator(type, title, field, value, props) {
     this._data = extend(baseRule(), {type, title, field, value, props: props || {}});
+    this.event = this.on;
 }
 
 extend(Creator.prototype, {
@@ -43,10 +44,6 @@ extend(Creator.prototype, {
     },
     setProp(key, value) {
         $set(this._data, key, value);
-        return this;
-    },
-    event(...args) {
-        this.on(...args);
         return this;
     },
     _clone() {

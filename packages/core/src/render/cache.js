@@ -5,16 +5,17 @@ export default function useCache(Render) {
         initCache() {
             this.clearCacheAll();
         },
-        clearCache(parser, clear = true) {
+        clearCache(parser) {
             if (!this.cache[parser.id]) {
-                clear && parser.parent && this.clearCache(parser.parent, clear);
+                parser.parent && this.clearCache(parser.parent);
                 return;
             }
-            if (this.cache[parser.id].use === true || this.cache[parser.id].parent)
+            if (this.cache[parser.id].use === true || this.cache[parser.id].parent) {
                 this.$handle.refresh();
+            }
             const parent = this.cache[parser.id].parent;
             this.cache[parser.id] = null;
-            clear && parent && this.clearCache(parent, clear);
+            parent && this.clearCache(parent);
         },
         clearCacheAll() {
             this.cache = {};

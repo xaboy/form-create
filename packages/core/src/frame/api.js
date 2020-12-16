@@ -24,7 +24,7 @@ export default function Api(h) {
             const parser = h.getParser(field);
             if (!parser) return;
             $set(parser.rule, key, val);
-            h.$render.clearCache(parser, true);
+            h.$render.clearCache(parser);
         })
     }
 
@@ -205,7 +205,7 @@ export default function Api(h) {
             const parser = is.Object(field) ? byParser(field) : h.getParser(field);
             if (parser) {
                 parser.updateKey(true);
-                h.$render.clearCache(parser, true);
+                h.$render.clearCache(parser);
                 h.refresh();
             }
         },
@@ -340,7 +340,7 @@ export default function Api(h) {
             tidyFields(fields).forEach(field => {
                 let parser = parsers[field];
                 if (!parser) return;
-                h.$render.clearCache(parser, true);
+                h.$render.clearCache(parser);
                 parser.rule.value = copy(parser.defaultValue);
                 h.refreshControl(parser);
             });

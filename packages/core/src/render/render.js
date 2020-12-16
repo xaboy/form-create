@@ -136,7 +136,7 @@ export default function useRender(Render) {
                 form.tidyRule(parser);
                 this.mergeGlobal(parser);
                 let {type, prop: rule} = parser, vn;
-                if (is.Boolean(rule.hidden) && rule.hidden) return;
+                if (rule.hidden) return;
 
                 if (type === 'template' && rule.template) {
                     vn = this.renderTemplate(parser);
@@ -166,10 +166,14 @@ export default function useRender(Render) {
 
             return this.getCache(parser);
         },
+        //todo 优化调用
         mergeProp(parser, custom) {
             const {refName, key} = parser;
+            this.$manager.mergeProp && this.$manager.mergeProp(parser, custom);
+            parser.mergeProp && parser.mergeProp(custom);
             const props = [
                 {
+                    props: injectProp(parser, this.$handle.api),
                     on: parser.input ? {
                         'fc.sub-form': (subForm) => this.$handle.addSubForm(parser, subForm)
                     } : {},
@@ -195,14 +199,8 @@ export default function useRender(Render) {
                         expression: `formData.${parser.field}`
                     } : undefined,
                 })
-
             }
             mergeProps(props, parser.prop);
-            this.$manager.mergeProp && this.$manager.mergeProp(parser, custom);
-            parser.mergeProp && parser.mergeProp(custom);
-            mergeProps([{
-                props: injectProp(parser, this.$handle.api),
-            }], parser.prop);
             return parser.prop;
         },
         onInput(parser, value) {

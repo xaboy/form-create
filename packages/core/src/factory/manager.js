@@ -34,6 +34,10 @@ extend(Manager.prototype, {
     //TODO interface
     init() {
     },
+    update() {
+    },
+    beforeRender() {
+    },
     form() {
         return this.vm.$refs[this.ref];
     },
@@ -42,6 +46,7 @@ extend(Manager.prototype, {
     },
     updateOptions(options) {
         this.options = this.mergeOptions([options], this.getDefaultOptions());
+        this.update();
     },
     tidyOptions(options) {
         return options;
