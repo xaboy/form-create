@@ -41,15 +41,18 @@
   },
   "homepage": "http://www.form-create.com",
   "dependencies": {
-    "@form-create/core": "^1.0.19",
-    "@form-create/utils": "^1.0.15",
+    "@form-create/component-antdv-frame": "^0.0.1",
     "@form-create/component-antdv-group": "^0.0.1",
     "@form-create/component-antdv-upload": "^0.0.1",
-    "@form-create/component-antdv-frame": "^0.0.1",
+    "@form-create/core": "^1.0.18",
+    "@form-create/utils": "^1.0.15",
     "ant-design-vue": "^1.5.3",
     "moment": "^2.24.0"
   },
   "publishConfig": {
     "access": "public"
+  },
+  "devDependencies": {
+    "@vue/cli-service": "^4.5.3"
   }
 }

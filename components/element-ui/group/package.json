@@ -33,5 +33,8 @@
   "homepage": "http://www.form-create.com",
   "publishConfig": {
     "access": "public"
+  },
+  "devDependencies": {
+    "@vue/cli-service": "^4.5.3"
   }
 }

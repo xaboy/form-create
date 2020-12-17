@@ -7,7 +7,7 @@
  * @Last Modified time: 2019-06-09 14:17:48
  */
 const webpack = require('webpack');
-const pkg = require('../package.json');
+const pkg = require('../../package.json');
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
 
 module.exports = {
