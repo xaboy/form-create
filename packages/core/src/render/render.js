@@ -21,7 +21,7 @@ function setTempProps(vm, ctx, api) {
     });
 
     const key = (vm.$options.model && vm.$options.model.prop) || 'value';
-    if (keys.indexOf(key) !== -1) {
+    if (keys.indexOf(key) > -1) {
         vm.$props[key] = prop.value;
     }
 }
@@ -83,9 +83,10 @@ export default function useRender(Render) {
         mergeGlobal(ctx) {
             const g = this.$handle.options.global;
             if (!g) return;
+            //todo 缓存配置,更新 option 更新
             if (!ctx.cacheConfig)
                 ctx.cacheConfig = g[ctx.originType] || g[ctx.type] || g[ctx.trueType] || {};
-            mergeProps([g['*'], ctx.cacheConfig], ctx.prop);
+            ctx.prop = mergeProps([g['*'], ctx.cacheConfig, ctx.prop]);
         },
         renderTemp(ctx) {
             if (!Vue.compile) {

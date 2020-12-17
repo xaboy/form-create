@@ -5,7 +5,6 @@ import Vue from 'vue';
 const NAME = 'FormCreate';
 
 //todo 优化 this 绑定
-//TODO 优化 slot
 export default function $FormCreate(FormCreate) {
     return {
         name: NAME,

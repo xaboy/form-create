@@ -6,17 +6,20 @@ const mergeProps = (objects, initial = {}, opt = {}) => {
     const _normalMerge = [...normalMerge, ...opt['normal'] || []];
     const _toArrayMerge = [...toArrayMerge, ...opt['array'] || []];
     const _functionalMerge = [...functionalMerge, ...opt['functional'] || []];
+    const propsMerge = opt['props'] || [];
 
     return objects.reduce((a, b) => {
         for (const key in b) {
             if (a[key]) {
-                if (_normalMerge.indexOf(key) !== -1) {
+                if (propsMerge.indexOf(key) > -1) {
+                    a[key] = mergeProps([b[key]], a[key]);
+                } else if (_normalMerge.indexOf(key) > -1) {
                     a[key] = {...a[key], ...b[key]}
-                } else if (_toArrayMerge.indexOf(key) !== -1) {
+                } else if (_toArrayMerge.indexOf(key) > -1) {
                     const arrA = a[key] instanceof Array ? a[key] : [a[key]];
                     const arrB = b[key] instanceof Array ? b[key] : [b[key]];
                     a[key] = [...arrA, ...arrB]
-                } else if (_functionalMerge.indexOf(key) !== -1) {
+                } else if (_functionalMerge.indexOf(key) > -1) {
                     for (const event in b[key]) {
                         if (a[key][event]) {
                             const arrA = a[key][event] instanceof Array ? a[key][event] : [a[key][event]];
@@ -38,9 +41,9 @@ const mergeProps = (objects, initial = {}, opt = {}) => {
                     a[key] = b[key]
                 }
             } else {
-                if (_normalMerge.indexOf(key) !== -1 || _functionalMerge.indexOf(key) !== -1) {
+                if (_normalMerge.indexOf(key) > -1 || _functionalMerge.indexOf(key) > -1 || propsMerge.indexOf(key) > -1) {
                     a[key] = {...b[key]}
-                } else if (_toArrayMerge.indexOf(key) !== -1) {
+                } else if (_toArrayMerge.indexOf(key) > -1) {
                     a[key] = b[key] instanceof Array ? [...b[key]] : (typeof b[key] === 'object' ? {...b[key]} : [b[key]]);
                 } else
                     a[key] = b[key];

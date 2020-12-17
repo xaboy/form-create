@@ -1,4 +1,4 @@
-import {toSlot} from '@form-create/utils/lib/toslot';
+import is from '@form-create/utils/lib/type';
 
 const NAME = 'fcSelect';
 export default {
@@ -12,9 +12,11 @@ export default {
     },
     render(h, ctx) {
         return <ElSelect {...ctx.data}>{ctx.props.formCreateOptions.map((props, index) => {
+            const slot = props.slot;
             return <ElOption {...{props}}
                 key={'' + index + props.value}>
-                {props.slot ? <template slot={props.slotName || 'default'}>{toSlot(props.slot, h)}</template> : null}
+                {slot ? <template
+                    slot={props.slotName || 'default'}>{is.Function(slot) ? props.slot(h) : slot}</template> : null}
             </ElOption>
         }).concat(ctx.chlidren)}</ElSelect>;
     }

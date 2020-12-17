@@ -105,7 +105,7 @@ export default function Api(h) {
         append: (rule, after, child) => {
             let fields = Object.keys(h.fieldList), index = h.sortList.length, rules;
 
-            if (rule.field && fields.indexOf(rule.field) !== -1)
+            if (rule.field && fields.indexOf(rule.field) > -1)
                 return err(`${rule.field} 字段已存在`, rule);
 
             const ctx = h.getCtx(after);
@@ -124,7 +124,7 @@ export default function Api(h) {
         prepend: (rule, after, child) => {
             let fields = Object.keys(h.fieldList), index = 0, rules;
 
-            if (rule.field && fields.indexOf(rule.field) !== -1)
+            if (rule.field && fields.indexOf(rule.field) > -1)
                 return err(`${rule.field} 字段已存在`, rule);
 
             const ctx = h.getCtx(after);
