@@ -122,7 +122,7 @@ export default {
             $f.coverValue(value || {});
         },
         addRule(i, emit) {
-            const rule = this.copyRule();
+            const rule = this.$formCreate.copyRules(this.formRule);
             const options = this.options ? this.options : {
                 submitBtn: false,
                 resetBtn: false,
@@ -149,9 +149,6 @@ export default {
             if (emit) {
                 this.$nextTick(() => this.$emit('remove', index));
             }
-        },
-        copyRule() {
-            return this.$formCreate.copyRules(this.formRule);
         },
         add(i) {
             (!this.disabled) && this.addRule(i, true);

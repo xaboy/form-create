@@ -24,6 +24,9 @@
   "dependencies": {
     "@form-create/utils": "^1.0.11"
   },
+  "devDependencies": {
+    "@form-create/element-ui": "^1.0.11"
+  },
   "bugs": {
     "url": "https://github.com/xaboy/form-create/issues"
   },

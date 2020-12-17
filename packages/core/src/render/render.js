@@ -139,24 +139,14 @@ export default function useRender(Render) {
                 this.ctxProp(ctx);
                 let {type, prop} = ctx, vn;
                 if (prop.hidden) return;
-
+                let flag = (!ctx.input && is.Undef(prop.native));
                 if (type === 'template' && prop.template) {
                     vn = this.renderTemp(ctx);
-                    if (parent && is.Undef(prop.native)) {
-                        vn = this.renderAround(vn, ctx);
-                        this.setCache(ctx, vn, parent);
-                        return vn;
-                    }
                 } else {
                     vn = ctx.parser.render(this.renderChildren(ctx), ctx);
-                    if (!ctx.input && is.Undef(prop.native)) {
-                        vn = this.renderAround(vn, ctx);
-                        this.setCache(ctx, vn, parent);
-                        return vn;
-                    }
                 }
                 vn = this.renderAround(vn, ctx);
-                if (prop.native !== true)
+                if (!flag && prop.native !== true)
                     vn = this.$manager.makeWrap(ctx, vn);
                 this.setCache(ctx, vn, parent);
                 return vn;
