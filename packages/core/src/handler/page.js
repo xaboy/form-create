@@ -23,17 +23,18 @@ export default function usePage(Handler) {
             this.pageLoad();
         },
         pageLoad() {
-            this.api.nextTick(() => {
+            const pageFn = () => {
                 if (this.pageEnd) {
+                    this.vm.$off('hook:updated', pageFn);
                     this.bus.$emit('page-end');
                 } else {
                     this.first += this.limit;
                     this.pageEnd = this.rules.length <= this.first;
                     this.loadRule();
-                    this.pageLoad();
                     this.refresh();
                 }
-            });
+            }
+            this.vm.$on('hook:updated', pageFn);
         },
     })
 }

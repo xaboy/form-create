@@ -126,6 +126,7 @@ export default {
             const options = this.options ? this.options : {
                 submitBtn: false,
                 resetBtn: false,
+                page: false,
                 formData: this.field ? ({[this.field]: this._value(this.value[i])}) : (this.value[i] || {})
             };
             this.$set(this.cacheRule, ++this.len, {rule, options});
