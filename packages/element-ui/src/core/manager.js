@@ -125,9 +125,7 @@ export default {
         const col = rule.col;
         const labelWidth = (!col.labelWidth && isFalse(rule.title.show)) ? 0 : col.labelWidth;
         const {inline, col: _col} = this.rule.props;
-        const item = isFalse(rule.wrap.show) ? children : this.$render.renderRule(mergeProps([
-            {class: rule.wrap.class}
-        ], {
+        const item = isFalse(rule.wrap.show) ? children : this.$render.renderRule(mergeProps([rule.wrap, {
             props: {
                 title: rule.title.title,
                 labelWidth: labelWidth === void 0 ? labelWidth : toString(labelWidth),
@@ -139,7 +137,7 @@ export default {
             key: `${uni}fi`,
             ref: ctx.wrapRef,
             type: 'formItem',
-        }), [children, this.makeInfo(rule, uni)]);
+        }]), [children, this.makeInfo(rule, uni)]);
         return (inline === true || isFalse(_col) || isFalse(col.show)) ? item : this.makeCol(rule, uni, [item]);
     },
     makeInfo(rule, uni) {
@@ -149,12 +147,12 @@ export default {
         const isTip = isTooltip(infoProp);
         const children = [titleProp.title];
 
-        const titleFn = (pop) => this.$render.renderRule({
+        const titleFn = (pop) => this.$render.renderRule(mergeProps([titleProp, {
             props: titleProp,
             slot: titleProp.slot || (pop ? (isTip ? 'default' : 'reference') : 'label'),
             key: `${uni}tit`,
             type: titleProp.type || 'span',
-        }, children);
+        }]), children);
 
         if (!isFalse(infoProp.show) && infoProp.info) {
             if (infoProp.icon !== false) {
@@ -164,12 +162,12 @@ export default {
                     key: `${uni}i`
                 }));
             }
-            return this.$render.renderRule({
+            return this.$render.renderRule(mergeProps([infoProp, {
                 type: infoProp.type || 'popover',
                 props: {...infoProp, content: infoProp.info},
                 key: `${uni}pop`,
                 slot: 'label'
-            }, [
+            }]), [
                 titleFn(true)
             ])
         }

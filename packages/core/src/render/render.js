@@ -149,7 +149,7 @@ export default function useRender(Render) {
                     }
                 } else {
                     vn = ctx.parser.render(this.renderChildren(ctx), ctx);
-                    if (!ctx.input && parent && is.Undef(prop.native)) {
+                    if (!ctx.input && is.Undef(prop.native)) {
                         vn = this.renderAround(vn, ctx);
                         this.setCache(ctx, vn, parent);
                         return vn;
