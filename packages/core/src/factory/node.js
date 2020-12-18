@@ -2,6 +2,7 @@ import toLine from '@form-create/utils/lib/toline';
 import is from '@form-create/utils/lib/type';
 import toString from '@form-create/utils/lib/tostring';
 import extend from '@form-create/utils/lib/extend';
+import Vue from 'vue';
 
 function parseProp(prop) {
     if (is.String(prop))
@@ -22,8 +23,9 @@ export function CreateNodeFactory() {
             this.vm = vm;
             this.$h = vm.$createElement;
         },
-        make(nodeName, data, children) {
-            let Node = this.$h(nodeName, parseProp(data), children || []);
+        make(tag, data, children) {
+            if (Vue.config.isReservedTag(tag) && data.nativeOn) delete data.nativeOn;
+            let Node = this.$h(tag, parseProp(data), children || []);
             Node.context = this.vm;
             return Node;
         },

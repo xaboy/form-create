@@ -24,6 +24,11 @@ export default function useInject(Handler) {
                     if (!on) emitKey = `native-${emitKey}`;
                     emit.forEach(eventName => {
                         if (!eventName) return;
+                        let eventInject;
+                        if (is.Object(eventName)) {
+                            eventInject = eventName.inject;
+                            eventName = eventName.name;
+                        }
                         const fieldKey = toLine(`${emitKey}-${eventName}`);
                         const fn = (...arg) => {
                             this.vm.$emit(fieldKey, ...arg);
@@ -31,11 +36,11 @@ export default function useInject(Handler) {
                         };
                         fn.__emit = true;
 
-                        if (inject === false) {
+                        if (!eventInject && inject === false) {
                             event[eventName] = fn;
                         } else {
-                            inject = rule.inject || this.options.injectEvent;
-                            event[eventName] = is.Undef(inject) ? fn : this.inject(rule, fn, inject);
+                            let _inject = eventInject || inject || this.options.injectEvent;
+                            event[eventName] = is.Undef(_inject) ? fn : this.inject(rule, fn, _inject);
                         }
                     });
                 }
