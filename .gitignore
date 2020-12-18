@@ -63,5 +63,6 @@ typings/
 
 # custom
 yarn.lock
-# package-lock.json
+package-lock.json
+packages/**/package-lock.json
 /index.html
