@@ -11,6 +11,8 @@ import toCase from '@form-create/utils/lib/tocase';
 import extend from '@form-create/utils/lib/extend';
 import {CreateNodeFactory} from '../factory/node';
 import {createManager} from '../factory/manager';
+import {arrayAttrs, keyAttrs, normalAttrs} from './attrs';
+import {appendProto} from '../factory/creator';
 
 export let _vue = typeof window !== 'undefined' && window.Vue ? window.Vue : Vue;
 
@@ -50,6 +52,17 @@ function mountForm(rules, option) {
     return $vm;
 }
 
+function exportAttrs(attrs) {
+    const key = attrs.key || [];
+    const array = attrs.array || [];
+    const normal = attrs.normal || [];
+    keyAttrs.push(...key);
+    arrayAttrs.push(...array);
+    normalAttrs.push(...normal);
+
+    appendProto([...key, ...array, ...normal]);
+}
+
 //todo 表单嵌套
 export default function FormCreateFactory(config) {
 
@@ -64,6 +77,8 @@ export default function FormCreateFactory(config) {
     let globalConfig = {global: {}};
     const data = {};
     const CreateNode = CreateNodeFactory();
+
+    exportAttrs(config.attrs || {});
 
     function filter() {
         const data = nameProp(...arguments);

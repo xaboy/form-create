@@ -132,7 +132,7 @@ export default function useRender(Render) {
         },
         renderCtx(ctx, parent) {
             if (ctx.type === 'hidden') return;
-            if (!this.cache[ctx.id] || ctx.type === 'template') {
+            if (!this.cache[ctx.id]) {
                 ctx.initProp();
                 this.mergeGlobal(ctx);
                 this.$manager.tidyRule(ctx);

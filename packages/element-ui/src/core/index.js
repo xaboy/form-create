@@ -27,6 +27,11 @@ export default function elmFormCreate() {
         ui: `${process.env.UI}`,
         version: `${process.env.VERSION}`,
         manager,
-        install
+        install,
+        attrs: {
+            normal: ['col', 'wrap'],
+            array: ['className'],
+            key: ['title', 'info'],
+        }
     });
 }

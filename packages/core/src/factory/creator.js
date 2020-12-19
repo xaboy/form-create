@@ -53,9 +53,13 @@ extend(Creator.prototype, {
     },
 })
 
-attrs.forEach(name => {
-    Creator.prototype[name] = function (key) {
-        mergeRule(this._data, {[name]: arguments.length < 2 ? key : {[key]: arguments[1]}})
-        return this;
-    };
-});
+export function appendProto(attrs) {
+    attrs.forEach(name => {
+        Creator.prototype[name] = function (key) {
+            mergeRule(this._data, {[name]: arguments.length < 2 ? key : {[key]: arguments[1]}})
+            return this;
+        };
+    });
+}
+
+appendProto(attrs());
