@@ -13,6 +13,7 @@ import {CreateNodeFactory} from '../factory/node';
 import {createManager} from '../factory/manager';
 import {arrayAttrs, keyAttrs, normalAttrs} from './attrs';
 import {appendProto} from '../factory/creator';
+import deepExtend from '@form-create/utils/lib/deepextend';
 
 export let _vue = typeof window !== 'undefined' && window.Vue ? window.Vue : Vue;
 
@@ -174,6 +175,9 @@ export default function FormCreateFactory(config) {
             vm.$emit('input', h.api);
 
             vm.$on('hook:created', () => {
+                if (this.isSub()) {
+                    this.initOptions(this.options);
+                }
                 this.created();
             })
             vm.$on('hook:mounted', () => {
@@ -186,15 +190,25 @@ export default function FormCreateFactory(config) {
                 h.bindNextTick(() => this.bus.$emit('next-tick', h.api));
             });
         },
+        isSub() {
+            return this.vm.parent$f && this.vm.extendOption;
+        },
         initOptions(options) {
             this.options = {formData: {}, ...globalConfig};
+            if (this.isSub()) {
+                this.mergeOptions(this.options, this.vm.parent$f.config);
+            }
             this.updateOptions(options);
         },
-        updateOptions(options) {
-            if (options.global) {
-                this.options.global = mergeGlobal(this.options.global, options.global);
+        mergeOptions(target, opt) {
+            if (opt.global) {
+                target.global = mergeGlobal(target.global, opt.global);
             }
-            this.$handle.$manager.mergeOptions([options], this.options);
+            this.$handle.$manager.mergeOptions([opt], target);
+            return target;
+        },
+        updateOptions(options) {
+            this.mergeOptions(this.options, options);
             this.$handle.$manager.updateOptions(this.options);
         },
         created() {

@@ -12,6 +12,12 @@ export default function $FormCreate(FormCreate) {
         model: {
             prop: 'api'
         },
+        provide() {
+            return {
+                parent$f: this.$f,
+            }
+        },
+        inject: {parent$f: {default: null}},
         props: {
             rule: {
                 type: Array,
@@ -23,6 +29,7 @@ export default function $FormCreate(FormCreate) {
                     return {};
                 }
             },
+            extendOption: Boolean,
             value: Object,
             api: Object,
         },

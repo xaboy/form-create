@@ -23,7 +23,6 @@ export default function getConfig() {
         },
         submitBtn: {
             type: 'primary',
-            size: 'medium',
             plain: false,
             round: false,
             circle: false,
@@ -40,7 +39,6 @@ export default function getConfig() {
         },
         resetBtn: {
             type: 'default',
-            size: 'medium',
             plain: false,
             round: false,
             circle: false,

@@ -227,7 +227,7 @@ export default {
                             input: ($f) => this.add$f(index, key, $f)
                         }}
                         rule={rule}
-                        option={options}/></ElFormItem></ElCol>
+                        option={options} extendOption={true}/></ElFormItem></ElCol>
                     {button ? <ElCol span={2} pull={1} push={1}>{this.makeIcon(keys.length, index, key)}</ElCol> : null}
                 </ElRow>
             })}</div>

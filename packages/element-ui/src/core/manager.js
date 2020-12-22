@@ -83,9 +83,6 @@ export default {
             wrap: {},
         }, {normal: ['title', 'info', 'col', 'wrap']});
         props = ctx.prop.props;
-        if (!props.size && this.options.form.size) {
-            props.size = this.options.form.size;
-        }
     },
     getDefaultOptions() {
         return getConfig();
@@ -156,7 +153,7 @@ export default {
 
         if (!isFalse(infoProp.show) && infoProp.info) {
             if (infoProp.icon !== false) {
-                children.push(this.$render.renderRule({
+                children[infoProp.align !== 'left' ? 'unshift' : 'push'](this.$render.renderRule({
                     type: 'i',
                     class: infoProp.icon === true ? 'el-icon-warning' : infoProp.icon,
                     key: `${uni}i`
@@ -217,7 +214,6 @@ export default {
     },
     makeResetBtn() {
         const resetBtn = this.options.resetBtn;
-
         return this.$render.renderRule({
             type: 'button',
             props: resetBtn,
