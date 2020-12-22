@@ -126,9 +126,9 @@ export default function useRender(Render) {
             vn.data.key = key;
             return vn;
         },
-        renderAround(vn, ctx) {
+        renderSides(vn, ctx) {
             const prop = ctx.prop;
-            return [prop.prefix || undefined, vn, prop.suffix || undefined];
+            return [this.renderRule(prop.prefix), vn, this.renderRule(prop.suffix)];
         },
         renderCtx(ctx, parent) {
             if (ctx.type === 'hidden') return;
@@ -145,7 +145,7 @@ export default function useRender(Render) {
                 } else {
                     vn = ctx.parser.render(this.renderChildren(ctx), ctx);
                 }
-                vn = this.renderAround(vn, ctx);
+                vn = this.renderSides(vn, ctx);
                 if (!flag && prop.native !== true)
                     vn = this.$manager.makeWrap(ctx, vn);
                 this.setCache(ctx, vn, parent);
@@ -237,11 +237,22 @@ export default function useRender(Render) {
                 return this.vNode[ctx.originType](prop, children);
             return this.vNode.make(ctx.originType, prop, children);
         },
-        renderRule(rule, children = []) {
-            let type = toCase(rule.type);
-            const alias = this.vNode.aliasMap[type];
-            if (alias) type = toCase(alias);
-            return this.vm.$createElement(type, rule, children);
+        renderRule(rule, children) {
+            if (!rule) return undefined;
+            if (is.String(rule)) return rule;
+
+            let type = rule.is;
+            if (rule.type) {
+                type = toCase(rule.type);
+                const alias = this.vNode.aliasMap[type];
+                if (alias) type = toCase(alias);
+            }
+            if (!type) return undefined;
+            let data = [[children]];
+            if (is.trueArray(rule.children)) {
+                data.push(rule.children.map(v => this.renderRule(v)));
+            }
+            return this.vm.$createElement(type, {...rule}, data);
         }
     })
 }
