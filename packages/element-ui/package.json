@@ -43,6 +43,7 @@
     "homepage": "http://www.form-create.com",
     "dependencies": {
         "@form-create/component-elm-checkbox": "^0.0.1",
+        "@form-create/component-sub-form": "^0.0.1",
         "@form-create/component-elm-frame": "^0.0.1",
         "@form-create/component-elm-group": "^0.0.1",
         "@form-create/component-elm-radio": "^0.0.1",

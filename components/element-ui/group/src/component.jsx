@@ -61,6 +61,12 @@ export default {
                 lst[k].$f.disabled(n);
             })
         },
+        expand(n) {
+            let d = n - this.value.length;
+            if (d > 0) {
+                this.expandRule(d);
+            }
+        },
         value(n) {
             n = n || [];
             let keys = Object.keys(this.cacheRule), total = keys.length, len = total - n.length;
@@ -68,7 +74,6 @@ export default {
                 for (let i = len; i < 0; i++) {
                     this.addRule(n.length + i);
                 }
-                this.$forceUpdate();
                 for (let i = 0; i < total; i++) {
                     this.setValue(keys[i], n[i]);
                 }
@@ -192,14 +197,17 @@ export default {
         },
         emitEvent(name, args, index, key) {
             this.$emit(name, ...args, this.cacheRule[key].$f, index);
+        },
+        expandRule(n) {
+            for (let i = 0; i < n; i++) {
+                this.value.push(this.field ? null : {});
+            }
         }
     },
     created() {
         const d = (this.expand || 0) - this.value.length;
         if (d > 0) {
-            for (let i = 0; i < d; i++) {
-                this.value.push(this.field ? null : {});
-            }
+            this.extendRule(d);
         }
         for (let i = 0; i < this.value.length; i++) {
             this.addRule(i);
@@ -218,7 +226,7 @@ export default {
             <div key={'con'}>{keys.map((key, index) => {
                 const {rule, options} = this.cacheRule[key];
                 return <ElRow align="middle" type="flex" key={key}
-                    style="border-bottom:1px dashed #DCDFE6;padding:10px;margin-bottom:10px;">
+                    style="border-bottom:1px dashed #DCDFE6;margin-bottom:10px;">
                     <ElCol span={button ? 20 : 24}><ElFormItem><FormCreate
                         key={key}
                         on={{

@@ -29,4 +29,6 @@ export default {
     autoComplete: 'elAutocomplete',
     auto: 'elAutocomplete',
     group: 'fcGroup',
+    object: 'fcSubForm',
+    subForm: 'fcSubForm',
 }

@@ -18,6 +18,6 @@ export default {
                 {slot ? <template
                     slot={props.slotName || 'default'}>{is.Function(slot) ? props.slot(h) : slot}</template> : null}
             </ElOption>
-        }).concat(ctx.chlidren)}</ElSelect>;
+        })}{ctx.children}</ElSelect>;
     }
 }
