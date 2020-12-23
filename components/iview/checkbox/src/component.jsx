@@ -1,15 +1,15 @@
-const NAME = 'fc-checkbox';
+const NAME = 'fcCheckbox';
 
 export default {
     name: NAME,
     props: {
-        formCreateOptions: {
-            type: Array,
-            default: () => []
-        },
         formCreateRule: {
             type: Object,
             default: () => ({})
+        },
+        formCreateOptions: {
+            type: Array,
+            default: () => []
         },
         value: {
             type: Array,
@@ -32,18 +32,18 @@ export default {
         },
         update() {
             this.trueValue = this.value ? this.formCreateOptions.filter((opt) => this.value.indexOf(opt.value) !== -1)
-                .map((option) => option.label) : [];
+                .map((option) => option.label) : []
         }
     },
     created() {
         this.update();
     },
     render() {
-        return <CheckboxGroup {...this.formCreateRule} v-model={this.trueValue}
+        return <CheckboxGroup {...this.formCreateRule} value={this.trueValue}
             on-input={this.onInput}>{this.formCreateOptions.map((opt, index) => {
                 const props = {...opt};
                 delete props.value;
-                return <Checkbox {...{props}} key={'' + index + props.value}/>
-            }).concat(this.chlidren)}</CheckboxGroup>
+                return <Checkbox {...{props}} key={'' + index + opt.value}/>
+            })}{this.$slots.default}</CheckboxGroup>
     }
 }

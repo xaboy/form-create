@@ -12,7 +12,7 @@ function getFileName(file) {
     return ('' + file).split('/').pop()
 }
 
-const NAME = 'fc-upload';
+const NAME = 'fcUpload';
 
 
 export default function createUpload(config) {
@@ -154,9 +154,8 @@ export default function createUpload(config) {
                 this.formCreateRule.props.defaultFileList = this.$refs.upload.defaultFileList;
             }
             return (
-                <div class={{
-                    '_fc-upload': true
-                }}>{[this.formCreateRule.props.showUploadList ? [] : this.makeFiles(), this.makeUpload()]}
+                <div
+                    class="_fc-upload">{[this.formCreateRule.props.showUploadList ? [] : this.makeFiles(), this.makeUpload()]}
                     <Modal title={this.modalTitle} v-model={this.previewVisible} footerHide={true}>
                         <img alt="example" style="width: 100%" src={this.previewImage}/>
                     </Modal>

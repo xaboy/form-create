@@ -12,8 +12,8 @@ export const iview2 = {
     fileUpIcon: 'folder',
     imgUpIcon: 'image',
     infoIcon: 'ios-information-outline',
-    removeIcon:'ios-minus-outline',
-    addIcon:'ios-plus-outline',
+    removeIcon: 'ios-minus-outline',
+    addIcon: 'ios-plus-outline',
 };
 
 export const iview3 = {
@@ -25,8 +25,8 @@ export const iview3 = {
     fileUpIcon: 'ios-folder-open',
     imgUpIcon: 'md-images',
     infoIcon: 'ios-information-circle-outline',
-    removeIcon:'ios-remove-circle-outline',
-    addIcon:'ios-add-circle-outline',
+    removeIcon: 'ios-remove-circle-outline',
+    addIcon: 'ios-add-circle-outline',
 };
 
 export const iviewConfig = (function () {
@@ -34,6 +34,15 @@ export const iviewConfig = (function () {
     return (iview.version && iview.version.split('.')[0] > 2) ? iview3 : iview2;
 }());
 
+export function info() {
+    return {
+        type: 'poptip',
+        trigger: 'hover',
+        placement: 'top-start',
+        wordWrap: true,
+        icon: iviewConfig.infoIcon
+    }
+}
 
 export default function getConfig() {
     return {
@@ -51,13 +60,6 @@ export default function getConfig() {
             align: undefined,
             justify: undefined,
             className: undefined
-        },
-        info: {
-            type: 'poptip',
-            trigger: 'hover',
-            placement: 'top-start',
-            wordWrap: true,
-            icon: iviewConfig.infoIcon
         },
         submitBtn: {
             type: 'primary',

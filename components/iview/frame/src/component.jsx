@@ -1,7 +1,7 @@
 import toArray from '@form-create/utils/lib/toarray';
 import './style.css'
 
-const NAME = 'fc-frame';
+const NAME = 'fcFrame';
 
 export default function createFrame(config) {
     return {
@@ -138,7 +138,7 @@ export default function createFrame(config) {
             fileList(n) {
                 const val = this.maxLength === 1 ? (n[0] || '') : n;
                 this.$emit('input', val);
-                this.$emit('on-change', val);
+                this.$emit('change', val);
             },
             src(n) {
                 this.modalVm && (this.modalVm.src = n);

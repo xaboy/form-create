@@ -1,4 +1,4 @@
-const NAME = 'fc-radio';
+const NAME = 'fcRadio';
 
 export default {
     name: NAME,
@@ -39,7 +39,7 @@ export default {
             on-input={this.onInput}>{this.formCreateOptions.map((opt, index) => {
                 const props = {...opt};
                 delete props.value;
-                return <Radio {...{props}} key={'' + index + props.value}/>
+                return <Radio {...{props}} key={'' + index + opt.value}/>
             })}{this.$slots.default}</RadioGroup>
     }
 }

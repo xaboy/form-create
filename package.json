@@ -9,7 +9,7 @@
         "dev:antd": "cross-env UI_LiB=ant-design-vue webpack-dev-server --config=./scripts/configs/webpack.config.antd.js",
         "commit": "git cz",
         "lint": "eslint *.js",
-        "clear-all": "rimraf package-lock.json packages/*/node_modules packages/*/package-lock.json",
+        "clear-all": "rimraf package-lock.json packages/*/node_modules components/*/*/package-lock.json",
         "bootstrap": "npm run clear-all && npm i && npm-run-all bootstrap:lerna",
         "bootstrap:lerna": "lerna bootstrap -- --ignore-engines"
     },
