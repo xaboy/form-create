@@ -16,6 +16,7 @@ export function baseRule() {
         emit: [],
         link: [],
         hidden: false,
+        display: true,
         value: null,
     };
 }

@@ -124,7 +124,7 @@ export default {
         const {inline, col: _col} = this.rule.props;
         const item = isFalse(rule.wrap.show) ? children : this.$render.renderRule(mergeProps([rule.wrap, {
             props: {
-                title: rule.title.title,
+                label: rule.title.title,
                 labelWidth: labelWidth === void 0 ? labelWidth : toString(labelWidth),
                 ...(rule.wrap || {}),
                 prop: ctx.field,

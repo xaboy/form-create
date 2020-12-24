@@ -62,6 +62,7 @@ export default function useRender(Render) {
             if (!this.vm.isShow) {
                 return;
             }
+            this.$h = this.vm.$createElement;
             this.$manager.beforeRender();
 
             const vn = this.sortList.map((id) => {
@@ -139,20 +140,28 @@ export default function useRender(Render) {
                 this.ctxProp(ctx);
                 let {type, prop} = ctx, vn;
                 if (prop.hidden) return;
-                let flag = (!ctx.input && is.Undef(prop.native));
                 if (type === 'template' && prop.template) {
                     vn = this.renderTemp(ctx);
                 } else {
                     vn = ctx.parser.render(this.renderChildren(ctx), ctx);
                 }
                 vn = this.renderSides(vn, ctx);
-                if (!flag && prop.native !== true)
+                if ((!(!ctx.input && is.Undef(prop.native))) && prop.native !== true) {
                     vn = this.$manager.makeWrap(ctx, vn);
+                }
+                vn = this.item(ctx, vn);
                 this.setCache(ctx, vn, parent);
                 return vn;
             }
 
             return this.getCache(ctx);
+        },
+        item(ctx, vn) {
+            return this.$h('div', {
+                slot: ctx.rule.slot,
+                key: ctx.key,
+                style: !(is.Undef(ctx.rule.display) || !!ctx.rule.display) ? 'display:none' : ''
+            }, [vn]);
         },
         ctxProp(ctx, custom) {
             const {ref, key} = ctx;
@@ -163,6 +172,7 @@ export default function useRender(Render) {
                     props: injectProp(ctx, this.$handle.api),
                     ref: ref,
                     key: `${key}fc`,
+                    slot: undefined,
                 }
             ]
 
@@ -252,7 +262,7 @@ export default function useRender(Render) {
             if (is.trueArray(rule.children)) {
                 data.push(rule.children.map(v => this.renderRule(v)));
             }
-            return this.vm.$createElement(type, {...rule}, data);
+            return this.$h(type, {...rule}, data, '');
         }
     })
 }
