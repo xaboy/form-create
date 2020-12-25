@@ -13,7 +13,6 @@ import {CreateNodeFactory} from '../factory/node';
 import {createManager} from '../factory/manager';
 import {arrayAttrs, keyAttrs, normalAttrs} from './attrs';
 import {appendProto} from '../factory/creator';
-import deepExtend from '@form-create/utils/lib/deepextend';
 
 export let _vue = typeof window !== 'undefined' && window.Vue ? window.Vue : Vue;
 
@@ -194,7 +193,7 @@ export default function FormCreateFactory(config) {
             return this.vm.parent$f && this.vm.extendOption;
         },
         initOptions(options) {
-            this.options = {formData: {}, ...globalConfig};
+            this.options = {formData: {}, submitBtn: {}, resetBtn: {}, ...globalConfig};
             if (this.isSub()) {
                 this.mergeOptions(this.options, this.vm.parent$f.config);
             }

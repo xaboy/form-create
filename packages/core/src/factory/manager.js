@@ -27,6 +27,7 @@ export default function Manager(handler) {
 extend(Manager.prototype, {
     __init() {
         this.$render = this.$handle.$render;
+        this.$r = (...args) => this.$render.renderRule(...args);
     },
     updateKey() {
         this.key = unique();

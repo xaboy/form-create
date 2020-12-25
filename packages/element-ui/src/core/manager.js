@@ -40,9 +40,6 @@ export default {
     validateField(field, call) {
         this.form().validateField(field, call);
     },
-    resetField(ctx) {
-        this.vm.$refs[ctx.wrapRef].resetField();
-    },
     clearValidateState(ctx) {
         const fItem = this.vm.$refs[ctx.wrapRef];
         if (fItem) {
@@ -82,16 +79,14 @@ export default {
             col: {span: 24},
             wrap: {},
         }, {normal: ['title', 'info', 'col', 'wrap']});
-        props = ctx.prop.props;
     },
     getDefaultOptions() {
         return getConfig();
     },
     update() {
         const form = this.options.form;
-        const h = this.$handle;
         this.rule = {
-            props: {...form, model: h.formData, rules: h.validate},
+            props: {...form},
             nativeOn: {
                 submit: (e) => {
                     e.preventDefault();
@@ -114,7 +109,7 @@ export default {
         if (children.length) {
             children.push(this.makeFormBtn());
         }
-        return this.$render.renderRule(this.rule, isFalse(this.options.row.show) ? children : [this.makeRow(children)]);
+        return this.$r(this.rule, isFalse(this.options.row.show) ? children : [this.makeRow(children)]);
     },
     makeWrap(ctx, children) {
         const rule = ctx.prop;
@@ -122,7 +117,7 @@ export default {
         const col = rule.col;
         const labelWidth = (!col.labelWidth && isFalse(rule.title.show)) ? 0 : col.labelWidth;
         const {inline, col: _col} = this.rule.props;
-        const item = isFalse(rule.wrap.show) ? children : this.$render.renderRule(mergeProps([rule.wrap, {
+        const item = isFalse(rule.wrap.show) ? children : this.$r(mergeProps([rule.wrap, {
             props: {
                 label: rule.title.title,
                 labelWidth: labelWidth === void 0 ? labelWidth : toString(labelWidth),
@@ -144,22 +139,22 @@ export default {
         const isTip = isTooltip(infoProp);
         const children = [titleProp.title];
 
-        const titleFn = (pop) => this.$render.renderRule(mergeProps([titleProp, {
+        const titleFn = (pop) => this.$r(mergeProps([titleProp, {
             props: titleProp,
             slot: titleProp.slot || (pop ? (isTip ? 'default' : 'reference') : 'label'),
             key: `${uni}tit`,
-            type: titleProp.type || 'span',
+            type: titleProp.type || 'fcFragment',
         }]), children);
 
         if (!isFalse(infoProp.show) && infoProp.info) {
             if (infoProp.icon !== false) {
-                children[infoProp.align !== 'left' ? 'unshift' : 'push'](this.$render.renderRule({
+                children[infoProp.align !== 'left' ? 'unshift' : 'push'](this.$r({
                     type: 'i',
                     class: infoProp.icon === true ? 'el-icon-warning' : infoProp.icon,
                     key: `${uni}i`
                 }));
             }
-            return this.$render.renderRule(mergeProps([infoProp, {
+            return this.$r(mergeProps([infoProp, {
                 type: infoProp.type || 'popover',
                 props: {...infoProp, content: infoProp.info},
                 key: `${uni}pop`,
@@ -172,7 +167,7 @@ export default {
     },
     makeCol(rule, uni, children) {
         const col = rule.col;
-        return this.$render.renderRule({
+        return this.$r({
             class: col.class,
             type: 'col',
             props: col || {span: 24},
@@ -181,7 +176,7 @@ export default {
     },
     makeRow(children) {
         const row = this.options.row || {};
-        return this.$render.renderRule({
+        return this.$r({
             type: 'row',
             props: row,
             class: row.class,
@@ -199,14 +194,14 @@ export default {
         if (!vn.length) {
             return;
         }
-        const item = this.$render.renderRule({
+        const item = this.$r({
             type: 'formItem',
             key: `${this.key}fb`
         }, vn);
 
         return this.rule.props.inline === true
             ? item
-            : this.$render.renderRule({
+            : this.$r({
                 type: 'col',
                 props: {span: 24},
                 key: `${this.key}fc`
@@ -214,7 +209,7 @@ export default {
     },
     makeResetBtn() {
         const resetBtn = this.options.resetBtn;
-        return this.$render.renderRule({
+        return this.$r({
             type: 'button',
             props: resetBtn,
             style: {width: resetBtn.width},
@@ -232,7 +227,7 @@ export default {
     makeSubmitBtn() {
         const submitBtn = this.options.submitBtn;
 
-        return this.$render.renderRule({
+        return this.$r({
             type: 'button',
             props: submitBtn,
             style: {width: submitBtn.width},

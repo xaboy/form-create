@@ -182,12 +182,14 @@ export default function Api(h) {
             let btn = tidyBtnProp(h.options.submitBtn, true);
             extend(btn, props);
             h.options.submitBtn = btn;
+            api.refreshOptions();
             api.refresh();
         },
         resetBtnProps: (props = {}) => {
             let btn = tidyBtnProp(h.options.resetProps, false);
             extend(btn, props);
             h.options.resetProps = btn;
+            api.refreshOptions();
             api.refresh();
         },
         reload: (rules) => {
