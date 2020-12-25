@@ -17,7 +17,7 @@ export function baseRule() {
         link: [],
         hidden: false,
         display: true,
-        value: null,
+        value: undefined,
     };
 }
 
