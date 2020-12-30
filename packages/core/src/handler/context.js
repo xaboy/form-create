@@ -8,14 +8,14 @@ import is from '@form-create/utils/lib/type';
 export default function useContext(Handler) {
     extend(Handler.prototype, {
         getCtx(id) {
-            return this.fieldList[id] || this.customData[id] || this.ctxs[id];
+            return this.fieldCtx[id] || this.nameCtx[id] || this.ctxs[id];
         },
         setCtx(ctx) {
             let {id, field, name, rule} = ctx;
             this.ctxs[id] = ctx;
-            if (name) $set(this.customData, name, ctx);
+            if (name) $set(this.nameCtx, name, ctx);
             if (!ctx.input) return;
-            this.fieldList[field] = ctx;
+            this.fieldCtx[field] = ctx;
             $set(this.formData, field, ctx.parser.toFormValue(rule.value, ctx));
             $set(this.validate, field, rule.validate || []);
         },
@@ -87,15 +87,15 @@ export default function useContext(Handler) {
             $del(this.validate, field);
             $del(this.formData, field);
             $del(this.form, field);
-            $del(this.fieldList, field);
+            $del(this.fieldCtx, field);
             $del(this.$render.renderList, id);
-            $del(this.customData, name);
+            $del(this.nameCtx, name);
             $del(this.subForm, field);
             $del(ctx, 'cacheValue');
 
-            const index = this.sortList.indexOf(id);
+            const index = this.sort.indexOf(id);
             if (index > -1) {
-                this.sortList.splice(index, 1);
+                this.sort.splice(index, 1);
             }
 
             ctx.delete();

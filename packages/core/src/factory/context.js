@@ -100,8 +100,12 @@ extend(RuleContext.prototype, {
     },
     rm() {
         let index = this.root.indexOf(this.origin);
-        if (index === -1) return;
-        this.root.splice(index, 1);
+        if (index > -1) {
+            this.root.splice(index, 1);
+        }
+        if (this.deleted) {
+            return;
+        }
         this.rmCtrl();
         this.$handle.rmCtx(this);
         extend(this, {

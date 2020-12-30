@@ -54,10 +54,10 @@ export default function Handler(fc) {
 extend(Handler.prototype, {
     initData(rules) {
         extend(this, {
-            fieldList: {},
+            fieldCtx: {},
             ctxs: {},
-            customData: {},
-            sortList: [],
+            nameCtx: {},
+            sort: [],
             rules,
             repeatRule: [],
         });

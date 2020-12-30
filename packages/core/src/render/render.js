@@ -65,7 +65,7 @@ export default function useRender(Render) {
             this.$h = this.vm.$createElement;
             this.$manager.beforeRender();
 
-            const vn = this.sortList.map((id) => {
+            const vn = this.sort.map((id) => {
                 return this.renderCtx(this.$handle.ctxs[id]);
             }).filter((val) => val !== undefined);
 
@@ -136,8 +136,13 @@ export default function useRender(Render) {
             if (!this.cache[ctx.id]) {
                 let vn;
                 const _type = ctx.trueType;
+                const none = !(is.Undef(ctx.rule.display) || !!ctx.rule.display);
                 if (_type === 'template' && !ctx.rule.template) {
-                    vn = this.item(ctx, this.renderSides(this.renderChildren(ctx), ctx, true), false);
+                    vn = this.renderSides(this.renderChildren(ctx), ctx, true);
+                    if (none) {
+                        this.display(vn);
+                    }
+                    vn = this.item(ctx, vn);
                 } else if (_type === 'fcFragment') {
                     vn = this.renderChildren(ctx);
                 } else {
@@ -158,11 +163,13 @@ export default function useRender(Render) {
                         vn = ctx.parser.render(this.renderChildren(ctx), ctx);
                     }
                     vn = this.renderSides(vn, ctx);
-                    const flag = (!(!ctx.input && is.Undef(prop.native))) && prop.native !== true;
-                    if (flag) {
+                    if ((!(!ctx.input && is.Undef(prop.native))) && prop.native !== true) {
                         vn = this.$manager.makeWrap(ctx, vn);
                     }
-                    vn = this.item(ctx, vn, flag);
+                    if (none) {
+                        vn = this.display(vn);
+                    }
+                    vn = this.item(ctx, vn)
                 }
                 this.setCache(ctx, vn, parent);
                 return vn;
@@ -170,11 +177,32 @@ export default function useRender(Render) {
 
             return this.getCache(ctx);
         },
-        item(ctx, vn, flag) {
-            return this.$h(flag ? 'div' : 'fcFragment', {
+        display(vn) {
+            if (Array.isArray(vn)) {
+                const data = [];
+                vn.forEach(v => {
+                    if (Array.isArray(v)) return this.display(v);
+                    if (this.none(v)) data.push(v);
+                })
+                return data;
+            } else {
+                return this.none(vn);
+            }
+        },
+        none(vn) {
+            if (vn && vn.data) {
+                if (Array.isArray(vn.data.style)) {
+                    vn.data.style.push({display: 'none'});
+                } else {
+                    vn.data.style = [vn.data.style, {display: 'none'}];
+                }
+                return vn;
+            }
+        },
+        item(ctx, vn) {
+            return this.$h('fcFragment', {
                 slot: ctx.rule.slot,
                 key: ctx.key,
-                style: !(is.Undef(ctx.rule.display) || !!ctx.rule.display) ? 'display:none' : ''
             }, [vn]);
         },
         ctxProp(ctx, custom) {

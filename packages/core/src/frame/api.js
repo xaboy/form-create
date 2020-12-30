@@ -57,20 +57,20 @@ export default function Api(h) {
         },
         formData(fields) {
             return tidyFields(fields).reduce((initial, id) => {
-                const ctx = h.fieldList[id];
+                const ctx = h.fieldCtx[id];
                 if (!ctx) return initial;
                 initial[ctx.field] = copy(ctx.rule.value);
                 return initial;
             }, {});
         },
         getValue(field) {
-            const ctx = h.fieldList[field];
+            const ctx = h.fieldCtx[field];
             if (!ctx) return;
             return copy(ctx.rule.value);
         },
         coverValue(formData) {
-            Object.keys(h.fieldList).forEach(key => {
-                const ctx = h.fieldList[key];
+            Object.keys(h.fieldCtx).forEach(key => {
+                const ctx = h.fieldCtx[key];
                 if (!ctx) return h.appendData[key] = formData[key];
                 ctx.rule.value = hasProperty(formData, key) ? formData[key] : undefined;
             });
@@ -80,7 +80,7 @@ export default function Api(h) {
             if (arguments.length >= 2)
                 formData = {[field]: arguments[1]};
             Object.keys(formData).forEach(key => {
-                const ctx = h.fieldList[key];
+                const ctx = h.fieldCtx[key];
                 if (!ctx) return h.appendData[key] = formData[key];
                 ctx.rule.value = formData[key];
             });
@@ -103,7 +103,7 @@ export default function Api(h) {
         },
         fields: () => h.fields(),
         append: (rule, after, child) => {
-            let fields = Object.keys(h.fieldList), index = h.sortList.length, rules;
+            let fields = Object.keys(h.fieldCtx), index = h.sort.length, rules;
 
             if (rule.field && fields.indexOf(rule.field) > -1)
                 return err(`${rule.field} 字段已存在`, rule);
@@ -122,7 +122,7 @@ export default function Api(h) {
             rules.splice(index + 1, 0, rule);
         },
         prepend: (rule, after, child) => {
-            let fields = Object.keys(h.fieldList), index = 0, rules;
+            let fields = Object.keys(h.fieldCtx), index = 0, rules;
 
             if (rule.field && fields.indexOf(rule.field) > -1)
                 return err(`${rule.field} 字段已存在`, rule);
@@ -150,21 +150,21 @@ export default function Api(h) {
         },
         disabled(disabled, fields) {
             tidyFields(fields).forEach((field) => {
-                const ctx = h.fieldList[field];
+                const ctx = h.fieldCtx[field];
                 if (!ctx) return;
                 $set(ctx.rule.props, 'disabled', !!disabled);
             });
             h.refresh();
         },
         model(origin) {
-            return byRules(h.fieldList, origin);
+            return byRules(h.fieldCtx, origin);
         },
         component(origin) {
-            return byRules(h.customData, origin);
+            return byRules(h.nameCtx, origin);
         },
         bind() {
-            return Object.defineProperties({}, Object.keys(h.fieldList).reduce((initial, field) => {
-                const ctx = h.fieldList[field];
+            return Object.defineProperties({}, Object.keys(h.fieldCtx).reduce((initial, field) => {
+                const ctx = h.fieldCtx[field];
                 initial[field] = {
                     get() {
                         return ctx.rule.value;
@@ -228,22 +228,29 @@ export default function Api(h) {
         clearChangeStatus: () => {
             h.changeStatus = false;
         },
-        updateRule: (id, rule) => {
+        updateRule(id, rule) {
+            const r = this.getRule(id);
+            r && extend(r, rule);
+        },
+        updateRules(rules) {
+            Object.keys(rules).forEach(id => {
+                this.updateRule(id, rules[id]);
+            })
+        },
+        mergeRule: (id, rule) => {
             const ctx = h.getCtx(id);
-            if (ctx) {
-                mergeRule(ctx.rule, rule);
-            }
+            ctx && mergeRule(ctx.rule, rule);
+        },
+        mergeRules(rules) {
+            Object.keys(rules).forEach(id => {
+                this.mergeRule(id, rules[id]);
+            })
         },
         getRule: (id, origin) => {
             const ctx = h.getCtx(id);
             if (ctx) {
                 return origin ? ctx.origin : ctx.rule;
             }
-        },
-        updateRules(rules) {
-            Object.keys(rules).forEach(id => {
-                this.updateRule(id, rules[id]);
-            })
         },
         updateValidate(id, validate, merge) {
             if (merge) {
@@ -331,12 +338,12 @@ export default function Api(h) {
 
         },
         validateField: (field, callback) => {
-            if (!h.fieldList[field])
+            if (!h.fieldCtx[field])
                 return;
             h.$manager.validateField(field, callback);
         },
         resetFields(fields) {
-            let ctxs = h.fieldList;
+            let ctxs = h.fieldCtx;
             tidyFields(fields).forEach(field => {
                 let ctx = ctxs[field];
                 if (!ctx) return;
@@ -363,7 +370,7 @@ export default function Api(h) {
         clearValidateState(fields, clearSub = true) {
             tidyFields(fields).forEach(field => {
                 if (clearSub) this.clearSubValidateState(field);
-                const ctx = h.fieldList[field];
+                const ctx = h.fieldCtx[field];
                 if (!ctx) return;
                 h.$manager.clearValidateState(ctx);
             });

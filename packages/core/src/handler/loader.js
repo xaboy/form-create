@@ -41,7 +41,7 @@ export default function useLoader(Handler) {
             return this.repeatRule.indexOf(rule) > -1;
         },
         loadRule() {
-            console.warn('%c load', 'color:blue');
+            // console.warn('%c load', 'color:blue');
             this.cycleLoad = false;
             if (this.pageEnd) {
                 this.bus.$emit('load-start');
@@ -73,7 +73,7 @@ export default function useLoader(Handler) {
                 if (!pre || !pre.__fc__) {
                     return i > 0 ? preIndex(i - 1) : -1;
                 }
-                let index = this.sortList.indexOf(pre.__fc__.id);
+                let index = this.sort.indexOf(pre.__fc__.id);
                 return index > -1 ? index : preIndex(i - 1);
             }
 
@@ -97,7 +97,7 @@ export default function useLoader(Handler) {
 
                 let rule = getRule(_rule);
 
-                if (rule.field && this.fieldList[rule.field]) {
+                if (rule.field && this.fieldCtx[rule.field] && this.fieldCtx[rule.field] !== _rule.__fc__) {
                     this.repeatRule.push(_rule);
                     return err(`${rule.field} 字段已存在`, _rule);
                 }
@@ -105,16 +105,17 @@ export default function useLoader(Handler) {
                 let ctx;
                 if (_rule.__fc__) {
                     ctx = _rule.__fc__;
+                    const check = !ctx.check(this);
                     if (ctx.deleted) {
-                        if (!ctx.check(this)) {
-                            if (ctx.rule.__ctrl) {
+                        if (check) {
+                            if (isCtrl(ctx)) {
                                 return;
                             }
                             ctx.update(this);
                         }
                     } else {
-                        if (!ctx.check(this) || this.ctxs[ctx.id]) {
-                            if (ctx.rule.__ctrl) {
+                        if (check) {
+                            if (isCtrl(ctx)) {
                                 return;
                             }
                             rules[index] = _rule = _rule._clone ? _rule._clone() : copyRule(_rule);
@@ -140,9 +141,9 @@ export default function useLoader(Handler) {
                 if (!parent) {
                     const _preIndex = preIndex(index);
                     if (_preIndex > -1) {
-                        this.sortList.splice(_preIndex + 1, 0, ctx.id);
+                        this.sort.splice(_preIndex + 1, 0, ctx.id);
                     } else {
-                        this.sortList.push(ctx.id);
+                        this.sort.push(ctx.id);
                     }
                 }
 
@@ -217,7 +218,7 @@ export default function useLoader(Handler) {
             return this._reloadRule(rules);
         }, 1),
         _reloadRule(rules) {
-            console.warn('%c reload', 'color:red');
+            // console.warn('%c reload', 'color:red');
             if (!rules) rules = this.rules;
 
             const ctxs = {...this.ctxs};
@@ -271,4 +272,8 @@ function findCtrl(ctx, rule) {
         if (ctrl.children === rule)
             return ctrl;
     }
+}
+
+function isCtrl(ctx) {
+    return !!ctx.rule.__ctrl;
 }

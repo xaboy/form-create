@@ -16,8 +16,8 @@ export default function Render(handle) {
         options() {
             return handle.options;
         },
-        sortList() {
-            return handle.sortList;
+        sort() {
+            return handle.sort;
         }
     })
 
