@@ -1,48 +1,37 @@
 import components from '../components';
 import parsers from '../parsers';
-import getConfig from './config';
-import nodes from './nodes';
-import formRender from './form';
-import createFormCreate, {Creator, VNode} from '@form-create/core';
-import makers from '../makers';
-import {isPlainObject, toString} from '@form-create/utils';
+import alias from './alias';
+import manager from './manager';
+import FormCreateFactory from '@form-create/core';
+import makers from './maker';
+import '../style/index.css';
 
-VNode.use(nodes);
+function install(FormCreate) {
+    FormCreate.componentAlias(alias);
 
-export const drive = {
-    ui: process.env.UI,
-    version: process.env.VERSION,
-    formRender,
-    components,
-    parsers,
-    makers,
-    getConfig,
-    nodes,
-};
-
-const {FormCreate, install} = createFormCreate(drive);
-
-Creator.prototype.event = function (key, value) {
-    let event;
-
-    if (!isPlainObject(key)) {
-        event = {[key]: value}
-    } else {
-        event = key;
-    }
-
-    Object.keys(event).forEach((eventName) => {
-        const name = toString(eventName).indexOf('on-') === 0 ? eventName : `on-${eventName}`;
-        this.on(name, event[eventName]);
+    components.forEach(component => {
+        FormCreate.component(component.name, component);
     });
-    return this;
-};
 
-if (typeof window !== 'undefined') {
-    window.formCreate = FormCreate;
-    if (window.Vue) {
-        install(window.Vue);
-    }
+    parsers.forEach((parser) => {
+        FormCreate.parser(parser);
+    });
+
+    Object.keys(makers).forEach(name => {
+        FormCreate.maker[name] = makers[name];
+    });
 }
 
-export default FormCreate;
+export default function ivuFormCreate() {
+    return FormCreateFactory({
+        ui: `${process.env.UI}`,
+        version: `${process.env.VERSION}`,
+        manager,
+        install,
+        attrs: {
+            normal: ['col', 'wrap'],
+            array: ['className'],
+            key: ['title', 'info'],
+        }
+    });
+}

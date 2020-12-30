@@ -18,6 +18,6 @@ export default {
                 {slot ? <template
                     slot={props.slotName || 'default'}>{is.Function(slot) ? props.slot(h) : slot}</template> : null}
             </Option>
-        })}{this.$slots.default}</Select>;
+        })}{ctx.children}</Select>;
     }
 }
