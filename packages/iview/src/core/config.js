@@ -1,26 +1,8 @@
-import iview from 'iview';
-
-
-export const ivuVersion = (iview.version && iview.version.split('.')[0] > 2 ? 3 : 2);
-
-export const iview2 = {
-    _v: 2,
-    resetBtnType: 'ghost',
-    resetBtnIcon: 'refresh',
-    infoIcon: 'ios-information-outline',
-};
-
-export const iview3 = {
-    _v: 3,
+export const iviewConfig = {
     resetBtnType: 'default',
     resetBtnIcon: 'md-refresh',
     infoIcon: 'ios-information-circle-outline',
 };
-
-export const iviewConfig = (function () {
-    if (typeof iview === 'undefined') return iview2;
-    return (iview.version && iview.version.split('.')[0] > 2) ? iview3 : iview2;
-}());
 
 export function info() {
     return {

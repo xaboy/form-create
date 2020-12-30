@@ -28,6 +28,9 @@ export default {
             this.setStatus(n);
         }
     },
+    created() {
+        this.setStatus(this.value);
+    },
     methods: {
         setStatus(value) {
             const n = toArray(value);

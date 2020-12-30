@@ -49,9 +49,9 @@
         "@form-create/component-ivu-select": "^0.0.1",
         "@form-create/component-ivu-tree": "^0.0.1",
         "@form-create/component-ivu-upload": "^0.0.1",
+        "@form-create/component-sub-form": "^0.0.1",
         "@form-create/core": "^1.0.18",
         "@form-create/utils": "^1.0.15",
-        "@vue/composition-api": "^1.0.0-beta.22",
         "iview": "^3.3.3"
     },
     "publishConfig": {
@@ -59,6 +59,7 @@
     },
     "devDependencies": {
         "@vue/cli-plugin-babel": "^4.5.9",
-        "@vue/cli-service": "^4.5.3"
+        "@vue/cli-service": "^4.5.3",
+        "@vue/composition-api": "^1.0.0-beta.22"
     }
 }
