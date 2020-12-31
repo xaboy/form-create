@@ -127,7 +127,7 @@ export default {
             props: titleProp,
             slot: titleProp.slot || (pop ? 'default' : 'label'),
             key: `${uni}tit`,
-            type: titleProp.type || 'fcFragment',
+            type: titleProp.type || 'span',
         }]), children);
 
         if (!isFalse(infoProp.show) && infoProp.info) {
@@ -135,6 +135,7 @@ export default {
                 children[infoProp.align !== 'left' ? 'unshift' : 'push'](this.$r({
                     type: 'icon',
                     props: {type: infoProp.icon === true ? iviewConfig.infoIcon : infoProp.icon, size: 16},
+                    style: 'margin-top: -1px',
                     key: `${uni}i`
                 }));
             }
