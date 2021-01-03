@@ -15,7 +15,7 @@ const parseFile = function (file, uid) {
         return {url: file.url, file};
     };
 
-const NAME = 'fc-upload';
+const NAME = 'fcUpload';
 
 export default {
     name: NAME,
@@ -23,8 +23,8 @@ export default {
         toFormValue(value) {
             return toArray(value);
         },
-        toValue(formValue) {
-            return this.rule.props.limit === 1 ? (formValue[0] || '') : formValue;
+        toValue(formValue,ctx) {
+            return ctx.prop.props.limit === 1 ? (formValue[0] || '') : formValue;
         }
     },
     props: {

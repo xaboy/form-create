@@ -1,7 +1,7 @@
 import toArray from '@form-create/utils/lib/toarray';
 import './style.css';
 
-const NAME = 'fc-frame';
+const NAME = 'fcFrame';
 
 export default {
     name: NAME,
@@ -135,7 +135,7 @@ export default {
             this.fileList = toArray(n);
         },
         fileList(n) {
-            const val = (this.maxLength === 1 ? (n[0] || '') : n);
+            const val = this.maxLength === 1 ? (n[0] || '') : n;
             this.$emit('input', val);
             this.$emit('change', val);
         }

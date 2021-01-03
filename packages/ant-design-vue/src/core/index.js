@@ -1,33 +1,37 @@
 import components from '../components';
 import parsers from '../parsers';
-import getConfig from './config';
-import nodes from './nodes';
-import formRender from './form';
-import createFormCreate, {VNode} from '@form-create/core';
-import makers from '../makers';
-import modelEvents from './modelEvents';
+import alias from './alias';
+import manager from './manager';
+import FormCreateFactory from '@form-create/core';
+import makers from './maker';
+import '../style/index.css';
 
-VNode.use(nodes);
+function install(FormCreate) {
+    FormCreate.componentAlias(alias);
 
-export const drive = {
-    ui: process.env.UI,
-    version: `${process.env.VERSION}`,
-    formRender,
-    components,
-    parsers,
-    makers,
-    getConfig,
-    modelEvents,
-    nodes
-};
+    components.forEach(component => {
+        FormCreate.component(component.name, component);
+    });
 
-const {FormCreate, install} = createFormCreate(drive);
+    parsers.forEach((parser) => {
+        FormCreate.parser(parser);
+    });
 
-if (typeof window !== 'undefined') {
-    window.formCreate = FormCreate;
-    if (window.Vue) {
-        install(window.Vue);
-    }
+    Object.keys(makers).forEach(name => {
+        FormCreate.maker[name] = makers[name];
+    });
 }
 
-export default FormCreate;
+export default function antdvFormCreate() {
+    return FormCreateFactory({
+        ui: `${process.env.UI}`,
+        version: `${process.env.VERSION}`,
+        manager,
+        install,
+        attrs: {
+            normal: ['col', 'wrap'],
+            array: ['className'],
+            key: ['title', 'info'],
+        }
+    });
+}

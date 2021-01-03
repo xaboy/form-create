@@ -13,11 +13,3 @@
 .form-create .form-create .ant-form-item .ant-form-item.ant-form-item-with-help {
     margin-bottom: -22px;
 }
-
-.form-create .__fc_h {
-    display: none;
-}
-
-.form-create .__fc_v {
-    visibility: hidden;
-}
