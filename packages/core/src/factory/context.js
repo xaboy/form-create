@@ -28,7 +28,7 @@ export default function RuleContext(handle, rule) {
         ctrlRule: [],
         parent: null,
         cacheConfig: null,
-        prop: {},
+        prop: {...rule},
         computed: {},
         input: !!rule.field,
         el: undefined,
@@ -83,7 +83,7 @@ extend(RuleContext.prototype, {
         this.rmCtrl();
         extend(this, {
             deleted: true,
-            prop: {},
+            prop: {...this.rule},
             computed: {},
             el: undef,
             $handle: undef,
