@@ -103,7 +103,7 @@ export default function Api(h) {
         },
         fields: () => h.fields(),
         append: (rule, after, child) => {
-            let fields = Object.keys(h.fieldCtx), index = h.sort.length, rules;
+            let fields = Object.keys(h.fieldCtx), index = h.sort.length - 1, rules;
 
             if (rule.field && fields.indexOf(rule.field) > -1)
                 return err(`${rule.field} 字段已存在`, rule);
@@ -113,7 +113,7 @@ export default function Api(h) {
             if (ctx) {
                 if (child) {
                     rules = ctx.rule.children;
-                    index = ctx.rule.children.length;
+                    index = ctx.rule.children.length - 1;
                 } else {
                     index = ctx.root.indexOf(ctx.origin);
                     rules = ctx.root;
@@ -163,20 +163,7 @@ export default function Api(h) {
             return byRules(h.nameCtx, origin);
         },
         bind() {
-            return Object.defineProperties({}, Object.keys(h.fieldCtx).reduce((initial, field) => {
-                const ctx = h.fieldCtx[field];
-                initial[field] = {
-                    get() {
-                        return ctx.rule.value;
-                    },
-                    set(value) {
-                        ctx.rule.value = value;
-                    },
-                    enumerable: true,
-                    configurable: true
-                };
-                return initial;
-            }, {}))
+            return api.form;
         },
         submitBtnProps: (props = {}) => {
             let btn = tidyBtnProp(h.options.submitBtn, true);
@@ -186,9 +173,9 @@ export default function Api(h) {
             api.refresh();
         },
         resetBtnProps: (props = {}) => {
-            let btn = tidyBtnProp(h.options.resetProps, false);
+            let btn = tidyBtnProp(h.options.resetBtn, false);
             extend(btn, props);
-            h.options.resetProps = btn;
+            h.options.resetBtn = btn;
             api.refreshOptions();
             api.refresh();
         },
@@ -197,7 +184,7 @@ export default function Api(h) {
         },
         updateOptions(options) {
             h.fc.updateOptions(options);
-            api.refreshOptions();
+            api.refresh();
         },
         onSubmit(fn) {
             this.updateOptions({onSubmit: fn});
@@ -312,10 +299,10 @@ export default function Api(h) {
                 if (valid) {
                     if (subLen > 1) subLen--;
                     else if (len > 1) len--;
-                    else callback(true);
+                    else callback && callback(true);
                 } else {
                     if (!state) {
-                        callback(false);
+                        callback && callback(false);
                         state = true;
                     }
                     field && this.clearValidateState(field, false);

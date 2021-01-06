@@ -43,7 +43,10 @@ export default function createUpload(config) {
                 default: true
             },
             modalTitle: String,
-            handleIcon: [String, Boolean],
+            handleIcon: {
+                type: [String, Boolean],
+                default: () => undefined
+            },
             value: [Array, String]
         },
         data() {

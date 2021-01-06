@@ -43,7 +43,10 @@ export default {
         },
         previewMask: undefined,
         modalTitle: String,
-        handleIcon: [String, Boolean],
+        handleIcon: {
+            type: [String, Boolean],
+            default: () => undefined
+        },
         value: [Array, String]
     },
     data() {

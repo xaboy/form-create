@@ -135,6 +135,7 @@ export default function useRender(Render) {
             if (ctx.type === 'hidden') return;
             if (!this.cache[ctx.id]) {
                 let vn;
+                let cacheFlag = true;
                 const _type = ctx.trueType;
                 const none = !(is.Undef(ctx.rule.display) || !!ctx.rule.display);
                 if (_type === 'template' && !ctx.rule.template) {
@@ -159,6 +160,7 @@ export default function useRender(Render) {
 
                     if (_type === 'template' && prop.template) {
                         vn = this.renderTemp(ctx);
+                        cacheFlag = false;
                     } else {
                         vn = ctx.parser.render(this.renderChildren(ctx), ctx);
                     }
@@ -171,7 +173,9 @@ export default function useRender(Render) {
                     }
                     vn = this.item(ctx, vn)
                 }
-                this.setCache(ctx, vn, parent);
+                if (cacheFlag) {
+                    this.setCache(ctx, vn, parent);
+                }
                 return vn;
             }
 

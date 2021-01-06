@@ -37,6 +37,7 @@ export default {
             this.updateValue()
         },
         updateValue() {
+            if (!this.$refs.tree) return;
             const type = this.type.toLocaleLowerCase();
             let value;
 

@@ -23,7 +23,7 @@ export default {
     },
     watch: {
         disabled(n) {
-            this.cacheRule.disabled(n);
+            this.cacheRule.$f.disabled(n);
         },
         value(n) {
             this.setValue(n);

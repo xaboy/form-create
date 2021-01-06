@@ -56,7 +56,7 @@ export default {
             const v = ctx.el.parseDate(value);
             return this.isRange(ctx.el) ? v : v[0];
         } else {
-            let isArr = Array.isArray(value), props = ctx.rule.props, parseValue, type = props.type || 'date';
+            let isArr = Array.isArray(value), props = ctx.prop.props, parseValue, type = props.type || 'date';
             if (['daterange', 'datetimerange'].indexOf(type) !== -1) {
                 if (isArr) {
                     parseValue = value.map((time) => !time ? '' : timeStampToDate(time));
