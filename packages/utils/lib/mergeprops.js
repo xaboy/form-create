@@ -44,7 +44,7 @@ const mergeProps = (objects, initial = {}, opt = {}) => {
                 if (_normalMerge.indexOf(key) > -1 || _functionalMerge.indexOf(key) > -1 || propsMerge.indexOf(key) > -1) {
                     a[key] = {...b[key]}
                 } else if (_toArrayMerge.indexOf(key) > -1) {
-                    a[key] = b[key] instanceof Array ? [...b[key]] : (typeof b[key] === 'object' ? {...b[key]} : [b[key]]);
+                    a[key] = b[key] instanceof Array ? [...b[key]] : (typeof b[key] === 'object' ? {...b[key]} : b[key]);
                 } else
                     a[key] = b[key];
             }

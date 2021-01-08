@@ -35,7 +35,7 @@ export default function useContext(Handler) {
             const vm = this.vm;
             const none = ['field', 'value', 'vm', 'template', 'name', 'config', 'control', 'inject'];
             Object.keys(ctx.rule).filter(k => none.indexOf(k) === -1).forEach((key) => {
-                ctx.watch.push(vm.$watch(() => ctx.rule[key], n => {
+                ctx.watch.push(vm.$watch(() => ctx.rule[key], (n, o) => {
                     this.watching = true;
                     if (key === 'hidden')
                         ctx.updateKey(true);
@@ -54,13 +54,23 @@ export default function useContext(Handler) {
                         ctx.updateType();
                         this.bindParser(ctx);
                     } else if (key === 'children') {
-                        this.loadChildren(n, ctx);
+                        const flag = is.trueArray(n);
+                        if (n !== o) {
+                            this.$render.orgChildren[ctx.id] = flag ? [...n] : [];
+                            this.rmSub(o);
+                        }
+                        flag && this.loadChildren(n, ctx);
                     }
                     this.$render.clearCache(ctx);
                     this.watching = false;
                 }, {deep: key !== 'children'}));
             });
             this.watchEffect(ctx);
+        },
+        rmSub(sub) {
+            is.trueArray(sub) && sub.forEach(r => {
+                r && r.__fc__ && this._rmCtx(r.__fc__);
+            })
         },
         rmCtx(ctx, reloadFlag) {
             this._rmCtx(ctx);

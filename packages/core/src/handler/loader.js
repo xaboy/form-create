@@ -155,11 +155,11 @@ export default function useLoader(Handler) {
                             this.refreshUpdate(ctx, r.value);
                         });
                     }
+                    this.effect(ctx, 'loaded');
                 }
 
                 if (ctx.input)
                     Object.defineProperty(r, 'value', this.valueHandle(ctx));
-                this.effect(ctx, 'loaded');
                 if (this.refreshControl(ctx)) this.cycleLoad = true;
                 return ctx;
             });

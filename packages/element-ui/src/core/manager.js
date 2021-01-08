@@ -138,12 +138,11 @@ export default {
         if (!titleProp.title || isFalse(titleProp.show)) return;
         const isTip = isTooltip(infoProp);
         const children = [titleProp.title];
-
         const titleFn = (pop) => this.$r(mergeProps([titleProp, {
             props: titleProp,
             slot: titleProp.slot || (pop ? (isTip ? 'default' : 'reference') : 'label'),
             key: `${uni}tit`,
-            type: titleProp.type || 'fcFragment',
+            type: titleProp.type || 'span',
         }]), children);
 
         if (!isFalse(infoProp.show) && infoProp.info) {

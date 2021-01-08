@@ -127,7 +127,7 @@ export default {
             props: titleProp,
             slot: titleProp.slot || (pop ? 'default' : 'label'),
             key: `${uni}tit`,
-            type: titleProp.type || 'fcFragment',
+            type: titleProp.type || 'span',
         }]), children);
 
         if (!isFalse(infoProp.show) && infoProp.info) {
