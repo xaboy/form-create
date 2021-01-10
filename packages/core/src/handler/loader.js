@@ -43,6 +43,7 @@ export default function useLoader(Handler) {
         loadRule() {
             // console.warn('%c load', 'color:blue');
             this.cycleLoad = false;
+            this.loading = true;
             if (this.pageEnd) {
                 this.bus.$emit('load-start');
             }
@@ -50,6 +51,7 @@ export default function useLoader(Handler) {
             if (this.cycleLoad && this.pageEnd) {
                 return this.loadRule();
             }
+            this.loading = false;
             if (this.pageEnd) {
                 this.bus.$emit('load-end');
             }
