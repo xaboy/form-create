@@ -35,6 +35,7 @@ export default function useContext(Handler) {
             const vm = this.vm;
             const none = ['field', 'value', 'vm', 'template', 'name', 'config', 'control', 'inject'];
             Object.keys(ctx.rule).filter(k => none.indexOf(k) === -1).forEach((key) => {
+                const flag = key === 'children';
                 ctx.watch.push(vm.$watch(() => ctx.rule[key], (n, o) => {
                     this.watching = true;
                     if (key === 'hidden')
@@ -63,7 +64,7 @@ export default function useContext(Handler) {
                     }
                     this.$render.clearCache(ctx);
                     this.watching = false;
-                }, {deep: key !== 'children'}));
+                }, {deep: !flag, sync: flag}));
             });
             this.watchEffect(ctx);
         },
