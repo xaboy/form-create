@@ -94,14 +94,24 @@ export default function useContext(Handler) {
             }
 
             $del(this.ctxs, id);
-            $del(this.validate, field);
-            $del(this.formData, field);
-            $del(this.form, field);
-            $del(this.fieldCtx, field);
             $del(this.$render.renderList, id);
-            $del(this.nameCtx, name);
-            $del(this.subForm, field);
+            $del(this.$render.cache, id);
+            $del(this.$render.orgChildren, id);
             $del(ctx, 'cacheValue');
+
+            const f = this.fieldCtx[field];
+
+            if (field && (!f || f === ctx)) {
+                $del(this.validate, field);
+                $del(this.formData, field);
+                $del(this.form, field);
+                $del(this.fieldCtx, field);
+                $del(this.subForm, field);
+            }
+
+            if (name && this.nameCtx[name] === ctx) {
+                $del(this.nameCtx, name);
+            }
 
             const index = this.sort.indexOf(id);
             if (index > -1) {
