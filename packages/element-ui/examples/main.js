@@ -17,6 +17,21 @@ Vue.use(VueCompositionAPI)
 Vue.use(ElementUI)
 Vue.use(FormCreate)
 
+//todo api 示例,rule 优化
+//demo 用
+import VJsoneditor from 'v-jsoneditor'
+import addressEffect from './addressEffect';
+
+Vue.use(VJsoneditor)
+FormCreate.register(addressEffect);
+
+//自定义组件
+Vue.component('testSlot', {
+    render(h) {
+        return h('div', {}, [this.$slots.asd]);
+    }
+})
+
 Vue.config.productionTip = false
 
 new Vue({
