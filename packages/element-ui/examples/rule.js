@@ -1,5 +1,5 @@
 import {maker} from '../src'
-import Vue from 'vue/dist/vue'
+import Vue from 'vue'
 
 export default function mock() {
     return [

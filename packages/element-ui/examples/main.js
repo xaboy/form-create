@@ -9,19 +9,20 @@
 import Vue from 'vue'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-import VueCompositionAPI from '@vue/composition-api'
 import FormCreate from '../src'
-import App from './App.vue'
 
-Vue.use(VueCompositionAPI)
 Vue.use(ElementUI)
 Vue.use(FormCreate)
 
-//todo api 示例,rule 优化
-//demo 用
+//todo ------------------ Demo 用 ------------------
+
 import VJsoneditor from 'v-jsoneditor'
 import addressEffect from './addressEffect';
+import VueCompositionAPI from '@vue/composition-api'
+import App from './App.vue'
 
+
+Vue.use(VueCompositionAPI)
 Vue.use(VJsoneditor)
 FormCreate.register(addressEffect);
 
@@ -31,6 +32,8 @@ Vue.component('testSlot', {
         return h('div', {}, [this.$slots.asd]);
     }
 })
+
+//todo ------------------ Demo 用 ------------------
 
 Vue.config.productionTip = false
 
