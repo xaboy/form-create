@@ -1,5 +1,3 @@
-import {maker} from '../src';
-
 export default function jsonMock() {
 
 

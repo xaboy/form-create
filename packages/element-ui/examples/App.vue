@@ -86,7 +86,7 @@
 <script>
 import {defineComponent, ref, watch, onMounted} from '@vue/composition-api'
 import mock from './rule';
-import jsonRule from './jsonRule';
+import jsonMock from './jsonRule';
 
 export default defineComponent({
     setup() {
@@ -113,7 +113,7 @@ export default defineComponent({
         }
 
         const jsonCreate = function () {
-            rule.value = jsonRule();
+            rule.value = jsonMock();
         }
 
         const createJson = function () {
