@@ -57,8 +57,8 @@ export default function useContext(Handler) {
                     } else if (key === 'children') {
                         const flag = is.trueArray(n);
                         if (n !== o) {
-                            this.$render.orgChildren[ctx.id] = flag ? [...n] : [];
                             this.rmSub(o);
+                            this.$render.initOrgChildren();
                         }
                         flag && this.loadChildren(n, ctx);
                     }
