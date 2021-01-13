@@ -272,9 +272,7 @@ export default function mock() {
                 watch: {
                     value: {
                         handler(n) {
-                            console.log(n, 'change value');
                             this.num = n;
-                            this.$emit('input', this.num);
                         },
                         immediate: true,
                     }
