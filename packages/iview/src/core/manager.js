@@ -198,7 +198,7 @@ export default {
         return this.$r({
             type: 'button',
             props: resetBtn,
-            style: {width: resetBtn.width},
+            style: {width: resetBtn.width, marginLeft: '15px'},
             on: {
                 click: () => {
                     const fApi = this.$handle.api;
