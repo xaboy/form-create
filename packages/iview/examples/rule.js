@@ -1,19 +1,22 @@
-var maker = formCreate.maker;
+import {maker} from '../src';
+import Vue from 'vue';
 
-//使用maker 生成器生成
-function mock() {
-    var mock;
-    return mock = [
+export default function rule() {
+    return [
 
         //hidden 组件
         maker.hidden('id', '14'),
 
+        //自定义组件
+        maker.create('testSlot', 'testSlot', 'testSlotTitle').children([
+            maker.input('', 'asd').slot('asd').display(false),
+            maker.input('', 'asd23').slot('asd'),
+        ]),
 
         //cascader 多级联动组件
         maker.cascader('所在区域', 'address', ['陕西省', '西安市', '新城区']).props({
-            data: window.province_city || [],
             hidden: false
-        }),
+        }).effect({address: 1}),
 
 
         //input 输入框组件
@@ -22,9 +25,8 @@ function mock() {
             disabled: false
         }).validate([
             {required: true, message: '请输入商品名称', trigger: 'blur'}
-        ]).children([maker.create('template').children(['append']).slot('append')]).event({
-            change: console.log
-        }).emit([{name:'on-change',inject:[1,2,3]}]).className('goods-name').info('请输入商品名称!!!!'),
+        ]).children([maker.create('template').children(['append']).slot('append')])
+            .emit([{name: 'on-change', inject: [1, 2, 3]}]).className('goods-name').info('请输入商品名称!!!!'),
 
 
         //autoComplete 自动选择组件
@@ -40,7 +42,7 @@ function mock() {
 
                 return option.toUpperCase().indexOf(value.toUpperCase()) !== -1
             }
-        }).emitPrefix('xaboy').emit(['on-change']),
+        }).emitPrefix('xaboy').emit(['on-change']).prefix('prefixprefixprefixprefixprefixprefix').wrap({show: false}).col({show: false}),
 
 
         //textarea 组件
@@ -50,50 +52,97 @@ function mock() {
         }),
 
         {
-            type:'group',
-            title:'批量添加',
-            field:'group',
-            value:[],
-            props:{
-                max:5,
-                min:3,
-                rules:[
+            type: 'object',
+            title: '对象组件',
+            field: 'object',
+            value: {date: '2121-12-12', field: 10, field2: '123123123'},
+            props: {
+                rule: [
                     {
-                        type:'col',
-                        children:[
-                            maker.date('','date','').native(false).col({span:12}),
+                        type: 'col',
+                        wrap: {show: true},
+                        children: [
+                            maker.date('date', 'date', '').native(false).col({span: 12}),
                             {
-                                type:'inputNumber',
-                                field:'field',
-                                props:{
-                                    disabled:false
+                                type: 'inputNumber',
+                                field: 'field',
+                                title: 'field',
+                                props: {
+                                    disabled: false
                                 },
-                                validate:[
-                                    {required:true,min:10,type:'number'}
+                                validate: [
+                                    {required: true, min: 10, type: 'number'}
                                 ],
-                                col:{
-                                    span:12
+                                col: {
+                                    span: 12
                                 }
                             }
                         ]
 
                     },
                     {
-                        type:'input',
-                        field:'field2',
-                        props:{
-                            disabled:false,
+                        type: 'input',
+                        field: 'field2',
+                        title: 'field2',
+                        props: {
+                            disabled: false
                         },
-                        validate:[
-                            {required:true}
+                        validate: [
+                            {required: true}
+                        ]
+                    }
+                ]
+            }
+        },
+
+        {
+            type: 'group',
+            title: '批量添加',
+            field: 'group',
+            value: [{date: '2121-12-12', field: 10, field2: '123123123'}],
+            suffix: 'suffixsuffix',
+            props: {
+                // field: 'field',
+                rules: [
+                    {
+                        type: 'col',
+                        wrap: {show: true},
+                        children: [
+                            maker.date('date', 'date', '').native(false).col({span: 12}),
+                            {
+                                type: 'inputNumber',
+                                field: 'field',
+                                title: 'field',
+                                props: {
+                                    disabled: false
+                                },
+                                validate: [
+                                    {required: true, min: 10, type: 'number'}
+                                ],
+                                col: {
+                                    span: 12
+                                }
+                            }
+                        ]
+
+                    },
+                    {
+                        type: 'input',
+                        field: 'field2',
+                        title: 'field2',
+                        props: {
+                            disabled: false
+                        },
+                        validate: [
+                            {required: true}
                         ]
                     }
                 ]
             },
-            validate:[
-                {required:true,min:3,type:'array',message:'最少增加3项'},
+            validate: [
+                {required: true, min: 3, type: 'array', message: '最少增加3项'},
             ]
-        },
+        }, ,
 
 
         //radio 单选框组件
@@ -103,9 +152,9 @@ function mock() {
             {value: 2, label: '未知', disabled: true},
         ]).props({required: true}).col({span: 8}).control([
             {
-                value:1,
-                rule:[
-                    maker.number('满额包邮','postage_money',0)
+                value: 1,
+                rule: [
+                    maker.number('满额包邮', 'postage_money', 0)
                 ]
             }
         ]),
@@ -133,7 +182,7 @@ function mock() {
 
 
         //自定义组件
-        maker.createTmp('<i-button @click="onClick" long :disabled="disabled">{{button}}字符串测试{{test}}-{{num}}</i-button>', function (){
+        maker.createTmp('<i-button @click="onClick" long :disabled="disabled">{{button}}字符串测试{{test}}-{{num}}</i-button>', function () {
             return new Vue({
                 data: function () {
                     return {
@@ -156,18 +205,6 @@ function mock() {
                         console.log('click');
                         this.num++;
                         this.$emit('input', this.num);
-                    },
-                    //表单禁用事件
-                    onDisabled: function (disabled) {
-                        this.disabled = disabled;
-                    },
-                    //表单重置事件
-                    onResetField: function () {
-                        this.num = 0;
-                    },
-                    //通过setValue,changeField,changeValue方法设置表单值时事件
-                    onSetValue: function (val, $f) {
-                        this.num = val;
                     }
                 }
             });
@@ -185,8 +222,7 @@ function mock() {
             icon: 'ios-upload',
             loading: false,
             show: true
-        }).name('btn')
-            .col({span: 12}).children([
+        }).name('btn').native(false).col({span: 12}).children([
             maker.create('span').domProps({
                 innerHTML: '测试自定义按钮'
             })
@@ -196,7 +232,7 @@ function mock() {
         //自定义组件
         maker.create('Tooltip').name('tip').title('自定义 title').props({
             content: '这里是提示文字',
-        }).value(false).col({span: 11, push: 1}).children([
+        }).value(false).native(false).col({span: 11, push: 1}).children([
             maker.create('span').domProps({
                 innerHTML: '当鼠标经过这段文字时，会显示一个气泡框'
             })
@@ -284,22 +320,22 @@ function mock() {
             })
             .validate({required: true, type: 'number', min: 3, message: '请大于3颗星', trigger: 'change'})
             .col({span: 12}).control([
-            {
-                handle: function (val) {
-                    return val > 5;
-                },
-                rule: [
-                    maker.input('好评原因', 'goods_reason', '').props({disabled:false})
-                ]
-            }, {
-                handle: function (val) {
-                    return val < 5;
-                },
-                rule: [
-                    maker.input('差评原因', 'bad_reason', '').props({disabled:false})
-                ]
-            }
-        ]),
+                {
+                    handle: function (val) {
+                        return val > 5;
+                    },
+                    rule: [
+                        maker.input('好评原因', 'goods_reason', '').props({disabled: false})
+                    ]
+                }, {
+                    handle: function (val) {
+                        return val < 5;
+                    },
+                    rule: [
+                        maker.input('差评原因', 'bad_reason', '').props({disabled: false})
+                    ]
+                }
+            ]),
 
 
         //slider 滑块组件
@@ -332,7 +368,7 @@ function mock() {
 
         //frame 框架组件
         maker.frame('素材', 'fodder', ['http://file.lotkk.com/form-create.jpeg']).props({
-            src: '../iframe.html',
+            src: '/iframe.html',
             maxLength: 0,
             type: 'image',
             modalTitle: '预览~~~',
@@ -354,7 +390,7 @@ function mock() {
 
 
         //tree 树形组件
-        maker.tree('权限', 'tree', [11,12]).props({
+        maker.tree('权限', 'tree', [11, 12]).props({
             type: 'checked',
             multiple: true,
             showCheckbox: true,
@@ -405,23 +441,6 @@ function mock() {
         ])
     ];
 }
-
-
-//upload 上传组件
-$r = maker.upload('产品主图', 'logo', 'http://file.lotkk.com/form-create.jpeg').props({
-    'action': 'http://127.0.0.1:8000/index/index/upload',
-    'maxLength': 1,
-    'multiple': false,
-    'showUploadList': false,
-    'max': 0,
-    'type': 'select',
-    'uploadType': 'image',
-    'name': 'file',
-    'modalTitle': '预览~~~',
-    'onSuccess': function (res, file) {
-        file.url = 'http://file.lotkk.com/form-create.jpeg';
-    }
-}).validate({required: true, type: 'array', min: 1, message: '请上传1张图片', trigger: 'change'});
 
 
 /**
