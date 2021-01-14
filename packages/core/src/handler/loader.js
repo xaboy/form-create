@@ -43,7 +43,6 @@ export default function useLoader(Handler) {
         loadRule() {
             // console.warn('%c load', 'color:blue');
             this.cycleLoad = false;
-            this.loading = true;
             if (this.pageEnd) {
                 this.bus.$emit('load-start');
             }
@@ -51,7 +50,6 @@ export default function useLoader(Handler) {
             if (this.cycleLoad && this.pageEnd) {
                 return this.loadRule();
             }
-            this.loading = false;
             if (this.pageEnd) {
                 this.bus.$emit('load-end');
             }
@@ -85,6 +83,7 @@ export default function useLoader(Handler) {
                 }
             };
 
+            this.loading = true;
             rules.map((_rule, index) => {
                 if (parent && is.String(_rule)) return;
                 if (!this.pageEnd && !parent && index >= this.first) return;
@@ -165,6 +164,7 @@ export default function useLoader(Handler) {
                 if (this.refreshControl(ctx)) this.cycleLoad = true;
                 return ctx;
             });
+            this.loading = false;
         },
         refreshControl(ctx) {
             return ctx.input && ctx.rule.control && this.useCtrl(ctx);
@@ -257,7 +257,7 @@ function fullRule(rule) {
     const def = baseRule();
 
     Object.keys(def).forEach(k => {
-        if (!hasProperty(rule, k)) $set(rule, k, def[k]);
+        if (!hasProperty(rule, k)) rule[k] = def[k];
     });
     return rule;
 }
