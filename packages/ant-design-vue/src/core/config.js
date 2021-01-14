@@ -19,7 +19,6 @@ export default function getConfig() {
         },
         submitBtn: {
             disabled: false,
-            icon: 'upload',
             loading: false,
             type: 'primary',
             innerText: '提交',
