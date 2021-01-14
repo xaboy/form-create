@@ -47,9 +47,7 @@
     "@form-create/component-antdv-upload": "^0.0.1",
     "@form-create/component-sub-form": "^0.0.1",
     "@form-create/core": "^1.0.18",
-    "@form-create/utils": "^1.0.15",
-    "ant-design-vue": "^1.5.3",
-    "moment": "^2.24.0"
+    "@form-create/utils": "^1.0.15"
   },
   "publishConfig": {
     "access": "public"
@@ -57,6 +55,9 @@
   "devDependencies": {
     "@vue/cli-plugin-babel": "^4.5.9",
     "@vue/cli-service": "^4.5.3",
-    "@vue/composition-api": "^1.0.0-beta.22"
+    "@vue/composition-api": "^1.0.0-beta.22",
+    "v-jsoneditor": "^1.4.2",
+    "ant-design-vue": "^1.5.3",
+    "moment": "^2.24.0"
   }
 }

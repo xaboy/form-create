@@ -13,5 +13,12 @@ module.exports = {
             template: 'public/index.html',
             filename: 'index.html'
         }
+    },
+    configureWebpack: {
+        resolve: {
+            alias: {
+                'vue$': 'vue/dist/vue.js'
+            }
+        }
     }
 }

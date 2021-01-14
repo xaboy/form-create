@@ -17,9 +17,8 @@ module.exports = {
     configureWebpack: {
         resolve: {
             alias: {
-                'vue$': 'vue/dist/vue.js',
-            },
-            extensions: ['*', '.js', '.jsx', '.vue', '.json']
+                'vue$': 'vue/dist/vue.js'
+            }
         }
     }
 
