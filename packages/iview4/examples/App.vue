@@ -8,7 +8,7 @@
 -->
 <template>
     <div>
-        <h1 class="title">FormCreate Iview Demo</h1>
+        <h1 class="title">FormCreate ViewDesign Demo</h1>
 
         <Row>
             <Col :span="12">

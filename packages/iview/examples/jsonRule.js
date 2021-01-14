@@ -92,7 +92,7 @@ export default function jsonMock() {
                         wrap: {show: true},
                         children: [
                             {
-                                type: 'date',
+                                type: 'datePicker',
                                 field: 'date',
                                 title: 'date',
                                 col: {
