@@ -58,7 +58,7 @@ export default {
             this.$emit('itemMounted', $f);
         },
         subForm() {
-            this.$emit('fc.subForm', this.cacheRule.$f);
+            this.$emit('fc.sub-form', this.cacheRule.$f);
         },
         emitEvent(name, ...args) {
             this.$emit(name, ...args);

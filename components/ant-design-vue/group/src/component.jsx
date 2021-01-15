@@ -145,7 +145,7 @@ export default {
             this.$emit('itemMounted', $f, Object.keys(this.cacheRule).indexOf(key));
         },
         subForm() {
-            this.$emit('fc.subForm', Object.keys(this.cacheRule).map(k => this.cacheRule[k].$f));
+            this.$emit('fc.sub-form', Object.keys(this.cacheRule).map(k => this.cacheRule[k].$f));
         },
         removeRule(key, emit) {
             const index = Object.keys(this.cacheRule).indexOf(key);
