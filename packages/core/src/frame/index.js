@@ -132,9 +132,9 @@ export default function FormCreateFactory(config) {
     }
 
     //todo 检查回调函数作用域
-    function use(fn, obj) {
-        if (is.Function(fn.install)) fn.install(create, obj);
-        else if (is.Function(fn)) fn(create, obj);
+    function use(fn, opt) {
+        if (is.Function(fn.install)) fn.install(create, opt);
+        else if (is.Function(fn)) fn(create, opt);
         return this;
     }
 

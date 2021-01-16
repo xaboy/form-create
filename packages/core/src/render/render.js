@@ -4,7 +4,7 @@ import is, {hasProperty} from '@form-create/utils/lib/type';
 import {_vue as Vue} from '../frame';
 import {tip} from '@form-create/utils/lib/console';
 import {invoke} from '../frame/util';
-import toCase from '@form-create/utils/lib/tocase';
+import toCase, {lower} from '@form-create/utils/lib/tocase';
 
 function setTempProps(vm, ctx, api) {
     if (!vm.$props) return;
@@ -291,7 +291,7 @@ export default function useRender(Render) {
                 return this.vNode[ctx.type](prop, children);
             if (this.vNode[ctx.originType])
                 return this.vNode[ctx.originType](prop, children);
-            return this.vNode.make(ctx.originType, prop, children);
+            return this.vNode.make(lower(ctx.originType), prop, children);
         },
         renderRule(rule, children) {
             if (!rule) return undefined;
