@@ -207,7 +207,7 @@ export default {
     created() {
         const d = (this.expand || 0) - this.value.length;
         if (d > 0) {
-            this.extendRule(d);
+            this.expandRule(d);
         }
         for (let i = 0; i < this.value.length; i++) {
             this.addRule(i);
