@@ -7,7 +7,7 @@
     "packages/iview",
     "packages/iview4",
     "packages/utils",
-    "components/common/sub-form",
+    "components/common/subform",
     "components/common/wangeditor",
     "components/ant-design-vue/frame",
     "components/ant-design-vue/group",

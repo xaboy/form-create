@@ -61,6 +61,7 @@
         "@vue/cli-service": "^4.5.3",
         "element-ui": "^2.13.2",
         "v-jsoneditor": "^1.4.2",
+        "@form-create/component-wangeditor": "^0.0.1",
         "@vue/composition-api": "^1.0.0-beta.22"
     }
 }

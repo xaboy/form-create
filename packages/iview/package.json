@@ -49,7 +49,7 @@
         "@form-create/component-ivu-select": "^0.0.1",
         "@form-create/component-ivu-tree": "^0.0.1",
         "@form-create/component-ivu-upload": "^0.0.1",
-        "@form-create/component-sub-form": "^0.0.1",
+        "@form-create/component-subform": "^0.0.1",
         "@form-create/core": "^1.0.18",
         "@form-create/utils": "^1.0.15"
     },
