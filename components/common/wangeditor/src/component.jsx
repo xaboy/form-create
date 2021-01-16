@@ -19,7 +19,7 @@ export default {
     },
     watch: {
         disabled(n) {
-            this.cacheRule.$f.disabled(n);
+            n ? this.editor.disable() : this.editor.enable();
         },
         value(n) {
             if (n !== this.editor.txt.html()) {
@@ -34,12 +34,13 @@ export default {
     },
     mounted() {
         this.editor = new WangEditor(`#editor${this.uni}`);
+        this.editor.config.zIndex = 2;
         this.init && this.init(this.editor);
         this.editor.create();
         this.editor.txt.html(this.value);
     },
     render() {
-        return <div value={this.value} on-input={this.result} id={`editor${this.uni}`}/>
+        return <div on-input={this.result} id={`editor${this.uni}`} style="line-height: normal;"/>
     },
     beforeDestroy() {
         this.editor.destroy()
