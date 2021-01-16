@@ -60,6 +60,7 @@
             <br/>
             <ARow>
                 <AButton @click="submit">提交表单(submit)</AButton>
+                <AButton @click="disabled2">提交表单(disabled)</AButton>
                 <AButton @click="hideForm">隐藏表单(hideForm)</AButton>
                 <AButton @click="validate">表单验证(validate)</AButton>
                 <AButton @click="resetFields">重置表单(resetFields)</AButton>
@@ -192,6 +193,12 @@
                 fapi.value.disabled(disabledFlag, 'goods_name');
             }
 
+            let disabledFlag2 = false;
+            const disabled2 = function () {
+                disabledFlag2 = !disabledFlag2;
+                fapi.value.disabled(disabledFlag2);
+            }
+
             let submitFlag = false;
             const submitBtnProps = function () {
                 submitFlag = !submitFlag;
@@ -287,6 +294,7 @@
                 fields,
                 hidden,
                 disabled,
+                disabled2,
                 submitBtnProps,
                 resetBtnProps,
                 inline,
@@ -316,6 +324,7 @@
         -webkit-animation: flowlight 5s linear infinite;
         animation: flowlight 5s linear infinite;
     }
+
     @keyframes flowlight {
         0% {
             background-position: 0 0;
@@ -324,6 +333,7 @@
             background-position: -100% 0;
         }
     }
+
     @-webkit-keyframes flowlight {
         0% {
             background-position: 0 0;
@@ -333,7 +343,7 @@
         }
     }
 
-    .ant-btn + .ant-btn{
+    .ant-btn + .ant-btn {
         margin-left: 10px;
     }
 </style>

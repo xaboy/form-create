@@ -59,6 +59,7 @@
             </ElRow>
             <br/>
             <ElRow>
+                <ElButton @click="disabled2">禁用表单(disabled)</ElButton>
                 <ElButton @click="submit">提交表单(submit)</ElButton>
                 <ElButton @click="hideForm">隐藏表单(hideForm)</ElButton>
                 <ElButton @click="validate">表单验证(validate)</ElButton>
@@ -84,226 +85,233 @@
 </template>
 
 <script>
-import {defineComponent, ref, watch, onMounted} from '@vue/composition-api'
-import mock from './rule';
-import jsonMock from './jsonRule';
+    import {defineComponent, ref, watch, onMounted} from '@vue/composition-api'
+    import mock from './rule';
+    import jsonMock from './jsonRule';
 
-export default defineComponent({
-    setup() {
-        const fapi = ref({});
-        const rule = ref(mock())
+    export default defineComponent({
+        setup() {
+            const fapi = ref({});
+            const rule = ref(mock())
 
-        //formData
-        const formData = ref({})
-        const json = ref({});
-        watch(formData, value => {
-            json.value = value;
-        })
+            //formData
+            const formData = ref({})
+            const json = ref({});
+            watch(formData, value => {
+                json.value = value;
+            })
 
 
-        //option
-        const option = ref({resetBtn: true})
-        const optionJson = ref({})
-        onMounted(() => {
-            optionJson.value = {...fapi.value.options};
-        });
+            //option
+            const option = ref({resetBtn: true})
+            const optionJson = ref({})
+            onMounted(() => {
+                optionJson.value = {...fapi.value.options};
+            });
 
-        const create = function () {
-            rule.value = mock();
-        }
+            const create = function () {
+                rule.value = mock();
+            }
 
-        const jsonCreate = function () {
-            rule.value = jsonMock();
-        }
+            const jsonCreate = function () {
+                rule.value = jsonMock();
+            }
 
-        const createJson = function () {
-            const json = fapi.value.toJson();
-            console.log(json);
-            alert(json);
-        };
+            const createJson = function () {
+                const json = fapi.value.toJson();
+                console.log(json);
+                alert(json);
+            };
 
-        let uni = 1;
+            let uni = 1;
 
-        //sync
+            //sync
 
-        const syncFormData = function () {
-            if (JSON.stringify(json.value) !== JSON.stringify(formData.value)) {
-                formData.value = {...json.value}
+            const syncFormData = function () {
+                if (JSON.stringify(json.value) !== JSON.stringify(formData.value)) {
+                    formData.value = {...json.value}
+                }
+            }
+            const syncFormOption = function () {
+                option.value = {...optionJson.value};
+            }
+
+            //api
+            const append = function () {
+                fapi.value.append({
+                    type: 'input',
+                    field: 'rule' + uni,
+                    title: 'rule' + uni,
+                }, 'goods_name');
+                uni++;
+            }
+            const prepend = function () {
+                fapi.value.prepend({
+                    type: 'input',
+                    field: 'rule' + uni,
+                    title: 'rule' + uni,
+                }, 'goods_name')
+                uni++;
+            }
+            const appendChild = function () {
+                fapi.value.append({
+                    type: 'button',
+                    children: ['按钮插槽'],
+                    slot: 'append',
+                }, 'goods_name', true)
+            }
+            const removeField = function () {
+                fapi.value.removeField('address')
+            }
+            const getRule = function () {
+                alert(JSON.stringify(fapi.value.getRule('goods_name')));
+            }
+            const destroy = function () {
+                fapi.value.destroy()
+            }
+            const fields = function () {
+                alert(JSON.stringify(fapi.value.fields()));
+            }
+            const getOption = function () {
+                alert(JSON.stringify(fapi.value.options));
+            }
+            const getFormData = function () {
+                alert(JSON.stringify(fapi.value.form));
+            }
+            const reload = function () {
+                fapi.value.reload();
+            }
+            let hiddenFlag = false;
+            const hidden = function () {
+                hiddenFlag = !hiddenFlag;
+                fapi.value.hidden(hiddenFlag, 'goods_name');
+            }
+
+            let disabledFlag = false;
+            const disabled = function () {
+                disabledFlag = !disabledFlag;
+                fapi.value.disabled(disabledFlag, 'goods_name');
+            }
+
+            let disabledFlag2 = false;
+            const disabled2 = function () {
+                disabledFlag2 = !disabledFlag2;
+                fapi.value.disabled(disabledFlag2);
+            }
+
+            let submitFlag = false;
+            const submitBtnProps = function () {
+                submitFlag = !submitFlag;
+                fapi.value.submitBtnProps({loading: submitFlag})
+                optionJson.value = {...fapi.value.options}
+            }
+
+            let resetFlag = false;
+            const resetBtnProps = function () {
+                resetFlag = !resetFlag;
+                fapi.value.resetBtnProps({loading: resetFlag})
+                optionJson.value = {...fapi.value.options}
+            }
+
+            let inlineFlag = false;
+            const inline = function () {
+                inlineFlag = !inlineFlag;
+                fapi.value.updateOptions({form: {inline: inlineFlag}})
+                optionJson.value = {...fapi.value.options}
+            }
+
+            const refresh = function () {
+                fapi.value.refresh();
+            }
+
+            let hideFlag = false;
+            const hideForm = function () {
+                hideFlag = !hideFlag;
+                fapi.value.hideForm(hideFlag);
+            }
+
+            const validate = function () {
+                fapi.value.validate();
+            }
+
+            const validateField = function () {
+                fapi.value.validateField('goods_name');
+            }
+
+            const resetFields = function () {
+                fapi.value.resetFields();
+            }
+
+            const resetField = function () {
+                fapi.value.resetFields(['goods_name']);
+            }
+
+            const submit = function () {
+                fapi.value.submit(() => alert('success'));
+            }
+
+            const clearValidateState = function () {
+                fapi.value.clearValidateState();
+            }
+
+            const method = function () {
+                fapi.value.exec('goods_name', 'focus');
+            }
+            const setValue = function () {
+                fapi.value.setValue('goods_name', fapi.value.form.goods_name + '1');
+            }
+            const getValue = function () {
+                alert(JSON.stringify(fapi.value.getValue('goods_name')));
+            }
+
+
+            return {
+                fapi,
+                rule,
+                formData,
+                json,
+                optionJson,
+                option,
+
+                create,
+                jsonCreate,
+                createJson,
+
+                syncFormData,
+                syncFormOption,
+                change() {
+                    console.log(arguments);
+                },
+                append,
+                reload,
+                prepend,
+                appendChild,
+                getFormData,
+                getOption,
+                removeField,
+                getRule,
+                destroy,
+                fields,
+                hidden,
+                disabled,
+                disabled2,
+                submitBtnProps,
+                resetBtnProps,
+                inline,
+                refresh,
+                hideForm,
+                validate,
+                validateField,
+                resetFields,
+                resetField,
+                submit,
+                clearValidateState,
+                method,
+                getValue,
+                setValue,
             }
         }
-        const syncFormOption = function () {
-            option.value = {...optionJson.value};
-        }
-
-        //api
-        const append = function () {
-            fapi.value.append({
-                type: 'input',
-                field: 'rule' + uni,
-                title: 'rule' + uni,
-            }, 'goods_name');
-            uni++;
-        }
-        const prepend = function () {
-            fapi.value.prepend({
-                type: 'input',
-                field: 'rule' + uni,
-                title: 'rule' + uni,
-            }, 'goods_name')
-            uni++;
-        }
-        const appendChild = function () {
-            fapi.value.append({
-                type: 'button',
-                children: ['按钮插槽'],
-                slot: 'append',
-            }, 'goods_name', true)
-        }
-        const removeField = function () {
-            fapi.value.removeField('address')
-        }
-        const getRule = function () {
-            alert(JSON.stringify(fapi.value.getRule('goods_name')));
-        }
-        const destroy = function () {
-            fapi.value.destroy()
-        }
-        const fields = function () {
-            alert(JSON.stringify(fapi.value.fields()));
-        }
-        const getOption = function () {
-            alert(JSON.stringify(fapi.value.options));
-        }
-        const getFormData = function () {
-            alert(JSON.stringify(fapi.value.form));
-        }
-        const reload = function () {
-            fapi.value.reload();
-        }
-        let hiddenFlag = false;
-        const hidden = function () {
-            hiddenFlag = !hiddenFlag;
-            fapi.value.hidden(hiddenFlag, 'goods_name');
-        }
-
-        let disabledFlag = false;
-        const disabled = function () {
-            disabledFlag = !disabledFlag;
-            fapi.value.disabled(disabledFlag, 'goods_name');
-        }
-
-        let submitFlag = false;
-        const submitBtnProps = function () {
-            submitFlag = !submitFlag;
-            fapi.value.submitBtnProps({loading: submitFlag})
-            optionJson.value = {...fapi.value.options}
-        }
-
-        let resetFlag = false;
-        const resetBtnProps = function () {
-            resetFlag = !resetFlag;
-            fapi.value.resetBtnProps({loading: resetFlag})
-            optionJson.value = {...fapi.value.options}
-        }
-
-        let inlineFlag = false;
-        const inline = function () {
-            inlineFlag = !inlineFlag;
-            fapi.value.updateOptions({form: {inline: inlineFlag}})
-            optionJson.value = {...fapi.value.options}
-        }
-
-        const refresh = function () {
-            fapi.value.refresh();
-        }
-
-        let hideFlag = false;
-        const hideForm = function () {
-            hideFlag = !hideFlag;
-            fapi.value.hideForm(hideFlag);
-        }
-
-        const validate = function () {
-            fapi.value.validate();
-        }
-
-        const validateField = function () {
-            fapi.value.validateField('goods_name');
-        }
-
-        const resetFields = function () {
-            fapi.value.resetFields();
-        }
-
-        const resetField = function () {
-            fapi.value.resetFields(['goods_name']);
-        }
-
-        const submit = function () {
-            fapi.value.submit(() => alert('success'));
-        }
-
-        const clearValidateState = function () {
-            fapi.value.clearValidateState();
-        }
-
-        const method = function () {
-            fapi.value.exec('goods_name', 'focus');
-        }
-        const setValue = function () {
-            fapi.value.setValue('goods_name', fapi.value.form.goods_name + '1');
-        }
-        const getValue = function () {
-            alert(JSON.stringify(fapi.value.getValue('goods_name')));
-        }
-
-
-        return {
-            fapi,
-            rule,
-            formData,
-            json,
-            optionJson,
-            option,
-
-            create,
-            jsonCreate,
-            createJson,
-
-            syncFormData,
-            syncFormOption,
-            change() {
-                console.log(arguments);
-            },
-            append,
-            reload,
-            prepend,
-            appendChild,
-            getFormData,
-            getOption,
-            removeField,
-            getRule,
-            destroy,
-            fields,
-            hidden,
-            disabled,
-            submitBtnProps,
-            resetBtnProps,
-            inline,
-            refresh,
-            hideForm,
-            validate,
-            validateField,
-            resetFields,
-            resetField,
-            submit,
-            clearValidateState,
-            method,
-            getValue,
-            setValue,
-        }
-    }
-})
+    })
 </script>
 
 <style>
@@ -316,6 +324,7 @@ export default defineComponent({
         -webkit-animation: flowlight 5s linear infinite;
         animation: flowlight 5s linear infinite;
     }
+
     @keyframes flowlight {
         0% {
             background-position: 0 0;
@@ -324,6 +333,7 @@ export default defineComponent({
             background-position: -100% 0;
         }
     }
+
     @-webkit-keyframes flowlight {
         0% {
             background-position: 0 0;

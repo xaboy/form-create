@@ -382,22 +382,22 @@ export default function mock() {
             })
             .validate({required: true, type: 'number', min: 3, message: '请大于3颗星', trigger: 'change'})
             .col({span: 12}).control([
-                {
-                    handle: function (val) {
-                        return val > 5;
-                    },
-                    rule: [
-                        maker.input('好评原因', 'goods_reason', '').props({disabled: false})
-                    ]
-                }, {
-                    handle: function (val) {
-                        return val < 5;
-                    },
-                    rule: [
-                        maker.input('差评原因', 'bad_reason', '').props({disabled: false})
-                    ]
-                }
-            ]),
+            {
+                handle: function (val) {
+                    return val > 5;
+                },
+                rule: [
+                    maker.input('好评原因', 'goods_reason', '').props({disabled: false})
+                ]
+            }, {
+                handle: function (val) {
+                    return val < 5;
+                },
+                rule: [
+                    maker.input('差评原因', 'bad_reason', '').props({disabled: false})
+                ]
+            }
+        ]),
 
 
         //slider 滑块组件
@@ -406,6 +406,13 @@ export default function mock() {
             'max': 100,
             'range': true,
         }).col({span: 12}),
+
+        {
+            type: 'wangEditor',
+            field: 'txt',
+            title: '富文本框',
+            value: '<h1 style="color: #419bf7;">form-create</h1><a href="https://github.com/xaboy/form-create">GitHub</a>'
+        },
 
 
         //upload 上传组件
