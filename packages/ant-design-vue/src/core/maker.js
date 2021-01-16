@@ -1,4 +1,4 @@
-import {creatorFactory, creatorTypeFactory} from '@form-create/core';
+import {creatorFactory} from '@form-create/core';
 
 const maker = {};
 
@@ -23,7 +23,7 @@ function useFrame(maker) {
     };
 
     Object.keys(types).reduce((maker, key) => {
-        maker[key] = creatorTypeFactory('frame', m => m.props({type: types[key][0], maxLength: types[key][1]}));
+        maker[key] = creatorFactory('frame', m => m.props({type: types[key][0], maxLength: types[key][1]}));
         return maker
     }, maker);
 
@@ -33,13 +33,13 @@ function useFrame(maker) {
 }
 
 function useSlider(maker) {
-    maker['sliderRange'] = creatorTypeFactory('slider', true, 'range')
+    maker['sliderRange'] = creatorFactory('slider', {range: true})
 }
 
 function useSelect(m) {
-    m.selectMultiple = creatorTypeFactory(name, 'multiple', 'mode');
-    m.selectTags = creatorTypeFactory(name, 'tags', 'mode');
-    m.selectCombobox = creatorTypeFactory(name, 'combobox', 'mode');
+    m.selectMultiple = creatorFactory(name, {mode:'multiple'});
+    m.selectTags = creatorFactory(name, {mode: 'tags'});
+    m.selectCombobox = creatorFactory(name, {mode:'combobox'});
 }
 
 function useUpload(maker) {
@@ -51,7 +51,7 @@ function useUpload(maker) {
     };
 
     Object.keys(types).reduce((maker, key) => {
-        maker[key] = creatorTypeFactory('upload', m => m.props({uploadType: types[key][0], maxLength: types[key][1]}));
+        maker[key] = creatorFactory('upload', m => m.props({uploadType: types[key][0], maxLength: types[key][1]}));
         return maker
     }, maker);
 

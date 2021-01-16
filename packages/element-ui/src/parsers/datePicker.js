@@ -1,4 +1,4 @@
-import {creatorTypeFactory} from '@form-create/core';
+import {creatorFactory} from '@form-create/core';
 
 const DEFAULT_FORMATS = {
     date: 'yyyy-MM-dd',
@@ -18,7 +18,7 @@ export default {
     name,
     maker: (function () {
         return ['year', 'month', 'date', 'dates', 'week', 'datetime', 'datetimerange', 'daterange'].reduce((initial, type) => {
-            initial[type] = creatorTypeFactory(name, type.toLowerCase());
+            initial[type] = creatorFactory(name, {type});
             return initial
         }, {});
     }()),

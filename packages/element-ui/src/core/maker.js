@@ -1,4 +1,4 @@
-import {creatorFactory, creatorTypeFactory} from '@form-create/core';
+import {creatorFactory} from '@form-create/core';
 
 const maker = {};
 
@@ -20,8 +20,8 @@ function useAlias(maker) {
 function useSelect(maker) {
     const select = 'select';
     const multiple = 'multiple';
-    maker['selectMultiple'] = creatorTypeFactory(select, true, multiple);
-    maker['selectOne'] = creatorTypeFactory(select, false, multiple);
+    maker['selectMultiple'] = creatorFactory(select, {[multiple]:true});
+    maker['selectOne'] = creatorFactory(select, {[multiple]:false});
 }
 
 function useTree(maker) {
@@ -29,7 +29,7 @@ function useTree(maker) {
     const types = {'treeSelected': 'selected', 'treeChecked': 'checked'};
 
     Object.keys(types).reduce((m, key) => {
-        m[key] = creatorTypeFactory(name, types[key]);
+        m[key] = creatorFactory(name, {type:types[key]});
         return m;
     }, maker);
 }
@@ -44,7 +44,7 @@ function useUpload(maker) {
     };
 
     Object.keys(types).reduce((m, key) => {
-        m[key] = creatorTypeFactory(name, m => m.props({uploadType: types[key][0], maxLength: types[key][1]}));
+        m[key] = creatorFactory(name, m => m.props({uploadType: types[key][0], maxLength: types[key][1]}));
         return m
     }, maker);
 
@@ -63,7 +63,7 @@ function useFrame(maker) {
     };
 
     Object.keys(types).reduce((maker, key) => {
-        maker[key] = creatorTypeFactory(name, m => m.props({type: types[key][0], maxLength: types[key][1]}));
+        maker[key] = creatorFactory(name, m => m.props({type: types[key][0], maxLength: types[key][1]}));
         return maker
     }, maker);
 

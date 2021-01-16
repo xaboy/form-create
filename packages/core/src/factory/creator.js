@@ -21,15 +21,13 @@ export function baseRule() {
     };
 }
 
-export function creatorFactory(name) {
-    return (title, field, value, props = {}) => new Creator(name, title, field, value, props);
-}
-
-export function creatorTypeFactory(name, type, typeName = 'type') {
+export function creatorFactory(name, init) {
     return (title, field, value, props = {}) => {
         const maker = new Creator(name, title, field, value, props);
-        if (is.Function(type)) type(maker);
-        else maker.props(typeName, type);
+        if (init) {
+            if (is.Function(init)) init(maker);
+            else maker.props(init);
+        }
         return maker;
     };
 }

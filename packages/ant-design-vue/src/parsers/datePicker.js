@@ -1,5 +1,5 @@
 import moment from 'moment';
-import {creatorTypeFactory} from '@form-create/core';
+import {creatorFactory} from '@form-create/core';
 
 const FORMAT_TYPE = {
     date: 'YYYY-MM-DD',
@@ -28,11 +28,11 @@ export default {
     name,
     maker: (function () {
         return ['date', 'month', 'week'].reduce((initial, type) => {
-            initial[type] = creatorTypeFactory(name, type);
+            initial[type] = creatorFactory(name, {type});
             return initial
         }, {
-            dateRange: creatorTypeFactory(name, 'range'),
-            datetimeRange: creatorTypeFactory(name, m => m.props({type: 'range', showTime: true}))
+            dateRange: creatorFactory(name, {type:'range'}),
+            datetimeRange: creatorFactory(name, m => m.props({type: 'range', showTime: true}))
         })
     }()),
     toFormValue(value, ctx) {

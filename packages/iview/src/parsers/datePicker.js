@@ -1,5 +1,5 @@
 import is from '@form-create/utils/lib/type';
-import {creatorTypeFactory} from '@form-create/core';
+import {creatorFactory} from '@form-create/core';
 
 export function timeStampToDate(timeStamp) {
     if (is.Date(timeStamp))
@@ -15,8 +15,8 @@ const name = 'datePicker';
 export default {
     name,
     maker: (function () {
-        return ['date', 'dateRange', 'dateTime', 'dateTimeRange', 'year', 'month'].reduce((maker, type) => {
-            maker[type] = creatorTypeFactory(name, type.toLowerCase());
+        return ['date', 'daterange', 'datetime', 'datetimerange', 'year', 'month'].reduce((maker, type) => {
+            maker[type] = creatorFactory(name, {type});
             return maker;
         }, {});
     }()),

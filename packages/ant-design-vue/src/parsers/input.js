@@ -1,14 +1,14 @@
-import {creatorTypeFactory} from '@form-create/core';
+import {creatorFactory} from '@form-create/core';
 
 const name = 'input';
 export default {
     name,
     maker: (function () {
         return ['password', 'url', 'email', 'text', 'textarea', 'search'].reduce((maker, type) => {
-            maker[type] = creatorTypeFactory(name, type);
+            maker[type] = creatorFactory(name, {type});
             return maker;
         }, {
-            idate: creatorTypeFactory(name, 'date')
+            idate: creatorFactory(name, {type:'date'})
         });
     }()),
     render(children, ctx) {

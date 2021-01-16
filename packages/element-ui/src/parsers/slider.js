@@ -1,11 +1,11 @@
-import {creatorTypeFactory} from '@form-create/core';
+import {creatorFactory} from '@form-create/core';
 
 const name = 'slider';
 
 export default {
     name,
     maker: {
-        sliderRange: creatorTypeFactory(name, true, 'range')
+        sliderRange: creatorFactory(name, {range:true})
     },
     toFormValue(value, ctx) {
         let isArr = Array.isArray(value), props = ctx.prop.props, min = props.min || 0,

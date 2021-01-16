@@ -1,4 +1,4 @@
-import {creatorFactory, creatorTypeFactory} from './creator';
+import {creatorFactory} from './creator';
 
 const commonMaker = creatorFactory('');
 
@@ -23,7 +23,6 @@ export default function makerFactory() {
         create,
         createTmp,
         template: createTmp,
-        factory: creatorFactory,
-        typeFactory: creatorTypeFactory,
+        factory: creatorFactory
     };
 }
