@@ -17,8 +17,8 @@ const name = 'datePicker';
 export default {
     name,
     maker: (function () {
-        return ['year', 'month', 'date', 'dates', 'week', 'datetime', 'datetimerange', 'daterange'].reduce((initial, type) => {
-            initial[type] = creatorFactory(name, {type});
+        return ['year', 'month', 'date', 'dates', 'week', 'datetime', 'datetimeRange', 'dateRange', 'monthRange'].reduce((initial, type) => {
+            initial[type] = creatorFactory(name, {type: type.toLowerCase()});
             return initial
         }, {});
     }()),

@@ -140,7 +140,7 @@ export default {
                 }));
             }
             return this.$r(mergeProps([infoProp, {
-                type: infoProp.type || 'popover',
+                type: infoProp.type || 'poptip',
                 props: {...infoProp, content: infoProp.info},
                 key: `${uni}pop`,
                 slot: 'label'
