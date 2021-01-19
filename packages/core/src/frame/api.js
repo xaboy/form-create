@@ -139,14 +139,23 @@ export default function Api(h) {
             } else rules = h.rules;
             rules.splice(index, 0, rule);
         },
-        hidden(hidden, fields) {
-            props(fields, 'hidden', !!hidden);
+        hidden(state, fields) {
+            props(fields, 'hidden', !!state);
             h.refresh();
         },
         hiddenStatus(id) {
             const ctx = h.getCtx(id);
             if (!ctx) return;
             return !!ctx.rule.hidden;
+        },
+        display(state, fields) {
+            props(fields, 'display', !!state);
+            h.refresh();
+        },
+        displayStatus(id) {
+            const ctx = h.getCtx(id);
+            if (!ctx) return;
+            return !!ctx.rule.display;
         },
         disabled(disabled, fields) {
             tidyFields(fields).forEach((field) => {
@@ -204,8 +213,8 @@ export default function Api(h) {
             h.$manager.updateOptions(h.options);
             this.refresh();
         },
-        hideForm: (isShow) => {
-            $set(h.vm, 'isShow', !isShow);
+        hideForm: (hide) => {
+            $set(h.vm, 'isShow', !hide);
         },
         changeStatus: () => {
             return h.changeStatus;
