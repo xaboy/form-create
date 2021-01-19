@@ -42,7 +42,8 @@
     },
     "homepage": "http://www.form-create.com",
     "dependencies": {
-        "@form-create/iview": "^1.0.15"
+        "@form-create/iview": "^1.0.15",
+        "@form-create/core": "^1.0.15"
     },
     "publishConfig": {
         "access": "public"
