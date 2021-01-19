@@ -69,7 +69,6 @@ export default function FormCreateFactory(config) {
     const components = {
         [fragment.name]: fragment
     };
-    const filters = {};
     const parsers = {};
     const directives = {};
     const providers = {};
@@ -79,11 +78,6 @@ export default function FormCreateFactory(config) {
     const CreateNode = CreateNodeFactory();
 
     exportAttrs(config.attrs || {});
-
-    function filter() {
-        const data = nameProp(...arguments);
-        if (data.id && data.prop) filters[data.id] = data.prop;
-    }
 
     function directive() {
         const data = nameProp(...arguments);
@@ -155,7 +149,6 @@ export default function FormCreateFactory(config) {
             rules: Array.isArray(rules) ? rules : [],
             prop: {
                 components,
-                filters,
                 directives,
             },
             CreateNode,
@@ -232,7 +225,6 @@ export default function FormCreateFactory(config) {
             data,
             maker,
             component,
-            filter,
             directive,
             register,
             parser,
