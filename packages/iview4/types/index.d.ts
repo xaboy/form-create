@@ -9,10 +9,10 @@ import {
     Effect as $Effect,
     Parser as $Parser
 } from "@form-create/core";
-import ElmMaker from "./maker";
+import Maker from "./maker";
 import {CreatorAttrs, OptionAttrs, RuleAttrs} from "./config";
 
-declare const formCreate: FormCreate<ElmMaker, OptionAttrs, CreatorAttrs, RuleAttrs>;
+declare const formCreate: FormCreate<Maker, OptionAttrs, CreatorAttrs, RuleAttrs>;
 export default formCreate;
 export declare const maker: typeof formCreate.maker;
 export type FormRule = $FormRule<OptionAttrs, CreatorAttrs, RuleAttrs>
