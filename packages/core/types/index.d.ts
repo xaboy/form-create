@@ -426,7 +426,7 @@ export interface Api<OptionAttrs, CreatorAttrs, RuleAttrs> {
 
 
 export interface Effect<OptionAttrs, CreatorAttrs, RuleAttrs> {
-    attr?: string;
+    name?: string;
     components?: string | string[];
     init?: (val: any, rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs>, $f: Api<OptionAttrs, CreatorAttrs, RuleAttrs>) => void;
     loaded?: (val: any, rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs>, $f: Api<OptionAttrs, CreatorAttrs, RuleAttrs>) => void;

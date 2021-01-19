@@ -85,8 +85,8 @@ export default function FormCreateFactory(config) {
     }
 
     function register() {
-        const data = _parseProp('attr', ...arguments);
-        if (data.id && data.prop) providers[data.id] = {...data.prop, attr: data.id};
+        const data = nameProp(...arguments);
+        if (data.id && data.prop) providers[data.id] = {...data.prop, name: data.id};
     }
 
     function componentAlias(alias) {

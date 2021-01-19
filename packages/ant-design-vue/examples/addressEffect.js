@@ -2,7 +2,7 @@ import data from '../../data/dist/province_city'
 
 //自定义属性 自动插入省市区数据
 export default {
-    attr: 'address',
+    name: 'address',
     components: ['cascader'],
     //rule初始化
     init(val, rule, fapi) {
