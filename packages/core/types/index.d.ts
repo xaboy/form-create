@@ -257,6 +257,10 @@ export interface BaseOptions<OptionAttrs, CreatorAttrs, RuleAttrs> {
     injectEvent?: boolean;
     formData?: FormData;
     el?: Element | string;
+    page?: Boolean | {
+        limit?: number;
+        first?: number;
+    };
     onSubmit?: (formData: FormData, $f: Api<OptionAttrs, CreatorAttrs, RuleAttrs>) => void;
 }
 
@@ -439,6 +443,7 @@ export interface Effect<OptionAttrs, CreatorAttrs, RuleAttrs> {
 
 export interface Parser {
     name?: string;
+    merge?: Boolean;
     init?: (ctx: Object) => void;
     toFormValue?: (value: any, ctx: Object) => void;
     toValue?: (value: any, ctx: Object) => void;

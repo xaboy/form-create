@@ -98,7 +98,8 @@ export default function FormCreateFactory(config) {
         if (!data.id || !data.prop) return;
         const name = toCase(data.id);
         const parser = data.prop;
-        parsers[name] = {...BaseParser, ...parser};
+        const base = parser.merge === true ? parsers[name] : undefined;
+        parsers[name] = {...(base || BaseParser), ...parser};
         maker[name] = creatorFactory(name);
         parser.maker && extend(maker, parser.maker);
     }
