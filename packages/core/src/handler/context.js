@@ -37,7 +37,7 @@ export default function useContext(Handler) {
             Object.keys(ctx.rule).filter(k => none.indexOf(k) === -1).forEach((key) => {
                 const flag = key === 'children';
                 ctx.watch.push(vm.$watch(() => ctx.rule[key], (n, o) => {
-                    if (this.loading) return;
+                    if (this.loading || this.reloading) return;
                     this.watching = true;
                     if (key === 'hidden')
                         ctx.updateKey(true);
@@ -74,9 +74,9 @@ export default function useContext(Handler) {
                 r && r.__fc__ && this._rmCtx(r.__fc__);
             })
         },
-        rmCtx(ctx, reloadFlag) {
+        rmCtx(ctx) {
             this._rmCtx(ctx);
-            if (!reloadFlag) {
+            if (!this.reloading) {
                 this.$render.initOrgChildren();
                 this.syncValue();
             }

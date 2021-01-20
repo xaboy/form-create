@@ -231,11 +231,12 @@ export default function useLoader(Handler) {
 
             this.bus.$once('load-end', () => {
                 Object.keys(ctxs).filter(id => this.ctxs[id] === undefined)
-                    .forEach(id => this.rmCtx(ctxs[id], true));
+                    .forEach(id => this.rmCtx(ctxs[id]));
                 this.$render.clearCacheAll();
             });
-
+            this.reloading = true;
             this.loadRule();
+            this.reloading = false;
             this.refresh();
 
             this.bus.$off('next-tick', this.nextReload);

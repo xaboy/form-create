@@ -19,6 +19,7 @@ export default function Handler(fc) {
         vm: fc.vm,
         watching: false,
         loading: false,
+        reloading: false,
         isMounted: false,
         validate: {},
         formData: {},
