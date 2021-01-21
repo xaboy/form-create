@@ -138,8 +138,8 @@ export interface BaseRule<OptionAttrs, CreatorAttrs, RuleAttrs> extends VNodeDat
     value?: any;
     emit?: Array<string | { name: string; inject: any }>;
     link?: string[];
-    prefix?: string | Object;
-    suffix?: string | Object;
+    prefix?: string | VNodeData;
+    suffix?: string | VNodeData;
     update?: (value: any, $rule: this, $f: Api<OptionAttrs, CreatorAttrs, RuleAttrs>) => Boolean | void;
     native?: Boolean;
     hidden?: Boolean;
@@ -217,9 +217,9 @@ export class BaseCreator<OptionAttrs, CreatorAttrs, RuleAttrs> {
 
     link(prop: string[]): this;
 
-    prefix(prop: string | Object): this;
+    prefix(prop: string | VNodeData): this;
 
-    suffix(prop: string | Object): this;
+    suffix(prop: string | VNodeData): this;
 
     update(prop: (value: any, $rule: FormRule<OptionAttrs, CreatorAttrs, RuleAttrs>, $f: Api<OptionAttrs, CreatorAttrs, RuleAttrs>) => Boolean | void): this;
 

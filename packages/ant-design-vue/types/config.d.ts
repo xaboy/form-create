@@ -58,14 +58,18 @@ export interface OptionAttrs {
 
 declare const optionAttrs: OptionAttrs;
 
+interface children {
+    children?: VNodeData[]
+}
+
 export interface CreatorAttrs {
     col(props: typeof optionAttrs.col): this;
 
     wrap(props: typeof optionAttrs.wrap): this;
 
-    title(props: string | typeof optionAttrs.title): this;
+    title(props: string | typeof optionAttrs.title & children): this;
 
-    info(props: string | typeof optionAttrs.info): this;
+    info(props: string | typeof optionAttrs.info & children): this;
 
     className(prop: string): this;
 
@@ -74,7 +78,7 @@ export interface CreatorAttrs {
 export interface RuleAttrs {
     col?: typeof optionAttrs.col;
     wrap?: typeof optionAttrs.wrap;
-    title?: string | typeof optionAttrs.title;
-    info?: string | typeof optionAttrs.info;
+    title?: string | typeof optionAttrs.title & children;
+    info?: string | typeof optionAttrs.info & children;
     className?: string;
 }
