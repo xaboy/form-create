@@ -5,6 +5,7 @@ import manager from './manager';
 import FormCreateFactory from '@form-create/core';
 import makers from './maker';
 import '../style/index.css';
+import extendApi from './api';
 
 function install(FormCreate) {
     FormCreate.componentAlias(alias);
@@ -28,6 +29,7 @@ export default function ivuFormCreate() {
         version: `${process.env.VERSION}`,
         manager,
         install,
+        extendApi,
         attrs: {
             normal: ['col', 'wrap'],
             array: ['className'],

@@ -1,7 +1,8 @@
 import {Button, Col, Popover, Row, Tooltip} from "element-ui";
-import {VNodeData} from "@form-create/core";
+import {FormData, VNodeData} from "@form-create/core";
 import {ElementUIComponentSize} from "element-ui/types/component";
 import {FormItemLabelPosition} from "element-ui/types/form";
+import {Api} from "./index";
 
 export interface OptionAttrs {
     col?: Boolean | Col & {
@@ -86,4 +87,32 @@ export interface RuleAttrs {
     title?: string | typeof optionAttrs.title & children;
     info?: string | typeof optionAttrs.info & children;
     className?: string;
+}
+
+export interface ApiAttrs {
+    btn: {
+        loading(loading: boolean): void;
+        disabled(disabled: boolean): void;
+        show(show: boolean): void;
+    }
+    resetBtn: {
+        loading(loading: boolean): void;
+        disabled(disabled: boolean): void;
+        show(show: boolean): void;
+    }
+
+    submit(success: (formData: FormData, $f: Api) => void, fail: ($f: Api) => void): void;
+
+    clearValidateState(fields?: string | string[], clearSub?: Boolean): void;
+
+    clearSubValidateState(fields?: string | string[]): void;
+
+    validate(callback?: (...args: any) => void): void;
+
+    validateField(field: string, callback?: (...args: any) => void): void;
+
+    submitBtnProps(props: Object): void;
+
+    resetBtnProps(props: Object): void;
+
 }

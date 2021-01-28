@@ -5,6 +5,18 @@ import is, {hasProperty} from '@form-create/utils/lib/type';
 import extend from '@form-create/utils/lib/extend';
 import {err, format} from '@form-create/utils/lib/console';
 
+
+function copy(value) {
+    return deepCopy(value);
+}
+
+function byRules(ctxs, origin) {
+    return Object.keys(ctxs).reduce((initial, key) => {
+        initial[key] = origin ? ctxs[key].origin : ctxs[key].rule;
+        return initial;
+    }, {});
+}
+
 export default function Api(h) {
 
     function tidyFields(fields) {
@@ -13,10 +25,6 @@ export default function Api(h) {
         else if (!Array.isArray(fields))
             fields = [fields];
         return fields;
-    }
-
-    function copy(value) {
-        return deepCopy(value);
     }
 
     function props(fields, key, val) {
@@ -28,21 +36,10 @@ export default function Api(h) {
         })
     }
 
-    function byRules(ctxs, origin) {
-        return Object.keys(ctxs).reduce((initial, key) => {
-            initial[key] = origin ? ctxs[key].origin : ctxs[key].rule;
-            return initial;
-        }, {});
-    }
-
-    function tidyBtnProp(btn, def) {
-        if (is.Boolean(btn))
-            btn = {show: btn};
-        else if (!is.Undef(btn) && !is.Object(btn)) btn = {show: def};
-        return btn;
-    }
-
     const api = {
+        helper: {
+            tidyFields, props,
+        },
         get config() {
             return h.options
         },
@@ -174,18 +171,6 @@ export default function Api(h) {
         bind() {
             return api.form;
         },
-        submitBtnProps: (props = {}) => {
-            let btn = tidyBtnProp(h.options.submitBtn, true);
-            extend(btn, props);
-            h.options.submitBtn = btn;
-            api.refreshOptions();
-        },
-        resetBtnProps: (props = {}) => {
-            let btn = tidyBtnProp(h.options.resetBtn, false);
-            extend(btn, props);
-            h.options.resetBtn = btn;
-            api.refreshOptions();
-        },
         reload: (rules) => {
             h.reloadRule(rules)
         },
@@ -194,7 +179,7 @@ export default function Api(h) {
             api.refresh();
         },
         onSubmit(fn) {
-            this.updateOptions({onSubmit: fn});
+            api.updateOptions({onSubmit: fn});
         },
         sync: (field) => {
             const ctx = is.Object(field) ? byCtx(field) : h.getCtx(field);
@@ -211,7 +196,7 @@ export default function Api(h) {
         },
         refreshOptions() {
             h.$manager.updateOptions(h.options);
-            this.refresh();
+            api.refresh();
         },
         hideForm: (hide) => {
             $set(h.vm, 'isShow', !hide);
@@ -223,12 +208,12 @@ export default function Api(h) {
             h.changeStatus = false;
         },
         updateRule(id, rule) {
-            const r = this.getRule(id);
+            const r = api.getRule(id);
             r && extend(r, rule);
         },
         updateRules(rules) {
             Object.keys(rules).forEach(id => {
-                this.updateRule(id, rules[id]);
+                api.updateRule(id, rules[id]);
             })
         },
         mergeRule: (id, rule) => {
@@ -237,7 +222,7 @@ export default function Api(h) {
         },
         mergeRules(rules) {
             Object.keys(rules).forEach(id => {
-                this.mergeRule(id, rules[id]);
+                api.mergeRule(id, rules[id]);
             })
         },
         getRule: (id, origin) => {
@@ -248,93 +233,15 @@ export default function Api(h) {
         },
         updateValidate(id, validate, merge) {
             if (merge) {
-                this.updateRule(id, {validate})
+                api.updateRule(id, {validate})
             } else {
                 props(id, 'validate', validate);
             }
         },
         updateValidates(validates, merge) {
             Object.keys(validates).forEach(id => {
-                this.updateValidate(id, validates[id], merge);
+                api.updateValidate(id, validates[id], merge);
             })
-        },
-        method(id, name) {
-            const el = this.el(id);
-            if (!el || !el[name])
-                throw new Error(format('err', `${name}方法不存在`));
-            return (...args) => {
-                return el[name](...args);
-            }
-        },
-        exec(id, name, ...args) {
-            return invoke(() => this.method(id, name)(...args));
-        },
-        toJson() {
-            return toJson(this.rule);
-        },
-        trigger(id, event, ...args) {
-            const el = this.el(id);
-            el && el.$emit(event, ...args);
-        },
-        el(id) {
-            const ctx = h.getCtx(id);
-            if (ctx) return ctx.el || h.vm.$refs[ctx.ref];
-        },
-        closeModal: (id) => {
-            const el = api.el(id);
-            el && el.$emit && el.$emit('close-modal');
-        },
-        //todo 移动到ui组件 中
-        validate(callback) {
-            let state = false;
-            let subForm = {
-                ...{
-                    ___this: {
-                        validate(call) {
-                            h.$manager.validate((valid) => {
-                                call && call(valid);
-                            });
-                        }
-                    }
-                }, ...h.subForm
-            };
-            let keys = Object.keys(subForm).filter(field => {
-                    const sub = subForm[field];
-                    return Array.isArray(sub) ? sub.length : !is.Undef(sub);
-                }), len = keys.length, subLen;
-            const validFn = (valid, field) => {
-                if (valid) {
-                    if (subLen > 1) subLen--;
-                    else if (len > 1) len--;
-                    else callback && callback(true);
-                } else {
-                    if (!state) {
-                        callback && callback(false);
-                        state = true;
-                    }
-                    field && this.clearValidateState(field, false);
-                }
-            };
-
-            keys.forEach(field => {
-                let sub = subForm[field];
-                if (Array.isArray(sub)) {
-                    subLen = sub.length;
-                    sub.forEach(form => {
-                        form.validate((v) => validFn(v, field))
-                    })
-                } else if (sub) {
-                    subLen = 1;
-                    sub.validate(validFn)
-                }
-
-            });
-
-        },
-        validateField: (field, callback) => {
-            if (!h.fieldCtx[field])
-                return;
-            h.$manager.validateField(field, callback);
         },
         resetFields(fields) {
             let ctxs = h.fieldCtx;
@@ -346,72 +253,39 @@ export default function Api(h) {
                 h.refreshControl(ctx);
             });
         },
-        submit(successFn, failFn) {
-            this.validate((valid) => {
-                if (valid) {
-                    let formData = this.formData();
-                    if (is.Function(successFn))
-                        successFn(formData, this);
-                    else {
-                        is.Function(h.options.onSubmit) && invoke(() => h.options.onSubmit(formData, this));
-                        h.vm.$emit('submit', formData, this);
-                    }
-                } else {
-                    is.Function(failFn) && invoke(() => failFn(this));
-                }
-            });
+        method(id, name) {
+            const el = api.el(id);
+            if (!el || !el[name])
+                throw new Error(format('err', `${name}方法不存在`));
+            return (...args) => {
+                return el[name](...args);
+            }
         },
-        clearValidateState(fields, clearSub = true) {
-            tidyFields(fields).forEach(field => {
-                if (clearSub) this.clearSubValidateState(field);
-                const ctx = h.fieldCtx[field];
-                if (!ctx) return;
-                h.$manager.clearValidateState(ctx);
-            });
+        exec(id, name, ...args) {
+            return invoke(() => api.method(id, name)(...args));
         },
-        clearSubValidateState(fields) {
-            tidyFields(fields).forEach(field => {
-                const subForm = h.subForm[field];
-                if (!subForm) return;
-                if (Array.isArray(subForm)) {
-                    subForm.forEach(form => {
-                        form.clearValidateState();
-                    })
-                } else if (subForm) {
-                    subForm.clearValidateState();
-                }
-            })
+        toJson() {
+            return toJson(api.rule);
+        },
+        trigger(id, event, ...args) {
+            const el = api.el(id);
+            el && el.$emit(event, ...args);
+        },
+        el(id) {
+            const ctx = h.getCtx(id);
+            if (ctx) return ctx.el || h.vm.$refs[ctx.ref];
+        },
+        closeModal: (id) => {
+            const el = api.el(id);
+            el && el.$emit && el.$emit('close-modal');
         },
         getSubForm(field) {
             return h.subForm[field];
-        },
-        btn: {
-            loading: (loading = true) => {
-                api.submitBtnProps({loading: !!loading});
-            },
-            disabled: (disabled = true) => {
-                api.submitBtnProps({disabled: !!disabled});
-            },
-            show: (isShow = true) => {
-                api.submitBtnProps({show: !!isShow});
-            }
-        },
-        resetBtn: {
-            loading: (loading = true) => {
-                api.resetBtnProps({loading: !!loading});
-            },
-            disabled: (disabled = true) => {
-                api.resetBtnProps({disabled: !!disabled});
-            },
-            show: (isShow = true) => {
-                api.resetBtnProps({show: !!isShow});
-            }
         },
         nextTick(fn) {
             h.bus.$once('next-tick', fn);
             h.refresh();
         }
-        //todo 以上
     };
 
     ['on', 'once', 'off', 'set'].forEach(n => {

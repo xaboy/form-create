@@ -50,7 +50,7 @@ export default function Handler(fc) {
 
     this.$manager = new fc.manager(this);
     this.$render = new Render(this);
-    this.api = Api(this);
+    this.api = fc.extendApi(Api(this), this);
 }
 
 extend(Handler.prototype, {

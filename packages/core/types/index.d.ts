@@ -2,36 +2,40 @@ import {ScopedSlot, VNodeDirective} from "vue/types/vnode";
 import Vue, {VNode} from "vue";
 import {ExtendedVue} from "vue/types/vue";
 
-export type Options<OptionAttrs extends Object, CreatorAttrs extends Object, RuleAttrs extends Object> =
-    BaseOptions<OptionAttrs, CreatorAttrs, RuleAttrs>
+export type Options<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> =
+    BaseOptions<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>
     & OptionAttrs;
 
-export type Rule<OptionAttrs extends Object, CreatorAttrs extends Object, RuleAttrs extends Object> =
-    BaseRule<OptionAttrs, CreatorAttrs, RuleAttrs>
+export type Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> =
+    BaseRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>
     & RuleAttrs;
 
-export type FormRule<OptionAttrs, CreatorAttrs, RuleAttrs> =
-    Rule<OptionAttrs, CreatorAttrs, RuleAttrs>
-    | Creator<OptionAttrs, CreatorAttrs, RuleAttrs>;
+export type FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> =
+    Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>
+    | Creator<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
 
-export declare type Creator<OptionAttrs extends Object, CreatorAttrs extends Object, RuleAttrs extends Object> =
-    BaseCreator<OptionAttrs, CreatorAttrs, RuleAttrs>
+export declare type Creator<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> =
+    BaseCreator<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>
     & CreatorAttrs;
 
-export declare type Maker<MakerAttrs extends Object, OptionAttrs extends Object, CreatorAttrs extends Object, RuleAttrs extends Object> =
-    BaseMaker<OptionAttrs, CreatorAttrs, RuleAttrs>
+export declare type Maker<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> =
+    BaseMaker<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>
     & MakerAttrs;
 
-declare type FormCreateFactory<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs> =
-    (config: FormCreateFactoryConfig<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs>) => FormCreate<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs>
+export declare type Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> =
+    BaseApi<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>
+    & ApiAttrs;
+
+declare type FormCreateFactory<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> =
+    (config: FormCreateFactoryConfig<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => FormCreate<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>
 
 export default FormCreateFactory;
 
-export interface Install<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs> {
-    (formCreate: FormCreate<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs>, opt: any): void;
+export interface Install<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
+    (formCreate: FormCreate<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, opt: any): void;
 }
 
-export interface FormCreateFactoryConfig<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs> {
+export interface FormCreateFactoryConfig<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
     manager: {
         [key: string]: Object | Function;
     },
@@ -40,19 +44,20 @@ export interface FormCreateFactoryConfig<MakerAttrs, OptionAttrs, CreatorAttrs, 
         array?: string[],
         normal?: string[],
     },
+    extendApi?: ($f: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, h: Object) => Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
     version?: string;
     ui?: string;
-    install?: Install<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs>
+    install?: Install<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>
 }
 
 
-export interface FormCreate<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs> {
+export interface FormCreate<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
     readonly version: string;
     readonly ui: string;
     readonly data: Object;
-    readonly maker: Maker<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs>;
+    readonly maker: Maker<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
 
-    (rule: FormRule<OptionAttrs, CreatorAttrs, RuleAttrs>[], option?: Options<OptionAttrs, CreatorAttrs, RuleAttrs>): Api<OptionAttrs, CreatorAttrs, RuleAttrs>;
+    (rule: FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>[], option?: Options<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>): Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
 
     component(name: string, component: any): void;
 
@@ -62,41 +67,41 @@ export interface FormCreate<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs> {
 
     directive(directive: any): void;
 
-    register(name: string, effect: Effect<OptionAttrs, CreatorAttrs, RuleAttrs>): void;
+    register(name: string, effect: Effect<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>): void;
 
-    register(effect: Effect<OptionAttrs, CreatorAttrs, RuleAttrs>): void;
+    register(effect: Effect<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>): void;
 
     parser(name: string, parser: Parser): void;
 
     parser(parser: Parser): void;
 
-    use(install: Install<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs> | {
-        install: Install<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs>,
+    use(install: Install<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> | {
+        install: Install<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>,
         [key: string]: any
     }, Opt?: any);
 
     componentAlias(alias: { [alias: string]: string }): void;
 
-    copyRule(rule: FormRule<OptionAttrs, CreatorAttrs, RuleAttrs>): FormRule<OptionAttrs, CreatorAttrs, RuleAttrs>;
+    copyRule(rule: FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>): FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
 
-    copyRules(rules: FormRule<OptionAttrs, CreatorAttrs, RuleAttrs>[]): FormRule<OptionAttrs, CreatorAttrs, RuleAttrs>[];
+    copyRules(rules: FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>[]): FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>[];
 
     $form(): ExtendedVue<Vue, {}, {}, {}, {}>;
 
-    parseJson(json: string): FormRule<OptionAttrs, CreatorAttrs, RuleAttrs>[];
+    parseJson(json: string): FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>[];
 
     install(vue: Vue): void;
 
-    create: FormCreate<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs>;
+    create: FormCreate<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
 
-    init(rule: FormRule<OptionAttrs, CreatorAttrs, RuleAttrs>[], option?: Options<OptionAttrs, CreatorAttrs, RuleAttrs>): {
-        mount($el?: Element): Api<OptionAttrs, CreatorAttrs, RuleAttrs>;
+    init(rule: FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>[], option?: Options<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>): {
+        mount($el?: Element): Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
 
         remove(): void;
 
         destroy(): void;
 
-        $f: Api<OptionAttrs, CreatorAttrs, RuleAttrs>;
+        $f: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
     }
 
 }
@@ -124,13 +129,13 @@ export interface VNodeData {
     directives?: VNodeDirective[];
 }
 
-export interface Control<OptionAttrs, CreatorAttrs, RuleAttrs> {
+export interface Control<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
     value?: any;
-    handle?: (val: any, $f: Api<OptionAttrs, CreatorAttrs, RuleAttrs>) => boolean;
-    rule: FormRule<OptionAttrs, CreatorAttrs, RuleAttrs>[];
+    handle?: (val: any, $f: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => boolean;
+    rule: FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>[];
 }
 
-export interface BaseRule<OptionAttrs, CreatorAttrs, RuleAttrs> extends VNodeData {
+export interface BaseRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> extends VNodeData {
     type: string;
     field?: string;
     name?: string;
@@ -140,15 +145,15 @@ export interface BaseRule<OptionAttrs, CreatorAttrs, RuleAttrs> extends VNodeDat
     link?: string[];
     prefix?: string | VNodeData;
     suffix?: string | VNodeData;
-    update?: (value: any, $rule: this, $f: Api<OptionAttrs, CreatorAttrs, RuleAttrs>) => Boolean | void;
+    update?: (value: any, $rule: this, $f: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => Boolean | void;
     native?: Boolean;
     hidden?: Boolean;
     display?: Boolean;
     inject?: any;
 
     validate?: Object[];
-    children?: FormRule<OptionAttrs, CreatorAttrs, RuleAttrs>[];
-    control?: Control<OptionAttrs, CreatorAttrs, RuleAttrs>[];
+    children?: FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>[];
+    control?: Control<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>[];
     effect?: {
         [key: string]: any
     };
@@ -156,26 +161,26 @@ export interface BaseRule<OptionAttrs, CreatorAttrs, RuleAttrs> extends VNodeDat
     [key: string]: any;
 }
 
-export interface CreatorHelper<OptionAttrs, CreatorAttrs, RuleAttrs> {
-    (title?: string | Object, field?: string, value?: any, props?: Object): Creator<OptionAttrs, CreatorAttrs, RuleAttrs>
+export interface CreatorHelper<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
+    (title?: string | Object, field?: string, value?: any, props?: Object): Creator<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>
 }
 
-export declare interface CreatorFactory<OptionAttrs, CreatorAttrs, RuleAttrs> {
-    (name: string, init: Object | ((m: Creator<OptionAttrs, CreatorAttrs, RuleAttrs>) => Creator<OptionAttrs, CreatorAttrs, RuleAttrs>))
-        : CreatorHelper<OptionAttrs, CreatorAttrs, RuleAttrs>;
+export declare interface CreatorFactory<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
+    (name: string, init: Object | ((m: Creator<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => Creator<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>))
+        : CreatorHelper<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
 }
 
-export class BaseCreator<OptionAttrs, CreatorAttrs, RuleAttrs> {
+export class BaseCreator<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
 
-    private _data: Rule<OptionAttrs, CreatorAttrs, RuleAttrs>;
+    private _data: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
 
     constructor(type: string, title?: string | Object, field?: string, value?: any, props?: Object) ;
 
     setProp(key: String, prop: any): this;
 
-    getRule(): Rule<OptionAttrs, CreatorAttrs, RuleAttrs>;
+    getRule(): Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
 
-    _clone(): Creator<OptionAttrs, CreatorAttrs, RuleAttrs>;
+    _clone(): Creator<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
 
     slot(prop: string): this;
 
@@ -221,7 +226,7 @@ export class BaseCreator<OptionAttrs, CreatorAttrs, RuleAttrs> {
 
     suffix(prop: string | VNodeData): this;
 
-    update(prop: (value: any, $rule: FormRule<OptionAttrs, CreatorAttrs, RuleAttrs>, $f: Api<OptionAttrs, CreatorAttrs, RuleAttrs>) => Boolean | void): this;
+    update(prop: (value: any, $rule: FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, $f: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => Boolean | void): this;
 
     native(prop: Boolean): this;
 
@@ -233,26 +238,26 @@ export class BaseCreator<OptionAttrs, CreatorAttrs, RuleAttrs> {
 
     validate(prop: Object[]): this;
 
-    children(prop: FormRule<OptionAttrs, CreatorAttrs, RuleAttrs>[]): this;
+    children(prop: FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>[]): this;
 
-    control(prop: Control<OptionAttrs, CreatorAttrs, RuleAttrs>[]): this;
+    control(prop: Control<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>[]): this;
 
     effect(prop: Object): this;
 }
 
-export interface BaseMaker<OptionAttrs, CreatorAttrs, RuleAttrs> {
-    create(type: string, field?: string, title?: string): Creator<OptionAttrs, CreatorAttrs, RuleAttrs>;
+export interface BaseMaker<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
+    create(type: string, field?: string, title?: string): Creator<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
 
-    createTmp(template: string, vm: Vue | Function, field?: string, title?: string): Creator<OptionAttrs, CreatorAttrs, RuleAttrs>;
+    createTmp(template: string, vm: Vue | Function, field?: string, title?: string): Creator<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
 
-    template(template: string, vm: Vue | Function, field?: string, title?: string): Creator<OptionAttrs, CreatorAttrs, RuleAttrs>;
+    template(template: string, vm: Vue | Function, field?: string, title?: string): Creator<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
 
-    factory: CreatorFactory<OptionAttrs, CreatorAttrs, RuleAttrs>;
+    factory: CreatorFactory<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
 }
 
-export interface BaseOptions<OptionAttrs, CreatorAttrs, RuleAttrs> {
+export interface BaseOptions<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
     global?: {
-        [key: string]: Rule<OptionAttrs, CreatorAttrs, RuleAttrs>;
+        [key: string]: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
     };
     injectEvent?: boolean;
     formData?: FormData;
@@ -261,14 +266,15 @@ export interface BaseOptions<OptionAttrs, CreatorAttrs, RuleAttrs> {
         limit?: number;
         first?: number;
     };
-    onSubmit?: (formData: FormData, $f: Api<OptionAttrs, CreatorAttrs, RuleAttrs>) => void;
+    onSubmit?: (formData: FormData, $f: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
 }
 
-export interface Api<OptionAttrs, CreatorAttrs, RuleAttrs> {
-    readonly config: Options<OptionAttrs, CreatorAttrs, RuleAttrs>;
-    readonly options: Options<OptionAttrs, CreatorAttrs, RuleAttrs>;
+
+export interface BaseApi<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
+    readonly config: Options<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
+    readonly options: Options<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
     readonly form: BindFormData;
-    readonly rule: FormRule<OptionAttrs, CreatorAttrs, RuleAttrs>[];
+    readonly rule: FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>[];
 
     formData(): FormData;
 
@@ -290,25 +296,25 @@ export interface Api<OptionAttrs, CreatorAttrs, RuleAttrs> {
 
     changeField(field: string, value: any): void;
 
-    removeField(field: string): FormRule<OptionAttrs, CreatorAttrs, RuleAttrs>;
+    removeField(field: string): FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
 
-    removeRule(rule: FormRule<OptionAttrs, CreatorAttrs, RuleAttrs>): FormRule<OptionAttrs, CreatorAttrs, RuleAttrs>;
+    removeRule(rule: FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>): FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
 
     destroy(): void;
 
     fields(): string[];
 
-    append(rule: FormRule<OptionAttrs, CreatorAttrs, RuleAttrs>): void;
+    append(rule: FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>): void;
 
-    append(rule: FormRule<OptionAttrs, CreatorAttrs, RuleAttrs>, field: string): void;
+    append(rule: FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, field: string): void;
 
-    append(rule: FormRule<OptionAttrs, CreatorAttrs, RuleAttrs>, field: string, child: boolean): void;
+    append(rule: FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, field: string, child: boolean): void;
 
-    prepend(rule: FormRule<OptionAttrs, CreatorAttrs, RuleAttrs>): void;
+    prepend(rule: FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>): void;
 
-    prepend(rule: FormRule<OptionAttrs, CreatorAttrs, RuleAttrs>, field: string): void;
+    prepend(rule: FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, field: string): void;
 
-    prepend(rule: FormRule<OptionAttrs, CreatorAttrs, RuleAttrs>, field: string, child: boolean): void;
+    prepend(rule: FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, field: string, child: boolean): void;
 
     hidden(hidden: Boolean): void;
 
@@ -326,29 +332,25 @@ export interface Api<OptionAttrs, CreatorAttrs, RuleAttrs> {
 
     disabled(disabled: Boolean, field: string | Array<string>): void;
 
-    model(): Rule<OptionAttrs, CreatorAttrs, RuleAttrs>;
+    model(): Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
 
-    model(origin: true): FormRule<OptionAttrs, CreatorAttrs, RuleAttrs>;
+    model(origin: true): FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
 
-    component(): Rule<OptionAttrs, CreatorAttrs, RuleAttrs>;
+    component(): Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
 
-    component(origin: true): FormRule<OptionAttrs, CreatorAttrs, RuleAttrs>;
+    component(origin: true): FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
 
     bind(): BindFormData;
 
-    submitBtnProps(props: Object): void;
+    reload(rules: FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>[]): void;
 
-    resetBtnProps(props: Object): void;
+    updateOptions(options: Options<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>): void;
 
-    reload(rules: FormRule<OptionAttrs, CreatorAttrs, RuleAttrs>[]): void;
-
-    updateOptions(options: Options<OptionAttrs, CreatorAttrs, RuleAttrs>): void;
-
-    onSubmit(fn: (formData: FormData, $f: Api<OptionAttrs, CreatorAttrs, RuleAttrs>) => void): void;
+    onSubmit(fn: (formData: FormData, $f: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void): void;
 
     sync(field: string): void;
 
-    sync(rule: FormRule<OptionAttrs, CreatorAttrs, RuleAttrs>): void;
+    sync(rule: FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>): void;
 
     refresh(clear?: Boolean): void;
 
@@ -360,19 +362,19 @@ export interface Api<OptionAttrs, CreatorAttrs, RuleAttrs> {
 
     clearChangeStatus(): void;
 
-    updateRule(field: string, rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs>): void;
+    updateRule(field: string, rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>): void;
 
-    updateRule(rules: { [field: string]: Rule<OptionAttrs, CreatorAttrs, RuleAttrs> }): void;
+    updateRule(rules: { [field: string]: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> }): void;
 
-    mergeRule(field: string, rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs>): void;
+    mergeRule(field: string, rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>): void;
 
-    mergeRules(rules: { [field: string]: Rule<OptionAttrs, CreatorAttrs, RuleAttrs> }): void;
+    mergeRules(rules: { [field: string]: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> }): void;
 
-    getRule(id: string): Rule<OptionAttrs, CreatorAttrs, RuleAttrs>;
+    getRule(id: string): Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
 
-    getRule(id: string, origin: true): FormRule<OptionAttrs, CreatorAttrs, RuleAttrs>;
+    getRule(id: string, origin: true): FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
 
-    getRule(id: string, origin: false): Rule<OptionAttrs, CreatorAttrs, RuleAttrs>;
+    getRule(id: string, origin: false): Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
 
     updateValidate(id: string, validate: Object[], merge?: Boolean): void;
 
@@ -390,34 +392,13 @@ export interface Api<OptionAttrs, CreatorAttrs, RuleAttrs> {
 
     closeModal(id: string): void;
 
-    validate(callback?: (...args: any) => void): void;
-
-    validateField(field: string, callback?: (...args: any) => void): void;
-
     resetFields(): void;
 
     resetFields(field: string | string[]): void;
 
-    submit(success: (formData: FormData, $f: Api<OptionAttrs, CreatorAttrs, RuleAttrs>) => void, fail: ($f: Api<OptionAttrs, CreatorAttrs, RuleAttrs>) => void): void;
+    getSubForm(field: string): Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> | Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>[];
 
-    clearValidateState(fields?: string | string[], clearSub?: Boolean): void;
-
-    clearSubValidateState(fields?: string | string[]): void;
-
-    getSubForm(field: string): Api<OptionAttrs, CreatorAttrs, RuleAttrs> | Api<OptionAttrs, CreatorAttrs, RuleAttrs>[];
-
-    btn: {
-        loading(loading: boolean): void;
-        disabled(disabled: boolean): void;
-        show(show: boolean): void;
-    }
-    resetBtn: {
-        loading(loading: boolean): void;
-        disabled(disabled: boolean): void;
-        show(show: boolean): void;
-    }
-
-    nextTick(fn: ($f: Api<OptionAttrs, CreatorAttrs, RuleAttrs>) => void): void;
+    nextTick(fn: ($f: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void): void;
 
     set<T>(object: object, key: string | number, value: T): T;
 
@@ -426,19 +407,21 @@ export interface Api<OptionAttrs, CreatorAttrs, RuleAttrs> {
     once(event: string | string[], callback: Function): this;
 
     off(event?: string | string[], callback?: Function): this;
+
+    [key: string]: any;
 }
 
 
-export interface Effect<OptionAttrs, CreatorAttrs, RuleAttrs> {
+export interface Effect<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
     name?: string;
     components?: string | string[];
-    init?: (val: any, rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs>, $f: Api<OptionAttrs, CreatorAttrs, RuleAttrs>) => void;
-    loaded?: (val: any, rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs>, $f: Api<OptionAttrs, CreatorAttrs, RuleAttrs>) => void;
-    watch?: (val: any, rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs>, $f: Api<OptionAttrs, CreatorAttrs, RuleAttrs>) => void;
-    value?: (val: any, rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs>, $f: Api<OptionAttrs, CreatorAttrs, RuleAttrs>) => void;
-    control?: (val: any, rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs>, $f: Api<OptionAttrs, CreatorAttrs, RuleAttrs>) => void;
-    deleted?: (val: any, rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs>, $f: Api<OptionAttrs, CreatorAttrs, RuleAttrs>) => void;
-    mounted?: (val: any, rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs>, $f: Api<OptionAttrs, CreatorAttrs, RuleAttrs>) => void;
+    init?: (val: any, rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, $f: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
+    loaded?: (val: any, rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, $f: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
+    watch?: (val: any, rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, $f: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
+    value?: (val: any, rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, $f: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
+    control?: (val: any, rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, $f: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
+    deleted?: (val: any, rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, $f: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
+    mounted?: (val: any, rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, $f: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
 }
 
 export interface Parser {

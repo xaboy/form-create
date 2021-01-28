@@ -5,6 +5,7 @@ import manager from './manager';
 import FormCreateFactory from '@form-create/core';
 import makers from './maker';
 import '../style/index.css';
+import extendApi from './api';
 
 function install(FormCreate) {
     FormCreate.componentAlias(alias);
@@ -27,6 +28,7 @@ export default function elmFormCreate() {
         ui: `${process.env.UI}`,
         version: `${process.env.VERSION}`,
         manager,
+        extendApi,
         install,
         attrs: {
             normal: ['col', 'wrap'],

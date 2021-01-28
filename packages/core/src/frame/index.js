@@ -153,7 +153,8 @@ export default function FormCreateFactory(config) {
                 directives,
             },
             CreateNode,
-            bus: new _vue
+            bus: new _vue,
+            extendApi: config.extendApi||(api=>api)
         })
         this.init();
         this.initOptions(options || {});
