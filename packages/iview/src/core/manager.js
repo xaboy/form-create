@@ -120,7 +120,7 @@ export default {
     makeInfo(rule, uni) {
         const titleProp = rule.title;
         const infoProp = rule.info;
-        if (!titleProp.title || isFalse(titleProp.show)) return;
+        if ((!titleProp.title && !titleProp.native) || isFalse(titleProp.show)) return;
         const children = [titleProp.title];
 
         const titleFn = (pop) => this.$r(mergeProps([titleProp, {
@@ -130,7 +130,7 @@ export default {
             type: titleProp.type || 'span',
         }]), children);
 
-        if (!isFalse(infoProp.show) && infoProp.info) {
+        if (!isFalse(infoProp.show) && (infoProp.info || infoProp.native)) {
             if (infoProp.icon !== false) {
                 children[infoProp.align !== 'left' ? 'unshift' : 'push'](this.$r({
                     type: 'icon',
@@ -139,12 +139,20 @@ export default {
                     key: `${uni}i`
                 }));
             }
-            return this.$r(mergeProps([infoProp, {
+
+            const prop = {
                 type: infoProp.type || 'poptip',
-                props: {...infoProp, content: infoProp.info},
+                props: {...infoProp},
                 key: `${uni}pop`,
                 slot: 'label'
-            }]), [
+            };
+
+            const field = 'content';
+            if (infoProp.info && !hasProperty(prop.props, field)) {
+                prop.props[field] = infoProp.info;
+            }
+
+            return this.$r(mergeProps([infoProp, prop]), [
                 titleFn(true)
             ])
         }

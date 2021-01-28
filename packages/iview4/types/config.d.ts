@@ -11,9 +11,15 @@ export interface OptionAttrs {
     };
     info?: Boolean | (Tooltip | Poptip) & VNodeData & {
         show?: Boolean;
+        native?: Boolean;
+        icon?: string;
+        align?: 'left' | 'right';
+        info?: string;
     };
     title?: Boolean | VNodeData & {
         show?: Boolean;
+        native?: Boolean;
+        title?: string;
     };
     wrap?: Boolean | VNodeData & {
         labelWidth?: number;
