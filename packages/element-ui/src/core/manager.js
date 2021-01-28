@@ -33,9 +33,7 @@ function tidyBool(opt, name) {
 
 export default {
     validate(call) {
-        this.form().validate((valid) => {
-            call && call(valid);
-        });
+        this.form().validate(call);
     },
     validateField(field, call) {
         this.form().validateField(field, call);

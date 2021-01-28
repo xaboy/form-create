@@ -17,9 +17,7 @@ export default function extendApi(api, h) {
                 ...{
                     ___this: {
                         validate(call) {
-                            h.$manager.validate((valid) => {
-                                call && call(valid);
-                            });
+                            h.$manager.validate(call);
                         }
                     }
                 }, ...h.subForm
@@ -28,14 +26,14 @@ export default function extendApi(api, h) {
                     const sub = subForm[field];
                     return Array.isArray(sub) ? sub.length : !is.Undef(sub);
                 }), len = keys.length, subLen;
-            const validFn = (valid, field) => {
-                if (valid) {
+            const validFn = (args, field) => {
+                if (args[0]) {
                     if (subLen > 1) subLen--;
                     else if (len > 1) len--;
-                    else callback && callback(true);
+                    else callback && callback(...args);
                 } else {
                     if (!state) {
-                        callback && callback(false);
+                        callback && callback(...args);
                         state = true;
                     }
                     field && this.clearValidateState(field, false);
@@ -47,11 +45,11 @@ export default function extendApi(api, h) {
                 if (Array.isArray(sub)) {
                     subLen = sub.length;
                     sub.forEach(form => {
-                        form.validate((v) => validFn(v, field))
+                        form.validate((...args) => validFn(args, field))
                     })
                 } else if (sub) {
                     subLen = 1;
-                    sub.validate(validFn)
+                    sub.validate((...args) => validFn(args))
                 }
 
             });
@@ -122,13 +120,13 @@ export default function extendApi(api, h) {
                 if (valid) {
                     let formData = api.formData();
                     if (is.Function(successFn))
-                        successFn(formData, this);
+                        invoke(() => successFn(formData, this));
                     else {
                         is.Function(h.options.onSubmit) && invoke(() => h.options.onSubmit(formData, this));
                         h.vm.$emit('submit', formData, this);
                     }
                 } else {
-                    is.Function(failFn) && invoke(() => failFn(this));
+                    is.Function(failFn) && invoke(() => failFn(this, ...arguments));
                 }
             });
         },
