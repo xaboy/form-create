@@ -29,8 +29,6 @@ export default function useLoader(Handler) {
 
             rule.options = parseArray(rule.options);
 
-            this.ruleEffect(rule, 'init');
-
             ['on', 'props', 'nativeOn'].forEach(k => {
                 this.parseInjectEvent(rule, rule[k] || {});
             })
@@ -83,6 +81,8 @@ export default function useLoader(Handler) {
                 }
             };
 
+            const initEvent = (rule) => this.ruleEffect(rule, 'init');
+
             this.loading = true;
             rules.map((_rule, index) => {
                 if (parent && is.String(_rule)) return;
@@ -97,6 +97,8 @@ export default function useLoader(Handler) {
                 }
 
                 let rule = getRule(_rule);
+
+                if (!rule.__fc__) initEvent(rule);
 
                 if (rule.field && this.fieldCtx[rule.field] && this.fieldCtx[rule.field] !== _rule.__fc__) {
                     this.repeatRule.push(_rule);
@@ -120,6 +122,7 @@ export default function useLoader(Handler) {
                                 return;
                             }
                             rules[index] = _rule = _rule._clone ? _rule._clone() : copyRule(_rule);
+                            initEvent(getRule(_rule));
                             ctx = null;
                         }
                     }

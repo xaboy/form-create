@@ -293,16 +293,22 @@ export default function useRender(Render) {
                 return this.vNode[ctx.originType](prop, children);
             return this.vNode.make(lower(ctx.originType), prop, children);
         },
-        renderRule(rule, children) {
+        renderRule(rule, children, origin) {
             if (!rule) return undefined;
             if (is.String(rule)) return rule;
 
-            let type = rule.is;
-            if (rule.type) {
-                type = toCase(rule.type);
-                const alias = this.vNode.aliasMap[type];
-                if (alias) type = toCase(alias);
+            let type;
+            if (origin) {
+                type = rule.type;
+            } else {
+                type = rule.is;
+                if (rule.type) {
+                    type = toCase(rule.type);
+                    const alias = this.vNode.aliasMap[type];
+                    if (alias) type = toCase(alias);
+                }
             }
+
             if (!type) return undefined;
             let data = [[children]];
             if (is.trueArray(rule.children)) {
