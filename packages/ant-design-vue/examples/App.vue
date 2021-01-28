@@ -59,8 +59,8 @@
             </ARow>
             <br/>
             <ARow>
+                <AButton @click="disabled2">禁用表单(disabled)</AButton>
                 <AButton @click="submit">提交表单(submit)</AButton>
-                <AButton @click="disabled2">提交表单(disabled)</AButton>
                 <AButton @click="hideForm">隐藏表单(hideForm)</AButton>
                 <AButton @click="validate">表单验证(validate)</AButton>
                 <AButton @click="resetFields">重置表单(resetFields)</AButton>
