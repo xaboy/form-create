@@ -36,9 +36,22 @@ export default function Api(h) {
         })
     }
 
+    function allSubForm() {
+        const subs = h.subForm;
+        return Object.keys(subs).reduce((initial, k) => {
+            const sub = subs[k];
+            if (!sub) return initial;
+            if (Array.isArray(sub))
+                initial.push(...sub);
+            else
+                initial.push(sub);
+            return initial;
+        }, []);
+    }
+
     const api = {
         helper: {
-            tidyFields, props,
+            tidyFields, props, allSubForm
         },
         get config() {
             return h.options
@@ -184,12 +197,25 @@ export default function Api(h) {
         sync: (field) => {
             const ctx = is.Object(field) ? byCtx(field) : h.getCtx(field);
             if (ctx) {
+                const subForm = h.subForm[field];
+                if (subForm) {
+                    if (Array.isArray(subForm)) {
+                        subForm.forEach(form => {
+                            form.refresh(true);
+                        })
+                    } else if (subForm) {
+                        subForm.refresh(true);
+                    }
+                }
                 ctx.updateKey(true);
                 h.$render.clearCache(ctx);
                 h.refresh();
             }
         },
         refresh: (clear) => {
+            allSubForm().forEach(sub => {
+                sub.refresh(clear);
+            });
             h.$render.clearCacheAll();
             clear && h.$manager.updateKey();
             h.refresh();
