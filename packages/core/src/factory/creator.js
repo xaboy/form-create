@@ -8,7 +8,6 @@ export function baseRule() {
     return {
         props: {},
         on: {},
-        validate: [],
         options: [],
         col: {},
         children: [],

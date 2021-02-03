@@ -21,7 +21,6 @@ export default function Handler(fc) {
         loading: false,
         reloading: false,
         isMounted: false,
-        validate: {},
         formData: {},
         subForm: {},
         form: {},

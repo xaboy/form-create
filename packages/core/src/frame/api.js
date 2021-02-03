@@ -259,7 +259,7 @@ export default function Api(h) {
         },
         updateValidate(id, validate, merge) {
             if (merge) {
-                api.updateRule(id, {validate})
+                api.mergeRule(id, {validate})
             } else {
                 props(id, 'validate', validate);
             }

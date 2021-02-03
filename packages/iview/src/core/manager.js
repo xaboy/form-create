@@ -85,7 +85,7 @@ export default {
         extend(this.rule, {key, ref});
         extend(this.rule.props, {
             model: $handle.formData,
-            rules: $handle.validate,
+            rules: $handle.validate(),
         });
     },
     render(children) {

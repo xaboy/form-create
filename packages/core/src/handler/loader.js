@@ -27,7 +27,7 @@ export default function useLoader(Handler) {
             if (rule.field && hasProperty(this.options.formData || {}, rule.field))
                 rule.value = this.options.formData[rule.field];
 
-            rule.options = parseArray(rule.options);
+            rule.options = Array.isArray(rule.options) ? rule.options : [];
 
             ['on', 'props', 'nativeOn'].forEach(k => {
                 this.parseInjectEvent(rule, rule[k] || {});
@@ -250,11 +250,6 @@ export default function useLoader(Handler) {
             this.vm._refresh();
         },
     });
-}
-
-
-function parseArray(validate) {
-    return Array.isArray(validate) ? validate : [];
 }
 
 function fullRule(rule) {

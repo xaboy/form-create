@@ -17,7 +17,6 @@ export default function useContext(Handler) {
             if (!ctx.input) return;
             this.fieldCtx[field] = ctx;
             $set(this.formData, field, ctx.parser.toFormValue(rule.value, ctx));
-            $set(this.validate, field, rule.validate || []);
         },
         getParser(ctx) {
             const list = this.fc.parsers;
@@ -44,10 +43,6 @@ export default function useContext(Handler) {
                     else if (key === 'link') {
                         ctx.link();
                         return;
-                    } else if (key === 'validate') {
-                        if (ctx.input) {
-                            this.validate[ctx.field] = n || []
-                        } else return;
                     } else if (['props', 'on', 'nativeOn'].indexOf(key) > -1)
                         this.parseInjectEvent(ctx.rule, n || {});
                     else if (['emit', 'nativeEmit'].indexOf(key) > -1)
@@ -104,7 +99,6 @@ export default function useContext(Handler) {
             const f = this.fieldCtx[field];
 
             if (field && (!f || f === ctx)) {
-                $del(this.validate, field);
                 $del(this.formData, field);
                 $del(this.form, field);
                 $del(this.fieldCtx, field);

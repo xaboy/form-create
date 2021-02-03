@@ -2,6 +2,7 @@ import extend from '@form-create/utils/lib/extend';
 import {$set} from '@form-create/utils/lib';
 import is, {hasProperty} from '@form-create/utils/lib/type';
 import {invoke} from '../frame/util';
+import toArray from '@form-create/utils/lib/toarray';
 
 export default function useInput(Handler) {
     extend(Handler.prototype, {
@@ -33,6 +34,13 @@ export default function useInput(Handler) {
         },
         getFormData(ctx) {
             return this.formData[ctx.field];
+        },
+        validate() {
+            return Object.keys(this.fieldCtx).reduce((initial, id) => {
+                const ctx = this.fieldCtx[id];
+                initial[ctx.field] = toArray(ctx.rule.validate);
+                return initial;
+            }, {});
         },
         syncForm() {
             Object.keys(this.form).forEach(k => delete this.form[k]);
