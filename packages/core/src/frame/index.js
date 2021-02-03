@@ -170,6 +170,10 @@ export default function FormCreateFactory(config) {
 
             vm.$on('hook:created', () => {
                 if (this.isSub()) {
+                    vm.$watch(()=>vm.$pfc.option,()=>{
+                        this.initOptions(this.options);
+                        vm.$f.refresh();
+                    },{deep:true});
                     this.initOptions(this.options);
                 }
                 this.created();
@@ -185,12 +189,12 @@ export default function FormCreateFactory(config) {
             });
         },
         isSub() {
-            return this.vm.parent$f && this.vm.extendOption;
+            return this.vm.$pfc && this.vm.extendOption;
         },
         initOptions(options) {
             this.options = {formData: {}, submitBtn: {}, resetBtn: {}, ...globalConfig};
             if (this.isSub()) {
-                this.mergeOptions(this.options, this.vm.parent$f.config);
+                this.mergeOptions(this.options, this.vm.$pfc.$f.config);
             }
             this.updateOptions(options);
         },

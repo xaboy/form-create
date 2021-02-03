@@ -12,10 +12,10 @@ export default function $FormCreate(FormCreate) {
         },
         provide() {
             return {
-                parent$f: this.$f,
+                $pfc: this,
             }
         },
-        inject: {parent$f: {default: null}},
+        inject: {$pfc: {default: null}},
         props: {
             rule: {
                 type: Array,
