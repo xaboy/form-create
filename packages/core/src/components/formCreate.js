@@ -65,9 +65,12 @@ export default function $FormCreate(FormCreate) {
                 },
                 deep: true
             },
-            option(n) {
-                this.formCreate.initOptions(n);
-                this.$f.refresh();
+            option: {
+                handler(n) {
+                    this.formCreate.initOptions(n);
+                    this.$f.refresh();
+                },
+                deep: true
             },
             rule(n) {
                 if (n.length === this.renderRule.length && n.every(v => this.renderRule.indexOf(v) > -1)) return;
