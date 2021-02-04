@@ -9,10 +9,10 @@ import RuleContext from '../factory/context';
 
 export default function useLoader(Handler) {
     extend(Handler.prototype, {
-        nextLoad() {
+        nextRefresh(fn) {
             const id = this.loadedId;
             this.vm.$nextTick(() => {
-                id === this.loadedId && this.refresh();
+                id === this.loadedId && ((fn || this.refresh)());
             });
         },
         parseRule(_rule) {

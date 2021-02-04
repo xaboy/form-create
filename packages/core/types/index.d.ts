@@ -400,6 +400,8 @@ export interface BaseApi<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
 
     nextTick(fn: ($f: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void): void;
 
+    nextRefresh(fn:Function):void;
+
     set<T>(object: object, key: string | number, value: T): T;
 
     on(event: string | string[], callback: Function): this;

@@ -15,7 +15,7 @@ export default function useInput(Handler) {
         setValue(ctx, value, formValue, setFlag) {
             ctx.cacheValue = value;
             this.changeStatus = true;
-            this.nextLoad();
+            this.nextRefresh();
             this.$render.clearCache(ctx);
             this.setFormData(ctx, formValue);
             this.syncValue();

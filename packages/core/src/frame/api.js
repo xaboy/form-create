@@ -311,6 +311,10 @@ export default function Api(h) {
         nextTick(fn) {
             h.bus.$once('next-tick', fn);
             h.refresh();
+        },
+        nextRefresh(fn, clear) {
+            invoke(() => fn);
+            h.nextRefresh(() => api.refresh(clear));
         }
     };
 
