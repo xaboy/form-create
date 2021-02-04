@@ -352,7 +352,7 @@ export interface BaseApi<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
 
     sync(rule: FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>): void;
 
-    refresh(clear?: Boolean): void;
+    refresh(): void;
 
     refreshOptions(): void;
 
