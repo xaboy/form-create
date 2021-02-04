@@ -45,7 +45,7 @@ export default function RuleContext(handle, rule) {
 extend(RuleContext.prototype, {
     updateKey(flag) {
         this.key = unique();
-        flag && this.parent && this.parent.updateKey(parent);
+        flag && this.parent && this.parent.updateKey(flag);
     },
     updateType() {
         this.originType = this.rule.type;

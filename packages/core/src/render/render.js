@@ -314,7 +314,7 @@ export default function useRender(Render) {
             if (is.trueArray(rule.children)) {
                 data.push(rule.children.map(v => this.renderRule(v)));
             }
-            return this.$h(type, {...rule}, data, '');
+            return this.$h(type, {...rule}, data);
         }
     })
 }

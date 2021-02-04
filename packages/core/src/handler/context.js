@@ -38,9 +38,10 @@ export default function useContext(Handler) {
                 ctx.watch.push(vm.$watch(() => ctx.rule[key], (n, o) => {
                     if (this.loading || this.reloading) return;
                     this.watching = true;
-                    if (key === 'hidden')
-                        ctx.updateKey(true);
-                    else if (key === 'link') {
+                    // if (key === 'hidden')
+                    //     ctx.updateKey(true);
+                    // else
+                    if (key === 'link') {
                         ctx.link();
                         return;
                     } else if (['props', 'on', 'nativeOn'].indexOf(key) > -1)

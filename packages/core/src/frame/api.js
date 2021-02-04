@@ -201,23 +201,22 @@ export default function Api(h) {
                 if (subForm) {
                     if (Array.isArray(subForm)) {
                         subForm.forEach(form => {
-                            form.refresh(true);
+                            form.refresh();
                         })
                     } else if (subForm) {
-                        subForm.refresh(true);
+                        subForm.refresh();
                     }
                 }
-                ctx.updateKey(true);
+                //ctx.updateKey(true);
                 h.$render.clearCache(ctx);
                 h.refresh();
             }
         },
-        refresh: (clear) => {
+        refresh: () => {
             allSubForm().forEach(sub => {
-                sub.refresh(clear);
+                sub.refresh();
             });
             h.$render.clearCacheAll();
-            clear && h.$manager.updateKey();
             h.refresh();
         },
         refreshOptions() {
@@ -312,9 +311,9 @@ export default function Api(h) {
             h.bus.$once('next-tick', fn);
             h.refresh();
         },
-        nextRefresh(fn, clear) {
+        nextRefresh(fn) {
             invoke(() => fn);
-            h.nextRefresh(() => api.refresh(clear));
+            h.nextRefresh(() => api.refresh());
         }
     };
 
