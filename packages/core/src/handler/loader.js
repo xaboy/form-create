@@ -12,7 +12,7 @@ export default function useLoader(Handler) {
         nextRefresh(fn) {
             const id = this.loadedId;
             this.vm.$nextTick(() => {
-                id === this.loadedId && ((fn || this.refresh)());
+                id === this.loadedId && (fn ? fn() : this.refresh());
             });
         },
         parseRule(_rule) {

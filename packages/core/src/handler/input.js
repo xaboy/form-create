@@ -36,14 +36,15 @@ export default function useInput(Handler) {
             return this.formData[ctx.field];
         },
         validate() {
-            return Object.keys(this.fieldCtx).reduce((initial, id) => {
+            toEmpty(this._validate);
+            Object.keys(this.fieldCtx).forEach(id => {
                 const ctx = this.fieldCtx[id];
-                initial[ctx.field] = toArray(ctx.rule.validate);
-                return initial;
-            }, {});
+                this._validate[ctx.field] = toArray(ctx.rule.validate);
+            });
+            return this._validate;
         },
         syncForm() {
-            Object.keys(this.form).forEach(k => delete this.form[k]);
+            toEmpty(this.form);
             Object.defineProperties(this.form, Object.keys(this.formData).reduce((initial, field) => {
                 const ctx = this.getCtx(field);
                 const handle = this.valueHandle(ctx);
@@ -116,4 +117,8 @@ export default function useInput(Handler) {
             return Object.keys(this.formData);
         },
     });
+}
+
+function toEmpty(obj) {
+    Object.keys(obj).forEach(k => delete obj[k]);
 }
