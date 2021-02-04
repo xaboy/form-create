@@ -154,6 +154,7 @@ export default function FormCreateFactory(config) {
             },
             CreateNode,
             bus: new _vue,
+            unwatch: null,
             extendApi: config.extendApi||(api=>api)
         })
         this.init();
@@ -170,7 +171,7 @@ export default function FormCreateFactory(config) {
 
             vm.$on('hook:created', () => {
                 if (this.isSub()) {
-                    vm.$watch(()=>vm.$pfc.option,()=>{
+                    this.unwatch = vm.$watch(()=>vm.$pfc.option,()=>{
                         this.initOptions(this.options);
                         vm.$f.refresh();
                     },{deep:true});
@@ -182,6 +183,7 @@ export default function FormCreateFactory(config) {
                 this.mounted();
             });
             vm.$on('hook:beforeDestroy', () => {
+                this.unwatch && this.unwatch();
                 h.reloadRule([]);
             });
             vm.$on('hook:updated', () => {
