@@ -1,7 +1,7 @@
 import {Button, Col, Popover, Row, Tooltip} from "element-ui";
 import {FormData, VNodeData} from "@form-create/core";
 import {ElementUIComponentSize} from "element-ui/types/component";
-import {FormItemLabelPosition} from "element-ui/types/form";
+import {FormItemLabelPosition, ValidateCallback, ValidateFieldCallback} from "element-ui/types/form";
 import {Api} from "./index";
 
 export interface OptionAttrs {
@@ -18,11 +18,6 @@ export interface OptionAttrs {
         icon?: string;
         align?: 'left' | 'right';
         info?: string;
-    };
-    title?: Boolean | VNodeData & {
-        show?: Boolean;
-        native?: Boolean;
-        title?: string;
     };
     wrap?: Boolean | VNodeData & {
         labelWidth?: string
@@ -62,7 +57,13 @@ export interface OptionAttrs {
 
 }
 
-declare const optionAttrs: OptionAttrs;
+declare const optionAttrs: OptionAttrs & {
+    title?: Boolean | VNodeData & {
+        show?: Boolean;
+        native?: Boolean;
+        title?: string;
+    };
+};
 
 interface children {
     children?: VNodeData[]
@@ -107,12 +108,12 @@ export interface ApiAttrs {
 
     clearSubValidateState(fields?: string | string[]): void;
 
-    validate(callback?: (...args: any) => void): void;
+    validate(callback?: ValidateCallback): void;
 
-    validateField(field: string, callback?: (...args: any) => void): void;
+    validateField(field: string, callback?: ValidateFieldCallback): void;
 
-    submitBtnProps(props: Object): void;
+    submitBtnProps(props: Button): void;
 
-    resetBtnProps(props: Object): void;
+    resetBtnProps(props: Button): void;
 
 }

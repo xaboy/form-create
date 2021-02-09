@@ -1,5 +1,6 @@
-import {VNodeData} from "@form-create/core";
+import {FormData, VNodeData} from "@form-create/core";
 import {Col, Row, Tooltip, Poptip, Button} from "view-design";
+import {Api} from "./index";
 
 export interface OptionAttrs {
     col?: Boolean | Col & {
@@ -15,11 +16,6 @@ export interface OptionAttrs {
         icon?: string;
         align?: 'left' | 'right';
         info?: string;
-    };
-    title?: Boolean | VNodeData & {
-        show?: Boolean;
-        native?: Boolean;
-        title?: string;
     };
     wrap?: Boolean | VNodeData & {
         labelWidth?: number;
@@ -52,7 +48,13 @@ export interface OptionAttrs {
 
 }
 
-declare const optionAttrs: OptionAttrs;
+declare const optionAttrs: OptionAttrs & {
+    title?: Boolean | VNodeData & {
+        show?: Boolean;
+        native?: Boolean;
+        title?: string;
+    };
+};
 
 interface children {
     children?: VNodeData[]
@@ -77,4 +79,32 @@ export interface RuleAttrs {
     title?: string | typeof optionAttrs.title & children;
     info?: string | typeof optionAttrs.info & children;
     className?: string;
+}
+
+export interface ApiAttrs {
+    btn: {
+        loading(loading: boolean): void;
+        disabled(disabled: boolean): void;
+        show(show: boolean): void;
+    }
+    resetBtn: {
+        loading(loading: boolean): void;
+        disabled(disabled: boolean): void;
+        show(show: boolean): void;
+    }
+
+    submit(success: (formData: FormData, $f: Api) => void, fail: ($f: Api) => void): void;
+
+    clearValidateState(fields?: string | string[], clearSub?: Boolean): void;
+
+    clearSubValidateState(fields?: string | string[]): void;
+
+    validate(callback?: (valid?: boolean) => void): void;
+
+    validateField(field: string, callback?: (valid?: boolean) => void): void;
+
+    submitBtnProps(props: Button): void;
+
+    resetBtnProps(props: Button): void;
+
 }
