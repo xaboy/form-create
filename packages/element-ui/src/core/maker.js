@@ -63,7 +63,7 @@ function useFrame(maker) {
     };
 
     Object.keys(types).reduce((maker, key) => {
-        maker[key] = creatorFactory(name, m => m.props({type: types[key][0], maxLength: types[key][1]}));
+        maker[key] = creatorFactory('frame', m => m.props({type: types[key][0], maxLength: types[key][1]}));
         return maker
     }, maker);
 

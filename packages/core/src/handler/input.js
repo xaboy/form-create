@@ -36,12 +36,12 @@ export default function useInput(Handler) {
             return this.formData[ctx.field];
         },
         validate() {
-            toEmpty(this._validate);
+            toEmpty(this.vm.validate);
             Object.keys(this.fieldCtx).forEach(id => {
                 const ctx = this.fieldCtx[id];
-                this._validate[ctx.field] = toArray(ctx.rule.validate);
+                this.vm.validate[ctx.field] = toArray(ctx.rule.validate);
             });
-            return this._validate;
+            return this.vm.validate;
         },
         syncForm() {
             toEmpty(this.form);

@@ -34,6 +34,7 @@ export default function $FormCreate(FormCreate) {
         data() {
             return {
                 formData: undefined,
+                validate: {},
                 $f: undefined,
                 isShow: true,
                 unique: 1,

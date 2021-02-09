@@ -268,6 +268,10 @@ export default function Api(h) {
                 api.updateValidate(id, validates[id], merge);
             })
         },
+        refreshValidate(){
+            h.vm.validate = {};
+            api.refresh();
+        },
         resetFields(fields) {
             let ctxs = h.fieldCtx;
             tidyFields(fields).forEach(field => {
@@ -312,7 +316,7 @@ export default function Api(h) {
             h.refresh();
         },
         nextRefresh(fn) {
-            invoke(() => fn);
+            invoke(() => fn());
             h.nextRefresh(() => api.refresh());
         }
     };

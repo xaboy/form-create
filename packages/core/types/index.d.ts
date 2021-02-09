@@ -380,6 +380,8 @@ export interface BaseApi<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
 
     updateValidates(validates: { [id: string]: Object[] }, merge?: Boolean): void;
 
+    refreshValidate(): void;
+
     method(id: string, name: string): (...args: any[]) => any;
 
     exec(id: string, name: string, ...args: any[]): any;
@@ -400,7 +402,7 @@ export interface BaseApi<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
 
     nextTick(fn: ($f: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void): void;
 
-    nextRefresh(fn:Function):void;
+    nextRefresh(fn: Function): void;
 
     set<T>(object: object, key: string | number, value: T): T;
 

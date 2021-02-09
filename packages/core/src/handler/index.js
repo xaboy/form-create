@@ -61,7 +61,6 @@ extend(Handler.prototype, {
             sort: [],
             rules,
             repeatRule: [],
-            _validate: {},
         });
         useHelper(rules);
     },
