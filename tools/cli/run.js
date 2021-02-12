@@ -11,13 +11,13 @@ const pkgUrl = path.join(commandExecUrl, '/lerna.json');
 
 program.on('--help', () => {
     log();
-    log(chalk.blue.bold('  Usage:'), chalk.cyan.bold('fc-tools build tools with Node 👍 ~'));
+    log(chalk.blue.bold('  Usage:'), chalk.cyan.bold('tools build tools with Node 👍 ~'));
     log();
 })
 
-/// fc-tools 版本
+/// tools 版本
 program
-    .version(`@form-create/fc-tools v${require(pkgUrl).version}`, '-v, --version', 'fc-tools versions')
+    .version(`@form-create/tools v${require(pkgUrl).version}`, '-v, --version', 'tools versions')
 
 program
     .command('build [flag]')

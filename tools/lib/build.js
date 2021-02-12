@@ -4,7 +4,7 @@
  * @LastEditors   : djkloop
  * @LastEditTime  : 2020-12-17 19:34:45
  * @Description  : 头部注释
- * @FilePath      : /form-create2/fc-tools/lib/build.js
+ * @FilePath      : /form-create2/tools/lib/build.js
  */
 const chalk = require('chalk')
 const ora = require('ora');

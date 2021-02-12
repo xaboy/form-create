@@ -5,8 +5,9 @@
 [GitHub](https://github.com/xaboy/form-create) | [文档](http://form-create.com/v2/) | [Document](http://form-create.com/en/v2/)
 
 
+props
 
-| 包名             | 类型  | 说明                                  |
+| 属性            | 类型  | 说明                                  |
 | -------------- | --------  | ------------------------------ |
 | v-model       |  string   | 富文本内容 |
 | init         |  Function | 初始化 wangEditor |
