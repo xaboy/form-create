@@ -38,7 +38,6 @@
     "access": "public"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "^4.5.11",
-    "@vue/cli-service": "^4.5.3"
+    "@vue/cli-plugin-babel": "^4.5.11"
   }
 }
