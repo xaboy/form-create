@@ -416,11 +416,3 @@ export default function jsonMock() {
     ]
 
 }
-
-
-/**
- * JS表单生成器
- *
- * Author: xaboy
- * Github: https://github.com/xaboy/form-create
- */
