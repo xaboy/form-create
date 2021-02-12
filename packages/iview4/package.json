@@ -1,7 +1,7 @@
 {
     "name": "@form-create/iview4",
     "version": "1.0.19",
-    "description": "iview v4版表单生成器|Iview Form builder with dynamic rendering, data collection, validation and submission capabilities, built-in 17 common form components, support for two-way data binding, event extension, and support for building built-in components and any vue components using json.",
+    "description": "view-design动态表单|form-create is a form generation component that can generate dynamic rendering, data collection, verification and submission functions through JSON. Supports 3 UI frameworks, and supports the generation of any Vue components. Built-in 20 kinds of commonly used form components and custom components, no matter how complex forms can be easily handled.",
     "main": "./dist/form-create.min.js",
     "module": "./dist/form-create.min.js",
     "unpkg": "./dist/form-create.min.js",
@@ -17,14 +17,16 @@
         "url": "git+https://github.com/xaboy/form-create.git"
     },
     "keywords": [
+        "动态表单",
         "@form-create",
         "form-builder",
         "form",
         "components",
         "vue.js",
         "iview",
+        "view-design",
         "json-form",
-        "vue-json-form"
+        "dynamic-form"
     ],
     "files": [
         "README.md",
@@ -53,7 +55,7 @@
         "@vue/cli-service": "^4.5.3",
         "@vue/composition-api": "^1.0.0-beta.22",
         "v-jsoneditor": "^1.4.2",
-        "@form-create/component-wangeditor": "^0.0.1",
+        "@form-create/component-wangeditor": "^2.5.0",
         "view-design": "^4.0.2"
     }
 }

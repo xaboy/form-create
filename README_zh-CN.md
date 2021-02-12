@@ -5,24 +5,21 @@
 </p>
 
 
-# form-create V2
+# form-create
 
 [![MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/xaboy/form-create)
 [![github](https://img.shields.io/badge/Author-xaboy-blue.svg)](https://github.com/xaboy)
-[![version](https://badge.fury.io/js/@form-create%2Fcore.svg)](https://www.npmjs.com/package/@form-create/core)
-[![npm](https://img.shields.io/npm/dt/@form-create/core.svg)](https://www.npmjs.com/package/@form-create/core)
 [![document](https://img.shields.io/badge/Doc-welcome-red.svg)](http://www.form-create.com/v2/)
 
 
-**form-create 是一个可以通过 JSON 生成具有动态渲染、数据收集、验证和提交功能的表单生成器。并且支持生成任何 Vue 组件。结合内置17种常用表单组件和自定义组件，再复杂的表单都可以轻松搞定。**
+**form-create 是一个可以通过 JSON 生成具有动态渲染、数据收集、验证和提交功能的表单生成组件。支持3个UI框架，并且支持生成任何 Vue 组件。内置20种常用表单组件和自定义组件，再复杂的表单都可以轻松搞定。**
 
 
 ## 支持
-- **iViewUI 2.13.0+**
-- **iViewUI 3.x**
-- **iViewUI 4.x**
-- **ElementUI 2.8.2+**
-- **Ant-design-vue 1.5.3+**
+- **iview**
+- **view-design**
+- **element-ui**
+- **Ant-design-vue**
 
 如果您有适合 form-create 的表单组件, 欢迎[点击这里留言](https://github.com/xaboy/form-create/issues/124)
 
@@ -41,37 +38,36 @@
 
 - **操作表单**
 
+[详细说明](http://www.form-create.com/v2/instance.html)
+
 ![demo2](https://raw.githubusercontent.com/xaboy/form-create/dev/images/demo-live2.gif)
 
 - **`group` 组件**
 
+[详细说明](http://www.form-create.com/v2/guide/group.html)
+
 ![demo3](https://raw.githubusercontent.com/xaboy/form-create/dev/images/demo-group.gif)
 
 - **`control` 配置项**
+
+[详细说明](http://www.form-create.com/v2/guide/control.html)
 
 ![demo2](https://raw.githubusercontent.com/xaboy/form-create/dev/images/demo-live4.gif)
 </details>
 
 ## 文档
 
-<p>
-    <a href="http://www.form-create.com/v2/">
-        <strong>简体中文</strong>
-    </a>
-    <a href="http://www.form-create.com/en/v2/">
-        <strong>English</strong>
-    </a>
-</p>
+[简体中文](http://www.form-create.com/v2/) | [English](http://www.form-create.com/en/v2/)
 
 
 ## 包说明
 
 | 包名             | 说明                                                |
 | ------------------ | ---------------------------------------------------------- |
-| @form-create/iview     | [iview 版本](http://form-create.com/v2/iview/) |
-| @form-create/iview4     | [iView V4 版本](http://form-create.com/v2/iview/) |
-| @form-create/element-ui | [ElementUI 版本](http://form-create.com/v2/element-ui/)        |
-| @form-create/ant-design-vue | [Ant-design-vue 版本](http://form-create.com/v2/ant-design-vue/)     |
+| @form-create/iview [![version](https://badge.fury.io/js/@form-create%2Fiview.svg)](https://www.npmjs.com/package/@form-create/iview) [![npm](https://img.shields.io/npm/dt/@form-create/iview.svg)](https://www.npmjs.com/package/@form-create/iview)    | [iview 版本](http://form-create.com/v2/iview/) |
+| @form-create/iview4 [![version](https://badge.fury.io/js/@form-create%2Fiview4.svg)](https://www.npmjs.com/package/@form-create/iview4) [![npm](https://img.shields.io/npm/dt/@form-create/iview4.svg)](https://www.npmjs.com/package/@form-create/iview4)    | [view-design 版本](http://form-create.com/v2/iview/) |
+| @form-create/element-ui [![version](https://badge.fury.io/js/@form-create%2Felement-ui.svg)](https://www.npmjs.com/package/@form-create/element-ui) [![npm](https://img.shields.io/npm/dt/@form-create/element-ui.svg)](https://www.npmjs.com/package/@form-create/element-ui) | [element-ui 版本](http://form-create.com/v2/element-ui/)        |
+| @form-create/ant-design-vue [![version](https://badge.fury.io/js/@form-create%2Fant-design-vue.svg)](https://www.npmjs.com/package/@form-create/ant-design-vue) [![npm](https://img.shields.io/npm/dt/@form-create/ant-design-vue.svg)](https://www.npmjs.com/package/@form-create/ant-design-vue) | [ant-design-vue 版本](http://form-create.com/v2/ant-design-vue/)     |
 
 
 
@@ -83,7 +79,7 @@
 
 - [使用 json 生成](https://jsrun.net/NQhKp/edit)
 
-- [各种示例](https://jsrun.net/user/xaboy)
+- [各种示例](http://www.form-create.com/v2/guide/demo.html)
 
 
 
@@ -96,17 +92,17 @@
 
 ## 安装
 
-iview 2.x|3.x
+iview
 ```shell
 npm install @form-create/iview
 ```
 
-iview 4.x
+view-design
 ```shell
 npm install @form-create/iview4
 ```
 
-elementUI
+element-ui
 ```shell
 npm install @form-create/element-ui
 ```
@@ -132,7 +128,7 @@ iview
 <script src="//unpkg.com/@form-create/iview/dist/form-create.min.js"></script>
 ```
 
-elementUI
+element-ui
 ```html
 <!-- import Vue.js -->
 <script src="//vuejs.org/js/vue.min.js"></script>
@@ -166,7 +162,7 @@ import formCreate from '@form-create/iview'
 Vue.use(formCreate)
 ```
 
-ElementUI
+element-ui
 ```js
 import formCreate from '@form-create/element-ui'
 Vue.use(formCreate)
@@ -182,56 +178,38 @@ Vue.use(formCreate)
 ##  使用
 
 ```html
-<form-create ref="fc" v-model="fApi" :rule="rule" :option="option"></form-create>
+<form-create :rule="rule" v-model="fApi" :option="options" :value.sync="value"/>
 ```
-NodeJs
 ```javascript
-    import {maker} from 'form-create'
-    export default {
-        data () {
-            return {
-                fApi:{},
-                model: {},
-                //表单生成规则
-                rule:[
-                    maker.input('商品名称','goods_name'),
-                    maker.date('创建时间','created_at')
-                ],
-                //组件参数配置
-                option:{
-                    //表单提交事件
-                    onSubmit:function (formData) {
-                        alert(JSON.stringify(formData));
-                    }
-                }
-            };
-        },
-        mounted:function(){
-            this.model = this.fApi.model();
-        }
-    };
-```
-Browser
-```javascript
-    new Vue({
-        el:'#app1',
-        data:{
+export default {
+    data(){
+        return {
             fApi:{},
-            model: {},
-            rule:[
-                formCreate.maker.input('商品名称','goods_name'),
-                formCreate.maker.date('创建时间','created_at')
-            ],
-            option:{
-                onSubmit:function (formData) {
-                    alert(JSON.stringify(formData));
+            value:{field1:'111',field2:'222',time:'11:11:11'},
+            options:{
+                onSubmit:(formData)=>{
+                    alert(JSON.stringify(formData))
                 }
-            }
-        },
-        mounted:function () {
-            this.model = this.fApi.model();
+            },
+            rule:[
+                {type:'input', field:'field1',title:'field1',value:'aaa'},
+                {type:'input', field:'field2',title:'field2',value:'sss'},
+                {type:'timePicker', field:'time',title:'time',value:'12:12:12'},
+                {
+                    type:'ElButton',
+                    title:'修改 field1',
+                    native: false,
+                    on:{
+                        click: ()=>{
+                            this.rule[0].value+='a'
+                        }
+                    },
+                    children: ['点击'],
+                }
+            ]
         }
-    });
+    }
+}
 ```
 
 ## 示例
@@ -245,15 +223,15 @@ $ cd form-create
 ```sh
 $ npm run bootstrap
 ```
-查看 Iview 2.x|3.x示例
+查看 iview 示例
 ```sh 
 $ npm run dev:iview
 ```
-查看 Iview 4.x示例
+查看 view-design 示例
 ```sh 
 $ npm run dev:iview4
 ```
-查看 ElementUI 示例
+查看 element-ui 示例
 ```sh 
 $ npm run dev:ele
 ```
@@ -274,8 +252,6 @@ $ npm run dev:antd
 ## 联系
 
 ##### email : xaboy2005@qq.com
-
-
 
 ## License
 

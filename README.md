@@ -5,25 +5,21 @@
 </p>
 
 
-# form-create V2
+# form-create
 
 [![MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/xaboy/form-create)
 [![github](https://img.shields.io/badge/Author-xaboy-blue.svg)](https://github.com/xaboy)
-[![version](https://badge.fury.io/js/@form-create%2Fcore.svg)](https://www.npmjs.com/package/@form-create/core)
-[![npm](https://img.shields.io/npm/dt/@form-create/core.svg)](https://www.npmjs.com/package/@form-create/core)
 [![document](https://img.shields.io/badge/Doc-welcome-red.svg)](http://www.form-create.com/en/v2/)
 
-
-**Form-create is a form generator that can generate dynamic rendering, data collection, validation, and submission via JSON. And support for generating any Vue components. Combined with the built-in 17 common form components and custom components, complex forms can be easily handled.**
+**form-create is a form generation component that can generate dynamic rendering, data collection, verification and submission functions through JSON. Supports 3 UI frameworks, and supports the generation of any Vue components. Built-in 20 kinds of commonly used form components and custom components, no matter how complex forms can be easily handled.**
 
 ## [中文 README](https://github.com/xaboy/form-create/blob/2.0/README_zh-CN.md)
 
 ## Support
-- **iViewUI 2.13.0+**
-- **iViewUI 3.x**
-- **iViewUI 4.x**
-- **ElementUI 2.8.2+**
-- **Ant-design-vue 1.5.3+**
+- **iview**
+- **view-design**
+- **element-ui**
+- **Ant-design-vue**
 
 If you have a form component suitable for form-create, please feel free to [click here to leave a message](https://github.com/xaboy/form-create/issues/124)
 
@@ -43,40 +39,36 @@ If you have a form component suitable for form-create, please feel free to [clic
 
 - **Form operations**
 
+[description](http://www.form-create.com/en/v2/instance.html)
+
 ![demo2](https://raw.githubusercontent.com/xaboy/form-create/dev/images/demo-live2.gif)
 
 - **`group` component**
 
+[description](http://www.form-create.com/en/v2/guide/group.html)
+
 ![demo3](https://raw.githubusercontent.com/xaboy/form-create/dev/images/demo-group.gif)
 
 - **`control` configuration**
+
+[description](http://www.form-create.com/en/v2/guide/control.html)
 
 ![demo2](https://raw.githubusercontent.com/xaboy/form-create/dev/images/demo-live4.gif)
 </details>
 
 ## Docs
 
-<p>
-    <a href="http://www.form-create.com/v2/">
-        <strong>简体中文</strong>
-    </a>
-    <a href="http://www.form-create.com/en/v2/">
-        <strong>English</strong>
-    </a>
-</p>
-
+[简体中文](http://www.form-create.com/v2/) | [English](http://www.form-create.com/en/v2/)
 
 
 ## Packages
 
 | Name               | Description                                                |
 | ------------------ | ---------------------------------------------------------- |
-| @form-create/iview     | [iView Version](http://form-create.com/en/v2/iview/) |
-| @form-create/iview4     | [iView V4 Version](http://form-create.com/en/v2/iview/) |
-| @form-create/element-ui | [ElementUI Version](http://form-create.com/en/v2/element-ui/)     |
-| @form-create/ant-design-vue | [Ant-design-vue Version](http://form-create.com/en/v2/ant-design-vue/)     |
-
-
+| @form-create/iview [![version](https://badge.fury.io/js/@form-create%2Fiview.svg)](https://www.npmjs.com/package/@form-create/iview) [![npm](https://img.shields.io/npm/dt/@form-create/iview.svg)](https://www.npmjs.com/package/@form-create/iview)    | [iview version](http://form-create.com/v2/iview/) |
+| @form-create/iview4 [![version](https://badge.fury.io/js/@form-create%2Fiview4.svg)](https://www.npmjs.com/package/@form-create/iview4) [![npm](https://img.shields.io/npm/dt/@form-create/iview4.svg)](https://www.npmjs.com/package/@form-create/iview4)    | [view-design version](http://form-create.com/v2/iview/) |
+| @form-create/element-ui [![version](https://badge.fury.io/js/@form-create%2Felement-ui.svg)](https://www.npmjs.com/package/@form-create/element-ui) [![npm](https://img.shields.io/npm/dt/@form-create/element-ui.svg)](https://www.npmjs.com/package/@form-create/element-ui) | [element-ui version](http://form-create.com/v2/element-ui/)        |
+| @form-create/ant-design-vue [![version](https://badge.fury.io/js/@form-create%2Fant-design-vue.svg)](https://www.npmjs.com/package/@form-create/ant-design-vue) [![npm](https://img.shields.io/npm/dt/@form-create/ant-design-vue.svg)](https://www.npmjs.com/package/@form-create/ant-design-vue) | [ant-design-vue version](http://form-create.com/v2/ant-design-vue/)     |
 
 ## Example
 
@@ -86,7 +78,7 @@ If you have a form component suitable for form-create, please feel free to [clic
 
 - [Generate a form using the json parameter](https://jsrun.net/NQhKp/edit)
 
-- [Component example](https://jsrun.net/user/xaboy)
+- [Component example](http://www.form-create.com/en/v2/guide/demo.html)
 
 
 
@@ -99,17 +91,17 @@ If you have a form component suitable for form-create, please feel free to [clic
 
 ## Install
 
-iview 2.x|3.x
+iview
 ```shell
 npm install @form-create/iview
 ```
 
-iview 4.x
+view-design
 ```shell
 npm install @form-create/iview4
 ```
 
-elementUI
+element-ui
 ```shell
 npm install @form-create/element-ui
 ```
@@ -123,7 +115,7 @@ npm install @form-create/ant-design-vue
 
 **CDN:**
 
-iviewUI
+iview
 ```html
 <!-- import Vue.js -->
 <script src="//vuejs.org/js/vue.min.js"></script>
@@ -135,7 +127,7 @@ iviewUI
 <script src="//unpkg.com/@form-create/iview/dist/form-create.min.js"></script>
 ```
 
-elementUI
+element-ui
 ```html
 <!-- import Vue.js -->
 <script src="//vuejs.org/js/vue.min.js"></script>
@@ -164,13 +156,13 @@ ant-design-vue
 
 **NodeJs:**
 
-iviewUI
+iview
 ```js
 import formCreate from '@form-create/iview'
 Vue.use(formCreate)
 ```
 
-ElementUI
+element-ui
 ```js
 import formCreate from '@form-create/element-ui'
 Vue.use(formCreate)
@@ -185,53 +177,38 @@ Vue.use(formCreate)
 ## Usage
 
 ```html
-<form-create ref="fc" v-model="fApi" :rule="rule" :option="option"></form-create>
+<form-create :rule="rule" v-model="fApi" :option="options" :value.sync="value"/>
 ```
-NodeJs
 ```javascript
-    import {maker} from 'form-create'
-    export default {
-        data () {
-            return {
-                fApi:{},
-                model: {},
-                rule:[
-                    maker.input('goods_name','goods_name'),
-                    maker.date('create_at','created_at')
-                ],
-                option:{
-                    onSubmit:function (formData) {
-                        alert(JSON.stringify(formData));
-                    }
-                }
-            };
-        },
-        mounted:function(){
-            this.model = this.fApi.model();
-        }
-    };
-```
-Browser
-```javascript
-    new Vue({
-        el:'#app1',
-        data:{
+export default {
+    data(){
+        return {
             fApi:{},
-            model: {},
-            rule:[
-                formCreate.maker.input('goods_name','goods_name'),
-                formCreate.maker.date('create_at','created_at')
-            ],
-            option:{
-                onSubmit:function (formData) {
-                    alert(JSON.stringify(formData));
+            value:{field1:'111',field2:'222',time:'11:11:11'},
+            options:{
+                onSubmit:(formData)=>{
+                    alert(JSON.stringify(formData))
                 }
-            }
-        },
-        mounted:function () {
-            this.model = this.fApi.model();
+            },
+            rule:[
+                {type:'input', field:'field1',title:'field1',value:'aaa'},
+                {type:'input', field:'field2',title:'field2',value:'sss'},
+                {type:'timePicker', field:'time',title:'time',value:'12:12:12'},
+                {
+                    type:'ElButton',
+                    title:'Modify field1',
+                    native: false,
+                    on:{
+                        click: ()=>{
+                            this.rule[0].value+='a'
+                        }
+                    },
+                    children: ['Click'],
+                }
+            ]
         }
-    });
+    }
+}
 ```
 
 
@@ -246,15 +223,15 @@ Install dependencies
 ```sh
 $ npm run bootstrap
 ```
-Iview 2.x|3.x Demo
+iview Demo
 ```sh 
 $ npm run dev:iview
 ```
-Iview 4.x Demo
+view-design Demo
 ```sh 
 $ npm run dev:iview4
 ```
-ElementUI Demo
+element-ui Demo
 ```sh 
 $ npm run dev:ele
 ```

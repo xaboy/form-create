@@ -1,7 +1,7 @@
 {
   "name": "@form-create/ant-design-vue",
   "version": "1.0.19",
-  "description": "ant-design-vue 版表单生成器|ant-design-vue Form builder with dynamic rendering, data collection, validation and submission capabilities, built-in 17 common form components, support for two-way data binding, event extension, and support for building built-in components and any vue components using json.",
+  "description": "ant-design-vue动态表单|form-create is a form generation component that can generate dynamic rendering, data collection, verification and submission functions through JSON. Supports 3 UI frameworks, and supports the generation of any Vue components. Built-in 20 kinds of commonly used form components and custom components, no matter how complex forms can be easily handled.",
   "main": "./src/core/index.js",
   "module": "./src/core/index.js",
   "unpkg": "./dist/form-create.min.js",
@@ -17,6 +17,7 @@
     "url": "git+https://github.com/xaboy/form-create.git"
   },
   "keywords": [
+    "动态表单",
     "@form-create",
     "form-builder",
     "form",
@@ -24,7 +25,7 @@
     "vue.js",
     "ant-design-vue",
     "json-form",
-    "vue-json-form"
+    "dynamic-form"
   ],
   "files": [
     "README.md",
@@ -42,10 +43,10 @@
   },
   "homepage": "http://www.form-create.com",
   "dependencies": {
-    "@form-create/component-antdv-frame": "^0.0.1",
-    "@form-create/component-antdv-group": "^0.0.1",
-    "@form-create/component-antdv-upload": "^0.0.1",
-    "@form-create/component-subform": "^0.0.1",
+    "@form-create/component-antdv-frame": "^2.5.0",
+    "@form-create/component-antdv-group": "^2.5.0",
+    "@form-create/component-antdv-upload": "^2.5.0",
+    "@form-create/component-subform": "^2.5.0",
     "@form-create/core": "^1.0.18",
     "@form-create/utils": "^1.0.15"
   },
@@ -57,7 +58,7 @@
     "@vue/cli-service": "^4.5.3",
     "@vue/composition-api": "^1.0.0-beta.22",
     "v-jsoneditor": "^1.4.2",
-    "@form-create/component-wangeditor": "^0.0.1",
+    "@form-create/component-wangeditor": "^2.5.0",
     "ant-design-vue": "^1.5.3",
     "moment": "^2.24.0"
   }

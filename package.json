@@ -9,7 +9,7 @@
         "dev:antd": "lerna run dev:antd",
         "commit": "git cz",
         "lint": "eslint *.js",
-        "clear-all": "rimraf package-lock.json packages/*/node_modules components/*/*/package-lock.json",
+        "clear-all": "rimraf package-lock.json packages/*/node_modules packages/*/package-lock.json components/*/*/node_modules components/*/*/package-lock.json",
         "bootstrap": "npm run clear-all && npm i && npm-run-all bootstrap:lerna",
         "bootstrap:lerna": "lerna bootstrap -- --ignore-engines"
     },
