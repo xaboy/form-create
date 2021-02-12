@@ -19,7 +19,7 @@
 - **iview**
 - **view-design**
 - **element-ui**
-- **Ant-design-vue**
+- **ant-design-vue**
 
 如果您有适合 form-create 的表单组件, 欢迎[点击这里留言](https://github.com/xaboy/form-create/issues/124)
 

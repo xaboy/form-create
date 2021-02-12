@@ -6,6 +6,7 @@
     "module": "./dist/form-create.min.js",
     "unpkg": "./dist/form-create.min.js",
     "jsdelivr": "./dist/form-create.min.js",
+    "typings": "./types/index.d.ts",
     "scripts": {
         "clean": "rimraf dist/",
         "dev:iview": "vue-cli-service serve",
@@ -35,7 +36,6 @@
         "types",
         "dist"
     ],
-    "typings": "./types/index.d.ts",
     "author": "xaboy",
     "license": "MIT",
     "bugs": {

@@ -19,7 +19,7 @@
 - **iview**
 - **view-design**
 - **element-ui**
-- **Ant-design-vue**
+- **ant-design-vue**
 
 If you have a form component suitable for form-create, please feel free to [click here to leave a message](https://github.com/xaboy/form-create/issues/124)
 
