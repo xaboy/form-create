@@ -66,3 +66,4 @@ yarn.lock
 package-lock.json
 packages/**/package-lock.json
 /index.html
+dist

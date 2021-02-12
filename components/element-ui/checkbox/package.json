@@ -1,19 +1,25 @@
 {
   "name": "@form-create/component-elm-checkbox",
-  "version": "0.0.1",
-  "description": "",
-  "main": "./src/index.js",
+  "version": "2.5.0",
+  "description": "@form-create/element-ui 内置组件",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "unpkg": "./dist/index.js",
+  "jsdelivr": "./dist/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "clean": "rimraf dist/",
+    "bili": "cross-env bili",
+    "build": "npm-run-all clean bili"
   },
   "files": [
     "README.md",
     "package.json",
     "LICENSE",
-    "src"
+    "src",
+    "dist"
   ],
   "keywords": [
-    "@form-create"
+    "@form-create", "form-create-component", "element-ui"
   ],
   "repository": {
     "type": "git",
@@ -29,6 +35,7 @@
     "access": "public"
   },
   "devDependencies": {
+    "@vue/cli-plugin-babel": "^4.5.11",
     "@vue/cli-service": "^4.5.3"
   }
 }

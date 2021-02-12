@@ -31,13 +31,13 @@ program.parse(process.argv);
 
 
 // code with vue-cli: https://github.com/vuejs/vue-cli/blob/dev/packages/%40vue/cli/bin/vue.js#L275
-function camelize (str) {
+function camelize(str) {
     return str.replace(/-(\w)/g, (_, c) => c ? c.toUpperCase() : '')
 }
 
 // commander passes the Command object itself as options,
 // extract only actual options into a fresh object.
-function cleanArgs (cmd) {
+function cleanArgs(cmd) {
     const args = {}
     cmd.options.forEach(o => {
         const key = camelize(o.long.replace(/^--/, ''))

@@ -29,7 +29,7 @@ async function createBuildTask(args) {
     const defaultPkgs = ['core', 'data']
     /// 如果是打包全部
     if (isAll) {
-        spinner.text = packageCreateBuildingTips;
+        spinner.text = packageCreateBuildingTips + '\n';
         shell.exec('lerna run build', (code) => {
             if (code !== 0) {
                 exit(code)
