@@ -1,4 +1,4 @@
-import {creatorFactory} from '@form-create/core';
+import {creatorFactory} from '@form-create/core/src/index';
 
 const name = 'slider';
 export default {

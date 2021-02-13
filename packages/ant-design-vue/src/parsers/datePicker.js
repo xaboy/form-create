@@ -1,5 +1,5 @@
 import moment from 'moment';
-import {creatorFactory} from '@form-create/core';
+import {creatorFactory} from '@form-create/core/src/index';
 
 const FORMAT_TYPE = {
     date: 'YYYY-MM-DD',

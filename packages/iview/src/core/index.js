@@ -2,7 +2,7 @@ import components from '../components';
 import parsers from '../parsers';
 import alias from './alias';
 import manager from './manager';
-import FormCreateFactory from '@form-create/core';
+import FormCreateFactory from '@form-create/core/src/index';
 import makers from './maker';
 import '../style/index.css';
 import extendApi from './api';

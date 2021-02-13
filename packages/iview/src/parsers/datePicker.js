@@ -1,5 +1,5 @@
 import is from '@form-create/utils/lib/type';
-import {creatorFactory} from '@form-create/core';
+import {creatorFactory} from '@form-create/core/src/index';
 
 export function timeStampToDate(timeStamp) {
     if (is.Date(timeStamp))
