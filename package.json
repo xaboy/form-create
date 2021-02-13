@@ -16,7 +16,7 @@
     "devDependencies": {
         "@vue/cli-service": "^4.5.3",
         "babel-eslint": "^10.1.0",
-        "bili": "^5.0.5",
+        "bili": "^4.5.3",
         "chalk": "^4.1.0",
         "commitizen": "^4.1.2",
         "cross-env": "^7.0.2",
@@ -58,7 +58,6 @@
     "dependencies": {
         "@vue/cli-plugin-babel": "^4.5.3",
         "commander": "^6.0.0",
-        "rollup-plugin-commonjs": "^10.1.0",
-        "rollup-plugin-vue": "^5.1.2"
+        "rollup-plugin-commonjs": "^10.1.0"
     }
 }

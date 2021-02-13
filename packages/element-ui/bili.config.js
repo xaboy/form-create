@@ -8,7 +8,6 @@ console.log(`开始打包 -> ${UI_LIB} \n`);
 module.exports = {
     plugins: {
         commonjs: true,
-        vue: true,
         postcss: {
             modules: {
                 generateScopedName: '[local]'

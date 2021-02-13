@@ -7,7 +7,6 @@ console.log(`开始打包 component -> ${name}\n`);
 module.exports = {
     plugins: {
         commonjs: true,
-        vue: true,
         postcss: {
             modules: {
                 generateScopedName: '[local]'

@@ -25,8 +25,10 @@ module.exports = {
     },
     externals: ['vue', 'Vue'],
     output: {
-        format: ['es', 'es-min'],
-        fileName: `form-create.${UI_LIB}[min].js`,
+        format: ['umd', 'umd-min'],
+        moduleName: 'FormCreateFactory',
+        fileName: 'index[min].js',
+        extractCSS: false,
     },
     input: join(cwd, '/src/index.js'),
     extendRollupConfig: (config) => {
