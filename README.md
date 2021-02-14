@@ -13,7 +13,7 @@
 
 **form-create is a form generation component that can generate dynamic rendering, data collection, verification and submission functions through JSON. Supports 3 UI frameworks, and supports the generation of any Vue components. Built-in 20 kinds of commonly used form components and custom components, no matter how complex forms can be easily handled.**
 
-## [中文 README](https://github.com/xaboy/form-create/blob/2.0/README_zh-CN.md)
+## [中文 README](https://github.com/xaboy/form-create/blob/2.5/README_zh-CN.md)
 
 ## Support
 - **iview**
