@@ -1,6 +1,6 @@
 {
   "name": "@form-create/component-ivu-tree",
-  "version": "2.5.0",
+  "version": "2.5.0-alpha.0",
   "description": "@form-create/iview 内置组件",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -19,7 +19,10 @@
     "dist"
   ],
   "keywords": [
-    "@form-create", "form-create-component", "iview", "view-design"
+    "@form-create",
+    "form-create-component",
+    "iview",
+    "view-design"
   ],
   "repository": {
     "type": "git",
@@ -28,7 +31,7 @@
   "author": "xaboy",
   "license": "MIT",
   "dependencies": {
-    "@form-create/utils": "^1.0.11"
+    "@form-create/utils": "^2.5.0-alpha.0"
   },
   "bugs": {
     "url": "https://github.com/xaboy/form-create/issues"

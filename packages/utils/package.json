@@ -1,6 +1,6 @@
 {
     "name": "@form-create/utils",
-    "version": "1.0.15",
+    "version": "2.5.0-alpha.0",
     "description": "",
     "main": "./lib/index.js",
     "scripts": {
@@ -10,7 +10,7 @@
         "README.md",
         "package.json",
         "LICENSE",
-        "src"
+        "lib"
     ],
     "keywords": [
         "@form-create"

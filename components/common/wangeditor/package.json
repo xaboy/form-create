@@ -1,6 +1,6 @@
 {
   "name": "@form-create/component-wangeditor",
-  "version": "2.5.0",
+  "version": "2.5.0-alpha.0",
   "description": "@form-create 富文本组件",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -19,7 +19,9 @@
     "dist"
   ],
   "keywords": [
-    "@form-create", "form-create-component", "form-create-common-component"
+    "@form-create",
+    "form-create-component",
+    "form-create-common-component"
   ],
   "repository": {
     "type": "git",
