@@ -15,7 +15,7 @@ export default function useRender(Handler) {
             }, 10);
         },
         render() {
-            console.warn('%c render', 'color:green');
+            // console.warn('%c render', 'color:green');
             ++this.loadedId;
 
             if (this.vm.unique > 0)
