@@ -113,7 +113,10 @@ export default function jsonMock() {
                                     span: 12
                                 }
                             }
-                        ]
+                        ],
+                        props:{
+                            span: 24
+                        }
 
                     },
                     {
@@ -165,7 +168,10 @@ export default function jsonMock() {
                                     span: 12
                                 }
                             }
-                        ]
+                        ],
+                        props:{
+                            span: 24
+                        }
 
                     },
                     {

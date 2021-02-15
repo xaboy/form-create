@@ -77,7 +77,10 @@ export default function rule() {
                                     span: 12
                                 }
                             }
-                        ]
+                        ],
+                        props:{
+                            span: 24
+                        }
 
                     },
                     {
@@ -123,7 +126,10 @@ export default function rule() {
                                     span: 12
                                 }
                             }
-                        ]
+                        ],
+                        props:{
+                            span: 24
+                        }
 
                     },
                     {
