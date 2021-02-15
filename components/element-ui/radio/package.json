@@ -29,9 +29,6 @@
   },
   "author": "xaboy",
   "license": "MIT",
-  "dependencies": {
-    "@form-create/core": "^2.5.0-alpha.1"
-  },
   "bugs": {
     "url": "https://github.com/xaboy/form-create/issues"
   },
