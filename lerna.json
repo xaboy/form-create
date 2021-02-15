@@ -6,6 +6,7 @@
     "packages/element-ui",
     "packages/iview",
     "packages/iview4",
+    "packages/view-design",
     "packages/utils",
     "components/common/subform",
     "components/common/wangeditor",

@@ -6,6 +6,7 @@
         "dev:ele": "lerna run dev:ele",
         "dev:iview": "lerna run dev:iview",
         "dev:iview4": "lerna run dev:iview4",
+        "dev:view-design": "lerna run dev:view-design",
         "dev:antdv": "lerna run dev:antdv",
         "commit": "git cz",
         "lint": "eslint *.js",
