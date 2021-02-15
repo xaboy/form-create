@@ -9,7 +9,7 @@
   "typings": "./types/index.d.ts",
   "scripts": {
     "clean": "rimraf dist/",
-    "dev:antd": "vue-cli-service serve",
+    "dev:antdv": "vue-cli-service serve",
     "bili": "cross-env UI_LIB=ant-design-vue bili",
     "build": "npm-run-all clean bili"
   },
