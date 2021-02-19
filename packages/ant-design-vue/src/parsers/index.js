@@ -1,5 +1,6 @@
 import checkbox from './checkbox';
 import radio from './radio';
+import select from './select';
 import datePicker from './datePicker';
 import hidden from './hidden';
 import input from './input';
@@ -14,4 +15,5 @@ export default [
     timePicker,
     tree,
     radio,
+    select,
 ]
