@@ -9,3 +9,4 @@ export {parseJson, toJson} from './json';
 export {$set, $del} from './modify';
 export {default as is} from './type';
 export {default as uniqueId} from './unique';
+export {default as getSlot} from './slot';
