@@ -289,7 +289,7 @@ export default {
             }
             return <div slot="footer">
                 {closeBtn ? <ElButton
-                    on-click={() => (this.onCancel() !== false && this.closeModel(true))}>{closeBtnText}</ElButton> : null}
+                    on-click={() => (this.onCancel() !== false && (this.frameVisible = false))}>{closeBtnText}</ElButton> : null}
                 {okBtn ? <ElButton type="primary"
                     on-click={() => (this.onOk() !== false && this.closeModel())}>{okBtnText}</ElButton> : null}
             </div>
