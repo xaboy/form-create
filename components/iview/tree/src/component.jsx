@@ -1,4 +1,5 @@
 import toArray from '@form-create/utils/lib/toarray';
+import getSlot from '@form-create/utils/lib/slot';
 
 const NAME = 'fcTree';
 
@@ -56,7 +57,7 @@ export default {
         } else {
             on['on-check-change'] = this.onInput;
         }
-        return <Tree {...this.formCreateRule} ref="tree" on={on}>{this.$slots.default}</Tree>;
+        return <Tree {...this.formCreateRule} ref="tree" on={on}>{getSlot(this.$slots)}</Tree>;
     },
     mounted() {
         this.onInput(this.type === 'selected' ? this.$refs.tree.getSelectedNodes() : this.$refs.tree.getCheckedNodes());

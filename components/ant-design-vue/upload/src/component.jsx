@@ -1,6 +1,7 @@
 import toString from '@form-create/utils/lib/tostring';
 import deepExtend from '@form-create/utils/lib/deepextend';
 import toArray from '@form-create/utils/lib/toarray';
+import getSlot from '@form-create/utils/lib/slot';
 
 const parseFile = function (file, uid) {
         return {
@@ -102,7 +103,7 @@ export default {
             <AUpload {...ctx} on-preview={this.onHandle.bind(this)}
                 on-change={this.handleChange}
                 ref="upload" defaultFileList={this.defaultUploadList}>
-                {isShow ? <template slot="default"><AIcon type="plus"/></template> : null}
+                {isShow ? <template slot="default">{this.$slots.default || <AIcon type="plus"/>}</template> : null}{getSlot(this.$slots, ['default'])}
             </AUpload>
             <aModal mask={this.previewMask} title={this.modalTitle} v-model={this.previewVisible} footer={null}>
                 <img style="width: 100%" src={this.previewImage}/>

@@ -1,4 +1,5 @@
 import toArray from '@form-create/utils/lib/toarray';
+import getSlot from '@form-create/utils/lib/slot';
 import './style.css';
 
 function parseFile(file, i) {
@@ -140,10 +141,10 @@ export default {
                 style={{display: 'inline-block'}}
                 key={this.key('upload')}>
                 {isShow ? <template slot="default">
-                    {this.$slots.default ? this.$slots.default : <div class='fc-upload-btn'>
+                    {this.$slots.default || <div class='fc-upload-btn'>
                         <i class="el-icon-upload2"/>
                     </div>}
-                </template> : null}
+                </template> : null}{getSlot(this.$slots, ['default'])}
             </ElUpload>;
         },
         update() {

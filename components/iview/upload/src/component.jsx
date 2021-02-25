@@ -1,5 +1,6 @@
 import toArray from '@form-create/utils/lib/toarray';
 import './style.css';
+import getSlot from '@form-create/utils/lib/slot';
 
 function parseFile(file) {
     return {
@@ -133,13 +134,13 @@ export default function createUpload(config) {
                     style={{display: 'inline-block'}}
                     key={this.key('upload')}>
                     {isShow ? <template slot="default">
-                        {this.$slots.default ? this.$slots.default : <div class="fc-upload-btn">
+                        {this.$slots.default || <div class="fc-upload-btn">
                             <icon props={{
                                 type: this.uploadType === 'file' ? 'ios-cloud-upload-outline' : config.imgUpIcon,
                                 size: 20
                             }}/>
                         </div>}
-                    </template> : null}
+                    </template> : null}{getSlot(this.$slots,['default'])}
                 </Upload>;
             },
             update() {

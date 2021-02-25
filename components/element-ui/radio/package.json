@@ -36,6 +36,9 @@
   "publishConfig": {
     "access": "public"
   },
+  "dependencies": {
+    "@form-create/utils": "^2.5.0-alpha.1"
+  },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^4.5.11"
   }

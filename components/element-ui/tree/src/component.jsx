@@ -1,4 +1,5 @@
 import toArray from '@form-create/utils/lib/toarray';
+import getSlot from '@form-create/utils/lib/slot';
 
 const NAME = 'fcTree';
 
@@ -61,7 +62,7 @@ export default {
     },
     render() {
         return <ElTree {...this.formCreateRule} ref="tree" on-check-change={() => this.updateValue()}
-            on-node-click={() => this.updateValue()}>{this.$slots.default}</ElTree>;
+            on-node-click={() => this.updateValue()}>{getSlot(this.$slots)}</ElTree>;
     },
     mounted() {
         this.setValue();

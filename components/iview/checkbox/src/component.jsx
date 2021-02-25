@@ -1,3 +1,5 @@
+import getSlot from '@form-create/utils/lib/slot';
+
 const NAME = 'fcCheckbox';
 
 export default {
@@ -44,6 +46,6 @@ export default {
                 const props = {...opt};
                 delete props.value;
                 return <Checkbox {...{props}} key={'' + index + opt.value}/>
-            })}{this.$slots.default}</CheckboxGroup>
+            })}{getSlot(this.$slots)}</CheckboxGroup>
     }
 }
