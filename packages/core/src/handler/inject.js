@@ -61,7 +61,7 @@ export default function useInject(Handler) {
         },
         inject(self, _fn, inject) {
             if (_fn.__inject) {
-                if (this.watching && self.__fc__)
+                if (this.watching && !this.loading)
                     return _fn;
                 _fn = _fn.__origin;
             }
