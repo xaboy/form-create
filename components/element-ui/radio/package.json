@@ -1,6 +1,6 @@
 {
   "name": "@form-create/component-elm-radio",
-  "version": "2.5.0-alpha.2",
+  "version": "2.5.0-alpha.4",
   "description": "@form-create/element-ui 内置组件",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -37,7 +37,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@form-create/utils": "^2.5.0-alpha.1"
+    "@form-create/utils": "^2.5.0-alpha.4"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^4.5.11"

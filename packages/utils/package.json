@@ -1,6 +1,6 @@
 {
     "name": "@form-create/utils",
-    "version": "2.5.0-alpha.1",
+    "version": "2.5.0-alpha.4",
     "description": "",
     "main": "./lib/index.js",
     "scripts": {
