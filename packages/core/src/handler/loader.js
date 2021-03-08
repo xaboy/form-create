@@ -44,7 +44,9 @@ export default function useLoader(Handler) {
             if (this.pageEnd) {
                 this.bus.$emit('load-start');
             }
+            this.loading = true;
             this._loadRule(this.rules);
+            this.loading = false;
             if (this.cycleLoad && this.pageEnd) {
                 return this.loadRule();
             }
@@ -58,7 +60,9 @@ export default function useLoader(Handler) {
         loadChildren(children, parent) {
             this.cycleLoad = false;
             this.bus.$emit('load-start');
+            this.loading = true;
             this._loadRule(children, parent);
+            this.loading = false;
             if (this.cycleLoad) {
                 return this.loadRule();
             }
@@ -83,7 +87,6 @@ export default function useLoader(Handler) {
 
             const initEvent = (rule) => this.ruleEffect(rule, 'init');
 
-            this.loading = true;
             rules.map((_rule, index) => {
                 if (parent && is.String(_rule)) return;
                 if (!this.pageEnd && !parent && index >= this.first) return;
@@ -167,7 +170,6 @@ export default function useLoader(Handler) {
                 if (this.refreshControl(ctx)) this.cycleLoad = true;
                 return ctx;
             });
-            this.loading = false;
         },
         refreshControl(ctx) {
             return ctx.input && ctx.rule.control && this.useCtrl(ctx);
@@ -231,6 +233,7 @@ export default function useLoader(Handler) {
             this.clearNextTick();
             this.$render.clearOrgChildren();
             this.initData(rules);
+            this.fc.rules = rules;
 
             this.bus.$once('load-end', () => {
                 Object.keys(ctxs).filter(id => this.ctxs[id] === undefined)
