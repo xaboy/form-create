@@ -196,7 +196,7 @@ export default function Api(h) {
         },
         sync: (field) => {
             const ctx = is.Object(field) ? byCtx(field) : h.getCtx(field);
-            if (ctx) {
+            if (ctx && !ctx.deleted) {
                 const subForm = h.subForm[field];
                 if (subForm) {
                     if (Array.isArray(subForm)) {
@@ -268,7 +268,7 @@ export default function Api(h) {
                 api.updateValidate(id, validates[id], merge);
             })
         },
-        refreshValidate(){
+        refreshValidate() {
             h.vm.validate = {};
             api.refresh();
         },
