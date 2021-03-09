@@ -20,6 +20,7 @@ export default function Handler(fc) {
         watching: false,
         loading: false,
         reloading: false,
+        noWatchFn: null,
         isMounted: false,
         formData: {},
         subForm: {},

@@ -99,17 +99,23 @@ extend(RuleContext.prototype, {
         this.ctrlRule = [];
     },
     rm() {
-        let index = this.root.indexOf(this.origin);
-        if (index > -1) {
-            this.root.splice(index, 1);
-        }
-        if (this.deleted) {
-            return;
-        }
-        this.rmCtrl();
-        this.$handle.rmCtx(this);
-        extend(this, {
-            root: []
+        this.$handle.noWatch(() => {
+            let index = this.root.indexOf(this.origin);
+            const _rm = () => {
+                if (index > -1) {
+                    this.root.splice(index, 1);
+                }
+            }
+            if (this.deleted) {
+                _rm();
+                return;
+            }
+            this.rmCtrl();
+            this.$handle.rmCtx(this);
+            _rm();
+            extend(this, {
+                root: []
+            });
         });
     },
     update(handle, init) {

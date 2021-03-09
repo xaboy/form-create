@@ -3,6 +3,7 @@ import toCase from '@form-create/utils/lib/tocase';
 import BaseParser from '../factory/parser';
 import {$del, $set} from '@form-create/utils/lib';
 import is from '@form-create/utils/lib/type';
+import {invoke} from '../frame/util';
 
 
 export default function useContext(Handler) {
@@ -16,7 +17,7 @@ export default function useContext(Handler) {
             if (name) $set(this.nameCtx, name, ctx);
             if (!ctx.input) return;
             this.fieldCtx[field] = ctx;
-            $set(this.formData, field, ctx.parser.toFormValue(rule.value, ctx));
+            this.setFormData(ctx, ctx.parser.toFormValue(rule.value, ctx))
         },
         getParser(ctx) {
             const list = this.fc.parsers;
@@ -30,13 +31,22 @@ export default function useContext(Handler) {
             const type = map[alias] || map[toCase(alias)] || alias;
             return toCase(type);
         },
+        noWatch(fn) {
+            if (!this.noWatchFn) {
+                this.noWatchFn = fn;
+            }
+            invoke(fn);
+            if (this.noWatchFn === fn) {
+                this.noWatchFn = null;
+            }
+        },
         watchCtx(ctx) {
             const vm = this.vm;
             const none = ['field', 'value', 'vm', 'template', 'name', 'config', 'control', 'inject'];
             Object.keys(ctx.rule).filter(k => none.indexOf(k) === -1).forEach((key) => {
                 const flag = key === 'children';
                 ctx.watch.push(vm.$watch(() => ctx.rule[key], (n, o) => {
-                    if (this.loading || this.reloading) return;
+                    if (this.loading || this.noWatchFn || this.reloading) return;
                     this.watching = true;
                     // if (key === 'hidden')
                     //     ctx.updateKey(true);
