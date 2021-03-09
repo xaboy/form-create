@@ -316,7 +316,7 @@ export default function Api(h) {
             h.refresh();
         },
         nextRefresh(fn) {
-            invoke(() => fn());
+            invoke(fn);
             h.nextRefresh(() => api.refresh());
         }
     };
