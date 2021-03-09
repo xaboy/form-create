@@ -1,12 +1,9 @@
 
 <!-- 版本号 (version) -->
-
-
-<!-- 使用的 UI 框架 (element-ui / iview) -->
-
+//@form-create/element-ui@2.5.0
 
 <!-- UI 框架的版本 (UI version) -->
-
+//2.13.0
 
 <!-- 问题描述 (Issue) -->
 
