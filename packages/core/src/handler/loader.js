@@ -1,10 +1,8 @@
 import extend from '@form-create/utils/lib/extend';
-import debounce from '@form-create/utils/lib/debounce';
 import {byCtx, copyRule, enumerable, getRule, invoke} from '../frame/util';
 import is, {hasProperty} from '@form-create/utils/lib/type';
 import {err} from '@form-create/utils/lib/console';
 import {baseRule} from '../factory/creator';
-import {$set} from '@form-create/utils/lib';
 import RuleContext from '../factory/context';
 
 export default function useLoader(Handler) {
@@ -221,9 +219,9 @@ export default function useLoader(Handler) {
             this.effect(ctx, 'control');
             return flag;
         },
-        reloadRule: debounce(function (rules) {
+        reloadRule(rules) {
             return this._reloadRule(rules);
-        }, 1),
+        },
         _reloadRule(rules) {
             // console.warn('%c reload', 'color:red');
             if (!rules) rules = this.rules;
