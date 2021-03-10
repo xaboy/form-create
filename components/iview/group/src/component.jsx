@@ -7,7 +7,7 @@ export default function createGroup(config) {
         name: NAME,
         props: {
             field: String,
-            rule: Object,
+            rule: [Array, Object],
             rules: Array,
             expand: Number,
             options: Object,
@@ -47,7 +47,7 @@ export default function createGroup(config) {
         computed: {
             formRule() {
                 if (this.rule) {
-                    return [this.rule];
+                    return Array.isArray(this.rule) ? this.rule :[this.rule];
                 }
                 if (this.rules) {
                     return this.rules;
