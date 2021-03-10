@@ -20,6 +20,9 @@ export default function jsonMock() {
             title: "所在区域",
             field: "address",
             value: ['陕西省', '西安市'],
+            props:{
+                options: []
+            },
             effect: {
                 address: 1
             }
