@@ -142,6 +142,7 @@ export default {
         add$f(i, key, $f) {
             this.cacheRule[key].$f = $f;
             this.subForm();
+            this.$nextTick(()=>$f.disabled(this.disabled));
             this.$emit('itemMounted', $f, Object.keys(this.cacheRule).indexOf(key));
         },
         subForm() {

@@ -142,6 +142,7 @@ export default function createGroup(config) {
             },
             add$f(i, key, $f) {
                 this.cacheRule[key].$f = $f;
+                this.$nextTick(()=>$f.disabled(this.disabled));
                 this.subForm();
                 this.$emit('itemMounted', $f, Object.keys(this.cacheRule).indexOf(key));
             },
