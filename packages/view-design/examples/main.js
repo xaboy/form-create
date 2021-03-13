@@ -21,7 +21,7 @@ import VJsoneditor from 'v-jsoneditor'
 import addressEffect from './addressEffect';
 import VueCompositionAPI from '@vue/composition-api'
 import App from './App.vue'
-import wangEditor from '@form-create/component-wangeditor'
+import wangEditor from '@form-create/component-wangeditor/src'
 
 
 Vue.use(VueCompositionAPI)

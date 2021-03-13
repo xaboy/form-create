@@ -1,4 +1,4 @@
-import data from '../../data/dist/province_city'
+import data from '../../data/src/province_city'
 
 //自定义属性 自动插入省市区数据
 export default {
