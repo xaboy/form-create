@@ -65,7 +65,7 @@ export function copyRules(rules, mode) {
 }
 
 export function mergeRule(rule, merge) {
-    mergeProps([merge], rule, {array: arrayAttrs, normal: normalAttrs});
+    mergeProps(Array.isArray(merge) ? merge : [merge], rule, {array: arrayAttrs, normal: normalAttrs});
     return rule;
 }
 

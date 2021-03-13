@@ -4,6 +4,7 @@ import is, {hasProperty} from '@form-create/utils/lib/type';
 import {err} from '@form-create/utils/lib/console';
 import {baseRule} from '../factory/creator';
 import RuleContext from '../factory/context';
+import mergeProps from '@form-create/utils/lib/mergeprops';
 
 export default function useLoader(Handler) {
     extend(Handler.prototype, {
@@ -32,6 +33,18 @@ export default function useLoader(Handler) {
             })
 
             return rule;
+        },
+        syncProp(ctx) {
+            const rule = ctx.rule;
+            is.trueArray(rule.sync) && mergeProps([{
+                on: rule.sync.reduce((pre, prop) => {
+                    pre[`update:${prop}`] = (val) => {
+                        rule.props[prop] = val;
+                        this.vm.$emit('sync', prop, val, rule, this.fapi);
+                    }
+                    return pre
+                }, {})
+            }], ctx.computed)
         },
         isRepeatRule(rule) {
             return this.repeatRule.indexOf(rule) > -1;
@@ -137,6 +150,7 @@ export default function useLoader(Handler) {
                 }
                 this.appendValue(ctx.rule);
                 [false, true].forEach(b => this.parseEmit(ctx, b));
+                this.syncProp(ctx);
                 ctx.parent = parent || null;
                 ctx.root = rules;
                 this.setCtx(ctx);
