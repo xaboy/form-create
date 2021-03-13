@@ -65,6 +65,12 @@ export default function Api(h) {
         get rule() {
             return h.rules
         },
+        get parent() {
+            return h.vm.$pfc && h.vm.$pfc.$f
+        },
+        get children() {
+            return allSubForm();
+        },
         formData(fields) {
             return tidyFields(fields).reduce((initial, id) => {
                 const ctx = h.fieldCtx[id];
