@@ -3,7 +3,7 @@ import mergeProps from '@form-create/utils/lib/mergeprops';
 import is, {hasProperty} from '@form-create/utils/lib/type';
 import {_vue as Vue} from '../frame';
 import {tip} from '@form-create/utils/lib/console';
-import {invoke} from '../frame/util';
+import {invoke, mergeRule} from '../frame/util';
 import toCase, {lower} from '@form-create/utils/lib/tocase';
 
 function setTempProps(vm, ctx, api) {
@@ -87,7 +87,7 @@ export default function useRender(Render) {
             //todo 缓存配置,更新 option 更新
             if (!ctx.cacheConfig)
                 ctx.cacheConfig = g[ctx.originType] || g[ctx.type] || g[ctx.trueType] || {};
-            ctx.prop = mergeProps([g['*'], ctx.cacheConfig, ctx.prop]);
+            ctx.prop = mergeRule({}, [g['*'], ctx.cacheConfig, ctx.prop]);
         },
         renderTemp(ctx) {
             if (!Vue.compile) {
