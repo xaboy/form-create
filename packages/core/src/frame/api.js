@@ -51,7 +51,7 @@ export default function Api(h) {
 
     const api = {
         helper: {
-            tidyFields, props, allSubForm
+            tidyFields, props
         },
         get config() {
             return h.options

@@ -1,6 +1,7 @@
 import extend from '@form-create/utils/lib/extend';
 import is from '@form-create/utils/lib/type';
 import {invoke} from '@form-create/core/src/frame/util';
+import toArray from '@form-create/utils/lib/toarray';
 
 function tidyBtnProp(btn, def) {
     if (is.Boolean(btn))
@@ -12,53 +13,75 @@ function tidyBtnProp(btn, def) {
 export default function extendApi(api, h) {
     extend(api, {
         validate(callback) {
-            let state = false;
-            let subForm = {
-                ...{
-                    ___this: {
-                        validate(call) {
-                            h.$manager.validate(call);
+            let flag;
+            const forms = api.children;
+            let len = forms.length;
+            const validate = () => {
+                h.$manager.validate((...args) => {
+                    if (!args[0] || !flag) {
+                        flag = args;
+                    }
+                    callback(...flag);
+                });
+            };
+
+            const validFn = (args) => {
+                setTimeout(() => {
+                    if (!args[0]) {
+                        if (!flag) {
+                            flag = args;
                         }
                     }
-                }, ...h.subForm
-            };
-            let keys = Object.keys(subForm).filter(field => {
-                    const sub = subForm[field];
-                    return Array.isArray(sub) ? sub.length : !is.Undef(sub);
-                }), len = keys.length, subLen;
-            const validFn = (args, field) => {
-                if (args[0]) {
-                    if (subLen > 1) subLen--;
-                    else if (len > 1) len--;
-                    else callback && callback(...args);
-                } else {
-                    if (!state) {
-                        callback && callback(...args);
-                        state = true;
+                    if (!--len) {
+                        validate();
                     }
-                    field && this.clearValidateState(field, false);
-                }
+                });
             };
 
-            keys.forEach(field => {
-                let sub = subForm[field];
-                if (Array.isArray(sub)) {
-                    subLen = sub.length;
-                    sub.forEach(form => {
-                        form.validate((...args) => validFn(args, field))
-                    })
-                } else if (sub) {
-                    subLen = 1;
-                    sub.validate((...args) => validFn(args))
-                }
+            forms.forEach(form => {
+                form.validate((...args) => validFn(args))
+            })
 
-            });
-
+            if (!len) {
+                validate();
+            }
         },
         validateField: (field, callback) => {
             if (!h.fieldCtx[field])
                 return;
-            h.$manager.validateField(field, callback);
+            const sub = h.subForm[field];
+            let len = 0;
+            let flag;
+            const validate = () => {
+                h.$manager.validateField(field, (...args) => {
+                    if (args[0]) {
+                        flag = args;
+                    } else if (flag) {
+                        return callback('子表单验证未通过', flag[1]);
+                    }
+                    callback(...flag || args);
+                });
+            };
+            const validFn = (args) => {
+                setTimeout(() => {
+                    if (!args[0]) {
+                        if (!flag) {
+                            flag = args;
+                        }
+                    }
+                    if (!--len) {
+                        validate();
+                    }
+                });
+            };
+            sub && toArray(sub).forEach(form => {
+                len++;
+                form.validate((...args) => validFn(args))
+            });
+
+            if (!len) {
+                validate();
+            }
         },
         clearValidateState(fields, clearSub = true) {
             api.helper.tidyFields(fields).forEach(field => {
