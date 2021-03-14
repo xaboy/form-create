@@ -173,10 +173,10 @@ export default {
                 style={`font-size:${this.fontSize}px;cursor:${this.disabled ? 'not-allowed;color:#c9cdd4' : 'pointer'};`}
                 on-click={this.add}/>;
         },
-        delIcon(key) {
+        delIcon(index, key) {
             return <AIcon key={`d${key}`} type="minus-circle"
                 style={`font-size:${this.fontSize}px;cursor:${this.disabled ? 'not-allowed;color:#c9cdd4' : 'pointer;color:#606266'};`}
-                on-click={() => this.del(key)}/>;
+                on-click={() => this.del(index, key)}/>;
         },
         makeIcon(total, index, key) {
             if (this.$scopedSlots.button) {
