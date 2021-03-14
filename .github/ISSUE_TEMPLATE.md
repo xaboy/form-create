@@ -1,9 +1,15 @@
 
-<!-- 版本号 (version) -->
-//@form-create/element-ui@2.5.0
+<!-- 
+    版本号 (version) 
+    例如栗子: @form-create/element-ui@2.5.0 
+-->
 
-<!-- UI 框架的版本 (UI version) -->
-//2.13.0
+
+<!-- 
+    UI 框架的版本 (UI version) 
+    例如: 2.13.0
+-->
+
 
 <!-- 问题描述 (Issue) -->
 
