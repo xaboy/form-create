@@ -241,7 +241,26 @@ export default function FormCreateFactory(config) {
             copyRule,
             copyRules,
             $form,
-            parseJson
+            parseJson,
+            init(rules, _opt = {}) {
+                let $vm = mountForm(rules, _opt), _this = $vm.$refs.fc.formCreate;
+                return {
+                    mount($el) {
+                        if ($el && is.Element($el))
+                            _this.options.el = $el;
+                        _getEl(_this.options).appendChild($vm.$el);
+                        return _this.api();
+                    },
+                    remove() {
+                        $vm.$el.parentNode && $vm.$el.parentNode.removeChild($vm.$el);
+                    },
+                    destroy() {
+                        this.remove();
+                        $vm.$destroy();
+                    },
+                    $f: _this.api()
+                };
+            }
         });
     }
 
@@ -262,25 +281,6 @@ export default function FormCreateFactory(config) {
 
                 Vue.prototype.$formCreate = $formCreate;
                 Vue.component('FormCreate', $form());
-            },
-            init(rules, _opt = {}) {
-                let $vm = mountForm(rules, _opt), _this = $vm.$refs.fc.formCreate;
-                return {
-                    mount($el) {
-                        if ($el && is.Element($el))
-                            _this.options.el = $el;
-                        _getEl(_this.options).appendChild($vm.$el);
-                        return _this.api();
-                    },
-                    remove() {
-                        $vm.$el.parentNode && $vm.$el.parentNode.removeChild($vm.$el);
-                    },
-                    destroy() {
-                        this.remove();
-                        $vm.$destroy();
-                    },
-                    $f: _this.api()
-                };
             }
         })
     }
