@@ -143,6 +143,7 @@ export interface BaseRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> extend
     value?: any;
     emit?: Array<string | { name: string; inject: any }>;
     link?: string[];
+    sync?: string[];
     prefix?: string | VNodeData;
     suffix?: string | VNodeData;
     update?: (value: any, $rule: this, $f: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => Boolean | void;
@@ -222,6 +223,8 @@ export class BaseCreator<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
 
     link(prop: string[]): this;
 
+    sync(prop: string[]): this;
+
     prefix(prop: string | VNodeData): this;
 
     suffix(prop: string | VNodeData): this;
@@ -275,6 +278,8 @@ export interface BaseApi<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
     readonly options: Options<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
     readonly form: BindFormData;
     readonly rule: FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>[];
+    readonly parent: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> | undefined;
+    readonly children: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>[];
 
     formData(): FormData;
 

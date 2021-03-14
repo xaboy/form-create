@@ -12,6 +12,12 @@ import {
 import Maker from "./maker";
 import {ApiAttrs, CreatorAttrs, OptionAttrs, RuleAttrs} from "./config";
 
+declare module 'vue/types/vue' {
+    interface Vue {
+        $formCreate: FormCreate<Maker, OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
+    }
+}
+
 declare const formCreate: FormCreate<Maker, OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
 export default formCreate;
 export declare const maker: typeof formCreate.maker;

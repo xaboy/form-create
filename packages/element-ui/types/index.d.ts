@@ -10,7 +10,13 @@ import {
     Parser as $Parser
 } from "@form-create/core";
 import Maker from "./maker";
-import {CreatorAttrs, OptionAttrs, RuleAttrs, ApiAttrs} from "./config";
+import {ApiAttrs, CreatorAttrs, OptionAttrs, RuleAttrs} from "./config";
+
+declare module 'vue/types/vue' {
+    interface Vue {
+        $formCreate: FormCreate<Maker, OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
+    }
+}
 
 declare const formCreate: FormCreate<Maker, OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
 export default formCreate;
