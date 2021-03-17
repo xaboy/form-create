@@ -52,10 +52,10 @@ export default function useLoader(Handler) {
         loadRule() {
             // console.warn('%c load', 'color:blue');
             this.cycleLoad = false;
+            this.loading = true;
             if (this.pageEnd) {
                 this.bus.$emit('load-start');
             }
-            this.loading = true;
             this._loadRule(this.rules);
             this.loading = false;
             if (this.cycleLoad && this.pageEnd) {
@@ -70,8 +70,8 @@ export default function useLoader(Handler) {
         },
         loadChildren(children, parent) {
             this.cycleLoad = false;
-            this.bus.$emit('load-start');
             this.loading = true;
+            this.bus.$emit('load-start');
             this._loadRule(children, parent);
             this.loading = false;
             if (this.cycleLoad) {

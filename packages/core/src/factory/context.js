@@ -99,17 +99,18 @@ extend(RuleContext.prototype, {
         this.ctrlRule = [];
     },
     rm() {
-        this.$handle.noWatch(() => {
+        const _rm = () => {
             let index = this.root.indexOf(this.origin);
-            const _rm = () => {
-                if (index > -1) {
-                    this.root.splice(index, 1);
-                }
+            if (index > -1) {
+                this.root.splice(index, 1);
             }
-            if (this.deleted) {
-                _rm();
-                return;
-            }
+        }
+        if (this.deleted) {
+            _rm();
+            return;
+        }
+
+        this.$handle.noWatch(() => {
             this.rmCtrl();
             this.$handle.rmCtx(this);
             _rm();

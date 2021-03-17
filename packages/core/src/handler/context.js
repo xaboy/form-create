@@ -125,6 +125,7 @@ export default function useContext(Handler) {
                 this.sort.splice(index, 1);
             }
 
+            this.$render.clearCache(ctx);
             ctx.delete();
             this.effect(ctx, 'deleted');
             return ctx;
