@@ -1,6 +1,7 @@
 import extend from '@form-create/utils/lib/extend';
 import is from '@form-create/utils/lib/type';
 
+const EVENT = ['hook:updated', 'hook:mounted'];
 
 export default function usePage(Handler) {
     extend(Handler.prototype, {
@@ -25,7 +26,7 @@ export default function usePage(Handler) {
         pageLoad() {
             const pageFn = () => {
                 if (this.pageEnd) {
-                    this.vm.$off('hook:updated', pageFn);
+                    this.vm.$off(EVENT, pageFn);
                     this.bus.$emit('page-end');
                 } else {
                     this.first += this.limit;
@@ -34,7 +35,7 @@ export default function usePage(Handler) {
                     this.refresh();
                 }
             }
-            this.vm.$on('hook:updated', pageFn);
+            this.vm.$on(EVENT, pageFn);
         },
     })
 }
