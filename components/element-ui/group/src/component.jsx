@@ -132,8 +132,8 @@ export default {
                 submitBtn: false,
                 resetBtn: false,
                 page: false,
-                formData: this.field ? ({[this.field]: this._value(this.value[i])}) : (this.value[i] || {})
             };
+            options.formData = this.field ? ({[this.field]: this._value(this.value[i])}) : (this.value[i] || {});
             this.$set(this.cacheRule, ++this.len, {rule, options});
             if (emit) {
                 this.$nextTick(() => this.$emit('add', rule, Object.keys(this.cacheRule).length - 1));

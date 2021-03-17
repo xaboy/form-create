@@ -46,7 +46,7 @@ export default {
     computed: {
         formRule() {
             if (this.rule) {
-                return Array.isArray(this.rule) ? this.rule :[this.rule];
+                return Array.isArray(this.rule) ? this.rule : [this.rule];
             }
             if (this.rules) {
                 return this.rules;
@@ -131,9 +131,9 @@ export default {
             const options = this.options ? this.options : {
                 submitBtn: false,
                 resetBtn: false,
-                page: false,
-                formData: this.field ? ({[this.field]: this._value(this.value[i])}) : (this.value[i] || {})
+                page: false
             };
+            options.formData = this.field ? ({[this.field]: this._value(this.value[i])}) : (this.value[i] || {});
             this.$set(this.cacheRule, ++this.len, {rule, options});
             if (emit) {
                 this.$nextTick(() => this.$emit('add', rule, Object.keys(this.cacheRule).length - 1));
@@ -142,7 +142,7 @@ export default {
         add$f(i, key, $f) {
             this.cacheRule[key].$f = $f;
             this.subForm();
-            this.$nextTick(()=>$f.disabled(this.disabled));
+            this.$nextTick(() => $f.disabled(this.disabled));
             this.$emit('itemMounted', $f, Object.keys(this.cacheRule).indexOf(key));
         },
         subForm() {
