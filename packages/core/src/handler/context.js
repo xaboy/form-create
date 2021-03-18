@@ -63,11 +63,13 @@ export default function useContext(Handler) {
                         this.bindParser(ctx);
                     } else if (key === 'children') {
                         const flag = is.trueArray(n);
-                        if (n !== o) {
-                            this.rmSub(o);
-                            this.$render.initOrgChildren();
-                        }
-                        flag && this.loadChildren(n, ctx);
+                        this.deferSyncValue(() => {
+                            if (n !== o) {
+                                this.rmSub(o);
+                                this.$render.initOrgChildren();
+                            }
+                            flag && this.loadChildren(n, ctx);
+                        });
                     }
                     this.$render.clearCache(ctx);
                     this.watching = false;
@@ -89,12 +91,17 @@ export default function useContext(Handler) {
                     writable: true
                 });
             }
-            (!this.reloading) && this.deferSyncValue(() => {
-                if (is.trueArray(ctx.rule.children)) {
-                    ctx.rule.children.forEach(h => h.__fc__ && this.rmCtx(h.__fc__));
+            if (!this.reloading) {
+                this.deferSyncValue(() => {
+                    if (is.trueArray(ctx.rule.children)) {
+                        ctx.rule.children.forEach(h => h.__fc__ && this.rmCtx(h.__fc__));
+                    }
+                    this.syncValue();
+                })
+                if (ctx.root === this.rules) {
+                    this.vm._renderRule();
                 }
-                this.syncValue();
-            });
+            }
 
             $del(this.ctxs, id);
             $del(this.$render.renderList, id);

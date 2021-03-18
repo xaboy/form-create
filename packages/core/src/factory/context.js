@@ -112,8 +112,8 @@ extend(RuleContext.prototype, {
         this.$handle.noWatch(() => {
             this.$handle.deferSyncValue(() => {
                 this.rmCtrl();
-                this.$handle.rmCtx(this);
                 _rm();
+                this.$handle.rmCtx(this);
                 extend(this, {
                     root: []
                 });
