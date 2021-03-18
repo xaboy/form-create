@@ -85,21 +85,25 @@ export default function Api(h) {
             return copy(ctx.rule.value);
         },
         coverValue(formData) {
-            Object.keys(h.fieldCtx).forEach(key => {
-                const ctx = h.fieldCtx[key];
-                if (!ctx) return h.appendData[key] = formData[key];
-                ctx.rule.value = hasProperty(formData, key) ? formData[key] : undefined;
-            });
+            h.deferSyncValue(() => {
+                Object.keys(h.fieldCtx).forEach(key => {
+                    const ctx = h.fieldCtx[key];
+                    if (!ctx) return h.appendData[key] = formData[key];
+                    ctx.rule.value = hasProperty(formData, key) ? formData[key] : undefined;
+                });
+            })
         },
         setValue(field) {
             let formData = field;
             if (arguments.length >= 2)
                 formData = {[field]: arguments[1]};
-            Object.keys(formData).forEach(key => {
-                const ctx = h.fieldCtx[key];
-                if (!ctx) return h.appendData[key] = formData[key];
-                ctx.rule.value = formData[key];
-            });
+            h.deferSyncValue(() => {
+                Object.keys(formData).forEach(key => {
+                    const ctx = h.fieldCtx[key];
+                    if (!ctx) return h.appendData[key] = formData[key];
+                    ctx.rule.value = formData[key];
+                });
+            })
         },
         removeField(field) {
             let ctx = h.getCtx(field);

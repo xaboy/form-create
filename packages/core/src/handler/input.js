@@ -75,7 +75,22 @@ export default function useInput(Handler) {
         addSubForm(ctx, subForm) {
             this.subForm[ctx.field] = subForm;
         },
+        deferSyncValue(fn) {
+            if (!this.deferSyncFn) {
+                this.deferSyncFn = fn;
+            }
+            invoke(fn);
+            if (this.deferSyncFn === fn) {
+                this.deferSyncFn = null;
+                if (fn.sync) {
+                    this.syncValue();
+                }
+            }
+        },
         syncValue() {
+            if (this.deferSyncFn) {
+                return this.deferSyncFn.sync = true;
+            }
             this.vm._updateValue({...this.form});
         },
         isChange(ctx, value) {

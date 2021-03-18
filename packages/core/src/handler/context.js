@@ -77,17 +77,10 @@ export default function useContext(Handler) {
         },
         rmSub(sub) {
             is.trueArray(sub) && sub.forEach(r => {
-                r && r.__fc__ && this._rmCtx(r.__fc__);
+                r && r.__fc__ && this.rmCtx(r.__fc__);
             })
         },
         rmCtx(ctx) {
-            this._rmCtx(ctx);
-            if (!this.reloading) {
-                this.$render.initOrgChildren();
-                this.syncValue();
-            }
-        },
-        _rmCtx(ctx) {
             if (ctx.deleted) return;
             const {id, field, name} = ctx;
             if (ctx.input) {
@@ -96,14 +89,15 @@ export default function useContext(Handler) {
                     writable: true
                 });
             }
-
-            if (is.trueArray(ctx.rule.children)) {
-                ctx.rule.children.forEach(h => h.__fc__ && this._rmCtx(h.__fc__));
-            }
+            (!this.reloading) && this.deferSyncValue(() => {
+                if (is.trueArray(ctx.rule.children)) {
+                    ctx.rule.children.forEach(h => h.__fc__ && this.rmCtx(h.__fc__));
+                }
+                this.syncValue();
+            });
 
             $del(this.ctxs, id);
             $del(this.$render.renderList, id);
-            $del(this.$render.cache, id);
             $del(this.$render.orgChildren, id);
             $del(ctx, 'cacheValue');
 

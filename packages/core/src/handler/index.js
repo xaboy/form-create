@@ -21,6 +21,7 @@ export default function Handler(fc) {
         loading: false,
         reloading: false,
         noWatchFn: null,
+        deferSyncFn: null,
         isMounted: false,
         formData: {},
         subForm: {},

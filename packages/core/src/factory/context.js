@@ -109,13 +109,14 @@ extend(RuleContext.prototype, {
             _rm();
             return;
         }
-
         this.$handle.noWatch(() => {
-            this.rmCtrl();
-            this.$handle.rmCtx(this);
-            _rm();
-            extend(this, {
-                root: []
+            this.$handle.deferSyncValue(() => {
+                this.rmCtrl();
+                this.$handle.rmCtx(this);
+                _rm();
+                extend(this, {
+                    root: []
+                });
             });
         });
     },

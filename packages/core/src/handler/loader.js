@@ -56,17 +56,19 @@ export default function useLoader(Handler) {
             if (this.pageEnd) {
                 this.bus.$emit('load-start');
             }
-            this._loadRule(this.rules);
-            this.loading = false;
-            if (this.cycleLoad && this.pageEnd) {
-                return this.loadRule();
-            }
-            if (this.pageEnd) {
-                this.bus.$emit('load-end');
-            }
-            this.vm._renderRule();
-            this.$render.initOrgChildren();
-            this.syncForm();
+            this.deferSyncValue(() => {
+                this._loadRule(this.rules);
+                this.loading = false;
+                if (this.cycleLoad && this.pageEnd) {
+                    return this.loadRule();
+                }
+                if (this.pageEnd) {
+                    this.bus.$emit('load-end');
+                }
+                this.vm._renderRule();
+                this.$render.initOrgChildren();
+                this.syncForm();
+            });
         },
         loadChildren(children, parent) {
             this.cycleLoad = false;
@@ -76,6 +78,8 @@ export default function useLoader(Handler) {
             this.loading = false;
             if (this.cycleLoad) {
                 return this.loadRule();
+            } else {
+                this.syncForm();
             }
             this.$render.clearCache(parent);
         },

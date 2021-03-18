@@ -256,19 +256,23 @@ export default function useRender(Render) {
             const {children} = ctx.rule, orgChildren = this.orgChildren[ctx.id];
 
             if (!is.trueArray(children) && orgChildren) {
-                orgChildren.forEach(child => {
-                    if (!is.String(child) && child.__fc__) {
-                        this.$handle.rmCtx(child.__fc__);
-                    }
+                this.$handle.deferSyncValue(() => {
+                    orgChildren.forEach(child => {
+                        if (!is.String(child) && child.__fc__) {
+                            this.$handle.rmCtx(child.__fc__);
+                        }
+                    });
                 });
                 this.orgChildren[ctx.id] = [];
                 return [];
             }
 
-            orgChildren && orgChildren.forEach(child => {
-                if (children.indexOf(child) === -1 && !is.String(child) && child.__fc__) {
-                    this.$handle.rmCtx(child.__fc__);
-                }
+            orgChildren && this.$handle.deferSyncValue(() => {
+                orgChildren.forEach(child => {
+                    if (children.indexOf(child) === -1 && !is.String(child) && child.__fc__) {
+                        this.$handle.rmCtx(child.__fc__);
+                    }
+                });
             });
 
             return children.map(child => {
