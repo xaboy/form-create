@@ -103,6 +103,7 @@ extend(RuleContext.prototype, {
             let index = this.root.indexOf(this.origin);
             if (index > -1) {
                 this.root.splice(index, 1);
+                this.$handle.refresh();
             }
         }
         if (this.deleted) {

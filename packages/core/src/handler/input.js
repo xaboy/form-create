@@ -13,6 +13,7 @@ export default function useInput(Handler) {
             return ctx.cacheValue;
         },
         setValue(ctx, value, formValue, setFlag) {
+            if (ctx.deleted) return;
             ctx.cacheValue = value;
             this.changeStatus = true;
             this.nextRefresh();

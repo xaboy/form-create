@@ -34,6 +34,7 @@ export default function $FormCreate(FormCreate) {
         data() {
             return {
                 formData: undefined,
+                destroyed: false,
                 validate: {},
                 $f: undefined,
                 isShow: true,
@@ -53,7 +54,7 @@ export default function $FormCreate(FormCreate) {
                 this.renderRule = [...this.rule || []];
             },
             _updateValue(value) {
-                if (this._isDestroyed) return;
+                if (this.destroyed) return;
                 this.updateValue = JSON.stringify(value);
                 this.$emit('update:value', value);
             }

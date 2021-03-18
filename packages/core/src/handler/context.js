@@ -91,17 +91,6 @@ export default function useContext(Handler) {
                     writable: true
                 });
             }
-            if (!this.reloading) {
-                this.deferSyncValue(() => {
-                    if (is.trueArray(ctx.rule.children)) {
-                        ctx.rule.children.forEach(h => h.__fc__ && this.rmCtx(h.__fc__));
-                    }
-                    this.syncValue();
-                })
-                if (ctx.root === this.rules) {
-                    this.vm._renderRule();
-                }
-            }
 
             $del(this.ctxs, id);
             $del(this.$render.renderList, id);
@@ -116,9 +105,19 @@ export default function useContext(Handler) {
                 $del(this.fieldCtx, field);
                 $del(this.subForm, field);
             }
-
             if (name && this.nameCtx[name] === ctx) {
                 $del(this.nameCtx, name);
+            }
+            if (!this.reloading) {
+                this.deferSyncValue(() => {
+                    if (is.trueArray(ctx.rule.children)) {
+                        ctx.rule.children.forEach(h => h.__fc__ && this.rmCtx(h.__fc__));
+                    }
+                    this.syncValue();
+                })
+                if (ctx.root === this.rules) {
+                    this.vm._renderRule();
+                }
             }
 
             const index = this.sort.indexOf(id);

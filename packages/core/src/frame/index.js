@@ -183,6 +183,7 @@ export default function FormCreateFactory(config) {
                 this.mounted();
             });
             vm.$on('hook:beforeDestroy', () => {
+                vm.destroyed = true;
                 this.unwatch && this.unwatch();
                 h.reloadRule([]);
             });
