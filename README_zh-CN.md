@@ -92,6 +92,8 @@
 
 ## 安装
 
+> 根据自己使用的 UI 安装对应的版本
+
 iview
 ```shell
 npm install @form-create/iview

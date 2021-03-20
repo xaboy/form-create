@@ -91,7 +91,9 @@ If you have a form component suitable for form-create, please feel free to [clic
 
 ## Install
 
-iview
+> Install the corresponding version according to the UI you use
+
+>iview
 ```shell
 npm install @form-create/iview
 ```
