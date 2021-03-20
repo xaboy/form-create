@@ -79,6 +79,7 @@ export default function useLoader(Handler) {
             if (this.cycleLoad) {
                 return this.loadRule();
             } else {
+                this.bus.$emit('load-end');
                 this.syncForm();
             }
             this.$render.clearCache(parent);
