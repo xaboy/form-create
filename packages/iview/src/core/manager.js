@@ -98,7 +98,7 @@ export default {
         const rule = ctx.prop;
         const uni = `${this.key}${ctx.key}`;
         const col = rule.col;
-        const labelWidth = (!col.labelWidth && isFalse(rule.title.show)) ? 0 : col.labelWidth;
+        const labelWidth = (!col.labelWidth && !this.isTitle(rule)) ? 0 : col.labelWidth;
         const {inline, col: _col} = this.rule.props;
         const item = isFalse(rule.wrap.show) ? children : this.$r(mergeProps([rule.wrap, {
             props: {
@@ -115,10 +115,13 @@ export default {
         }]), [children, this.makeInfo(rule, uni)]);
         return (inline === true || isFalse(_col) || isFalse(col.show)) ? item : this.makeCol(rule, uni, [item]);
     },
+    isTitle(rule) {
+        const title = rule.title;
+        return !((!title.title && !title.native) || isFalse(title.show))
+    },
     makeInfo(rule, uni) {
         const titleProp = rule.title;
         const infoProp = rule.info;
-        if ((!titleProp.title && !titleProp.native) || isFalse(titleProp.show)) return;
         const children = [titleProp.title];
 
         const titleFn = (pop) => this.$r(mergeProps([titleProp, {
