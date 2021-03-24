@@ -106,6 +106,7 @@ export default {
                 ...(rule.wrap || {}),
                 prop: ctx.field,
                 rules: rule.validate,
+                ...(layout !== 'horizontal' ? {labelCol: {}, wrapperCol: {}} : {})
             },
             class: rule.className,
             key: `${uni}fi`,
@@ -183,7 +184,10 @@ export default {
         if (!vn.length) {
             return;
         }
-        const {labelCol, wrapperCol} = this.rule.props;
+        let {labelCol, wrapperCol, layout} = this.rule.props;
+        if (layout !== 'horizontal') {
+            labelCol = wrapperCol = {};
+        }
         const item = this.$r({
             type: 'formItem',
             key: `${this.key}fb`,
@@ -194,7 +198,7 @@ export default {
             }
         }, vn);
 
-        return this.rule.props.inline === true
+        return layout === 'inline'
             ? item
             : this.$r({
                 type: 'col',
