@@ -131,10 +131,6 @@ export default {
             const options = this.options ? this.options : {
                 submitBtn: false,
                 resetBtn: false,
-                page: false,
-                onSubmit: undefined,
-                mounted: undefined,
-                reload: undefined,
             };
             options.formData = this.field ? ({[this.field]: this._value(this.value[i])}) : (this.value[i] || {});
             this.$set(this.cacheRule, ++this.len, {rule, options});
@@ -145,8 +141,10 @@ export default {
         add$f(i, key, $f) {
             this.cacheRule[key].$f = $f;
             this.subForm();
-            this.$nextTick(() => $f.disabled(this.disabled));
-            this.$emit('itemMounted', $f, Object.keys(this.cacheRule).indexOf(key));
+            this.$nextTick(()=>{
+                $f.disabled(this.disabled);
+                this.$emit('itemMounted', $f, Object.keys(this.cacheRule).indexOf(key));
+            });
         },
         subForm() {
             this.$emit('fc.sub-form', Object.keys(this.cacheRule).map(k => this.cacheRule[k].$f));
