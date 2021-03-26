@@ -1,6 +1,7 @@
 import {ScopedSlot, VNodeDirective} from "vue/types/vnode";
 import Vue, {VNode} from "vue";
 import {ExtendedVue} from "vue/types/vue";
+import {PluginObject} from "vue/types/plugin";
 
 export type Options<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> =
     BaseOptions<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>
@@ -51,7 +52,7 @@ export interface FormCreateFactoryConfig<MakerAttrs, OptionAttrs, CreatorAttrs, 
 }
 
 
-export interface FormCreate<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
+export interface FormCreate<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> extends PluginObject<Options<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>> {
     readonly version: string;
     readonly ui: string;
     readonly data: Object;
@@ -78,7 +79,7 @@ export interface FormCreate<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs, Ap
     use(install: Install<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> | {
         install: Install<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>,
         [key: string]: any
-    }, Opt?: any);
+    }, Opt?: any): void;
 
     componentAlias(alias: { [alias: string]: string }): void;
 
@@ -90,7 +91,7 @@ export interface FormCreate<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs, Ap
 
     parseJson(json: string): FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>[];
 
-    install(vue: Vue): void;
+    install(vue: typeof Vue, options?: Options<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>): void;
 
     create: FormCreate<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
 
@@ -185,8 +186,8 @@ export class BaseCreator<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
 
     slot(prop: string): this;
 
-    scopedSlots(prop: { [key: string]: ScopedSlot | undefined });
-    scopedSlots(prop: string, key: ScopedSlot | undefined);
+    scopedSlots(prop: { [key: string]: ScopedSlot | undefined }): this;
+    scopedSlots(prop: string, key: ScopedSlot | undefined): this;
 
     class(prop: any): this;
 
@@ -325,13 +326,13 @@ export interface BaseApi<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
 
     hidden(hidden: Boolean, field: string | Array<string>): void;
 
-    hiddenStatus(field): Boolean;
+    hiddenStatus(field: String): Boolean;
 
     display(hidden: Boolean): void;
 
     display(hidden: Boolean, field: string | Array<string>): void;
 
-    displayStatus(field): Boolean;
+    displayStatus(field: String): Boolean;
 
     disabled(disabled: Boolean): void;
 
