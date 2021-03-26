@@ -39,8 +39,5 @@
   },
   "dependencies": {
     "@form-create/utils": "^2.5.0-alpha.4"
-  },
-  "devDependencies": {
-    "@vue/cli-plugin-babel": "^4.5.11"
   }
 }

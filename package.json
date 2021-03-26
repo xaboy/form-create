@@ -10,7 +10,7 @@
         "dev:antdv": "cd packages/ant-design-vue && npm run dev:antdv",
         "commit": "git cz",
         "lint": "eslint *.js",
-        "clear-all": "rimraf package-lock.json packages/*/node_modules components/*/*/node_modules",
+        "clear-all": "rimraf package-lock.json node_modules packages/*/node_modules components/*/*/node_modules packages/*/package-lock.json components/*/*/package-lock.json",
         "bootstrap": "npm run clear-all && npm i && npm-run-all bootstrap:lerna",
         "bootstrap:lerna": "lerna bootstrap -- --ignore-engines"
     },

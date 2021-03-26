@@ -39,8 +39,5 @@
   "homepage": "http://www.form-create.com",
   "publishConfig": {
     "access": "public"
-  },
-  "devDependencies": {
-    "@vue/cli-plugin-babel": "^4.5.11"
   }
 }

@@ -38,8 +38,5 @@
   },
   "dependencies": {
     "wangeditor": "^4.6.0"
-  },
-  "devDependencies": {
-    "@vue/cli-plugin-babel": "^4.5.11"
   }
 }
