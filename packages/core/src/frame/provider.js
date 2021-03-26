@@ -13,6 +13,9 @@ const $fetch = {
         } else if (val) {
             run(val, rule);
         }
+    },
+    watch(val, rule) {
+        this.init(val, rule);
     }
 };
 

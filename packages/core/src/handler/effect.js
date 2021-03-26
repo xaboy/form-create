@@ -30,7 +30,7 @@ export default function useEffect(Handler) {
             Object.keys(ctx.rule.effect || {}).forEach(k => {
                 ctx.watch.push(vm.$watch(() => ctx.rule.effect[k], (n) => {
                     this.effect(ctx, 'watch', {[k]: n});
-                }));
+                }, {deep: true}));
             });
         },
         effect(ctx, event, custom) {
