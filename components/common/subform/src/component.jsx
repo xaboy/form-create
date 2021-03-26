@@ -47,7 +47,10 @@ export default {
             const options = this.options ? this.options : {
                 submitBtn: false,
                 resetBtn: false,
-                page: false
+                page: false,
+                onSubmit: undefined,
+                mounted: undefined,
+                reload: undefined,
             };
             options.formData = {...(this.value || {})};
             this.cacheRule = {rule: this.rule, options};

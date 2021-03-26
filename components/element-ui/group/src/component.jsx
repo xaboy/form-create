@@ -132,6 +132,9 @@ export default {
                 submitBtn: false,
                 resetBtn: false,
                 page: false,
+                onSubmit: undefined,
+                mounted: undefined,
+                reload: undefined,
             };
             options.formData = this.field ? ({[this.field]: this._value(this.value[i])}) : (this.value[i] || {});
             this.$set(this.cacheRule, ++this.len, {rule, options});
