@@ -2,6 +2,7 @@ import $FormCreate from '../components/formCreate';
 import Vue from 'vue';
 import makerFactory from '../factory/maker';
 import Handle from '../handler';
+import fetch from './fetch';
 import {creatorFactory} from '..';
 import BaseParser from '../factory/parser';
 import {copyRule, copyRules, mergeGlobal, parseJson} from './util';
@@ -13,6 +14,7 @@ import {CreateNodeFactory} from '../factory/node';
 import {createManager} from '../factory/manager';
 import {arrayAttrs, keyAttrs, normalAttrs} from './attrs';
 import {appendProto} from '../factory/creator';
+import $fetch from './provider';
 
 export let _vue = typeof window !== 'undefined' && window.Vue ? window.Vue : Vue;
 
@@ -71,7 +73,9 @@ export default function FormCreateFactory(config) {
     };
     const parsers = {};
     const directives = {};
-    const providers = {};
+    const providers = {
+        fetch: $fetch
+    };
     const maker = makerFactory();
     let globalConfig = {global: {}};
     const data = {};
@@ -241,6 +245,7 @@ export default function FormCreateFactory(config) {
             componentAlias,
             copyRule,
             copyRules,
+            fetch,
             $form,
             parseJson,
             init(rules, _opt = {}) {
@@ -265,8 +270,8 @@ export default function FormCreateFactory(config) {
         });
     }
 
-    function useStatic(FormCreate) {
-        extend(FormCreate, {
+    function useStatic(formCreate) {
+        extend(formCreate, {
             create,
             install(Vue, options) {
                 globalConfig = {...globalConfig, ...(options || {})}

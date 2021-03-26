@@ -60,6 +60,8 @@ export interface FormCreate<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs, Ap
 
     (rule: FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>[], option?: Options<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>): Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
 
+    fetch(option: FetchOption): void,
+
     component(name: string, component: any): void;
 
     component(component: string | any): any;
@@ -157,6 +159,7 @@ export interface BaseRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> extend
     children?: FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>[];
     control?: Control<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>[];
     effect?: {
+        fetch?: String | FetchEffectOption,
         [key: string]: any
     };
 
@@ -421,7 +424,6 @@ export interface BaseApi<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
     [key: string]: any;
 }
 
-
 export interface Effect<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
     name?: string;
     components?: string | string[];
@@ -443,6 +445,26 @@ export interface Parser {
     mounted?: (ctx: Object) => void;
     render?: (children: VNode[], ctx: Object) => VNode | VNode[];
     mergeProp?: (ctx: Object) => void;
+}
+
+export interface FetchOption {
+    action: String;
+    method?: String;
+    data?: Object;
+    headers?: Object;
+    onSuccess: (body: any) => void
+    onError: (e: Error | ProgressEvent) => void;
+}
+
+export interface FetchEffectOption {
+    to: String;
+    parse?: (body: any) => any;
+    action: String;
+    method?: String;
+    data?: Object;
+    headers?: Object;
+    onSuccess?: (body: any, rule: Object) => void
+    onError?: (e: Error | ProgressEvent) => void;
 }
 
 
