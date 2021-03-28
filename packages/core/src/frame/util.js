@@ -76,8 +76,11 @@ export function getRule(rule) {
 export function mergeGlobal(target, merge) {
     if (!target) return merge;
     Object.keys(merge || {}).forEach((k) => {
-        mergeRule(target[k], merge[k] || {})
+        if (merge[k]) {
+            target[k] = mergeRule(target[k] || {}, merge[k])
+        }
     });
+    return target;
 }
 
 export function funcProxy(that, proxy) {

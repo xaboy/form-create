@@ -15,6 +15,7 @@ import {createManager} from '../factory/manager';
 import {arrayAttrs, keyAttrs, normalAttrs} from './attrs';
 import {appendProto} from '../factory/creator';
 import $fetch from './provider';
+import {deepCopy} from '@form-create/utils/lib/deepextend';
 
 export let _vue = typeof window !== 'undefined' && window.Vue ? window.Vue : Vue;
 
@@ -199,15 +200,20 @@ export default function FormCreateFactory(config) {
             return this.vm.$pfc && this.vm.extendOption;
         },
         initOptions(options) {
-            this.options = {formData: {}, submitBtn: {}, resetBtn: {}, ...globalConfig};
+            this.options = {formData: {}, submitBtn: {}, resetBtn: {}, ...deepCopy(globalConfig)};
             if (this.isSub()) {
-                this.mergeOptions(this.options, this.vm.$pfc.$f.config);
+                const p = deepCopy((this.vm.$pfc.$f.config || {}));
+                ['page', 'onSubmit', 'mounted', 'reload', 'formData', 'el'].forEach((n) => {
+                    delete p[n];
+                });
+                this.mergeOptions(this.options, p);
             }
             this.updateOptions(options);
         },
         mergeOptions(target, opt) {
             if (opt.global) {
                 target.global = mergeGlobal(target.global, opt.global);
+                delete opt.global;
             }
             this.$handle.$manager.mergeOptions([opt], target);
             return target;

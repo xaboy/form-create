@@ -1,5 +1,6 @@
 import extend from '@form-create/utils/lib/extend';
 import is from '@form-create/utils/lib/type';
+import {deepCopy} from '@form-create/utils';
 
 const NAME = 'FormCreate';
 
@@ -69,7 +70,7 @@ export default function $FormCreate(FormCreate) {
             },
             option: {
                 handler(n) {
-                    this.formCreate.initOptions(n);
+                    this.formCreate.initOptions(deepCopy(n));
                     this.$f.refresh();
                 },
                 deep: true
