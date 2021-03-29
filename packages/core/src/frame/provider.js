@@ -5,47 +5,70 @@ import is from '@form-create/utils/lib/type';
 
 const $fetch = {
     name: 'fetch',
-    init(val, rule) {
-        if (Array.isArray(val)) {
-            val.forEach(v => {
-                run(v, rule);
-            })
-        } else if (val) {
-            run(val, rule);
-        }
+    loaded(...args) {
+        run(...args);
     },
-    watch(val, rule) {
-        this.init(val, rule);
+    watch(inject, rule, api) {
+        if (!run(inject, rule, api)) {
+            inject.clearProp();
+            api.sync(rule);
+        }
     }
 };
 
-function run(option, rule) {
+function parseOpt(option) {
     if (is.String(option)) {
         option = {
             action: option,
             to: 'options'
         }
     }
-    const {onError, onSuccess} = option;
+    return option;
+}
+
+function run(inject, rule, api) {
+    let option = inject.value;
+    if (!option) return false;
+    option = parseOpt(option);
+    if (!option.to) {
+        return false;
+    }
+    const onError = option.onError;
+
+    const check = () => {
+        if (!inject.getValue()) {
+            inject.clearProp();
+            api.sync(rule);
+            return true;
+        }
+    }
+
+    const set = (val) => {
+        let data = inject.getProp(), to;
+        option.to.split('.').forEach(v => {
+            if (to) {
+                data = data[to] = {};
+            }
+            to = v;
+        })
+        data[to] = val;
+    }
 
     invoke(() => fetch({
         ...option,
-        onSuccess(r) {
-            (onSuccess || ((body) => {
-                let data = rule, to;
-                option.to.split('.').forEach(v => {
-                    if (to) {
-                        data = data[to];
-                    }
-                    to = v;
-                })
-                data[to] = (option.parse || ((v) => v.data))(body)
-            }))(r, rule)
+        onSuccess(body) {
+            if (check()) return;
+            set((option.parse || ((v) => v.data))(body))
+            api.sync(rule);
         },
         onError(e) {
-            (onError || ((e) => err(e.message || 'fetch fail ' + option.action)))(e);
+            set(undefined)
+            if (check()) return;
+            (onError || ((e) => err(e.message || 'fetch fail ' + option.action)))(e, rule, api);
         }
     }));
+
+    return true;
 }
 
 export default $fetch;

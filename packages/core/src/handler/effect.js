@@ -1,5 +1,6 @@
 import extend from '@form-create/utils/lib/extend';
 import is from '@form-create/utils/lib/type';
+import mergeProps from '@form-create/utils/lib/mergeprops';
 
 
 export default function useEffect(Handler) {
@@ -38,6 +39,7 @@ export default function useEffect(Handler) {
                 rule: ctx.rule,
                 input: ctx.input,
                 type: ctx.trueType,
+                ctx,
                 custom
             }, event);
         },
@@ -48,7 +50,7 @@ export default function useEffect(Handler) {
                 type: this.getType(rule.type)
             }, event);
         },
-        emitEffect({rule, input, type, custom}, event) {
+        emitEffect({ctx, rule, input, type, custom}, event) {
             if (!type || type === 'fcFragment') return;
             const effect = custom ? custom : (rule.effect || {});
             Object.keys(effect).forEach(attr => {
@@ -62,7 +64,13 @@ export default function useEffect(Handler) {
                 } else {
                     return;
                 }
-                this.bus.$emit(`p:${attr}:${_type}:${p.input ? 1 : 0}`, event, [effect[attr], rule, this.api]);
+                const data = {value: effect[attr], getValue: () => effect[attr]};
+                if (ctx) {
+                    data.getProp = () => ctx.effectData(attr);
+                    data.clearProp = () => ctx.clearEffectData(attr);
+                    data.mergeProp = (prop) => mergeProps([prop], data.getProp());
+                }
+                this.bus.$emit(`p:${attr}:${_type}:${p.input ? 1 : 0}`, event, [data, rule, this.api]);
             });
         }
     });

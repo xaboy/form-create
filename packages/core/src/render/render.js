@@ -30,7 +30,7 @@ function injectProp(ctx, api) {
     return {
         formCreate: api,
         formCreateField: ctx.field,
-        formCreateOptions: ctx.rule.options,
+        formCreateOptions: ctx.prop.options,
         formCreateRule: (function () {
             const temp = {...ctx.prop};
             return temp.on = temp.on ? {...temp.on} : {}, temp;

@@ -30,6 +30,7 @@ export default function RuleContext(handle, rule) {
         cacheConfig: null,
         prop: {...rule},
         computed: {},
+        payload: {},
         input: !!rule.field,
         el: undefined,
         defaultValue: rule.field ? deepCopy(rule.value) : undefined,
@@ -43,6 +44,15 @@ export default function RuleContext(handle, rule) {
 }
 
 extend(RuleContext.prototype, {
+    effectData(name) {
+        if (!this.payload[name]) {
+            this.payload[name] = {};
+        }
+        return this.payload[name];
+    },
+    clearEffectData(name) {
+        delete this.payload[name]
+    },
     updateKey(flag) {
         this.key = unique();
         flag && this.parent && this.parent.updateKey(flag);
@@ -56,7 +66,7 @@ extend(RuleContext.prototype, {
         parser.init(this);
     },
     initProp() {
-        this.prop = mergeProps([this.rule, this.computed]);
+        this.prop = mergeProps([this.rule, ...Object.keys(this.payload).map(k => this.payload[k]), this.computed]);
     },
     check(handle) {
         return this.vm === handle.vm
