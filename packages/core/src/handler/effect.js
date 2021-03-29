@@ -1,5 +1,5 @@
 import extend from '@form-create/utils/lib/extend';
-import is from '@form-create/utils/lib/type';
+import is, {hasProperty} from '@form-create/utils/lib/type';
 import mergeProps from '@form-create/utils/lib/mergeprops';
 
 
@@ -50,6 +50,12 @@ export default function useEffect(Handler) {
                 type: this.getType(rule.type)
             }, event);
         },
+        getEffect(rule, name) {
+            if (hasProperty(rule, 'effect') && hasProperty(rule.effect, name))
+                return rule.effect[name];
+            else
+                return undefined;
+        },
         emitEffect({ctx, rule, input, type, custom}, event) {
             if (!type || type === 'fcFragment') return;
             const effect = custom ? custom : (rule.effect || {});
@@ -64,7 +70,7 @@ export default function useEffect(Handler) {
                 } else {
                     return;
                 }
-                const data = {value: effect[attr], getValue: () => effect[attr]};
+                const data = {value: effect[attr], getValue: () => this.getEffect(rule, attr)};
                 if (ctx) {
                     data.getProp = () => ctx.effectData(attr);
                     data.clearProp = () => ctx.clearEffectData(attr);
