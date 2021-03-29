@@ -1,6 +1,6 @@
 {
   "name": "@form-create/component-antdv-upload",
-  "version": "2.5.0-alpha.4",
+  "version": "2.5.2",
   "description": "@form-create/ant-design-vue 内置组件",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
