@@ -3,6 +3,7 @@ import hidden from './hidden';
 import input from './input';
 import slider from './slider';
 import timePicker from './timePicker';
+import row from './row';
 
 export default [
     datePicker,
@@ -10,4 +11,5 @@ export default [
     input,
     slider,
     timePicker,
+    row
 ]

@@ -6,6 +6,7 @@ import hidden from './hidden';
 import input from './input';
 import timePicker from './timePicker';
 import tree from './tree';
+import row from './row';
 
 export default [
     checkbox,
@@ -16,4 +17,5 @@ export default [
     tree,
     radio,
     select,
+    row,
 ]
