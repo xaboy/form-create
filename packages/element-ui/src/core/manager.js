@@ -113,7 +113,8 @@ export default {
         const rule = ctx.prop;
         const uni = `${this.key}${ctx.key}`;
         const col = rule.col;
-        const labelWidth = (!col.labelWidth && !this.isTitle(rule)) ? 0 : col.labelWidth;
+        const isTitle = this.isTitle(rule);
+        const labelWidth = (!col.labelWidth && !isTitle) ? 0 : col.labelWidth;
         const {inline, col: _col} = this.rule.props;
         const item = isFalse(rule.wrap.show) ? children : this.$r(mergeProps([rule.wrap, {
             props: {
@@ -127,7 +128,7 @@ export default {
             key: `${uni}fi`,
             ref: ctx.wrapRef,
             type: 'formItem',
-        }]), [children, this.makeInfo(rule, uni)]);
+        }]), [children, isTitle ? this.makeInfo(rule, uni) : null]);
         return (inline === true || isFalse(_col) || isFalse(col.show)) ? item : this.makeCol(rule, uni, [item]);
     },
     isTitle(rule) {
