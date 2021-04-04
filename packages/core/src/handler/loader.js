@@ -117,7 +117,7 @@ export default function useLoader(Handler) {
 
                 let rule = getRule(_rule);
 
-                if (!rule.__fc__) initEvent(rule);
+                if (!_rule.__fc__) initEvent(rule);
 
                 if (rule.field && this.fieldCtx[rule.field] && this.fieldCtx[rule.field] !== _rule.__fc__) {
                     this.repeatRule.push(_rule);
