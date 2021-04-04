@@ -5,7 +5,7 @@ import Handle from '../handler';
 import fetch from './fetch';
 import {creatorFactory} from '..';
 import BaseParser from '../factory/parser';
-import {copyRule, copyRules, mergeGlobal, parseJson} from './util';
+import {copyRule, copyRules, mergeGlobal, parseJson, toJson} from './util';
 import fragment from '../components/fragment';
 import is from '@form-create/utils/lib/type';
 import toCase from '@form-create/utils/lib/tocase';
@@ -254,6 +254,7 @@ export default function FormCreateFactory(config) {
             fetch,
             $form,
             parseJson,
+            toJson,
             init(rules, _opt = {}) {
                 let $vm = mountForm(rules, _opt), _this = $vm.$refs.fc.formCreate;
                 return {
