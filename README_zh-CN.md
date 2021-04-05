@@ -14,6 +14,7 @@
 
 **form-create 是一个可以通过 JSON 生成具有动态渲染、数据收集、验证和提交功能的表单生成组件。支持3个UI框架，并且支持生成任何 Vue 组件。内置20种常用表单组件和自定义组件，再复杂的表单都可以轻松搞定。**
 
+[开源的vue表单设计器组件](https://github.com/xaboy/form-create-designer) ([功能演示](http://form-create.com/designer?fr=fc))
 
 ## 支持
 - **iview**
@@ -68,6 +69,7 @@
 | @form-create/iview4 [![version](https://img.shields.io/npm/v/@form-create/iview4.svg)](https://www.npmjs.com/package/@form-create/iview4) [![npm](https://img.shields.io/npm/dt/@form-create/iview4.svg)](https://www.npmjs.com/package/@form-create/iview4)    | [view-design 版本](http://form-create.com/v2/iview/) |
 | @form-create/element-ui [![version](https://img.shields.io/npm/v/@form-create/element-ui.svg)](https://www.npmjs.com/package/@form-create/element-ui) [![npm](https://img.shields.io/npm/dt/@form-create/element-ui.svg)](https://www.npmjs.com/package/@form-create/element-ui) | [element-ui 版本](http://form-create.com/v2/element-ui/)        |
 | @form-create/ant-design-vue [![version](https://img.shields.io/npm/v/@form-create/ant-design-vue.svg)](https://www.npmjs.com/package/@form-create/ant-design-vue) [![npm](https://img.shields.io/npm/dt/@form-create/ant-design-vue.svg)](https://www.npmjs.com/package/@form-create/ant-design-vue) | [ant-design-vue 版本](http://form-create.com/v2/ant-design-vue/)     |
+| @form-create/designer [![version](https://img.shields.io/npm/v/@form-create/designer.svg)](https://www.npmjs.com/package/@form-create/designer) [![npm](https://img.shields.io/npm/dt/@form-create/designer.svg)](https://www.npmjs.com/package/@form-create/designer) | [表单设计器](http://form-create.com/designer)     |
 
 
 
@@ -249,7 +251,7 @@ $ npm run dev:antd
 
 ## 捐赠
 
-![donation.jpg](https://raw.githubusercontent.com/xaboy/form-create/dev/images/donation.jpg)
+![donation.jpg](http://form-create.com/img/donation.jpg)
 
 ## 联系
 
