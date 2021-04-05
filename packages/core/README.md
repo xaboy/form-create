@@ -5,6 +5,7 @@ form-create is a form generation component that can generate dynamic rendering, 
 
 [GitHub](https://github.com/xaboy/form-create) | [文档](http://form-create.com/v2) | [Document](http://form-create.com/en/v2)
 
+[开源的vue表单设计器组件](https://github.com/xaboy/form-create-designer) ([功能演示](http://form-create.com/designer?fr=fc))
 
 - **预览**
 
