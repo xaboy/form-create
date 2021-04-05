@@ -1,7 +1,7 @@
 
 <!-- 
     版本号 (version) 
-    例如栗子: @form-create/element-ui@2.5.0 
+    例如: @form-create/element-ui@2.5.0 
 -->
 
 
