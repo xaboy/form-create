@@ -202,15 +202,15 @@ export default function FormCreateFactory(config) {
         initOptions(options) {
             this.options = {formData: {}, submitBtn: {}, resetBtn: {}, ...deepCopy(globalConfig)};
             if (this.isSub()) {
-                const p = deepCopy((this.vm.$pfc.$f.config || {}));
-                ['page', 'onSubmit', 'mounted', 'reload', 'formData', 'el'].forEach((n) => {
-                    delete p[n];
-                });
-                this.mergeOptions(this.options, p);
+                this.mergeOptions(this.options, this.vm.$pfc.$f.config || {}, true);
             }
             this.updateOptions(options);
         },
-        mergeOptions(target, opt) {
+        mergeOptions(target, opt, parent) {
+            opt = deepCopy(opt);
+            parent && ['page', 'onSubmit', 'mounted', 'reload', 'formData', 'el'].forEach((n) => {
+                delete opt[n];
+            });
             if (opt.global) {
                 target.global = mergeGlobal(target.global, opt.global);
                 delete opt.global;

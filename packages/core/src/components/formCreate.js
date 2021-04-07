@@ -1,6 +1,4 @@
 import extend from '@form-create/utils/lib/extend';
-import is from '@form-create/utils/lib/type';
-import {deepCopy} from '@form-create/utils';
 
 const NAME = 'FormCreate';
 
@@ -70,7 +68,7 @@ export default function $FormCreate(FormCreate) {
             },
             option: {
                 handler(n) {
-                    this.formCreate.initOptions(deepCopy(n));
+                    this.formCreate.initOptions(n);
                     this.$f.refresh();
                 },
                 deep: true
@@ -84,7 +82,7 @@ export default function $FormCreate(FormCreate) {
         beforeCreate() {
             const {rule, option, value} = this.$options.propsData;
             this.formCreate = new FormCreate(this, rule, option);
-            value && is.Object(value) && this.formCreate.updateOptions({formData: value});
+            extend(this.formCreate.options.formData, value || {});
             Object.keys(this.formCreate.prop).forEach(k => {
                 extend(this.$options[k], this.formCreate.prop[k]);
             })
