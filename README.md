@@ -13,7 +13,7 @@
 
 **form-create is a form generation component that can generate dynamic rendering, data collection, verification and submission functions through JSON. Supports 3 UI frameworks, and supports the generation of any Vue components. Built-in 20 kinds of commonly used form components and custom components, no matter how complex forms can be easily handled.**
 
-[开源的vue表单设计器组件](https://github.com/xaboy/form-create-designer) ([功能演示](http://form-create.com/designer?fr=fc))
+[开源的vue可视化表单设计器组件](https://github.com/xaboy/form-create-designer) ([功能演示](http://form-create.com/designer?fr=fc))
 
 ## [中文 README](https://github.com/xaboy/form-create/blob/2.5/README_zh-CN.md)
 
@@ -71,6 +71,7 @@ If you have a form component suitable for form-create, please feel free to [clic
 | @form-create/iview4 [![version](https://img.shields.io/npm/v/@form-create/iview4.svg)](https://www.npmjs.com/package/@form-create/iview4) [![npm](https://img.shields.io/npm/dt/@form-create/iview4.svg)](https://www.npmjs.com/package/@form-create/iview4)    | [view-design version](http://form-create.com/v2/iview/) |
 | @form-create/element-ui [![version](https://img.shields.io/npm/v/@form-create/element-ui.svg)](https://www.npmjs.com/package/@form-create/element-ui) [![npm](https://img.shields.io/npm/dt/@form-create/element-ui.svg)](https://www.npmjs.com/package/@form-create/element-ui) | [element-ui version](http://form-create.com/v2/element-ui/)        |
 | @form-create/ant-design-vue [![version](https://img.shields.io/npm/v/@form-create/ant-design-vue.svg)](https://www.npmjs.com/package/@form-create/ant-design-vue) [![npm](https://img.shields.io/npm/dt/@form-create/ant-design-vue.svg)](https://www.npmjs.com/package/@form-create/ant-design-vue) | [ant-design-vue version](http://form-create.com/v2/ant-design-vue/)     |
+| @form-create/designer [![version](https://img.shields.io/npm/v/@form-create/designer.svg)](https://www.npmjs.com/package/@form-create/designer) [![npm](https://img.shields.io/npm/dt/@form-create/designer.svg)](https://www.npmjs.com/package/@form-create/designer) | [Form Designer](http://form-create.com/designer)     |
 
 ## Example
 
