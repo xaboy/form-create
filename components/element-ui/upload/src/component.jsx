@@ -165,7 +165,7 @@ export default {
         return (
             <div
                 class='_fc-upload'>{[this.formCreateRule.props.showFileList ? [] : this.makeFiles(), this.makeUpload()]}
-                <el-dialog modal={this.previewMask} title={this.modalTitle} visible={this.previewVisible}
+                <el-dialog appendToBody={true} modal={this.previewMask} title={this.modalTitle} visible={this.previewVisible}
                     on-close={this.handleCancel}>
                     <img alt="example" style="width: 100%" src={this.previewImage}/>
                 </el-dialog>
