@@ -303,8 +303,8 @@ export default function Api(h) {
         exec(id, name, ...args) {
             return invoke(() => api.method(id, name)(...args));
         },
-        toJson() {
-            return toJson(api.rule);
+        toJson(space) {
+            return toJson(api.rule, space);
         },
         trigger(id, event, ...args) {
             const el = api.el(id);

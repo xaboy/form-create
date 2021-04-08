@@ -93,6 +93,8 @@ export interface FormCreate<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs, Ap
 
     parseJson(json: string): FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>[];
 
+    toJson(rules: FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>[], space?: string | number): string;
+
     install(vue: typeof Vue, options?: Options<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>): void;
 
     create: FormCreate<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;

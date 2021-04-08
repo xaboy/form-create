@@ -7,7 +7,7 @@ import {err, logError} from '@form-create/utils/lib/console';
 const PREFIX = '[[FORM-CREATE-PREFIX-';
 const SUFFIX = '-FORM-CREATE-SUFFIX]]';
 
-export function toJson(obj) {
+export function toJson(obj, space) {
     return JSON.stringify(deepExtend([], obj, true), function (key, val) {
         if (val && val._isVue === true)
             return undefined;
@@ -22,7 +22,7 @@ export function toJson(obj) {
             return undefined;
 
         return PREFIX + val + SUFFIX;
-    });
+    }, space);
 }
 
 function makeFn(fn) {
