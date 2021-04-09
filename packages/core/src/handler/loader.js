@@ -1,5 +1,5 @@
 import extend from '@form-create/utils/lib/extend';
-import {byCtx, copyRule, enumerable, getRule, invoke} from '../frame/util';
+import {byCtx, copyRule, enumerable, getRule, invoke, parseFn} from '../frame/util';
 import is, {hasProperty} from '@form-create/utils/lib/type';
 import {err} from '@form-create/utils/lib/console';
 import {baseRule} from '../factory/creator';
@@ -29,7 +29,13 @@ export default function useLoader(Handler) {
             rule.options = Array.isArray(rule.options) ? rule.options : [];
 
             ['on', 'props', 'nativeOn'].forEach(k => {
-                this.parseInjectEvent(rule, rule[k] || {});
+                const v = rule[k];
+                if (v) {
+                    Object.keys(v).forEach(n => {
+                        v[n] = parseFn(v[n]);
+                    })
+                    this.parseInjectEvent(rule, v);
+                }
             })
 
             return rule;
