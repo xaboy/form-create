@@ -49,6 +49,7 @@ export function parseFn(fn, mode) {
         try{
             return makeFn(v.indexOf(FUNCTION) === -1 && v.indexOf('(') !== 0 ? (FUNCTION + ' ' + v) : v);
         }catch (e){
+            err(`解析失败:${v}`);
             return undefined;
         }
     }
