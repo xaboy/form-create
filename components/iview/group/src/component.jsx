@@ -129,7 +129,7 @@ export default function createGroup(config) {
             },
             addRule(i, emit) {
                 const rule = this.$formCreate.copyRules(this.formRule);
-                const options = this.options ? { ...this.options } : {
+                const options = this.options ? {...this.options} : {
                     submitBtn: false,
                     resetBtn: false,
                 };
