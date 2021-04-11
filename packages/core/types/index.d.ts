@@ -147,11 +147,13 @@ export interface BaseRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> extend
     emitPrefix?: string;
     value?: any;
     emit?: Array<string | { name: string; inject: any }>;
+    nativeEmit?: Array<string | { name: string; inject: any }>;
     link?: string[];
     sync?: string[];
     prefix?: string | VNodeData;
     suffix?: string | VNodeData;
     update?: (value: any, $rule: this, $f: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => Boolean | void;
+    options?: Object[],
     native?: Boolean;
     hidden?: Boolean;
     display?: Boolean;
@@ -254,6 +256,8 @@ export class BaseCreator<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
     effect(prop: Object): this;
 
     options(options: Array<Object>): this;
+
+    nativeEmit(emit: Array<string | { name: string; inject: any }>): this;
 }
 
 export interface BaseMaker<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
