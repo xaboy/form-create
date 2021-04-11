@@ -403,7 +403,7 @@ export interface BaseApi<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
 
     exec(id: string, name: string, ...args: any[]): any;
 
-    toJson(): string;
+    toJson(space?: string | number): string;
 
     trigger(id: string, event: string, ...args: any[]): void;
 
