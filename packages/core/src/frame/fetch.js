@@ -29,14 +29,6 @@ export default function fetch(option) {
     const xhr = new XMLHttpRequest();
     const action = option.action;
 
-    const formData = new FormData();
-
-    if (option.data) {
-        Object.keys(option.data).map(key => {
-            formData.append(key, option.data[key]);
-        });
-    }
-
     xhr.onerror = function error(e) {
         option.onError(e);
     };
@@ -50,6 +42,20 @@ export default function fetch(option) {
     };
 
     xhr.open(option.method || 'get', action, true);
+
+    let formData;
+    if (option.data) {
+        if ((option.dataType || '').toLowerCase() !== 'json') {
+            formData = new FormData();
+            Object.keys(option.data).map(key => {
+                formData.append(key, option.data[key]);
+            });
+        } else {
+            formData = JSON.stringify(option.data);
+            xhr.setRequestHeader('content-type', 'application/json');
+        }
+    }
+
 
     if (option.withCredentials && 'withCredentials' in xhr) {
         xhr.withCredentials = true;

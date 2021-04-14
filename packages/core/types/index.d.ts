@@ -466,9 +466,11 @@ export interface FetchOption {
     action: String;
     method?: String;
     data?: Object;
+    dataType?: 'json';
     headers?: Object;
+    withCredentials?: Boolean;
     onSuccess: (body: any) => void
-    onError: (e: Error | ProgressEvent) => void;
+    onError?: (e: Error | ProgressEvent) => void;
 }
 
 export interface FetchEffectOption {
@@ -477,7 +479,9 @@ export interface FetchEffectOption {
     action: String;
     method?: String;
     data?: Object;
+    dataType?: 'json';
     headers?: Object;
+    withCredentials?: Boolean;
     onError?: (e: Error | ProgressEvent) => void;
 }
 
