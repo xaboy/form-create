@@ -31,7 +31,7 @@ function run(inject, rule, api) {
     if (!option) return false;
     option = parseOpt(option);
     if (!option.to) {
-        return false;
+        option.to = 'options';
     }
     const onError = option.onError;
 
