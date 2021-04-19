@@ -18,7 +18,7 @@ export default {
         }
     },
     watch: {
-        disabled {
+        disabled: {
             handler: function (n) {
                 n ? this.editor.disable() : this.editor.enable();
             },
