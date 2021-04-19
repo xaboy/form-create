@@ -18,8 +18,11 @@ export default {
         }
     },
     watch: {
-        disabled(n) {
-            n ? this.editor.disable() : this.editor.enable();
+        disabled {
+            handler: function (n) {
+                n ? this.editor.disable() : this.editor.enable();
+            },
+            immediate: true
         },
         value(n) {
             if (n !== this.editor.txt.html()) {
