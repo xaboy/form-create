@@ -28,8 +28,10 @@ function parseOpt(option) {
 
 function run(inject, rule, api) {
     let option = inject.value;
-    if (!option) return false;
     option = parseOpt(option);
+    if (!option.action) {
+        return false;
+    }
     if (!option.to) {
         option.to = 'options';
     }
@@ -51,7 +53,12 @@ function run(inject, rule, api) {
             }
             to = v;
         })
-        data[to] = val;
+        if (val === undefined) {
+            delete data[to];
+            api.sync(rule);
+        } else {
+            data[to] = val;
+        }
     }
 
     invoke(() => fetch({
