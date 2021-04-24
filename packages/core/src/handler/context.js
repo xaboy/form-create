@@ -110,6 +110,7 @@ export default function useContext(Handler) {
                 $del(this.form, field);
                 $del(this.fieldCtx, field);
                 $del(this.subForm, field);
+                this.vm.$nextTick(() => this.vm.$emit('removeField', field, ctx.rule, this.api));
             }
             if (name && this.nameCtx[name] === ctx) {
                 $del(this.nameCtx, name);
@@ -134,6 +135,7 @@ export default function useContext(Handler) {
             this.$render.clearCache(ctx);
             ctx.delete();
             this.effect(ctx, 'deleted');
+            this.vm.$nextTick(() => this.vm.$emit('removeRule', ctx.rule, this.api));
             return ctx;
         },
     })
