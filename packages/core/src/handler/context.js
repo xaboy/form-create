@@ -19,7 +19,7 @@ export default function useContext(Handler) {
             this.fieldCtx[field] = ctx;
             this.setFormData(ctx, ctx.parser.toFormValue(rule.value, ctx));
             if (this.isMounted && !this.reloading) {
-                this.vm.$emit('change', ctx.field, rule.value, ctx.origin, this.api, true);
+                this.vm.$emit('change', ctx.field, rule.value, ctx.origin, this.api);
             }
         },
         getParser(ctx) {
