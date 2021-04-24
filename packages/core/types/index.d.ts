@@ -437,6 +437,7 @@ export interface EffectValue {
     getProp: () => Object;
     clearProp: () => void;
     getValue: () => any;
+    mergeProp: (prop: Object) => Object;
 }
 
 export interface Effect<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
