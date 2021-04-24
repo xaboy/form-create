@@ -18,8 +18,8 @@ export default {
         }
     },
     watch: {
-        disabled(n) {
-            n ? this.editor.disable() : this.editor.enable();
+        disabled() {
+            this.enable();
         },
         value(n) {
             if (n !== this.editor.txt.html()) {
@@ -28,6 +28,9 @@ export default {
         }
     },
     methods: {
+        enable(){
+            this.disabled ? this.editor.disable() : this.editor.enable();
+        },
         result() {
             this.$emit('input', this.editor.txt.html())
         }
@@ -37,6 +40,7 @@ export default {
         this.editor.config.zIndex = 2;
         this.init && this.init(this.editor);
         this.editor.create();
+        this.enable();
         this.editor.txt.html(this.value);
     },
     render() {

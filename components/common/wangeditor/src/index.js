@@ -1,3 +1,3 @@
-import Editor from './component';
+import FcEditor from './component';
 
-export default Editor;
+export default FcEditor;
