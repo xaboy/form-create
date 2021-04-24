@@ -29,7 +29,7 @@ function parseOpt(option) {
 function run(inject, rule, api) {
     let option = inject.value;
     option = parseOpt(option);
-    if (!option.action) {
+    if (!option || !option.action) {
         return false;
     }
     if (!option.to) {
@@ -46,17 +46,17 @@ function run(inject, rule, api) {
     }
 
     const set = (val) => {
-        let data = inject.getProp(), to;
-        option.to.split('.').forEach(v => {
-            if (to) {
-                data = data[to] = {};
-            }
-            to = v;
-        })
         if (val === undefined) {
-            delete data[to];
+            inject.clearProp();
             api.sync(rule);
         } else {
+            let data = inject.getProp(), to;
+            option.to.split('.').forEach(v => {
+                if (to) {
+                    data = data[to] = {};
+                }
+                to = v;
+            })
             data[to] = val;
         }
     }
