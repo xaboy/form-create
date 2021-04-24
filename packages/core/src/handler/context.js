@@ -17,7 +17,10 @@ export default function useContext(Handler) {
             if (name) $set(this.nameCtx, name, ctx);
             if (!ctx.input) return;
             this.fieldCtx[field] = ctx;
-            this.setFormData(ctx, ctx.parser.toFormValue(rule.value, ctx))
+            this.setFormData(ctx, ctx.parser.toFormValue(rule.value, ctx));
+            if (this.isMounted && !this.reloading) {
+                this.vm.$emit('change', ctx.field, rule.value, ctx.origin, this.api, true);
+            }
         },
         getParser(ctx) {
             const list = this.fc.parsers;
