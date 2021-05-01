@@ -2,6 +2,7 @@ import {err} from '@form-create/utils/lib/console';
 import fetch from './fetch';
 import {invoke} from './util';
 import is from '@form-create/utils/lib/type';
+import deepSet from '@form-create/utils/lib/deepset';
 
 const $fetch = {
     name: 'fetch',
@@ -50,14 +51,7 @@ function run(inject, rule, api) {
             inject.clearProp();
             api.sync(rule);
         } else {
-            let data = inject.getProp(), to;
-            option.to.split('.').forEach(v => {
-                if (to) {
-                    data = data[to] = {};
-                }
-                to = v;
-            })
-            data[to] = val;
+            deepSet(inject.getProp(), option.to, val);
         }
     }
 
