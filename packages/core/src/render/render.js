@@ -258,6 +258,7 @@ export default function useRender(Render) {
             if (!is.trueArray(children) && orgChildren) {
                 this.$handle.deferSyncValue(() => {
                     orgChildren.forEach(child => {
+                        if (!child) return;
                         if (!is.String(child) && child.__fc__) {
                             this.$handle.rmCtx(child.__fc__);
                         }
@@ -269,6 +270,7 @@ export default function useRender(Render) {
 
             orgChildren && this.$handle.deferSyncValue(() => {
                 orgChildren.forEach(child => {
+                    if (!child) return;
                     if (children.indexOf(child) === -1 && !is.String(child) && child.__fc__) {
                         this.$handle.rmCtx(child.__fc__);
                     }
@@ -276,6 +278,7 @@ export default function useRender(Render) {
             });
 
             return children.map(child => {
+                if (!child) return;
                 if (is.String(child)) return child;
                 if (child.__fc__) {
                     return this.renderCtx(child.__fc__, ctx);

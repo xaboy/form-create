@@ -110,7 +110,7 @@ export default function useLoader(Handler) {
             const initEvent = (rule) => this.ruleEffect(rule, 'init');
 
             rules.map((_rule, index) => {
-                if (parent && is.String(_rule)) return;
+                if (parent && (is.String(_rule) || is.Undef(_rule))) return;
                 if (!this.pageEnd && !parent && index >= this.first) return;
 
                 if (!is.Object(_rule) || !getRule(_rule).type)
