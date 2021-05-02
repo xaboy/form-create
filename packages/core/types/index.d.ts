@@ -154,6 +154,7 @@ export interface BaseRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> extend
     suffix?: string | VNodeData;
     update?: (value: any, $rule: this, $f: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => Boolean | void;
     options?: Object[],
+    optionsTo?: string,
     native?: Boolean;
     hidden?: Boolean;
     display?: Boolean;
@@ -256,6 +257,8 @@ export class BaseCreator<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
     effect(prop: Object): this;
 
     options(options: Array<Object>): this;
+
+    optionsTo(to: string): this;
 
     nativeEmit(emit: Array<string | { name: string; inject: any }>): this;
 }

@@ -5,6 +5,7 @@ import {_vue as Vue} from '../frame';
 import {tip} from '@form-create/utils/lib/console';
 import {invoke, mergeRule} from '../frame/util';
 import toCase, {lower} from '@form-create/utils/lib/tocase';
+import {deepSet} from '@form-create/utils';
 
 function setTempProps(vm, ctx, api) {
     if (!vm.$props) return;
@@ -89,6 +90,11 @@ export default function useRender(Render) {
                 ctx.cacheConfig = g[ctx.originType] || g[ctx.type] || g[ctx.trueType] || {};
             ctx.prop = mergeRule({}, [g['*'], ctx.cacheConfig, ctx.prop]);
         },
+        setOptions(ctx) {
+            if (ctx.prop.optionsTo && ctx.prop.options) {
+                deepSet(ctx.prop, ctx.prop.optionsTo, ctx.prop.options);
+            }
+        },
         renderTemp(ctx) {
             if (!Vue.compile) {
                 tip('当前使用的Vue构建版本不支持compile,无法使用template功能');
@@ -150,6 +156,7 @@ export default function useRender(Render) {
                     ctx.initProp();
                     this.mergeGlobal(ctx);
                     this.$manager.tidyRule(ctx);
+                    this.setOptions(ctx);
                     this.ctxProp(ctx);
                     let prop = ctx.prop;
 
