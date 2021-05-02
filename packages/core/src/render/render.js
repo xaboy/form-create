@@ -262,11 +262,15 @@ export default function useRender(Render) {
         renderChildren(ctx) {
             const {children} = ctx.rule, orgChildren = this.orgChildren[ctx.id];
 
+            const isRm = child => {
+                return !is.String(child) && child.__fc__ && !this.$handle.ctxs[child.__fc__.id];
+            }
+
             if (!is.trueArray(children) && orgChildren) {
                 this.$handle.deferSyncValue(() => {
                     orgChildren.forEach(child => {
                         if (!child) return;
-                        if (!is.String(child) && child.__fc__) {
+                        if (isRm(child)) {
                             this.$handle.rmCtx(child.__fc__);
                         }
                     });
@@ -278,7 +282,7 @@ export default function useRender(Render) {
             orgChildren && this.$handle.deferSyncValue(() => {
                 orgChildren.forEach(child => {
                     if (!child) return;
-                    if (children.indexOf(child) === -1 && !is.String(child) && child.__fc__) {
+                    if (children.indexOf(child) === -1 && isRm(child)) {
                         this.$handle.rmCtx(child.__fc__);
                     }
                 });
