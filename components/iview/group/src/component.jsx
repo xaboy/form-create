@@ -35,7 +35,17 @@ export default function createGroup(config) {
             fontSize: {
                 type: Number,
                 default: 28
-            }
+            },
+            onBeforeRemove: {
+                type: Function,
+                default: () => {
+                }
+            },
+            onBeforeAdd: {
+                type: Function,
+                default: () => {
+                }
+            },
         },
         data() {
             return {
@@ -47,7 +57,7 @@ export default function createGroup(config) {
         computed: {
             formRule() {
                 if (this.rule) {
-                    return Array.isArray(this.rule) ? this.rule :[this.rule];
+                    return Array.isArray(this.rule) ? this.rule : [this.rule];
                 }
                 if (this.rules) {
                     return this.rules;
@@ -142,7 +152,7 @@ export default function createGroup(config) {
             add$f(i, key, $f) {
                 this.cacheRule[key].$f = $f;
                 this.subForm();
-                this.$nextTick(()=>{
+                this.$nextTick(() => {
                     $f.disabled(this.disabled);
                     this.$emit('itemMounted', $f, Object.keys(this.cacheRule).indexOf(key));
                 });
@@ -159,10 +169,13 @@ export default function createGroup(config) {
                 }
             },
             add(i) {
-                (!this.disabled) && this.addRule(i, true);
+                if (this.disabled || false === this.onBeforeAdd(this.value)) {
+                    return;
+                }
+                this.addRule(i, true);
             },
             del(index, key) {
-                if (this.disabled) {
+                if (this.disabled || false === this.onBeforeRemove(this.value)) {
                     return;
                 }
                 this.removeRule(key, true);
