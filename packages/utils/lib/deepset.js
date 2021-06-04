@@ -2,7 +2,10 @@ export default function deepSet(data, idx, val) {
     let _data = data, to;
     (idx || '').split('.').forEach(v => {
         if (to) {
-            _data = _data[to] || {};
+            if(!_data[to]) {
+                _data[to] = {}
+            }
+            _data = _data[to];
         }
         to = v;
     })
