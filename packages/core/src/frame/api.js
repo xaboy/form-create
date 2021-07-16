@@ -56,8 +56,14 @@ export default function Api(h) {
         get config() {
             return h.options
         },
+        set config(val) {
+            h.fc.options.value = val;
+        },
         get options() {
             return h.options
+        },
+        set options(val) {
+            h.fc.options.value = val;
         },
         get form() {
             return h.form
@@ -66,7 +72,7 @@ export default function Api(h) {
             return h.rules
         },
         get parent() {
-            return h.vm.$pfc && h.vm.$pfc.$f
+            return h.vm.parent && h.vm.parent.ctx.fapi
         },
         get children() {
             return allSubForm();
@@ -116,10 +122,6 @@ export default function Api(h) {
             if (!ctx) return;
             ctx.rm();
             return ctx.origin;
-        },
-        destroy: () => {
-            h.vm.$el.parentNode && h.vm.$el.parentNode.removeChild(h.vm.$el);
-            h.vm.$destroy();
         },
         fields: () => h.fields(),
         append: (rule, after, child) => {
@@ -234,7 +236,7 @@ export default function Api(h) {
             api.refresh();
         },
         hideForm: (hide) => {
-            $set(h.vm, 'isShow', !hide);
+            h.vm._.setupState.isShow = !hide;
         },
         changeStatus: () => {
             return h.changeStatus;
@@ -279,7 +281,6 @@ export default function Api(h) {
             })
         },
         refreshValidate() {
-            h.vm.validate = {};
             api.refresh();
         },
         resetFields(fields) {

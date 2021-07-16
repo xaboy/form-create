@@ -79,23 +79,23 @@
         </ElRow>
         <ElRow>
             <h3>Render</h3>
-            <form-create :rule="rule" v-model="fapi" :option="option" :value.sync="formData" @prefix-change="change"/>
+            <form-create :rule="rule" :test="true" v-model:api="fapi" :option="option" v-model="formData" @prefix-change="change" @xaboy-change="change"/>
         </ElRow>
     </div>
 </template>
 
 <script>
-    import {defineComponent, ref, watch, onMounted} from '@vue/composition-api'
+    import {defineComponent, ref, watch, onMounted} from 'vue'
     import mock from './rule';
     import jsonMock from './jsonRule';
 
     export default defineComponent({
         setup() {
-            const fapi = ref({});
+            const fapi = ref({b:2});
             const rule = ref(mock())
 
             //formData
-            const formData = ref({})
+            const formData = ref({goods_name:'asdf12312'})
             const json = ref({});
             watch(formData, value => {
                 json.value = value;
@@ -103,7 +103,7 @@
 
 
             //option
-            const option = ref({resetBtn: true})
+            const option = ref({resetBtn: true,global:{'*':{emit:['aaa']}}})
             const optionJson = ref({})
             onMounted(() => {
                 optionJson.value = {...fapi.value.options};

@@ -9,9 +9,21 @@ export default function useInject(Handler) {
             if (rule.inject === false) return;
             const inject = rule.inject || this.options.injectEvent;
             if (is.Undef(inject)) return;
+
+            const injectFn = (fn) => {
+                if (is.Function(fn))
+                    return this.inject(rule, fn, inject)
+                else
+                    return fn;
+            }
             Object.keys(on).forEach(k => {
-                if (is.Function(on[k]))
-                    on[k] = this.inject(rule, on[k], inject)
+                if (Array.isArray(on[k])) {
+                    on[k].forEach((fn, i) => {
+                        on[k][i] = injectFn(fn);
+                    })
+                } else {
+                    on[k] = injectFn(on[k]);
+                }
             });
             return on;
         },
@@ -50,7 +62,7 @@ export default function useInject(Handler) {
             return event;
         },
         getInjectData(self, inject) {
-            const {option, rule} = this.vm.$options.propsData;
+            const {option, rule} = this.vm;
             return {
                 $f: this.api,
                 rule,

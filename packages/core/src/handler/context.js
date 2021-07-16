@@ -4,6 +4,8 @@ import BaseParser from '../factory/parser';
 import {$del, $set} from '@form-create/utils/lib';
 import is from '@form-create/utils/lib/type';
 import {invoke} from '../frame/util';
+import {toRef,watch} from 'vue';
+import {attrs} from '../frame/attrs';
 
 
 export default function useContext(Handler) {
@@ -44,11 +46,14 @@ export default function useContext(Handler) {
             }
         },
         watchCtx(ctx) {
-            const vm = this.vm;
             const none = ['field', 'value', 'vm', 'template', 'name', 'config', 'control', 'inject', 'sync', 'payload', 'optionsTo'];
-            Object.keys(ctx.rule).filter(k => none.indexOf(k) === -1).forEach((key) => {
+            const all = attrs();
+            all.filter(k => none.indexOf(k) === -1).forEach((key) => {
+                const ref = toRef(ctx.rule, key);
                 const flag = key === 'children';
-                ctx.watch.push(vm.$watch(() => ctx.rule[key], (n, o) => {
+                ctx.refRule[key] = ref;
+                ctx.watch.push(watch(flag ? () => [...(ref.value || [])] : ref, (_, o) => {
+                    const n = ref.value;
                     if (this.loading || this.noWatchFn || this.reloading) return;
                     this.watching = true;
                     // if (key === 'hidden')
@@ -68,19 +73,28 @@ export default function useContext(Handler) {
                         ctx.updateType();
                         this.bindParser(ctx);
                     } else if (key === 'children') {
-                        const flag = is.trueArray(n);
                         this.deferSyncValue(() => {
-                            if (n !== o) {
-                                this.rmSub(o);
-                                this.$render.initOrgChildren();
-                            }
-                            flag && this.loadChildren(n, ctx);
+                            o && o.forEach((child) => {
+                                if ((n || []).indexOf(child) === -1 && child && !is.String(child) && child.__fc__ && !this.ctxs[child.__fc__.id]) {
+                                    this.rmCtx(child.__fc__);
+                                }
+                            });
+                            is.trueArray(n) && this.loadChildren(n, ctx);
                         });
                     }
                     this.$render.clearCache(ctx);
                     this.watching = false;
                 }, {deep: !flag, sync: flag}));
             });
+            if (ctx.input) {
+                const val = toRef(ctx.rule, 'value');
+                ctx.watch.push(watch(val, () => {
+                    const formValue = ctx.parser.toFormValue(val.value, ctx);
+                    if (this.isChange(ctx, formValue)) {
+                        this.setValue(ctx, val.value, formValue, true);
+                    }
+                }));
+            }
             this.watchEffect(ctx);
         },
         rmSub(sub) {
@@ -89,6 +103,7 @@ export default function useContext(Handler) {
             })
         },
         rmCtx(ctx) {
+            console.trace(ctx.field,'deleted');
             if (ctx.deleted) return;
             const {id, field, name} = ctx;
             if (ctx.input) {
@@ -101,7 +116,6 @@ export default function useContext(Handler) {
             $del(this.ctxs, id);
             $del(this.$render.renderList, id);
             $del(this.$render.orgChildren, id);
-            $del(ctx, 'cacheValue');
 
             const f = this.fieldCtx[field];
 
@@ -123,7 +137,7 @@ export default function useContext(Handler) {
                     this.syncValue();
                 })
                 if (ctx.root === this.rules) {
-                    this.vm._renderRule();
+                    this.vm.renderRule();
                 }
             }
 

@@ -1,11 +1,11 @@
 import $FormCreate from '../components/formCreate';
-import Vue from 'vue';
+import {createApp, h, ref, toRef, customRef, watch} from 'vue';
 import makerFactory from '../factory/maker';
 import Handle from '../handler';
 import fetch from './fetch';
 import {creatorFactory} from '..';
 import BaseParser from '../factory/parser';
-import {copyRule, copyRules, mergeGlobal, parseJson, toJson} from './util';
+import {copyRule, copyRules, makeBus, mergeGlobal, parseJson, toJson} from './util';
 import fragment from '../components/fragment';
 import is from '@form-create/utils/lib/type';
 import toCase from '@form-create/utils/lib/tocase';
@@ -17,9 +17,7 @@ import {appendProto} from '../factory/creator';
 import $fetch from './provider';
 import {deepCopy} from '@form-create/utils/lib/deepextend';
 
-export let _vue = typeof window !== 'undefined' && window.Vue ? window.Vue : Vue;
-
-function _parseProp(name, id) {
+function parseProp(name, id) {
     let prop;
     if (arguments.length === 2) {
         prop = arguments[1];
@@ -31,7 +29,7 @@ function _parseProp(name, id) {
 }
 
 function nameProp() {
-    return _parseProp('name', ...arguments);
+    return parseProp('name', ...arguments);
 }
 
 function _getEl(options) {
@@ -39,20 +37,6 @@ function _getEl(options) {
     return is.Element(options.el)
         ? options.el
         : document.querySelector(options.el);
-}
-
-function mountForm(rules, option) {
-    const $vm = new _vue({
-        data() {
-            //todo 外部无法修改
-            return {rule: rules, option: option || {}};
-        },
-        render(h) {
-            return h('FormCreate', {ref: 'fc', props: this.$data});
-        }
-    });
-    $vm.$mount();
-    return $vm;
 }
 
 function exportAttrs(attrs) {
@@ -113,9 +97,7 @@ export default function FormCreateFactory(config) {
         let name;
         if (is.String(id)) {
             name = toCase(id);
-            if (['form-create', 'formcreate'].indexOf(name) > -1) {
-                return $form();
-            } else if (component === undefined) {
+            if (component === undefined) {
                 return components[name];
             }
         } else {
@@ -128,8 +110,21 @@ export default function FormCreateFactory(config) {
     }
 
     function $form() {
-        return _vue.extend($FormCreate(FormCreate));
+        return $FormCreate(FormCreate);
     }
+
+    function mountForm(rules, option) {
+        return createApp({
+            data() {
+                //todo 外部无法修改
+                return {rule: ref(rules), option: ref(option || {})};
+            },
+            render() {
+                return h($form(), {ref: 'fc', ...this.$data});
+            }
+        });
+    }
+
 
     //todo 检查回调函数作用域
     function use(fn, opt) {
@@ -140,69 +135,60 @@ export default function FormCreateFactory(config) {
 
     function create(rules, _opt, parent) {
         let $vm = mountForm(rules, _opt || {});
+        console.log($vm);
         const _this = $vm.$refs.fc.formCreate;
         _this.$parent = parent;
         _getEl(_this.options).appendChild($vm.$el);
         return _this.api();
     }
 
-    function FormCreate(vm, rules, options) {
+    function FormCreate(vm) {
         extend(this, {
-            vm,
+            vm: vm.ctx,
             manager: createManager(config.manager),
             parsers,
             providers,
-            rules: Array.isArray(rules) ? rules : [],
+            rules:vm.props.rule,
             prop: {
                 components,
                 directives,
             },
             CreateNode,
-            bus: new _vue,
+            bus: makeBus(),
             unwatch: null,
+            options:ref({}),
             extendApi: config.extendApi || (api => api)
         })
-        this.init();
-        this.initOptions(options || {});
+        watch(this.options, () => {
+            this.$handle.$manager.updateOptions(this.options.value);
+            this.api().refresh();
+        }, {deep: true})
+        extend(vm.appContext.components, components);
+        extend(vm.appContext.directives, directives);
+        this.$handle = new Handle(this)
     }
 
     extend(FormCreate.prototype, {
         init() {
-            const vm = this.vm;
-            const h = new Handle(this);
-            this.$handle = h;
-            vm.$f = h.api;
-            vm.$emit('input', h.api);
+            if (this.isSub()) {
+                this.unwatch = this.vm.$watch(() => this.vm.parent.option, () => {
+                    this.initOptions(this.options.value);
+                    this.$handle.api.refresh();
+                }, {deep: true});
+                this.initOptions(this.options.value);
+            } else {
+                this.initOptions(this.vm.option || {});
+            }
 
-            vm.$on('hook:created', () => {
-                if (this.isSub()) {
-                    this.unwatch = vm.$watch(() => vm.$pfc.option, () => {
-                        this.initOptions(this.options);
-                        vm.$f.refresh();
-                    }, {deep: true});
-                    this.initOptions(this.options);
-                }
-                this.created();
-            })
-            vm.$on('hook:mounted', () => {
-                this.mounted();
-            });
-            vm.$on('hook:beforeDestroy', () => {
-                vm.destroyed = true;
-                this.unwatch && this.unwatch();
-                h.reloadRule([]);
-            });
-            vm.$on('hook:updated', () => {
-                h.bindNextTick(() => this.bus.$emit('next-tick', h.api));
-            });
+            this.$handle.init();
         },
         isSub() {
-            return this.vm.$pfc && this.vm.extendOption;
+            return this.vm.parent && this.vm.extendOption;
         },
         initOptions(options) {
-            this.options = {formData: {}, submitBtn: {}, resetBtn: {}, ...deepCopy(globalConfig)};
+            this.options.value = {formData: {}, submitBtn: {}, resetBtn: {}, ...deepCopy(globalConfig)};
             if (this.isSub()) {
-                this.mergeOptions(this.options, this.vm.$pfc.$f.config || {}, true);
+                this.mergeOptions(this.options.value, this.vm.parent.api.config || {}, true);
             }
             this.updateOptions(options);
         },
@@ -219,11 +205,8 @@ export default function FormCreateFactory(config) {
             return target;
         },
         updateOptions(options) {
-            this.mergeOptions(this.options, options);
-            this.$handle.$manager.updateOptions(this.options);
-        },
-        created() {
-            this.$handle.init();
+            this.mergeOptions(this.options.value, options);
+            this.$handle.$manager.updateOptions(this.options.value);
         },
         api() {
             return this.$handle.api;
@@ -234,6 +217,13 @@ export default function FormCreateFactory(config) {
         mounted() {
             this.$handle.mounted();
         },
+        unmount() {
+            this.unwatch && this.unwatch();
+            this.$handle.reloadRule([]);
+        },
+        updated() {
+            this.$handle.bindNextTick(() => this.bus.$emit('next-tick', this.$handle.api));
+        }
     })
 
 
@@ -255,25 +245,6 @@ export default function FormCreateFactory(config) {
             $form,
             parseJson,
             toJson,
-            init(rules, _opt = {}) {
-                let $vm = mountForm(rules, _opt), _this = $vm.$refs.fc.formCreate;
-                return {
-                    mount($el) {
-                        if ($el && is.Element($el))
-                            _this.options.el = $el;
-                        _getEl(_this.options).appendChild($vm.$el);
-                        return _this.api();
-                    },
-                    remove() {
-                        $vm.$el.parentNode && $vm.$el.parentNode.removeChild($vm.$el);
-                    },
-                    destroy() {
-                        this.remove();
-                        $vm.$destroy();
-                    },
-                    $f: _this.api()
-                };
-            }
         });
     }
 
@@ -284,7 +255,6 @@ export default function FormCreateFactory(config) {
                 globalConfig = {...globalConfig, ...(options || {})}
                 if (Vue._installedFormCreate === true) return;
                 Vue._installedFormCreate = true;
-                _vue = Vue;
 
                 const $formCreate = function (rules, opt = {}) {
                     return create(rules, opt, this);
@@ -292,7 +262,7 @@ export default function FormCreateFactory(config) {
 
                 useAttr($formCreate);
 
-                Vue.prototype.$formCreate = $formCreate;
+                Vue.config.globalProperties.$formCreate = $formCreate;
                 Vue.component('FormCreate', $form());
             }
         })
@@ -301,7 +271,7 @@ export default function FormCreateFactory(config) {
     useAttr(create);
     useStatic(create);
 
-    CreateNode.use({fragment: 'fcFragment'});
+    CreateNode.use({fragment: 'FcFragment'});
 
     if (config.install) create.use(config);
 

@@ -57,13 +57,7 @@ export default {
         return prop;
     },
     mergeProp(ctx) {
-        let props = ctx.prop.props;
         ctx.prop = mergeProps([{
-            attrs: Object.keys(props).reduce((initial, val) => {
-                if (isAttr(val, props[val]))
-                    initial[val] = props[val];
-                return initial;
-            }, {}),
             info: this.options.info || {},
             wrap: this.options.wrap || {},
             col: this.options.col || {},
@@ -100,14 +94,13 @@ export default {
         extend(this.rule, {key, ref});
         extend(this.rule.props, {
             model: $handle.formData,
-            rules: $handle.validate(),
         });
     },
     render(children) {
-        if (children.length) {
-            children.push(this.makeFormBtn());
+        if (children.slotLen()) {
+            children.setSlot(undefined, () => this.makeFormBtn());
         }
-        return this.$r(this.rule, isFalse(this.options.row.show) ? children : [this.makeRow(children)]);
+        return this.$r(this.rule, isFalse(this.options.row.show) ? children.getSlots() : [this.makeRow(children)]);
     },
     makeWrap(ctx, children) {
         const rule = ctx.prop;
@@ -128,7 +121,7 @@ export default {
             key: `${uni}fi`,
             ref: ctx.wrapRef,
             type: 'formItem',
-        }]), [children, isTitle ? this.makeInfo(rule, uni) : null]);
+        }]), {default: () => children, title: () => (isTitle ? this.makeInfo(rule, uni) : null)});
         return (inline === true || isFalse(_col) || isFalse(col.show)) ? item : this.makeCol(rule, uni, [item]);
     },
     isTitle(rule) {
@@ -140,9 +133,8 @@ export default {
         const infoProp = rule.info;
         const isTip = isTooltip(infoProp);
         const children = [titleProp.title];
-        const titleFn = (pop) => this.$r(mergeProps([titleProp, {
+        const titleFn = () => this.$r(mergeProps([titleProp, {
             props: titleProp,
-            slot: titleProp.slot || (pop ? (isTip ? 'default' : 'reference') : 'label'),
             key: `${uni}tit`,
             type: titleProp.type || 'span',
         }]), children);
@@ -158,8 +150,7 @@ export default {
             const prop = {
                 type: infoProp.type || 'popover',
                 props: {...infoProp},
-                key: `${uni}pop`,
-                slot: 'label'
+                key: `${uni}pop`
             };
 
             const field = 'content';
@@ -167,9 +158,9 @@ export default {
                 prop.props[field] = infoProp.info;
             }
 
-            return this.$r(mergeProps([infoProp, prop]), [
-                titleFn(true)
-            ])
+            return this.$r(mergeProps([infoProp, prop]), {
+                [titleProp.slot || (isTip ? 'default' : 'reference')]: () => titleFn()
+            })
         }
         return titleFn();
     },

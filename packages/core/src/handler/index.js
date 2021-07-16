@@ -7,10 +7,10 @@ import usePage from './page';
 import useRender from './render';
 import useLoader from './loader';
 import useInput from './input';
-import useHelper from './helper';
 import useContext from './context';
 import useLifecycle from './lifecycle';
 import useEffect from './effect';
+import {reactive, watch} from 'vue';
 
 
 export default function Handler(fc) {
@@ -23,9 +23,9 @@ export default function Handler(fc) {
         noWatchFn: null,
         deferSyncFn: null,
         isMounted: false,
-        formData: {},
+        formData: reactive({}),
         subForm: {},
-        form: {},
+        form: reactive({}),
         appendData: {},
         providers: {},
         cycleLoad: null,
@@ -40,7 +40,7 @@ export default function Handler(fc) {
 
     funcProxy(this, {
         options() {
-            return fc.options;
+            return fc.options.value;
         },
         bus() {
             return fc.bus;
@@ -64,14 +64,12 @@ extend(Handler.prototype, {
             rules,
             repeatRule: [],
         });
-        useHelper(rules);
     },
     init() {
         this.useProvider();
         this.usePage();
         this.loadRule();
         this.$manager.__init();
-        this.vm.$set(this.vm, 'formData', this.formData);
     },
 })
 

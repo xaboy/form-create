@@ -3,6 +3,8 @@ import is from '@form-create/utils/lib/type';
 import mergeProps from '@form-create/utils/lib/mergeprops';
 import {arrayAttrs, normalAttrs} from './attrs';
 import {err, logError} from '@form-create/utils/lib/console';
+import Mitt from './mitt';
+import {isVNode} from 'vue';
 
 const PREFIX = '[[FORM-CREATE-PREFIX-';
 const SUFFIX = '-FORM-CREATE-SUFFIX]]';
@@ -42,13 +44,13 @@ export function parseFn(fn, mode) {
         } else if (v.indexOf($T) === 0) {
             v = v.replace($T, '');
             flag = true;
-        }else if(!mode && v.indexOf(FUNCTION) === 0 && v !== FUNCTION){
+        } else if (!mode && v.indexOf(FUNCTION) === 0 && v !== FUNCTION) {
             flag = true;
         }
-        if(!flag) return  fn;
-        try{
+        if (!flag) return fn;
+        try {
             return makeFn(v.indexOf(FUNCTION) === -1 && v.indexOf('(') !== 0 ? (FUNCTION + ' ' + v) : v);
-        }catch (e){
+        } catch (e) {
             err(`解析失败:${v}`);
             return undefined;
         }
@@ -122,4 +124,76 @@ export function invoke(fn, def) {
         logError(e);
     }
     return def;
+}
+
+export function makeBus() {
+    const mitt = new Mitt();
+
+    return {
+        $on: mitt.on,
+        $once: mitt.once,
+        $off: mitt.off,
+        $emit: mitt.emit,
+    }
+}
+
+export function makeSlotBag() {
+    const slotBag = {};
+
+    const slotName = (n) => n || 'default';
+
+    return {
+        setSlot(slot, vnFn) {
+            slot = slotName(slot);
+            if (!vnFn || (Array.isArray(vnFn) && vnFn.length))
+                return;
+            if (!slotBag[slot]) slotBag[slot] = [];
+            slotBag[slot].push(vnFn);
+        },
+        getSlot(slot) {
+            slot = slotName(slot);
+            const children = [];
+            (slotBag[slot] || []).forEach(fn => {
+                if (Array.isArray(fn)) {
+                    children.push(...fn);
+                } else if (is.Function(fn)) {
+                    const res = fn();
+                    if (Array.isArray(res)) {
+                        children.push(...res);
+                    } else {
+                        children.push(res);
+                    }
+                } else if (!is.Undef(fn)) {
+                    children.push(fn);
+                }
+            })
+            return children;
+        },
+        getSlots() {
+            const slots = {};
+            Object.keys(slotBag).forEach(k => {
+                slots[k] = () => {
+                    return this.getSlot(k);
+                }
+            })
+            return slots
+        },
+        slotLen(slot) {
+            slot = slotName(slot);
+            return slotBag[slot] ? slotBag[slot].length : 0;
+        },
+        mergeBag(bag) {
+            if (!bag) return this;
+            const slots = is.Function(bag.getSlots) ? bag.getSlots() : bag;
+            if (Array.isArray(bag) || isVNode(bag)) {
+                this.setSlot(undefined, () => bag);
+            } else {
+                Object.keys(slots).forEach(k => {
+                    this.setSlot(k, slots[k]);
+                });
+            }
+
+            return this;
+        }
+    };
 }

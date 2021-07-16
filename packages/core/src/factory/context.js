@@ -4,16 +4,18 @@ import extend from '@form-create/utils/lib/extend';
 import mergeProps from '@form-create/utils/lib/mergeprops';
 import {enumerable} from '../frame/util';
 import {deepCopy} from '@form-create/utils/lib/deepextend';
+import {markRaw} from 'vue';
+import {hasProperty} from '@form-create/utils/lib/type';
 
 function bind(ctx) {
     Object.defineProperties(ctx.origin, {
-        __fc__: enumerable(ctx, true)
+        __fc__: enumerable(markRaw(ctx), true)
     });
 }
 
 export default function RuleContext(handle, rule) {
     const id = unique();
-
+    const isInput = hasProperty(rule,'field');
     extend(this, {
         id,
         ref: id,
@@ -31,10 +33,11 @@ export default function RuleContext(handle, rule) {
         prop: {...rule},
         computed: {},
         payload: {},
-        input: !!rule.field,
+        refRule: {},
+        input: isInput,
         el: undefined,
-        defaultValue: rule.field ? deepCopy(rule.value) : undefined,
-        field: rule.field || undefined,
+        defaultValue: isInput ? deepCopy(rule.value) : undefined,
+        field: rule.field || undefined
     })
 
     this.updateType();

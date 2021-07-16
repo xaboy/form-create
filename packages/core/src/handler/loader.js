@@ -71,7 +71,7 @@ export default function useLoader(Handler) {
                 if (this.pageEnd) {
                     this.bus.$emit('load-end');
                 }
-                this.vm._renderRule();
+                this.vm.renderRule();
                 this.$render.initOrgChildren();
                 this.syncForm();
             });
@@ -188,8 +188,8 @@ export default function useLoader(Handler) {
                     this.effect(ctx, 'loaded');
                 }
 
-                if (ctx.input)
-                    Object.defineProperty(r, 'value', this.valueHandle(ctx));
+                // if (ctx.input)
+                //     Object.defineProperty(r, 'value', this.valueHandle(ctx));
                 if (this.refreshControl(ctx)) this.cycleLoad = true;
                 return ctx;
             });
@@ -218,7 +218,7 @@ export default function useLoader(Handler) {
                 if (valid) {
                     flag = true;
                     const ruleCon = {
-                        type: 'fcFragment',
+                        type: 'template',
                         native: true,
                         __ctrl: true,
                         children: rule,
@@ -273,7 +273,7 @@ export default function useLoader(Handler) {
         },
         //todo 组件生成全部通过 alias
         refresh() {
-            this.vm._refresh();
+            this.vm.refresh();
         },
     });
 }

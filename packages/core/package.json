@@ -39,7 +39,8 @@
     },
     "homepage": "http://www.form-create.com",
     "dependencies": {
-        "@form-create/utils": "^2.5.6"
+        "@form-create/utils": "^2.5.6",
+        "mitt": "^2.1.0"
     },
     "publishConfig": {
         "access": "public"

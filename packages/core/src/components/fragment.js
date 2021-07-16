@@ -1,9 +1,11 @@
-const NAME = 'fcFragment';
+import {defineComponent} from 'vue';
 
-export default {
+const NAME = 'FcFragment';
+
+export default defineComponent({
     name: NAME,
     functional: true,
-    render(h, ctx) {
-        return ctx.children
+    render(h) {
+        return h.$slots.default();
     }
-}
+})

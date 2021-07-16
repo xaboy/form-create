@@ -1,8 +1,8 @@
-import toLine from '@form-create/utils/lib/toline';
+import toLine, {_parseProp} from '@form-create/utils/lib/toline';
 import is from '@form-create/utils/lib/type';
 import toString from '@form-create/utils/lib/tostring';
 import extend from '@form-create/utils/lib/extend';
-import Vue from 'vue';
+import {createVNode, resolveComponent, getCurrentInstance} from 'vue';
 
 function parseProp(prop) {
     if (is.String(prop))
@@ -14,20 +14,14 @@ export function CreateNodeFactory() {
 
     const aliasMap = {};
 
-    function CreateNode(vm) {
-        vm && this.setVm(vm);
+    function CreateNode() {
     }
 
     extend(CreateNode.prototype, {
-        setVm(vm) {
-            this.vm = vm;
-            this.$h = vm.$createElement;
-        },
         make(tag, data, children) {
-            if (Vue.config.isReservedTag(tag) && data.nativeOn) delete data.nativeOn;
-            let Node = this.$h(tag, parseProp(data), children || []);
-            Node.context = this.vm;
-            return Node;
+            console.log(tag);
+            // if (Vue.config.isReservedTag(tag) && data.nativeOn) delete data.nativeOn;
+            return createVNode(getCurrentInstance().appContext.config.isNativeTag(tag) ? tag : resolveComponent(tag), _parseProp(data), children);
         },
         aliasMap
     });

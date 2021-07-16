@@ -1,20 +1,25 @@
-import extend from '@form-create/utils/lib/extend';
+import {
+    defineComponent,
+    getCurrentInstance,
+    reactive,
+    toRefs,
+    provide,
+    inject,
+    onMounted,
+    onBeforeUnmount,
+    onUpdated,
+    watch,
+    markRaw
+} from 'vue/dist/vue.esm-bundler.js';
+import * as vue from 'vue/dist/vue.esm-bundler.js';
+
+window.__vue = vue;
 
 const NAME = 'FormCreate';
 
 export default function $FormCreate(FormCreate) {
-    return {
+    return defineComponent({
         name: NAME,
-        componentName: NAME,
-        model: {
-            prop: 'api'
-        },
-        provide() {
-            return {
-                $pfc: this,
-            }
-        },
-        inject: {$pfc: {default: null}},
         props: {
             rule: {
                 type: Array,
@@ -22,70 +27,89 @@ export default function $FormCreate(FormCreate) {
             },
             option: {
                 type: Object,
-                default: () => {
-                    return {};
-                }
+                default: () => ({})
             },
             extendOption: Boolean,
-            value: Object,
+            modelValue: Object,
             api: Object,
         },
-        data() {
-            return {
-                formData: undefined,
+        emits: ['update:api', 'update:modelValue', 'mounted', 'submit', 'change'],
+        render() {
+            return this.fc.render();
+        },
+        setup(props, context) {
+            console.log(context, props, 'form-create123');
+
+            const vm = getCurrentInstance();
+            provide('pfc', vm.ctx);
+            const parent = inject('pfc');
+            console.log(parent, 'parentparentparentparent');
+
+            window.vm = vm;
+
+            const {rule, modelValue} = toRefs(props);
+
+            const data = reactive({
                 destroyed: false,
-                validate: {},
-                $f: undefined,
                 isShow: true,
                 unique: 1,
-                renderRule: [...this.rule || []],
+                renderRule: [...rule.value || []],
                 updateValue: ''
-            };
-        },
-        render() {
-            return this.formCreate.render();
-        },
-        methods: {
-            _refresh() {
-                ++this.unique;
-            },
-            _renderRule() {
-                this.renderRule = [...this.rule || []];
-            },
-            _updateValue(value) {
-                if (this.destroyed) return;
-                this.updateValue = JSON.stringify(value);
-                this.$emit('update:value', value);
-            }
-        },
-        watch: {
-            value: {
-                handler(n) {
-                    if (JSON.stringify(n) === this.updateValue) return;
-                    this.$f.setValue(n);
+            });
+
+            const fc = new FormCreate(vm);
+            const fapi = fc.api();
+
+            onMounted(() => {
+                fc.mounted();
+            })
+
+            onBeforeUnmount(() => {
+                data.destroyed = true;
+                fc.unmount();
+            })
+
+            onUpdated(() => {
+                fc.updated();
+            });
+
+            watch(() => [...rule.value], function (n, o) {
+                if (n.length === data.renderRule.length && n.every(v => data.renderRule.indexOf(v) > -1)) return;
+                fc.$handle.reloadRule(rule.value);
+                vm.ctx.renderRule();
+            })
+
+            watch(props.option, function (n) {
+                fc.initOptions(n);
+                fapi.refresh();
+            });
+
+            watch(modelValue, (n) => {
+                if (JSON.stringify(n) === data.updateValue) return;
+                fapi.setValue(n);
+            }, {deep: true});
+
+            return {
+                fc: markRaw(fc),
+                parent: parent ? markRaw(parent) : parent,
+                fapi: markRaw(fapi),
+                ...toRefs(data),
+                refresh() {
+                    ++data.unique;
                 },
-                deep: true
-            },
-            option: {
-                handler(n) {
-                    this.formCreate.initOptions(n);
-                    this.$f.refresh();
+                renderRule() {
+                    data.renderRule = [...rule.value || []];
                 },
-                deep: true
-            },
-            rule(n) {
-                if (n.length === this.renderRule.length && n.every(v => this.renderRule.indexOf(v) > -1)) return;
-                this.formCreate.$handle.reloadRule(n);
-                this._renderRule();
+                updateValue(value) {
+                    if (data.destroyed) return;
+                    data.updateValue = JSON.stringify(value);
+                    this.$emit('update:modelValue', value);
+                }
             }
         },
         beforeCreate() {
-            const {rule, option, value} = this.$options.propsData;
-            this.formCreate = new FormCreate(this, rule, option);
-            extend(this.formCreate.options.formData, value || {});
-            Object.keys(this.formCreate.prop).forEach(k => {
-                extend(this.$options[k], this.formCreate.prop[k]);
-            })
-        },
-    }
+            this.fc.init();
+            this.$emit('update:api', this.fapi);
+        }
+    })
 }
