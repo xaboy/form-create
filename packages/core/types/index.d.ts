@@ -480,13 +480,13 @@ export interface FetchOption {
 export interface FetchEffectOption {
     action: String;
     to?: String;
-    parse?: (body: any) => any;
+    parse?: (body: any, rule: Object, api: Object) => any;
     method?: String;
     data?: Object;
     dataType?: 'json';
     headers?: Object;
     withCredentials?: Boolean;
-    onError?: (e: Error | ProgressEvent) => void;
+    onError?: (e: Error | ProgressEvent, rule: Object, api: Object) => void;
 }
 
 
