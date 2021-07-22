@@ -5,6 +5,7 @@ import {arrayAttrs, normalAttrs} from './attrs';
 import {err, logError} from '@form-create/utils/lib/console';
 import Mitt from './mitt';
 import {isVNode} from 'vue';
+import {upper} from '@form-create/utils/lib/toline';
 
 const PREFIX = '[[FORM-CREATE-PREFIX-';
 const SUFFIX = '-FORM-CREATE-SUFFIX]]';
@@ -196,4 +197,21 @@ export function makeSlotBag() {
             return this;
         }
     };
+}
+
+export function toProps(rule) {
+    const prop = {...(rule.attrs || {}), ...(rule.props || {})};
+    Object.keys(rule.nativeOn || {}).forEach(k => {
+        prop[(`on${upper(k)}`)] = rule.nativeOn[k];
+    })
+    Object.keys(rule.on || {}).forEach(k => {
+        prop[(`on${upper(k)}`)] = rule.on[k];
+    })
+    prop.key = rule.key;
+    prop.ref = rule.ref;
+    prop.class = rule.class;
+    prop.style = rule.style;
+    if (prop.slot) delete prop.slot;
+
+    return prop;
 }

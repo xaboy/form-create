@@ -1,5 +1,5 @@
 import $FormCreate from '../components/formCreate';
-import {createApp, h, ref, toRef, customRef, watch} from 'vue';
+import {createApp, h, ref, watch} from 'vue';
 import makerFactory from '../factory/maker';
 import Handle from '../handler';
 import fetch from './fetch';
@@ -30,13 +30,6 @@ function parseProp(name, id) {
 
 function nameProp() {
     return parseProp('name', ...arguments);
-}
-
-function _getEl(options) {
-    if (!options || !options.el) return window.document.body;
-    return is.Element(options.el)
-        ? options.el
-        : document.querySelector(options.el);
 }
 
 function exportAttrs(attrs) {
@@ -113,14 +106,15 @@ export default function FormCreateFactory(config) {
         return $FormCreate(FormCreate);
     }
 
-    function mountForm(rules, option) {
+    function createFormApp(rules, option) {
+        const Type = $form();
         return createApp({
             data() {
                 //todo 外部无法修改
                 return {rule: ref(rules), option: ref(option || {})};
             },
             render() {
-                return h($form(), {ref: 'fc', ...this.$data});
+                return h(Type, {ref: 'fc', ...this.$data});
             }
         });
     }
@@ -133,13 +127,11 @@ export default function FormCreateFactory(config) {
         return this;
     }
 
-    function create(rules, _opt, parent) {
-        let $vm = mountForm(rules, _opt || {});
-        console.log($vm);
-        const _this = $vm.$refs.fc.formCreate;
-        _this.$parent = parent;
-        _getEl(_this.options).appendChild($vm.$el);
-        return _this.api();
+    function create(rules, _opt) {
+        let app = createFormApp(rules, _opt || {});
+        config.appUse && config.appUse(app);
+        const vm = app.mount(_opt?.el || document.body);
+        return vm.$refs.fc.fapi;
     }
 
     function FormCreate(vm) {

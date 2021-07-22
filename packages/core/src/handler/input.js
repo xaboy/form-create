@@ -104,7 +104,3 @@ export default function useInput(Handler) {
         },
     });
 }
-
-function toEmpty(obj) {
-    Object.keys(obj).forEach(k => delete obj[k]);
-}

@@ -1,17 +1,17 @@
+import * as vue from 'vue/dist/vue.esm-bundler.js';
 import {
     defineComponent,
     getCurrentInstance,
+    inject,
+    markRaw,
+    onBeforeUnmount,
+    onMounted,
+    onUpdated,
+    provide,
     reactive,
     toRefs,
-    provide,
-    inject,
-    onMounted,
-    onBeforeUnmount,
-    onUpdated,
-    watch,
-    markRaw
+    watch
 } from 'vue/dist/vue.esm-bundler.js';
-import * as vue from 'vue/dist/vue.esm-bundler.js';
 
 window.__vue = vue;
 
@@ -38,7 +38,7 @@ export default function $FormCreate(FormCreate) {
             return this.fc.render();
         },
         setup(props, context) {
-            console.log(context, props, 'form-create123');
+            // console.log(context, props, 'form-create123');
 
             const vm = getCurrentInstance();
             provide('pfc', vm.ctx);

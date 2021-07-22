@@ -10,7 +10,7 @@ import useInput from './input';
 import useContext from './context';
 import useLifecycle from './lifecycle';
 import useEffect from './effect';
-import {reactive, watch} from 'vue';
+import {reactive} from 'vue';
 
 
 export default function Handler(fc) {

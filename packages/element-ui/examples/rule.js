@@ -1,6 +1,6 @@
 import {maker} from '../src'
 import Vue from 'vue'
-
+window.mock = mock;
 export default function mock() {
     return [
 
@@ -15,14 +15,18 @@ export default function mock() {
         // maker.create('testSlot', 'testSlot', 'testSlotTitle').children([
         //     maker.input('', 'asd').slot('asd').display(false),
         //     maker.input('', 'asd23').slot('asd'),
-        // ]),
+        // ]).directives({
+        //     afocus:{
+        //         value:'asf'
+        //     }
+        // }).directives({}),
 
         //cascader 多级联动组件
-        // maker.cascader({title: '所在区域', style: 'color:red'}, 'address', ['陕西省', '西安市']).props({
-        //     options: []
-        // }).effect({
-        //     address: '1'
-        // }),
+        maker.cascader({title: '所在区域', style: 'color:red'}, 'address', ['陕西省', '西安市']).props({
+            options: []
+        }).effect({
+            address: '1'
+        }),
 
         // {
         //     type:'div',
@@ -32,36 +36,36 @@ export default function mock() {
         //
         //
         // input 输入框组件
-        // maker.input('商品名称', 'goods_name', 'iphone').props({
-        //     placeholder: '请输入商品名称',
-        //     clearable: true,
-        //     disabled: false,
-        //     maxlength: 10,
-        //     prefixIcon: 'el-icon-info'
-        // }).setProp('prefix', 'prefix').setProp('suffix', 'suffix').validate([
-        //     {required: true, message: '请输入商品名称', trigger: 'change'}
-        // ]).control([
-        //     {
-        //         value: 'append',
-        //         child: true,
-        //         rule: [maker.create('template').children(['append']).slot('append').setProp('suffix', {
-        //             type: 'span',
-        //             children: ['asdf']
-        //         })]
-        //     },
-        //     {
-        //         value: 'prepend',
-        //         child: true,
-        //         rule: [maker.create('template').children(['prepend']).slot('prepend')]
-        //     },
-        // ]).on({
-        //     input(v) {
-        //         console.log(v);
-        //     }
-        // }).emit(['change']).className('goods-name').children([
-        //     maker.create('template').children(['append']).slot('append')
-        // ]).style('color:red').wrap({style:'color:red',class:'asdfasdf'})
-        //     .info('请输入商品名称!!!!!'),
+        maker.input('商品名称', 'goods_name', 'iphone').props({
+            placeholder: '请输入商品名称',
+            clearable: true,
+            disabled: false,
+            maxlength: 10,
+            prefixIcon: 'el-icon-info'
+        }).setProp('prefix', 'prefix').setProp('suffix', 'suffix').validate([
+            {required: true, message: '请输入商品名称', trigger: 'change'}
+        ]).control([
+            {
+                value: 'append',
+                child: true,
+                rule: [maker.create('template').children(['append']).slot('append').setProp('suffix', {
+                    type: 'span',
+                    children: ['asdf']
+                })]
+            },
+            {
+                value: 'prepend',
+                child: true,
+                rule: [maker.create('template').children(['prepend']).slot('prepend')]
+            },
+        ]).on({
+            input(v) {
+                console.log(v);
+            }
+        }).emit(['change']).className('goods-name').children([
+            maker.create('template').children(['append']).slot('append')
+        ]).style('color:red').wrap({style:'color:red',class:'asdfasdf'})
+            .info('请输入商品名称!!!!!'),
         //
         // {
         //     type: 'div',
@@ -70,16 +74,16 @@ export default function mock() {
         // },
 
         //autoComplete 自动选择组件
-        // maker.auto('自动完成', 'auto', 'xaboy').props({
-        //     fetchSuggestions: function (queryString, cb) {
-        //         cb([
-        //             {value: queryString}, {value: queryString + queryString}
-        //         ]);
-        //     }
-        // }).emitPrefix('xaboy').emit(['change']),
-
-
-        //textarea 组件
+        maker.auto('自动完成', 'auto', 'xaboy').props({
+            fetchSuggestions: function (queryString, cb) {
+                cb([
+                    {value: queryString}, {value: queryString + queryString}
+                ]);
+            }
+        }).emitPrefix('xaboy').emit(['change']).validate([{required: true}]),
+        //
+        //
+        // //textarea 组件
         maker.textarea('商品简介', 'goods_info', '').props({
             autosize: {minRows: 4, maxRows: 8},
             placeholder: '请输入商品名称'
@@ -88,7 +92,7 @@ export default function mock() {
             return 'val' === api.getValue('auto');
         }).link(['auto']).wrap({
             show: true
-        }),
+        }).validate([{required: true}]),
         //
         // {
         //     type: 'form-create',

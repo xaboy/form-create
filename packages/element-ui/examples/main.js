@@ -6,14 +6,14 @@
  * @Description  : 头部注释
  * @FilePath     : /form-create2/packages/element-ui/examples/main.js
  */
-import {createApp,h, defineComponent, resolveComponent} from 'vue'
+import {createApp,h, inject, defineComponent, resolveComponent, defineAsyncComponent} from 'vue'
 import ElementUI from 'element-plus/lib/index'
 import 'element-plus/lib/theme-chalk/index.css'
 import FormCreate from '../src'
 import App from './App.vue'
 
 const app = createApp(App)
-
+window.ELM = ElementUI;
 app.use(ElementUI)
 app.use(FormCreate)
 
@@ -32,16 +32,25 @@ FormCreate.register(addressEffect);
 // FormCreate.component('wangEditor', wangEditor);
 
 //自定义组件
-app.component('testSlot', defineComponent({
+FormCreate.component('testSlot', defineComponent({
     // components:{
     //     ElInput,
     // },
     // template:'<el-input />'
+    setup(){
+        console.log(inject('formCreateRule'));
+    },
     render(_,b) {
         window.bbb = this;
         return h('div',{}, this.$slots.asd());
     }
 }))
+
+FormCreate.directive('afocus',{  // 在绑定元素的 attribute 或事件监听器被应用之前调用
+    created() {
+        console.log('created');
+    }
+})
 
 //todo ------------------ Demo 用 ------------------
 

@@ -1,13 +1,28 @@
-import toLine, {_parseProp} from '@form-create/utils/lib/toline';
-import is from '@form-create/utils/lib/type';
+import toLine from '@form-create/utils/lib/toline';
 import toString from '@form-create/utils/lib/tostring';
 import extend from '@form-create/utils/lib/extend';
-import {createVNode, resolveComponent, getCurrentInstance} from 'vue';
+import {toProps} from '../frame/util';
+import {createVNode, getCurrentInstance, resolveComponent, resolveDirective, withDirectives} from 'vue';
 
-function parseProp(prop) {
-    if (is.String(prop))
-        return {domProps: {innerHTML: prop}};
-    return prop;
+
+function tidyDirectives(directives) {
+    return Object.keys(directives).map(n => {
+        const directive = directives[n];
+        return [
+            resolveDirective(n), directive.arg, directive.value, directive.modifiers
+        ]
+    });
+}
+
+function makeDirective(data, vn) {
+    let directives = data.directives;
+    if (!directives) return vn;
+    if (!Array.isArray(directives)) {
+        directives = [directives];
+    }
+    return withDirectives(vn, directives.reduce((lst, v) => {
+        return lst.concat(tidyDirectives(v));
+    }, []))
 }
 
 export function CreateNodeFactory() {
@@ -19,9 +34,10 @@ export function CreateNodeFactory() {
 
     extend(CreateNode.prototype, {
         make(tag, data, children) {
-            console.log(tag);
-            // if (Vue.config.isReservedTag(tag) && data.nativeOn) delete data.nativeOn;
-            return createVNode(getCurrentInstance().appContext.config.isNativeTag(tag) ? tag : resolveComponent(tag), _parseProp(data), children);
+            return makeDirective(data, this.h(tag, toProps(data), children));
+        },
+        h(tag, data, children) {
+            return createVNode(getCurrentInstance().appContext.config.isNativeTag(tag) ? tag : resolveComponent(tag), data, children);
         },
         aliasMap
     });

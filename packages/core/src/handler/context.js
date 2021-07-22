@@ -4,7 +4,7 @@ import BaseParser from '../factory/parser';
 import {$del, $set} from '@form-create/utils/lib';
 import is from '@form-create/utils/lib/type';
 import {invoke} from '../frame/util';
-import {toRef,watch} from 'vue';
+import {toRef, watch} from 'vue';
 import {attrs} from '../frame/attrs';
 
 
@@ -103,7 +103,7 @@ export default function useContext(Handler) {
             })
         },
         rmCtx(ctx) {
-            console.trace(ctx.field,'deleted');
+            // console.trace(ctx.field,'deleted');
             if (ctx.deleted) return;
             const {id, field, name} = ctx;
             if (ctx.input) {
@@ -114,7 +114,6 @@ export default function useContext(Handler) {
             }
 
             $del(this.ctxs, id);
-            $del(this.$render.renderList, id);
             $del(this.$render.orgChildren, id);
 
             const f = this.fieldCtx[field];

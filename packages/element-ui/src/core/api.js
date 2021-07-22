@@ -1,7 +1,6 @@
 import extend from '@form-create/utils/lib/extend';
 import is from '@form-create/utils/lib/type';
 import {invoke} from '@form-create/core/src/frame/util';
-import toArray from '@form-create/utils/lib/toarray';
 
 function tidyBtnProp(btn, def) {
     if (is.Boolean(btn))
@@ -13,75 +12,36 @@ function tidyBtnProp(btn, def) {
 export default function extendApi(api, h) {
     extend(api, {
         validate(callback) {
-            let flag;
-            const forms = api.children;
-            let len = forms.length;
-            const validate = () => {
-                h.$manager.validate((...args) => {
-                    if (!args[0] || !flag) {
-                        flag = args;
-                    }
-                    callback(...flag);
-                });
-            };
-
-            const validFn = (args) => {
-                setTimeout(() => {
-                    if (!args[0]) {
-                        if (!flag) {
-                            flag = args;
-                        }
-                    }
-                    if (!--len) {
-                        validate();
-                    }
-                });
-            };
-
-            forms.forEach(form => {
-                form.validate((...args) => validFn(args))
-            })
-
-            if (!len) {
-                validate();
-            }
-        },
-        validateField: (field, callback) => {
-            if (!h.fieldCtx[field])
-                return;
-            const sub = h.subForm[field];
-            let len = 0;
-            let flag;
-            const validate = () => {
-                h.$manager.validateField(field, (...args) => {
-                    if (args[0]) {
-                        flag = args;
-                    } else if (flag) {
-                        return callback('子表单验证未通过', flag[1]);
-                    }
-                    callback(...flag || args);
-                });
-            };
-            const validFn = (args) => {
-                setTimeout(() => {
-                    if (!args[0]) {
-                        if (!flag) {
-                            flag = args;
-                        }
-                    }
-                    if (!--len) {
-                        validate();
-                    }
-                });
-            };
-            sub && toArray(sub).forEach(form => {
-                len++;
-                form.validate((...args) => validFn(args))
+            return new Promise((resolve, reject) => {
+                const forms = api.children;
+                const all = [h.$manager.validate()];
+                forms.forEach(v => {
+                    all.push(v.validate());
+                })
+                Promise.all(all).then(() => {
+                    resolve(true);
+                    callback && callback(true);
+                }).catch((e) => {
+                    reject(e);
+                    callback && callback(e);
+                })
             });
-
-            if (!len) {
-                validate();
-            }
+        },
+        validateField(field, callback) {
+            return new Promise((resolve, reject) => {
+                const sub = h.subForm[field] || [];
+                const all = [h.$manager.validateField(field)];
+                sub.forEach(v => {
+                    all.push(v.validate());
+                })
+                Promise.all(all).then(() => {
+                    resolve(null);
+                    callback && callback(null);
+                }).catch((e) => {
+                    reject(e);
+                    callback && callback(e);
+                })
+            });
         },
         clearValidateState(fields, clearSub = true) {
             api.helper.tidyFields(fields).forEach(field => {
@@ -139,18 +99,17 @@ export default function extendApi(api, h) {
             api.refreshOptions();
         },
         submit(successFn, failFn) {
-            api.validate((valid) => {
-                if (valid) {
+            return new Promise((resolve, reject) => {
+                api.validate().then(() => {
                     let formData = api.formData();
-                    if (is.Function(successFn))
-                        invoke(() => successFn(formData, this));
-                    else {
-                        is.Function(h.options.onSubmit) && invoke(() => h.options.onSubmit(formData, this));
-                        h.vm.$emit('submit', formData, this);
-                    }
-                } else {
+                    is.Function(successFn) && invoke(() => successFn(formData, this));
+                    is.Function(h.options.onSubmit) && invoke(() => h.options.onSubmit(formData, this));
+                    h.vm.$emit('submit', formData, this);
+                    resolve(formData);
+                }).catch(() => {
                     is.Function(failFn) && invoke(() => failFn(this, ...arguments));
-                }
+                    reject(...arguments)
+                })
             });
         },
     });

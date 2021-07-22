@@ -1,33 +1,10 @@
 import extend from '@form-create/utils/lib/extend';
 import mergeProps from '@form-create/utils/lib/mergeprops';
-import is, {hasProperty} from '@form-create/utils/lib/type';
-import {_vue as Vue} from '../frame';
-import {tip} from '@form-create/utils/lib/console';
-import {invoke, makeSlotBag, mergeRule} from '../frame/util';
+import is from '@form-create/utils/lib/type';
+import {makeSlotBag, mergeRule, toProps} from '../frame/util';
 import toCase, {lower} from '@form-create/utils/lib/tocase';
-import {deepCopy, deepSet, toLine} from '@form-create/utils';
-import {h, resolveComponent, Fragment, computed, compile, createApp, render} from 'vue';
-import {_parseProp} from '@form-create/utils/lib/toline';
-
-function setTempProps(vm, ctx, api) {
-    if (!vm.$props) return;
-
-    const {prop} = ctx;
-    const keys = Object.keys(vm.$props);
-    const inject = injectProp(ctx, api);
-    const injectKeys = Object.keys(inject);
-
-    keys.forEach(key => {
-        if (hasProperty(prop.props, key))
-            vm.$props[key] = prop.props[key];
-        else if (injectKeys.indexOf(key) > -1) vm.$props[key] = inject[key];
-    });
-
-    const key = (vm.$options.model && vm.$options.model.prop) || 'value';
-    if (keys.indexOf(key) > -1) {
-        vm.$props[key] = prop.value;
-    }
-}
+import {deepSet} from '@form-create/utils';
+import {computed, Fragment, h, resolveComponent} from 'vue';
 
 function injectProp(ctx, api) {
     return {
@@ -45,7 +22,6 @@ function injectProp(ctx, api) {
 export default function useRender(Render) {
     extend(Render.prototype, {
         initRender() {
-            this.renderList = {};
             this.cacheConfig = {};
             this.clearOrgChildren();
         },
@@ -91,16 +67,6 @@ export default function useRender(Render) {
                 slotBag.setSlot(ctx.rule.slot, this.renderCtx(ctx, parent));
             }
         },
-        makeVm(rule) {
-            const vm = rule.vm;
-            if (!vm)
-                return createApp({});
-            else if (is.Function(vm))
-                return invoke(() => vm(this.$handle.getInjectData(rule)));
-            else if (!vm._uid)
-                return createApp(vm);
-            return vm;
-        },
         mergeGlobal(ctx) {
             const g = this.$handle.options.global;
             if (!g) return;
@@ -117,44 +83,6 @@ export default function useRender(Render) {
                 deepSet(ctx.prop, ctx.prop.optionsTo, ctx.prop.options);
             }
         },
-        renderTemp(ctx) {
-            if (!compile({})) {
-                tip('当前使用的Vue构建版本不支持compile,无法使用template功能');
-                return undefined;
-            }
-            const rule = ctx.prop;
-            const {id, key} = ctx;
-
-            if (!this.renderList[id]) {
-                if (!ctx.el) {
-                    ctx.el = this.makeVm(rule);
-                    this.vm.$nextTick(() => ctx.parser.mounted(ctx));
-                }
-
-                let vm = ctx.el;
-                if (ctx.input)
-                    vm.$on((vm.$options.model && vm.$options.model.event) || 'input', (value) => {
-                        this.onInput(ctx, value);
-                    });
-
-                this.renderList[id] = {
-                    vm,
-                    template: Vue.compile(rule.template)
-                };
-            }
-
-            const {vm, template} = this.renderList[id];
-
-            setTempProps(vm, ctx, this.$handle.api);
-
-            const vn = template.render.call(vm);
-
-            if (is.Undef(vn.data)) vn.data = {};
-            vn.key = key;
-            vn.data.ref = ctx.ref;
-            vn.data.key = key;
-            return vn;
-        },
         renderSides(vn, ctx, temp) {
             const prop = ctx[temp ? 'rule' : 'prop'];
             return [this.renderRule(prop.prefix), vn, this.renderRule(prop.suffix)];
@@ -163,10 +91,9 @@ export default function useRender(Render) {
             if (ctx.type === 'hidden') return;
             if (!this.cache[ctx.id]) {
                 let vn;
-                let cacheFlag = true;
                 const _type = ctx.trueType;
                 const none = !(is.Undef(ctx.rule.display) || !!ctx.rule.display);
-                if (_type === 'template' && !ctx.rule.template) {
+                if (_type === 'template') {
                     vn = this.renderChildren(ctx).default();
                     if (none) {
                         this.display(vn);
@@ -186,25 +113,19 @@ export default function useRender(Render) {
                         this.setCache(ctx, undefined, parent);
                         return;
                     }
-
-                    if (_type === 'template' && prop.template) {
-                        vn = this.renderTemp(ctx);
-                        cacheFlag = false;
-                    } else {
-                        vn = ctx.parser.render(this.renderChildren(ctx), ctx);
-                    }
-                    vn = this.renderSides(vn, ctx);
-                    if ((!(!ctx.input && is.Undef(prop.native))) && prop.native !== true) {
-                        vn = this.$manager.makeWrap(ctx, vn);
-                    }
-                    if (none) {
-                        vn = this.display(vn);
-                    }
-                    vn = this.item(ctx, vn)
+                    vn = this.vNode.h('FcFragment', injectProp(ctx, this.$handle.api), () => {
+                        let _vn = ctx.parser.render(this.renderChildren(ctx), ctx);
+                        _vn = this.renderSides(_vn, ctx);
+                        if ((!(!ctx.input && is.Undef(prop.native))) && prop.native !== true) {
+                            _vn = this.$manager.makeWrap(ctx, _vn);
+                        }
+                        if (none) {
+                            _vn = this.display(_vn);
+                        }
+                        return this.item(ctx, _vn)
+                    });
                 }
-                if (cacheFlag) {
-                    this.setCache(ctx, vn, parent);
-                }
+                this.setCache(ctx, vn, parent);
                 ctx._vnode = vn;
                 return vn;
             }
@@ -242,14 +163,13 @@ export default function useRender(Render) {
             return ctx.type === 'fragment' || (ctx.type === 'template' && !ctx.rule.template);
         },
         ctxProp(ctx, custom) {
-            const {ref, key} = ctx;
+            const {ref, key, rule} = ctx;
             this.$manager.mergeProp(ctx, custom);
             ctx.parser.mergeProp(ctx, custom);
             const props = [
                 {
-                    props: injectProp(ctx, this.$handle.api),
                     ref: ref,
-                    key: `${key}fc`,
+                    key: rule.key || `${key}fc`,
                     slot: undefined,
                 }
             ]
@@ -363,11 +283,10 @@ export default function useRender(Render) {
             const slotBag = makeSlotBag();
             if (is.trueArray(rule.children)) {
                 rule.children.forEach(v => {
-                    console.log(v?.slot);
                     slotBag.setSlot(v?.slot, () => this.renderRule(v));
                 });
             }
-            return this.$h(resolveComponent(type), _parseProp(rule), slotBag.mergeBag(children).getSlots());
+            return this.$h(resolveComponent(type), toProps(rule), slotBag.mergeBag(children).getSlots());
 
         }
     })

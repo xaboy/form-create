@@ -8,12 +8,6 @@ function isTooltip(info) {
     return info.type === 'tooltip';
 }
 
-const upperCaseReg = /[A-Z]/;
-
-export function isAttr(name, value) {
-    return (!upperCaseReg.test(name) && (is.String(value) || is.Number(value)))
-}
-
 function tidy(props, name) {
     if (!hasProperty(props, name)) return;
     if (is.String(props[name])) {
@@ -33,10 +27,15 @@ function tidyBool(opt, name) {
 
 export default {
     validate(call) {
-        this.form().validate(call);
+        return this.form().validate(call);
     },
-    validateField(field, call) {
-        this.form().validateField(field, call);
+    validateField(field) {
+        return new Promise((resolve, reject) => {
+            this.form().validateField(field, (res) => {
+                res ? reject(res) : resolve(null);
+            });
+
+        });
     },
     clearValidateState(ctx) {
         const fItem = this.vm.$refs[ctx.wrapRef];
