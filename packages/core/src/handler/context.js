@@ -114,7 +114,6 @@ export default function useContext(Handler) {
             }
 
             $del(this.ctxs, id);
-            $del(this.$render.orgChildren, id);
 
             const f = this.fieldCtx[field];
 

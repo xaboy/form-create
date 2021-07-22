@@ -8,6 +8,7 @@ import {computed, Fragment, h, resolveComponent} from 'vue';
 
 function injectProp(ctx, api) {
     return {
+        key: ctx.key,
         formCreate: api,
         formCreateField: ctx.field,
         formCreateOptions: ctx.prop.options,
@@ -23,20 +24,6 @@ export default function useRender(Render) {
     extend(Render.prototype, {
         initRender() {
             this.cacheConfig = {};
-            this.clearOrgChildren();
-        },
-        initOrgChildren() {
-            const ctxs = this.$handle.ctxs;
-            this.orgChildren = Object.keys(ctxs).reduce((initial, id) => {
-                const children = ctxs[id].rule.children;
-                initial[id] = is.trueArray(children) ? [...children] : [];
-
-                return initial;
-            }, {});
-
-        },
-        clearOrgChildren() {
-            this.orgChildren = {};
         },
         render() {
             // debugger
@@ -46,13 +33,10 @@ export default function useRender(Render) {
             }
             this.$h = h;
             this.$manager.beforeRender();
-
             const slotBag = makeSlotBag();
-
-            const vn = this.sort.map((id) => {
-                const ctx = this.$handle.ctxs[id];
-                this.renderSlot(slotBag, ctx);
-            }).filter((val) => val !== undefined);
+            this.sort.forEach((k) => {
+                this.renderSlot(slotBag, this.$handle.ctxs[k]);
+            });
 
             return this.$manager.render(slotBag);
         },
@@ -94,11 +78,13 @@ export default function useRender(Render) {
                 const _type = ctx.trueType;
                 const none = !(is.Undef(ctx.rule.display) || !!ctx.rule.display);
                 if (_type === 'template') {
-                    vn = this.renderChildren(ctx).default();
-                    if (none) {
-                        this.display(vn);
-                    }
-                    vn = this.item(ctx, vn);
+                    vn = this.item(ctx, () => {
+                        vn = this.renderChildren(ctx).default();
+                        if (none) {
+                            this.display(vn);
+                        }
+                        return vn;
+                    });
                 } else if (_type === 'fcFragment') {
                     vn = this.renderChildren(ctx);
                 } else {
@@ -113,7 +99,7 @@ export default function useRender(Render) {
                         this.setCache(ctx, undefined, parent);
                         return;
                     }
-                    vn = this.vNode.h('FcFragment', injectProp(ctx, this.$handle.api), () => {
+                    vn = this.item(ctx, () => {
                         let _vn = ctx.parser.render(this.renderChildren(ctx), ctx);
                         _vn = this.renderSides(_vn, ctx);
                         if ((!(!ctx.input && is.Undef(prop.native))) && prop.native !== true) {
@@ -122,7 +108,7 @@ export default function useRender(Render) {
                         if (none) {
                             _vn = this.display(_vn);
                         }
-                        return this.item(ctx, _vn)
+                        return _vn
                     });
                 }
                 this.setCache(ctx, vn, parent);
@@ -155,12 +141,10 @@ export default function useRender(Render) {
             }
         },
         item(ctx, vn) {
-            return this.$h(Fragment, {
-                key: ctx.key,
-            }, vn);
+            return this.vNode.h('FcFragment', injectProp(ctx, this.$handle.api), vn);
         },
         isFragment(ctx) {
-            return ctx.type === 'fragment' || (ctx.type === 'template' && !ctx.rule.template);
+            return ctx.type === 'fragment' || ctx.type === 'template';
         },
         ctxProp(ctx, custom) {
             const {ref, key, rule} = ctx;
@@ -208,43 +192,19 @@ export default function useRender(Render) {
             this.$handle.onInput(ctx, value);
         },
         renderChildren(ctx) {
-            const {children} = ctx.rule, orgChildren = this.orgChildren[ctx.id];
+            const {children} = ctx.rule;
 
-            const isRm = child => {
-                return !is.String(child) && child.__fc__ && !this.$handle.ctxs[child.__fc__.id];
-            }
-
-            if (!is.trueArray(children) && orgChildren) {
-                this.$handle.deferSyncValue(() => {
-                    orgChildren.forEach(child => {
-                        if (!child) return;
-                        if (isRm(child)) {
-                            this.$handle.rmCtx(child.__fc__);
-                        }
-                    });
-                });
-                this.orgChildren[ctx.id] = [];
-                return {};
-            }
-
-            orgChildren && this.$handle.deferSyncValue(() => {
-                orgChildren.forEach(child => {
-                    if (!child) return;
-                    if (children.indexOf(child) === -1 && isRm(child)) {
-                        this.$handle.rmCtx(child.__fc__);
-                    }
-                });
-            });
-
-            if (!children.length) return {};
+            if (!is.trueArray(children)) return {};
             const slotBag = makeSlotBag()
+            let flag = true;
             children.map(child => {
                 if (!child) return;
                 if (is.String(child)) return slotBag.setSlot(null, child);
                 if (child.__fc__) {
                     return this.renderSlot(slotBag, child.__fc__, ctx);
                 }
-                if (!this.$handle.isRepeatRule(child.__origin__ || child) && child.type) {
+                if (flag && !this.$handle.isRepeatRule(child.__origin__ || child) && child.type) {
+                    flag = false;
                     this.vm.$nextTick(() => {
                         this.$handle.loadChildren(children, ctx);
                         this.$handle.refresh();
@@ -252,7 +212,6 @@ export default function useRender(Render) {
                 }
             });
             return slotBag.getSlots();
-
         },
         defaultRender(ctx, children) {
             const prop = ctx.prop;

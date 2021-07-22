@@ -72,7 +72,6 @@ export default function useLoader(Handler) {
                     this.bus.$emit('load-end');
                 }
                 this.vm.renderRule();
-                this.$render.initOrgChildren();
                 this.syncForm();
             });
         },
@@ -254,7 +253,6 @@ export default function useLoader(Handler) {
             const ctxs = {...this.ctxs};
 
             this.clearNextTick();
-            this.$render.clearOrgChildren();
             this.initData(rules);
             this.fc.rules = rules;
 
