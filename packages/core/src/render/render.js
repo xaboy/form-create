@@ -217,14 +217,14 @@ export default function useRender(Render) {
             }, [vn]);
         },
         ctxProp(ctx, custom) {
-            const {ref, key} = ctx;
+            const {ref, key, rule} = ctx;
             this.$manager.mergeProp(ctx, custom);
             ctx.parser.mergeProp(ctx, custom);
             const props = [
                 {
                     props: injectProp(ctx, this.$handle.api),
                     ref: ref,
-                    key: `${key}fc`,
+                    key: rule.key || `${key}fc`,
                     slot: undefined,
                 }
             ]

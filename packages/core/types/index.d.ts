@@ -143,6 +143,7 @@ export interface Control<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
 export interface BaseRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> extends VNodeData {
     type: string;
     field?: string;
+    key?: string;
     name?: string;
     emitPrefix?: string;
     value?: any;
@@ -203,6 +204,8 @@ export class BaseCreator<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
 
     props(prop: { [key: string]: any }): this;
     props(prop: string, val: any): this;
+
+    key(key: string): this;
 
     attrs(prop: { [key: string]: any }): this;
     attrs(prop: string, val: any): this;
