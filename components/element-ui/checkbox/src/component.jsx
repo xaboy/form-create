@@ -41,11 +41,11 @@ export default defineComponent({
     },
     render() {
         const Type = resolveComponent(this.type === 'button' ? 'ElCheckboxButton' : 'ElCheckbox');
-        return <ElCheckboxGroup {...this.$attrs} modelValue={this.trueValue}
+        return <ElCheckboxGroup {...this.$attrs} modelValue={this.trueValue} v-slots={getSlot(this.$slots, ['default'])}
             onUpdate:modelValue={this.onInput}>{this.options.map((opt, index) => {
                 const props = {...opt};
                 delete props.value;
-                return <Type {...props} key={Type + index + opt.value}/>
-            })}{getSlot(this.$slots)}</ElCheckboxGroup>
+                return <Type {...props} key={index + opt.value}/>
+            })}{this.$slots.default?.()}</ElCheckboxGroup>
     }
 });
