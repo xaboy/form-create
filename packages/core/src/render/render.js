@@ -27,6 +27,9 @@ export default function useRender(Render) {
         },
         renderSlot(slotBag, ctx, parent) {
             if (this.isFragment(ctx)) {
+                ctx.initProp();
+                this.mergeGlobal(ctx);
+                ctx.initNone();
                 const slots = this.renderChildren(ctx);
                 const def = slots.default;
                 def && slotBag.setSlot(ctx.rule.slot, () => def());
@@ -60,42 +63,29 @@ export default function useRender(Render) {
             if (ctx.type === 'hidden') return;
             if (!this.cache[ctx.id]) {
                 let vn;
-                const _type = ctx.trueType;
-                const none = !(is.Undef(ctx.rule.display) || !!ctx.rule.display);
-                if (_type === 'template') {
-                    vn = this.item(ctx, () => {
-                        vn = this.renderChildren(ctx).default();
-                        if (none) {
-                            this.display(vn);
-                        }
-                        return vn;
-                    });
-                } else if (_type === 'fcFragment') {
-                    vn = this.renderChildren(ctx);
-                } else {
-                    ctx.initProp();
-                    this.mergeGlobal(ctx);
-                    this.$manager.tidyRule(ctx);
-                    this.setOptions(ctx);
-                    this.ctxProp(ctx);
-                    let prop = ctx.prop;
+                ctx.initProp();
+                this.mergeGlobal(ctx);
+                ctx.initNone();
+                this.$manager.tidyRule(ctx);
+                this.setOptions(ctx);
+                this.ctxProp(ctx);
+                let prop = ctx.prop;
 
-                    if (prop.hidden) {
-                        this.setCache(ctx, undefined, parent);
-                        return;
-                    }
-                    vn = this.item(ctx, () => {
-                        let _vn = ctx.parser.render(this.renderChildren(ctx), ctx);
-                        _vn = this.renderSides(_vn, ctx);
-                        if ((!(!ctx.input && is.Undef(prop.native))) && prop.native !== true) {
-                            _vn = this.$manager.makeWrap(ctx, _vn);
-                        }
-                        if (none) {
-                            _vn = this.display(_vn);
-                        }
-                        return _vn
-                    });
+                if (prop.hidden) {
+                    this.setCache(ctx, undefined, parent);
+                    return;
                 }
+                vn = this.item(ctx, () => {
+                    let _vn = ctx.parser.render(this.renderChildren(ctx), ctx);
+                    _vn = this.renderSides(_vn, ctx);
+                    if ((!(!ctx.input && is.Undef(prop.native))) && prop.native !== true) {
+                        _vn = this.$manager.makeWrap(ctx, _vn);
+                    }
+                    if (ctx.none) {
+                        _vn = this.display(_vn);
+                    }
+                    return _vn
+                });
                 this.setCache(ctx, vn, parent);
                 ctx._vnode = vn;
                 return vn;

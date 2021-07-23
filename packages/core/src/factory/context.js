@@ -5,7 +5,16 @@ import mergeProps from '@form-create/utils/lib/mergeprops';
 import {enumerable} from '../frame/util';
 import {deepCopy} from '@form-create/utils/lib/deepextend';
 import {markRaw} from 'vue';
-import {hasProperty} from '@form-create/utils/lib/type';
+import is, {hasProperty} from '@form-create/utils/lib/type';
+
+function isNone(ctx) {
+    const none = !(is.Undef(ctx.prop.display) || !!ctx.prop.display);
+    if (ctx.parent) {
+        return ctx.parent.none || none;
+    } else {
+        return none;
+    }
+}
 
 function bind(ctx) {
     Object.defineProperties(ctx.origin, {
@@ -24,6 +33,7 @@ export default function RuleContext(handle, rule) {
         origin: rule.__origin__ || rule,
         name: rule.name,
 
+        none: false,
         watch: [],
         linkOn: [],
         root: [],
@@ -71,6 +81,9 @@ extend(RuleContext.prototype, {
     initProp() {
         this.prop = mergeProps([this.rule, ...Object.keys(this.payload).map(k => this.payload[k]), this.computed]);
     },
+    initNone(){
+        this.none = isNone(this);
+    },
     check(handle) {
         return this.vm === handle.vm
     },
@@ -106,6 +119,7 @@ extend(RuleContext.prototype, {
             vNode: undef,
             parent: null,
             cacheConfig: null,
+            none: false,
         })
     },
     rmCtrl() {
