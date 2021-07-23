@@ -15,7 +15,7 @@ function bind(ctx) {
 
 export default function RuleContext(handle, rule) {
     const id = unique();
-    const isInput = hasProperty(rule,'field');
+    const isInput = hasProperty(rule, 'field');
     extend(this, {
         id,
         ref: id,

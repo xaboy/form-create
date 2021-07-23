@@ -4,21 +4,7 @@ import is from '@form-create/utils/lib/type';
 import {makeSlotBag, mergeRule, toProps} from '../frame/util';
 import toCase, {lower} from '@form-create/utils/lib/tocase';
 import {deepSet} from '@form-create/utils';
-import {computed, Fragment, h, resolveComponent} from 'vue';
-
-function injectProp(ctx, api) {
-    return {
-        key: ctx.key,
-        formCreate: api,
-        formCreateField: ctx.field,
-        formCreateOptions: ctx.prop.options,
-        formCreateRule: (function () {
-            const temp = {...ctx.prop};
-            return temp.on = temp.on ? {...temp.on} : {}, temp;
-        }()),
-    }
-}
-
+import {computed, h, resolveComponent} from 'vue';
 
 export default function useRender(Render) {
     extend(Render.prototype, {
@@ -26,8 +12,7 @@ export default function useRender(Render) {
             this.cacheConfig = {};
         },
         render() {
-            // debugger
-            console.log('renderrrrr');
+            // console.log('renderrrrr');
             if (!this.vm.isShow) {
                 return;
             }
@@ -43,8 +28,8 @@ export default function useRender(Render) {
         renderSlot(slotBag, ctx, parent) {
             if (this.isFragment(ctx)) {
                 const slots = this.renderChildren(ctx);
-                const def = slots?.default;
-                slotBag.setSlot(ctx.rule.slot, () => def && def());
+                const def = slots.default;
+                def && slotBag.setSlot(ctx.rule.slot, () => def());
                 delete slots.default;
                 slotBag.mergeBag(slots);
             } else {
@@ -141,7 +126,15 @@ export default function useRender(Render) {
             }
         },
         item(ctx, vn) {
-            return this.vNode.h('FcFragment', injectProp(ctx, this.$handle.api), vn);
+            return this.vNode.h('FcFragment', {
+                key: ctx.key,
+                formCreate: {
+                    api: this.$handle.api,
+                    field: ctx.field,
+                    options: ctx.prop.options,
+                    rule: ctx.rule
+                }
+            }, vn);
         },
         isFragment(ctx) {
             return ctx.type === 'fragment' || ctx.type === 'template';
@@ -164,14 +157,13 @@ export default function useRender(Render) {
                         vnodeMounted: () => {
                             this.onMounted(ctx);
                         },
-                        'fc.sub-form': (subForm) => {
+                        'fc:subform': (subForm) => {
                             this.$handle.addSubForm(ctx, subForm);
                         }
                     }
                 };
                 if (ctx.input) {
                     data.on['update:modelValue'] = (value) => {
-                        console.log(value, ctx.field);
                         this.onInput(ctx, value);
                     };
                     data.props = {

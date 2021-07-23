@@ -1,17 +1,19 @@
-import {defineComponent, provide} from 'vue';
+import {defineComponent, provide, reactive, toRef, watch} from 'vue';
+import {extend} from '@form-create/utils';
 
 const NAME = 'FcFragment';
-
-const PROPS = ['Field', 'Options', 'Rule'];
 
 export default defineComponent({
     name: NAME,
     inheritAttrs: false,
-    props: PROPS.map(v => 'formCreate' + v),
+    props: ['formCreate'],
     setup(props) {
-        Object.keys(props).forEach(k => {
-            provide(k, props[k]);
-        })
+        const data = toRef(props, 'formCreate');
+        const $inject = reactive({...data.value});
+        watch(data, () => {
+            extend($inject, data.value);
+        });
+        provide('formCreate', $inject);
     },
     render() {
         return this.$slots.default();
