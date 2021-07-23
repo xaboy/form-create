@@ -1,10 +1,10 @@
 import extend from '@form-create/utils/lib/extend';
 import mergeProps from '@form-create/utils/lib/mergeprops';
 import is from '@form-create/utils/lib/type';
-import {makeSlotBag, mergeRule, toProps} from '../frame/util';
+import {makeSlotBag, mergeRule} from '../frame/util';
 import toCase, {lower} from '@form-create/utils/lib/tocase';
 import {deepSet} from '@form-create/utils';
-import {computed, h, resolveComponent} from 'vue';
+import {computed} from 'vue';
 
 export default function useRender(Render) {
     extend(Render.prototype, {
@@ -16,7 +16,6 @@ export default function useRender(Render) {
             if (!this.vm.isShow) {
                 return;
             }
-            this.$h = h;
             this.$manager.beforeRender();
             const slotBag = makeSlotBag();
             this.sort.forEach((k) => {
@@ -224,11 +223,10 @@ export default function useRender(Render) {
             const slotBag = makeSlotBag();
             if (is.trueArray(rule.children)) {
                 rule.children.forEach(v => {
-                    slotBag.setSlot(v?.slot, () => this.renderRule(v));
+                    v && slotBag.setSlot(v?.slot, () => this.renderRule(v));
                 });
             }
-            return this.$h(resolveComponent(type), toProps(rule), slotBag.mergeBag(children).getSlots());
-
+            return this.vNode.make(type, rule, slotBag.mergeBag(children).getSlots());
         }
     })
 }
