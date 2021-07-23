@@ -1,4 +1,4 @@
-import * as vue from 'vue/dist/vue.esm-bundler.js';
+import * as vue from 'vue';
 import {
     defineComponent,
     getCurrentInstance,
@@ -11,7 +11,7 @@ import {
     reactive,
     toRefs,
     watch
-} from 'vue/dist/vue.esm-bundler.js';
+} from 'vue';
 
 window.__vue = vue;
 
@@ -73,8 +73,8 @@ export default function $FormCreate(FormCreate) {
                 fc.updated();
             });
 
-            watch(() => [...rule.value], function (n, o) {
-                if (n.length === data.renderRule.length && n.every(v => data.renderRule.indexOf(v) > -1)) return;
+            watch(() => [...rule.value], function (n) {
+                if (fc.$handle.isBreakWatch() || n.length === data.renderRule.length && n.every(v => data.renderRule.indexOf(v) > -1)) return;
                 fc.$handle.reloadRule(rule.value);
                 vm.ctx.renderRule();
             })

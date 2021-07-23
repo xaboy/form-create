@@ -71,6 +71,9 @@ extend(Handler.prototype, {
         this.loadRule();
         this.$manager.__init();
     },
+    isBreakWatch(){
+        return this.loading || this.noWatchFn || this.reloading;
+    }
 })
 
 useInject(Handler);

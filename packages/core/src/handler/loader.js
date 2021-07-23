@@ -169,7 +169,7 @@ export default function useLoader(Handler) {
 
                 if (!parent) {
                     const _preIndex = preIndex(index);
-                    if (_preIndex > -1) {
+                    if (_preIndex > -1 || !index) {
                         this.sort.splice(_preIndex + 1, 0, ctx.id);
                     } else {
                         this.sort.push(ctx.id);

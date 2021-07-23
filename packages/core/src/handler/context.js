@@ -54,11 +54,8 @@ export default function useContext(Handler) {
                 ctx.refRule[key] = ref;
                 ctx.watch.push(watch(flag ? () => [...(ref.value || [])] : ref, (_, o) => {
                     const n = ref.value;
-                    if (this.loading || this.noWatchFn || this.reloading) return;
+                    if (this.isBreakWatch()) return;
                     this.watching = true;
-                    // if (key === 'hidden')
-                    //     ctx.updateKey(true);
-                    // else
                     if (key === 'link') {
                         ctx.link();
                         return;
