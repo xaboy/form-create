@@ -56,7 +56,7 @@ export default function useLoader(Handler) {
             return this.repeatRule.indexOf(rule) > -1;
         },
         loadRule() {
-            console.warn('%c load', 'color:blue');
+            // console.warn('%c load', 'color:blue');
             this.cycleLoad = false;
             this.loading = true;
             if (this.pageEnd) {
