@@ -31,6 +31,10 @@ export default {
             type: Boolean,
             default: false
         },
+        syncDisabled: {
+            type: Boolean,
+            default: true
+        },
         fontSize: {
             type: Number,
             default: 28
@@ -66,10 +70,12 @@ export default {
     },
     watch: {
         disabled(n) {
-            const lst = this.cacheRule;
-            Object.keys(lst).forEach(k => {
-                lst[k].$f.disabled(n);
-            })
+            if (this.syncDisabled) {
+                const lst = this.cacheRule;
+                Object.keys(lst).forEach(k => {
+                    lst[k].$f.disabled(n);
+                })
+            }
         },
         expand(n) {
             let d = n - this.value.length;
@@ -152,7 +158,9 @@ export default {
             this.cacheRule[key].$f = $f;
             this.subForm();
             this.$nextTick(() => {
-                $f.disabled(this.disabled);
+                if (this.syncDisabled) {
+                    $f.disabled(this.disabled);
+                }
                 this.$emit('itemMounted', $f, Object.keys(this.cacheRule).indexOf(key));
             });
         },
