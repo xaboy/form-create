@@ -1,6 +1,6 @@
 {
   "name": "@form-create/component-ivu-group",
-  "version": "2.5.7",
+  "version": "2.5.8",
   "description": "@form-create/iview 内置组件",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
