@@ -15,7 +15,6 @@ export default defineComponent({
     inject: ['formCreate'],
     emits: ['update:modelValue', 'fc:subform'],
     setup(props, _) {
-
         const {options} = toRefs(inject('formCreate'));
         const trueValue = ref([]);
         const value = toRef(props, 'modelValue');
@@ -40,12 +39,13 @@ export default defineComponent({
         }
     },
     render() {
-        const Type = resolveComponent(this.type === 'button' ? 'ElCheckboxButton' : 'ElCheckbox');
+        const name = this.type === 'button' ? 'ElCheckboxButton' : 'ElCheckbox';
+        const Type = resolveComponent(name);
         return <ElCheckboxGroup {...this.$attrs} modelValue={this.trueValue} v-slots={getSlot(this.$slots, ['default'])}
             onUpdate:modelValue={this.onInput}>{this.options.map((opt, index) => {
                 const props = {...opt};
                 delete props.value;
-                return <Type {...props} key={index + opt.value}/>
+                return <Type {...props} key={name + index + opt.value}/>
             })}{this.$slots.default?.()}</ElCheckboxGroup>
     }
 });

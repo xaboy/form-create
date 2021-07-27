@@ -1,23 +1,32 @@
-import is from '@form-create/utils/lib/type';
+import {defineComponent, inject, toRef, toRefs} from 'vue';
+import getSlot from '@form-create/utils/lib/slot';
 
 const NAME = 'fcSelect';
-export default {
+
+export default defineComponent({
     name: NAME,
-    functional: true,
     props: {
-        formCreateOptions: {
+        modelValue: {
             type: Array,
-            default: () => ([])
+            default: () => []
         },
+        type: String,
     },
-    render(h, ctx) {
-        return <ElSelect {...ctx.data}>{ctx.props.formCreateOptions.map((props, index) => {
-            const slot = props.slot;
-            return <ElOption {...{props}}
-                key={'' + index + props.value}>
-                {slot ? <template
-                    slot={props.slotName || 'default'}>{is.Function(slot) ? props.slot(h) : slot}</template> : null}
-            </ElOption>
-        })}{ctx.children}</ElSelect>;
+    inject: ['formCreate'],
+    emits: ['update:modelValue', 'fc:subform'],
+    setup(props) {
+        const {options} = toRefs(inject('formCreate'));
+        const value = toRef(props, 'modelValue');
+        return {
+            options,
+            value
+        }
+    },
+    render() {
+        return <ElSelect {...this.$attrs} modelValue={this.value}
+            onUpdate:modelValue={(v) => this.$emit('update:modelValue', v)}
+            v-slots={getSlot(this.$slots, ['default'])}>{this.options.map((props, index) => {
+                return <ElOption {...props} key={'' + index + props.value}/>
+            })}{this.$slots.default?.()}</ElSelect>;
     }
-}
+});

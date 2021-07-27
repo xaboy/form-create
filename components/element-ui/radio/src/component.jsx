@@ -1,49 +1,50 @@
+import {defineComponent, inject, ref, resolveComponent, toRef, toRefs} from 'vue';
 import getSlot from '@form-create/utils/lib/slot';
 
 const NAME = 'fcRadio';
 
-export default {
+export default defineComponent({
     name: NAME,
     props: {
-        formCreateRule: {
-            type: Object,
-            default: () => ({})
-        },
-        formCreateOptions: {
+        modelValue: {
             type: Array,
             default: () => []
         },
-        value: {},
         type: String,
     },
+    inject: ['formCreate'],
+    emits: ['update:modelValue', 'fc:subform'],
+    setup(props, _) {
+        const {options} = toRefs(inject('formCreate'));
+        const trueValue = ref([]);
+        const value = toRef(props, 'modelValue');
+        const update = () => {
+            trueValue.value = options.value.filter((opt) => opt.value === value.value).reduce((initial, opt) => opt.label, '')
+        }
+        update();
+        return {
+            options,
+            trueValue,
+            value,
+            onInput(n) {
+                _.emit('update:modelValue', options.value.filter((opt) => opt.label === n).reduce((initial, opt) => opt.value, ''));
+            },
+            update
+        }
+    },
     watch: {
-        value() {
+        modelValue() {
             this.update();
         }
     },
-    data() {
-        return {
-            trueValue: []
-        }
-    },
-    methods: {
-        onInput(n) {
-            this.$emit('input', this.formCreateOptions.filter((opt) => opt.label === n).reduce((initial, opt) => opt.value, ''));
-        },
-        update() {
-            this.trueValue = this.formCreateOptions.filter((opt) => opt.value === this.value).reduce((initial, opt) => opt.label, '');
-        }
-    },
-    created() {
-        this.update();
-    },
     render() {
-        return <ElRadioGroup {...this.formCreateRule} value={this.trueValue}
-            on-input={this.onInput}>{this.formCreateOptions.map((opt, index) => {
+        const name = this.type === 'button' ? 'ElRadioButton' : 'ElRadio';
+        const Type = resolveComponent(name);
+        return <ElRadioGroup {...this.$attrs} modelValue={this.trueValue} v-slots={getSlot(this.$slots, ['default'])}
+            onUpdate:modelValue={this.onInput}>{this.options.map((opt, index) => {
                 const props = {...opt};
-                const Type = this.type === 'button' ? 'ElRadioButton' : 'ElRadio';
                 delete props.value;
-                return <Type {...{props}} key={Type + index + opt.value}/>
-            })}{getSlot(this.$slots)}</ElRadioGroup>
+                return <Type {...props} key={name + index + opt.value}/>
+            })}{this.$slots.default?.()}</ElRadioGroup>
     }
-}
+});
