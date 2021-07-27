@@ -12,7 +12,6 @@ export default defineComponent({
         },
         type: String,
     },
-    inject: ['formCreate'],
     emits: ['update:modelValue', 'fc:subform'],
     setup(props, _) {
         const {options} = toRefs(inject('formCreate'));

@@ -1,9 +1,9 @@
+import {defineComponent} from 'vue';
 import toArray from '@form-create/utils/lib/toarray';
-import getSlot from '@form-create/utils/lib/slot';
 
 const NAME = 'fcTree';
 
-export default {
+export default defineComponent({
     name: NAME,
     formCreateParser: {
         mergeProp(ctx) {
@@ -15,57 +15,47 @@ export default {
         }
     },
     props: {
-        formCreateRule: {
-            type: Object,
-            default: () => ({props: {}})
-        },
-        type: {
-            type: String,
-            default: 'checked'
-        },
-        value: {
+        type: String,
+        modelValue: {
             type: [Array, String, Number],
             default: () => ([])
         }
     },
+    emits: ['update:modelValue', 'fc:subform'],
     watch: {
-        value() {
+        modelValue() {
             this.setValue();
         }
     },
     methods: {
-        onChange() {
-            this.updateValue()
-        },
         updateValue() {
             if (!this.$refs.tree) return;
-            const type = this.type.toLocaleLowerCase();
             let value;
-
-            if (type === 'selected') {
+            if (this.type === 'selected') {
                 value = this.$refs.tree.getCurrentKey();
             } else {
                 value = this.$refs.tree.getCheckedKeys();
             }
-
-            this.$emit('input', value);
+            this.$emit('update:modelValue', value);
         },
         setValue() {
-            const type = this.type.toLocaleLowerCase();
+            if (!this.$refs.tree) return;
+            const type = this.type;
 
             if (type === 'selected') {
-                this.$refs.tree.setCurrentKey(this.value);
+                this.$refs.tree.setCurrentKey(this.modelValue);
             } else {
-                this.$refs.tree.setCheckedKeys(toArray(this.value));
+                this.$refs.tree.setCheckedKeys(toArray(this.modelValue));
             }
         }
     },
     render() {
-        return <ElTree {...this.formCreateRule} ref="tree" on-check-change={() => this.updateValue()}
-            on-node-click={() => this.updateValue()}>{getSlot(this.$slots)}</ElTree>;
+        return <ElTree {...this.$attrs} ref="tree" onCheck-change={this.updateValue}
+            onNode-click={this.updateValue}
+            v-slots={this.$slots}/>;
     },
     mounted() {
         this.setValue();
         this.updateValue();
     }
-}
+});
