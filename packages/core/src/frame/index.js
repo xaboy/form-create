@@ -5,7 +5,7 @@ import Handle from '../handler';
 import fetch from './fetch';
 import {creatorFactory} from '..';
 import BaseParser from '../factory/parser';
-import {copyRule, copyRules, makeBus, mergeGlobal, parseJson, toJson} from './util';
+import {copyRule, copyRules, mergeGlobal, parseJson, toJson} from './util';
 import fragment from '../components/fragment';
 import is from '@form-create/utils/lib/type';
 import toCase from '@form-create/utils/lib/tocase';
@@ -16,6 +16,7 @@ import {arrayAttrs, keyAttrs, normalAttrs} from './attrs';
 import {appendProto} from '../factory/creator';
 import $fetch from './provider';
 import {deepCopy} from '@form-create/utils/lib/deepextend';
+import Mitt from '@form-create/utils/lib/mitt';
 
 function parseProp(name, id) {
     let prop;
@@ -146,7 +147,7 @@ export default function FormCreateFactory(config) {
                 directives,
             },
             CreateNode,
-            bus: makeBus(),
+            bus: new Mitt(),
             unwatch: null,
             options:ref({}),
             extendApi: config.extendApi || (api => api)

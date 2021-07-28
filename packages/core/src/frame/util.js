@@ -3,7 +3,6 @@ import is from '@form-create/utils/lib/type';
 import mergeProps from '@form-create/utils/lib/mergeprops';
 import {arrayAttrs, normalAttrs} from './attrs';
 import {err, logError} from '@form-create/utils/lib/console';
-import Mitt from './mitt';
 import {isVNode} from 'vue';
 import {upper} from '@form-create/utils/lib/toline';
 
@@ -125,17 +124,6 @@ export function invoke(fn, def) {
         logError(e);
     }
     return def;
-}
-
-export function makeBus() {
-    const mitt = new Mitt();
-
-    return {
-        $on: mitt.on,
-        $once: mitt.once,
-        $off: mitt.off,
-        $emit: mitt.emit,
-    }
 }
 
 export function makeSlotBag() {

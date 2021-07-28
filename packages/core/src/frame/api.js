@@ -316,8 +316,7 @@ export default function Api(h) {
             if (ctx) return ctx.el || h.vm.$refs[ctx.ref];
         },
         closeModal: (id) => {
-            const el = api.el(id);
-            el && el.$emit && el.$emit('close-modal');
+            h.bus.$emit('fc:closeModal:'+id);
         },
         getSubForm(field) {
             return h.subForm[field];
@@ -334,7 +333,7 @@ export default function Api(h) {
 
     ['on', 'once', 'off', 'set'].forEach(n => {
         api[n] = function (...args) {
-            h.vm[`$${n}`](...args);
+            h.bus.$on(...args);
         }
     });
 

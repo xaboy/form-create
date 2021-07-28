@@ -1,12 +1,13 @@
 import toArray from '@form-create/utils/lib/toarray';
 import './style.css';
+import {defineComponent} from 'vue';
+import Mitt from '@form-create/utils/lib/mitt';
 
 const NAME = 'fcFrame';
 
-export default {
+export default defineComponent({
     name: NAME,
     props: {
-        formCreateField: String,
         type: {
             type: String,
             default: 'input'
@@ -88,21 +89,13 @@ export default {
             default: () => {
             }
         },
-        onHandle: {
-            type: Function,
-            default(src) {
-                this.previewImage = this.getSrc(src);
-                this.previewVisible = true;
-            }
-        },
+        onHandle: Function,
         modal: {
             type: Object,
             default: () => ({})
         },
-        srcKey: {
-            type: [String, Number]
-        },
-        value: [Array, String, Number, Object],
+        srcKey: [String, Number],
+        modelValue: [Array, String, Number, Object],
         previewMask: undefined,
         footer: {
             type: Boolean,
@@ -122,25 +115,20 @@ export default {
         },
 
     },
+    inject: ['formCreate'],
+    emits: ['update:modelValue', 'change', 'fc:subform'],
     data() {
         return {
-            fileList: toArray(this.value),
+            fileList: toArray(this.modelValue),
             previewVisible: false,
             frameVisible: false,
-            previewImage: ''
+            previewImage: '',
+            bus: new Mitt()
         }
     },
     watch: {
-        value(n) {
+        modelValue(n) {
             this.fileList = toArray(n);
-        },
-        fileList(n) {
-            const val = this.maxLength === 1 ? (n[0] || '') : n;
-            this.$emit('input', val);
-            this.$emit('change', val);
-        },
-        src(n) {
-            this.modalVm && (this.modalVm.src = n);
         }
     },
     methods: {
@@ -148,10 +136,10 @@ export default {
             return unique;
         },
         closeModel(close) {
-            this.$emit(close ? '$close' : '$ok');
+            this.bus.$emit(close ? '$close' : '$ok');
             if (this.reload) {
-                this.$off('$ok');
-                this.$off('$close');
+                this.bus.$off('$ok');
+                this.bus.$off('$close');
             }
             this.frameVisible = false;
         },
@@ -165,21 +153,26 @@ export default {
             }
             this.frameVisible = true;
         },
-
-        makeInput() {
-            const props = {
-                type: 'text',
-                value: (this.fileList.map(v => this.getSrc(v))).toString(),
-                readonly: true
-            };
-
-            return <ElInput props={props} key={this.key('input')}>
-                {this.fileList.length ? <i slot="suffix" class="el-input__icon el-icon-circle-close"
-                    on-click={() => this.fileList = []}/> : null}
-                <ElButton icon={this.icon} on={{'click': () => this.showModel()}} slot="append"/>
-            </ElInput>
+        input() {
+            const n = this.fileList;
+            const val = this.maxLength === 1 ? (n[0] || '') : n;
+            this.$emit('update:modelValue', val);
+            this.$emit('change', val);
         },
-
+        makeInput() {
+            return <ElInput {...{
+                type: 'text',
+                modelValue: (this.fileList.map(v => this.getSrc(v))).toString(),
+                readonly: true
+            }} key={this.key('input')} v-slots={{
+                append: () => <ElButton icon={this.icon} onClick={() => this.showModel()}/>,
+                suffix: () => this.fileList.length ?
+                    <i class="el-input__icon el-icon-circle-close" onClick={() => {
+                        this.fileList = [];
+                        this.input();
+                    }}/> : null
+            }}/>
+        },
         makeGroup(children) {
             if (!this.maxLength || this.fileList.length < this.maxLength) {
                 children.push(this.makeBtn());
@@ -191,12 +184,11 @@ export default {
             return <div class='fc-files' key={this.key('file' + index)}>{...children}</div>;
         },
         valid(f) {
-            const field = this.formCreateField || this.field;
+            const field = this.formCreate.field || this.field;
             if (field && f !== field) {
                 throw new Error('[frame]无效的字段值');
             }
         },
-
         makeIcons(val, index) {
             if (this.handleIcon !== false || this.allowRemove === true) {
                 const icons = [];
@@ -212,17 +204,17 @@ export default {
         makeHandleIcon(val, index) {
             return <i
                 class={(this.handleIcon === true || this.handleIcon === undefined) ? 'el-icon-view' : this.handleIcon}
-                on-click={() => this.handleClick(val)} key={this.key('hi' + index)}/>
+                onClick={() => this.handleClick(val)} key={this.key('hi' + index)}/>
         },
 
         makeRemoveIcon(val, index) {
-            return <i class="el-icon-delete" on-click={() => this.handleRemove(val)} key={this.key('ri' + index)}/>
+            return <i class="el-icon-delete" onClick={() => this.handleRemove(val)} key={this.key('ri' + index)}/>
         },
 
         makeFiles() {
             return this.makeGroup(this.fileList.map((src, index) => {
                 return this.makeItem(index, [<i class="el-icon-tickets"
-                    on-click={() => this.handleClick(src)}/>, this.makeIcons(src, index)])
+                    onClick={() => this.handleClick(src)}/>, this.makeIcons(src, index)])
             }))
         },
         makeImages() {
@@ -231,7 +223,7 @@ export default {
             }))
         },
         makeBtn() {
-            return <div class='fc-upload-btn' on-click={() => this.showModel()} key={this.key('btn')}>
+            return <div class='fc-upload-btn' onClick={() => this.showModel()} key={this.key('btn')}>
                 <i class={this.icon}/>
             </div>
         },
@@ -239,7 +231,10 @@ export default {
             if (this.disabled) {
                 return;
             }
-            return this.onHandle(src);
+            return (this.onHandle || (src => {
+                this.previewImage = this.getSrc(src);
+                this.previewVisible = true;
+            }))(src);
         },
         handleRemove(src) {
             if (this.disabled) {
@@ -247,6 +242,7 @@ export default {
             }
             if (false !== this.onBeforeRemove(src)) {
                 this.fileList.splice(this.fileList.indexOf(src), 1);
+                this.input();
                 this.onRemove(src);
             }
         },
@@ -264,21 +260,19 @@ export default {
                         },
                         set: (field, value) => {
                             this.valid(field);
-                            if (!this.disabled)
-                                this.$emit('input', value);
-
+                            !this.disabled && this.$emit('update:modelValue', value);
                         },
                         get: (field) => {
                             this.valid(field);
-                            return this.value;
+                            return this.modelValue;
                         },
-                        onOk: fn => this.$on('$ok', fn),
-                        onClose: fn => this.$on('$close', fn)
+                        onOk: fn => this.bus.$on('$ok', fn),
+                        onClose: fn => this.bus.$on('$close', fn)
                     };
 
                 }
             } catch (e) {
-                console.log(e);
+                console.error(e);
             }
         },
         makeFooter() {
@@ -287,11 +281,11 @@ export default {
             if (!footer) {
                 return;
             }
-            return <div slot="footer">
+            return <div>
                 {closeBtn ? <ElButton
-                    on-click={() => (this.onCancel() !== false && (this.frameVisible = false))}>{closeBtnText}</ElButton> : null}
+                    onClick={() => (this.onCancel() !== false && (this.frameVisible = false))}>{closeBtnText}</ElButton> : null}
                 {okBtn ? <ElButton type="primary"
-                    on-click={() => (this.onOk() !== false && this.closeModel())}>{okBtnText}</ElButton> : null}
+                    onClick={() => (this.onOk() !== false && this.closeModel())}>{okBtnText}</ElButton> : null}
             </div>
         }
     },
@@ -314,22 +308,24 @@ export default {
             }
         });
         return <div class="_fc-frame">{node}
-            <el-dialog appendToBody={true} modal={this.previewMask} title={modalTitle} visible={this.previewVisible}
-                on-close={this.handleCancel}>
+            <ElDialog appendToBody={true} modal={this.previewMask} title={modalTitle} modelValue={this.previewVisible}
+                onClose={this.handleCancel}>
                 <img alt="example" style="width: 100%" src={this.previewImage}/>
-            </el-dialog>
-            <el-dialog appendToBody={true} props={{width, title, ...this.modal}} visible={this.frameVisible}
-                on-close={() => (this.closeModel(true))}>
+            </ElDialog>
+            <ElDialog appendToBody={true} {...{width, title, ...this.modal}} modelValue={this.frameVisible}
+                onClose={() => (this.closeModel(true))} v-slots={{
+                    footer: () => this.makeFooter()
+                }}>
                 {(this.frameVisible || !this.reload) ? <iframe ref="frame" src={src} frameBorder="0" style={{
                     'height': height,
                     'border': '0 none',
                     'width': '100%'
-                }}/> : null}
-                {this.makeFooter()}
-            </el-dialog>
+                }}/> : null}</ElDialog>
         </div>
     },
     mounted() {
-        this.$on('fc.closeModal', this.closeModal);
+        const close = ()=>(this.frameVisible = false);
+        this.formCreate.api.on('fc:closeModal:'+this.formCreate.name, close);
+        this.formCreate.api.on('fc:closeModal:'+this.formCreate.field, close);
     }
-}
+})

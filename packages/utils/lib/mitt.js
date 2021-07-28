@@ -5,7 +5,7 @@ export default function Mitt(all) {
 
     const mitt = {
 
-        on(type, handler) {
+        $on(type, handler) {
             const handlers = all.get(type);
             const added = handlers && handlers.push(handler);
             if (!added) {
@@ -13,22 +13,22 @@ export default function Mitt(all) {
             }
         },
 
-        once(type, handler) {
+        $once(type, handler) {
             handler._once = true;
-            mitt.on(type, handler);
+            mitt.$on(type, handler);
         },
 
-        off(type, handler) {
+        $off(type, handler) {
             const handlers = all.get(type);
             if (handlers) {
                 handlers.splice(handlers.indexOf(handler) >>> 0, 1);
             }
         },
 
-        emit(type, ...args) {
+        $emit(type, ...args) {
             (all.get(type) || []).slice().map((handler) => {
                 if (handler._once) {
-                    mitt.off(type, handler);
+                    mitt.$off(type, handler);
                     delete handler._once;
                 }
                 handler(...args);
