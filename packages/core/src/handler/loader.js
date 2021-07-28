@@ -23,9 +23,6 @@ export default function useLoader(Handler) {
 
             fullRule(rule);
 
-            if (rule.field && hasProperty(this.options.formData || {}, rule.field))
-                rule.value = this.options.formData[rule.field];
-
             rule.options = Array.isArray(rule.options) ? rule.options : [];
 
             ['on', 'props', 'nativeOn'].forEach(k => {

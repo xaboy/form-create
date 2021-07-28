@@ -28,20 +28,10 @@ export default {
     emits: ['fc:subform', 'update:modelValue', 'change', 'itemMounted'],
     watch: {
         disabled(n) {
-            this.cacheRule.$f.disabled(n);
+            this.syncDisabled && this.subApi.disabled(n);
         },
         modelValue(n) {
             this.setValue(n);
-        }
-    },
-    computed: {
-        fcOptions() {
-            const options = this.options ? this.options : {
-                submitBtn: false,
-                resetBtn: false,
-            };
-            options.formData = {...(this.modelValue || {})};
-            return options;
         }
     },
     methods: {
@@ -62,7 +52,7 @@ export default {
             this.subApi = api;
             this.$emit('fc:subform', api);
             this.$nextTick(() => {
-                api.disabled(this.disabled);
+                this.syncDisabled && api.disabled(this.disabled);
                 this.$emit('itemMounted', api);
             });
         }
@@ -79,6 +69,9 @@ export default {
             onEmit-event={this.$emit}
             onUpdate:api={this.add$f}
             rule={this.rule}
-            option={this.fcOptions} extendOption={true}/>
+            option={this.options || {
+                submitBtn: false,
+                resetBtn: false,
+            }} extendOption={true}/>
     }
 }
