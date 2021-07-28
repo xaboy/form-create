@@ -1,6 +1,7 @@
 import extend from '@form-create/utils/lib/extend';
 import is from '@form-create/utils/lib/type';
 import {invoke} from '@form-create/core/src/frame/util';
+import toArray from '@form-create/utils/lib/toarray';
 
 function tidyBtnProp(btn, def) {
     if (is.Boolean(btn))
@@ -31,7 +32,7 @@ export default function extendApi(api, h) {
             return new Promise((resolve, reject) => {
                 const sub = h.subForm[field] || [];
                 const all = [h.$manager.validateField(field)];
-                sub.forEach(v => {
+                toArray(sub).forEach(v => {
                     all.push(v.validate());
                 })
                 Promise.all(all).then(() => {

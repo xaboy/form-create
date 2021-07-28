@@ -33,7 +33,7 @@ export default function $FormCreate(FormCreate) {
             modelValue: Object,
             api: Object,
         },
-        emits: ['update:api', 'update:modelValue', 'mounted', 'submit', 'change'],
+        emits: ['update:api', 'update:modelValue', 'mounted', 'submit', 'change', 'emit-event'],
         render() {
             return this.fc.render();
         },
@@ -54,7 +54,7 @@ export default function $FormCreate(FormCreate) {
                 isShow: true,
                 unique: 1,
                 renderRule: [...rule.value || []],
-                updateValue: ''
+                updateValue: JSON.stringify(modelValue)
             });
 
             const fc = new FormCreate(vm);

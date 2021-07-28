@@ -72,7 +72,7 @@ export default function Api(h) {
             return h.rules
         },
         get parent() {
-            return h.vm.parent && h.vm.parent.ctx.fapi
+            return h.vm.parent && h.vm.parent.fapi
         },
         get children() {
             return allSubForm();

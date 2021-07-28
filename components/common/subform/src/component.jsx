@@ -5,34 +5,49 @@ export default {
     props: {
         rule: Array,
         options: Object,
-        formCreate: Object,
-        value: {
+        modelValue: {
             type: Object,
             default: () => ({})
         },
         disabled: {
             type: Boolean,
             default: false
+        },
+        syncDisabled: {
+            type: Boolean,
+            default: true
         }
     },
+    inject: ['formCreate'],
     data() {
         return {
-            cacheRule: {},
             cacheValue: {},
+            subApi: {},
         }
     },
+    emits: ['fc:subform', 'update:modelValue', 'change', 'itemMounted'],
     watch: {
         disabled(n) {
             this.cacheRule.$f.disabled(n);
         },
-        value(n) {
+        modelValue(n) {
             this.setValue(n);
+        }
+    },
+    computed: {
+        fcOptions() {
+            const options = this.options ? this.options : {
+                submitBtn: false,
+                resetBtn: false,
+            };
+            options.formData = {...(this.modelValue || {})};
+            return options;
         }
     },
     methods: {
         formData(value) {
             this.cacheValue = JSON.stringify(value);
-            this.$emit('input', value);
+            this.$emit('update:modelValue', value);
             this.$emit('change', value);
         },
         setValue(value) {
@@ -41,43 +56,29 @@ export default {
                 return;
             }
             this.cacheValue = str;
-            this.cacheRule.$f.coverValue(value || {});
+            this.subApi.coverValue(value || {});
         },
-        addRule() {
-            const options = this.options ? this.options : {
-                submitBtn: false,
-                resetBtn: false,
-            };
-            options.formData = {...(this.value || {})};
-            this.cacheRule = {rule: this.rule, options};
-        },
-        add$f($f) {
-            this.cacheRule.$f = $f;
-            this.subForm();
+        add$f(api) {
+            this.subApi = api;
+            this.$emit('fc:subform', api);
             this.$nextTick(() => {
-                $f.disabled(this.disabled);
-                this.$emit('itemMounted', $f);
+                api.disabled(this.disabled);
+                this.$emit('itemMounted', api);
             });
-        },
-        subForm() {
-            this.$emit('fc.sub-form', this.cacheRule.$f);
-        },
-        emitEvent(name, ...args) {
-            this.$emit(name, ...args);
         }
     },
     created() {
-        this.addRule();
+        if (this.formCreate) {
+            this._.appContext.components['FormCreate'] = this.formCreate.create.$form()
+        }
     },
     render() {
-        const {rule, options} = this.cacheRule;
         return <FormCreate
-            on={{
-                'update:value': this.formData,
-                'emit-event': this.emitEvent,
-                input: this.add$f
-            }}
-            rule={rule}
-            option={options} extendOption={true}/>
+            onUpdate:modelValue={this.formData}
+            modelValue={this.modelValue}
+            onEmit-event={this.$emit}
+            onUpdate:api={this.add$f}
+            rule={this.rule}
+            option={this.fcOptions} extendOption={true}/>
     }
 }

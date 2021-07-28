@@ -120,8 +120,10 @@ export default function useRender(Render) {
                 formCreate: {
                     api: this.$handle.api,
                     field: ctx.field,
+                    name: ctx.name,
                     options: ctx.prop.options,
-                    rule: ctx.rule
+                    rule: ctx.rule,
+                    create:this.fc.create
                 }
             }, vn);
         },

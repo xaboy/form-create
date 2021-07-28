@@ -137,11 +137,12 @@ export default function FormCreateFactory(config) {
 
     function FormCreate(vm) {
         extend(this, {
+            create,
             vm: vm.ctx,
             manager: createManager(config.manager),
             parsers,
             providers,
-            rules:vm.props.rule,
+            rules: vm.props.rule,
             prop: {
                 components,
                 directives,
@@ -149,7 +150,7 @@ export default function FormCreateFactory(config) {
             CreateNode,
             bus: new Mitt(),
             unwatch: null,
-            options:ref({}),
+            options: ref({}),
             extendApi: config.extendApi || (api => api)
         })
         watch(this.options, () => {
@@ -168,11 +169,8 @@ export default function FormCreateFactory(config) {
                     this.initOptions(this.options.value);
                     this.$handle.api.refresh();
                 }, {deep: true});
-                this.initOptions(this.options.value);
-            } else {
-                this.initOptions(this.vm.option || {});
             }
-
+            this.initOptions(this.vm.option || {});
             this.$handle.init();
         },
         isSub() {
@@ -181,7 +179,7 @@ export default function FormCreateFactory(config) {
         initOptions(options) {
             this.options.value = {formData: {}, submitBtn: {}, resetBtn: {}, ...deepCopy(globalConfig)};
             if (this.isSub()) {
-                this.mergeOptions(this.options.value, this.vm.parent.api.config || {}, true);
+                this.options.value = this.mergeOptions(this.options.value, this.vm.parent.fapi.config || {}, true);
             }
             this.updateOptions(options);
         },
@@ -198,7 +196,7 @@ export default function FormCreateFactory(config) {
             return target;
         },
         updateOptions(options) {
-            this.mergeOptions(this.options.value, options);
+            this.options.value = this.mergeOptions(this.options.value, options);
             this.$handle.$manager.updateOptions(this.options.value);
         },
         api() {

@@ -14,6 +14,14 @@ import {reactive} from 'vue';
 
 
 export default function Handler(fc) {
+    funcProxy(this, {
+        options() {
+            return fc.options.value || {};
+        },
+        bus() {
+            return fc.bus;
+        },
+    })
     extend(this, {
         fc,
         vm: fc.vm,
@@ -26,7 +34,9 @@ export default function Handler(fc) {
         formData: reactive({}),
         subForm: {},
         form: reactive({}),
-        appendData: {},
+        appendData: {
+            ...(this.options.formData || {}), ...(fc.vm.modelValue || {})
+        },
         providers: {},
         cycleLoad: null,
         loadedId: 1,
@@ -37,15 +47,6 @@ export default function Handler(fc) {
             this.lifecycle('reload');
         }
     });
-
-    funcProxy(this, {
-        options() {
-            return fc.options.value;
-        },
-        bus() {
-            return fc.bus;
-        },
-    })
 
     this.initData(fc.rules);
 
@@ -71,7 +72,7 @@ extend(Handler.prototype, {
         this.loadRule();
         this.$manager.__init();
     },
-    isBreakWatch(){
+    isBreakWatch() {
         return this.loading || this.noWatchFn || this.reloading;
     }
 })
