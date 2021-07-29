@@ -22,6 +22,7 @@ export default function useLoader(Handler) {
             });
 
             fullRule(rule);
+            this.appendValue(rule);
 
             rule.options = Array.isArray(rule.options) ? rule.options : [];
 
@@ -155,7 +156,6 @@ export default function useLoader(Handler) {
                     ctx.updateType();
                     this.bindParser(ctx);
                 }
-                this.appendValue(ctx.rule);
                 [false, true].forEach(b => this.parseEmit(ctx, b));
                 this.syncProp(ctx);
                 ctx.parent = parent || null;

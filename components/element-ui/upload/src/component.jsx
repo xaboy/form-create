@@ -59,6 +59,7 @@ export default defineComponent({
                 this.$refs.upload.uploadFiles = toArray(n).map(parseFile);
                 this.uploadList = this.$refs.upload.uploadFiles;
             }
+            this.fileList = toArray(n).map(parseFile);
         },
         limit(n, o) {
             if (o === 1 || n === 1) {
