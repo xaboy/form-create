@@ -13,7 +13,11 @@ export default {
         disabled: {
             type: Boolean,
             default: false
-        }
+        },
+        syncDisabled: {
+            type: Boolean,
+            default: true
+        },
     },
     data() {
         return {
@@ -23,7 +27,7 @@ export default {
     },
     watch: {
         disabled(n) {
-            this.cacheRule.$f.disabled(n);
+            this.syncDisabled && this.cacheRule.$f.disabled(n);
         },
         value(n) {
             this.setValue(n);
@@ -55,7 +59,7 @@ export default {
             this.cacheRule.$f = $f;
             this.subForm();
             this.$nextTick(() => {
-                $f.disabled(this.disabled);
+                this.syncDisabled && $f.disabled(this.disabled);
                 this.$emit('itemMounted', $f);
             });
         },
