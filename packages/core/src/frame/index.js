@@ -146,6 +146,10 @@ export default function FormCreateFactory(config) {
         return _this.api();
     }
 
+    function factory(){
+        return FormCreateFactory(config);
+    }
+
     function FormCreate(vm, rules, options) {
         extend(this, {
             vm,
@@ -248,6 +252,7 @@ export default function FormCreateFactory(config) {
             register,
             parser,
             use,
+            factory,
             componentAlias,
             copyRule,
             copyRules,
