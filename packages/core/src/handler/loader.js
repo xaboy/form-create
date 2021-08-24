@@ -107,8 +107,6 @@ export default function useLoader(Handler) {
                 }
             };
 
-            const initEvent = (rule) => this.ruleEffect(rule, 'init');
-
             rules.map((_rule, index) => {
                 if (parent && (is.String(_rule) || is.Undef(_rule))) return;
                 if (!this.pageEnd && !parent && index >= this.first) return;
@@ -123,15 +121,15 @@ export default function useLoader(Handler) {
 
                 let rule = getRule(_rule);
 
-                if (!_rule.__fc__) initEvent(rule);
-
                 if (rule.field && this.fieldCtx[rule.field] && this.fieldCtx[rule.field] !== _rule.__fc__) {
                     this.repeatRule.push(_rule);
                     return err(`${rule.field} 字段已存在`, _rule);
                 }
 
                 let ctx;
-                if (_rule.__fc__) {
+                let isCopy = false;
+                let isInit = !!_rule.__fc__;
+                if (isInit) {
                     ctx = _rule.__fc__;
                     const check = !ctx.check(this);
                     if (ctx.deleted) {
@@ -147,8 +145,8 @@ export default function useLoader(Handler) {
                                 return;
                             }
                             rules[index] = _rule = _rule._clone ? _rule._clone() : copyRule(_rule);
-                            initEvent(getRule(_rule));
                             ctx = null;
+                            isCopy = true;
                         }
                     }
                 }
@@ -165,6 +163,10 @@ export default function useLoader(Handler) {
                 ctx.parent = parent || null;
                 ctx.root = rules;
                 this.setCtx(ctx);
+
+                if (!isCopy && !isInit) {
+                    this.effect(ctx, 'init');
+                }
 
                 loadChildren(ctx.rule.children, ctx);
 

@@ -43,13 +43,6 @@ export default function useEffect(Handler) {
                 custom
             }, event);
         },
-        ruleEffect(rule, event) {
-            this.emitEffect({
-                rule,
-                input: !!rule.field,
-                type: this.getType(rule.type)
-            }, event);
-        },
         getEffect(rule, name) {
             if (hasProperty(rule, 'effect') && hasProperty(rule.effect, name))
                 return rule.effect[name];

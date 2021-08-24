@@ -451,7 +451,7 @@ export interface EffectValue {
 export interface Effect<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
     name?: string;
     components?: string | string[];
-    init?: (val: { value: any, getValue: () => any; }, rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, $f: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
+    init?: (val: EffectValue, rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, $f: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
     loaded?: (val: EffectValue, rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, $f: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
     watch?: (val: EffectValue, rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, $f: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
     value?: (val: EffectValue, rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, $f: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
