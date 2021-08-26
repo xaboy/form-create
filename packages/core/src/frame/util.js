@@ -18,12 +18,15 @@ export function toJson(obj, space) {
         if (typeof val !== FUNCTION) {
             return val;
         }
+        if (val.__json) {
+            return val.__json;
+        }
         if (val.__origin)
             val = val.__origin;
 
         if (val.__emit)
             return undefined;
-        return is.Function(val) ? PREFIX + val + SUFFIX : val;
+        return PREFIX + val + SUFFIX;
     }, space);
 }
 
@@ -47,7 +50,7 @@ export function parseFn(fn, mode) {
         if (!flag) return fn;
         try {
             const val = makeFn(v.indexOf(FUNCTION) === -1 && v.indexOf('(') !== 0 ? (FUNCTION + ' ' + v) : v);
-            val.__origin = fn;
+            val.__json = fn;
             return val;
         } catch (e) {
             err(`解析失败:${v}`);
