@@ -139,9 +139,10 @@ export default function useLoader(Handler) {
 
                 if (rule.field && this.fieldCtx[rule.field] && this.fieldCtx[rule.field] !== _rule.__fc__) {
                     this.repeatRule.push(_rule);
+                    this.vm.$emit('repeat', _rule, this.api);
                     return err(`${rule.field} 字段已存在`, _rule);
                 }
-
+                
                 let ctx;
                 let isCopy = false;
                 let isInit = !!_rule.__fc__;
