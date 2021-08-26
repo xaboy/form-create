@@ -18,13 +18,12 @@ export function toJson(obj, space) {
         if (typeof val !== FUNCTION) {
             return val;
         }
-        if (val.__inject)
+        if (val.__origin)
             val = val.__origin;
 
         if (val.__emit)
             return undefined;
-
-        return PREFIX + val + SUFFIX;
+        return is.Function(val) ? PREFIX + val + SUFFIX : val;
     }, space);
 }
 
@@ -42,13 +41,15 @@ export function parseFn(fn, mode) {
         } else if (v.indexOf($T) === 0) {
             v = v.replace($T, '');
             flag = true;
-        }else if(!mode && v.indexOf(FUNCTION) === 0 && v !== FUNCTION){
+        } else if (!mode && v.indexOf(FUNCTION) === 0 && v !== FUNCTION) {
             flag = true;
         }
-        if(!flag) return  fn;
-        try{
-            return makeFn(v.indexOf(FUNCTION) === -1 && v.indexOf('(') !== 0 ? (FUNCTION + ' ' + v) : v);
-        }catch (e){
+        if (!flag) return fn;
+        try {
+            const val = makeFn(v.indexOf(FUNCTION) === -1 && v.indexOf('(') !== 0 ? (FUNCTION + ' ' + v) : v);
+            val.__origin = fn;
+            return val;
+        } catch (e) {
             err(`解析失败:${v}`);
             return undefined;
         }

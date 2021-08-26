@@ -12,7 +12,7 @@ export function toJson(obj) {
         if (typeof val !== 'function') {
             return val;
         }
-        if (val.__inject)
+        if (val.__origin)
             val = val.__origin;
 
         if (val.__emit)

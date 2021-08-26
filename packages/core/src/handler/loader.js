@@ -28,17 +28,33 @@ export default function useLoader(Handler) {
 
             rule.options = Array.isArray(rule.options) ? rule.options : [];
 
+            [rule, rule['prefix'], rule['suffix']].forEach(item => {
+                if (!item) {
+                    return;
+                }
+                this.loadFn(item, rule);
+            });
+            this.loadCtrl(rule);
+            if (rule.update) {
+                rule.update = parseFn(rule.update);
+            }
+            return rule;
+        },
+        loadFn(item, rule) {
             ['on', 'props', 'nativeOn'].forEach(k => {
-                const v = rule[k];
+                const v = item[k];
                 if (v) {
-                    Object.keys(v).forEach(n => {
-                        v[n] = parseFn(v[n]);
-                    })
+                    this.parseFn(v);
                     this.parseInjectEvent(rule, v);
                 }
+            });
+        },
+        loadCtrl(rule) {
+            rule.control && rule.control.forEach(ctrl => {
+                if (ctrl.handle) {
+                    ctrl.handle = parseFn(ctrl.handle)
+                }
             })
-
-            return rule;
         },
         syncProp(ctx) {
             const rule = ctx.rule;

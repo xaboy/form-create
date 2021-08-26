@@ -1,6 +1,7 @@
 import extend from '@form-create/utils/lib/extend';
 import is from '@form-create/utils/lib/type';
 import toLine from '@form-create/utils/lib/toline';
+import {parseFn} from '../frame/util';
 
 
 export default function useInject(Handler) {
@@ -14,6 +15,11 @@ export default function useInject(Handler) {
                     on[k] = this.inject(rule, on[k], inject)
             });
             return on;
+        },
+        parseFn(obj) {
+            obj && Object.keys(obj).forEach(n => {
+                obj[n] = parseFn(obj[n]);
+            })
         },
         parseEmit(ctx, on) {
             let event = {}, rule = ctx.rule, {emitPrefix, field, name, inject} = rule;
@@ -60,7 +66,7 @@ export default function useInject(Handler) {
             };
         },
         inject(self, _fn, inject) {
-            if (_fn.__inject) {
+            if (_fn.__origin) {
                 if (this.watching && !this.loading)
                     return _fn;
                 _fn = _fn.__origin;
@@ -72,7 +78,6 @@ export default function useInject(Handler) {
                 args.unshift(h.getInjectData(self, inject));
                 return _fn.apply(this, args);
             };
-            fn.__inject = true;
             fn.__origin = _fn;
             return fn;
         },
