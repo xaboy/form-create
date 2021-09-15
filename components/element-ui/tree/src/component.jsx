@@ -61,11 +61,10 @@ export default {
         }
     },
     render() {
-        return <ElTree {...this.formCreateRule} ref="tree" on-check-change={() => this.updateValue()}
+        return <ElTree {...this.formCreateRule} ref="tree" on-check={() => this.updateValue()}
             on-node-click={() => this.updateValue()}>{getSlot(this.$slots)}</ElTree>;
     },
     mounted() {
         this.setValue();
-        this.updateValue();
     }
 }

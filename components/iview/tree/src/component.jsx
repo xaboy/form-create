@@ -58,8 +58,5 @@ export default {
             on['on-check-change'] = this.onInput;
         }
         return <Tree {...this.formCreateRule} ref="tree" on={on}>{getSlot(this.$slots)}</Tree>;
-    },
-    mounted() {
-        this.onInput(this.type === 'selected' ? this.$refs.tree.getSelectedNodes() : this.$refs.tree.getCheckedNodes());
     }
 }
