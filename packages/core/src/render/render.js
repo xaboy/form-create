@@ -12,7 +12,7 @@ export default function useRender(Render) {
             this.cacheConfig = {};
         },
         render() {
-            // console.log('renderrrrr');
+            console.log('renderrrrr', this.id);
             if (!this.vm.isShow) {
                 return;
             }
@@ -155,6 +155,7 @@ export default function useRender(Render) {
                 };
                 if (ctx.input) {
                     data.on['update:modelValue'] = (value) => {
+                        console.log(ctx.field,value);
                         this.onInput(ctx, value);
                     };
                     data.props = {

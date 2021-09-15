@@ -22,11 +22,11 @@ export default function mock() {
         // }).directives({}),
 
         //cascader 多级联动组件
-        maker.cascader({title: '所在区域', style: 'color:red'}, 'address', ['陕西省', '西安市']).props({
-            options: []
-        }).effect({
-            address: '1'
-        }),
+        // maker.cascader({title: '所在区域', style: 'color:red'}, 'address', ['陕西省', '西安市']).props({
+        //     options: []
+        // }).effect({
+        //     address: '1'
+        // }),
 
         // {
         //     type:'div',
@@ -74,124 +74,125 @@ export default function mock() {
         // },
 
         //autoComplete 自动选择组件
-        maker.auto('自动完成', 'auto', 'xaboy').props({
-            fetchSuggestions: function (queryString, cb) {
-                cb([
-                    {value: queryString}, {value: queryString + queryString}
-                ]);
-            }
-        }).emitPrefix('xaboy').emit(['change']).validate([{required: true}]),
+        // maker.auto('自动完成', 'auto', 'xaboy').props({
+        //     fetchSuggestions: function (queryString, cb) {
+        //         cb([
+        //             {value: queryString}, {value: queryString + queryString}
+        //         ]);
+        //     }
+        // }).emitPrefix('xaboy').emit(['change']).validate([{required: true}]),
         //
         //
         // //textarea 组件
-        maker.textarea('商品简介', 'goods_info', '').props({
-            autosize: {minRows: 4, maxRows: 8},
-            placeholder: '请输入商品名称'
-        }).update((val, rule, api) => {
-            console.log('change');
-            return 'val' === api.getValue('auto');
-        }).link(['auto']).wrap({
-            show: true
-        }).validate([{required: true}]),
+        // maker.textarea('商品简介', 'goods_info', '').props({
+        //     autosize: {minRows: 4, maxRows: 8},
+        //     placeholder: '请输入商品名称'
+        // }).update((val, rule, api) => {
+        //     console.log('change');
+        //     return 'val' === api.getValue('auto');
+        // }).link(['auto']).wrap({
+        //     show: true
+        // }).validate([{required: true}]),
         //
-        // {
-        //     type: 'form-create',
-        //     title: '对象组件',
-        //     field: 'object',
-        //     value: {date: '2121-12-12', field: 10, field2: '123123123'},
-        //     props: {
-        //         rule: [
-        //             {
-        //                 type: 'col',
-        //                 wrap: {show: true},
-        //                 children: [
-        //                     maker.date('date', 'date', '').native(false).col({span: 12}),
-        //                     {
-        //                         type: 'inputNumber',
-        //                         field: 'field',
-        //                         title: 'field',
-        //                         props: {
-        //                             disabled: false
-        //                         },
-        //                         validate: [
-        //                             {required: true, min: 10, type: 'number'}
-        //                         ],
-        //                         col: {
-        //                             span: 12
-        //                         }
-        //                     }
-        //                 ]
-        //
-        //             },
-        //             {
-        //                 type: 'input',
-        //                 field: 'field2',
-        //                 title: 'field2',
-        //                 props: {
-        //                     disabled: false
-        //                 },
-        //                 validate: [
-        //                     {required: true}
-        //                 ]
-        //             }
-        //         ]
-        //     }
-        // },
-        //
-        // {
-        //     type: 'group',
-        //     title: '批量添加',
-        //     field: 'group',
-        //     value: [{date: '2121-12-12', field: 10, field2: '123123123'}],
-        //     suffix: 'suffixsuffix',
-        //     props: {
-        //         // field: 'field',
-        //         rules: [
-        //             {
-        //                 type: 'col',
-        //                 wrap: {show: true},
-        //                 children: [
-        //                     {
-        //                         type: 'DatePicker',
-        //                         field: 'date',
-        //                         title: 'date',
-        //                         native: false,
-        //                         col: {span: 12}
-        //                     },
-        //                     {
-        //                         type: 'inputNumber',
-        //                         field: 'field',
-        //                         title: 'field',
-        //                         props: {
-        //                             disabled: false
-        //                         },
-        //                         validate: [
-        //                             {required: true, min: 10, type: 'number'}
-        //                         ],
-        //                         col: {
-        //                             span: 12
-        //                         }
-        //                     }
-        //                 ]
-        //
-        //             },
-        //             {
-        //                 type: 'input',
-        //                 field: 'field2',
-        //                 title: 'field2',
-        //                 props: {
-        //                     disabled: false
-        //                 },
-        //                 validate: [
-        //                     {required: true}
-        //                 ]
-        //             }
-        //         ]
-        //     },
-        //     validate: [
-        //         {required: true, min: 3, type: 'array', message: '最少增加3项', trigger: 'change'},
-        //     ]
-        // },
+        {
+            type: 'object',
+            title: '对象组件',
+            field: 'object',
+            value: {date: '2121-12-12', field: 10, field2: '123123123'},
+            props: {
+                rule: [
+                    {
+                        type: 'col',
+                        wrap: {show: true},
+                        children: [
+                            maker.date('date', 'date', '').native(false).col({span: 12}),
+                            {
+                                type: 'inputNumber',
+                                field: 'field',
+                                title: 'field',
+                                props: {
+                                    disabled: false
+                                },
+                                validate: [
+                                    {required: true, min: 10, type: 'number'}
+                                ],
+                                col: {
+                                    span: 12
+                                },
+                            }
+                        ]
+
+                    },
+                    {
+                        type: 'input',
+                        field: 'field2',
+                        title: 'field2',
+                        emit:['change'],
+                        props: {
+                            disabled: false
+                        },
+                        validate: [
+                            {required: true}
+                        ]
+                    }
+                ]
+            }
+        },
+
+        {
+            type: 'group',
+            title: '批量添加',
+            field: 'group',
+            value: [{date: '2121-12-12', field: 10, field2: '123123123'}],
+            suffix: 'suffixsuffix',
+            props: {
+                // field: 'field',
+                rules: [
+                    {
+                        type: 'col',
+                        wrap: {show: true},
+                        children: [
+                            {
+                                type: 'DatePicker',
+                                field: 'date',
+                                title: 'date',
+                                native: false,
+                                col: {span: 12}
+                            },
+                            {
+                                type: 'inputNumber',
+                                field: 'field',
+                                title: 'field',
+                                props: {
+                                    disabled: false
+                                },
+                                validate: [
+                                    {required: true, min: 10, type: 'number'}
+                                ],
+                                col: {
+                                    span: 12
+                                }
+                            }
+                        ]
+
+                    },
+                    {
+                        type: 'input',
+                        field: 'field2',
+                        title: 'field2',
+                        props: {
+                            disabled: false
+                        },
+                        validate: [
+                            {required: true}
+                        ]
+                    }
+                ]
+            },
+            validate: [
+                {required: true, min: 3, type: 'array', message: '最少增加3项', trigger: 'change'},
+            ]
+        },
         //
         //
         // //radio 单选框组件
@@ -209,7 +210,7 @@ export default function mock() {
         //             }).control([
         //                 {
         //                     value: 0,
-        //                     prepend: 'rate',
+        //                     append: 'rate',
         //                     rule: [
         //                         maker.number('满额包邮2', 'postage_money2', 0)
         //                     ]
@@ -219,12 +220,12 @@ export default function mock() {
         //     },
         //     {
         //         value: 0,
-        //         prepend: 'goods_info',
+        //         append: 'goods_info',
         //         rule: [
         //             maker.number('满额包邮3', 'postage_money3', 0).control([
         //                 {
         //                     value: 0,
-        //                     prepend: 'goods_name',
+        //                     // prepend: 'goods_name',
         //                     rule: [
         //                         maker.number('满额包邮4', 'postage_money4', 0)
         //                     ]
@@ -236,14 +237,15 @@ export default function mock() {
         //
         //
         // //checkbox 复选框付选择
-        // maker.checkbox('标签', 'label', [1]).options([
+        // maker.checkbox('标签', 'label', [1,2]).options([
         //     {value: 1, label: '好用', disabled: true},
         //     {value: 2, label: '方便', disabled: false},
         //     {value: 3, label: '实用', disabled: false},
         //     {value: 4, label: '有效', disabled: false},
-        // ]).col({span: 8}).children([
+        // ]).children([
         //     {
         //         type: 'el-checkbox',
+        //         value:'asd',
         //         children: ['asdf'],
         //         slot: 'default'
         //     }
@@ -315,15 +317,9 @@ export default function mock() {
         //
         // //select 下拉选择组件
         // maker.select('产品分类', 'cate_id', '105').options([
-        //     {'value': '104', 'label': '生态蔬菜', 'disabled': false, 'slot': '<div style:\'color:#ff7271;\'>自定义显示内容</div>'},
+        //     {'value': '104', 'label': '生态蔬菜', 'disabled': false},
         //     {'value': '106', 'label': '植物植物', 'disabled': false},
-        //     {
-        //         'value': '105', 'label': '新鲜水果', 'disabled': false, 'slot': function ($h) {
-        //             return $h('div', {
-        //                 style: 'color:#ff7271;'
-        //             }, ['新鲜水果']);
-        //         }
-        //     },
+        //     {'value': '105', 'label': '新鲜水果', 'disabled': false},
         // ]).props({multiple: true}),
         // {
         //     type: 'div',
@@ -422,94 +418,94 @@ export default function mock() {
         // },
         //
         //
-        // //upload 上传组件
-        // maker.upload('轮播图', 'pic', ['http://file.lotkk.com/form-create.jpeg'])
-        //     .props({
-        //         'action': 'https://mock.uutool.cn/4erua2dig4i0',
-        //         'limit': 2,
-        //         'uploadType': 'image',
-        //         'name': 'file',
-        //         'onSuccess': function (res, file) {
-        //             console.log('upload success');
-        //             file.url = res.thumbUrl;
-        //         },
-        //         'onRemove': function (file, fileList) {
-        //             console.log(file, fileList);
-        //         },
-        //         'beforeRemove': function () {
-        //             console.log('before-remove');
-        //         },
-        //         'allowRemove': true,
-        //     }),
-        //
-        // //frame 框架组件
-        // maker.frame('素材', 'fodder', ['http://file.lotkk.com/form-create.jpeg']).props({
-        //     src: '/iframe.html',
-        //     maxLength: 0,
-        //     type: 'image',
-        //     width: '80%',
-        //     modalTitle: '预览~~~',
-        //     okBtnText: 'ok',
-        //     closeBtnText: 'close',
-        //     title: 'select'
-        // }).validate([
-        //     {required: true, type: 'array', min: 2, message: '请选择2张图片', trigger: 'change'}
-        // ]),
-        //
-        //
-        // //tree 树形组件
-        // maker.tree('权限', 'tree', [11, 12]).props({
-        //     type: 'checked',
-        //     multiple: true,
-        //     showCheckbox: true,
-        //     emptyText: '暂无数据',
-        //     defaultExpandAll: true,
-        //     expandOnClickNode: false,
-        //     data: [
-        //         {
-        //             title: 'parent 1',
-        //             expand: true,
-        //             selected: false,
-        //             id: 1,
-        //             children: [
-        //                 {
-        //                     title: 'parent 1-1',
-        //                     expand: true,
-        //                     id: 2,
-        //                     children: [
-        //                         {
-        //                             title: 'leaf 1-1-1',
-        //                             disabled: true,
-        //                             id: 11
-        //                         },
-        //                         {
-        //                             title: 'leaf 1-1-2',
-        //                             selected: true,
-        //                             id: 12
-        //                         }
-        //                     ]
-        //                 },
-        //                 {
-        //                     title: 'parent 1-2',
-        //                     expand: true,
-        //                     id: 3,
-        //                     children: [
-        //                         {
-        //                             title: 'leaf 1-2-1',
-        //                             checked: true,
-        //                             id: 13,
-        //                         },
-        //                         {
-        //                             title: 'leaf 1-2-1',
-        //                             id: 14,
-        //                         }
-        //                     ]
-        //                 }
-        //             ]
-        //         }
-        //     ],
-        // }).validate([
-        //     {required: true, type: 'array', min: 2, message: '至少选择2个', trigger: 'change'}
-        // ])
+        //upload 上传组件
+        maker.upload('轮播图', 'pic', ['http://file.lotkk.com/form-create.jpeg'])
+            .props({
+                'action': 'https://mock.uutool.cn/4erua2dig4i0',
+                'limit': 2,
+                'uploadType': 'image',
+                'name': 'file',
+                'onSuccess': function (res, file) {
+                    console.log('upload success');
+                    file.url = res.thumbUrl;
+                },
+                'onRemove': function (file, fileList) {
+                    console.log(file, fileList);
+                },
+                'beforeRemove': function () {
+                    console.log('before-remove');
+                },
+                'allowRemove': true,
+            }),
+
+        //frame 框架组件
+        maker.frame('素材', 'fodder', ['http://file.lotkk.com/form-create.jpeg']).props({
+            src: '/iframe.html',
+            maxLength: 0,
+            type: 'image',
+            width: '80%',
+            modalTitle: '预览~~~',
+            okBtnText: 'ok',
+            closeBtnText: 'close',
+            title: 'select'
+        }).validate([
+            {required: true, type: 'array', min: 2, message: '请选择2张图片', trigger: 'change'}
+        ]),
+
+
+        //tree 树形组件
+        maker.tree('权限', 'tree', [11, 12]).props({
+            type: 'checked',
+            multiple: true,
+            showCheckbox: true,
+            emptyText: '暂无数据',
+            defaultExpandAll: true,
+            expandOnClickNode: false,
+            data: [
+                {
+                    title: 'parent 1',
+                    expand: true,
+                    selected: false,
+                    id: 1,
+                    children: [
+                        {
+                            title: 'parent 1-1',
+                            expand: true,
+                            id: 2,
+                            children: [
+                                {
+                                    title: 'leaf 1-1-1',
+                                    disabled: true,
+                                    id: 11
+                                },
+                                {
+                                    title: 'leaf 1-1-2',
+                                    selected: true,
+                                    id: 12
+                                }
+                            ]
+                        },
+                        {
+                            title: 'parent 1-2',
+                            expand: true,
+                            id: 3,
+                            children: [
+                                {
+                                    title: 'leaf 1-2-1',
+                                    checked: true,
+                                    id: 13,
+                                },
+                                {
+                                    title: 'leaf 1-2-1',
+                                    id: 14,
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ],
+        }).validate([
+            {required: true, type: 'array', min: 2, message: '至少选择2个', trigger: 'change'}
+        ])
     ];
 }

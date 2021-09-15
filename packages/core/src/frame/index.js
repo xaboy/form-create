@@ -135,6 +135,13 @@ export default function FormCreateFactory(config) {
         return vm.$refs.fc.fapi;
     }
 
+    /**
+     * todo 统一事件风格
+     * todo object syncDisabled 功能
+     *
+     * @param vm
+     * @constructor
+     */
     function FormCreate(vm) {
         extend(this, {
             create,

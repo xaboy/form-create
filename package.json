@@ -58,9 +58,9 @@
         ]
     },
     "dependencies": {
-        "vue": "^3.0.11",
         "@vue/cli-plugin-babel": "^4.5.3",
         "commander": "^6.0.0",
-        "rollup-plugin-commonjs": "^10.1.0"
+        "rollup-plugin-commonjs": "^10.1.0",
+        "vue": "^3.1.5"
     }
 }

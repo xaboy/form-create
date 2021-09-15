@@ -1,6 +1,8 @@
+import {defineComponent} from 'vue';
+
 const NAME = 'fcSubForm';
 
-export default {
+export default defineComponent({
     name: NAME,
     props: {
         rule: Array,
@@ -74,4 +76,4 @@ export default {
                 resetBtn: false,
             }} extendOption={true}/>
     }
-}
+})

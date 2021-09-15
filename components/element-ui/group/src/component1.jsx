@@ -1,19 +1,16 @@
 import {hasProperty} from '@form-create/utils/lib/type';
-import {defineComponent} from 'vue';
-import SubForm from '../../../common/subform/src/index';
 
 const NAME = 'fcGroup';
 
-export default defineComponent({
+export default {
     name: NAME,
-    components:{
-        SubForm
-    },
     props: {
         field: String,
-        rule: Array,
+        rule: [Array, Object],
+        rules: Array,
         expand: Number,
         options: Object,
+        formCreate: Object,
         button: {
             type: Boolean,
             default: true
@@ -26,17 +23,13 @@ export default defineComponent({
             type: Number,
             default: 0
         },
-        modelValue: {
+        value: {
             type: Array,
             default: () => []
         },
         disabled: {
             type: Boolean,
             default: false
-        },
-        syncDisabled: {
-            type: Boolean,
-            default: true
         },
         fontSize: {
             type: Number,
@@ -53,7 +46,6 @@ export default defineComponent({
             }
         },
     },
-    inject: ['formCreate'],
     data() {
         return {
             len: 0,
@@ -61,7 +53,17 @@ export default defineComponent({
             cacheValue: {},
         }
     },
-    emits: ['fc:subform', 'update:modelValue', 'change', 'itemMounted'],
+    computed: {
+        formRule() {
+            if (this.rule) {
+                return Array.isArray(this.rule) ? this.rule : [this.rule];
+            }
+            if (this.rules) {
+                return this.rules;
+            }
+            return [];
+        }
+    },
     watch: {
         disabled(n) {
             const lst = this.cacheRule;
@@ -253,4 +255,4 @@ export default defineComponent({
                 </ElRow>
             })}</div>
     }
-});
+}

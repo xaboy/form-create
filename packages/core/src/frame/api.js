@@ -284,9 +284,8 @@ export default function Api(h) {
             api.refresh();
         },
         resetFields(fields) {
-            let ctxs = h.fieldCtx;
             tidyFields(fields).forEach(field => {
-                let ctx = ctxs[field];
+                let ctx = h.fieldCtx[field];
                 if (!ctx) return;
                 h.$render.clearCache(ctx);
                 ctx.rule.value = copy(ctx.defaultValue);

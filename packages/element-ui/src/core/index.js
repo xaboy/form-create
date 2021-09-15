@@ -6,7 +6,7 @@ import FormCreateFactory from '@form-create/core/src/index';
 import makers from './maker';
 import '../style/index.css';
 import extendApi from './api';
-import ElementUI from 'element-plus/lib/index';
+import ElementUI from 'element-plus';
 
 function install(FormCreate) {
     FormCreate.componentAlias(alias);
