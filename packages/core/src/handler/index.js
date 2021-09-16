@@ -67,6 +67,7 @@ extend(Handler.prototype, {
         useHelper(rules);
     },
     init() {
+        this.appendData = {...this.fc.options.formData || {}, ...this.vm.value || {}, ...this.appendData};
         this.useProvider();
         this.usePage();
         this.loadRule();

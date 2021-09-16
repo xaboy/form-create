@@ -22,9 +22,7 @@ export default function useLoader(Handler) {
             });
 
             fullRule(rule);
-
-            if (rule.field && hasProperty(this.options.formData || {}, rule.field))
-                rule.value = this.options.formData[rule.field];
+            this.appendValue(rule);
 
             rule.options = Array.isArray(rule.options) ? rule.options : [];
 
@@ -142,7 +140,7 @@ export default function useLoader(Handler) {
                     this.vm.$emit('repeat', _rule, this.api);
                     return err(`${rule.field} 字段已存在`, _rule);
                 }
-                
+
                 let ctx;
                 let isCopy = false;
                 let isInit = !!_rule.__fc__;
@@ -170,11 +168,13 @@ export default function useLoader(Handler) {
                 if (!ctx) {
                     ctx = new RuleContext(this, this.parseRule(_rule));
                     this.bindParser(ctx);
-                } else if (ctx.originType !== ctx.rule.type) {
-                    ctx.updateType();
-                    this.bindParser(ctx);
+                } else {
+                    if (ctx.originType !== ctx.rule.type) {
+                        ctx.updateType();
+                        this.bindParser(ctx);
+                    }
+                    this.appendValue(ctx.rule);
                 }
-                this.appendValue(ctx.rule);
                 [false, true].forEach(b => this.parseEmit(ctx, b));
                 this.syncProp(ctx);
                 ctx.parent = parent || null;

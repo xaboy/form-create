@@ -77,7 +77,7 @@ export default function Api(h) {
                 if (!ctx) return initial;
                 initial[ctx.field] = copy(ctx.rule.value);
                 return initial;
-            }, {});
+            }, copy(h.appendData));
         },
         getValue(field) {
             const ctx = h.fieldCtx[field];
