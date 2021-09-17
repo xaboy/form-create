@@ -135,7 +135,13 @@ export default function useLoader(Handler) {
 
                 let rule = getRule(_rule);
 
-                if (rule.field && this.fieldCtx[rule.field] && this.fieldCtx[rule.field] !== _rule.__fc__) {
+                const isRepeat = () => {
+                    return !!(rule.field && this.fieldCtx[rule.field] && this.fieldCtx[rule.field] !== _rule.__fc__)
+                }
+
+                this.ruleEffect(rule, 'init', {repeat: isRepeat()});
+
+                if (isRepeat()) {
                     this.repeatRule.push(_rule);
                     this.vm.$emit('repeat', _rule, this.api);
                     return err(`${rule.field} 字段已存在`, _rule);
@@ -181,9 +187,7 @@ export default function useLoader(Handler) {
                 ctx.root = rules;
                 this.setCtx(ctx);
 
-                if (!isCopy && !isInit) {
-                    this.effect(ctx, 'init');
-                }
+                !isCopy && !isInit && this.effect(ctx, 'load');
 
                 loadChildren(ctx.rule.children, ctx);
 

@@ -451,13 +451,14 @@ export interface EffectValue {
 export interface Effect<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
     name?: string;
     components?: string | string[];
-    init?: (val: EffectValue, rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, $f: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
-    loaded?: (val: EffectValue, rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, $f: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
-    watch?: (val: EffectValue, rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, $f: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
-    value?: (val: EffectValue, rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, $f: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
-    control?: (val: EffectValue, rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, $f: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
-    deleted?: (val: EffectValue, rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, $f: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
-    mounted?: (val: EffectValue, rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, $f: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
+    init?: (data: { value: any, getValue: () => any; repeat: Boolean; }, rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, $f: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
+    load?: (data: EffectValue, rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, $f: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
+    loaded?: (data: EffectValue, rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, $f: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
+    watch?: (data: EffectValue, rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, $f: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
+    value?: (data: EffectValue, rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, $f: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
+    control?: (data: EffectValue, rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, $f: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
+    deleted?: (data: EffectValue, rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, $f: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
+    mounted?: (data: EffectValue, rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, $f: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
 }
 
 export interface Parser {
