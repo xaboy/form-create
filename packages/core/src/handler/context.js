@@ -107,13 +107,14 @@ export default function useContext(Handler) {
             $del(ctx, 'cacheValue');
 
             const f = this.fieldCtx[field];
+            let flag = false;
 
             if (field && (!f || f === ctx)) {
                 $del(this.formData, field);
                 $del(this.form, field);
                 $del(this.fieldCtx, field);
                 $del(this.subForm, field);
-                this.vm.$nextTick(() => this.vm.$emit('removeField', field, ctx.rule, this.api));
+                flag = true;
             }
             if (name && this.nameCtx[name] === ctx) {
                 $del(this.nameCtx, name);
@@ -138,7 +139,8 @@ export default function useContext(Handler) {
             this.$render.clearCache(ctx);
             ctx.delete();
             this.effect(ctx, 'deleted');
-            this.vm.$nextTick(() => this.vm.$emit('removeRule', ctx.rule, this.api));
+            flag && this.vm.$emit('removeField', field, ctx.rule, this.api);
+            ctx.rule.__ctrl || this.vm.$emit('removeRule', ctx.rule, this.api);
             return ctx;
         },
     })
