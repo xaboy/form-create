@@ -133,9 +133,12 @@ export default function useRender(Render) {
             vn.data.key = key;
             return vn;
         },
+        parseSide(side) {
+            return is.Object(side) ? mergeRule({}, side) : side;
+        },
         renderSides(vn, ctx, temp) {
             const prop = ctx[temp ? 'rule' : 'prop'];
-            return [this.renderRule(prop.prefix), vn, this.renderRule(prop.suffix)];
+            return [this.renderRule(this.parseSide(prop.prefix)), vn, this.renderRule(this.parseSide(prop.suffix))];
         },
         renderCtx(ctx, parent) {
             if (ctx.type === 'hidden') return;
