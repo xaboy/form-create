@@ -1,6 +1,6 @@
 {
   "name": "@form-create/component-ivu-radio",
-  "version": "2.5.7",
+  "version": "2.5.9",
   "description": "@form-create/iview 内置组件",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -38,6 +38,6 @@
     "access": "public"
   },
   "dependencies": {
-    "@form-create/utils": "^2.5.7"
+    "@form-create/utils": "^2.5.9"
   }
 }

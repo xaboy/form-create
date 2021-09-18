@@ -1,6 +1,6 @@
 {
     "name": "@form-create/iview",
-    "version": "2.5.8",
+    "version": "2.5.9",
     "description": "iview动态表单|form-create is a form generation component that can generate dynamic rendering, data collection, verification and submission functions through JSON. Supports 3 UI frameworks, and supports the generation of any Vue components. Built-in 20 kinds of commonly used form components and custom components, no matter how complex forms can be easily handled.",
     "main": "./dist/form-create.min.js",
     "module": "./dist/form-create.min.js",
@@ -43,16 +43,16 @@
     },
     "homepage": "http://www.form-create.com",
     "dependencies": {
-        "@form-create/component-ivu-checkbox": "^2.5.7",
-        "@form-create/component-ivu-frame": "^2.5.7",
-        "@form-create/component-ivu-group": "^2.5.8",
-        "@form-create/component-ivu-radio": "^2.5.7",
-        "@form-create/component-ivu-select": "^2.5.7",
-        "@form-create/component-ivu-tree": "^2.5.7",
-        "@form-create/component-ivu-upload": "^2.5.7",
-        "@form-create/component-subform": "^2.5.2",
-        "@form-create/core": "^2.5.8",
-        "@form-create/utils": "^2.5.7"
+        "@form-create/component-ivu-checkbox": "^2.5.9",
+        "@form-create/component-ivu-frame": "^2.5.9",
+        "@form-create/component-ivu-group": "^2.5.9",
+        "@form-create/component-ivu-radio": "^2.5.9",
+        "@form-create/component-ivu-select": "^2.5.9",
+        "@form-create/component-ivu-tree": "^2.5.9",
+        "@form-create/component-ivu-upload": "^2.5.9",
+        "@form-create/component-subform": "^2.5.9",
+        "@form-create/core": "^2.5.9",
+        "@form-create/utils": "^2.5.9"
     },
     "publishConfig": {
         "access": "public"

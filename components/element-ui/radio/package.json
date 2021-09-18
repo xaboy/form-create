@@ -1,6 +1,6 @@
 {
   "name": "@form-create/component-elm-radio",
-  "version": "2.5.7",
+  "version": "2.5.9",
   "description": "@form-create/element-ui 内置组件",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -37,6 +37,6 @@
     "access": "public"
   },
   "dependencies": {
-    "@form-create/utils": "^2.5.7"
+    "@form-create/utils": "^2.5.9"
   }
 }

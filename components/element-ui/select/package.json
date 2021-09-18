@@ -1,6 +1,6 @@
 {
   "name": "@form-create/component-elm-select",
-  "version": "2.5.7",
+  "version": "2.5.9",
   "description": "@form-create/element-ui 内置组件",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -30,7 +30,7 @@
   "author": "xaboy",
   "license": "MIT",
   "dependencies": {
-    "@form-create/utils": "^2.5.7"
+    "@form-create/utils": "^2.5.9"
   },
   "bugs": {
     "url": "https://github.com/xaboy/form-create/issues"
