@@ -21,7 +21,7 @@ export default function extendApi(api, h) {
                     if (!args[0] || !flag) {
                         flag = args;
                     }
-                    callback(...flag);
+                    callback && callback(...flag);
                 });
             };
 
@@ -57,9 +57,9 @@ export default function extendApi(api, h) {
                     if (args[0]) {
                         flag = args;
                     } else if (flag) {
-                        return callback('子表单验证未通过', flag[1]);
+                        return callback && callback('子表单验证未通过', flag[1]);
                     }
-                    callback(...flag || args);
+                    callback && callback(...flag || args);
                 });
             };
             const validFn = (args) => {
