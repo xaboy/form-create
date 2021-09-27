@@ -31,8 +31,8 @@ function appUse(app)
 
 export default function elmFormCreate() {
     return FormCreateFactory({
-        ui: `${process.env.UI}`,
-        version: `${process.env.VERSION}`,
+        ui:'process.env.UI',
+        version: 'process.env.VERSION',
         manager,
         appUse,
         extendApi,

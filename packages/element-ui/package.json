@@ -63,5 +63,19 @@
         "@vue/cli-service": "^4.5.3",
         "element-plus": "^1.1.0-beta.12",
         "v-jsoneditor": "^1.4.2"
+    },
+    "buildFormCreateOptions": {
+        "name": "@form-create/element-ui",
+        "exportName": "formCreate",
+        "extendExternals": ["element-plus", "ElementPlus", "element-ui", "ElementUI"],
+        "extendGlobal": {
+            "vue": "Vue",
+            "ELEMENT": "element-ui",
+            "element-plus": "element-ui"
+        },
+        "fileName": "form-create",
+        "formats": [
+            "umd"
+        ]
     }
 }

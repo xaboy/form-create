@@ -38,5 +38,12 @@
   },
   "dependencies": {
     "wangeditor": "^4.6.0"
+  },
+  "buildFormCreateOptions": {
+    "name": "@form-create/component-wangeditor",
+    "exportName": "FcEditor",
+    "formats": [
+      "umd"
+    ]
   }
 }

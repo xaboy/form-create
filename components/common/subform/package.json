@@ -35,5 +35,12 @@
   "homepage": "http://www.form-create.com",
   "publishConfig": {
     "access": "public"
+  },
+  "buildFormCreateOptions": {
+    "name": "@form-create/component-subform",
+    "exportName": "FcSubForm",
+    "formats": [
+      "umd"
+    ]
   }
 }

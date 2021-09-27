@@ -1,9 +1,10 @@
 import toArray from '@form-create/utils/lib/toarray';
 import './style.css';
+import {defineComponent} from 'vue'
 
 const NAME = 'fcFrame';
 
-export default {
+export default defineComponent({
     name: NAME,
     props: {
         formCreateField: String,
@@ -317,4 +318,4 @@ export default {
     mounted() {
         this.$on('fc.closeModal', this.closeModal);
     }
-}
+})

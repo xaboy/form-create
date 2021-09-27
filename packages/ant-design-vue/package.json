@@ -61,5 +61,19 @@
     "ant-design-vue": "^1.5.3",
     "moment": "^2.24.0",
     "v-jsoneditor": "^1.4.2"
+  },
+  "buildFormCreateOptions": {
+    "name": "@form-create/ant-design-vue",
+    "exportName": "formCreate",
+    "extendExternals": ["Antd", "moment"],
+    "extendGlobal": {
+        "vue": "Vue",
+        "antd": "ant-design-vuei",
+        "moment": "moment"
+    },
+    "fileName": "form-create",
+    "formats": [
+        "umd"
+    ]
   }
 }

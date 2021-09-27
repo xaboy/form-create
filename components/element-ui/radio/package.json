@@ -38,5 +38,12 @@
   },
   "dependencies": {
     "@form-create/utils": "^2.5.6"
+  },
+  "buildFormCreateOptions": {
+    "name": "@form-create/component-elm-radio",
+    "exportName": "FcRadio",
+    "formats": [
+      "umd"
+    ]
   }
 }

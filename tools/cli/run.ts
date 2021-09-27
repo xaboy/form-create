@@ -1,6 +1,15 @@
-const {program} = require('commander')
-const path = require('path')
-const chalk = require('chalk')
+/*
+ * @Author       : djkloop
+ * @Date         : 2021-09-15 15:13:17
+ * @LastEditors  : djkloop
+ * @LastEditTime : 2021-09-19 16:10:22
+ * @Description  : 头部注释
+ * @FilePath     : /form-create2/tools/cli/run.ts
+ */
+import {program} from 'commander';
+import path from 'path';
+import chalk from 'chalk';
+import build from '../lib/build';
 // pkgUrl
 const log = console.log
 const commandExecUrl = process.cwd()
@@ -21,25 +30,26 @@ program
 
 program
     .command('build [flag]')
-    .description('build packages')
-    .option('-a,--all', 'Build @form-create/[all]packages') /// 默认打包搓个
-    .option('-p, --packages <ui-package...>', 'Build @form-create/<ui-package> package or packages array') // 默认打单独的包支持数据
-    .action((_, cmd) => require('../lib/build')(_, cleanArgs(cmd)));
+    .description('build components && packages || build components || build packages')
+    .option('-a,--all', 'Build @form-create/[all]packages') /// 默认打包components和packages
+    .option('-c, --components <ui-compnents...>', 'Build @form-create/component-<ui-package> package or packages array') // 打单独的组件
+    .option('-p, --packages <ui-package...>', 'Build @form-create/<ui-package> package or packages array') // 打单独的包
+    .action((_: any, cmd: any) => build(_, cleanArgs(cmd)));
 
 program.parse(process.argv);
 
 
 
 // code with vue-cli: https://github.com/vuejs/vue-cli/blob/dev/packages/%40vue/cli/bin/vue.js#L275
-function camelize(str) {
+function camelize(str: string) {
     return str.replace(/-(\w)/g, (_, c) => c ? c.toUpperCase() : '')
 }
 
 // commander passes the Command object itself as options,
 // extract only actual options into a fresh object.
-function cleanArgs(cmd) {
-    const args = {}
-    cmd.options.forEach(o => {
+function cleanArgs(cmd: any) {
+    const args: any = {}
+    cmd.options.forEach((o: any) => {
         const key = camelize(o.long.replace(/^--/, ''))
         // if an option is not present and Command has a method with the same name
         // it should not be copied

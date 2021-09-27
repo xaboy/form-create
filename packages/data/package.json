@@ -36,5 +36,12 @@
     "homepage": "http://www.form-create.com",
     "publishConfig": {
         "access": "public"
+    },
+    "buildFormCreateOptions": {
+        "name": "@form-create/data",
+        "isMulti": true,
+        "formats": [
+            "umd"
+        ]
     }
 }

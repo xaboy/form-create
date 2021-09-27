@@ -38,5 +38,12 @@
   "homepage": "http://www.form-create.com",
   "publishConfig": {
     "access": "public"
+  },
+  "buildFormCreateOptions": {
+    "name": "@form-create/component-elm-upload",
+    "exportName": "FcUpload",
+    "formats": [
+      "umd"
+    ]
   }
 }

@@ -44,5 +44,13 @@
     },
     "publishConfig": {
         "access": "public"
+    },
+    "buildFormCreateOptions": {
+        "name": "@form-create/core",
+        "exportName": "formCreateFactory",
+        "fileName": "index",
+        "formats": [
+            "esm"
+        ]
     }
 }

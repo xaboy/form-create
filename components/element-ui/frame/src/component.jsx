@@ -1,7 +1,7 @@
 import toArray from '@form-create/utils/lib/toarray';
+import Mitt from '@form-create/utils/lib/mitt';
 import './style.css';
 import {defineComponent} from 'vue';
-import Mitt from '@form-create/utils/lib/mitt';
 
 const NAME = 'fcFrame';
 
@@ -177,11 +177,11 @@ export default defineComponent({
             if (!this.maxLength || this.fileList.length < this.maxLength) {
                 children.push(this.makeBtn());
             }
-            return <div key={this.key('group')}>{...children}</div>
+            return <div key={this.key('group')}>{children}</div>
         },
 
         makeItem(index, children) {
-            return <div class='fc-files' key={this.key('file' + index)}>{...children}</div>;
+            return <div class='fc-files' key={this.key('file' + index)}>{children}</div>;
         },
         valid(f) {
             const field = this.formCreate.field || this.field;
