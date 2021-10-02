@@ -11,7 +11,10 @@ export default function createGroup(config) {
             rules: Array,
             expand: Number,
             options: Object,
-            formCreate: Object,
+            formCreateInject: {
+                type: Object,
+                required: true,
+            },
             button: {
                 type: Boolean,
                 default: true
@@ -144,7 +147,7 @@ export default function createGroup(config) {
                 $f.coverValue(value || {});
             },
             addRule(i, emit) {
-                const rule = this.$formCreate.copyRules(this.formRule);
+                const rule = this.formCreateInject.form.copyRules(this.formRule);
                 const options = this.options ? {...this.options} : {
                     submitBtn: false,
                     resetBtn: false,
@@ -263,6 +266,9 @@ export default function createGroup(config) {
                         {button ? <Col span={2} pull={1} push={1}>{this.makeIcon(keys.length, index, key)}</Col> : null}
                     </Row>
                 })}</div>
+        },
+        beforeMount() {
+            this.$options.components.FormCreate = this.formCreateInject.form.$form();
         }
     };
 }

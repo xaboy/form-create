@@ -7,38 +7,22 @@ import {invoke, mergeRule} from '../frame/util';
 import toCase, {lower} from '@form-create/utils/lib/tocase';
 import {deepSet, toLine} from '@form-create/utils';
 
-function setTempProps(vm, ctx, api) {
-    if (!vm.$props) return;
-
-    const {prop} = ctx;
-    const keys = Object.keys(vm.$props);
-    const inject = injectProp(ctx, api);
-    const injectKeys = Object.keys(inject);
-
-    keys.forEach(key => {
-        if (hasProperty(prop.props, key))
-            vm.$props[key] = prop.props[key];
-        else if (injectKeys.indexOf(key) > -1) vm.$props[key] = inject[key];
-    });
-
-    const key = (vm.$options.model && vm.$options.model.prop) || 'value';
-    if (keys.indexOf(key) > -1) {
-        vm.$props[key] = prop.value;
-    }
-}
-
-function injectProp(ctx, api) {
+function injectProp(ctx, form, api) {
     return {
-        formCreate: api,
-        formCreateField: ctx.field,
-        formCreateOptions: ctx.prop.options,
-        formCreateRule: (function () {
-            const temp = {...ctx.prop};
-            return temp.on = temp.on ? {...temp.on} : {}, temp;
-        }()),
+        formCreateInject: {
+            api,
+            form,
+            field: ctx.field,
+            options: ctx.prop.options,
+            children: ctx.rule.children,
+            rule: ctx.rule,
+            prop: (function () {
+                const temp = {...ctx.prop};
+                return temp.on = temp.on ? {...temp.on} : {}, temp;
+            }()),
+        },
     }
 }
-
 
 export default function useRender(Render) {
     extend(Render.prototype, {
@@ -110,6 +94,25 @@ export default function useRender(Render) {
                 deepSet(ctx.prop, ctx.prop.optionsTo, ctx.prop.options);
             }
         },
+        setTempProps(vm, ctx) {
+            if (!vm.$props) return;
+
+            const {prop} = ctx;
+            const keys = Object.keys(vm.$props);
+            const inject = injectProp(ctx, this.fc.create, this.$handle.api);
+            const injectKeys = Object.keys(inject);
+
+            keys.forEach(key => {
+                if (hasProperty(prop.props, key))
+                    vm.$props[key] = prop.props[key];
+                else if (injectKeys.indexOf(key) > -1) vm.$props[key] = inject[key];
+            });
+
+            const key = (vm.$options.model && vm.$options.model.prop) || 'value';
+            if (keys.indexOf(key) > -1) {
+                vm.$props[key] = prop.value;
+            }
+        },
         renderTemp(ctx) {
             if (!Vue.compile) {
                 tip('当前使用的Vue构建版本不支持compile,无法使用template功能');
@@ -138,7 +141,7 @@ export default function useRender(Render) {
 
             const {vm, template} = this.tempList[id];
 
-            setTempProps(vm, ctx, this.$handle.api);
+            this.setTempProps(vm, ctx);
 
             const vn = template.render.call(vm);
 
@@ -264,7 +267,7 @@ export default function useRender(Render) {
             ctx.parser.mergeProp(ctx, custom);
             const props = [
                 {
-                    props: injectProp(ctx, this.$handle.api),
+                    props: injectProp(ctx, this.fc.create, this.$handle.api),
                     ref: ref,
                     key: rule.key || `${key}fc`,
                     slot: undefined,

@@ -7,7 +7,10 @@ export default function createFrame(config) {
     return {
         name: NAME,
         props: {
-            formCreateField: String,
+            formCreateInject: {
+                type: Object,
+                required: true,
+            },
             type: {
                 type: String,
                 default: 'input'
@@ -183,7 +186,7 @@ export default function createFrame(config) {
                 return <div class='fc-files' key={this.key('file' + index)}>{...children}</div>;
             },
             valid(f) {
-                const field = this.formCreateField || this.field;
+                const field = this.formCreateInject.field || this.field;
                 if (field && f !== field)
                     throw new Error('[frame]无效的字段值');
             },

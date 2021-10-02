@@ -153,6 +153,7 @@ export default function FormCreateFactory(config) {
     function FormCreate(vm, rules, options) {
         extend(this, {
             vm,
+            create,
             manager: createManager(config.manager),
             parsers,
             providers,

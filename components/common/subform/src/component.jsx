@@ -5,7 +5,10 @@ export default {
     props: {
         rule: Array,
         options: Object,
-        formCreate: Object,
+        formCreateInject: {
+            type: Object,
+            required: true,
+        },
         value: {
             type: Object,
             default: () => ({})
@@ -83,5 +86,8 @@ export default {
             }}
             rule={rule}
             option={options} extendOption={true}/>
+    },
+    beforeMount() {
+        this.$options.components.FormCreate = this.formCreateInject.form.$form();
     }
 }

@@ -5,13 +5,13 @@ export default {
     name: NAME,
     functional: true,
     props: {
-        formCreateOptions: {
-            type: Array,
-            default: () => ([])
+        formCreateInject: {
+            type: Object,
+            required: true,
         },
     },
     render(h, ctx) {
-        return <ElSelect {...ctx.data}>{ctx.props.formCreateOptions.map((props, index) => {
+        return <ElSelect {...ctx.data}>{ctx.props.formCreateInject.options.map((props, index) => {
             const slot = props.slot;
             return <ElOption {...{props}}
                 key={'' + index + props.value}>

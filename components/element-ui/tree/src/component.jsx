@@ -15,9 +15,9 @@ export default {
         }
     },
     props: {
-        formCreateRule: {
+        formCreateInject: {
             type: Object,
-            default: () => ({props: {}})
+            required: true,
         },
         type: {
             type: String,
@@ -61,7 +61,7 @@ export default {
         }
     },
     render() {
-        return <ElTree {...this.formCreateRule} ref="tree" on-check={() => this.updateValue()}
+        return <ElTree {...this.formCreateInject.prop} ref="tree" on-check={() => this.updateValue()}
             on-node-click={() => this.updateValue()}>{getSlot(this.$slots)}</ElTree>;
     },
     mounted() {

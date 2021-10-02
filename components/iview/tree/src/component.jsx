@@ -6,9 +6,9 @@ const NAME = 'fcTree';
 export default {
     name: NAME,
     props: {
-        formCreateRule: {
+        formCreateInject: {
             type: Object,
-            default: () => ({props: {}})
+            required: true,
         },
         type: {
             type: String,
@@ -35,7 +35,7 @@ export default {
     methods: {
         setStatus(value) {
             const n = toArray(value);
-            const data = this.formCreateRule.props.data;
+            const data = this.formCreateInject.prop.props.data;
             this.type === 'selected' ? this.checked(data, n, 'selected') : this.checked(data, n, 'checked');
             this.$forceUpdate();
         },
@@ -57,6 +57,6 @@ export default {
         } else {
             on['on-check-change'] = this.onInput;
         }
-        return <Tree {...this.formCreateRule} ref="tree" on={on}>{getSlot(this.$slots)}</Tree>;
+        return <Tree {...this.formCreateInject.prop} ref="tree" on={on}>{getSlot(this.$slots)}</Tree>;
     }
 }

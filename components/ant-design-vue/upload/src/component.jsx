@@ -33,9 +33,9 @@ export default {
             type: Number,
             default: 0
         },
-        formCreateRule: {
+        formCreateInject: {
             type: Object,
-            default: () => ({props: {}})
+            required: true,
         },
         value: {
             type: Array,
@@ -97,7 +97,7 @@ export default {
     },
     render() {
         const isShow = (!this.limit || this.limit > this.uploadList.length);
-        const ctx = {...this.formCreateRule};
+        const ctx = {...this.formCreateInject.prop};
         ctx.on = deepExtend({}, ctx.on || {});
         return <div>
             <AUpload {...ctx} on-preview={this.onHandle.bind(this)}

@@ -10,7 +10,10 @@ export default {
         rules: Array,
         expand: Number,
         options: Object,
-        formCreate: Object,
+        formCreateInject: {
+            type: Object,
+            required: true,
+        },
         button: {
             type: Boolean,
             default: true
@@ -143,7 +146,7 @@ export default {
             $f.coverValue(value || {});
         },
         addRule(i, emit) {
-            const rule = this.$formCreate.copyRules(this.formRule);
+            const rule = this.formCreateInject.form.copyRules(this.formRule);
             const options = this.options ? {...this.options} : {
                 submitBtn: false,
                 resetBtn: false,
@@ -262,5 +265,8 @@ export default {
                     {button ? <ElCol span={2} pull={1} push={1}>{this.makeIcon(keys.length, index, key)}</ElCol> : null}
                 </ElRow>
             })}</div>
+    },
+    beforeMount() {
+        this.$options.components.FormCreate = this.formCreateInject.form.$form();
     }
 }

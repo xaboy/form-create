@@ -19,9 +19,9 @@ const NAME = 'fcUpload';
 export default {
     name: NAME,
     props: {
-        formCreateRule: {
+        formCreateInject: {
             type: Object,
-            default: () => ({props: {}})
+            required: true,
         },
         onHandle: {
             type: Function,
@@ -58,10 +58,10 @@ export default {
         }
     },
     created() {
-        if (this.formCreateRule.props.showFileList === undefined) {
-            this.formCreateRule.props.showFileList = false;
+        if (this.formCreateInject.prop.props.showFileList === undefined) {
+            this.formCreateInject.prop.props.showFileList = false;
         }
-        this.formCreateRule.props.fileList = toArray(this.value).map(parseFile);
+        this.formCreateInject.prop.props.fileList = toArray(this.value).map(parseFile);
     },
     watch: {
         value(n) {
@@ -83,7 +83,7 @@ export default {
             return unique;
         },
         isDisabled() {
-            return this.formCreateRule.props.disabled === true;
+            return this.formCreateInject.prop.props.disabled === true;
         },
         onRemove(file) {
             if (this.isDisabled()) {
@@ -137,7 +137,7 @@ export default {
         },
         makeUpload() {
             const isShow = (!this.limit || this.limit > this.uploadList.length);
-            return <ElUpload {...this.formCreateRule} ref="upload"
+            return <ElUpload {...this.formCreateInject.prop} ref="upload"
                 style={{display: 'inline-block'}}
                 key={this.key('upload')}>
                 {isShow ? <template slot="default">
@@ -157,15 +157,16 @@ export default {
     },
     render() {
         if (this.$refs.upload) {
-            if (this.formCreateRule.props.showFileList === undefined) {
-                this.formCreateRule.props.showFileList = this.$refs.upload.showFileList;
+            if (this.formCreateInject.prop.props.showFileList === undefined) {
+                this.formCreateInject.prop.props.showFileList = this.$refs.upload.showFileList;
             }
-            this.formCreateRule.props.fileList = this.$refs.upload.fileList;
+            this.formCreateInject.prop.props.fileList = this.$refs.upload.fileList;
         }
         return (
             <div
-                class='_fc-upload'>{[this.formCreateRule.props.showFileList ? [] : this.makeFiles(), this.makeUpload()]}
-                <el-dialog appendToBody={true} modal={this.previewMask} title={this.modalTitle} visible={this.previewVisible}
+                class='_fc-upload'>{[this.formCreateInject.prop.props.showFileList ? [] : this.makeFiles(), this.makeUpload()]}
+                <el-dialog appendToBody={true} modal={this.previewMask} title={this.modalTitle}
+                    visible={this.previewVisible}
                     on-close={this.handleCancel}>
                     <img alt="example" style="width: 100%" src={this.previewImage}/>
                 </el-dialog>
