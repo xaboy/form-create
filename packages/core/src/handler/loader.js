@@ -40,11 +40,7 @@ export default function useLoader(Handler) {
         },
         loadFn(item, rule) {
             ['on', 'props', 'nativeOn'].forEach(k => {
-                const v = item[k];
-                if (v) {
-                    this.parseFn(v);
-                    this.parseInjectEvent(rule, v);
-                }
+                item[k] && this.parseInjectEvent(rule, item[k]);
             });
         },
         loadCtrl(rule) {

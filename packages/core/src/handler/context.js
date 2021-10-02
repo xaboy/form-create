@@ -58,7 +58,6 @@ export default function useContext(Handler) {
                         ctx.link();
                         return;
                     } else if (['props', 'on', 'nativeOn'].indexOf(key) > -1) {
-                        this.parseFn(n || {});
                         this.parseInjectEvent(ctx.rule, n || {});
                         if (key === 'props' && ctx.input) {
                             this.setFormData(ctx, ctx.parser.toFormValue(ctx.rule.value, ctx));

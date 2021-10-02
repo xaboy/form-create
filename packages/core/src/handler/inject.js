@@ -9,17 +9,23 @@ export default function useInject(Handler) {
         parseInjectEvent(rule, on) {
             if (rule.inject === false) return;
             const inject = rule.inject || this.options.injectEvent;
-            if (is.Undef(inject)) return;
-            Object.keys(on).forEach(k => {
-                if (is.Function(on[k]))
-                    on[k] = this.inject(rule, on[k], inject)
-            });
-            return on;
-        },
-        parseFn(obj) {
-            obj && Object.keys(obj).forEach(n => {
-                obj[n] = parseFn(obj[n]);
-            })
+            const flag = !is.Undef(inject);
+            const parseEvent = (on) => {
+                Object.keys(on).forEach(k => {
+                    if (is.Function(on[k]) && flag) {
+                        on[k] = this.inject(rule, on[k], inject)
+                    } else if (is.Object(on[k]) && on[k].inject) {
+                        on[k] = this.inject(rule, on[k].handler, inject)
+                    } else if (Array.isArray(on[k])) {
+                        parseEvent(on[k]);
+                    } else if (is.String(on[k])) {
+                        const val = parseFn(on[k]);
+                        on[k] = is.String(val) ? val : parseEvent([val])[0];
+                    }
+                });
+                return on
+            }
+            return parseEvent(on);
         },
         parseEmit(ctx, on) {
             let event = {}, rule = ctx.rule, {emitPrefix, field, name, inject} = rule;
@@ -75,10 +81,13 @@ export default function useInject(Handler) {
             const h = this;
 
             const fn = function (...args) {
-                args.unshift(h.getInjectData(self, inject));
+                const data = h.getInjectData(self, inject);
+                data.args = [...args];
+                args.unshift(data);
                 return _fn.apply(this, args);
             };
             fn.__origin = _fn;
+            fn.__json = _fn.__json;
             return fn;
         },
     })
