@@ -50,6 +50,7 @@ export default function useContext(Handler) {
                 const flag = key === 'children';
                 ctx.watch.push(vm.$watch(() => ctx.rule[key], (n, o) => {
                     if (this.loading || this.noWatchFn || this.reloading) return;
+                    if (flag && ctx.parser.loadChildren === false) return;
                     this.watching = true;
                     // if (key === 'hidden')
                     //     ctx.updateKey(true);
@@ -119,12 +120,14 @@ export default function useContext(Handler) {
                 $del(this.nameCtx, name);
             }
             if (!this.reloading) {
-                this.deferSyncValue(() => {
-                    if (is.trueArray(ctx.rule.children)) {
-                        ctx.rule.children.forEach(h => h.__fc__ && this.rmCtx(h.__fc__));
-                    }
-                    this.syncValue();
-                })
+                if (ctx.parser.loadChildren !== false) {
+                    this.deferSyncValue(() => {
+                        if (is.trueArray(ctx.rule.children)) {
+                            ctx.rule.children.forEach(h => h.__fc__ && this.rmCtx(h.__fc__));
+                        }
+                        this.syncValue();
+                    })
+                }
                 if (ctx.root === this.rules) {
                     this.vm._renderRule();
                 }

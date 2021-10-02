@@ -5,7 +5,7 @@ import {_vue as Vue} from '../frame';
 import {tip} from '@form-create/utils/lib/console';
 import {invoke, mergeRule} from '../frame/util';
 import toCase, {lower} from '@form-create/utils/lib/tocase';
-import {deepSet} from '@form-create/utils';
+import {deepSet, toLine} from '@form-create/utils';
 
 function setTempProps(vm, ctx, api) {
     if (!vm.$props) return;
@@ -43,14 +43,16 @@ function injectProp(ctx, api) {
 export default function useRender(Render) {
     extend(Render.prototype, {
         initRender() {
-            this.renderList = {};
+            this.tempList = {};
             this.clearOrgChildren();
         },
         initOrgChildren() {
             const ctxs = this.$handle.ctxs;
             this.orgChildren = Object.keys(ctxs).reduce((initial, id) => {
-                const children = ctxs[id].rule.children;
-                initial[id] = is.trueArray(children) ? [...children] : [];
+                if (ctxs[id].parser.loadChildren !== false) {
+                    const children = ctxs[id].rule.children;
+                    initial[id] = is.trueArray(children) ? [...children] : [];
+                }
 
                 return initial;
             }, {});
@@ -66,11 +68,24 @@ export default function useRender(Render) {
             this.$h = this.vm.$createElement;
             this.$manager.beforeRender();
 
-            const vn = this.sort.map((id) => {
-                return this.renderCtx(this.$handle.ctxs[id]);
-            }).filter((val) => val !== undefined);
+            let vn;
 
+            const make = () => this.renderList();
+            make.renderSlot = slot => this.renderList(slot);
+            make.renderName = name => this.renderId(name);
+            make.renderField = field => this.renderId(field, 'field');
+
+            if (this.vm.$scopedSlots.container) {
+                vn = [this.vm.$scopedSlots.container(make)];
+            } else {
+                vn = make();
+            }
             return this.$manager.render(vn);
+        },
+        renderList(slot) {
+            return this.sort.map((id) => {
+                return slot ? this.renderSlot(this.$handle.ctxs[id], slot) : this.renderCtx(this.$handle.ctxs[id]);
+            }).filter((val) => val !== undefined);
         },
         makeVm(rule) {
             const vm = rule.vm;
@@ -103,7 +118,7 @@ export default function useRender(Render) {
             const rule = ctx.prop;
             const {id, key} = ctx;
 
-            if (!this.renderList[id]) {
+            if (!this.tempList[id]) {
                 if (!ctx.el) {
                     ctx.el = this.makeVm(rule);
                     this.vm.$nextTick(() => ctx.parser.mounted(ctx));
@@ -115,13 +130,13 @@ export default function useRender(Render) {
                         this.onInput(ctx, value);
                     });
 
-                this.renderList[id] = {
+                this.tempList[id] = {
                     vm,
                     template: Vue.compile(rule.template)
                 };
             }
 
-            const {vm, template} = this.renderList[id];
+            const {vm, template} = this.tempList[id];
 
             setTempProps(vm, ctx, this.$handle.api);
 
@@ -140,14 +155,22 @@ export default function useRender(Render) {
             const prop = ctx[temp ? 'rule' : 'prop'];
             return [this.renderRule(this.parseSide(prop.prefix)), vn, this.renderRule(this.parseSide(prop.suffix))];
         },
+        renderSlot(ctx, slot) {
+            return ctx.rule.slot === slot ? this.renderCtx(ctx) : undefined;
+        },
+        renderId(name, type) {
+            const ctx = this.$handle[type === 'field' ? 'nameCtx' : 'fieldCtx'][name]
+            return ctx ? this.renderCtx(ctx, ctx.parent) : undefined;
+        },
         renderCtx(ctx, parent) {
             if (ctx.type === 'hidden') return;
-            if (!this.cache[ctx.id]) {
+            const rule = ctx.rule;
+            if ((!this.cache[ctx.id]) || this.cache[ctx.id].slot !== rule.slot) {
                 let vn;
                 let cacheFlag = true;
                 const _type = ctx.trueType;
-                const none = !(is.Undef(ctx.rule.display) || !!ctx.rule.display);
-                if (_type === 'template' && !ctx.rule.template) {
+                const none = !(is.Undef(rule.display) || !!rule.display);
+                if (_type === 'template' && !rule.template) {
                     vn = this.renderSides(this.renderChildren(ctx), ctx, true);
                     if (none) {
                         this.display(vn);
@@ -172,7 +195,23 @@ export default function useRender(Render) {
                         vn = this.renderTemp(ctx);
                         cacheFlag = false;
                     } else {
-                        vn = ctx.parser.render(this.renderChildren(ctx), ctx);
+                        let children = [];
+                        if (ctx.parser.renderChildren) {
+                            children = ctx.parser.renderChildren(ctx);
+                        } else if (ctx.parser.loadChildren !== false) {
+                            children = this.renderChildren(ctx);
+                        }
+                        const slot = 'type-' + toLine(ctx.type);
+                        if (this.vm.$scopedSlots[slot]) {
+                            vn = this.vm.$scopedSlots[slot]({
+                                rule,
+                                prop,
+                                children,
+                                model: prop.model || {}
+                            });
+                        } else {
+                            vn = ctx.parser.render(children, ctx);
+                        }
                     }
                     vn = this.renderSides(vn, ctx);
                     if ((!(!ctx.input && is.Undef(prop.native))) && prop.native !== true) {

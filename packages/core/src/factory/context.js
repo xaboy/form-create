@@ -66,7 +66,9 @@ extend(RuleContext.prototype, {
         parser.init(this);
     },
     initProp() {
-        this.prop = mergeProps([this.rule, ...Object.keys(this.payload).map(k => this.payload[k]), this.computed]);
+        const rule = {...this.rule};
+        delete rule.children;
+        this.prop = mergeProps([rule, ...Object.keys(this.payload).map(k => this.payload[k]), this.computed]);
     },
     check(handle) {
         return this.vm === handle.vm

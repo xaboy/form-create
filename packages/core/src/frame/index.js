@@ -307,6 +307,7 @@ export default function FormCreateFactory(config) {
     useStatic(create);
 
     CreateNode.use({fragment: 'fcFragment'});
+    Vue.component('fc-vnode',fragment);
 
     if (config.install) create.use(config);
 

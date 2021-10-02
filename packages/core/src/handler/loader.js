@@ -185,7 +185,7 @@ export default function useLoader(Handler) {
 
                 !isCopy && !isInit && this.effect(ctx, 'load');
 
-                loadChildren(ctx.rule.children, ctx);
+                ctx.parser.loadChildren === false || loadChildren(ctx.rule.children, ctx);
 
                 if (!parent) {
                     const _preIndex = preIndex(index);
