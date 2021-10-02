@@ -268,15 +268,17 @@ export default function useRender(Render) {
                     ref: ref,
                     key: rule.key || `${key}fc`,
                     slot: undefined,
+                    on: {
+                        'hook:mounted': () => {
+                            this.onMounted(ctx);
+                        }
+                    },
                 }
             ]
 
             if (!custom) {
                 props.push({
                     on: {
-                        'hook:mounted': () => {
-                            this.onMounted(ctx);
-                        },
                         'fc.sub-form': (subForm) => {
                             this.$handle.addSubForm(ctx, subForm);
                         }
@@ -295,6 +297,9 @@ export default function useRender(Render) {
         },
         onMounted(ctx) {
             ctx.el = this.vm.$refs[ctx.ref];
+            if (ctx.el) {
+                (ctx.el.$el || ctx.el).__rule__ = ctx.rule;
+            }
             ctx.parser.mounted(ctx);
             this.$handle.effect(ctx, 'mounted');
         },
