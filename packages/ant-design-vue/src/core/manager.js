@@ -118,6 +118,7 @@ export default {
     makeInfo(rule, uni) {
         const titleProp = rule.title;
         const infoProp = rule.info;
+        if (this.options.form.title === false) return false;
         if ((!titleProp.title && !titleProp.native) || isFalse(titleProp.show)) return;
         const isTool = isTooltip(infoProp);
         const children = [titleProp.title];

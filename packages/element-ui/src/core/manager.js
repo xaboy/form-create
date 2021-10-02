@@ -118,7 +118,6 @@ export default {
         const {inline, col: _col} = this.rule.props;
         const item = isFalse(rule.wrap.show) ? children : this.$r(mergeProps([rule.wrap, {
             props: {
-                label: rule.title.title,
                 labelWidth: labelWidth === void 0 ? labelWidth : toString(labelWidth),
                 ...(rule.wrap || {}),
                 prop: ctx.field,
@@ -132,6 +131,7 @@ export default {
         return (inline === true || isFalse(_col) || isFalse(col.show)) ? item : this.makeCol(rule, uni, [item]);
     },
     isTitle(rule) {
+        if(this.options.form.title === false) return false;
         const title = rule.title;
         return !((!title.title && !title.native) || isFalse(title.show))
     },
