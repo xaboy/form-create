@@ -36,25 +36,23 @@ export function parseFn(fn, mode) {
     if (fn && is.String(fn)) {
         let v = fn.trim();
         let flag = false;
-        if (v.indexOf(SUFFIX) > 0 && v.indexOf(PREFIX) === 0) {
-            v = v.replace(SUFFIX, '').replace(PREFIX, '');
-            flag = true;
-        } else if (v.indexOf($T) === 0) {
-            v = v.replace($T, '');
-            flag = true;
-        } else if (v.indexOf('$FNX:') === 0) {
-            v = makeFn('function($inject){' + v.replace('$FNX:', '') + '}');
-            v.__json = fn;
-            return {
-                handler: v,
-                inject: true,
-            }
-        } else if (!mode && v.indexOf(FUNCTION) === 0 && v !== FUNCTION) {
-            flag = true;
-        }
-        if (!flag) return fn;
         try {
-            const val = makeFn(v.indexOf(FUNCTION) === -1 && v.indexOf('(') !== 0 ? (FUNCTION + ' ' + v) : v);
+            if (v.indexOf(SUFFIX) > 0 && v.indexOf(PREFIX) === 0) {
+                v = v.replace(SUFFIX, '').replace(PREFIX, '');
+                flag = true;
+            } else if (v.indexOf($T) === 0) {
+                v = v.replace($T, '');
+                flag = true;
+            } else if (v.indexOf('$FNX:') === 0) {
+                v = makeFn('function($inject){' + v.replace('$FNX:', '') + '}');
+                v.__json = fn;
+                v.__inject = true;
+                return v;
+            } else if (!mode && v.indexOf(FUNCTION) === 0 && v !== FUNCTION) {
+                flag = true;
+            }
+            if (!flag) return fn;
+            const val = makeFn((v.indexOf(FUNCTION) === -1 && v.indexOf('(') !== 0) ? (FUNCTION + ' ' + v) : v);
             val.__json = fn;
             return val;
         } catch (e) {

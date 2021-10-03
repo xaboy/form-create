@@ -108,7 +108,7 @@ extend(RuleContext.prototype, {
         })
     },
     rmCtrl() {
-        this.ctrlRule.forEach(ctrl => ctrl.__fc__.rm());
+        this.ctrlRule.forEach(ctrl => ctrl.__fc__ && ctrl.__fc__.rm());
         this.ctrlRule = [];
     },
     rm() {

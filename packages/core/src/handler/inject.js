@@ -9,23 +9,26 @@ export default function useInject(Handler) {
         parseInjectEvent(rule, on) {
             if (rule.inject === false) return;
             const inject = rule.inject || this.options.injectEvent;
-            const flag = !is.Undef(inject);
-            const parseEvent = (on) => {
-                Object.keys(on).forEach(k => {
-                    if (is.Function(on[k]) && flag) {
-                        on[k] = this.inject(rule, on[k], inject)
-                    } else if (is.Object(on[k]) && on[k].inject) {
-                        on[k] = this.inject(rule, on[k].handler, inject)
-                    } else if (Array.isArray(on[k])) {
-                        parseEvent(on[k]);
-                    } else if (is.String(on[k])) {
-                        const val = parseFn(on[k]);
-                        on[k] = is.String(val) ? val : parseEvent([val])[0];
-                    }
-                });
-                return on
+            return this.parseEventLst(rule, on, inject);
+        },
+        parseEventLst(rule, data, inject, deep) {
+            Object.keys(data).forEach(k => {
+                const fn = this.parseEvent(rule, data[k], inject, deep);
+                if (fn) {
+                    data[k] = fn;
+                }
+            });
+            return data;
+        },
+        parseEvent(rule, fn, inject, deep) {
+            if (is.Function(fn) && (!is.Undef(inject) || fn.__inject)) {
+                return this.inject(rule, fn, inject)
+            } else if (!deep && Array.isArray(fn) && fn[0] && (is.String(fn[0]) || is.Function(fn[0]))) {
+                return this.parseEventLst(rule, fn, inject, true);
+            } else if (is.String(fn)) {
+                const val = parseFn(fn);
+                return is.String(val) ? val : this.parseEvent(rule, val, inject, true);
             }
-            return parseEvent(on);
         },
         parseEmit(ctx, on) {
             let event = {}, rule = ctx.rule, {emitPrefix, field, name, inject} = rule;

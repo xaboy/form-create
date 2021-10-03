@@ -234,6 +234,18 @@ export default function useLoader(Handler) {
 
             let flag = false;
             validate.reverse().forEach(({valid, rule, prepend, append, child, ctrl}) => {
+                if (is.String(rule[0])) {
+                    valid ? ctx.ctrlRule.push({
+                        __ctrl: true,
+                        children: rule,
+                        valid
+                    })
+                        : ctx.ctrlRule.splice(ctx.ctrlRule.indexOf(ctrl), 1);
+                    this.vm.$nextTick(() => {
+                        this.api.hidden(!valid, rule);
+                    });
+                    return;
+                }
                 if (valid) {
                     flag = true;
                     const ruleCon = {
