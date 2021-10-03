@@ -139,7 +139,7 @@ export default function useLoader(Handler) {
 
                 if (isRepeat()) {
                     this.repeatRule.push(_rule);
-                    this.vm.$emit('repeat', _rule, this.api);
+                    this.vm.$emit('repeat-field', _rule, this.api);
                     return err(`${rule.field} 字段已存在`, _rule);
                 }
 
