@@ -34,9 +34,7 @@ export default function Handler(fc) {
         formData: reactive({}),
         subForm: {},
         form: reactive({}),
-        appendData: {
-            ...(this.options.formData || {}), ...(fc.vm.modelValue || {})
-        },
+        appendData: {},
         providers: {},
         cycleLoad: null,
         loadedId: 1,
@@ -67,6 +65,7 @@ extend(Handler.prototype, {
         });
     },
     init() {
+        this.appendData = {...(this.options.formData || {}), ...(this.fc.vm.modelValue || {}), ...this.appendData};
         this.useProvider();
         this.usePage();
         this.loadRule();

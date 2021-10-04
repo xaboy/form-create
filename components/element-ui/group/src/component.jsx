@@ -49,7 +49,7 @@ export default defineComponent({
             }
         },
     },
-    inject: ['formCreate'],
+    inject: ['formCreateInject'],
     data() {
         return {
             len: 0,
@@ -57,13 +57,15 @@ export default defineComponent({
             cacheValue: {},
         }
     },
-    emits: ['fc:subform', 'update:modelValue', 'change', 'itemMounted'],
+    emits: ['update:modelValue', 'change', 'itemMounted'],
     watch: {
         disabled(n) {
-            const lst = this.cacheRule;
-            Object.keys(lst).forEach(k => {
-                lst[k].$f.disabled(n);
-            })
+            if (this.syncDisabled) {
+                const lst = this.cacheRule;
+                Object.keys(lst).forEach(k => {
+                    lst[k].$f.disabled(n);
+                })
+            }
         },
         expand(n) {
             let d = n - this.modelValue.length;
@@ -133,7 +135,7 @@ export default defineComponent({
             this.cache(key, value);
         },
         addRule(i, emit) {
-            const rule = this.formCreate.create.copyRules(this.rule || []);
+            const rule = this.formCreateInject.form.copyRules(this.rule || []);
             const options = this.options ? {...this.options} : {
                 submitBtn: false,
                 resetBtn: false,
@@ -147,12 +149,14 @@ export default defineComponent({
             this.cacheRule[key].$f = $f;
             this.subForm();
             this.$nextTick(() => {
-                $f.disabled(this.disabled);
+                if (this.syncDisabled) {
+                    $f.disabled(this.disabled);
+                }
                 this.$emit('itemMounted', $f, Object.keys(this.cacheRule).indexOf(key));
             });
         },
         subForm() {
-            this.$emit('fc:subform', Object.keys(this.cacheRule).map(k => this.cacheRule[k].$f));
+            this.formCreateInject.subForm(Object.keys(this.cacheRule).map(k => this.cacheRule[k].$f));
         },
         removeRule(key, emit) {
             const index = Object.keys(this.cacheRule).indexOf(key);
@@ -215,7 +219,7 @@ export default defineComponent({
         }
     },
     created() {
-        this._.appContext.components.FormCreate = this.formCreate.create.$form()
+        this._.appContext.components.FormCreate = this.formCreateInject.form.$form()
         const d = (this.expand || 0) - this.modelValue.length;
         if (d > 0) {
             this.expandRule(d);

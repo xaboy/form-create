@@ -18,9 +18,9 @@ export default defineComponent({
         syncDisabled: {
             type: Boolean,
             default: true
-        }
+        },
     },
-    inject: ['formCreate'],
+    inject: ['formCreateInject'],
     data() {
         return {
             cacheValue: {},
@@ -52,7 +52,7 @@ export default defineComponent({
         },
         add$f(api) {
             this.subApi = api;
-            this.$emit('fc:subform', api);
+            this.formCreateInject.subForm(api);
             this.$nextTick(() => {
                 this.syncDisabled && api.disabled(this.disabled);
                 this.$emit('itemMounted', api);
@@ -60,7 +60,7 @@ export default defineComponent({
         }
     },
     created() {
-        this._.appContext.components.FormCreate = this.formCreate.create.$form()
+        this._.appContext.components.FormCreate = this.formCreateInject.form.$form()
     },
     render() {
         return <FormCreate

@@ -20,9 +20,9 @@ export default function createUpload(config) {
     return {
         name: NAME,
         props: {
-            formCreateRule: {
+            formCreateInject: {
                 type: Object,
-                default: () => ({props: {}})
+                required: true,
             },
             onHandle: {
                 type: Function,
@@ -58,9 +58,9 @@ export default function createUpload(config) {
             }
         },
         created() {
-            if (this.formCreateRule.props.showUploadList === undefined)
-                this.formCreateRule.props.showUploadList = false;
-            this.formCreateRule.props.defaultFileList = toArray(this.value).map(parseFile);
+            if (this.formCreateInject.prop.props.showUploadList === undefined)
+                this.formCreateInject.prop.props.showUploadList = false;
+            this.formCreateInject.prop.props.defaultFileList = toArray(this.value).map(parseFile);
         },
         watch: {
             value(n) {
@@ -81,7 +81,7 @@ export default function createUpload(config) {
                 return unique;
             },
             isDisabled() {
-                return this.formCreateRule.props.disabled === true;
+                return this.formCreateInject.prop.props.disabled === true;
             },
             onRemove(file) {
                 if (this.isDisabled()) return;
@@ -130,7 +130,7 @@ export default function createUpload(config) {
             },
             makeUpload() {
                 const isShow = (!this.maxLength || this.maxLength > this.uploadList.length);
-                return <Upload {...this.formCreateRule} ref="upload"
+                return <Upload {...this.formCreateInject.prop} ref="upload"
                     style={{display: 'inline-block'}}
                     key={this.key('upload')}>
                     {isShow ? <template slot="default">
@@ -153,13 +153,13 @@ export default function createUpload(config) {
         },
         render() {
             if (this.$refs.upload) {
-                if (this.formCreateRule.props.showUploadList === undefined)
-                    this.formCreateRule.props.showUploadList = this.$refs.upload.showUploadList;
-                this.formCreateRule.props.defaultFileList = this.$refs.upload.defaultFileList;
+                if (this.formCreateInject.prop.props.showUploadList === undefined)
+                    this.formCreateInject.prop.props.showUploadList = this.$refs.upload.showUploadList;
+                this.formCreateInject.prop.props.defaultFileList = this.$refs.upload.defaultFileList;
             }
             return (
                 <div
-                    class="_fc-upload">{[this.formCreateRule.props.showUploadList ? [] : this.makeFiles(), this.makeUpload()]}
+                    class="_fc-upload">{[this.formCreateInject.prop.props.showUploadList ? [] : this.makeFiles(), this.makeUpload()]}
                     <Modal title={this.modalTitle} v-model={this.previewVisible} footerHide={true}>
                         <img alt="example" style="width: 100%" src={this.previewImage}/>
                     </Modal>

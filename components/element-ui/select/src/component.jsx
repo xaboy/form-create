@@ -12,9 +12,9 @@ export default defineComponent({
         },
         type: String,
     },
-    emits: ['update:modelValue', 'fc:subform'],
+    emits: ['update:modelValue'],
     setup(props) {
-        const {options} = toRefs(inject('formCreate'));
+        const {options} = toRefs(inject('formCreateInject'));
         const value = toRef(props, 'modelValue');
         return {
             options,

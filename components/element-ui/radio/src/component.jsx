@@ -7,14 +7,14 @@ export default defineComponent({
     name: NAME,
     props: {
         modelValue: {
-            type: [String,  Number],
+            type: [String, Number],
             default: () => []
         },
         type: String,
     },
-    emits: ['update:modelValue', 'fc:subform'],
+    emits: ['update:modelValue'],
     setup(props, _) {
-        const {options} = toRefs(inject('formCreate'));
+        const {options} = toRefs(inject('formCreateInject'));
         const trueValue = ref([]);
         const value = toRef(props, 'modelValue');
         const update = () => {

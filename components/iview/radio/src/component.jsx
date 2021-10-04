@@ -5,13 +5,9 @@ const NAME = 'fcRadio';
 export default {
     name: NAME,
     props: {
-        formCreateRule: {
+        formCreateInject: {
             type: Object,
-            default: () => ({})
-        },
-        formCreateOptions: {
-            type: Array,
-            default: () => []
+            required: true,
         },
         value: {}
     },
@@ -27,18 +23,18 @@ export default {
     },
     methods: {
         onInput(n) {
-            this.$emit('input', this.formCreateOptions.filter((opt) => opt.label === n).reduce((initial, opt) => opt.value, ''));
+            this.$emit('input', this.formCreateInject.options.filter((opt) => opt.label === n).reduce((initial, opt) => opt.value, ''));
         },
         update() {
-            this.trueValue = this.formCreateOptions.filter((opt) => opt.value === this.value).reduce((initial, opt) => opt.label, '');
+            this.trueValue = this.formCreateInject.options.filter((opt) => opt.value === this.value).reduce((initial, opt) => opt.label, '');
         }
     },
     created() {
         this.update();
     },
     render() {
-        return <RadioGroup {...this.formCreateRule} value={this.trueValue}
-            on-input={this.onInput}>{this.formCreateOptions.map((opt, index) => {
+        return <RadioGroup {...this.formCreateInject.prop} value={this.trueValue}
+            on-input={this.onInput}>{this.formCreateInject.options.map((opt, index) => {
                 const props = {...opt};
                 delete props.value;
                 return <Radio {...{props}} key={'' + index + opt.value}/>

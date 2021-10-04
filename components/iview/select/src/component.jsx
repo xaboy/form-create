@@ -5,13 +5,13 @@ export default {
     name: NAME,
     functional: true,
     props: {
-        formCreateOptions: {
-            type: Array,
-            default: () => ([])
+        formCreateInject: {
+            type: Object,
+            required: true,
         },
     },
     render(h, ctx) {
-        return <Select {...ctx.data}>{ctx.props.formCreateOptions.map((props, index) => {
+        return <Select {...ctx.data}>{ctx.props.formCreateInject.options.map((props, index) => {
             const slot = props.slot;
             return <Option {...{props}}
                 key={'' + index + props.value}>

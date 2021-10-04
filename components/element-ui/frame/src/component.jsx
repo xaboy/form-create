@@ -115,8 +115,8 @@ export default defineComponent({
         },
 
     },
-    inject: ['formCreate'],
-    emits: ['update:modelValue', 'change', 'fc:subform'],
+    inject: ['formCreateInject'],
+    emits: ['update:modelValue', 'change'],
     data() {
         return {
             fileList: toArray(this.modelValue),
@@ -181,10 +181,10 @@ export default defineComponent({
         },
 
         makeItem(index, children) {
-            return <div class='fc-files' key={this.key('file' + index)}>{children}</div>;
+            return <div class="fc-files" key={this.key('file' + index)}>{children}</div>;
         },
         valid(f) {
-            const field = this.formCreate.field || this.field;
+            const field = this.formCreateInject.field || this.field;
             if (field && f !== field) {
                 throw new Error('[frame]无效的字段值');
             }
@@ -198,7 +198,7 @@ export default defineComponent({
                 if (this.allowRemove) {
                     icons.push(this.makeRemoveIcon(val, index));
                 }
-                return <div class='fc-upload-cover' key={this.key('uc')}>{icons}</div>
+                return <div class="fc-upload-cover" key={this.key('uc')}>{icons}</div>
             }
         },
         makeHandleIcon(val, index) {
@@ -223,7 +223,7 @@ export default defineComponent({
             }))
         },
         makeBtn() {
-            return <div class='fc-upload-btn' onClick={() => this.showModel()} key={this.key('btn')}>
+            return <div class="fc-upload-btn" onClick={() => this.showModel()} key={this.key('btn')}>
                 <i class={this.icon}/>
             </div>
         },
@@ -324,8 +324,8 @@ export default defineComponent({
         </div>
     },
     mounted() {
-        const close = ()=>(this.frameVisible = false);
-        this.formCreate.api.on('fc:closeModal:'+this.formCreate.name, close);
-        this.formCreate.api.on('fc:closeModal:'+this.formCreate.field, close);
+        const close = () => (this.frameVisible = false);
+        this.formCreateInject.api.on('fc:closeModal:' + this.formCreateInject.name, close);
+        this.formCreateInject.api.on('fc:closeModal:' + this.formCreateInject.field, close);
     }
 })

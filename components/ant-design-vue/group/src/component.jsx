@@ -10,7 +10,10 @@ export default {
         rules: Array,
         expand: Number,
         options: Object,
-        formCreate: Object,
+        formCreateInject: {
+            type: Object,
+            required: true,
+        },
         button: {
             type: Boolean,
             default: true
@@ -30,6 +33,10 @@ export default {
         disabled: {
             type: Boolean,
             default: false
+        },
+        syncDisabled: {
+            type: Boolean,
+            default: true
         },
         fontSize: {
             type: Number,
@@ -66,10 +73,12 @@ export default {
     },
     watch: {
         disabled(n) {
-            const lst = this.cacheRule;
-            Object.keys(lst).forEach(k => {
-                lst[k].$f.disabled(n);
-            })
+            if (this.syncDisabled) {
+                const lst = this.cacheRule;
+                Object.keys(lst).forEach(k => {
+                    lst[k].$f.disabled(n);
+                })
+            }
         },
         expand(n) {
             let d = n - this.value.length;
@@ -137,7 +146,7 @@ export default {
             $f.coverValue(value || {});
         },
         addRule(i, emit) {
-            const rule = this.$formCreate.copyRules(this.formRule);
+            const rule = this.formCreateInject.form.copyRules(this.formRule);
             const options = this.options ? {...this.options} : {
                 submitBtn: false,
                 resetBtn: false,
@@ -152,12 +161,14 @@ export default {
             this.cacheRule[key].$f = $f;
             this.subForm();
             this.$nextTick(() => {
-                $f.disabled(this.disabled);
+                if (this.syncDisabled) {
+                    $f.disabled(this.disabled);
+                }
                 this.$emit('itemMounted', $f, Object.keys(this.cacheRule).indexOf(key));
             });
         },
         subForm() {
-            this.$emit('fc.sub-form', Object.keys(this.cacheRule).map(k => this.cacheRule[k].$f));
+            this.formCreateInject.subForm(Object.keys(this.cacheRule).map(k => this.cacheRule[k].$f));
         },
         removeRule(key, emit) {
             const index = Object.keys(this.cacheRule).indexOf(key);
@@ -254,5 +265,8 @@ export default {
                     {button ? <ACol span={2} pull={1} push={1}>{this.makeIcon(keys.length, index, key)}</ACol> : null}
                 </ARow>
             })}</div>
+    },
+    beforeMount() {
+        this.$options.components.FormCreate = this.formCreateInject.form.$form();
     }
 }

@@ -21,7 +21,7 @@ export default defineComponent({
             default: () => ([])
         }
     },
-    emits: ['update:modelValue', 'fc:subform'],
+    emits: ['update:modelValue'],
     watch: {
         modelValue() {
             this.setValue();
@@ -56,6 +56,5 @@ export default defineComponent({
     },
     mounted() {
         this.setValue();
-        this.updateValue();
     }
 });

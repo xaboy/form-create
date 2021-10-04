@@ -23,6 +23,12 @@ export default function deepExtend(origin, target = {}, mode) {
                     nst && $set(origin, key, {});
                 }
                 origin[key] = deepExtend(origin[key], clone, mode);
+            } else if (is.Undef(clone)) {
+                $set(origin, key, clone);
+            } else if (clone.__json !== undefined) {
+                $set(origin, key, clone.__json);
+            } else if (clone.__origin !== undefined) {
+                $set(origin, key, clone.__origin);
             } else {
                 $set(origin, key, clone);
             }

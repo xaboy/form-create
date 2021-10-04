@@ -35,7 +35,19 @@ export default function useInput(Handler) {
                 const ctx = this.getCtx(field);
                 initial[field] = toRef(ctx.rule, 'value');
                 return initial;
-            }, this.form);
+            }, Object.keys(this.appendData).reduce((initial, field) => {
+                initial[field] = {
+                    enumerable: true,
+                    configurable: true,
+                    get: () => {
+                        return this.appendData[field];
+                    },
+                    set: (val) => {
+                        this.appendData[field] = val;
+                    }
+                }
+                return initial;
+            }, this.form));
             this.syncValue();
         },
         appendValue(rule) {
@@ -44,7 +56,9 @@ export default function useInput(Handler) {
             delete this.appendData[rule.field];
         },
         addSubForm(ctx, subForm) {
-            this.subForm[ctx.field] = subForm;
+            if (ctx.input) {
+                this.subForm[ctx.field] = subForm;
+            }
         },
         deferSyncValue(fn) {
             if (!this.deferSyncFn) {

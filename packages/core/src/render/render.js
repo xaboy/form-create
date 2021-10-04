@@ -60,7 +60,8 @@ export default function useRender(Render) {
         },
         renderCtx(ctx, parent) {
             if (ctx.type === 'hidden') return;
-            if (!this.cache[ctx.id]) {
+            const rule = ctx.rule;
+            if ((!this.cache[ctx.id]) || this.cache[ctx.id].slot !== rule.slot) {
                 let vn;
                 ctx.initProp();
                 this.mergeGlobal(ctx);
@@ -117,18 +118,28 @@ export default function useRender(Render) {
         item(ctx, vn) {
             return this.vNode.h('FcFragment', {
                 key: ctx.key,
-                formCreate: {
-                    api: this.$handle.api,
-                    field: ctx.field,
-                    name: ctx.name,
-                    options: ctx.prop.options,
-                    rule: ctx.rule,
-                    create:this.fc.create
-                }
+                formCreateInject: this.injectProp(ctx)
             }, vn);
         },
         isFragment(ctx) {
             return ctx.type === 'fragment' || ctx.type === 'template';
+        },
+        injectProp(ctx) {
+            return {
+                api: this.$handle.api,
+                form: this.fc.create,
+                subForm: subForm => {
+                    this.$handle.addSubForm(ctx, subForm);
+                },
+                field: ctx.field,
+                options: ctx.prop.options,
+                children: ctx.rule.children,
+                rule: ctx.rule,
+                prop: (function () {
+                    const temp = {...ctx.prop};
+                    return temp.on = temp.on ? {...temp.on} : {}, temp;
+                }()),
+            }
         },
         ctxProp(ctx, custom) {
             const {ref, key, rule} = ctx;
@@ -147,15 +158,12 @@ export default function useRender(Render) {
                     on: {
                         vnodeMounted: () => {
                             this.onMounted(ctx);
-                        },
-                        'fc:subform': (subForm) => {
-                            this.$handle.addSubForm(ctx, subForm);
                         }
                     }
                 };
                 if (ctx.input) {
                     data.on['update:modelValue'] = (value) => {
-                        console.log(ctx.field,value);
+                        console.log(ctx.field, value);
                         this.onInput(ctx, value);
                     };
                     data.props = {
@@ -169,6 +177,9 @@ export default function useRender(Render) {
         },
         onMounted(ctx) {
             ctx.el = this.vm.$refs[ctx.ref];
+            if (ctx.el) {
+                (ctx.el.$el || ctx.el).__rule__ = ctx.rule;
+            }
             ctx.parser.mounted(ctx);
             this.$handle.effect(ctx, 'mounted');
         },

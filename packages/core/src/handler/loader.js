@@ -26,17 +26,29 @@ export default function useLoader(Handler) {
 
             rule.options = Array.isArray(rule.options) ? rule.options : [];
 
+            [rule, rule['prefix'], rule['suffix']].forEach(item => {
+                if (!item) {
+                    return;
+                }
+                this.loadFn(item, rule);
+            });
+            this.loadCtrl(rule);
+            if (rule.update) {
+                rule.update = parseFn(rule.update);
+            }
+            return rule;
+        },
+        loadFn(item, rule) {
             ['on', 'props', 'nativeOn'].forEach(k => {
-                const v = rule[k];
-                if (v) {
-                    Object.keys(v).forEach(n => {
-                        v[n] = parseFn(v[n]);
-                    })
-                    this.parseInjectEvent(rule, v);
+                item[k] && this.parseInjectEvent(rule, item[k]);
+            });
+        },
+        loadCtrl(rule) {
+            rule.control && rule.control.forEach(ctrl => {
+                if (ctrl.handle) {
+                    ctrl.handle = parseFn(ctrl.handle)
                 }
             })
-
-            return rule;
         },
         syncProp(ctx) {
             const rule = ctx.rule;
@@ -104,8 +116,6 @@ export default function useLoader(Handler) {
                 }
             };
 
-            const initEvent = (rule) => this.ruleEffect(rule, 'init');
-
             rules.map((_rule, index) => {
                 if (parent && (is.String(_rule) || is.Undef(_rule))) return;
                 if (!this.pageEnd && !parent && index >= this.first) return;
@@ -120,15 +130,22 @@ export default function useLoader(Handler) {
 
                 let rule = getRule(_rule);
 
-                if (!_rule.__fc__) initEvent(rule);
+                const isRepeat = () => {
+                    return !!(rule.field && this.fieldCtx[rule.field] && this.fieldCtx[rule.field] !== _rule.__fc__)
+                }
 
-                if (rule.field && this.fieldCtx[rule.field] && this.fieldCtx[rule.field] !== _rule.__fc__) {
+                this.ruleEffect(rule, 'init', {repeat: isRepeat()});
+
+                if (isRepeat()) {
                     this.repeatRule.push(_rule);
+                    this.vm.$emit('repeat-field', _rule, this.api);
                     return err(`${rule.field} 字段已存在`, _rule);
                 }
 
                 let ctx;
-                if (_rule.__fc__) {
+                let isCopy = false;
+                let isInit = !!_rule.__fc__;
+                if (isInit) {
                     ctx = _rule.__fc__;
                     const check = !ctx.check(this);
                     if (ctx.deleted) {
@@ -144,17 +161,20 @@ export default function useLoader(Handler) {
                                 return;
                             }
                             rules[index] = _rule = _rule._clone ? _rule._clone() : copyRule(_rule);
-                            initEvent(getRule(_rule));
                             ctx = null;
+                            isCopy = true;
                         }
                     }
                 }
                 if (!ctx) {
                     ctx = new RuleContext(this, this.parseRule(_rule));
                     this.bindParser(ctx);
-                } else if (ctx.originType !== ctx.rule.type) {
-                    ctx.updateType();
-                    this.bindParser(ctx);
+                } else {
+                    if (ctx.originType !== ctx.rule.type) {
+                        ctx.updateType();
+                        this.bindParser(ctx);
+                    }
+                    this.appendValue(ctx.rule);
                 }
                 [false, true].forEach(b => this.parseEmit(ctx, b));
                 this.syncProp(ctx);
@@ -162,7 +182,9 @@ export default function useLoader(Handler) {
                 ctx.root = rules;
                 this.setCtx(ctx);
 
-                loadChildren(ctx.rule.children, ctx);
+                !isCopy && !isInit && this.effect(ctx, 'load');
+
+                ctx.parser.loadChildren === false || loadChildren(ctx.rule.children, ctx);
 
                 if (!parent) {
                     const _preIndex = preIndex(index);
@@ -211,6 +233,18 @@ export default function useLoader(Handler) {
 
             let flag = false;
             validate.reverse().forEach(({valid, rule, prepend, append, child, ctrl}) => {
+                if (is.String(rule[0])) {
+                    valid ? ctx.ctrlRule.push({
+                        __ctrl: true,
+                        children: rule,
+                        valid
+                    })
+                        : ctx.ctrlRule.splice(ctx.ctrlRule.indexOf(ctrl), 1);
+                    this.vm.$nextTick(() => {
+                        this.api.hidden(!valid, rule);
+                    });
+                    return;
+                }
                 if (valid) {
                     flag = true;
                     const ruleCon = {

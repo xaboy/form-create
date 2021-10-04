@@ -24,7 +24,8 @@ export default function useCache(Render) {
             this.cache[ctx.id] = {
                 vnode,
                 use: false,
-                parent
+                parent,
+                slot: ctx.rule.slot
             };
         },
         getCache(ctx) {

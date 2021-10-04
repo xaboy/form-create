@@ -110,7 +110,6 @@ export default {
         const {inline, col: _col} = this.rule.props;
         const item = isFalse(rule.wrap.show) ? children : this.$r(mergeProps([rule.wrap, {
             props: {
-                label: rule.title.title,
                 labelWidth: labelWidth === void 0 ? labelWidth : toString(labelWidth),
                 ...(rule.wrap || {}),
                 prop: ctx.field,
@@ -120,10 +119,11 @@ export default {
             key: `${uni}fi`,
             ref: ctx.wrapRef,
             type: 'formItem',
-        }]), {default: () => children, title: () => (isTitle ? this.makeInfo(rule, uni) : null)});
+        }]), {default: () => children, label: () => (isTitle ? this.makeInfo(rule, uni) : null)});
         return (inline === true || isFalse(_col) || isFalse(col.show)) ? item : this.makeCol(rule, uni, [item]);
     },
     isTitle(rule) {
+        if(this.options.form.title === false) return false;
         const title = rule.title;
         return !((!title.title && !title.native) || isFalse(title.show))
     },
@@ -131,7 +131,8 @@ export default {
         const titleProp = rule.title;
         const infoProp = rule.info;
         const isTip = isTooltip(infoProp);
-        const children = [titleProp.title];
+        const form = this.options.form;
+        const children = [titleProp.title + (form.labelSuffix || form['label-suffix'] || '')];
         const titleFn = () => this.$r(mergeProps([titleProp, {
             props: titleProp,
             key: `${uni}tit`,

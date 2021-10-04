@@ -5,13 +5,9 @@ const NAME = 'fcCheckbox';
 export default {
     name: NAME,
     props: {
-        formCreateRule: {
+        formCreateInject: {
             type: Object,
-            default: () => ({})
-        },
-        formCreateOptions: {
-            type: Array,
-            default: () => []
+            required: true,
         },
         value: {
             type: Array,
@@ -30,10 +26,10 @@ export default {
     },
     methods: {
         onInput(n) {
-            this.$emit('input', this.formCreateOptions.filter((opt) => n.indexOf(opt.label) !== -1).map((opt) => opt.value).filter(v => v !== undefined));
+            this.$emit('input', this.formCreateInject.options.filter((opt) => n.indexOf(opt.label) !== -1).map((opt) => opt.value).filter(v => v !== undefined));
         },
         update() {
-            this.trueValue = this.value ? this.formCreateOptions.filter((opt) => this.value.indexOf(opt.value) !== -1)
+            this.trueValue = this.value ? this.formCreateInject.options.filter((opt) => this.value.indexOf(opt.value) !== -1)
                 .map((option) => option.label) : []
         }
     },
@@ -41,8 +37,8 @@ export default {
         this.update();
     },
     render() {
-        return <CheckboxGroup {...this.formCreateRule} value={this.trueValue}
-            on-input={this.onInput}>{this.formCreateOptions.map((opt, index) => {
+        return <CheckboxGroup {...this.formCreateInject.prop} value={this.trueValue}
+            on-input={this.onInput}>{this.formCreateInject.options.map((opt, index) => {
                 const props = {...opt};
                 delete props.value;
                 return <Checkbox {...{props}} key={'' + index + opt.value}/>

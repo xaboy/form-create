@@ -34,6 +34,13 @@ export default function useEffect(Handler) {
                 }, {deep: true}));
             });
         },
+        ruleEffect(rule, event, append) {
+            this.emitEffect({
+                rule,
+                input: !!rule.field,
+                type: this.getType(rule.type)
+            }, event, append);
+        },
         effect(ctx, event, custom) {
             this.emitEffect({
                 rule: ctx.rule,
@@ -43,20 +50,13 @@ export default function useEffect(Handler) {
                 custom
             }, event);
         },
-        ruleEffect(rule, event) {
-            this.emitEffect({
-                rule,
-                input: !!rule.field,
-                type: this.getType(rule.type)
-            }, event);
-        },
         getEffect(rule, name) {
             if (hasProperty(rule, 'effect') && hasProperty(rule.effect, name))
                 return rule.effect[name];
             else
                 return undefined;
         },
-        emitEffect({ctx, rule, input, type, custom}, event) {
+        emitEffect({ctx, rule, input, type, custom}, event, append) {
             if (!type || type === 'fcFragment') return;
             const effect = custom ? custom : (rule.effect || {});
             Object.keys(effect).forEach(attr => {
@@ -70,7 +70,7 @@ export default function useEffect(Handler) {
                 } else {
                     return;
                 }
-                const data = {value: effect[attr], getValue: () => this.getEffect(rule, attr)};
+                const data = {value: effect[attr], getValue: () => this.getEffect(rule, attr), ...(append || {})};
                 if (ctx) {
                     data.getProp = () => ctx.effectData(attr);
                     data.clearProp = () => ctx.clearEffectData(attr);

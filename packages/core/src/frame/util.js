@@ -2,68 +2,10 @@ import deepExtend from '@form-create/utils/lib/deepextend';
 import is from '@form-create/utils/lib/type';
 import mergeProps from '@form-create/utils/lib/mergeprops';
 import {arrayAttrs, normalAttrs} from './attrs';
-import {err, logError} from '@form-create/utils/lib/console';
+import {logError} from '@form-create/utils/lib/console';
 import {isVNode} from 'vue';
+export {parseJson,parseFn,toJson} from '@form-create/utils/lib/json';
 import {upper} from '@form-create/utils/lib/toline';
-
-const PREFIX = '[[FORM-CREATE-PREFIX-';
-const SUFFIX = '-FORM-CREATE-SUFFIX]]';
-
-const $T = '$FN:';
-const FUNCTION = 'function';
-
-export function toJson(obj, space) {
-    return JSON.stringify(deepExtend([], obj, true), function (key, val) {
-        if (val && val._isVue === true)
-            return undefined;
-
-        if (typeof val !== FUNCTION) {
-            return val;
-        }
-        if (val.__inject)
-            val = val.__origin;
-
-        if (val.__emit)
-            return undefined;
-
-        return PREFIX + val + SUFFIX;
-    }, space);
-}
-
-function makeFn(fn) {
-    return eval('(' + FUNCTION + '(){return ' + fn + ' })()')
-}
-
-export function parseFn(fn, mode) {
-    if (fn && is.String(fn)) {
-        let v = fn.trim();
-        let flag = false;
-        if (v.indexOf(SUFFIX) > 0 && v.indexOf(PREFIX) === 0) {
-            v = v.replace(SUFFIX, '').replace(PREFIX, '');
-            flag = true;
-        } else if (v.indexOf($T) === 0) {
-            v = v.replace($T, '');
-            flag = true;
-        } else if (!mode && v.indexOf(FUNCTION) === 0 && v !== FUNCTION) {
-            flag = true;
-        }
-        if (!flag) return fn;
-        try {
-            return makeFn(v.indexOf(FUNCTION) === -1 && v.indexOf('(') !== 0 ? (FUNCTION + ' ' + v) : v);
-        } catch (e) {
-            err(`解析失败:${v}`);
-            return undefined;
-        }
-    }
-    return fn;
-}
-
-export function parseJson(json, mode) {
-    return JSON.parse(json, function (k, v) {
-        if (is.Undef(v) || !v.indexOf) return v;
-        return parseFn(v, mode);
-    });
-}
 
 export function enumerable(value, writable) {
     return {

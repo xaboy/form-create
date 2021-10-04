@@ -79,7 +79,9 @@ extend(RuleContext.prototype, {
         parser.init(this);
     },
     initProp() {
-        this.prop = mergeProps([this.rule, ...Object.keys(this.payload).map(k => this.payload[k]), this.computed]);
+        const rule = {...this.rule};
+        delete rule.children;
+        this.prop = mergeProps([rule, ...Object.keys(this.payload).map(k => this.payload[k]), this.computed]);
     },
     initNone(){
         this.none = isNone(this);
@@ -123,7 +125,7 @@ extend(RuleContext.prototype, {
         })
     },
     rmCtrl() {
-        this.ctrlRule.forEach(ctrl => ctrl.__fc__.rm());
+        this.ctrlRule.forEach(ctrl => ctrl.__fc__ && ctrl.__fc__.rm());
         this.ctrlRule = [];
     },
     rm() {
@@ -131,7 +133,7 @@ extend(RuleContext.prototype, {
             let index = this.root.indexOf(this.origin);
             if (index > -1) {
                 this.root.splice(index, 1);
-                this.$handle.refresh();
+                this.$handle && this.$handle.refresh();
             }
         }
         if (this.deleted) {

@@ -46,7 +46,7 @@ export default function useContext(Handler) {
             }
         },
         watchCtx(ctx) {
-            const none = ['field', 'value', 'vm', 'template', 'name', 'config', 'control', 'inject', 'sync', 'payload', 'optionsTo'];
+            const none = ['field', 'value', 'vm', 'template', 'name', 'config', 'control', 'inject', 'sync', 'payload', 'optionsTo', 'update'];
             const all = attrs();
             all.filter(k => none.indexOf(k) === -1).forEach((key) => {
                 const ref = toRef(ctx.rule, key);
@@ -55,6 +55,7 @@ export default function useContext(Handler) {
                 ctx.watch.push(watch(flag ? () => [...(ref.value || [])] : ref, (_, o) => {
                     const n = ref.value;
                     if (this.isBreakWatch()) return;
+                    if (flag && ctx.parser.loadChildren === false) return;
                     this.watching = true;
                     if (key === 'link') {
                         ctx.link();
@@ -66,6 +67,8 @@ export default function useContext(Handler) {
                         }
                     } else if (['emit', 'nativeEmit'].indexOf(key) > -1)
                         this.parseEmit(ctx, key === 'emit');
+                    else if (['prefix', 'suffix'].indexOf(key) > -1)
+                        n && this.loadFn(n, ctx.rule);
                     else if (key === 'type') {
                         ctx.updateType();
                         this.bindParser(ctx);
@@ -113,24 +116,27 @@ export default function useContext(Handler) {
             $del(this.ctxs, id);
 
             const f = this.fieldCtx[field];
+            let flag = false;
 
             if (field && (!f || f === ctx)) {
                 $del(this.formData, field);
                 $del(this.form, field);
                 $del(this.fieldCtx, field);
                 $del(this.subForm, field);
-                this.vm.$nextTick(() => this.vm.$emit('removeField', field, ctx.rule, this.api));
+                flag = true;
             }
             if (name && this.nameCtx[name] === ctx) {
                 $del(this.nameCtx, name);
             }
             if (!this.reloading) {
-                this.deferSyncValue(() => {
-                    if (is.trueArray(ctx.rule.children)) {
-                        ctx.rule.children.forEach(h => h.__fc__ && this.rmCtx(h.__fc__));
-                    }
-                    this.syncValue();
-                })
+                if (ctx.parser.loadChildren !== false) {
+                    this.deferSyncValue(() => {
+                        if (is.trueArray(ctx.rule.children)) {
+                            ctx.rule.children.forEach(h => h.__fc__ && this.rmCtx(h.__fc__));
+                        }
+                        this.syncValue();
+                    })
+                }
                 if (ctx.root === this.rules) {
                     this.vm.renderRule();
                 }
@@ -144,7 +150,8 @@ export default function useContext(Handler) {
             this.$render.clearCache(ctx);
             ctx.delete();
             this.effect(ctx, 'deleted');
-            this.vm.$nextTick(() => this.vm.$emit('removeRule', ctx.rule, this.api));
+            flag && this.vm.$emit('remove-field', field, ctx.rule, this.api);
+            ctx.rule.__ctrl || this.vm.$emit('remove-rule', ctx.rule, this.api);
             return ctx;
         },
     })

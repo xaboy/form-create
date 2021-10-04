@@ -99,6 +99,8 @@ export interface FormCreate<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs, Ap
 
     create: FormCreate<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
 
+    factory(): FormCreate<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
+
     init(rule: FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>[], option?: Options<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>): {
         mount($el?: Element): Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
 
@@ -137,12 +139,13 @@ export interface VNodeData {
 export interface Control<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
     value?: any;
     handle?: (val: any, $f: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => boolean;
-    rule: FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>[];
+    rule: FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>[] | string[];
 }
 
 export interface BaseRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> extends VNodeData {
     type: string;
     field?: string;
+    key?: string;
     name?: string;
     emitPrefix?: string;
     value?: any;
@@ -203,6 +206,8 @@ export class BaseCreator<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
 
     props(prop: { [key: string]: any }): this;
     props(prop: string, val: any): this;
+
+    key(key: string): this;
 
     attrs(prop: { [key: string]: any }): this;
     attrs(prop: string, val: any): this;
@@ -446,13 +451,14 @@ export interface EffectValue {
 export interface Effect<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
     name?: string;
     components?: string | string[];
-    init?: (val: { value: any, getValue: () => any; }, rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, $f: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
-    loaded?: (val: EffectValue, rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, $f: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
-    watch?: (val: EffectValue, rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, $f: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
-    value?: (val: EffectValue, rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, $f: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
-    control?: (val: EffectValue, rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, $f: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
-    deleted?: (val: EffectValue, rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, $f: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
-    mounted?: (val: EffectValue, rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, $f: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
+    init?: (data: { value: any, getValue: () => any; repeat: Boolean; }, rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, $f: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
+    load?: (data: EffectValue, rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, $f: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
+    loaded?: (data: EffectValue, rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, $f: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
+    watch?: (data: EffectValue, rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, $f: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
+    value?: (data: EffectValue, rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, $f: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
+    control?: (data: EffectValue, rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, $f: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
+    deleted?: (data: EffectValue, rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, $f: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
+    mounted?: (data: EffectValue, rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, $f: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
 }
 
 export interface Parser {
@@ -480,13 +486,13 @@ export interface FetchOption {
 export interface FetchEffectOption {
     action: String;
     to?: String;
-    parse?: (body: any) => any;
+    parse?: (body: any, rule: Object, api: Object) => any;
     method?: String;
     data?: Object;
     dataType?: 'json';
     headers?: Object;
     withCredentials?: Boolean;
-    onError?: (e: Error | ProgressEvent) => void;
+    onError?: (e: Error | ProgressEvent, rule: Object, api: Object) => void;
 }
 
 

@@ -135,13 +135,10 @@ export default function FormCreateFactory(config) {
         return vm.$refs.fc.fapi;
     }
 
-    /**
-     * todo 统一事件风格
-     * todo object syncDisabled 功能
-     *
-     * @param vm
-     * @constructor
-     */
+    function factory() {
+        return FormCreateFactory(config);
+    }
+
     function FormCreate(vm) {
         extend(this, {
             create,
@@ -236,6 +233,7 @@ export default function FormCreateFactory(config) {
             register,
             parser,
             use,
+            factory,
             componentAlias,
             copyRule,
             copyRules,
@@ -262,6 +260,7 @@ export default function FormCreateFactory(config) {
 
                 Vue.config.globalProperties.$formCreate = $formCreate;
                 Vue.component('FormCreate', $form());
+                Vue.component('fc-vnode', fragment);
             }
         })
     }
@@ -269,7 +268,7 @@ export default function FormCreateFactory(config) {
     useAttr(create);
     useStatic(create);
 
-    CreateNode.use({fragment: 'FcFragment'});
+    CreateNode.use({fragment: 'fcFragment'});
 
     if (config.install) create.use(config);
 

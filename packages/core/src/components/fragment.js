@@ -6,16 +6,16 @@ const NAME = 'FcFragment';
 export default defineComponent({
     name: NAME,
     inheritAttrs: false,
-    props: ['formCreate'],
+    props: ['formCreateInject', 'vnode'],
     setup(props) {
-        const data = toRef(props, 'formCreate');
+        const data = toRef(props, 'formCreateInject');
         const $inject = reactive({...data.value});
         watch(data, () => {
             extend($inject, data.value);
         });
-        provide('formCreate', $inject);
+        provide('formCreateInject', $inject);
     },
     render() {
-        return this.$slots.default();
+        return this.vnode ? this.vnode : this.$slots.default();
     }
 })

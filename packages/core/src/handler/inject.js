@@ -1,6 +1,7 @@
 import extend from '@form-create/utils/lib/extend';
 import is from '@form-create/utils/lib/type';
 import toLine from '@form-create/utils/lib/toline';
+import {parseFn} from '../frame/util';
 
 
 export default function useInject(Handler) {
@@ -8,24 +9,26 @@ export default function useInject(Handler) {
         parseInjectEvent(rule, on) {
             if (rule.inject === false) return;
             const inject = rule.inject || this.options.injectEvent;
-            if (is.Undef(inject)) return;
-
-            const injectFn = (fn) => {
-                if (is.Function(fn))
-                    return this.inject(rule, fn, inject)
-                else
-                    return fn;
-            }
-            Object.keys(on).forEach(k => {
-                if (Array.isArray(on[k])) {
-                    on[k].forEach((fn, i) => {
-                        on[k][i] = injectFn(fn);
-                    })
-                } else {
-                    on[k] = injectFn(on[k]);
+            return this.parseEventLst(rule, on, inject);
+        },
+        parseEventLst(rule, data, inject, deep) {
+            Object.keys(data).forEach(k => {
+                const fn = this.parseEvent(rule, data[k], inject, deep);
+                if (fn) {
+                    data[k] = fn;
                 }
             });
-            return on;
+            return data;
+        },
+        parseEvent(rule, fn, inject, deep) {
+            if (is.Function(fn) && (!is.Undef(inject) || fn.__inject)) {
+                return this.inject(rule, fn, inject)
+            } else if (!deep && Array.isArray(fn) && fn[0] && (is.String(fn[0]) || is.Function(fn[0]))) {
+                return this.parseEventLst(rule, fn, inject, true);
+            } else if (is.String(fn)) {
+                const val = parseFn(fn);
+                return is.String(val) ? val : this.parseEvent(rule, val, inject, true);
+            }
         },
         parseEmit(ctx, on) {
             let event = {}, rule = ctx.rule, {emitPrefix, field, name, inject} = rule;
@@ -72,7 +75,7 @@ export default function useInject(Handler) {
             };
         },
         inject(self, _fn, inject) {
-            if (_fn.__inject) {
+            if (_fn.__origin) {
                 if (this.watching && !this.loading)
                     return _fn;
                 _fn = _fn.__origin;
@@ -81,11 +84,13 @@ export default function useInject(Handler) {
             const h = this;
 
             const fn = function (...args) {
-                args.unshift(h.getInjectData(self, inject));
+                const data = h.getInjectData(self, inject);
+                data.args = [...args];
+                args.unshift(data);
                 return _fn.apply(this, args);
             };
-            fn.__inject = true;
             fn.__origin = _fn;
+            fn.__json = _fn.__json;
             return fn;
         },
     })

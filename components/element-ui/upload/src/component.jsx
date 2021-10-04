@@ -39,7 +39,7 @@ export default defineComponent({
         handleIcon: [String, Boolean],
         modelValue: [Array, String]
     },
-    emits: ['update:modelValue', 'fc:subform'],
+    emits: ['update:modelValue'],
     data() {
         return {
             uploadList: [],
