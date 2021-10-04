@@ -7,23 +7,6 @@ import {invoke, mergeRule} from '../frame/util';
 import toCase, {lower} from '@form-create/utils/lib/tocase';
 import {deepSet, toLine} from '@form-create/utils';
 
-function injectProp(ctx, form, api) {
-    return {
-        formCreateInject: {
-            api,
-            form,
-            field: ctx.field,
-            options: ctx.prop.options,
-            children: ctx.rule.children,
-            rule: ctx.rule,
-            prop: (function () {
-                const temp = {...ctx.prop};
-                return temp.on = temp.on ? {...temp.on} : {}, temp;
-            }()),
-        },
-    }
-}
-
 export default function useRender(Render) {
     extend(Render.prototype, {
         initRender() {
@@ -99,7 +82,7 @@ export default function useRender(Render) {
 
             const {prop} = ctx;
             const keys = Object.keys(vm.$props);
-            const inject = injectProp(ctx, this.fc.create, this.$handle.api);
+            const inject = this.injectProp(ctx);
             const injectKeys = Object.keys(inject);
 
             keys.forEach(key => {
@@ -261,13 +244,32 @@ export default function useRender(Render) {
                 key: ctx.key,
             }, [vn]);
         },
+        injectProp(ctx) {
+            return {
+                formCreateInject: {
+                    api: this.$handle.api,
+                    form: this.fc.create,
+                    subForm: subForm => {
+                        this.$handle.addSubForm(ctx, subForm);
+                    },
+                    field: ctx.field,
+                    options: ctx.prop.options,
+                    children: ctx.rule.children,
+                    rule: ctx.rule,
+                    prop: (function () {
+                        const temp = {...ctx.prop};
+                        return temp.on = temp.on ? {...temp.on} : {}, temp;
+                    }()),
+                },
+            }
+        },
         ctxProp(ctx, custom) {
             const {ref, key, rule} = ctx;
             this.$manager.mergeProp(ctx, custom);
             ctx.parser.mergeProp(ctx, custom);
             const props = [
                 {
-                    props: injectProp(ctx, this.fc.create, this.$handle.api),
+                    props: this.injectProp(ctx),
                     ref: ref,
                     key: rule.key || `${key}fc`,
                     slot: undefined,
@@ -281,11 +283,6 @@ export default function useRender(Render) {
 
             if (!custom) {
                 props.push({
-                    on: {
-                        'fc.sub-form': (subForm) => {
-                            this.$handle.addSubForm(ctx, subForm);
-                        }
-                    },
                     model: ctx.input ? {
                         value: this.$handle.getFormData(ctx),
                         callback: (value) => {

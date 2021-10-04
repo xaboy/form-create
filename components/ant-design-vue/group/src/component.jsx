@@ -168,7 +168,7 @@ export default {
             });
         },
         subForm() {
-            this.$emit('fc.sub-form', Object.keys(this.cacheRule).map(k => this.cacheRule[k].$f));
+            this.formCreateInject.subForm(Object.keys(this.cacheRule).map(k => this.cacheRule[k].$f));
         },
         removeRule(key, emit) {
             const index = Object.keys(this.cacheRule).indexOf(key);

@@ -67,7 +67,7 @@ export default {
             });
         },
         subForm() {
-            this.$emit('fc.sub-form', this.cacheRule.$f);
+            this.formCreateInject.subForm(this.cacheRule.$f);
         },
         emitEvent(name, ...args) {
             this.$emit(name, ...args);
