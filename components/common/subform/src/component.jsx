@@ -60,9 +60,7 @@ export default defineComponent({
         }
     },
     created() {
-        if (this.formCreate) {
-            this._.appContext.components['FormCreate'] = this.formCreate.create.$form()
-        }
+        this._.appContext.components.FormCreate = this.formCreate.create.$form()
     },
     render() {
         return <FormCreate

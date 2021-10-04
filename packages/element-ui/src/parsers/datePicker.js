@@ -1,15 +1,14 @@
 import {creatorFactory} from '@form-create/core/src/index';
 
 const DEFAULT_FORMATS = {
-    date: 'yyyy-MM-dd',
-    month: 'yyyy-MM',
-    datetime: 'yyyy-MM-dd HH:mm:ss',
-    week: 'yyyywWW',
+    date: 'YYYY-MM-DD',
+    month: 'YYYY-MM',
+    datetime: 'YYYY-MM-DD HH:mm:ss',
     timerange: 'HH:mm:ss',
-    daterange: 'yyyy-MM-dd',
-    monthrange: 'yyyy-MM',
-    datetimerange: 'yyyy-MM-dd HH:mm:ss',
-    year: 'yyyy'
+    daterange: 'YYYY-MM-DD',
+    monthrange: 'YYYY-MM',
+    datetimerange: 'YYYY-MM-DD HH:mm:ss',
+    year: 'YYYY'
 };
 
 const name = 'datePicker';

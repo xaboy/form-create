@@ -1,14 +1,10 @@
 import {hasProperty} from '@form-create/utils/lib/type';
 import {defineComponent} from 'vue';
-import SubForm from '../../../common/subform/src/index';
 
 const NAME = 'fcGroup';
 
 export default defineComponent({
     name: NAME,
-    components:{
-        SubForm
-    },
     props: {
         field: String,
         rule: Array,
@@ -70,32 +66,35 @@ export default defineComponent({
             })
         },
         expand(n) {
-            let d = n - this.value.length;
+            let d = n - this.modelValue.length;
             if (d > 0) {
                 this.expandRule(d);
             }
         },
-        value(n) {
-            n = n || [];
-            let keys = Object.keys(this.cacheRule), total = keys.length, len = total - n.length;
-            if (len < 0) {
-                for (let i = len; i < 0; i++) {
-                    this.addRule(n.length + i);
-                }
-                for (let i = 0; i < total; i++) {
-                    this.setValue(keys[i], n[i]);
-                }
-            } else {
-                if (len > 0) {
-                    for (let i = 0; i < len; i++) {
-                        this.removeRule(keys[total - i - 1]);
+        modelValue: {
+            handler(n) {
+                n = n || [];
+                let keys = Object.keys(this.cacheRule), total = keys.length, len = total - n.length;
+                if (len < 0) {
+                    for (let i = len; i < 0; i++) {
+                        this.addRule(n.length + i);
                     }
-                    this.subForm();
+                    for (let i = 0; i < total; i++) {
+                        this.setValue(keys[i], n[i]);
+                    }
+                } else {
+                    if (len > 0) {
+                        for (let i = 0; i < len; i++) {
+                            this.removeRule(keys[total - i - 1]);
+                        }
+                        this.subForm();
+                    }
+                    n.forEach((val, i) => {
+                        this.setValue(keys[i], n[i]);
+                    });
                 }
-                n.forEach((val, i) => {
-                    this.setValue(keys[i], n[i]);
-                });
-            }
+            },
+            deep: true,
         }
     },
     methods: {
@@ -106,7 +105,7 @@ export default defineComponent({
             this.cacheValue[k] = JSON.stringify(val);
         },
         input(value) {
-            this.$emit('input', value);
+            this.$emit('update:modelValue', value);
             this.$emit('change', value);
         },
         formData(key, formData) {
@@ -124,7 +123,7 @@ export default defineComponent({
             this.input(value);
         },
         setValue(key, value) {
-            const field = this.field, $f = this.cacheRule[key].$f;
+            const field = this.field
             if (field) {
                 value = {[field]: this._value(value)};
             }
@@ -132,16 +131,14 @@ export default defineComponent({
                 return;
             }
             this.cache(key, value);
-            $f.coverValue(value || {});
         },
         addRule(i, emit) {
-            const rule = this.$formCreate.copyRules(this.formRule);
+            const rule = this.formCreate.create.copyRules(this.rule || []);
             const options = this.options ? {...this.options} : {
                 submitBtn: false,
                 resetBtn: false,
             };
-            options.formData = this.field ? ({[this.field]: this._value(this.value[i])}) : (this.value[i] || {});
-            this.$set(this.cacheRule, ++this.len, {rule, options});
+            this.cacheRule[++this.len] = {rule, options};
             if (emit) {
                 this.$nextTick(() => this.$emit('add', rule, Object.keys(this.cacheRule).length - 1));
             }
@@ -155,44 +152,44 @@ export default defineComponent({
             });
         },
         subForm() {
-            this.$emit('fc.sub-form', Object.keys(this.cacheRule).map(k => this.cacheRule[k].$f));
+            this.$emit('fc:subform', Object.keys(this.cacheRule).map(k => this.cacheRule[k].$f));
         },
         removeRule(key, emit) {
             const index = Object.keys(this.cacheRule).indexOf(key);
-            this.$delete(this.cacheRule, key);
-            this.$delete(this.cacheValue, key);
+            delete this.cacheRule[key];
+            delete this.cacheValue[key];
             if (emit) {
                 this.$nextTick(() => this.$emit('remove', index));
             }
         },
         add(i) {
-            if (this.disabled || false === this.onBeforeAdd(this.value)) {
+            if (this.disabled || false === this.onBeforeAdd(this.modelValue)) {
                 return;
             }
             this.addRule(i, true);
         },
         del(index, key) {
-            if (this.disabled || false === this.onBeforeRemove(this.value)) {
+            if (this.disabled || false === this.onBeforeRemove(this.modelValue)) {
                 return;
             }
             this.removeRule(key, true);
             this.subForm();
-            this.value.splice(index, 1);
-            this.input(this.value);
+            this.modelValue.splice(index, 1);
+            this.input(this.modelValue);
         },
         addIcon(key) {
             return <i key={`a${key}`} class="el-icon-circle-plus-outline"
                 style={`font-size:${this.fontSize}px;cursor:${this.disabled ? 'not-allowed;color:#c9cdd4' : 'pointer'};`}
-                on-click={this.add}/>;
+                onClick={this.add}/>;
         },
         delIcon(index, key) {
             return <i key={`d${key}`} class="el-icon-remove-outline"
                 style={`font-size:${this.fontSize}px;cursor:${this.disabled ? 'not-allowed;color:#c9cdd4' : 'pointer;color:#606266'};`}
-                on-click={() => this.del(index, key)}/>;
+                onClick={() => this.del(index, key)}/>;
         },
         makeIcon(total, index, key) {
-            if (this.$scopedSlots.button) {
-                return this.$scopedSlots.button({
+            if (this.$slots.button) {
+                return this.$slots.button({
                     total,
                     index,
                     vm: this,
@@ -213,16 +210,17 @@ export default defineComponent({
         },
         expandRule(n) {
             for (let i = 0; i < n; i++) {
-                this.value.push(this.field ? null : {});
+                this.modelValue.push(this.field ? null : {});
             }
         }
     },
     created() {
-        const d = (this.expand || 0) - this.value.length;
+        this._.appContext.components.FormCreate = this.formCreate.create.$form()
+        const d = (this.expand || 0) - this.modelValue.length;
         if (d > 0) {
             this.expandRule(d);
         }
-        for (let i = 0; i < this.value.length; i++) {
+        for (let i = 0; i < this.modelValue.length; i++) {
             this.addRule(i);
         }
     },
@@ -230,25 +228,27 @@ export default defineComponent({
         const keys = Object.keys(this.cacheRule);
         const button = this.button;
         return keys.length === 0 ?
-            (this.$scopedSlots.default ? (this.$scopedSlots.default({
+            (this.$slots.default ? (this.$slots.default({
                 vm: this,
                 add: this.add
             })) : <i key={'a_def'} class="el-icon-circle-plus-outline"
                 style={`font-size:${this.fontSize}px;vertical-align:middle;color:${this.disabled ? '#c9cdd4;cursor: not-allowed' : '#606266;cursor:pointer'};`}
-                on-click={this.add}/>) :
+                onClick={this.add}/>) :
             <div key={'con'}>{keys.map((key, index) => {
                 const {rule, options} = this.cacheRule[key];
                 return <ElRow align="middle" type="flex" key={key}
                     style="border-bottom:1px dashed #DCDFE6;margin-bottom:10px;">
                     <ElCol span={button ? 20 : 24}><ElFormItem><FormCreate
                         key={key}
-                        on={{
-                            'update:value': (formData) => this.formData(key, formData),
-                            'emit-event': (name, ...args) => this.emitEvent(name, args, index, key),
-                            input: ($f) => this.add$f(index, key, $f)
-                        }}
+                        onUpdate:modelValue={(formData) => this.formData(key, formData)}
+                        modelValue={this.field ? {[this.field]: this._value(this.modelValue[index])} : this.modelValue[index]}
+                        onEmit-event={(name, ...args) => this.emitEvent(name, args, index, key)}
+                        onUpdate:api={($f) => this.add$f(index, key, $f)}
                         rule={rule}
-                        option={options} extendOption={true}/></ElFormItem></ElCol>
+                        option={options || {
+                            submitBtn: false,
+                            resetBtn: false,
+                        }} extendOption={true}/></ElFormItem></ElCol>
                     {button ? <ElCol span={2} pull={1} push={1}>{this.makeIcon(keys.length, index, key)}</ElCol> : null}
                 </ElRow>
             })}</div>
