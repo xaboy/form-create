@@ -7,7 +7,7 @@ export default defineComponent({
     name: NAME,
     props: {
         modelValue: {
-            type: Array,
+            type: [String,  Number],
             default: () => []
         },
         type: String,

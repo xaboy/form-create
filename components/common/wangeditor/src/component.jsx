@@ -1,16 +1,18 @@
 import WangEditor from 'wangeditor'
+import {defineComponent} from 'vue';
 
 const NAME = 'fcEditor';
 
 let uni = 1;
 
-export default {
+export default defineComponent({
     name: NAME,
     props: {
-        value: String,
+        modelValue: String,
         init: Function,
         disabled: Boolean,
     },
+    emits: ['update:modelValue'],
     data() {
         return {
             editor: {},
@@ -21,7 +23,7 @@ export default {
         disabled() {
             this.enable();
         },
-        value(n) {
+        modelValue(n) {
             if (n !== this.editor.txt.html()) {
                 this.editor.txt.html(n);
             }
@@ -32,7 +34,7 @@ export default {
             this.disabled ? this.editor.disable() : this.editor.enable();
         },
         result() {
-            this.$emit('input', this.editor.txt.html())
+            this.$emit('update:modelValue', this.editor.txt.html())
         }
     },
     mounted() {
@@ -41,13 +43,13 @@ export default {
         this.init && this.init(this.editor);
         this.editor.create();
         this.enable();
-        this.editor.txt.html(this.value);
+        this.editor.txt.html(this.modelValue);
     },
     render() {
-        return <div on-input={this.result} id={`editor${this.uni}`} style="line-height: normal;"/>
+        return <div onInput={this.result} id={`editor${this.uni}`} style="line-height: normal;"/>
     },
     beforeDestroy() {
         this.editor.destroy()
         this.editor = null
     }
-}
+});

@@ -33,7 +33,7 @@ export default function $FormCreate(FormCreate) {
             modelValue: Object,
             api: Object,
         },
-        emits: ['update:api', 'update:modelValue', 'mounted', 'submit', 'change', 'emit-event'],
+        emits: ['update:api', 'update:modelValue', 'mounted', 'submit', 'change', 'emit-event', 'control', 'removeRule', 'removeField'],
         render() {
             return this.fc.render();
         },
