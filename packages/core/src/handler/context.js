@@ -60,13 +60,13 @@ export default function useContext(Handler) {
                     if (key === 'link') {
                         ctx.link();
                         return;
-                    } else if (['props', 'on', 'nativeOn'].indexOf(key) > -1) {
+                    } else if (['props', 'on'].indexOf(key) > -1) {
                         this.parseInjectEvent(ctx.rule, n || {});
                         if (key === 'props' && ctx.input) {
                             this.setFormData(ctx, ctx.parser.toFormValue(ctx.rule.value, ctx));
                         }
-                    } else if (['emit', 'nativeEmit'].indexOf(key) > -1)
-                        this.parseEmit(ctx, key === 'emit');
+                    } else if (key === 'emit')
+                        this.parseEmit(ctx);
                     else if (['prefix', 'suffix'].indexOf(key) > -1)
                         n && this.loadFn(n, ctx.rule);
                     else if (key === 'type') {

@@ -78,7 +78,7 @@ export default {
         const form = this.options.form;
         this.rule = {
             props: {...form},
-            nativeOn: {
+            on: {
                 submit: (e) => {
                     e.preventDefault();
                 }
@@ -119,7 +119,7 @@ export default {
             key: `${uni}fi`,
             ref: ctx.wrapRef,
             type: 'formItem',
-        }]), {default: () => children, label: () => (isTitle ? this.makeInfo(rule, uni) : null)});
+        }]), {default: () => children, ...(isTitle ? {label: () => this.makeInfo(rule, uni)}: {})});
         return (inline === true || isFalse(_col) || isFalse(col.show)) ? item : this.makeCol(rule, uni, [item]);
     },
     isTitle(rule) {
@@ -132,7 +132,7 @@ export default {
         const infoProp = rule.info;
         const isTip = isTooltip(infoProp);
         const form = this.options.form;
-        const children = [titleProp.title + (form.labelSuffix || form['label-suffix'] || '')];
+        const children = [(titleProp.title || '') + (form.labelSuffix || form['label-suffix'] || '')];
         const titleFn = () => this.$r(mergeProps([titleProp, {
             props: titleProp,
             key: `${uni}tit`,

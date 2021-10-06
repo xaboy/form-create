@@ -4,7 +4,8 @@ import mergeProps from '@form-create/utils/lib/mergeprops';
 import {arrayAttrs, normalAttrs} from './attrs';
 import {logError} from '@form-create/utils/lib/console';
 import {isVNode} from 'vue';
-export {parseJson,parseFn,toJson} from '@form-create/utils/lib/json';
+
+export {parseJson, parseFn, toJson} from '@form-create/utils/lib/json';
 import {upper} from '@form-create/utils/lib/toline';
 
 export function enumerable(value, writable) {
@@ -130,12 +131,17 @@ export function makeSlotBag() {
 }
 
 export function toProps(rule) {
-    const prop = {...(rule.attrs || {}), ...(rule.props || {})};
-    Object.keys(rule.nativeOn || {}).forEach(k => {
-        prop[(`on${upper(k)}`)] = rule.nativeOn[k];
-    })
+    const prop = {...(rule.props || {})};
+
     Object.keys(rule.on || {}).forEach(k => {
-        prop[(`on${upper(k)}`)] = rule.on[k];
+        const name = `on${upper(k)}`;
+        if (Array.isArray(prop[name])) {
+            prop[name] = [...prop[name], rule.on[k]];
+        } else if (prop[name]) {
+            prop[name] = [prop[name], rule.on[k]];
+        } else {
+            prop[name] = rule.on[k];
+        }
     })
     prop.key = rule.key;
     prop.ref = rule.ref;

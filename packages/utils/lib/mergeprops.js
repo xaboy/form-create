@@ -1,6 +1,6 @@
-export const normalMerge = ['attrs', 'props', 'domProps', 'scopedSlots'];
+export const normalMerge = ['props'];
 export const toArrayMerge = ['class', 'style', 'directives'];
-export const functionalMerge = ['on', 'nativeOn'];
+export const functionalMerge = ['on'];
 
 const mergeProps = (objects, initial = {}, opt = {}) => {
     const _normalMerge = [...normalMerge, ...opt['normal'] || []];

@@ -39,7 +39,7 @@ export default function useLoader(Handler) {
             return rule;
         },
         loadFn(item, rule) {
-            ['on', 'props', 'nativeOn'].forEach(k => {
+            ['on', 'props'].forEach(k => {
                 item[k] && this.parseInjectEvent(rule, item[k]);
             });
         },
@@ -176,7 +176,7 @@ export default function useLoader(Handler) {
                     }
                     this.appendValue(ctx.rule);
                 }
-                [false, true].forEach(b => this.parseEmit(ctx, b));
+                this.parseEmit(ctx);
                 this.syncProp(ctx);
                 ctx.parent = parent || null;
                 ctx.root = rules;
