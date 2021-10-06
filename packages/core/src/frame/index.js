@@ -7,6 +7,7 @@ import {creatorFactory} from '..';
 import BaseParser from '../factory/parser';
 import {copyRule, copyRules, mergeGlobal, parseJson, toJson} from './util';
 import fragment from '../components/fragment';
+import vnode from '../components/vnode';
 import is from '@form-create/utils/lib/type';
 import toCase from '@form-create/utils/lib/tocase';
 import extend from '@form-create/utils/lib/extend';
@@ -260,7 +261,7 @@ export default function FormCreateFactory(config) {
 
                 Vue.config.globalProperties.$formCreate = $formCreate;
                 Vue.component('FormCreate', $form());
-                Vue.component('fc-vnode', fragment);
+                Vue.component('fc-vnode', vnode);
             }
         })
     }

@@ -75,7 +75,7 @@ export default function useRender(Render) {
                     this.setCache(ctx, undefined, parent);
                     return;
                 }
-                vn = this.item(ctx, () => {
+                vn = () => this.item(ctx, () => {
                     let _vn = ctx.parser.render(this.renderChildren(ctx), ctx);
                     _vn = this.renderSides(_vn, ctx);
                     if ((!(!ctx.input && is.Undef(prop.native))) && prop.native !== true) {

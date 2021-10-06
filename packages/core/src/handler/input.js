@@ -2,7 +2,7 @@ import extend from '@form-create/utils/lib/extend';
 import {$set} from '@form-create/utils/lib';
 import is, {hasProperty} from '@form-create/utils/lib/type';
 import {invoke} from '../frame/util';
-import {toRef} from 'vue';
+import {customRef, toRef} from 'vue';
 
 export default function useInput(Handler) {
     extend(Handler.prototype, {
@@ -36,16 +36,17 @@ export default function useInput(Handler) {
                 initial[field] = toRef(ctx.rule, 'value');
                 return initial;
             }, Object.keys(this.appendData).reduce((initial, field) => {
-                initial[field] = {
-                    enumerable: true,
-                    configurable: true,
+                initial[field] = customRef((track, trigger) => ({
                     get: () => {
+                        track();
                         return this.appendData[field];
                     },
                     set: (val) => {
+                        trigger();
                         this.appendData[field] = val;
+                        this.syncValue();
                     }
-                }
+                }))
                 return initial;
             }, this.form));
             this.syncValue();

@@ -1,4 +1,3 @@
-import * as vue from 'vue';
 import {
     defineComponent,
     getCurrentInstance,
@@ -12,8 +11,6 @@ import {
     toRefs,
     watch
 } from 'vue';
-
-window.__vue = vue;
 
 const NAME = 'FormCreate';
 
@@ -33,19 +30,14 @@ export default function $FormCreate(FormCreate) {
             modelValue: Object,
             api: Object,
         },
-        emits: ['update:api', 'update:modelValue', 'mounted', 'submit', 'change', 'emit-event', 'control', 'removeRule', 'removeField'],
+        emits: ['update:api', 'update:modelValue', 'mounted', 'submit', 'change', 'emit-event', 'control', 'remove-rule', 'remove-field'],
         render() {
             return this.fc.render();
         },
-        setup(props, context) {
-            // console.log(context, props, 'form-create123');
-
+        setup(props) {
             const vm = getCurrentInstance();
             provide('pfc', vm.ctx);
             const parent = inject('pfc');
-            console.log(parent, 'parentparentparentparent');
-
-            window.vm = vm;
 
             const {rule, modelValue} = toRefs(props);
 

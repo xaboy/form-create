@@ -5,7 +5,7 @@ import mergeProps from '@form-create/utils/lib/mergeprops';
 import {enumerable} from '../frame/util';
 import {deepCopy} from '@form-create/utils/lib/deepextend';
 import {markRaw} from 'vue';
-import is, {hasProperty} from '@form-create/utils/lib/type';
+import is from '@form-create/utils/lib/type';
 
 function isNone(ctx) {
     const none = !(is.Undef(ctx.prop.display) || !!ctx.prop.display);
@@ -24,7 +24,7 @@ function bind(ctx) {
 
 export default function RuleContext(handle, rule) {
     const id = unique();
-    const isInput = hasProperty(rule, 'field');
+    const isInput = !!rule.field;
     extend(this, {
         id,
         ref: id,
@@ -83,7 +83,7 @@ extend(RuleContext.prototype, {
         delete rule.children;
         this.prop = mergeProps([rule, ...Object.keys(this.payload).map(k => this.payload[k]), this.computed]);
     },
-    initNone(){
+    initNone() {
         this.none = isNone(this);
     },
     check(handle) {
@@ -92,6 +92,7 @@ extend(RuleContext.prototype, {
     unwatch() {
         this.watch.forEach(un => un());
         this.watch = [];
+        this.refRule = {};
     },
     unlink() {
         this.linkOn.forEach(un => un());
@@ -102,7 +103,9 @@ extend(RuleContext.prototype, {
         this.$handle.appendLink(this);
     },
     watchTo() {
-        this.$handle.watchCtx(this);
+        this.vm.$nextTick(() => {
+            this.$handle.watchCtx(this);
+        });
     },
     delete() {
         const undef = void 0;

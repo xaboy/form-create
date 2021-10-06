@@ -106,12 +106,6 @@ export default function useContext(Handler) {
             // console.trace(ctx.field,'deleted');
             if (ctx.deleted) return;
             const {id, field, name} = ctx;
-            if (ctx.input) {
-                Object.defineProperty(ctx.rule, 'value', {
-                    value: ctx.rule.value,
-                    writable: true
-                });
-            }
 
             $del(this.ctxs, id);
 
