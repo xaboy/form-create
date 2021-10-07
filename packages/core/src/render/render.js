@@ -5,7 +5,7 @@ import {_vue as Vue} from '../frame';
 import {tip} from '@form-create/utils/lib/console';
 import {invoke, mergeRule} from '../frame/util';
 import toCase, {lower} from '@form-create/utils/lib/tocase';
-import {deepSet, toLine} from '@form-create/utils';
+import {$set, deepSet, toLine} from '@form-create/utils';
 
 export default function useRender(Render) {
     extend(Render.prototype, {
@@ -171,6 +171,7 @@ export default function useRender(Render) {
                     this.setOptions(ctx);
                     this.ctxProp(ctx);
                     let prop = ctx.prop;
+                    prop.props.formCreateInject = this.injectProp(ctx);
 
                     if (prop.hidden) {
                         this.setCache(ctx, undefined, parent);
@@ -245,23 +246,25 @@ export default function useRender(Render) {
             }, [vn]);
         },
         injectProp(ctx) {
-            return {
-                formCreateInject: {
-                    api: this.$handle.api,
-                    form: this.fc.create,
-                    subForm: subForm => {
-                        this.$handle.addSubForm(ctx, subForm);
-                    },
-                    field: ctx.field,
-                    options: ctx.prop.options,
-                    children: ctx.rule.children,
-                    rule: ctx.rule,
-                    prop: (function () {
-                        const temp = {...ctx.prop};
-                        return temp.on = temp.on ? {...temp.on} : {}, temp;
-                    }()),
-                },
+            if (!this.vm.ctxInject[ctx.id]) {
+                $set(this.vm.ctxInject, ctx.id, {});
             }
+            extend(this.vm.ctxInject[ctx.id], {
+                api: this.$handle.api,
+                form: this.fc.create,
+                subForm: subForm => {
+                    this.$handle.addSubForm(ctx, subForm);
+                },
+                field: ctx.field,
+                options: ctx.prop.options,
+                children: ctx.rule.children,
+                rule: ctx.rule,
+                prop: (function () {
+                    const temp = {...ctx.prop};
+                    return temp.on = temp.on ? {...temp.on} : {}, temp;
+                }()),
+            });
+            return this.vm.ctxInject[ctx.id];
         },
         ctxProp(ctx, custom) {
             const {ref, key, rule} = ctx;
@@ -269,7 +272,7 @@ export default function useRender(Render) {
             ctx.parser.mergeProp(ctx, custom);
             const props = [
                 {
-                    props: this.injectProp(ctx),
+                    // props: this.injectProp(ctx),
                     ref: ref,
                     key: rule.key || `${key}fc`,
                     slot: undefined,
@@ -281,15 +284,15 @@ export default function useRender(Render) {
                 }
             ]
 
-            if (!custom) {
+            if (!custom && ctx.input) {
                 props.push({
-                    model: ctx.input ? {
+                    model: {
                         value: this.$handle.getFormData(ctx),
                         callback: (value) => {
                             this.onInput(ctx, value);
                         },
                         expression: `formData.${ctx.field}`
-                    } : undefined,
+                    },
                 })
             }
             mergeProps(props, ctx.prop);

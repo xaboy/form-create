@@ -50,7 +50,11 @@ export default function useContext(Handler) {
                 const flag = key === 'children';
                 ctx.watch.push(vm.$watch(() => ctx.rule[key], (n, o) => {
                     if (this.loading || this.noWatchFn || this.reloading) return;
-                    if (flag && ctx.parser.loadChildren === false) return;
+                    if (flag && ctx.parser.loadChildren === false) {
+                        this.$render.clearCache(ctx);
+                        this.nextRefresh();
+                        return;
+                    }
                     this.watching = true;
                     // if (key === 'hidden')
                     //     ctx.updateKey(true);

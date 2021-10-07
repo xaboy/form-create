@@ -39,6 +39,7 @@ export default function $FormCreate(FormCreate) {
                 isShow: true,
                 unique: 1,
                 renderRule: [...this.rule || []],
+                ctxInject: {},
                 updateValue: ''
             };
         },
