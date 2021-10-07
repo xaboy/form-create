@@ -261,7 +261,9 @@ export default function useRender(Render) {
                 rule: ctx.rule,
                 prop: (function () {
                     const temp = {...ctx.prop};
-                    return temp.on = temp.on ? {...temp.on} : {}, temp;
+                    temp.on = temp.on ? {...temp.on} : {};
+                    delete temp.model;
+                    return temp;
                 }()),
             });
             return this.vm.ctxInject[ctx.id];
