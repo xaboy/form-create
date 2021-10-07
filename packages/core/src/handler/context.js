@@ -106,7 +106,7 @@ export default function useContext(Handler) {
             }
 
             $del(this.ctxs, id);
-            $del(this.$render.renderList, id);
+            $del(this.$render.tempList, id);
             $del(this.$render.orgChildren, id);
             $del(this.vm.ctxInject, id);
             $del(ctx, 'cacheValue');
