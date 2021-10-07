@@ -1,6 +1,6 @@
 {
   "name": "@form-create/component-ivu-tree",
-  "version": "2.5.9",
+  "version": "2.5.10",
   "description": "@form-create/iview 内置组件",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -31,7 +31,7 @@
   "author": "xaboy",
   "license": "MIT",
   "dependencies": {
-    "@form-create/utils": "^2.5.9"
+    "@form-create/utils": "^2.5.10"
   },
   "bugs": {
     "url": "https://github.com/xaboy/form-create/issues"

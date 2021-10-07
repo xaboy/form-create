@@ -1,6 +1,6 @@
 {
     "name": "@form-create/core",
-    "version": "2.5.9",
+    "version": "2.5.10",
     "description": "vue动态表单,助你轻松搞定表单|form-create is a form generation component that can generate dynamic rendering, data collection, verification and submission functions through JSON. Supports 3 UI frameworks, and supports the generation of any Vue components. Built-in 20 kinds of commonly used form components and custom components, no matter how complex forms can be easily handled.",
     "main": "./dist/index.min.js",
     "module": "./dist/index.min.js",
@@ -39,7 +39,7 @@
     },
     "homepage": "http://www.form-create.com",
     "dependencies": {
-        "@form-create/utils": "^2.5.9"
+        "@form-create/utils": "^2.5.10"
     },
     "publishConfig": {
         "access": "public"

@@ -1,6 +1,6 @@
 {
   "name": "@form-create/component-subform",
-  "version": "2.5.9",
+  "version": "2.5.10",
   "description": "@form-create 内置组件",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
