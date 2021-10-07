@@ -69,8 +69,9 @@ function exportAttrs(attrs) {
 //todo 表单嵌套
 export default function FormCreateFactory(config) {
 
+    const _fragment = _vue.extend(fragment);
     const components = {
-        [fragment.name]: fragment
+        [fragment.name]: _fragment
     };
     const parsers = {};
     const directives = {};
@@ -146,7 +147,7 @@ export default function FormCreateFactory(config) {
         return _this.api();
     }
 
-    function factory(){
+    function factory() {
         return FormCreateFactory(config);
     }
 
@@ -251,7 +252,7 @@ export default function FormCreateFactory(config) {
             component,
             directive,
             register,
-            fragment,
+            fragment: _fragment,
             parser,
             use,
             factory,
@@ -301,7 +302,7 @@ export default function FormCreateFactory(config) {
 
                 Vue.prototype.$formCreate = $formCreate;
                 Vue.component('FormCreate', $form());
-                Vue.component('FcFragment',fragment);
+                Vue.component('FcFragment', _fragment);
             }
         })
     }
