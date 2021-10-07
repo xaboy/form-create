@@ -274,7 +274,6 @@ export default function useRender(Render) {
             ctx.parser.mergeProp(ctx, custom);
             const props = [
                 {
-                    // props: this.injectProp(ctx),
                     ref: ref,
                     key: rule.key || `${key}fc`,
                     slot: undefined,

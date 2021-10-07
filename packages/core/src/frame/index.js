@@ -251,6 +251,7 @@ export default function FormCreateFactory(config) {
             component,
             directive,
             register,
+            fragment,
             parser,
             use,
             factory,
@@ -300,6 +301,7 @@ export default function FormCreateFactory(config) {
 
                 Vue.prototype.$formCreate = $formCreate;
                 Vue.component('FormCreate', $form());
+                Vue.component('FcFragment',fragment);
             }
         })
     }
@@ -308,7 +310,6 @@ export default function FormCreateFactory(config) {
     useStatic(create);
 
     CreateNode.use({fragment: 'fcFragment'});
-    Vue.component('fc-vnode',fragment);
 
     if (config.install) create.use(config);
 
