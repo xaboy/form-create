@@ -42,7 +42,7 @@ export default function rule() {
 
                 return option.toUpperCase().indexOf(value.toUpperCase()) !== -1
             }
-        }).emitPrefix('xaboy').emit(['on-change']).prefix('prefixprefixprefixprefixprefixprefix').wrap({show: false}).col({show: false}),
+        }).emitPrefix('xaboy').emit(['on-change']).prefix('prefix'),
 
 
         //textarea 组件
