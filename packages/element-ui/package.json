@@ -69,9 +69,7 @@
         "exportName": "formCreate",
         "extendExternals": ["element-plus", "ElementPlus", "element-ui", "ElementUI"],
         "extendGlobal": {
-            "vue": "Vue",
-            "ELEMENT": "element-ui",
-            "element-plus": "element-ui"
+            "vue": "Vue"
         },
         "fileName": "form-create",
         "formats": [

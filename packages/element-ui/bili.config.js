@@ -22,9 +22,9 @@ module.exports = {
     },
     globals: {
         vue: 'Vue',
-        ELEMENT: 'element-ui'
+        ElementPlus: 'element-plus'
     },
-    externals: ['vue', 'Vue', 'element-ui', 'elementUI'],
+    externals: ['vue', 'Vue', 'element-plus', 'ElementPlus'],
     output: {
         format: ['umd', 'umd-min'],
         moduleName: 'formCreate',
