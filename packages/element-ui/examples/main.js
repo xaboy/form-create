@@ -7,17 +7,17 @@
  * @FilePath     : /form-create2/packages/element-ui/examples/main.js
  */
 import {createApp,h, inject, defineComponent, resolveComponent, defineAsyncComponent} from 'vue'
-// import ElementUI from 'element-plus/es/index'
-// import 'element-plus/dist/index.css'
-// import zhCn from 'element-plus/es/locale/lang/zh-cn'
+import ElementUI from 'element-plus/es/index'
+import 'element-plus/dist/index.css'
+import zhCn from 'element-plus/es/locale/lang/zh-cn'
 import FormCreate from '../src'
 import App from './App.vue'
 
 const app = createApp(App)
-// window.ELM = ElementUI;
-// app.use(ElementUI, {
-//     locale: zhCn,
-// })
+
+app.use(ElementUI, {
+    locale: zhCn,
+})
 app.use(FormCreate)
 
 //todo ------------------ Demo 用 ------------------
@@ -26,13 +26,13 @@ app.use(FormCreate)
 import addressEffect from './addressEffect';
 // import {ElInput} from 'element-plus';
 // import VueCompositionAPI from '@vue/composition-api'
-// import wangEditor from '@form-create/component-wangeditor/src'
+import wangEditor from '@form-create/component-wangeditor/src'
 
 
 // app.use(VueCompositionAPI)
 // app.use(VJsoneditor)
 FormCreate.register(addressEffect);
-// FormCreate.component('wangEditor', wangEditor);
+FormCreate.component('wangEditor', wangEditor);
 
 //自定义组件
 FormCreate.component('testSlot', defineComponent({

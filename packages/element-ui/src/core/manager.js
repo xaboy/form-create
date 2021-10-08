@@ -34,7 +34,6 @@ export default {
             this.form().validateField(field, (res) => {
                 res ? reject(res) : resolve(null);
             });
-
         });
     },
     clearValidateState(ctx) {

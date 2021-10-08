@@ -30,7 +30,7 @@ export default function $FormCreate(FormCreate) {
             modelValue: Object,
             api: Object,
         },
-        emits: ['update:api', 'update:modelValue', 'mounted', 'submit', 'change', 'emit-event', 'control', 'remove-rule', 'remove-field'],
+        emits: ['update:api', 'update:modelValue', 'mounted', 'submit', 'change', 'emit-event', 'control', 'remove-rule', 'remove-field', 'sync'],
         render() {
             return this.fc.render();
         },
@@ -54,7 +54,8 @@ export default function $FormCreate(FormCreate) {
 
             onMounted(() => {
                 fc.mounted();
-            })
+                vm.ctx.$el.__fc__ = fc;
+            });
 
             onBeforeUnmount(() => {
                 data.destroyed = true;
@@ -102,6 +103,6 @@ export default function $FormCreate(FormCreate) {
         beforeCreate() {
             this.fc.init();
             this.$emit('update:api', this.fapi);
-        }
+        },
     })
 }

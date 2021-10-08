@@ -53,6 +53,7 @@ export default function FormCreateFactory(config) {
     };
     const parsers = {};
     const directives = {};
+    const modelFields = {};
     const providers = {
         fetch: $fetch
     };
@@ -140,6 +141,10 @@ export default function FormCreateFactory(config) {
         return FormCreateFactory(config);
     }
 
+    function setModelField(name, field) {
+        modelFields[name] = field;
+    }
+
     function FormCreate(vm) {
         extend(this, {
             create,
@@ -147,6 +152,7 @@ export default function FormCreateFactory(config) {
             manager: createManager(config.manager),
             parsers,
             providers,
+            modelFields,
             rules: vm.props.rule,
             prop: {
                 components,
@@ -231,6 +237,7 @@ export default function FormCreateFactory(config) {
             maker,
             component,
             directive,
+            setModelField,
             register,
             parser,
             use,

@@ -40,6 +40,10 @@ extend(Creator.prototype, {
         $set(this._data, key, value);
         return this;
     },
+    modelField(field) {
+        this._data.modelField = field;
+        return this;
+    },
     _clone() {
         const clone = new this.constructor();
         clone._data = copyRule(this._data);

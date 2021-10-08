@@ -12,6 +12,7 @@ export default defineComponent({
         init: Function,
         disabled: Boolean,
     },
+    inheritAttrs: false,
     emits: ['update:modelValue'],
     data() {
         return {
@@ -30,7 +31,7 @@ export default defineComponent({
         }
     },
     methods: {
-        enable(){
+        enable() {
             this.disabled ? this.editor.disable() : this.editor.enable();
         },
         result() {
@@ -46,7 +47,9 @@ export default defineComponent({
         this.editor.txt.html(this.modelValue);
     },
     render() {
-        return <div onInput={this.result} id={`editor${this.uni}`} style="line-height: normal;"/>
+        const attrs = {...this.$attrs};
+        delete attrs.id;
+        return <div {...attrs} onInput={this.result} id={`editor${this.uni}`} style="line-height: normal;"/>
     },
     beforeDestroy() {
         this.editor.destroy()

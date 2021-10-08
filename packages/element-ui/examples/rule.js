@@ -4,13 +4,13 @@ window.mock = mock;
 export default function mock() {
     return [
 
-        //hidden 组件
-        // maker.hidden('id', '14'),
-        //
-        // maker.create('testSlot', 'testSlot', 'testSlotTitle123').children([
-        //     maker.date('', 'asd').slot('asd').display(true),
-        //     maker.date('', 'asd23').slot('asd'),
-        // ]),
+        // hidden 组件
+        maker.hidden('id', '14'),
+
+        maker.create('testSlot', 'testSlot', 'testSlotTitle123').children([
+            maker.date('', 'asd').slot('asd').display(true),
+            maker.date('', 'asd23').slot('asd'),
+        ]),
         //
         // maker.create('testSlot', 'testSlot', 'testSlotTitle').children([
         //     maker.input('', 'asd').slot('asd').display(false),
@@ -21,22 +21,22 @@ export default function mock() {
         //     }
         // }).directives({}),
 
-        //cascader 多级联动组件
-        // maker.cascader({title: '所在区域', style: 'color:red'}, 'address', ['陕西省', '西安市']).props({
-        //     options: []
-        // }).effect({
-        //     address: '1'
-        // }),
+        // cascader 多级联动组件
+        maker.cascader({title: '所在区域', style: 'color:red'}, 'address', ['陕西省', '西安市']).props({
+            options: []
+        }).effect({
+            address: '1'
+        }),
 
         // {
         //     type:'div',
         //     native:false,
         //     children: [{type:'span',children:['adsfasf']}],
         // },
-        //
-        //
+
+
         // input 输入框组件
-        maker.input('商品名称', 'goods_name', 'iphone').props({
+        maker.input('商品名称', 'goods_name1', 'iphone').props({
             placeholder: '请输入商品名称',
             clearable: true,
             disabled: false,
@@ -66,34 +66,34 @@ export default function mock() {
             maker.create('template').children(['append']).slot('append')
         ]).style('color:red').wrap({style:'color:red',class:'asdfasdf'})
             .info('请输入商品名称!!!!!'),
-        //
-        // {
-        //     type: 'div',
-        //     name: 'div',
-        //     children: []
-        // },
 
-        //autoComplete 自动选择组件
-        // maker.auto('自动完成', 'auto', 'xaboy').props({
-        //     fetchSuggestions: function (queryString, cb) {
-        //         cb([
-        //             {value: queryString}, {value: queryString + queryString}
-        //         ]);
-        //     }
-        // }).emitPrefix('xaboy').emit(['change']).validate([{required: true}]),
-        //
-        //
-        // //textarea 组件
-        // maker.textarea('商品简介', 'goods_info', '').props({
-        //     autosize: {minRows: 4, maxRows: 8},
-        //     placeholder: '请输入商品名称'
-        // }).update((val, rule, api) => {
-        //     console.log('change');
-        //     return 'val' === api.getValue('auto');
-        // }).link(['auto']).wrap({
-        //     show: true
-        // }).validate([{required: true}]),
-        //
+        {
+            type: 'div',
+            name: 'div',
+            children: []
+        },
+
+        // autoComplete 自动选择组件
+        maker.auto('自动完成', 'auto', 'xaboy').props({
+            fetchSuggestions: function (queryString, cb) {
+                cb([
+                    {value: queryString}, {value: queryString + queryString}
+                ]);
+            }
+        }).emitPrefix('xaboy').emit(['change']).validate([{required: true}]),
+
+
+        //textarea 组件
+        maker.textarea('商品简介', 'goods_info', '').props({
+            autosize: {minRows: 4, maxRows: 8},
+            placeholder: '请输入商品名称'
+        }).update((val, rule, api) => {
+            console.log('change');
+            return 'val' === api.getValue('auto');
+        }).link(['auto']).wrap({
+            show: true
+        }).validate([{required: true}]),
+
         {
             type: 'object',
             title: '对象组件',
@@ -146,8 +146,7 @@ export default function mock() {
             value: [{date: '2121-12-12', field: 10, field2: '123123123'}],
             suffix: 'suffixsuffix',
             props: {
-                // field: 'field',
-                rules: [
+                rule: [
                     {
                         type: 'col',
                         wrap: {show: true},
@@ -193,77 +192,77 @@ export default function mock() {
                 {required: true, min: 3, type: 'array', message: '最少增加3项', trigger: 'change'},
             ]
         },
-        //
-        //
-        // //radio 单选框组件
-        // maker.radio('是否包邮', 'is_postage', 1).options([
-        //     {value: 0, label: '不包邮', disabled: false},
-        //     {value: 1, label: '包邮', disabled: false},
-        //     {value: 2, label: '未知', disabled: true},
-        // ]).col({span: 8}).control([
-        //     {
-        //         value: 1,
-        //         prepend: 'is_postage',
-        //         rule: [
-        //             maker.number('满额包邮1', 'postage_money1', 0).effect({
-        //                 open: '1'
-        //             }).control([
-        //                 {
-        //                     value: 0,
-        //                     append: 'rate',
-        //                     rule: [
-        //                         maker.number('满额包邮2', 'postage_money2', 0)
-        //                     ]
-        //                 }
-        //             ])
-        //         ]
-        //     },
-        //     {
-        //         value: 0,
-        //         append: 'goods_info',
-        //         rule: [
-        //             maker.number('满额包邮3', 'postage_money3', 0).control([
-        //                 {
-        //                     value: 0,
-        //                     // prepend: 'goods_name',
-        //                     rule: [
-        //                         maker.number('满额包邮4', 'postage_money4', 0)
-        //                     ]
-        //                 }
-        //             ])
-        //         ]
-        //     }
-        // ]),
-        //
-        //
-        // //checkbox 复选框付选择
-        // maker.checkbox('标签', 'label', [1,2]).options([
-        //     {value: 1, label: '好用', disabled: true},
-        //     {value: 2, label: '方便', disabled: false},
-        //     {value: 3, label: '实用', disabled: false},
-        //     {value: 4, label: '有效', disabled: false},
-        // ]).children([
-        //     {
-        //         type: 'el-checkbox',
-        //         value:'asd',
-        //         children: ['asdf'],
-        //         slot: 'default'
-        //     }
-        // ]),
-        //
-        //
-        // //switch 开关组件
-        // maker.switch('是否上架', 'is_show', '1').props({
-        //     'activeValue': '1',
-        //     'inactiveValue': '0',
-        //     'slot': {
-        //         open: '上架',
-        //         close: '下架',
-        //     }
-        // }).col({span: 8, labelWidth: '100'}),
-        //
-        //
-        //自定义组件
+
+
+        //radio 单选框组件
+        maker.radio('是否包邮', 'is_postage', 1).options([
+            {value: 0, label: '不包邮', disabled: false},
+            {value: 1, label: '包邮', disabled: false},
+            {value: 2, label: '未知', disabled: true},
+        ]).col({span: 8}).control([
+            {
+                value: 1,
+                prepend: 'is_postage',
+                rule: [
+                    maker.number('满额包邮1', 'postage_money1', 0).effect({
+                        open: '1'
+                    }).control([
+                        {
+                            value: 0,
+                            append: 'rate',
+                            rule: [
+                                maker.number('满额包邮2', 'postage_money2', 0)
+                            ]
+                        }
+                    ])
+                ]
+            },
+            {
+                value: 0,
+                append: 'goods_info',
+                rule: [
+                    maker.number('满额包邮3', 'postage_money3', 0).control([
+                        {
+                            value: 0,
+                            // prepend: 'goods_name',
+                            rule: [
+                                maker.number('满额包邮4', 'postage_money4', 0)
+                            ]
+                        }
+                    ])
+                ]
+            }
+        ]),
+
+
+        //checkbox 复选框付选择
+        maker.checkbox('标签', 'label', [1,2]).options([
+            {value: 1, label: '好用', disabled: true},
+            {value: 2, label: '方便', disabled: false},
+            {value: 3, label: '实用', disabled: false},
+            {value: 4, label: '有效', disabled: false},
+        ]).children([
+            {
+                type: 'el-checkbox',
+                value:'asd',
+                children: ['asdf'],
+                slot: 'default'
+            }
+        ]),
+
+
+        //switch 开关组件
+        maker.switch('是否上架', 'is_show', '1').props({
+            'activeValue': '1',
+            'inactiveValue': '0',
+            'slot': {
+                open: '上架',
+                close: '下架',
+            }
+        }).col({span: 8, labelWidth: '100'}),
+
+
+        // 自定义组件
         // maker.createTmp('<el-button @click="onClick" style="width:100%;" :disabled="disabled">{{button}}字符串测试{{test}}-{{num}}</el-button>', function () {
         //     return new Vue({
         //         data: function () {
@@ -295,129 +294,123 @@ export default function mock() {
         //         }
         //     })
         // }, 'tmp', '自定义 title').prefix('prefixprefixprefix').value(100).props('disabled', false),
-        //
-        //
-        // //自定义组件
-        // maker.create('el-button', 'btn').props('disabled', false).col({span: 12}).children([
-        //     maker.create('span').domProps({
-        //         innerHTML: '测试自定义按钮'
-        //     })
-        // ]).emit(['click']).emitPrefix('btn'),
-        //
-        //
-        // //自定义组件
-        // maker.create('el-tooltip', 'tip', '自定义 title').props({
-        //     content: '这里是提示文字',
-        // }).col({span: 11, push: 1}).children([
-        //     maker.create('span').domProps({
-        //         innerHTML: '当鼠标经过这段文字时，会显示一个气泡框'
-        //     })
-        // ]).value(false),
-        //
-        //
-        // //select 下拉选择组件
-        // maker.select('产品分类', 'cate_id', '105').options([
-        //     {'value': '104', 'label': '生态蔬菜', 'disabled': false},
-        //     {'value': '106', 'label': '植物植物', 'disabled': false},
-        //     {'value': '105', 'label': '新鲜水果', 'disabled': false},
-        // ]).props({multiple: true}),
-        // {
-        //     type: 'div',
-        //     name: 'div2',
-        //     children: []
-        // },
-        // {
-        //     type: 'div',
-        //     name: 'div',
-        //     children: [
-        //         'asdfasf',
-        //         {
-        //             type: 'el-col',
-        //             props: {
-        //                 span: 12
-        //             },
-        //             name: 'cal',
-        //             children: [
-        //
-        //                 //datePicker 日期选择组件
-        //                 maker.date('活动日期', 'section_day', ['2018-02-20 12:12:12', '2018-03-20 12:12:12']).props({
-        //                     'type': 'datetimerange',
-        //                 }),
-        //
-        //                 //timePicker 时间选择组件
-        //                 maker.time('活动时间', 'section_time', ['11:11:11', '22:22:22']).props({
-        //                     'isRange': true,
-        //                     'placeholder': '请选择活动时间'
-        //                 }),
-        //
-        //             ]
-        //         },
-        //         {
-        //             type: 'el-col',
-        //             props: {
-        //                 span: 12
-        //             },
-        //             children: [
-        //                 //inputNumber 数组输入框组件
-        //                 maker.number('排序', 'sort', 0).props({
-        //                     precision: 2
-        //                 }).col({span: 12}).validate(
-        //                     [{require: true, type: 'number', min: 10}]
-        //                 ),
-        //
-        //                 //colorPicker 颜色选择组件
-        //                 maker.color('颜色', 'color', '#ff7271').props({
-        //                     'format': 'hex'
-        //                 }).props({
-        //                     'hue': true
-        //                 }).col({span: 12}),
-        //
-        //             ]
-        //         }
-        //     ],
-        //     native: true
-        // },
-        //
-        // //rate 评分组件
-        // maker.rate('推荐级别', 'rate', 2)
-        //     .props({
-        //         'max': 10,
-        //     })
-        //     .validate({required: true, type: 'number', min: 3, message: '请大于3颗星', trigger: 'change'})
-        //     .col({span: 12}).control([
-        //     {
-        //         handle: function (val) {
-        //             return val > 5;
-        //         },
-        //         rule: [
-        //             maker.input('好评原因', 'goods_reason', '').props({disabled: false})
-        //         ]
-        //     }, {
-        //         handle: function (val) {
-        //             return val < 5;
-        //         },
-        //         rule: [
-        //             maker.input('差评原因', 'bad_reason', '').props({disabled: false})
-        //         ]
-        //     }
-        // ]),
-        //
-        //
-        // //slider 滑块组件
-        // maker.slider('滑块', 'slider', [30, 80]).props({
-        //     'min': 0,
-        //     'max': 100,
-        //     'range': true,
-        // }).col({span: 12}),
-        //
-        // {
-        //     type: 'wangEditor',
-        //     field: 'txt',
-        //     title: '富文本框',
-        //     value: '<h1 style="color: #419bf7;">form-create</h1><a href="https://github.com/xaboy/form-create">GitHub</a>'
-        // },
-        //
-        //
+
+
+        //自定义组件
+        maker.create('el-button', 'btn').props('disabled', false).col({span: 12}).children([
+            '测试自定义按钮'
+        ]).emit(['click']).emitPrefix('btn'),
+
+
+        //自定义组件
+        maker.create('el-tooltip', 'tip', '自定义 title').props({
+            content: '这里是提示文字',
+        }).col({span: 11, push: 1}).children([
+            '当鼠标经过这段文字时，会显示一个气泡框'
+        ]).value(false),
+
+
+        //select 下拉选择组件
+        maker.select('产品分类', 'cate_id', '105').options([
+            {'value': '104', 'label': '生态蔬菜', 'disabled': false},
+            {'value': '106', 'label': '植物植物', 'disabled': false},
+            {'value': '105', 'label': '新鲜水果', 'disabled': false},
+        ]).props({multiple: true}),
+        {
+            type: 'div',
+            name: 'div2',
+            children: []
+        },
+        {
+            type: 'div',
+            name: 'div',
+            children: [
+                'asdfasf',
+                {
+                    type: 'el-col',
+                    props: {
+                        span: 12
+                    },
+                    name: 'cal',
+                    children: [
+
+                        //datePicker 日期选择组件
+                        maker.date('活动日期', 'section_day', ['2018-02-20 12:12:12', '2018-03-20 12:12:12']).props({
+                            'type': 'datetimerange',
+                        }),
+
+                        //timePicker 时间选择组件
+                        maker.time('活动时间', 'section_time', ['11:11:11', '22:22:22']).props({
+                            'isRange': true,
+                            'placeholder': '请选择活动时间'
+                        }),
+
+                    ]
+                },
+                {
+                    type: 'el-col',
+                    props: {
+                        span: 12
+                    },
+                    children: [
+                        //inputNumber 数组输入框组件
+                        maker.number('排序', 'sort', 0).props({
+                            precision: 2
+                        }).col({span: 12}).validate(
+                            [{require: true, type: 'number', min: 10}]
+                        ),
+
+                        //colorPicker 颜色选择组件
+                        maker.color('颜色', 'color', '#ff7271').props({
+                            'color-format': 'hex'
+                        }).col({span: 12}),
+
+                    ]
+                }
+            ],
+            native: true
+        },
+
+        //rate 评分组件
+        maker.rate('推荐级别', 'rate', 2)
+            .props({
+                'max': 10,
+            })
+            .validate({required: true, type: 'number', min: 3, message: '请大于3颗星', trigger: 'change'})
+            .col({span: 12}).control([
+            {
+                handle: function (val) {
+                    return val > 5;
+                },
+                rule: [
+                    maker.input('好评原因', 'goods_reason', '').props({disabled: false})
+                ]
+            }, {
+                handle: function (val) {
+                    return val < 5;
+                },
+                rule: [
+                    maker.input('差评原因', 'bad_reason', '').props({disabled: false})
+                ]
+            }
+        ]),
+
+
+        //slider 滑块组件
+        maker.slider('滑块', 'slider', [30, 80]).props({
+            'min': 0,
+            'max': 100,
+            'range': true,
+        }).col({span: 12}),
+
+        {
+            type: 'wangEditor',
+            field: 'txt',
+            title: '富文本框',
+            value: '<h1 style="color: #419bf7;">form-create</h1><a href="https://github.com/xaboy/form-create">GitHub</a>'
+        },
+
+
         //upload 上传组件
         maker.upload('轮播图', 'pic', ['http://file.lotkk.com/form-create.jpeg'])
             .props({

@@ -54,6 +54,7 @@ export default function useContext(Handler) {
                 ctx.refRule[key] = ref;
                 ctx.watch.push(watch(flag ? () => [...(ref.value || [])] : ref, (_, o) => {
                     const n = ref.value;
+                    console.log('change',key,ctx.rule.field,_);
                     if (this.isBreakWatch()) return;
                     if (flag && ctx.parser.loadChildren === false) return;
                     this.watching = true;
@@ -88,7 +89,9 @@ export default function useContext(Handler) {
             });
             if (ctx.input) {
                 const val = toRef(ctx.rule, 'value');
+                console.log('value',ctx.rule.field, ctx.rule.value);
                 ctx.watch.push(watch(val, () => {
+                    console.log('value',ctx.rule.field, val);
                     const formValue = ctx.parser.toFormValue(val.value, ctx);
                     if (this.isChange(ctx, formValue)) {
                         this.setValue(ctx, val.value, formValue, true);

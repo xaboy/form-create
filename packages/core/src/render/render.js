@@ -12,7 +12,7 @@ export default function useRender(Render) {
             this.cacheConfig = {};
         },
         render() {
-            console.log('renderrrrr', this.id);
+            console.warn('renderrrrr', this.id);
             if (!this.vm.isShow) {
                 return;
             }
@@ -93,6 +93,9 @@ export default function useRender(Render) {
 
             return this.getCache(ctx);
         },
+        getModelField(ctx) {
+            return ctx.rule.modelField || ctx.parser.modelField || this.fc.modelFields[this.vNode.aliasMap[ctx.field]] || this.fc.modelFields[ctx.field] || this.fc.modelFields[ctx.originType] || 'modelValue';
+        },
         display(vn) {
             if (Array.isArray(vn)) {
                 const data = [];
@@ -150,36 +153,34 @@ export default function useRender(Render) {
                     ref: ref,
                     key: rule.key || `${key}fc`,
                     slot: undefined,
+                    on: {
+                        vnodeMounted: (vn) => {
+                            vn.el.__rule__ = ctx;
+                            this.onMounted(ctx, vn.el);
+                        }
+                    }
                 }
             ]
 
-            if (!custom) {
-                const data = {
+            if (!custom && ctx.input) {
+                const field = this.getModelField(ctx);
+                props.push({
                     on: {
-                        vnodeMounted: () => {
-                            this.onMounted(ctx);
+                        [`update:${field}`]: (value) => {
+                            console.log(value,ctx.field);
+                            this.onInput(ctx, value);
                         }
+                    },
+                    props: {
+                        [field]: this.$handle.getFormData(ctx)
                     }
-                };
-                if (ctx.input) {
-                    data.on['update:modelValue'] = (value) => {
-                        console.log(ctx.field, value);
-                        this.onInput(ctx, value);
-                    };
-                    data.props = {
-                        modelValue: this.$handle.getFormData(ctx),
-                    }
-                }
-                props.push(data);
+                })
             }
             mergeProps(props, ctx.prop);
             return ctx.prop;
         },
-        onMounted(ctx) {
-            ctx.el = this.vm.$refs[ctx.ref];
-            if (ctx.el) {
-                (ctx.el.$el || ctx.el).__rule__ = ctx.rule;
-            }
+        onMounted(ctx, el) {
+            ctx.el = this.vm.$refs[ctx.ref] || el;
             ctx.parser.mounted(ctx);
             this.$handle.effect(ctx, 'mounted');
         },
