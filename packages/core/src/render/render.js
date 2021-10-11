@@ -138,10 +138,6 @@ export default function useRender(Render) {
                 options: ctx.prop.options,
                 children: ctx.rule.children,
                 rule: ctx.rule,
-                prop: (function () {
-                    const temp = {...ctx.prop};
-                    return temp.on = temp.on ? {...temp.on} : {}, temp;
-                }()),
             }
         },
         ctxProp(ctx, custom) {
@@ -155,7 +151,7 @@ export default function useRender(Render) {
                     slot: undefined,
                     on: {
                         vnodeMounted: (vn) => {
-                            vn.el.__rule__ = ctx;
+                            vn.el.__rule__ = ctx.rule;
                             this.onMounted(ctx, vn.el);
                         }
                     }
@@ -167,7 +163,6 @@ export default function useRender(Render) {
                 props.push({
                     on: {
                         [`update:${field}`]: (value) => {
-                            console.log(value,ctx.field);
                             this.onInput(ctx, value);
                         }
                     },

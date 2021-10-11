@@ -39,8 +39,7 @@ export default {
     clearValidateState(ctx) {
         const fItem = this.vm.$refs[ctx.wrapRef];
         if (fItem) {
-            fItem.validateMessage = '';
-            fItem.validateState = '';
+            fItem.clearValidate();
         }
     },
     tidyOptions(options) {
@@ -118,11 +117,11 @@ export default {
             key: `${uni}fi`,
             ref: ctx.wrapRef,
             type: 'formItem',
-        }]), {default: () => children, ...(isTitle ? {label: () => this.makeInfo(rule, uni)}: {})});
+        }]), {default: () => children, ...(isTitle ? {label: () => this.makeInfo(rule, uni)} : {})});
         return (inline === true || isFalse(_col) || isFalse(col.show)) ? item : this.makeCol(rule, uni, [item]);
     },
     isTitle(rule) {
-        if(this.options.form.title === false) return false;
+        if (this.options.form.title === false) return false;
         const title = rule.title;
         return !((!title.title && !title.native) || isFalse(title.show))
     },
@@ -206,7 +205,9 @@ export default {
             }, [item]);
     },
     makeResetBtn() {
-        const resetBtn = this.options.resetBtn;
+        const resetBtn = {...this.options.resetBtn};
+        const text = resetBtn.innerText;
+        delete resetBtn.innerText;
         return this.$r({
             type: 'button',
             props: resetBtn,
@@ -220,10 +221,12 @@ export default {
                 }
             },
             key: `${this.key}b2`,
-        }, [resetBtn.innerText]);
+        }, [text]);
     },
     makeSubmitBtn() {
-        const submitBtn = this.options.submitBtn;
+        const submitBtn = {...this.options.submitBtn};
+        const text = submitBtn.innerText;
+        delete submitBtn.innerText;
 
         return this.$r({
             type: 'button',
@@ -238,6 +241,6 @@ export default {
                 }
             },
             key: `${this.key}b1`,
-        }, [submitBtn.innerText]);
+        }, [text]);
     }
 }

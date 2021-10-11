@@ -332,7 +332,7 @@ export default function Api(h) {
 
     ['on', 'once', 'off', 'set'].forEach(n => {
         api[n] = function (...args) {
-            h.bus.$on(...args);
+            h.bus[`$${n}`](...args);
         }
     });
 

@@ -107,9 +107,9 @@ export default function extendApi(api, h) {
                     is.Function(h.options.onSubmit) && invoke(() => h.options.onSubmit(formData, this));
                     h.vm.$emit('submit', formData, this);
                     resolve(formData);
-                }).catch(() => {
-                    is.Function(failFn) && invoke(() => failFn(this, ...arguments));
-                    reject(...arguments)
+                }).catch((...args) => {
+                    is.Function(failFn) && invoke(() => failFn(this, ...args));
+                    reject(...args)
                 })
             });
         },

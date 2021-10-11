@@ -164,10 +164,12 @@ export default function FormCreateFactory(config) {
             options: ref({}),
             extendApi: config.extendApi || (api => api)
         })
-        watch(this.options, () => {
-            this.$handle.$manager.updateOptions(this.options.value);
-            this.api().refresh();
-        }, {deep: true})
+        this.vm.$nextTick(() => {
+            watch(this.options, () => {
+                this.$handle.$manager.updateOptions(this.options.value);
+                this.api().refresh();
+            }, {deep: true})
+        });
         extend(vm.appContext.components, components);
         extend(vm.appContext.directives, directives);
         this.$handle = new Handle(this)

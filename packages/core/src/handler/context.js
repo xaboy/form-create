@@ -4,7 +4,7 @@ import BaseParser from '../factory/parser';
 import {$del, $set} from '@form-create/utils/lib';
 import is from '@form-create/utils/lib/type';
 import {invoke} from '../frame/util';
-import {toRef, watch} from 'vue';
+import {toRef} from 'vue';
 import {attrs} from '../frame/attrs';
 
 
@@ -52,9 +52,8 @@ export default function useContext(Handler) {
                 const ref = toRef(ctx.rule, key);
                 const flag = key === 'children';
                 ctx.refRule[key] = ref;
-                ctx.watch.push(watch(flag ? () => [...(ref.value || [])] : ref, (_, o) => {
+                ctx.watch.push(this.vm.$watch(flag ? () => [...(ref.value || [])] : () => ref.value, (_, o) => {
                     const n = ref.value;
-                    console.log('change',key,ctx.rule.field,_);
                     if (this.isBreakWatch()) return;
                     if (flag && ctx.parser.loadChildren === false) return;
                     this.watching = true;
@@ -89,9 +88,7 @@ export default function useContext(Handler) {
             });
             if (ctx.input) {
                 const val = toRef(ctx.rule, 'value');
-                console.log('value',ctx.rule.field, ctx.rule.value);
-                ctx.watch.push(watch(val, () => {
-                    console.log('value',ctx.rule.field, val);
+                ctx.watch.push(this.vm.$watch(() => val.value, () => {
                     const formValue = ctx.parser.toFormValue(val.value, ctx);
                     if (this.isChange(ctx, formValue)) {
                         this.setValue(ctx, val.value, formValue, true);

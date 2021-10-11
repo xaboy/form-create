@@ -221,19 +221,21 @@ export default function useLoader(Handler) {
 
             for (let i = 0; i < controls.length; i++) {
                 const control = controls[i], handleFn = control.handle || (val => val === control.value);
+                if (!is.trueArray(control.rule)) continue;
                 const data = {
                     ...control,
                     valid: invoke(() => handleFn(ctx.rule.value, api)),
                     ctrl: findCtrl(ctx, control.rule),
+                    isHidden: is.String(control.rule[0]),
                 };
-                if ((data.valid && data.ctrl) || (!data.valid && !data.ctrl)) continue;
+                if ((data.valid && data.ctrl) || (!data.valid && !data.ctrl && !data.isHidden)) continue;
                 validate.push(data);
             }
             if (!validate.length) return false;
 
             let flag = false;
-            validate.reverse().forEach(({valid, rule, prepend, append, child, ctrl}) => {
-                if (is.String(rule[0])) {
+            validate.reverse().forEach(({isHidden, valid, rule, prepend, append, child, ctrl}) => {
+                if (isHidden) {
                     valid ? ctx.ctrlRule.push({
                         __ctrl: true,
                         children: rule,
