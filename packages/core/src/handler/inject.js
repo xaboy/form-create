@@ -67,6 +67,7 @@ export default function useInject(Handler) {
         getInjectData(self, inject) {
             const {option, rule} = this.vm.$options.propsData;
             return {
+                api: this.api,
                 $f: this.api,
                 rule,
                 self: self.__origin__,

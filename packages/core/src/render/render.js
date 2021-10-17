@@ -59,7 +59,7 @@ export default function useRender(Render) {
             if (!vm)
                 return new Vue;
             else if (is.Function(vm))
-                return invoke(() => vm(this.$handle.getInjectData(rule)));
+                return invoke(() => rule.vm(this.$handle.getInjectData(rule)));
             else if (!vm._isVue)
                 return new Vue(vm);
             return vm;
@@ -76,6 +76,12 @@ export default function useRender(Render) {
             if (ctx.prop.optionsTo && ctx.prop.options) {
                 deepSet(ctx.prop, ctx.prop.optionsTo, ctx.prop.options);
             }
+        },
+        deepSet(ctx) {
+            const deep = ctx.rule.deep;
+            deep && Object.keys(deep).sort((a, b) => a.length < b.length ? -1 : 1).forEach(str => {
+                deepSet(ctx.prop, str, deep[str]);
+            });
         },
         setTempProps(vm, ctx) {
             if (!vm.$props) return;
@@ -145,7 +151,7 @@ export default function useRender(Render) {
             return ctx.rule.slot === slot ? this.renderCtx(ctx) : undefined;
         },
         renderId(name, type) {
-            const ctxs = this.$handle[type === 'field' ? 'nameCtx' : 'fieldCtx'][name]
+            const ctxs = this.$handle[type === 'field' ? 'fieldCtx' : 'nameCtx'][name]
             return ctxs ? ctxs.map(ctx => this.renderCtx(ctx, ctx.parent)) : undefined;
         },
         renderCtx(ctx, parent) {
@@ -168,6 +174,7 @@ export default function useRender(Render) {
                     ctx.initProp();
                     this.mergeGlobal(ctx);
                     this.$manager.tidyRule(ctx);
+                    this.deepSet(ctx);
                     this.setOptions(ctx);
                     this.ctxProp(ctx);
                     let prop = ctx.prop;
@@ -194,6 +201,7 @@ export default function useRender(Render) {
                                 rule,
                                 prop,
                                 children,
+                                api: this.$handle.api,
                                 model: prop.model || {}
                             });
                         } else {

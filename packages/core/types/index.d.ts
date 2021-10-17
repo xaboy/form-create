@@ -156,8 +156,9 @@ export interface BaseRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> extend
     prefix?: string | VNodeData;
     suffix?: string | VNodeData;
     update?: (value: any, $rule: this, $f: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => Boolean | void;
-    options?: Object[],
-    optionsTo?: string,
+    options?: Object[];
+    optionsTo?: string;
+    deep: Object;
     native?: Boolean;
     hidden?: Boolean;
     display?: Boolean;
@@ -252,6 +253,8 @@ export class BaseCreator<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
     display(prop: Boolean): this;
 
     inject(prop: any): this;
+
+    deep(deep: Object[]): this;
 
     validate(prop: Object[]): this;
 
@@ -373,9 +376,9 @@ export interface BaseApi<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
 
     onSubmit(fn: (formData: FormData, $f: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void): void;
 
-    sync(field: string): void;
+    sync(field: string | string[]): void;
 
-    sync(rule: FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>): void;
+    sync(rule: FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> | FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>[]): void;
 
     refresh(): void;
 
