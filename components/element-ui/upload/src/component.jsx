@@ -92,9 +92,6 @@ export default {
             this.$refs.upload.handleRemove(file);
         },
         handleClick(file) {
-            if (this.isDisabled()) {
-                return;
-            }
             this.onHandle(file);
         },
         makeItem(file, index) {

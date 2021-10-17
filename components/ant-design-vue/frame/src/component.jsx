@@ -228,7 +228,6 @@ export default {
             </div>
         },
         handleClick(src) {
-            if (this.disabled) return;
             return this.onHandle(src);
         },
         handleRemove(src) {
