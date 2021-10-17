@@ -39,7 +39,7 @@ export default function useLoader(Handler) {
             return rule;
         },
         loadFn(item, rule) {
-            ['on', 'props', 'nativeOn'].forEach(k => {
+            ['on', 'props', 'nativeOn', 'deep'].forEach(k => {
                 item[k] && this.parseInjectEvent(rule, item[k]);
             });
         },

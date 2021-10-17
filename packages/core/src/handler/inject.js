@@ -7,7 +7,6 @@ import {parseFn} from '../frame/util';
 export default function useInject(Handler) {
     extend(Handler.prototype, {
         parseInjectEvent(rule, on) {
-            if (rule.inject === false) return;
             const inject = rule.inject || this.options.injectEvent;
             return this.parseEventLst(rule, on, inject);
         },
@@ -21,13 +20,15 @@ export default function useInject(Handler) {
             return data;
         },
         parseEvent(rule, fn, inject, deep) {
-            if (is.Function(fn) && (!is.Undef(inject) || fn.__inject)) {
+            if (is.Function(fn) && ((inject !== false && !is.Undef(inject)) || fn.__inject)) {
                 return this.inject(rule, fn, inject)
             } else if (!deep && Array.isArray(fn) && fn[0] && (is.String(fn[0]) || is.Function(fn[0]))) {
                 return this.parseEventLst(rule, fn, inject, true);
             } else if (is.String(fn)) {
                 const val = parseFn(fn);
-                return is.String(val) ? val : this.parseEvent(rule, val, inject, true);
+                if (val && fn !== val) {
+                    return val.__inject ? this.parseEvent(rule, val, inject, true) : val;
+                }
             }
         },
         parseEmit(ctx, on) {
