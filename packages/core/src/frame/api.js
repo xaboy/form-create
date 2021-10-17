@@ -180,12 +180,14 @@ export default function Api(h) {
             return h.fields().reduce((initial, key) => {
                 const ctx = h.fieldCtx[key][0];
                 initial[key] = origin ? ctx.origin : ctx.rule;
+                return initial;
             }, {});
         },
         component(origin) {
             return Object.keys(h.nameCtx).reduce((initial, key) => {
                 const ctx = h.nameCtx[key].map(ctx => origin ? ctx.origin : ctx.rule);
                 initial[key] = ctx.length === 1 ? ctx[0] : ctx;
+                return initial;
             }, {});
         },
         bind() {
