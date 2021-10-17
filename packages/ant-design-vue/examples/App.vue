@@ -142,6 +142,7 @@
                     type: 'input',
                     field: 'rule' + uni,
                     title: 'rule' + uni,
+                    value: `${uni}`
                 }, 'goods_name');
                 uni++;
             }
@@ -150,6 +151,7 @@
                     type: 'input',
                     field: 'rule' + uni,
                     title: 'rule' + uni,
+                    value: `${uni}`
                 }, 'goods_name')
                 uni++;
             }
