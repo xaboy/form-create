@@ -143,18 +143,18 @@ export default function useContext(Handler) {
             input && this.rmIdCtx(ctx, field, 'field');
             name && this.rmIdCtx(ctx, name, 'name');
 
-            if (!this.reloading) {
-                if (ctx.parser.loadChildren !== false) {
-                    this.deferSyncValue(() => {
+            this.deferSyncValue(() => {
+                if (!this.reloading) {
+                    if (ctx.parser.loadChildren !== false) {
                         if (is.trueArray(ctx.rule.children)) {
                             ctx.rule.children.forEach(h => h.__fc__ && this.rmCtx(h.__fc__));
                         }
-                    }, true);
+                    }
+                    if (ctx.root === this.rules) {
+                        this.vm._renderRule();
+                    }
                 }
-                if (ctx.root === this.rules) {
-                    this.vm._renderRule();
-                }
-            }
+            }, input);
 
             const index = this.sort.indexOf(id);
             if (index > -1) {
