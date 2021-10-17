@@ -105,9 +105,11 @@ export default function Api(h) {
         },
         removeField(field) {
             const ctx = h.getCtx(field);
-            h.getCtxs(field).forEach(ctx => {
-                ctx.rm();
-            });
+            h.deferSyncValue(() => {
+                h.getCtxs(field).forEach(ctx => {
+                    ctx.rm();
+                });
+            }, true);
             return ctx ? ctx.origin : undefined;
         },
         removeRule(rule) {

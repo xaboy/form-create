@@ -131,7 +131,7 @@ extend(RuleContext.prototype, {
                 extend(this, {
                     root: []
                 });
-            });
+            }, this.input);
         });
     },
     update(handle, init) {

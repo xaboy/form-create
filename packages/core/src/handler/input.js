@@ -95,10 +95,13 @@ export default function useInput(Handler) {
             if (!this.deferSyncFn) {
                 this.deferSyncFn = fn;
             }
+            if (!this.deferSyncFn.sync) {
+                this.deferSyncFn.sync = sync;
+            }
             invoke(fn);
             if (this.deferSyncFn === fn) {
                 this.deferSyncFn = null;
-                if (fn.sync || sync) {
+                if (fn.sync) {
                     this.syncValue();
                 }
             }
