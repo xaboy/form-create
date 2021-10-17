@@ -116,9 +116,8 @@ export default function useInput(Handler) {
             return (is.Object(value) || Array.isArray(value)) && value === ctx.rule.value;
         },
         refreshUpdate(ctx, val) {
-            const fn = ctx.rule.update;
-            if (is.Function(fn)) {
-                const state = invoke(() => fn(val, ctx.origin, this.api));
+            if (is.Function(ctx.rule.update)) {
+                const state = invoke(() => ctx.rule.update(val, ctx.origin, this.api));
                 if (state === undefined) return;
                 ctx.rule.hidden = state === true;
             }
