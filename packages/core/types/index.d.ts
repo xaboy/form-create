@@ -254,7 +254,7 @@ export class BaseCreator<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
 
     inject(prop: any): this;
 
-    deep(deep: Object[]): this;
+    deep(deep: Object): this;
 
     validate(prop: Object[]): this;
 
