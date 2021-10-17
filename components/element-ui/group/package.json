@@ -1,6 +1,6 @@
 {
   "name": "@form-create/component-elm-group",
-  "version": "2.5.10",
+  "version": "2.5.11",
   "description": "@form-create/element-ui 内置组件",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -30,7 +30,7 @@
   "author": "xaboy",
   "license": "MIT",
   "dependencies": {
-    "@form-create/utils": "^2.5.10"
+    "@form-create/utils": "^2.5.11"
   },
   "bugs": {
     "url": "https://github.com/xaboy/form-create/issues"
