@@ -104,7 +104,7 @@ export default {
         const item = isFalse(rule.wrap.show) ? children : this.$r(mergeProps([rule.wrap, {
             props: {
                 ...(rule.wrap || {}),
-                prop: ctx.field,
+                prop: ctx.id,
                 rules: rule.validate,
                 ...(layout !== 'horizontal' ? {labelCol: {}, wrapperCol: {}} : {})
             },

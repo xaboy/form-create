@@ -31,23 +31,24 @@ export default function useInput(Handler) {
             }
         },
         setFormData(ctx, value) {
-            $set(this.formData, ctx.field, value);
+            $set(this.formData, ctx.id, value);
         },
         getFormData(ctx) {
-            return this.formData[ctx.field];
+            return this.formData[ctx.id];
         },
         validate() {
             toEmpty(this.vm.validate);
-            Object.keys(this.fieldCtx).forEach(id => {
-                const ctx = this.fieldCtx[id];
-                this.vm.validate[ctx.field] = toArray(ctx.rule.validate);
+            this.fields().forEach(id => {
+                this.fieldCtx[id].forEach(ctx => {
+                    this.vm.validate[ctx.id] = toArray(ctx.rule.validate);
+                });
             });
             return this.vm.validate;
         },
         syncForm() {
             toEmpty(this.form);
-            Object.defineProperties(this.form, Object.keys(this.formData).reduce((initial, field) => {
-                const ctx = this.getCtx(field);
+            Object.defineProperties(this.form, this.fields().reduce((initial, field) => {
+                const ctx = this.getFieldCtx(field);
                 const handle = this.valueHandle(ctx);
                 handle.configurable = true;
                 initial[field] = handle;
@@ -87,17 +88,17 @@ export default function useInput(Handler) {
         },
         addSubForm(ctx, subForm) {
             if (ctx.input) {
-                this.subForm[ctx.field] = subForm;
+                this.subForm[ctx.id] = subForm;
             }
         },
-        deferSyncValue(fn) {
+        deferSyncValue(fn, sync) {
             if (!this.deferSyncFn) {
                 this.deferSyncFn = fn;
             }
             invoke(fn);
             if (this.deferSyncFn === fn) {
                 this.deferSyncFn = null;
-                if (fn.sync) {
+                if (fn.sync || sync) {
                     this.syncValue();
                 }
             }
@@ -144,7 +145,7 @@ export default function useInput(Handler) {
             });
         },
         fields() {
-            return Object.keys(this.formData);
+            return Object.keys(this.fieldCtx);
         },
     });
 }

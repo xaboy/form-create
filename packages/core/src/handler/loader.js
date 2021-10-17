@@ -62,9 +62,6 @@ export default function useLoader(Handler) {
                 }, {})
             }], ctx.computed)
         },
-        isRepeatRule(rule) {
-            return this.repeatRule.indexOf(rule) > -1;
-        },
         loadRule() {
             // console.warn('%c load', 'color:blue');
             this.cycleLoad = false;
@@ -132,15 +129,13 @@ export default function useLoader(Handler) {
                 let rule = getRule(_rule);
 
                 const isRepeat = () => {
-                    return !!(rule.field && this.fieldCtx[rule.field] && this.fieldCtx[rule.field] !== _rule.__fc__)
+                    return !!(rule.field && this.fieldCtx[rule.field] && this.fieldCtx[rule.field][0] !== _rule.__fc__)
                 }
 
                 this.ruleEffect(rule, 'init', {repeat: isRepeat()});
 
                 if (isRepeat()) {
-                    this.repeatRule.push(_rule);
                     this.vm.$emit('repeat-field', _rule, this.api);
-                    return err(`${rule.field} 字段已存在`, _rule);
                 }
 
                 let ctx;

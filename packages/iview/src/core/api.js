@@ -47,13 +47,13 @@ export default function extendApi(api, h) {
             }
         },
         validateField: (field, callback) => {
-            if (!h.fieldCtx[field])
-                return;
-            const sub = h.subForm[field];
+            const ctx = h.getFieldCtx(field);
+            if (!ctx) return;
+            const sub = h.subForm[ctx.id];
             let len = 0;
             let flag;
             const validate = () => {
-                h.$manager.validateField(field, (...args) => {
+                h.$manager.validateField(ctx.id, (...args) => {
                     if (args[0]) {
                         flag = args;
                     } else if (flag) {
@@ -86,22 +86,24 @@ export default function extendApi(api, h) {
         clearValidateState(fields, clearSub = true) {
             api.helper.tidyFields(fields).forEach(field => {
                 if (clearSub) this.clearSubValidateState(field);
-                const ctx = h.fieldCtx[field];
-                if (!ctx) return;
-                h.$manager.clearValidateState(ctx);
+                h.getCtxs(field).forEach(ctx => {
+                    h.$manager.clearValidateState(ctx);
+                });
             });
         },
         clearSubValidateState(fields) {
             api.helper.tidyFields(fields).forEach(field => {
-                const subForm = h.subForm[field];
-                if (!subForm) return;
-                if (Array.isArray(subForm)) {
-                    subForm.forEach(form => {
-                        form.clearValidateState();
-                    })
-                } else if (subForm) {
-                    subForm.clearValidateState();
-                }
+                h.getCtxs(field).forEach(ctx => {
+                    const subForm = h.subForm[ctx.id];
+                    if (!subForm) return;
+                    if (Array.isArray(subForm)) {
+                        subForm.forEach(form => {
+                            form.clearValidateState();
+                        })
+                    } else if (subForm) {
+                        subForm.clearValidateState();
+                    }
+                });
             })
         },
         btn: {

@@ -120,7 +120,7 @@ export default {
             props: {
                 labelWidth: labelWidth === void 0 ? labelWidth : toString(labelWidth),
                 ...(rule.wrap || {}),
-                prop: ctx.field,
+                prop: ctx.id,
                 rules: rule.validate,
             },
             class: rule.className,

@@ -1,7 +1,7 @@
 import extend from '@form-create/utils/lib/extend';
 import toCase from '@form-create/utils/lib/tocase';
 import BaseParser from '../factory/parser';
-import {$del, $set} from '@form-create/utils/lib';
+import {$del} from '@form-create/utils/lib';
 import is from '@form-create/utils/lib/type';
 import {invoke} from '../frame/util';
 
@@ -9,14 +9,41 @@ import {invoke} from '../frame/util';
 export default function useContext(Handler) {
     extend(Handler.prototype, {
         getCtx(id) {
-            return this.fieldCtx[id] || this.nameCtx[id] || this.ctxs[id];
+            return this.getFieldCtx(id) || this.getNameCtx(id)[0] || this.ctxs[id];
+        },
+        getCtxs(id) {
+            return this.fieldCtx[id] || this.nameCtx[id] || (this.ctxs[id] ? [this.ctxs[id]] : []);
+        },
+        setIdCtx(ctx, key, type) {
+            const field = `${type}Ctx`;
+            if (!this[field][key]) {
+                this[field][key] = [ctx];
+            } else {
+                this[field][key].push(ctx);
+            }
+        },
+        rmIdCtx(ctx, key, type) {
+            const field = `${type}Ctx`;
+            const lst = this[field][key];
+            if (!lst) return false;
+            const flag = lst.splice(lst.indexOf(ctx) >>> 0, 1).length > 0;
+            if (!lst.length) {
+                delete this[field][key];
+            }
+            return flag;
+        },
+        getFieldCtx(field) {
+            return (this.fieldCtx[field] || [])[0];
+        },
+        getNameCtx(name) {
+            return this.nameCtx[name] || [];
         },
         setCtx(ctx) {
             let {id, field, name, rule} = ctx;
             this.ctxs[id] = ctx;
-            if (name) $set(this.nameCtx, name, ctx);
+            name && this.setIdCtx(ctx, name, 'name');
             if (!ctx.input) return;
-            this.fieldCtx[field] = ctx;
+            this.setIdCtx(ctx, field, 'field');
             this.setFormData(ctx, ctx.parser.toFormValue(rule.value, ctx));
             if (this.isMounted && !this.reloading) {
                 this.vm.$emit('change', ctx.field, rule.value, ctx.origin, this.api);
@@ -97,7 +124,7 @@ export default function useContext(Handler) {
         },
         rmCtx(ctx) {
             if (ctx.deleted) return;
-            const {id, field, name} = ctx;
+            const {id, field, input, name} = ctx;
             if (ctx.input) {
                 Object.defineProperty(ctx.rule, 'value', {
                     value: ctx.rule.value,
@@ -109,29 +136,20 @@ export default function useContext(Handler) {
             $del(this.$render.tempList, id);
             $del(this.$render.orgChildren, id);
             $del(this.vm.ctxInject, id);
+            $del(this.formData, id);
+            $del(this.subForm, id);
             $del(ctx, 'cacheValue');
 
-            const f = this.fieldCtx[field];
-            let flag = false;
+            input && this.rmIdCtx(ctx, field, 'field');
+            name && this.rmIdCtx(ctx, name, 'name');
 
-            if (field && (!f || f === ctx)) {
-                $del(this.formData, field);
-                $del(this.form, field);
-                $del(this.fieldCtx, field);
-                $del(this.subForm, field);
-                flag = true;
-            }
-            if (name && this.nameCtx[name] === ctx) {
-                $del(this.nameCtx, name);
-            }
             if (!this.reloading) {
                 if (ctx.parser.loadChildren !== false) {
                     this.deferSyncValue(() => {
                         if (is.trueArray(ctx.rule.children)) {
                             ctx.rule.children.forEach(h => h.__fc__ && this.rmCtx(h.__fc__));
                         }
-                        this.syncValue();
-                    })
+                    }, true);
                 }
                 if (ctx.root === this.rules) {
                     this.vm._renderRule();
@@ -146,7 +164,7 @@ export default function useContext(Handler) {
             this.$render.clearCache(ctx);
             ctx.delete();
             this.effect(ctx, 'deleted');
-            flag && this.vm.$emit('removeField', field, ctx.rule, this.api);
+            input && !this.fieldCtx[field] && this.vm.$emit('removeField', field, ctx.rule, this.api);
             ctx.rule.__ctrl || this.vm.$emit('removeRule', ctx.rule, this.api);
             return ctx;
         },

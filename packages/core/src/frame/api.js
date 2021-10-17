@@ -3,18 +3,11 @@ import {$set} from '@form-create/utils/lib/modify';
 import {deepCopy} from '@form-create/utils/lib/deepextend';
 import is, {hasProperty} from '@form-create/utils/lib/type';
 import extend from '@form-create/utils/lib/extend';
-import {err, format} from '@form-create/utils/lib/console';
+import {format} from '@form-create/utils/lib/console';
 
 
 function copy(value) {
     return deepCopy(value);
-}
-
-function byRules(ctxs, origin) {
-    return Object.keys(ctxs).reduce((initial, key) => {
-        initial[key] = origin ? ctxs[key].origin : ctxs[key].rule;
-        return initial;
-    }, {});
 }
 
 export default function Api(h) {
@@ -29,10 +22,10 @@ export default function Api(h) {
 
     function props(fields, key, val) {
         tidyFields(fields).forEach(field => {
-            const ctx = h.getCtx(field);
-            if (!ctx) return;
-            $set(ctx.rule, key, val);
-            h.$render.clearCache(ctx);
+            h.getCtxs(field).forEach(ctx => {
+                $set(ctx.rule, key, val);
+                h.$render.clearCache(ctx);
+            });
         })
     }
 
@@ -73,23 +66,26 @@ export default function Api(h) {
         },
         formData(fields) {
             return tidyFields(fields).reduce((initial, id) => {
-                const ctx = h.fieldCtx[id];
+                const ctx = h.getFieldCtx(id);
                 if (!ctx) return initial;
                 initial[ctx.field] = copy(ctx.rule.value);
                 return initial;
             }, copy(h.appendData));
         },
         getValue(field) {
-            const ctx = h.fieldCtx[field];
+            const ctx = h.getFieldCtx(field);
             if (!ctx) return;
             return copy(ctx.rule.value);
         },
         coverValue(formData) {
             h.deferSyncValue(() => {
-                Object.keys(h.fieldCtx).forEach(key => {
-                    const ctx = h.fieldCtx[key];
-                    if (!ctx) return h.appendData[key] = formData[key];
-                    ctx.rule.value = hasProperty(formData, key) ? formData[key] : undefined;
+                api.fields().forEach(key => {
+                    const ctxs = h.fieldCtx[key];
+                    if (!ctxs) return h.appendData[key] = formData[key];
+                    const flag = hasProperty(formData, key);
+                    ctxs.forEach(ctx => {
+                        ctx.rule.value = flag ? formData[key] : undefined;
+                    })
                 });
             })
         },
@@ -99,17 +95,20 @@ export default function Api(h) {
                 formData = {[field]: arguments[1]};
             h.deferSyncValue(() => {
                 Object.keys(formData).forEach(key => {
-                    const ctx = h.fieldCtx[key];
-                    if (!ctx) return h.appendData[key] = formData[key];
-                    ctx.rule.value = formData[key];
+                    const ctxs = h.fieldCtx[key];
+                    if (!ctxs) return h.appendData[key] = formData[key];
+                    ctxs.forEach(ctx => {
+                        ctx.rule.value = formData[key];
+                    });
                 });
             })
         },
         removeField(field) {
-            let ctx = h.getCtx(field);
-            if (!ctx) return;
-            ctx.rm();
-            return ctx.origin;
+            const ctx = h.getCtx(field);
+            h.getCtxs(field).forEach(ctx => {
+                ctx.rm();
+            });
+            return ctx ? ctx.origin : undefined;
         },
         removeRule(rule) {
             const ctx = rule && byCtx(rule);
@@ -123,11 +122,7 @@ export default function Api(h) {
         },
         fields: () => h.fields(),
         append: (rule, after, child) => {
-            let fields = Object.keys(h.fieldCtx), index = h.sort.length - 1, rules;
-
-            if (rule.field && fields.indexOf(rule.field) > -1)
-                return err(`${rule.field} 字段已存在`, rule);
-
+            let index = h.sort.length - 1, rules;
             const ctx = h.getCtx(after);
 
             if (ctx) {
@@ -142,11 +137,7 @@ export default function Api(h) {
             rules.splice(index + 1, 0, rule);
         },
         prepend: (rule, after, child) => {
-            let fields = Object.keys(h.fieldCtx), index = 0, rules;
-
-            if (rule.field && fields.indexOf(rule.field) > -1)
-                return err(`${rule.field} 字段已存在`, rule);
-
+            let index = 0, rules;
             const ctx = h.getCtx(after);
 
             if (ctx) {
@@ -179,17 +170,23 @@ export default function Api(h) {
         },
         disabled(disabled, fields) {
             tidyFields(fields).forEach((field) => {
-                const ctx = h.fieldCtx[field];
-                if (!ctx) return;
-                $set(ctx.rule.props, 'disabled', !!disabled);
+                h.getCtxs(field).forEach(ctx => {
+                    $set(ctx.rule.props, 'disabled', !!disabled);
+                });
             });
             h.refresh();
         },
         model(origin) {
-            return byRules(h.fieldCtx, origin);
+            return h.fields().reduce((initial, key) => {
+                const ctx = h.fieldCtx[key][0];
+                initial[key] = origin ? ctx.origin : ctx.rule;
+            }, {});
         },
         component(origin) {
-            return byRules(h.nameCtx, origin);
+            return Object.keys(h.nameCtx).reduce((initial, key) => {
+                const ctx = h.nameCtx[key].map(ctx => origin ? ctx.origin : ctx.rule);
+                initial[key] = ctx.length === 1 ? ctx[0] : ctx;
+            }, {});
         },
         bind() {
             return api.form;
@@ -205,22 +202,32 @@ export default function Api(h) {
             api.updateOptions({onSubmit: fn});
         },
         sync: (field) => {
-            const ctx = is.Object(field) ? byCtx(field) : h.getCtx(field);
-            if (ctx && !ctx.deleted) {
-                const subForm = h.subForm[field];
-                if (subForm) {
-                    if (Array.isArray(subForm)) {
-                        subForm.forEach(form => {
-                            form.refresh();
-                        })
-                    } else if (subForm) {
-                        subForm.refresh();
-                    }
-                }
-                //ctx.updateKey(true);
-                h.$render.clearCache(ctx);
-                h.refresh();
+            if (Array.isArray(field)) {
+                field.forEach(v => api.sync(v));
+                return;
             }
+            let ctxs = is.Object(field) ? byCtx(field) : h.getCtxs(field);
+            if (!ctxs) {
+                return;
+            }
+            ctxs = Array.isArray(ctxs) ? ctxs : [ctxs];
+            ctxs.forEach(ctx => {
+                if (!ctx.deleted) {
+                    const subForm = h.subForm[ctx.id];
+                    if (subForm) {
+                        if (Array.isArray(subForm)) {
+                            subForm.forEach(form => {
+                                form.refresh();
+                            })
+                        } else if (subForm) {
+                            subForm.refresh();
+                        }
+                    }
+                    //ctx.updateKey(true);
+                    h.$render.clearCache(ctx);
+                }
+            });
+            h.refresh();
         },
         refresh: () => {
             allSubForm().forEach(sub => {
@@ -243,8 +250,9 @@ export default function Api(h) {
             h.changeStatus = false;
         },
         updateRule(id, rule) {
-            const r = api.getRule(id);
-            r && extend(r, rule);
+            h.getCtxs(id).forEach(ctx => {
+                extend(ctx.rule, rule);
+            });
         },
         updateRules(rules) {
             Object.keys(rules).forEach(id => {
@@ -252,8 +260,9 @@ export default function Api(h) {
             })
         },
         mergeRule: (id, rule) => {
-            const ctx = h.getCtx(id);
-            ctx && mergeRule(ctx.rule, rule);
+            h.getCtxs(id).forEach(ctx => {
+                mergeRule(ctx.rule, rule);
+            });
         },
         mergeRules(rules) {
             Object.keys(rules).forEach(id => {
@@ -283,13 +292,12 @@ export default function Api(h) {
             api.refresh();
         },
         resetFields(fields) {
-            let ctxs = h.fieldCtx;
             tidyFields(fields).forEach(field => {
-                let ctx = ctxs[field];
-                if (!ctx) return;
-                h.$render.clearCache(ctx);
-                ctx.rule.value = copy(ctx.defaultValue);
-                h.refreshControl(ctx);
+                h.getCtxs(field).forEach(ctx => {
+                    h.$render.clearCache(ctx);
+                    ctx.rule.value = copy(ctx.defaultValue);
+                    h.refreshControl(ctx);
+                });
             });
         },
         method(id, name) {
@@ -319,7 +327,8 @@ export default function Api(h) {
             el && el.$emit && el.$emit('close-modal');
         },
         getSubForm(field) {
-            return h.subForm[field];
+            const ctx = h.getCtx(field);
+            return ctx ? h.subForm[ctx.id] : undefined;
         },
         nextTick(fn) {
             h.bus.$once('next-tick', fn);

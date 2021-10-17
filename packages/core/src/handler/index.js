@@ -7,7 +7,6 @@ import usePage from './page';
 import useRender from './render';
 import useLoader from './loader';
 import useInput from './input';
-import useHelper from './helper';
 import useContext from './context';
 import useLifecycle from './lifecycle';
 import useEffect from './effect';
@@ -57,14 +56,12 @@ export default function Handler(fc) {
 extend(Handler.prototype, {
     initData(rules) {
         extend(this, {
-            fieldCtx: {},
             ctxs: {},
+            fieldCtx: {},
             nameCtx: {},
             sort: [],
             rules,
-            repeatRule: [],
         });
-        useHelper(rules);
     },
     init() {
         this.appendData = {...this.fc.options.formData || {}, ...this.vm.value || {}, ...this.appendData};

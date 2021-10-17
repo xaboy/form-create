@@ -105,7 +105,7 @@ export default {
             props: {
                 labelWidth,
                 ...(rule.wrap || {}),
-                prop: ctx.field,
+                prop: ctx.id,
                 rules: rule.validate,
             },
             class: rule.className,

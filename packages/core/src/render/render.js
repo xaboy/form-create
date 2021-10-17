@@ -145,8 +145,8 @@ export default function useRender(Render) {
             return ctx.rule.slot === slot ? this.renderCtx(ctx) : undefined;
         },
         renderId(name, type) {
-            const ctx = this.$handle[type === 'field' ? 'nameCtx' : 'fieldCtx'][name]
-            return ctx ? this.renderCtx(ctx, ctx.parent) : undefined;
+            const ctxs = this.$handle[type === 'field' ? 'nameCtx' : 'fieldCtx'][name]
+            return ctxs ? ctxs.map(ctx => this.renderCtx(ctx, ctx.parent)) : undefined;
         },
         renderCtx(ctx, parent) {
             if (ctx.type === 'hidden') return;
@@ -249,7 +249,8 @@ export default function useRender(Render) {
             if (!this.vm.ctxInject[ctx.id]) {
                 $set(this.vm.ctxInject, ctx.id, {});
             }
-            extend(this.vm.ctxInject[ctx.id], {
+            const inject = this.vm.ctxInject[ctx.id];
+            extend(inject, {
                 api: this.$handle.api,
                 form: this.fc.create,
                 subForm: subForm => {
@@ -266,7 +267,7 @@ export default function useRender(Render) {
                     return temp;
                 }()),
             });
-            return this.vm.ctxInject[ctx.id];
+            return inject;
         },
         ctxProp(ctx, custom) {
             const {ref, key, rule} = ctx;
@@ -292,7 +293,7 @@ export default function useRender(Render) {
                         callback: (value) => {
                             this.onInput(ctx, value);
                         },
-                        expression: `formData.${ctx.field}`
+                        expression: `formData.${ctx.id}`
                     },
                 })
             }
@@ -345,7 +346,7 @@ export default function useRender(Render) {
                 if (child.__fc__) {
                     return this.renderCtx(child.__fc__, ctx);
                 }
-                if (!this.$handle.isRepeatRule(child.__origin__ || child) && child.type) {
+                if (child.type) {
                     this.vm.$nextTick(() => {
                         this.$handle.loadChildren(children, ctx);
                         this.$handle.refresh();
