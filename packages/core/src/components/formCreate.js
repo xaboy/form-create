@@ -20,7 +20,8 @@ export default function $FormCreate(FormCreate) {
         props: {
             rule: {
                 type: Array,
-                required: true
+                required: true,
+                default: () => []
             },
             option: {
                 type: Object,
@@ -36,8 +37,8 @@ export default function $FormCreate(FormCreate) {
         },
         setup(props) {
             const vm = getCurrentInstance();
-            provide('pfc', vm.ctx);
-            const parent = inject('pfc');
+            provide('parentFC', vm.ctx);
+            const parent = inject('parentFC');
 
             const {rule, modelValue} = toRefs(props);
 
@@ -54,7 +55,6 @@ export default function $FormCreate(FormCreate) {
 
             onMounted(() => {
                 fc.mounted();
-                vm.ctx.$el.__fc__ = fc;
             });
 
             onBeforeUnmount(() => {

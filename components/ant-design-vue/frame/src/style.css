@@ -16,9 +16,9 @@
     transition: opacity .3s;
 }
 
-._fc-frame .fc-upload-cover i {
+._fc-frame .fc-upload-cover ._fc-frame-icon {
     color: #fff;
-    font-size: 20px;
+    font-size: 16px;
     cursor: pointer;
     margin: 0 2px;
 }

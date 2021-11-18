@@ -1,16 +1,14 @@
 import toArray from '@form-create/utils/lib/toarray';
+import Mitt from '@form-create/utils/lib/mitt';
+import {defineComponent, resolveComponent} from 'vue';
+import {CloseCircleOutlined, FolderOutlined, FileOutlined, DeleteOutlined, EyeOutlined} from '@ant-design/icons-vue';
 import './style.css';
-import {defineComponent} from 'vue'
 
 const NAME = 'fcFrame';
 
 export default defineComponent({
     name: NAME,
     props: {
-        formCreateInject: {
-            type: Object,
-            required: true,
-        },
         type: {
             type: String,
             default: 'input'
@@ -30,7 +28,7 @@ export default defineComponent({
         },
         icon: {
             type: String,
-            default: 'folder'
+            default: 'FolderOutlined'
         },
         width: {
             type: [Number, String],
@@ -92,21 +90,13 @@ export default defineComponent({
             default: () => {
             }
         },
-        onHandle: {
-            type: Function,
-            default(src) {
-                this.previewImage = this.getSrc(src);
-                this.previewVisible = true;
-            }
-        },
+        onHandle: Function,
         modal: {
             type: Object,
             default: () => ({})
         },
-        srcKey: {
-            type: [String, Number]
-        },
-        value: [Array, String, Number, Object],
+        srcKey: [String, Number],
+        modelValue: [Array, String, Number, Object],
         previewMask: undefined,
         footer: {
             type: Boolean,
@@ -126,69 +116,85 @@ export default defineComponent({
         },
 
     },
+    inject: ['formCreateInject'],
+    emits: ['update:modelValue', 'change'],
+    components: {
+        FolderOutlined, EyeOutlined
+    },
     data() {
         return {
-            fileList: toArray(this.value),
+            fileList: toArray(this.modelValue),
             previewVisible: false,
             frameVisible: false,
-            previewImage: ''
+            previewImage: '',
+            bus: new Mitt()
         }
     },
     watch: {
-        value(n) {
+        modelValue(n) {
             this.fileList = toArray(n);
-        },
-        fileList(n) {
-            const val = this.maxLength === 1 ? (n[0] || '') : n;
-            this.$emit('input', val);
-            this.$emit('change', val);
         }
     },
     methods: {
         key(unique) {
             return unique;
         },
+        close() {
+            this.closeModal(true);
+        },
         closeModal(close) {
-            this.$emit(close ? '$close' : '$ok');
+            this.bus.$emit(close ? '$close' : '$ok');
             if (this.reload) {
-                this.$off('$ok');
-                this.$off('$close');
+                this.bus.$off('$ok');
+                this.bus.$off('$close');
             }
             this.frameVisible = false;
         },
-
-        showModal() {
-            if (this.disabled || false === this.onOpen()) return;
-            this.frameVisible = true;
+        handleCancel() {
+            this.previewVisible = false;
         },
 
+        showModal() {
+            if (this.disabled || false === this.onOpen()) {
+                return;
+            }
+            this.frameVisible = true;
+        },
+        input() {
+            const n = this.fileList;
+            const val = this.maxLength === 1 ? (n[0] || '') : n;
+            this.$emit('update:modelValue', val);
+            this.$emit('change', val);
+        },
         makeInput() {
             const props = {
                 type: 'text',
                 value: (this.fileList.map(v => this.getSrc(v))).toString(),
                 readonly: true
             };
-
+            const Type = resolveComponent(this.icon);
             return <AInput props={props} key={this.key('input')}>
-                <AIcon type={this.icon} slot="addonAfter" on-click={this.showModal}/>
+                <Type class="_fc-frame-icon" slot="addonAfter" onClick={this.showModal}/>
                 {this.fileList.length ?
-                    <AIcon type="close-circle" slot="suffix" on-click={() => this.fileList = []}/> : null}
+                    <CloseCircleOutlined class="_fc-frame-icon" slot="suffix"
+                        onClick={() => this.fileList = []}/> : null}
             </AInput>
         },
 
         makeGroup(children) {
             if (!this.maxLength || this.fileList.length < this.maxLength)
                 children.push(this.makeBtn());
-            return <div key={this.key('group')}>{...children}</div>
+            return <div key={this.key('group')}>{children}</div>
         },
 
         makeItem(index, children) {
-            return <div class='fc-files' key={this.key('file' + index)}>{...children}</div>;
+            return <div class="fc-files" key={this.key('file' + index)}>{children}</div>;
         },
         valid(f) {
             const field = this.formCreateInject.field || this.field;
-            if (field && f !== field)
+            if (field && f !== field) {
                 throw new Error('[frame]无效的字段值');
+            }
         },
 
         makeIcons(val, index) {
@@ -199,23 +205,24 @@ export default defineComponent({
                 if (this.allowRemove)
                     icons.push(this.makeRemoveIcon(val, index));
 
-                return <div class='fc-upload-cover' key={this.key('uc')}>{icons}</div>
+                return <div class="fc-upload-cover" key={this.key('uc')}>{icons}</div>
             }
         },
         makeHandleIcon(val, index) {
-            return <AIcon
-                type={(this.handleIcon === true || this.handleIcon === undefined) ? 'eye-o' : this.handleIcon}
-                on-click={() => this.handleClick(val)} key={this.key('hi' + index)}/>
+            const Type = resolveComponent((this.handleIcon === true || this.handleIcon === undefined) ? 'EyeOutlined' : this.handleIcon);
+            return <Type class="_fc-frame-icon"
+                onClick={() => this.handleClick(val)} key={this.key('hi' + index)}/>
         },
 
         makeRemoveIcon(val, index) {
-            return <AIcon type="delete" on-click={() => this.handleRemove(val)} key={this.key('ri' + index)}/>
+            return <DeleteOutlined class="_fc-frame-icon" onClick={() => this.handleRemove(val)}
+                key={this.key('ri' + index)}/>
         },
 
         makeFiles() {
             return this.makeGroup(this.fileList.map((src, index) => {
-                return this.makeItem(index, [<AIcon type="file"
-                    on-click={() => this.handleClick(src)}/>, this.makeIcons(src, index)])
+                return this.makeItem(index, [<FileOutlined class="_fc-frame-icon"
+                    onClick={() => this.handleClick(src)}/>, this.makeIcons(src, index)])
             }))
         },
         makeImages() {
@@ -224,18 +231,27 @@ export default defineComponent({
             }))
         },
         makeBtn() {
-            return <div class='fc-upload-btn' on-click={() => this.showModal()} key={this.key('btn')}>
-                <AIcon type={this.icon} theme="filled"/>
+            const Type = resolveComponent(this.icon);
+            return <div class="fc-upload-btn" onClick={() => this.showModal()} key={this.key('btn')}>
+                <Type class="_fc-frame-icon"/>
             </div>
         },
         handleClick(src) {
-            if (this.disabled) return;
-            return this.onHandle(src);
+            if (this.disabled) {
+                return;
+            }
+            if (this.onHandle) {
+                return this.onHandle(src);
+            } else {
+                this.previewImage = this.getSrc(src);
+                this.previewVisible = true;
+            }
         },
         handleRemove(src) {
             if (this.disabled) return;
             if (false !== this.onBeforeRemove(src)) {
                 this.fileList.splice(this.fileList.indexOf(src), 1);
+                this.input();
                 this.onRemove(src);
             }
         },
@@ -254,20 +270,20 @@ export default defineComponent({
                         set: (field, value) => {
                             this.valid(field);
                             if (!this.disabled)
-                                this.$emit('input', value);
+                                this.$emit('update:modelValue', value);
 
                         },
                         get: (field) => {
                             this.valid(field);
-                            return this.value;
+                            return this.modelValue;
                         },
-                        onOk: fn => this.$on('$ok', fn),
-                        onClose: fn => this.$on('$close', fn)
+                        onOk: fn => this.bus.$on('$ok', fn),
+                        onClose: fn => this.bus.$on('$close', fn)
                     };
 
                 }
             } catch (e) {
-                console.log(e);
+                console.error(e);
             }
         },
         makeFooter() {
@@ -278,10 +294,10 @@ export default defineComponent({
 
             if (closeBtn)
                 node.push(<AButton
-                    on-click={() => (this.onCancel() !== false && this.closeModal(true))}>{closeBtnText}</AButton>);
+                    onClick={() => (this.onCancel() !== false && this.closeModal(true))}>{closeBtnText}</AButton>);
             if (okBtn)
                 node.push(<AButton type="primary"
-                    on-click={() => (this.onOk() !== false && this.closeModal())}>{okBtnText}</AButton>);
+                    onClick={() => (this.onOk() !== false && this.closeModal())}>{okBtnText}</AButton>);
             return node;
         }
     },
@@ -302,23 +318,30 @@ export default defineComponent({
             }
         });
         return <div class="_fc-frame">{Node}
-            <aModal mask={this.previewMask} title={modalTitle} v-model={this.previewVisible} footer={null}>
+            <aModal mask={this.previewMask} title={modalTitle} visible={this.previewVisible}
+                onCancel={() => this.previewVisible = false} footer={null}>
                 <img alt="example" style="width: 100%" src={this.previewImage}/>
             </aModal>
             <aModal props={{width, title, ...this.modal}} visible={this.frameVisible}
-                on-cancel={() => (this.closeModal(true))}>
+                onCancel={() => (this.closeModal(true))} slots={
+                    {footer: this.makeFooter()}
+                }>
                 {(this.frameVisible || !this.reload) ? <iframe ref="frame" src={src} frameborder="0" style={{
-                    'height': height,
+                    height,
                     'border': '0 none',
                     'width': '100%'
                 }}/> : null}
-                <div slot="footer">
-                    {this.makeFooter()}
-                </div>
             </aModal>
         </div>
     },
-    mounted() {
-        this.$on('fc.closeModal', this.closeModal);
+    beforeMount() {
+        const {name, field, api} = this.formCreateInject;
+        name && api.on('fc:closeModal:' + name, this.close);
+        field && api.on('fc:closeModal:' + field, this.close);
+    },
+    beforeUnmount() {
+        const {name, field, api} = this.formCreateInject;
+        name && api.off('fc:closeModal:' + name, this.close);
+        field && api.off('fc:closeModal:' + field, this.close);
     }
 })

@@ -1,7 +1,8 @@
+import {defineComponent} from 'vue';
 import toString from '@form-create/utils/lib/tostring';
-import deepExtend from '@form-create/utils/lib/deepextend';
 import toArray from '@form-create/utils/lib/toarray';
 import getSlot from '@form-create/utils/lib/slot';
+import {PlusOutlined} from '@ant-design/icons-vue';
 
 const parseFile = function (file, uid) {
         return {
@@ -18,13 +19,13 @@ const parseFile = function (file, uid) {
 
 const NAME = 'fcUpload';
 
-export default {
+export default defineComponent({
     name: NAME,
     formCreateParser: {
         toFormValue(value) {
             return toArray(value);
         },
-        toValue(formValue,ctx) {
+        toValue(formValue, ctx) {
             return ctx.prop.props.limit === 1 ? (formValue[0] || '') : formValue;
         }
     },
@@ -33,11 +34,7 @@ export default {
             type: Number,
             default: 0
         },
-        formCreateInject: {
-            type: Object,
-            required: true,
-        },
-        value: {
+        modelValue: {
             type: Array,
             default: () => []
         },
@@ -55,8 +52,12 @@ export default {
         modalTitle: String,
         previewMask: undefined,
     },
+    emits: ['update:modelValue'],
+    components: {
+        PlusOutlined
+    },
     data() {
-        const fileList = this.value.map(parseFile);
+        const fileList = this.modelValue.map(parseFile);
         return {
             defaultUploadList: fileList,
             previewImage: '',
@@ -65,7 +66,7 @@ export default {
         };
     },
     watch: {
-        value(n) {
+        modelValue(n) {
             const fileList = n.map(parseFile);
             this.$refs.upload.sFileList = fileList;
             this.uploadList = fileList.map(parseUpload)
@@ -91,23 +92,23 @@ export default {
             }
         },
         input() {
-            this.$emit('input', this.uploadList.map(v => v.url));
+            this.$emit('update:modelValue', this.uploadList.map(v => v.url));
         },
 
     },
     render() {
         const isShow = (!this.limit || this.limit > this.uploadList.length);
-        const ctx = {...this.formCreateInject.prop};
-        ctx.on = deepExtend({}, ctx.on || {});
         return <div>
-            <AUpload {...ctx} on-preview={this.onHandle.bind(this)}
-                on-change={this.handleChange}
-                ref="upload" defaultFileList={this.defaultUploadList}>
-                {isShow ? <template slot="default">{this.$slots.default || <AIcon type="plus"/>}</template> : null}{getSlot(this.$slots, ['default'])}
+            <AUpload {...this.$attrs} onPreview={this.onHandle.bind(this)}
+                onChange={this.handleChange}
+                ref="upload" defaultFileList={this.defaultUploadList} v-slots={getSlot(this.$slots, ['default'])}>
+                {isShow ? (this.$slots.default?.() ||
+                    <PlusOutlined/>) : null}
             </AUpload>
-            <aModal mask={this.previewMask} title={this.modalTitle} v-model={this.previewVisible} footer={null}>
+            <aModal mask={this.previewMask} title={this.modalTitle} visible={this.previewVisible}
+                onCancel={() => this.previewVisible = false} footer={null}>
                 <img style="width: 100%" src={this.previewImage}/>
             </aModal>
         </div>;
     }
-}
+});

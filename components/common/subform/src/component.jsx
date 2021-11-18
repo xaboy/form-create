@@ -1,4 +1,4 @@
-import {defineComponent} from 'vue';
+import {defineComponent, reactive} from 'vue';
 
 const NAME = 'fcSubForm';
 
@@ -6,7 +6,13 @@ export default defineComponent({
     name: NAME,
     props: {
         rule: Array,
-        options: Object,
+        options: {
+            type: Object,
+            default: () => reactive(({
+                submitBtn: false,
+                resetBtn: false,
+            }))
+        },
         modelValue: {
             type: Object,
             default: () => ({})
@@ -69,9 +75,6 @@ export default defineComponent({
             onEmit-event={this.$emit}
             onUpdate:api={this.add$f}
             rule={this.rule}
-            option={this.options || {
-                submitBtn: false,
-                resetBtn: false,
-            }} extendOption={true}/>
+            option={this.options} extendOption={true}/>
     }
 })

@@ -57,7 +57,7 @@ export default defineComponent({
             cacheValue: {},
         }
     },
-    emits: ['update:modelValue', 'change', 'itemMounted'],
+    emits: ['update:modelValue', 'change', 'itemMounted', 'remove'],
     watch: {
         disabled(n) {
             if (this.syncDisabled) {
@@ -166,11 +166,12 @@ export default defineComponent({
                 this.$nextTick(() => this.$emit('remove', index));
             }
         },
-        add(i) {
+        add() {
             if (this.disabled || false === this.onBeforeAdd(this.modelValue)) {
                 return;
             }
-            this.addRule(i, true);
+            this.modelValue.push({});
+            this.$emit('update:modelValue', this.modelValue);
         },
         del(index, key) {
             if (this.disabled || false === this.onBeforeRemove(this.modelValue)) {
@@ -249,10 +250,7 @@ export default defineComponent({
                         onEmit-event={(name, ...args) => this.emitEvent(name, args, index, key)}
                         onUpdate:api={($f) => this.add$f(index, key, $f)}
                         rule={rule}
-                        option={options || {
-                            submitBtn: false,
-                            resetBtn: false,
-                        }} extendOption={true}/></ElFormItem></ElCol>
+                        option={options} extendOption={true}/></ElFormItem></ElCol>
                     {button ? <ElCol span={2} pull={1} push={1}>{this.makeIcon(keys.length, index, key)}</ElCol> : null}
                 </ElRow>
             })}</div>

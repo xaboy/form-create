@@ -1,22 +1,15 @@
-import moment from 'moment';
-
-const toMoment = function (val, format) {
-    return val instanceof moment ? val : moment(val, format);
-};
-
-function getFormat(ctx) {
-    return ctx.prop.props.format || (ctx.el ? ctx.el.format : '') || 'HH:mm:ss';
-}
-
 export default {
     name: 'timePicker',
-    toFormValue(value, ctx) {
-        return value ? toMoment(value, getFormat(ctx)) : null;
+    modelField: 'value',
+    mergeProp(ctx) {
+        const props = ctx.prop.props;
+        if (!props.valueFormat) {
+            props.valueFormat = 'HH:mm:ss';
+        }
     },
-
-    toValue(formValue, ctx) {
-        return formValue ? formValue.format(getFormat(ctx)) : formValue;
-    },
+    render(children, ctx) {
+        return ctx.$render.vNode['time' +( ctx.prop.props.range === true ? 'Range' : '') + 'Picker'](ctx.prop, children);
+    }
 
 }
 

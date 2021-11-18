@@ -1,6 +1,6 @@
 {
   "name": "@form-create/component-antdv-frame",
-  "version": "2.5.9",
+  "version": "3.0.0-alpha.0",
   "description": "@form-create/ant-design-vue 内置组件",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -30,7 +30,10 @@
   "author": "xaboy",
   "license": "MIT",
   "dependencies": {
-    "@form-create/utils": "^2.5.9"
+    "@form-create/utils": "^3.0.0-alpha.0"
+  },
+  "devDependencies": {
+    "@ant-design/icons-vue": "^6.0.1"
   },
   "bugs": {
     "url": "https://github.com/xaboy/form-create/issues"

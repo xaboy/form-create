@@ -11,6 +11,7 @@ export default {
             idate: creatorFactory(name, {type:'date'})
         });
     }()),
+    modelField: 'value',
     render(children, ctx) {
         let type = ctx.prop.props.type;
         if (['textarea', 'search'].indexOf(type) === -1) type = 'input';

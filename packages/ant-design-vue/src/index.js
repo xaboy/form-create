@@ -4,9 +4,6 @@ const FormCreate = antdvFormCreate();
 
 if (typeof window !== 'undefined') {
     window.formCreate = FormCreate;
-    if (window.Vue) {
-        FormCreate.install(window.Vue);
-    }
 }
 
 const maker = FormCreate.maker;

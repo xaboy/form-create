@@ -1,7 +1,7 @@
 import toArray from '@form-create/utils/lib/toarray';
 import Mitt from '@form-create/utils/lib/mitt';
-import './style.css';
 import {defineComponent} from 'vue';
+import './style.css';
 
 const NAME = 'fcFrame';
 
@@ -50,10 +50,7 @@ export default defineComponent({
             default: '关闭'
         },
         modalTitle: String,
-        handleIcon: {
-            type: [String, Boolean],
-            default: undefined
-        },
+        handleIcon: [String, Boolean],
         title: String,
         allowRemove: {
             type: Boolean,
@@ -134,6 +131,9 @@ export default defineComponent({
     methods: {
         key(unique) {
             return unique;
+        },
+        close() {
+            this.closeModel(true);
         },
         closeModel(close) {
             this.bus.$emit(close ? '$close' : '$ok');
@@ -231,10 +231,12 @@ export default defineComponent({
             if (this.disabled) {
                 return;
             }
-            return (this.onHandle || (src => {
+            if (this.onHandle) {
+                return this.onHandle(src);
+            } else {
                 this.previewImage = this.getSrc(src);
                 this.previewVisible = true;
-            }))(src);
+            }
         },
         handleRemove(src) {
             if (this.disabled) {
@@ -323,9 +325,14 @@ export default defineComponent({
                 }}/> : null}</ElDialog>
         </div>
     },
-    mounted() {
-        const close = () => (this.frameVisible = false);
-        this.formCreateInject.api.on('fc:closeModal:' + this.formCreateInject.name, close);
-        this.formCreateInject.api.on('fc:closeModal:' + this.formCreateInject.field, close);
+    beforeMount() {
+        const {name, field, api} = this.formCreateInject;
+        name && api.on('fc:closeModal:' + name, this.close);
+        field && api.on('fc:closeModal:' + field, this.close);
+    },
+    beforeUnmount() {
+        const {name, field, api} = this.formCreateInject;
+        name && api.off('fc:closeModal:' + name, this.close);
+        field && api.off('fc:closeModal:' + field, this.close);
     }
 })

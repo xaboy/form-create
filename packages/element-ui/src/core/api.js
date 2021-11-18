@@ -46,7 +46,7 @@ export default function extendApi(api, h) {
         },
         clearValidateState(fields, clearSub = true) {
             api.helper.tidyFields(fields).forEach(field => {
-                if (clearSub) this.clearSubValidateState(field);
+                if (clearSub) api.clearSubValidateState(field);
                 const ctx = h.fieldCtx[field];
                 if (!ctx) return;
                 h.$manager.clearValidateState(ctx);
@@ -103,12 +103,12 @@ export default function extendApi(api, h) {
             return new Promise((resolve, reject) => {
                 api.validate().then(() => {
                     let formData = api.formData();
-                    is.Function(successFn) && invoke(() => successFn(formData, this));
-                    is.Function(h.options.onSubmit) && invoke(() => h.options.onSubmit(formData, this));
-                    h.vm.$emit('submit', formData, this);
+                    is.Function(successFn) && invoke(() => successFn(formData, api));
+                    is.Function(h.options.onSubmit) && invoke(() => h.options.onSubmit(formData, api));
+                    h.vm.$emit('submit', formData, api);
                     resolve(formData);
                 }).catch((...args) => {
-                    is.Function(failFn) && invoke(() => failFn(this, ...args));
+                    is.Function(failFn) && invoke(() => failFn(api, ...args));
                     reject(...args)
                 })
             });

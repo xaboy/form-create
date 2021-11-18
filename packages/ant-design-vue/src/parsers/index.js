@@ -7,13 +7,17 @@ import input from './input';
 import timePicker from './timePicker';
 import tree from './tree';
 import row from './row';
+import rangePicker from './rangePicker';
+import timeRangePicker from './timeRangePicker';
 
 export default [
     checkbox,
     datePicker,
+    rangePicker,
     hidden,
     input,
     timePicker,
+    timeRangePicker,
     tree,
     radio,
     select,

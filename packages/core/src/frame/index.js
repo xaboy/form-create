@@ -1,5 +1,5 @@
 import $FormCreate from '../components/formCreate';
-import {createApp, h, ref, watch} from 'vue';
+import {createApp, h, ref, watch, reactive} from 'vue';
 import makerFactory from '../factory/maker';
 import Handle from '../handler';
 import fetch from './fetch';
@@ -109,12 +109,13 @@ export default function FormCreateFactory(config) {
         return $FormCreate(FormCreate);
     }
 
-    function createFormApp(rules, option) {
+    function createFormApp(rule, option) {
         const Type = $form();
         return createApp({
             data() {
-                //todo 外部无法修改
-                return {rule: ref(rules), option: ref(option || {})};
+                return reactive({
+                    rule, option
+                });
             },
             render() {
                 return h(Type, {ref: 'fc', ...this.$data});
@@ -130,10 +131,12 @@ export default function FormCreateFactory(config) {
         return this;
     }
 
-    function create(rules, _opt) {
-        let app = createFormApp(rules, _opt || {});
+    function create(rules, option) {
+        let app = createFormApp(rules, option || {});
         config.appUse && config.appUse(app);
-        const vm = app.mount(_opt?.el || document.body);
+        const div = document.createElement('div');
+        (option?.el || document.body).appendChild(div);
+        const vm = app.mount(div);
         return vm.$refs.fc.fapi;
     }
 

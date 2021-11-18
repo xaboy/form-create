@@ -26,8 +26,8 @@ function tidyBool(opt, name) {
 }
 
 export default {
-    validate(call) {
-        return this.form().validate(call);
+    validate() {
+        return this.form().validate();
     },
     validateField(field) {
         return new Promise((resolve, reject) => {
@@ -143,7 +143,7 @@ export default {
                     type: 'i',
                     class: infoProp.icon === true ? 'el-icon-warning' : infoProp.icon,
                     key: `${uni}i`
-                }));
+                }, {}, true));
             }
             const prop = {
                 type: infoProp.type || 'popover',

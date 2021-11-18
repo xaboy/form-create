@@ -4,9 +4,6 @@
     "packages/core",
     "packages/data",
     "packages/element-ui",
-    "packages/iview",
-    "packages/iview4",
-    "packages/view-design",
     "packages/utils",
     "components/common/subform",
     "components/common/wangeditor",
@@ -19,14 +16,7 @@
     "components/element-ui/radio",
     "components/element-ui/select",
     "components/element-ui/tree",
-    "components/element-ui/upload",
-    "components/iview/checkbox",
-    "components/iview/frame",
-    "components/iview/group",
-    "components/iview/radio",
-    "components/iview/select",
-    "components/iview/tree",
-    "components/iview/upload"
+    "components/element-ui/upload"
   ],
-  "version": "2.5.9"
+  "version": "3.0.0-alpha.0"
 }

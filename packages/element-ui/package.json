@@ -1,6 +1,6 @@
 {
     "name": "@form-create/element-ui",
-    "version": "2.5.9",
+    "version": "3.0.0-alpha.0",
     "description": "element-ui动态表单|form-create is a form generation component that can generate dynamic rendering, data collection, verification and submission functions through JSON. Supports 3 UI frameworks, and supports the generation of any Vue components. Built-in 20 kinds of commonly used form components and custom components, no matter how complex forms can be easily handled.",
     "main": "./dist/form-create.min.js",
     "module": "./dist/form-create.min.js",
@@ -43,22 +43,22 @@
     },
     "homepage": "http://www.form-create.com",
     "dependencies": {
-        "@form-create/component-elm-checkbox": "^2.5.9",
-        "@form-create/component-elm-frame": "^2.5.9",
-        "@form-create/component-elm-group": "^2.5.9",
-        "@form-create/component-elm-radio": "^2.5.9",
-        "@form-create/component-elm-select": "^2.5.9",
-        "@form-create/component-elm-tree": "^2.5.9",
-        "@form-create/component-elm-upload": "^2.5.9",
-        "@form-create/component-subform": "^2.5.9",
-        "@form-create/core": "^2.5.9",
-        "@form-create/utils": "^2.5.9"
+        "@form-create/component-elm-checkbox": "^3.0.0-alpha.0",
+        "@form-create/component-elm-frame": "^3.0.0-alpha.0",
+        "@form-create/component-elm-group": "^3.0.0-alpha.0",
+        "@form-create/component-elm-radio": "^3.0.0-alpha.0",
+        "@form-create/component-elm-select": "^3.0.0-alpha.0",
+        "@form-create/component-elm-tree": "^3.0.0-alpha.0",
+        "@form-create/component-elm-upload": "^3.0.0-alpha.0",
+        "@form-create/component-subform": "^3.0.0-alpha.0",
+        "@form-create/core": "^3.0.0-alpha.0",
+        "@form-create/utils": "^3.0.0-alpha.0"
     },
     "publishConfig": {
         "access": "public"
     },
     "devDependencies": {
-        "@form-create/component-wangeditor": "^2.5.5",
+        "@form-create/component-wangeditor": "^3.0.0-alpha.0",
         "@vue/cli-plugin-babel": "~4.5.0",
         "@vue/cli-service": "^4.5.3",
         "element-plus": "^1.1.0-beta.12",
@@ -67,7 +67,12 @@
     "buildFormCreateOptions": {
         "name": "@form-create/element-ui",
         "exportName": "formCreate",
-        "extendExternals": ["element-plus", "ElementPlus", "element-ui", "ElementUI"],
+        "extendExternals": [
+            "element-plus",
+            "ElementPlus",
+            "element-ui",
+            "ElementUI"
+        ],
         "extendGlobal": {
             "vue": "Vue"
         },

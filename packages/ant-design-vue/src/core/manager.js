@@ -25,17 +25,16 @@ function tidyBool(opt, name) {
 }
 
 export default {
-    validate(call) {
-        this.form().validate(call);
+    validate() {
+        return this.form().validate();
     },
-    validateField(field, call) {
-        this.form().validateField(field, call);
+    validateField(field) {
+        return this.form().validateFields(field);
     },
     clearValidateState(ctx) {
         const fItem = this.vm.$refs[ctx.wrapRef];
         if (fItem) {
-            fItem.validateMessage = '';
-            fItem.validateState = '';
+            fItem.clearValidate();
         }
     },
     tidyOptions(options) {
@@ -58,7 +57,7 @@ export default {
             info: {
                 type: 'popover',
                 placement: 'topLeft',
-                icon: 'question-circle-o'
+                icon: 'QuestionCircleOutlined'
             },
             title: {},
             col: {span: 24},
@@ -72,7 +71,7 @@ export default {
         const form = this.options.form;
         this.rule = {
             props: {...form},
-            nativeOn: {
+            on: {
                 submit: (e) => {
                     e.preventDefault();
                 }
@@ -87,24 +86,24 @@ export default {
         extend(this.rule, {key, ref});
         extend(this.rule.props, {
             model: $handle.formData,
-            rules: $handle.validate(),
         });
     },
     render(children) {
-        if (children.length) {
-            children.push(this.makeFormBtn());
+        if (children.slotLen()) {
+            children.setSlot(undefined, () => this.makeFormBtn());
         }
-        return this.$r(this.rule, isFalse(this.options.row.show) ? children : [this.makeRow(children)]);
+        return this.$r(this.rule, isFalse(this.options.row.show) ? children.getSlots() : [this.makeRow(children)]);
     },
     makeWrap(ctx, children) {
         const rule = ctx.prop;
         const uni = `${this.key}${ctx.key}`;
         const col = rule.col;
+        const isTitle = this.isTitle(rule);
         const {layout, col: _col} = this.rule.props;
         const item = isFalse(rule.wrap.show) ? children : this.$r(mergeProps([rule.wrap, {
             props: {
                 ...(rule.wrap || {}),
-                prop: ctx.field,
+                name: ctx.field,
                 rules: rule.validate,
                 ...(layout !== 'horizontal' ? {labelCol: {}, wrapperCol: {}} : {})
             },
@@ -112,20 +111,22 @@ export default {
             key: `${uni}fi`,
             ref: ctx.wrapRef,
             type: 'formItem',
-        }]), [children, this.makeInfo(rule, uni)]);
+        }]), {default: () => children, ...(isTitle ? {label: () => this.makeInfo(rule, uni)} : {})});
         return (layout === 'inline' || isFalse(_col) || isFalse(col.show)) ? item : this.makeCol(rule, uni, [item]);
+    },
+    isTitle(rule) {
+        if (this.options.form.title === false) return false;
+        const title = rule.title;
+        return !((!title.title && !title.native) || isFalse(title.show));
     },
     makeInfo(rule, uni) {
         const titleProp = rule.title;
         const infoProp = rule.info;
-        if (this.options.form.title === false) return false;
-        if ((!titleProp.title && !titleProp.native) || isFalse(titleProp.show)) return;
-        const isTool = isTooltip(infoProp);
-        const children = [titleProp.title];
-
-        const titleFn = (pop) => this.$r(mergeProps([titleProp, {
+        const isTip = isTooltip(infoProp);
+        const form = this.options.form;
+        const children = [(titleProp.title || '') + (form.labelSuffix || form['label-suffix'] || '')];
+        const titleFn = () => this.$r(mergeProps([titleProp, {
             props: titleProp,
-            slot: titleProp.slot || (pop ? 'default' : 'label'),
             key: `${uni}tit`,
             type: titleProp.type || 'span',
         }]), children);
@@ -133,8 +134,8 @@ export default {
         if (!isFalse(infoProp.show) && (infoProp.info || infoProp.native)) {
             if (infoProp.icon !== false) {
                 children[infoProp.align !== 'left' ? 'unshift' : 'push'](this.$r({
-                    type: 'icon',
-                    props: {type: infoProp.icon === true ? 'question-circle-o' : infoProp.icon},
+                    type: infoProp.icon === true ? 'QuestionCircleOutlined' : (infoProp.icon || ''),
+                    props: {type: infoProp.icon === true ? 'QuestionCircleOutlined' : infoProp.icon},
                     key: `${uni}i`
                 }));
             }
@@ -142,17 +143,15 @@ export default {
                 type: infoProp.type || 'popover',
                 props: {...infoProp},
                 key: `${uni}pop`,
-                slot: 'label',
             };
 
-            const field = isTool ? 'title' : 'content';
+            const field = isTip ? 'title' : 'content';
             if (infoProp.info && !hasProperty(prop.props, field)) {
                 prop.props[field] = infoProp.info;
             }
-
-            return this.$r(mergeProps([infoProp, prop]), [
-                titleFn(true)
-            ])
+            return this.$r(mergeProps([infoProp, prop]), {
+                [titleProp.slot || 'default']: () => titleFn()
+            })
         }
         return titleFn();
     },

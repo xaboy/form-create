@@ -6,7 +6,7 @@
  * @Description  : 头部注释
  * @FilePath     : /form-create2/packages/element-ui/examples/main.js
  */
-import {createApp,h, inject, defineComponent, resolveComponent, defineAsyncComponent} from 'vue'
+import {createApp,h, defineComponent} from 'vue'
 import ElementUI from 'element-plus/es/index'
 import 'element-plus/dist/index.css'
 import zhCn from 'element-plus/es/locale/lang/zh-cn'
@@ -24,39 +24,20 @@ app.use(FormCreate)
 
 // import VJsoneditor from 'v-jsoneditor'
 import addressEffect from './addressEffect';
-// import {ElInput} from 'element-plus';
-// import VueCompositionAPI from '@vue/composition-api'
 import wangEditor from '@form-create/component-wangeditor/src'
 
 
-// app.use(VueCompositionAPI)
 // app.use(VJsoneditor)
 FormCreate.register(addressEffect);
 FormCreate.component('wangEditor', wangEditor);
 
 //自定义组件
 FormCreate.component('testSlot', defineComponent({
-    // components:{
-    //     ElInput,
-    // },
-    // template:'<el-input />'
-    setup(){
-        console.log(inject('formCreateRule'));
-    },
-    render(_,b) {
-        window.bbb = this;
-        return h('div',{}, this.$slots.asd());
+    render() {
+        return h('div',{}, this.$slots.test());
     }
 }))
 
-FormCreate.directive('afocus',{  // 在绑定元素的 attribute 或事件监听器被应用之前调用
-    created() {
-        console.log('created');
-    }
-})
-
 //todo ------------------ Demo 用 ------------------
-
-// app.config.productionTip = false
 
 app.mount('#app')

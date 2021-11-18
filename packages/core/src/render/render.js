@@ -135,7 +135,7 @@ export default function useRender(Render) {
                     this.$handle.addSubForm(ctx, subForm);
                 },
                 field: ctx.field,
-                options: ctx.prop.options,
+                options: ctx.prop.options || [],
                 children: ctx.rule.children,
                 rule: ctx.rule,
             }

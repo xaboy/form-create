@@ -1,5 +1,5 @@
 import {maker} from '../src'
-import Vue from 'vue'
+
 window.mock = mock;
 export default function mock() {
     return [
@@ -8,18 +8,9 @@ export default function mock() {
         maker.hidden('id', '14'),
 
         maker.create('testSlot', 'testSlot', 'testSlotTitle123').children([
-            maker.date('', 'asd').slot('asd').display(true),
-            maker.date('', 'asd23').slot('asd'),
+            maker.date('', 'asd').slot('test').display(true),
+            maker.date('', 'asd23').slot('test'),
         ]),
-        //
-        // maker.create('testSlot', 'testSlot', 'testSlotTitle').children([
-        //     maker.input('', 'asd').slot('asd').display(false),
-        //     maker.input('', 'asd23').slot('asd'),
-        // ]).directives({
-        //     afocus:{
-        //         value:'asf'
-        //     }
-        // }).directives({}),
 
         // cascader 多级联动组件
         maker.cascader({title: '所在区域', style: 'color:red'}, 'address', ['陕西省', '西安市']).props({
@@ -28,15 +19,8 @@ export default function mock() {
             address: '1'
         }),
 
-        // {
-        //     type:'div',
-        //     native:false,
-        //     children: [{type:'span',children:['adsfasf']}],
-        // },
-
-
         // input 输入框组件
-        maker.input('商品名称', 'goods_name1', 'iphone').props({
+        maker.input('商品名称', 'goods_name', 'iphone').props({
             placeholder: '请输入商品名称',
             clearable: true,
             disabled: false,
@@ -66,12 +50,6 @@ export default function mock() {
             maker.create('template').children(['append']).slot('append')
         ]).style('color:red').wrap({style:'color:red',class:'asdfasdf'})
             .info('请输入商品名称!!!!!'),
-
-        {
-            type: 'div',
-            name: 'div',
-            children: []
-        },
 
         // autoComplete 自动选择组件
         maker.auto('自动完成', 'auto', 'xaboy').props({
@@ -259,56 +237,12 @@ export default function mock() {
                 open: '上架',
                 close: '下架',
             }
-        }).col({span: 8, labelWidth: '100'}),
-
-
-        // 自定义组件
-        // maker.createTmp('<el-button @click="onClick" style="width:100%;" :disabled="disabled">{{button}}字符串测试{{test}}-{{num}}</el-button>', function () {
-        //     return new Vue({
-        //         data: function () {
-        //             return {
-        //                 test: 'createTmp渲染',
-        //                 button: '<i-button />',
-        //                 num: '',
-        //             }
-        //         },
-        //         props: {
-        //             disabled: Boolean,
-        //             value: Number,
-        //             formCreate: Object
-        //         },
-        //         watch: {
-        //             value: {
-        //                 handler(n) {
-        //                     this.num = n;
-        //                 },
-        //                 immediate: true,
-        //             }
-        //         },
-        //         methods: {
-        //             onClick: function () {
-        //                 console.log('click');
-        //                 this.num++;
-        //                 this.$emit('input', this.num);
-        //             },
-        //         }
-        //     })
-        // }, 'tmp', '自定义 title').prefix('prefixprefixprefix').value(100).props('disabled', false),
-
+        }).col({span: 12}),
 
         //自定义组件
         maker.create('el-button', 'btn').props('disabled', false).col({span: 12}).children([
             '测试自定义按钮'
         ]).emit(['click']).emitPrefix('btn'),
-
-
-        //自定义组件
-        maker.create('el-tooltip', 'tip', '自定义 title').props({
-            content: '这里是提示文字',
-        }).col({span: 11, push: 1}).children([
-            '当鼠标经过这段文字时，会显示一个气泡框'
-        ]).value(false),
-
 
         //select 下拉选择组件
         maker.select('产品分类', 'cate_id', '105').options([

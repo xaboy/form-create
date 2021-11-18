@@ -1,7 +1,6 @@
 import {maker} from '../src';
-import Vue from 'vue'
 
-
+window.mock = rule;
 //使用maker 生成器生成
 export default function rule() {
     var mock;
@@ -12,7 +11,7 @@ export default function rule() {
 
         //自定义组件
         maker.create('testSlot', 'testSlot', 'testSlotTitle').children([
-            maker.input('', 'asd').slot('asd'),
+            maker.input('', 'asd').props({type:'search'}).slot('asd'),
             maker.input('', 'asd23').slot('asd'),
         ]),
 
@@ -27,17 +26,15 @@ export default function rule() {
             disabled: false,
         }).validate([
             {required: true, message: '请输入商品名称', trigger: 'blur'}
-        ]).event({
-            //    change: console.log
-        }).emit([{name: 'change', inject: [1, 2, 3]}]).className('goods-name').children([
-            maker.create('template').children(['append']).slot('append')
+        ]).emit(['change']).className('goods-name').children([
+            maker.create('template').children(['append']).slot('addonAfter')
         ]).info({info: '请输入商品名称!!!!!', type: 'tooltip'}),
 
 
         //autoComplete 自动选择组件
-        maker.auto('自动完成', 'auto', 'xaboy').props({dataSource: ['aa', 'bb']}).on({
+        maker.auto('自动完成', 'auto', 'xaboy').props({options: [{value: 'aaa'}, {value: 'bbb'}]}).on({
             search: function (inject, value) {
-                inject.self.props({dataSource: !value ? [] : [value, value + value, value + value + value]});
+                inject.self.props({options: !value ? [] : [{value}, {value: value + value}, {value: value + value + value}]});
             }
         }).emitPrefix('xaboy').emit(['change']).inject(true),
 
@@ -54,10 +51,7 @@ export default function rule() {
             value: {date: '2121-12-12', field: 10, field2: '123123123'},
             props: {
                 rule: [
-                    {
-                        type: 'col',
-                        wrap: {show: true},
-                        children: [
+
                             maker.date('date', 'date', '').native(false).col({span: 12}),
                             {
                                 type: 'inputNumber',
@@ -72,10 +66,7 @@ export default function rule() {
                                 col: {
                                     span: 12
                                 }
-                            }
-                        ]
-
-                    },
+                            },
                     {
                         type: 'input',
                         field: 'field2',
@@ -99,9 +90,9 @@ export default function rule() {
             props: {
                 max: 5,
                 min: 3,
-                rules: [
+                rule: [
                     {
-                        type: 'col',
+                        type: 'row',
                         children: [
                             maker.date('', 'date', '').native(false).col({span: 12}),
                             {
@@ -143,14 +134,15 @@ export default function rule() {
             {value: 0, label: '不包邮', disabled: false},
             {value: 1, label: '包邮', disabled: false},
             {value: 2, label: '未知', disabled: true},
-        ]).col({span: 8}).control([
+        ]).props({optionType: 'button'})
+            .control([
             {
                 value: 1,
                 rule: [
                     maker.number('满额包邮', 'postage_money', 0)
                 ]
             }
-        ]).wrap({labelCol: {span: 12}, wrapperCol: {span: 12}}),
+        ]),
 
 
         //checkbox 复选框付选择
@@ -159,82 +151,27 @@ export default function rule() {
             {value: 2, label: '方便', disabled: false},
             {value: 3, label: '实用', disabled: false},
             {value: 4, label: '有效', disabled: false},
-        ]).col({span: 8}).wrap({labelCol: {span: 12}, wrapperCol: {span: 12}}),
+        ]),
 
 
-        //switch 开关组件
+        // switch 开关组件
         maker.switch('是否上架', 'is_show', true).props({
             'checkedChildren': '1',
             'unCheckedChildren': '0'
-        }).col({span: 8, labelWidth: '100'}).wrap({labelCol: {span: 12}, wrapperCol: {span: 12}}),
-
-
-        //自定义组件
-        maker.createTmp('<a-button @click="onClick" style="width:100%;" :disabled="disabled">{{button}}字符串测试{{test}}-{{num}}</a-button>', function () {
-            return new Vue({
-                data: function () {
-                    return {
-                        test: 'createTmp渲染',
-                        button: '<a-button />',
-                        num: this.value,
-                    }
-                },
-                props: {
-                    disabled: Boolean,
-                    value: Number,
-                    formCreate: Object
-                },
-                watch: {
-                    value(n) {
-                        this.num = n;
-                    }
-                },
-                methods: {
-                    onClick: function () {
-                        console.log('click');
-                        this.num++;
-                        this.$emit('input', this.num);
-                    },
-                    //表单禁用事件
-                    onDisabled: function (disabled) {
-                        this.disabled = disabled;
-                    },
-                    //表单重置事件
-                    onResetField: function () {
-                        this.num = 0;
-                    },
-                    //通过setValue,changeField,changeValue方法设置表单值时事件
-                    onSetValue: function (val, $f) {
-                        this.num = val;
-                    }
-                }
-            })
-        }, 'tmp', '自定义 title').value(100).props('disabled', false),
-
+        }),
 
         //自定义组件
-        maker.create('a-button', 'btn').props('disabled', false).col({span: 12, push: 2}).children([
-            maker.create('span').domProps({
-                innerHTML: '测试自定义按钮'
-            })
+        maker.create('a-button').props('disabled', false).col({span: 12, push: 2}).children([
+            maker.create('span').children(['测试自定义按钮'])
         ]).emit(['click']).emitPrefix('btn'),
 
-
-        //自定义组件
-        maker.create('a-tooltip', 'tip', '自定义 title').props({
-            title: '这里是提示文字',
-        }).col({span: 11, push: 1}).children([
-            maker.create('span').domProps({
-                innerHTML: '当鼠标经过这段文字时，会显示一个气泡框'
-            })
-        ]).value(false),
 
 
         //select 下拉选择组件
         maker.select('产品分类', 'cate_id', '104').options([
             {'value': '104', 'label': '生态蔬菜', 'disabled': false},
             {'value': '105', 'label': '新鲜水果', 'disabled': false},
-        ]).event({change: console.log}),
+        ]),
 
 
         {
@@ -247,14 +184,15 @@ export default function rule() {
                     },
                     children: [
 
-                        //datePicker 日期选择组件
-                        maker.datetimeRange('活动日期', 'section_day', ['2018-02-20 12:12:12', '2018-03-20 12:12:12']).props({
-                            showTime: true
+                        // datePicker 日期选择组件
+                        maker.rangePicker('活动日期', 'section_day').props({
+                            showTime: true,
+                            picker: 'year',
                         }),
 
-                        //timePicker 时间选择组件
-                        maker.time('活动时间', 'section_time', ['11:11:11', '22:22:22']).props({
-                            'placeholder': '请选择活动时间'
+                        // timePicker 时间选择组件
+                        maker.timeRangePicker('活动时间', 'section_time', '11:11:11').props({
+                            'placeholder': ['请选择活动时间','请选择活动时间'],
                         }),
 
                     ]
@@ -284,7 +222,7 @@ export default function rule() {
                 'count': 10,
             })
             .validate({required: true, type: 'number', min: 3, message: '请大于3颗星', trigger: 'change'})
-            .col({span: 12}).control([
+            .control([
             {
                 handle: function (val) {
                     return val > 5;
@@ -307,12 +245,12 @@ export default function rule() {
         maker.slider('滑块', 'slider', [30, 80]).props({
             'min': 0,
             'max': 100,
-            'range': true,
-        }).col({span: 12}),
+            // 'range': true,
+        }),
 
         {
             type: 'wangEditor',
-            field: 'txt',
+            field: 'txt2',
             title: '富文本框',
             value: '<h1 style="color: #419bf7;">form-create</h1><a href="https://github.com/xaboy/form-create">GitHub</a>'
         },
@@ -321,7 +259,7 @@ export default function rule() {
         maker.upload('轮播图', 'pic', ['http://file.lotkk.com/form-create.jpeg'])
             .props({
                 // "action": "http://127.0.0.1:8000/index/index/upload",
-                action: 'https://api.uukit.com/req/mock/48959qh',
+                action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
                 'limit': 2,
                 listType: 'picture-card',
                 'name': 'file',
@@ -345,8 +283,7 @@ export default function rule() {
             {required: true, type: 'array', min: 2, message: '请选择2张图片', trigger: 'change'}
         ]).event({
             remove: function () {
-                alert('不能删除');
-                return false;
+                alert('删除了');
             },
             open: console.log,
             change() {

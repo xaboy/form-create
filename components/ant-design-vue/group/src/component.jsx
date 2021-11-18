@@ -1,19 +1,16 @@
 import {hasProperty} from '@form-create/utils/lib/type';
+import {defineComponent, resolveComponent} from 'vue';
+import {PlusCircleOutlined, MinusCircleOutlined} from '@ant-design/icons-vue';
 
 const NAME = 'fcGroup';
 
-export default {
+export default defineComponent({
     name: NAME,
     props: {
         field: String,
-        rule: [Array, Object],
-        rules: Array,
+        rule: Array,
         expand: Number,
         options: Object,
-        formCreateInject: {
-            type: Object,
-            required: true,
-        },
         button: {
             type: Boolean,
             default: true
@@ -26,7 +23,7 @@ export default {
             type: Number,
             default: 0
         },
-        value: {
+        modelValue: {
             type: Array,
             default: () => []
         },
@@ -53,6 +50,7 @@ export default {
             }
         },
     },
+    inject: ['formCreateInject'],
     data() {
         return {
             len: 0,
@@ -60,17 +58,7 @@ export default {
             cacheValue: {},
         }
     },
-    computed: {
-        formRule() {
-            if (this.rule) {
-                return Array.isArray(this.rule) ? this.rule : [this.rule];
-            }
-            if (this.rules) {
-                return this.rules;
-            }
-            return [];
-        }
-    },
+    emits: ['update:modelValue', 'change', 'itemMounted', 'remove'],
     watch: {
         disabled(n) {
             if (this.syncDisabled) {
@@ -81,32 +69,35 @@ export default {
             }
         },
         expand(n) {
-            let d = n - this.value.length;
+            let d = n - this.modelValue.length;
             if (d > 0) {
                 this.expandRule(d);
             }
         },
-        value(n) {
-            n = n || [];
-            let keys = Object.keys(this.cacheRule), total = keys.length, len = total - n.length;
-            if (len < 0) {
-                for (let i = len; i < 0; i++) {
-                    this.addRule(n.length + i);
-                }
-                for (let i = 0; i < total; i++) {
-                    this.setValue(keys[i], n[i]);
-                }
-            } else {
-                if (len > 0) {
-                    for (let i = 0; i < len; i++) {
-                        this.removeRule(keys[total - i - 1]);
+        modelValue: {
+            handler(n) {
+                n = n || [];
+                let keys = Object.keys(this.cacheRule), total = keys.length, len = total - n.length;
+                if (len < 0) {
+                    for (let i = len; i < 0; i++) {
+                        this.addRule(n.length + i);
                     }
-                    this.subForm();
+                    for (let i = 0; i < total; i++) {
+                        this.setValue(keys[i], n[i]);
+                    }
+                } else {
+                    if (len > 0) {
+                        for (let i = 0; i < len; i++) {
+                            this.removeRule(keys[total - i - 1]);
+                        }
+                        this.subForm();
+                    }
+                    n.forEach((val, i) => {
+                        this.setValue(keys[i], n[i]);
+                    });
                 }
-                n.forEach((val, i) => {
-                    this.setValue(keys[i], n[i]);
-                });
-            }
+            },
+            deep: true,
         }
     },
     methods: {
@@ -117,7 +108,7 @@ export default {
             this.cacheValue[k] = JSON.stringify(val);
         },
         input(value) {
-            this.$emit('input', value);
+            this.$emit('update:modelValue', value);
             this.$emit('change', value);
         },
         formData(key, formData) {
@@ -135,7 +126,7 @@ export default {
             this.input(value);
         },
         setValue(key, value) {
-            const field = this.field, $f = this.cacheRule[key].$f;
+            const field = this.field
             if (field) {
                 value = {[field]: this._value(value)};
             }
@@ -143,16 +134,14 @@ export default {
                 return;
             }
             this.cache(key, value);
-            $f.coverValue(value || {});
         },
         addRule(i, emit) {
-            const rule = this.formCreateInject.form.copyRules(this.formRule);
+            const rule = this.formCreateInject.form.copyRules(this.rule || []);
             const options = this.options ? {...this.options} : {
                 submitBtn: false,
                 resetBtn: false,
             };
-            options.formData = this.field ? ({[this.field]: this._value(this.value[i])}) : (this.value[i] || {});
-            this.$set(this.cacheRule, ++this.len, {rule, options});
+            this.cacheRule[++this.len] = {rule, options};
             if (emit) {
                 this.$nextTick(() => this.$emit('add', rule, Object.keys(this.cacheRule).length - 1));
             }
@@ -172,40 +161,41 @@ export default {
         },
         removeRule(key, emit) {
             const index = Object.keys(this.cacheRule).indexOf(key);
-            this.$delete(this.cacheRule, key);
-            this.$delete(this.cacheValue, key);
+            delete this.cacheRule[key];
+            delete this.cacheValue[key];
             if (emit) {
                 this.$nextTick(() => this.$emit('remove', index));
             }
         },
-        add(i) {
-            if (this.disabled || false === this.onBeforeAdd(this.value)) {
+        add() {
+            if (this.disabled || false === this.onBeforeAdd(this.modelValue)) {
                 return;
             }
-            this.addRule(i, true);
+            this.modelValue.push({});
+            this.$emit('update:modelValue', this.modelValue);
         },
         del(index, key) {
-            if (this.disabled || false === this.onBeforeRemove(this.value)) {
+            if (this.disabled || false === this.onBeforeRemove(this.modelValue)) {
                 return;
             }
             this.removeRule(key, true);
             this.subForm();
-            this.value.splice(index, 1);
-            this.input(this.value);
+            this.modelValue.splice(index, 1);
+            this.input(this.modelValue);
         },
         addIcon(key) {
-            return <AIcon key={`a${key}`} type="plus-circle"
+            return <PlusCircleOutlined key={`a${key}`}
                 style={`font-size:${this.fontSize}px;cursor:${this.disabled ? 'not-allowed;color:#c9cdd4' : 'pointer'};`}
-                on-click={this.add}/>;
+                onClick={this.add}/>;
         },
         delIcon(index, key) {
-            return <AIcon key={`d${key}`} type="minus-circle"
+            return <MinusCircleOutlined key={`d${key}`}
                 style={`font-size:${this.fontSize}px;cursor:${this.disabled ? 'not-allowed;color:#c9cdd4' : 'pointer;color:#606266'};`}
-                on-click={() => this.del(index, key)}/>;
+                onClick={() => this.del(index, key)}/>;
         },
         makeIcon(total, index, key) {
-            if (this.$scopedSlots.button) {
-                return this.$scopedSlots.button({
+            if (this.$slots.button) {
+                return this.$slots.button({
                     total,
                     index,
                     vm: this,
@@ -226,16 +216,17 @@ export default {
         },
         expandRule(n) {
             for (let i = 0; i < n; i++) {
-                this.value.push(this.field ? null : {});
+                this.modelValue.push(this.field ? null : {});
             }
         }
     },
     created() {
-        const d = (this.expand || 0) - this.value.length;
+        this._.appContext.components.FormCreate = this.formCreateInject.form.$form()
+        const d = (this.expand || 0) - this.modelValue.length;
         if (d > 0) {
             this.expandRule(d);
         }
-        for (let i = 0; i < this.value.length; i++) {
+        for (let i = 0; i < this.modelValue.length; i++) {
             this.addRule(i);
         }
     },
@@ -243,30 +234,26 @@ export default {
         const keys = Object.keys(this.cacheRule);
         const button = this.button;
         return keys.length === 0 ?
-            (this.$scopedSlots.default ? (this.$scopedSlots.default({
+            (this.$slots.default ? (this.$slots.default({
                 vm: this,
                 add: this.add
-            })) : <AIcon key={'a_def'} type="plus-circle"
+            })) : <PlusCircleOutlined key={'a_def'}
                 style={`font-size:${this.fontSize}px;vertical-align:middle;color:${this.disabled ? '#c9cdd4;cursor: not-allowed' : '#606266;cursor:pointer'};`}
-                on-click={this.add}/>) :
+                onClick={this.add}/>) :
             <div key={'con'}>{keys.map((key, index) => {
                 const {rule, options} = this.cacheRule[key];
-                return <ARow align="middle" type="flex" key={key}
-                    style="border-bottom:1px dashed #d9d9d9;margin-bottom:10px;">
-                    <ACol span={button ? 20 : 24}><FormCreate
+                return <aRow align="middle" type="flex" key={key}
+                    style="border-bottom:1px dashed #DCDFE6;margin-bottom:10px;">
+                    <aCol span={button ? 20 : 24}><FormCreate
                         key={key}
-                        on={{
-                            'update:value': (formData) => this.formData(key, formData),
-                            'emit-event': (name, ...args) => this.emitEvent(name, args, index, key),
-                            input: ($f) => this.add$f(index, key, $f)
-                        }}
+                        onUpdate:modelValue={(formData) => this.formData(key, formData)}
+                        modelValue={this.field ? {[this.field]: this._value(this.modelValue[index])} : this.modelValue[index]}
+                        onEmit-event={(name, ...args) => this.emitEvent(name, args, index, key)}
+                        onUpdate:api={($f) => this.add$f(index, key, $f)}
                         rule={rule}
-                        option={options} extendOption={true}/></ACol>
-                    {button ? <ACol span={2} pull={1} push={1}>{this.makeIcon(keys.length, index, key)}</ACol> : null}
-                </ARow>
+                        option={options} extendOption={true}/></aCol>
+                    {button ? <aCol span={2} pull={1} push={1}>{this.makeIcon(keys.length, index, key)}</aCol> : null}
+                </aRow>
             })}</div>
-    },
-    beforeMount() {
-        this.$options.components.FormCreate = this.formCreateInject.form.$form();
     }
-}
+});
