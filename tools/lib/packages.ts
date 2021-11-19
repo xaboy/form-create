@@ -15,7 +15,7 @@
  import os from 'os';
  import execa from 'execa';
  import dayjs from 'dayjs';
- 
+
  let spinner: Ora;
  const build = async (target: string, comp: string, targetName: string) => {
    dayjs().startOf('millisecond');
@@ -39,8 +39,8 @@
    );
    spinner.text = chalk.bold.green(`finished build ${targetName} ui time: ${dayjs().startOf('millisecond').format('SSS')}ms. \n `);
  }
- 
- 
+
+
  const runParallel = async (maxConcurrency: number, source: string[], buildName: string, iteratorFn: Function) => {
    const ret = []
    const executing = []
@@ -48,7 +48,7 @@
      const comp = item.split('/').pop()
      const p = Promise.resolve().then(() => iteratorFn(item, comp, buildName))
      ret.push(p)
- 
+
      if (maxConcurrency <= source.length) {
        const e = p.then(() => executing.splice(executing.indexOf(e), 1))
        executing.push(e)
@@ -59,11 +59,11 @@
    }
    return Promise.all(ret)
  }
- 
+
  const buildAll = async (comAllTargets) => {
    await runParallel(os.cpus().length, comAllTargets[1], comAllTargets[0], build)
  }
- 
+
  const createBuildComponents = async (cpaths: { [k: string]: any }) => {
    const tips = chalk.redBright.bold('\n start build all packages \n')
    spinner = ora(tips).start()
@@ -73,5 +73,5 @@
      await buildAll(cpath)
    }
  }
- 
+
  export default createBuildComponents

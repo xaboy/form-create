@@ -3,7 +3,7 @@
   "version": "3.0.0-alpha.0",
   "description": "ant-design-vue动态表单|form-create is a form generation component that can generate dynamic rendering, data collection, verification and submission functions through JSON. Supports 3 UI frameworks, and supports the generation of any Vue components. Built-in 20 kinds of commonly used form components and custom components, no matter how complex forms can be easily handled.",
   "main": "./dist/form-create.min.js",
-  "module": "./dist/form-create.min.js",
+  "module": "./dist/form-create.esm.min.js",
   "unpkg": "./dist/form-create.min.js",
   "jsdelivr": "./dist/form-create.min.js",
   "typings": "./types/index.d.ts",
@@ -65,17 +65,21 @@
     "name": "@form-create/ant-design-vue",
     "exportName": "formCreate",
     "extendExternals": [
+      "ant-design-vue",
       "Antd",
-      "moment"
+      "moment",
+      "@ant-design/icons-vue"
     ],
     "extendGlobal": {
       "vue": "Vue",
       "antd": "ant-design-vue",
-      "moment": "moment"
+      "moment": "moment",
+      "@ant-design/icons-vue": "self"
     },
     "fileName": "form-create",
     "formats": [
-      "umd"
+      "umd",
+      "esm"
     ]
   }
 }

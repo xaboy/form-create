@@ -5,17 +5,17 @@
  * @LastEditTime : 2021-09-20 18:53:25
  * @Description  : rollup.config.ts
  * @FilePath     : /form-create2/rollup.config.ts
- * 
- * 
+ *
+ *
  * ****************************************** !!!Notice!!! ***********************************************
- * 
+ *
  *    不要在本文件的函数参数上加ts类型，esno貌似支持的不完善
- * 
+ *
  *    Do not add ts type to the function parameters of this file, esno seems to be imperfectly supported
- *    
+ *
  *    issues:
  *      Error: Unexpected token (Note that you need plugins to import files that are not JavaScript)
- * 
+ *
  *  ******************************************************************************************************
  */
 import path from 'path';
@@ -31,6 +31,7 @@ import externals from 'rollup-plugin-node-externals';
 import nodeResolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import babel from '@rollup/plugin-babel';
+import json from '@rollup/plugin-json';
 import { terser } from 'rollup-plugin-terser';
 import { visualizer } from 'rollup-plugin-visualizer';
 import replace from "@rollup/plugin-replace";
@@ -68,12 +69,12 @@ const outputConfigs = {
     format: `umd`
   },
   'esm': {
-    file: resolve(`dist/${fileName}.js`),
+    file: resolve(`dist/${fileName}.esm.js`),
     format: `es`
   },
 }
 
-const defaultFormats = ['umd']
+const defaultFormats = ['umd','esm']
 const inlineFormats = process.env.FORMATS && process.env.FORMATS.split(',')
 const packageFormats = inlineFormats || packageOptions.formats || defaultFormats
 const packageConfigs = defaultFormats.map(format => createConfig(format, outputConfigs[format]))
@@ -110,14 +111,15 @@ function createBanner(banner, pkg) {
   )
 }
 
-function createReplacePlugin() {
+function createReplacePlugin(format) {
 
   const replacements = {
     'process.env.NODE_ENV': 'production',
     'process.env.VERSION': version,
     'process.env.UI': UI_LIB,
+    'process.env.format': format
   }
- 
+
   return replace({
     values: replacements,
     preventAssignment: true
@@ -125,12 +127,12 @@ function createReplacePlugin() {
 }
 
 /// create plugins
-function createRollupPlugins(plugins) {
-  
+function createRollupPlugins(plugins, format) {
+
   const rollupPlugins = [
     vue({
       preprocessStyles: true,
-    })
+    }),
   ];
 
   if (isMult) {
@@ -171,9 +173,9 @@ function createRollupPlugins(plugins) {
   rollupPlugins.push(commonjs());
   /// replace
   if (isPackaegs) {
-    rollupPlugins.push(createReplacePlugin());
+    rollupPlugins.push(createReplacePlugin(format));
   }
-  
+
 
   rollupPlugins.push(babel({
     babelHelpers: 'bundled',
@@ -181,8 +183,8 @@ function createRollupPlugins(plugins) {
     extensions: ['.js', '.jsx', '.mjs', '.ts', '.tsx', '.vue'],
   }));
   rollupPlugins.push(...plugins);
-  
-  
+
+
   rollupPlugins.push(visualizer({
     gzipSize: true,
     brotliSize: true
@@ -208,14 +210,13 @@ function createMultiInput() {
 }
 
 
-function createConfig(_, output, plugins = []) {
+function createConfig(format, output, plugins = []) {
 
   let entryFile = `src/index.js`
-  const _plugins = createRollupPlugins(plugins);
-  const _globals = isPackaegs ? Object.assign({}, {vue: 'Vue'}, ExtendGlobal) : { vue: 'Vue' }
+  const _plugins = createRollupPlugins(plugins, format);
+  const _globals = ExtendGlobal ? Object.assign({}, {vue: 'Vue'}, ExtendGlobal) : {vue: 'Vue'};
   let _input = ''
   let _output = {}
-  console.log(isMult)
   if (isMult) {
     _input = createMultiInput()
     _output = {
@@ -233,8 +234,8 @@ function createConfig(_, output, plugins = []) {
       sourcemapExcludeSources: false,
     }
   }
-  
-  
+
+
   const configs = {
     input: _input,
     output: _output,

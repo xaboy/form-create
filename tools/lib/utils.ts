@@ -58,7 +58,7 @@ export const targets = (dir: 'packages' | 'components' = 'packages') => {
       }
     }
   }
-  
+
   if (dir === 'components') {
     uiFoldersPath.forEach(uiPath => {
       const componentFolderPath = []
@@ -81,6 +81,46 @@ export const targets = (dir: 'packages' | 'components' = 'packages') => {
     })
   }
 
-  
+
   return componentsAllPaths
+}
+
+
+export const getSingleComponentPaths = (dir: string = 'components', libname: string = '', comname: string = '') => {
+  const fpath = Object.create(null)
+  const _rootPath = dir
+  const _libPath = libname
+  const _compPath = comname
+
+  if (!fs.statSync(`${projRoot}/${_rootPath}/${_libPath}/${_compPath}`).isDirectory()) {
+    return
+  }
+
+  const pkg = require(`${projRoot}/${_rootPath}/${_libPath}/${_compPath}/package.json`)
+  if (pkg.private || !pkg.buildFormCreateOptions) {
+    red(`\n info: ${projRoot}/${_rootPath}/${_libPath}/${_compPath}/package.json private is true or buildFormCreateOptions is not exists!`)
+    return
+  }
+  fpath[_libPath] = [`${projRoot}/${_rootPath}/${_libPath}/${_compPath}`]
+
+  return fpath
+}
+
+export const getSinglePackagePaths = (dir: string = 'packages', libname: string = '') => {
+  const fpath = Object.create(null)
+  const _rootPath = dir
+  const _libPath = libname
+
+  if (!fs.statSync(`${projRoot}/${_rootPath}/${_libPath}`).isDirectory()) {
+    return
+  }
+
+  const pkg = require(`${projRoot}/${_rootPath}/${_libPath}/package.json`)
+  if (pkg.private || !pkg.buildFormCreateOptions) {
+    red(`\n info: ${projRoot}/${_rootPath}/${_libPath}/package.json private is true or buildFormCreateOptions is not exists!`)
+    return
+  }
+  fpath[_libPath] = [`${projRoot}/${_rootPath}/${_libPath}`]
+
+  return fpath
 }

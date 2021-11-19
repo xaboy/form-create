@@ -6,9 +6,9 @@ import FormCreateFactory from '@form-create/core/src/index';
 import makers from './maker';
 import '../style/index.css';
 import extendApi from './api';
-import Antd from 'ant-design-vue';
-import {QuestionCircleOutlined} from '@ant-design/icons-vue';
+// import Antd from 'ant-design-vue';
 import modelFields from './modelFields';
+import {QuestionCircleOutlined} from '@ant-design/icons-vue';
 
 function install(FormCreate) {
     FormCreate.componentAlias(alias);
@@ -31,16 +31,15 @@ function install(FormCreate) {
     });
 }
 
-function appUse(app) {
-    app.use(Antd);
-}
+// function appUse(app) {
+//     app.use(Antd);
+// }
 
 export default function antdvFormCreate() {
     return FormCreateFactory({
         ui: 'process.env.UI',
         version: 'process.env.VERSION',
         manager,
-        appUse,
         install,
         extendApi,
         attrs: {

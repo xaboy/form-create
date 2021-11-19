@@ -8,6 +8,13 @@ import os from 'os';
 import execa from 'execa';
 import dayjs from 'dayjs';
 
+function sleep(ms) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
+
+
 let spinner: Ora;
 const build = async (target: string, comp: string, targetName: string) => {
   dayjs().startOf('millisecond');
@@ -53,7 +60,7 @@ const runParallel = async (maxConcurrency: number, source: string[], buildName: 
 }
 
 const buildAll = async (comAllTargets) => {
-  await runParallel(os.cpus().length, comAllTargets[1], comAllTargets[0], build)
+    await runParallel(os.cpus().length, comAllTargets[1], comAllTargets[0], build)
 }
 
 const createBuildComponents = async (cpaths: { [k: string]: any }) => {
