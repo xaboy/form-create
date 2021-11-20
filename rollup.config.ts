@@ -76,7 +76,7 @@ const outputConfigs = {
 const defaultFormats = ['umd','esm']
 const inlineFormats = process.env.FORMATS && process.env.FORMATS.split(',')
 const packageFormats = inlineFormats || packageOptions.formats || defaultFormats
-const packageConfigs = defaultFormats.map(format => createConfig(format, outputConfigs[format]))
+const packageConfigs = packageFormats.map(format => createConfig(format, outputConfigs[format]))
 
 if (process.env.NODE_ENV === 'production') {
   packageFormats.forEach(format => {
