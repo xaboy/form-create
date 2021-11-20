@@ -29,11 +29,12 @@ FormCreate.register(addressEffect);
 FormCreate.component('wangEditor', wangEditor);
 
 //自定义组件
-Vue.component('testSlot', {
+formCreate.component('testSlot', {
     render(h) {
         return h('div', {}, [this.$slots.asd]);
     }
 })
+window.Vue = Vue;
 
 //todo ------------------ Demo 用 ------------------
 

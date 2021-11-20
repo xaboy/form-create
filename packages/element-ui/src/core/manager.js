@@ -141,7 +141,7 @@ export default {
         const infoProp = rule.info;
         const isTip = isTooltip(infoProp);
         const form = this.options.form;
-        const children = [titleProp.title + (form.labelSuffix || form['label-suffix'] || '')];
+        const children = [(titleProp.title || '') + (form.labelSuffix || form['label-suffix'] || '')];
         const titleFn = (pop) => this.$r(mergeProps([titleProp, {
             props: titleProp,
             slot: titleProp.slot || (pop ? (isTip ? 'default' : 'reference') : 'label'),

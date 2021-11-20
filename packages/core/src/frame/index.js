@@ -131,7 +131,7 @@ export default function FormCreateFactory(config) {
         return _vue.extend($FormCreate(FormCreate));
     }
 
-    function $fragment() {
+    function $vnode() {
         return _vue.extend(fragment);
     }
 
@@ -255,7 +255,7 @@ export default function FormCreateFactory(config) {
             component,
             directive,
             register,
-            $fragment,
+            $vnode,
             parser,
             use,
             factory,
@@ -305,7 +305,7 @@ export default function FormCreateFactory(config) {
 
                 Vue.prototype.$formCreate = $formCreate;
                 Vue.component('FormCreate', $form());
-                Vue.component('FcFragment', $fragment());
+                Vue.component('FcFragment', $vnode());
             }
         })
     }
