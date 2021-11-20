@@ -119,6 +119,7 @@ export default {
         const item = isFalse(rule.wrap.show) ? children : this.$r(mergeProps([rule.wrap, {
             props: {
                 labelWidth: labelWidth === void 0 ? labelWidth : toString(labelWidth),
+                label: isTitle ? rule.title.title : undefined,
                 ...(rule.wrap || {}),
                 prop: ctx.id,
                 rules: rule.validate,
