@@ -5,6 +5,7 @@ const NAME = 'fcSelect';
 
 export default defineComponent({
     name: NAME,
+    inheritAttrs: false,
     props: {
         modelValue: {
             type: Array,

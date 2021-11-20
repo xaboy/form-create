@@ -5,6 +5,7 @@ const NAME = 'fcTree';
 
 export default defineComponent({
     name: NAME,
+    inheritAttrs: false,
     formCreateParser: {
         mergeProp(ctx) {
             const props = ctx.prop.props;

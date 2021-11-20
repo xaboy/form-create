@@ -21,6 +21,7 @@ const NAME = 'fcUpload';
 
 export default defineComponent({
     name: NAME,
+    inheritAttrs: false,
     formCreateParser: {
         toFormValue(value) {
             return toArray(value);

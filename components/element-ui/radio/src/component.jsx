@@ -5,6 +5,7 @@ const NAME = 'fcRadio';
 
 export default defineComponent({
     name: NAME,
+    inheritAttrs: false,
     props: {
         modelValue: {
             type: [String, Number],
