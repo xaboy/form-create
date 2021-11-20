@@ -1,4 +1,4 @@
-import {defineComponent, reactive} from 'vue';
+import {defineComponent, reactive, markRaw} from 'vue';
 
 const NAME = 'fcSubForm';
 
@@ -31,6 +31,7 @@ export default defineComponent({
         return {
             cacheValue: {},
             subApi: {},
+            form: markRaw(this.formCreateInject.form.$form())
         }
     },
     emits: ['fc:subform', 'update:modelValue', 'change', 'itemMounted'],
@@ -65,11 +66,9 @@ export default defineComponent({
             });
         }
     },
-    created() {
-        this._.appContext.components.FormCreate = this.formCreateInject.form.$form()
-    },
     render() {
-        return <FormCreate
+        const Type = this.form;
+        return <Type
             onUpdate:modelValue={this.formData}
             modelValue={this.modelValue}
             onEmit-event={this.$emit}

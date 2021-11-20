@@ -323,8 +323,8 @@ export default defineComponent({
                 <img alt="example" style="width: 100%" src={this.previewImage}/>
             </aModal>
             <aModal props={{width, title, ...this.modal}} visible={this.frameVisible}
-                onCancel={() => (this.closeModal(true))} slots={
-                    {footer: this.makeFooter()}
+                onCancel={() => (this.closeModal(true))} v-slots={
+                    {footer: () => this.makeFooter()}
                 }>
                 {(this.frameVisible || !this.reload) ? <iframe ref="frame" src={src} frameborder="0" style={{
                     height,

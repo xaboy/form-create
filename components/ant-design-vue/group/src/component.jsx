@@ -1,5 +1,5 @@
 import {hasProperty} from '@form-create/utils/lib/type';
-import {defineComponent, resolveComponent} from 'vue';
+import {defineComponent, markRaw} from 'vue';
 import {PlusCircleOutlined, MinusCircleOutlined} from '@ant-design/icons-vue';
 
 const NAME = 'fcGroup';
@@ -56,6 +56,7 @@ export default defineComponent({
             len: 0,
             cacheRule: {},
             cacheValue: {},
+            form: markRaw(this.formCreateInject.form.$form())
         }
     },
     emits: ['update:modelValue', 'change', 'itemMounted', 'remove'],
@@ -171,7 +172,7 @@ export default defineComponent({
             if (this.disabled || false === this.onBeforeAdd(this.modelValue)) {
                 return;
             }
-            this.modelValue.push({});
+            this.modelValue.push(this.field ? null : {});
             this.$emit('update:modelValue', this.modelValue);
         },
         del(index, key) {
@@ -221,7 +222,6 @@ export default defineComponent({
         }
     },
     created() {
-        this._.appContext.components.FormCreate = this.formCreateInject.form.$form()
         const d = (this.expand || 0) - this.modelValue.length;
         if (d > 0) {
             this.expandRule(d);
@@ -233,6 +233,7 @@ export default defineComponent({
     render() {
         const keys = Object.keys(this.cacheRule);
         const button = this.button;
+        const Type = this.form;
         return keys.length === 0 ?
             (this.$slots.default ? (this.$slots.default({
                 vm: this,
@@ -244,7 +245,7 @@ export default defineComponent({
                 const {rule, options} = this.cacheRule[key];
                 return <aRow align="middle" type="flex" key={key}
                     style="border-bottom:1px dashed #DCDFE6;margin-bottom:10px;">
-                    <aCol span={button ? 20 : 24}><FormCreate
+                    <aCol span={button ? 20 : 24}><Type
                         key={key}
                         onUpdate:modelValue={(formData) => this.formData(key, formData)}
                         modelValue={this.field ? {[this.field]: this._value(this.modelValue[index])} : this.modelValue[index]}
