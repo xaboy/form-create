@@ -78,7 +78,7 @@
 
 - [使用 json 生成](https://jsrun.net/NQhKp/edit)
 
-- [各种示例](http://www.form-create.com/v2/guide/demo.html)
+- [各种示例](http://www.form-create.com/v3/guide/demo.html)
 
 
 
