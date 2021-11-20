@@ -20,7 +20,8 @@ function install(FormCreate) {
     components.forEach(component => {
         FormCreate.component(component.name, component);
     });
-    FormCreate.component(QuestionCircleOutlined.name, QuestionCircleOutlined);
+
+    FormCreate.component('QuestionCircleOutlined', QuestionCircleOutlined);
 
     parsers.forEach((parser) => {
         FormCreate.parser(parser);
