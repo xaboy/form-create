@@ -26,6 +26,7 @@ export default {
         return {
             cacheRule: {},
             cacheValue: {},
+            type: undefined
         }
     },
     watch: {
@@ -75,10 +76,12 @@ export default {
     },
     created() {
         this.addRule();
+        this.type = this.formCreateInject.form.$form();
     },
     render() {
         const {rule, options} = this.cacheRule;
-        return <FormCreate
+        const Type = this.type;
+        return <Type
             on={{
                 'update:value': this.formData,
                 'emit-event': this.emitEvent,
@@ -86,8 +89,5 @@ export default {
             }}
             rule={rule}
             option={options} extendOption={true}/>
-    },
-    beforeMount() {
-        this.$options.components.FormCreate = this.formCreateInject.form.$form();
     }
 }
