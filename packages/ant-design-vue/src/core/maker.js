@@ -37,6 +37,7 @@ function useSlider(maker) {
 }
 
 function useSelect(m) {
+    const name = 'select';
     m.selectMultiple = creatorFactory(name, {mode:'multiple'});
     m.selectTags = creatorFactory(name, {mode: 'tags'});
     m.selectCombobox = creatorFactory(name, {mode:'combobox'});
