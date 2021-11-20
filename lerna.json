@@ -2,7 +2,6 @@
   "packages": [
     "packages/ant-design-vue",
     "packages/core",
-    "packages/data",
     "packages/element-ui",
     "packages/utils",
     "components/common/subform",

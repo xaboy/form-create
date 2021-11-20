@@ -43,7 +43,8 @@
     "name": "@form-create/component-elm-radio",
     "exportName": "FcRadio",
     "formats": [
-      "umd"
+      "umd",
+      "esm"
     ]
   }
 }

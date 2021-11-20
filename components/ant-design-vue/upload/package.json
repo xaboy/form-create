@@ -46,7 +46,8 @@
       "@ant-design/icons-vue"
     ],
     "formats": [
-      "umd"
+      "umd",
+      "esm"
     ]
   }
 }

@@ -43,7 +43,8 @@
     "name": "@form-create/component-elm-group",
     "exportName": "FcGroup",
     "formats": [
-      "umd"
+      "umd",
+      "esm"
     ]
   }
 }

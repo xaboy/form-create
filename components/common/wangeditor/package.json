@@ -2,10 +2,10 @@
   "name": "@form-create/component-wangeditor",
   "version": "3.0.0-alpha.0",
   "description": "@form-create 富文本组件",
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "unpkg": "./dist/index.js",
-  "jsdelivr": "./dist/index.js",
+  "main": "./dist/index.min.js",
+  "module": "./dist/index.esm.js",
+  "unpkg": "./dist/index.min.js",
+  "jsdelivr": "./dist/index.min.js",
   "scripts": {
     "clean": "rimraf dist/",
     "bili": "cross-env bili",
@@ -20,6 +20,7 @@
   ],
   "keywords": [
     "@form-create",
+    "vue3",
     "form-create-component",
     "form-create-common-component"
   ],
@@ -43,7 +44,8 @@
     "name": "@form-create/component-wangeditor",
     "exportName": "FcEditor",
     "formats": [
-      "umd"
+      "umd",
+      "esm"
     ]
   }
 }

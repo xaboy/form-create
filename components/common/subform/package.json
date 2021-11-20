@@ -40,7 +40,8 @@
     "name": "@form-create/component-subform",
     "exportName": "FcSubForm",
     "formats": [
-      "umd"
+      "umd",
+      "esm"
     ]
   }
 }

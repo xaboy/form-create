@@ -43,7 +43,8 @@
     "name": "@form-create/component-elm-frame",
     "exportName": "FcFrame",
     "formats": [
-      "umd"
+      "umd",
+      "esm"
     ]
   }
 }
