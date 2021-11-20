@@ -6,6 +6,7 @@ const PREFIX = '[[FORM-CREATE-PREFIX-';
 const SUFFIX = '-FORM-CREATE-SUFFIX]]';
 
 const $T = '$FN:';
+const $TX = '$FNX:';
 const FUNCTION = 'function';
 
 export function toJson(obj, space) {
@@ -33,7 +34,7 @@ function makeFn(fn) {
 }
 
 export function parseFn(fn, mode) {
-    if (fn && is.String(fn)) {
+    if (fn && is.String(fn) && fn.length > 4) {
         let v = fn.trim();
         let flag = false;
         try {
@@ -43,8 +44,8 @@ export function parseFn(fn, mode) {
             } else if (v.indexOf($T) === 0) {
                 v = v.replace($T, '');
                 flag = true;
-            } else if (v.indexOf('$FNX:') === 0) {
-                v = makeFn('function($inject){' + v.replace('$FNX:', '') + '}');
+            } else if (v.indexOf($TX) === 0) {
+                v = makeFn('function($inject){' + v.replace($TX, '') + '}');
                 v.__json = fn;
                 v.__inject = true;
                 return v;
@@ -56,7 +57,7 @@ export function parseFn(fn, mode) {
             val.__json = fn;
             return val;
         } catch (e) {
-            err(`解析失败:${v}`);
+            err(`解析失败:${v}\n\nerr: ${e}`);
             return undefined;
         }
     }

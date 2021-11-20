@@ -1,4 +1,4 @@
-import {defineComponent, inject, ref, resolveComponent, toRef, toRefs} from 'vue';
+import {defineComponent, inject, ref, resolveComponent, toRef, toRefs, computed} from 'vue';
 import getSlot from '@form-create/utils/lib/slot';
 
 const NAME = 'fcCheckbox';
@@ -17,17 +17,20 @@ export default defineComponent({
         const {options} = toRefs(inject('formCreateInject'));
         const trueValue = ref([]);
         const value = toRef(props, 'modelValue');
+        const _options = computed(() => {
+            return Array.isArray(options) ? options : []
+        })
         const update = () => {
-            trueValue.value = value.value ? options.value.filter((opt) => value.value.indexOf(opt.value) !== -1)
+            trueValue.value = value.value ? _options.value.filter((opt) => value.value.indexOf(opt.value) !== -1)
                 .map((option) => option.label) : []
         }
         update();
         return {
-            options,
+            options: _options,
             trueValue,
             value,
             onInput(n) {
-                _.emit('update:modelValue', options.value.filter((opt) => n.indexOf(opt.label) !== -1).map((opt) => opt.value).filter(v => v !== undefined));
+                _.emit('update:modelValue', _options.value.filter((opt) => n.indexOf(opt.label) !== -1).map((opt) => opt.value).filter(v => v !== undefined));
             },
             update
         }

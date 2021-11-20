@@ -56,12 +56,11 @@ export default function Handler(fc) {
 extend(Handler.prototype, {
     initData(rules) {
         extend(this, {
-            fieldCtx: {},
             ctxs: {},
+            fieldCtx: {},
             nameCtx: {},
             sort: [],
             rules,
-            repeatRule: [],
         });
     },
     init() {

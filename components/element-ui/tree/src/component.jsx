@@ -50,7 +50,7 @@ export default defineComponent({
         }
     },
     render() {
-        return <ElTree {...this.$attrs} ref="tree" onCheck-change={this.updateValue}
+        return <ElTree {...this.$attrs} ref="tree" onCheck={this.updateValue}
             onNode-click={this.updateValue}
             v-slots={this.$slots}/>;
     },

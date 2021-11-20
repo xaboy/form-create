@@ -81,15 +81,12 @@ export default defineComponent({
             this.$refs.upload.handleRemove(file);
         },
         handleClick(file) {
-            if (this.isDisabled()) {
-                return;
-            }
-            window.vm2 = this;
-            (this.onHandle || (file => {
+            if (this.onHandle) {
+                return this.onHandle(file);
+            } else {
                 this.previewImage = file.url;
                 this.previewVisible = true;
-            })
-            )(file);
+            }
         },
         makeItem(file, index) {
             return this.uploadType === 'image'

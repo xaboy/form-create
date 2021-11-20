@@ -25,13 +25,13 @@ export default function useInput(Handler) {
             }
         },
         setFormData(ctx, value) {
-            $set(this.formData, ctx.field, value);
+            $set(this.formData, ctx.id, value);
         },
         getFormData(ctx) {
-            return this.formData[ctx.field];
+            return this.formData[ctx.id];
         },
         syncForm() {
-            Object.keys(this.formData).reduce((initial, field) => {
+            this.fields().reduce((initial, field) => {
                 const ctx = this.getCtx(field);
                 initial[field] = toRef(ctx.rule, 'value');
                 return initial;
@@ -58,12 +58,15 @@ export default function useInput(Handler) {
         },
         addSubForm(ctx, subForm) {
             if (ctx.input) {
-                this.subForm[ctx.field] = subForm;
+                this.subForm[ctx.id] = subForm;
             }
         },
-        deferSyncValue(fn) {
+        deferSyncValue(fn, sync) {
             if (!this.deferSyncFn) {
                 this.deferSyncFn = fn;
+            }
+            if (!this.deferSyncFn.sync) {
+                this.deferSyncFn.sync = sync;
             }
             invoke(fn);
             if (this.deferSyncFn === fn) {
@@ -86,9 +89,8 @@ export default function useInput(Handler) {
             return (is.Object(value) || Array.isArray(value)) && value === ctx.rule.value;
         },
         refreshUpdate(ctx, val) {
-            const fn = ctx.rule.update;
-            if (is.Function(fn)) {
-                const state = invoke(() => fn(val, ctx.origin, this.api));
+            if (is.Function(ctx.rule.update)) {
+                const state = invoke(() => ctx.rule.update(val, ctx.origin, this.api));
                 if (state === undefined) return;
                 ctx.rule.hidden = state === true;
             }
@@ -115,7 +117,7 @@ export default function useInput(Handler) {
             });
         },
         fields() {
-            return Object.keys(this.formData);
+            return Object.keys(this.fieldCtx);
         },
     });
 }

@@ -39,7 +39,7 @@ export default function useLoader(Handler) {
             return rule;
         },
         loadFn(item, rule) {
-            ['on', 'props'].forEach(k => {
+            ['on', 'props', 'deep'].forEach(k => {
                 item[k] && this.parseInjectEvent(rule, item[k]);
             });
         },
@@ -61,9 +61,6 @@ export default function useLoader(Handler) {
                     return pre
                 }, {})
             }], ctx.computed)
-        },
-        isRepeatRule(rule) {
-            return this.repeatRule.indexOf(rule) > -1;
         },
         loadRule() {
             // console.warn('%c load', 'color:blue');
@@ -131,15 +128,13 @@ export default function useLoader(Handler) {
                 let rule = getRule(_rule);
 
                 const isRepeat = () => {
-                    return !!(rule.field && this.fieldCtx[rule.field] && this.fieldCtx[rule.field] !== _rule.__fc__)
+                    return !!(rule.field && this.fieldCtx[rule.field] && this.fieldCtx[rule.field][0] !== _rule.__fc__)
                 }
 
                 this.ruleEffect(rule, 'init', {repeat: isRepeat()});
 
                 if (isRepeat()) {
-                    this.repeatRule.push(_rule);
                     this.vm.$emit('repeat-field', _rule, this.api);
-                    return err(`${rule.field} 字段已存在`, _rule);
                 }
 
                 let ctx;
@@ -234,43 +229,45 @@ export default function useLoader(Handler) {
             if (!validate.length) return false;
 
             let flag = false;
-            validate.reverse().forEach(({isHidden, valid, rule, prepend, append, child, ctrl}) => {
-                if (isHidden) {
-                    valid ? ctx.ctrlRule.push({
-                        __ctrl: true,
-                        children: rule,
-                        valid
-                    })
-                        : ctx.ctrlRule.splice(ctx.ctrlRule.indexOf(ctrl), 1);
-                    this.vm.$nextTick(() => {
-                        this.api.hidden(!valid, rule);
-                    });
-                    return;
-                }
-                if (valid) {
-                    flag = true;
-                    const ruleCon = {
-                        type: 'template',
-                        native: true,
-                        __ctrl: true,
-                        children: rule,
+            this.deferSyncValue(() => {
+                validate.reverse().forEach(({isHidden, valid, rule, prepend, append, child, ctrl}) => {
+                    if (isHidden) {
+                        valid ? ctx.ctrlRule.push({
+                            __ctrl: true,
+                            children: rule,
+                            valid
+                        })
+                            : ctx.ctrlRule.splice(ctx.ctrlRule.indexOf(ctrl), 1);
+                        this.vm.$nextTick(() => {
+                            this.api.hidden(!valid, rule);
+                        });
+                        return;
                     }
-                    ctx.ctrlRule.push(ruleCon);
-                    this.bus.$once('load-start', () => {
-                        // this.cycleLoad = true;
-                        if (prepend) {
-                            api.prepend(ruleCon, prepend, child)
-                        } else if (append || child) {
-                            api.append(ruleCon, append || ctx.id, child)
-                        } else {
-                            ctx.root.splice(ctx.root.indexOf(ctx.origin) + 1, 0, ruleCon);
+                    if (valid) {
+                        flag = true;
+                        const ruleCon = {
+                            type: 'template',
+                            native: true,
+                            __ctrl: true,
+                            children: rule,
                         }
-                    });
-                } else {
-                    ctx.ctrlRule.splice(ctx.ctrlRule.indexOf(ctrl), 1);
-                    const ctrlCtx = byCtx(ctrl);
-                    ctrlCtx && ctrlCtx.rm();
-                }
+                        ctx.ctrlRule.push(ruleCon);
+                        this.bus.$once('load-start', () => {
+                            // this.cycleLoad = true;
+                            if (prepend) {
+                                api.prepend(ruleCon, prepend, child)
+                            } else if (append || child) {
+                                api.append(ruleCon, append || ctx.id, child)
+                            } else {
+                                ctx.root.splice(ctx.root.indexOf(ctx.origin) + 1, 0, ruleCon);
+                            }
+                        });
+                    } else {
+                        ctx.ctrlRule.splice(ctx.ctrlRule.indexOf(ctrl), 1);
+                        const ctrlCtx = byCtx(ctrl);
+                        ctrlCtx && ctrlCtx.rm();
+                    }
+                });
             });
             this.vm.$emit('control', ctx.origin, this.api);
             this.effect(ctx, 'control');

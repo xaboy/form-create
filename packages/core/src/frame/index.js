@@ -123,6 +123,9 @@ export default function FormCreateFactory(config) {
         });
     }
 
+    function $vnode() {
+        return vnode;
+    }
 
     //todo 检查回调函数作用域
     function use(fn, opt) {
@@ -244,6 +247,7 @@ export default function FormCreateFactory(config) {
             directive,
             setModelField,
             register,
+            $vnode,
             parser,
             use,
             factory,

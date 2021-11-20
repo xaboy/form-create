@@ -1,4 +1,4 @@
-import {defineComponent, inject, ref, resolveComponent, toRef, toRefs} from 'vue';
+import {computed, defineComponent, inject, ref, resolveComponent, toRef, toRefs} from 'vue';
 import getSlot from '@form-create/utils/lib/slot';
 
 const NAME = 'fcRadio';
@@ -17,16 +17,19 @@ export default defineComponent({
         const {options} = toRefs(inject('formCreateInject'));
         const trueValue = ref([]);
         const value = toRef(props, 'modelValue');
+        const _options = computed(() => {
+            return Array.isArray(options) ? options : []
+        })
         const update = () => {
-            trueValue.value = options.value.filter((opt) => opt.value === value.value).reduce((initial, opt) => opt.label, '')
+            trueValue.value = _options.value.filter((opt) => opt.value === value.value).reduce((initial, opt) => opt.label, '')
         }
         update();
         return {
-            options,
+            options: _options,
             trueValue,
             value,
             onInput(n) {
-                _.emit('update:modelValue', options.value.filter((opt) => opt.label === n).reduce((initial, opt) => opt.value, ''));
+                _.emit('update:modelValue', _options.value.filter((opt) => opt.label === n).reduce((initial, opt) => opt.value, ''));
             },
             update
         }

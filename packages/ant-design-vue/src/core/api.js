@@ -30,8 +30,10 @@ export default function extendApi(api, h) {
         },
         validateField(field, callback) {
             return new Promise((resolve, reject) => {
-                const sub = h.subForm[field] || [];
-                const all = [h.$manager.validateField(field)];
+                const ctx = h.getFieldCtx(field);
+                if (!ctx) return;
+                const sub = h.subForm[ctx.id];
+                const all = [h.$manager.validateField(ctx.id)];
                 toArray(sub).forEach(v => {
                     all.push(v.validate());
                 })
@@ -46,23 +48,25 @@ export default function extendApi(api, h) {
         },
         clearValidateState(fields, clearSub = true) {
             api.helper.tidyFields(fields).forEach(field => {
-                if (clearSub) api.clearSubValidateState(field);
-                const ctx = h.fieldCtx[field];
-                if (!ctx) return;
-                h.$manager.clearValidateState(ctx);
+                if (clearSub) this.clearSubValidateState(field);
+                h.getCtxs(field).forEach(ctx => {
+                    h.$manager.clearValidateState(ctx);
+                });
             });
         },
         clearSubValidateState(fields) {
             api.helper.tidyFields(fields).forEach(field => {
-                const subForm = h.subForm[field];
-                if (!subForm) return;
-                if (Array.isArray(subForm)) {
-                    subForm.forEach(form => {
-                        form.clearValidateState();
-                    })
-                } else if (subForm) {
-                    subForm.clearValidateState();
-                }
+                h.getCtxs(field).forEach(ctx => {
+                    const subForm = h.subForm[ctx.id];
+                    if (!subForm) return;
+                    if (Array.isArray(subForm)) {
+                        subForm.forEach(form => {
+                            form.clearValidateState();
+                        })
+                    } else if (subForm) {
+                        subForm.clearValidateState();
+                    }
+                });
             })
         },
         btn: {

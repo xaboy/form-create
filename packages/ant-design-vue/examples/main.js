@@ -30,8 +30,6 @@ app.use(FormCreate)
 
 // import VJsoneditor from 'v-jsoneditor'
 import addressEffect from './addressEffect';
-// import {ElInput} from 'element-plus';
-// import VueCompositionAPI from '@vue/composition-api'
 import wangEditor from '@form-create/component-wangeditor/src'
 
 
@@ -50,7 +48,6 @@ FormCreate.component('testSlot', defineComponent({
         console.log(inject('formCreateInject'));
     },
     render(_,b) {
-        window.bbb = this;
         return h('div',{}, this.$slots.asd());
     }
 }))

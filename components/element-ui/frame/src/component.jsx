@@ -228,9 +228,6 @@ export default defineComponent({
             </div>
         },
         handleClick(src) {
-            if (this.disabled) {
-                return;
-            }
             if (this.onHandle) {
                 return this.onHandle(src);
             } else {

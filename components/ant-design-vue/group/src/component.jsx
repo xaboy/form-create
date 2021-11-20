@@ -176,7 +176,7 @@ export default defineComponent({
             this.$emit('update:modelValue', this.modelValue);
         },
         del(index, key) {
-            if (this.disabled || false === this.onBeforeRemove(this.modelValue)) {
+            if (this.disabled || false === this.onBeforeRemove(this.modelValue, index)) {
                 return;
             }
             this.removeRule(key, true);

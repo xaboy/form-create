@@ -103,7 +103,7 @@ export default {
         const item = isFalse(rule.wrap.show) ? children : this.$r(mergeProps([rule.wrap, {
             props: {
                 ...(rule.wrap || {}),
-                name: ctx.field,
+                name: ctx.id,
                 rules: rule.validate,
                 ...(layout !== 'horizontal' ? {labelCol: {}, wrapperCol: {}} : {})
             },
@@ -122,9 +122,10 @@ export default {
     makeInfo(rule, uni) {
         const titleProp = rule.title;
         const infoProp = rule.info;
+        if (this.options.form.title === false) return false;
+        if ((!titleProp.title && !titleProp.native) || isFalse(titleProp.show)) return;
         const isTip = isTooltip(infoProp);
-        const form = this.options.form;
-        const children = [(titleProp.title || '') + (form.labelSuffix || form['label-suffix'] || '')];
+        const children = [titleProp.title];
         const titleFn = () => this.$r(mergeProps([titleProp, {
             props: titleProp,
             key: `${uni}tit`,

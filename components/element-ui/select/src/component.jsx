@@ -1,4 +1,4 @@
-import {defineComponent, inject, toRef, toRefs} from 'vue';
+import {computed, defineComponent, inject, toRef, toRefs} from 'vue';
 import getSlot from '@form-create/utils/lib/slot';
 
 const NAME = 'fcSelect';
@@ -16,8 +16,11 @@ export default defineComponent({
     setup(props) {
         const {options} = toRefs(inject('formCreateInject'));
         const value = toRef(props, 'modelValue');
+        const _options = computed(() => {
+            return Array.isArray(options) ? options : []
+        })
         return {
-            options,
+            options: _options,
             value
         }
     },

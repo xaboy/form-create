@@ -3,7 +3,7 @@ import mergeProps from '@form-create/utils/lib/mergeprops';
 import is from '@form-create/utils/lib/type';
 import {makeSlotBag, mergeRule} from '../frame/util';
 import toCase, {lower} from '@form-create/utils/lib/tocase';
-import {deepSet} from '@form-create/utils';
+import {$set, deepSet, toLine} from '@form-create/utils';
 import {computed} from 'vue';
 
 export default function useRender(Render) {
@@ -54,9 +54,22 @@ export default function useRender(Render) {
                 deepSet(ctx.prop, ctx.prop.optionsTo, ctx.prop.options);
             }
         },
+        deepSet(ctx) {
+            const deep = ctx.rule.deep;
+            deep && Object.keys(deep).sort((a, b) => a.length < b.length ? -1 : 1).forEach(str => {
+                deepSet(ctx.prop, str, deep[str]);
+            });
+        },
+        parseSide(side) {
+            return is.Object(side) ? mergeRule({}, side) : side;
+        },
         renderSides(vn, ctx, temp) {
             const prop = ctx[temp ? 'rule' : 'prop'];
-            return [this.renderRule(prop.prefix), vn, this.renderRule(prop.suffix)];
+            return [this.renderRule(this.parseSide(prop.prefix)), vn, this.renderRule(this.parseSide(prop.suffix))];
+        },
+        renderId(name, type) {
+            const ctxs = this.$handle[type === 'field' ? 'fieldCtx' : 'nameCtx'][name]
+            return ctxs ? ctxs.map(ctx => this.renderCtx(ctx, ctx.parent)) : undefined;
         },
         renderCtx(ctx, parent) {
             if (ctx.type === 'hidden') return;
@@ -67,6 +80,7 @@ export default function useRender(Render) {
                 this.mergeGlobal(ctx);
                 ctx.initNone();
                 this.$manager.tidyRule(ctx);
+                this.deepSet(ctx);
                 this.setOptions(ctx);
                 this.ctxProp(ctx);
                 let prop = ctx.prop;
@@ -76,7 +90,25 @@ export default function useRender(Render) {
                     return;
                 }
                 vn = () => this.item(ctx, () => {
-                    let _vn = ctx.parser.render(this.renderChildren(ctx), ctx);
+                    let children = {};
+                    if (ctx.parser.renderChildren) {
+                        children = ctx.parser.renderChildren(ctx);
+                    } else if (ctx.parser.loadChildren !== false) {
+                        children = this.renderChildren(ctx);
+                    }
+                    const slot = 'type-' + toLine(ctx.type);
+                    let _vn;
+                    if (this.vm.$slots[slot]) {
+                        _vn = this.vm.$slots[slot]({
+                            rule,
+                            prop,
+                            children,
+                            api: this.$handle.api,
+                            model: prop.model || {}
+                        })
+                    } else {
+                        _vn = ctx.parser.render(this.renderChildren(ctx), ctx)
+                    }
                     _vn = this.renderSides(_vn, ctx);
                     if ((!(!ctx.input && is.Undef(prop.native))) && prop.native !== true) {
                         _vn = this.$manager.makeWrap(ctx, _vn);
@@ -187,15 +219,13 @@ export default function useRender(Render) {
 
             if (!is.trueArray(children)) return {};
             const slotBag = makeSlotBag()
-            let flag = true;
             children.map(child => {
                 if (!child) return;
                 if (is.String(child)) return slotBag.setSlot(null, child);
                 if (child.__fc__) {
                     return this.renderSlot(slotBag, child.__fc__, ctx);
                 }
-                if (flag && !this.$handle.isRepeatRule(child.__origin__ || child) && child.type) {
-                    flag = false;
+                if (child.type) {
                     this.vm.$nextTick(() => {
                         this.$handle.loadChildren(children, ctx);
                         this.$handle.refresh();
