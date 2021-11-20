@@ -67,13 +67,11 @@
     "extendExternals": [
       "ant-design-vue",
       "Antd",
-      "moment",
       "@ant-design/icons-vue"
     ],
     "extendGlobal": {
       "vue": "Vue",
       "antd": "ant-design-vue",
-      "moment": "moment",
       "@ant-design/icons-vue": "self"
     },
     "fileName": "form-create",

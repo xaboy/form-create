@@ -12,7 +12,7 @@ export default function useRender(Render) {
             this.cacheConfig = {};
         },
         render() {
-            console.warn('renderrrrr', this.id);
+            // console.warn('renderrrrr', this.id);
             if (!this.vm.isShow) {
                 return;
             }
@@ -120,7 +120,7 @@ export default function useRender(Render) {
         },
         item(ctx, vn) {
             return this.vNode.h('FcFragment', {
-                key: ctx.key,
+                key: ctx.prop.key,
                 formCreateInject: this.injectProp(ctx)
             }, vn);
         },

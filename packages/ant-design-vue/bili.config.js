@@ -23,9 +23,8 @@ module.exports = {
     globals: {
         vue: 'Vue',
         antd: 'ant-design-vue',
-        moment: 'moment'
     },
-    externals: ['vue', 'Vue', 'Antd', 'moment'],
+    externals: ['vue', 'Vue', 'Antd'],
     output: {
         format: ['umd', 'umd-min'],
         moduleName: 'formCreate',

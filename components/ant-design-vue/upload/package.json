@@ -42,6 +42,9 @@
   "buildFormCreateOptions": {
     "name": "@form-create/component-antdv-upload",
     "exportName": "FcUpload",
+    "extendExternals": [
+      "@ant-design/icons-vue"
+    ],
     "formats": [
       "umd"
     ]

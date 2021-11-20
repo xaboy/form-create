@@ -45,6 +45,9 @@
   "buildFormCreateOptions": {
     "name": "@form-create/component-antdv-frame",
     "exportName": "FcFrame",
+    "extendExternals": [
+      "@ant-design/icons-vue"
+    ],
     "formats": [
       "umd"
     ]
