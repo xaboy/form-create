@@ -22,12 +22,18 @@ export default {
             trueValue: []
         }
     },
+    computed: {
+        options() {
+            const opt = this.formCreateInject.options;
+            return Array.isArray(opt) ? opt : [];
+        }
+    },
     methods: {
         onInput(n) {
-            this.$emit('input', this.formCreateInject.options.filter((opt) => opt.label === n).reduce((initial, opt) => opt.value, ''));
+            this.$emit('input', this.options.filter((opt) => opt.label === n).reduce((initial, opt) => opt.value, ''));
         },
         update() {
-            this.trueValue = this.formCreateInject.options.filter((opt) => opt.value === this.value).reduce((initial, opt) => opt.label, '');
+            this.trueValue = this.options.filter((opt) => opt.value === this.value).reduce((initial, opt) => opt.label, '');
         }
     },
     created() {
@@ -35,7 +41,7 @@ export default {
     },
     render() {
         return <ElRadioGroup {...this.formCreateInject.prop} value={this.trueValue}
-            on-input={this.onInput}>{this.formCreateInject.options.map((opt, index) => {
+            on-input={this.onInput}>{this.options.map((opt, index) => {
                 const props = {...opt};
                 const Type = this.type === 'button' ? 'ElRadioButton' : 'ElRadio';
                 delete props.value;

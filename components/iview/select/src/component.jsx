@@ -11,7 +11,8 @@ export default {
         },
     },
     render(h, ctx) {
-        return <Select {...ctx.data}>{ctx.props.formCreateInject.options.map((props, index) => {
+        const options = ctx.props.formCreateInject.options;
+        return <Select {...ctx.data}>{(Array.isArray(options) ? options : []).map((props, index) => {
             const slot = props.slot;
             return <Option {...{props}}
                 key={'' + index + props.value}>
