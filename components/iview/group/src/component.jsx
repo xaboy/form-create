@@ -59,6 +59,7 @@ export default function createGroup(config) {
                 len: 0,
                 cacheRule: {},
                 cacheValue: {},
+                type: undefined
             }
         },
         computed: {
@@ -232,6 +233,7 @@ export default function createGroup(config) {
             }
         },
         created() {
+            this.type = this.formCreateInject.form.$form();
             const d = (this.expand || 0) - this.value.length;
             if (d > 0) {
                 this.expandRule(d);
@@ -243,6 +245,7 @@ export default function createGroup(config) {
         render() {
             const keys = Object.keys(this.cacheRule);
             const button = this.button;
+            const Type = this.type;
             return keys.length === 0 ?
                 (this.$scopedSlots.default ? (this.$scopedSlots.default({
                     vm: this,
@@ -254,7 +257,7 @@ export default function createGroup(config) {
                     const {rule, options} = this.cacheRule[key];
                     return <Row align="middle" type="flex" key={key}
                         style="border-bottom:1px dashed #dcdee2;margin-bottom:10px;">
-                        <Col span={button ? 20 : 24}><FormItem><FormCreate
+                        <Col span={button ? 20 : 24}><FormItem><Type
                             key={key}
                             on={{
                                 'update:value': (formData) => this.formData(key, formData),
@@ -266,9 +269,6 @@ export default function createGroup(config) {
                         {button ? <Col span={2} pull={1} push={1}>{this.makeIcon(keys.length, index, key)}</Col> : null}
                     </Row>
                 })}</div>
-        },
-        beforeMount() {
-            this.$options.components.FormCreate = this.formCreateInject.form.$form();
         }
     };
 }

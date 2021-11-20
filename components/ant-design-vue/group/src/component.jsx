@@ -58,6 +58,7 @@ export default {
             len: 0,
             cacheRule: {},
             cacheValue: {},
+            type: undefined
         }
     },
     computed: {
@@ -231,6 +232,7 @@ export default {
         }
     },
     created() {
+        this.type = this.formCreateInject.form.$form();
         const d = (this.expand || 0) - this.value.length;
         if (d > 0) {
             this.expandRule(d);
@@ -242,6 +244,7 @@ export default {
     render() {
         const keys = Object.keys(this.cacheRule);
         const button = this.button;
+        const Type = this.type;
         return keys.length === 0 ?
             (this.$scopedSlots.default ? (this.$scopedSlots.default({
                 vm: this,
@@ -253,7 +256,7 @@ export default {
                 const {rule, options} = this.cacheRule[key];
                 return <ARow align="middle" type="flex" key={key}
                     style="border-bottom:1px dashed #d9d9d9;margin-bottom:10px;">
-                    <ACol span={button ? 20 : 24}><FormCreate
+                    <ACol span={button ? 20 : 24}><Type
                         key={key}
                         on={{
                             'update:value': (formData) => this.formData(key, formData),
@@ -265,8 +268,5 @@ export default {
                     {button ? <ACol span={2} pull={1} push={1}>{this.makeIcon(keys.length, index, key)}</ACol> : null}
                 </ARow>
             })}</div>
-    },
-    beforeMount() {
-        this.$options.components.FormCreate = this.formCreateInject.form.$form();
     }
 }
