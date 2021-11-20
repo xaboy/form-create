@@ -187,7 +187,7 @@ export default function createGroup(config) {
                 this.addRule(i, true);
             },
             del(index, key) {
-                if (this.disabled || false === this.onBeforeRemove(this.value)) {
+                if (this.disabled || false === this.onBeforeRemove(this.value, index)) {
                     return;
                 }
                 this.removeRule(key, true);
