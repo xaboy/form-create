@@ -2,7 +2,7 @@
   "name": "@form-create/component-elm-upload",
   "version": "3.0.0-alpha.0",
   "description": "@form-create/element-ui 内置组件",
-  "main": "./dist/index.js",
+  "main": "./dist/index.min.js",
   "module": "./dist/index.esm.js",
   "unpkg": "./dist/index.min.js",
   "jsdelivr": "./dist/index.min.js",
