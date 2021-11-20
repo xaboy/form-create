@@ -289,6 +289,9 @@ export default function useRender(Render) {
                     on: {
                         'hook:mounted': () => {
                             this.onMounted(ctx);
+                        },
+                        'fc.sub-form': (subForm) => {
+                            this.$handle.addSubForm(ctx, subForm);
                         }
                     },
                 }
