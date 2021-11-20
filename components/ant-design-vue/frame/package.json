@@ -3,7 +3,7 @@
   "version": "3.0.0-alpha.0",
   "description": "@form-create/ant-design-vue 内置组件",
   "main": "./dist/index.js",
-  "module": "./dist/index.js",
+  "module": "./dist/index.esm.js",
   "unpkg": "./dist/index.js",
   "jsdelivr": "./dist/index.js",
   "scripts": {
@@ -48,8 +48,12 @@
     "extendExternals": [
       "@ant-design/icons-vue"
     ],
+    "extendGlobal": {
+      "@ant-design/icons-vue": "iconsVue"
+    },
     "formats": [
-      "umd"
+      "umd",
+      "esm"
     ]
   }
 }

@@ -18,7 +18,6 @@ function sleep(ms) {
 let spinner: Ora;
 const build = async (target: string, comp: string, targetName: string) => {
   dayjs().startOf('millisecond');
-  spinner.text = chalk.bold.yellow(`start build ${targetName} ui components with ${comp} \n`);
   /// env 先写死
   const env = 'production'
   await execa(
@@ -36,7 +35,7 @@ const build = async (target: string, comp: string, targetName: string) => {
     ],
     { stdio: 'inherit' }
   );
-  spinner.text = chalk.bold.green(`finished build ${targetName} ui components with ${comp} time: ${dayjs().startOf('millisecond').format('SSS')}ms. \n `);
+  console.log('build task time' + ' ' + dayjs().format('YYYY-MM-DD HH:mm:ss'))
 }
 
 
@@ -64,8 +63,6 @@ const buildAll = async (comAllTargets) => {
 }
 
 const createBuildComponents = async (cpaths: { [k: string]: any }) => {
-  const tips = chalk.redBright.bold('\n start build all components \n')
-  spinner = ora(tips).start()
   /// 根据每个不同的ui库去生成每个ui库下面的不同的组件打包
   const cps = Object.entries(cpaths)
   for (const cpath of cps) {

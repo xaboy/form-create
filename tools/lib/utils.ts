@@ -124,3 +124,12 @@ export const getSinglePackagePaths = (dir: string = 'packages', libname: string 
 
   return fpath
 }
+
+/// Get all the folder names under the current folder
+export const getFolderNames = (folder: string, uiFolder: string) => {
+  return fs.readdirSync(`${folder}/${uiFolder}`).map(uiFolderPath => {
+    if (fs.statSync(`${projRoot}/${folder}/${uiFolder}`).isDirectory()) {
+      return `${uiFolder}/${uiFolderPath}`
+    }
+  })
+}

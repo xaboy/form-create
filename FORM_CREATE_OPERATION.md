@@ -22,6 +22,6 @@
   # yarn build -p ant-design-vue element-ui # 指定打packages下的ant-design-vue,element-ui包
 
   ### 示例 ###
-  # yarn build -c ant-design-vue/frame element-ui/group common/\*
+  # yarn build -c ant-design-vue/frame element-ui/{group,frame} common/\*
 
 ```

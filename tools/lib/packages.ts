@@ -64,7 +64,7 @@
    await runParallel(os.cpus().length, comAllTargets[1], comAllTargets[0], build)
  }
 
- const createBuildComponents = async (cpaths: { [k: string]: any }) => {
+ const createBuildPackages = async (cpaths: { [k: string]: any }) => {
    const tips = chalk.redBright.bold('\n start build all packages \n')
    spinner = ora(tips).start()
    /// 根据每个不同的ui库去生成每个ui库下面的不同的组件打包
@@ -74,4 +74,4 @@
    }
  }
 
- export default createBuildComponents
+ export default createBuildPackages
