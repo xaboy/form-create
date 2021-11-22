@@ -1,5 +1,5 @@
 import $FormCreate from '../components/formCreate';
-import {createApp, h, reactive, ref, watch} from 'vue';
+import {createApp, h, reactive, ref, watch, nextTick} from 'vue';
 import makerFactory from '../factory/maker';
 import Handle from '../handler';
 import fetch from './fetch';
@@ -154,7 +154,7 @@ export default function FormCreateFactory(config) {
     function FormCreate(vm) {
         extend(this, {
             create,
-            vm: vm.ctx,
+            vm,
             manager: createManager(config.manager),
             parsers,
             providers,
@@ -170,7 +170,7 @@ export default function FormCreateFactory(config) {
             options: ref({}),
             extendApi: config.extendApi || (api => api)
         })
-        this.vm.$nextTick(() => {
+        nextTick(() => {
             watch(this.options, () => {
                 this.$handle.$manager.updateOptions(this.options.value);
                 this.api().refresh();
@@ -184,21 +184,21 @@ export default function FormCreateFactory(config) {
     extend(FormCreate.prototype, {
         init() {
             if (this.isSub()) {
-                this.unwatch = this.vm.$watch(() => this.vm.parent.option, () => {
+                this.unwatch = watch(() => this.vm.parent.option, () => {
                     this.initOptions(this.options.value);
                     this.$handle.api.refresh();
                 }, {deep: true});
             }
-            this.initOptions(this.vm.option || {});
+            this.initOptions(this.vm.props.option || {});
             this.$handle.init();
         },
         isSub() {
-            return this.vm.parent && this.vm.extendOption;
+            return this.vm.setupState.parent && this.vm.setupState.extendOption;
         },
         initOptions(options) {
             this.options.value = {formData: {}, submitBtn: {}, resetBtn: {}, ...deepCopy(globalConfig)};
             if (this.isSub()) {
-                this.options.value = this.mergeOptions(this.options.value, this.vm.parent.fapi.config || {}, true);
+                this.options.value = this.mergeOptions(this.options.value, this.vm.setupState.parent.setupState.fapi.config || {}, true);
             }
             this.updateOptions(options);
         },

@@ -109,7 +109,7 @@ export default function extendApi(api, h) {
                     let formData = api.formData();
                     is.Function(successFn) && invoke(() => successFn(formData, api));
                     is.Function(h.options.onSubmit) && invoke(() => h.options.onSubmit(formData, api));
-                    h.vm.$emit('submit', formData, api);
+                    h.vm.emit('submit', formData, api);
                     resolve(formData);
                 }).catch((...args) => {
                     is.Function(failFn) && invoke(() => failFn(api, ...args));

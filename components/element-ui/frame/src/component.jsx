@@ -1,6 +1,6 @@
 import toArray from '@form-create/utils/lib/toarray';
 import Mitt from '@form-create/utils/lib/mitt';
-import {defineComponent} from 'vue';
+import {defineComponent, nextTick} from 'vue';
 import './style.css';
 
 const NAME = 'fcFrame';
@@ -301,7 +301,7 @@ export default defineComponent({
         }
 
         const {width = '30%', height, src, title, modalTitle} = this.$props;
-        this.$nextTick(() => {
+        nextTick(() => {
             if (this.$refs.frame) {
                 this.frameLoad(this.$refs.frame.contentWindow || {});
             }

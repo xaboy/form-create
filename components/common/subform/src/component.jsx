@@ -1,4 +1,4 @@
-import {defineComponent, reactive, markRaw} from 'vue';
+import {defineComponent, reactive, markRaw, nextTick} from 'vue';
 
 const NAME = 'fcSubForm';
 
@@ -60,7 +60,7 @@ export default defineComponent({
         add$f(api) {
             this.subApi = api;
             this.formCreateInject.subForm(api);
-            this.$nextTick(() => {
+            nextTick(() => {
                 this.syncDisabled && api.disabled(this.disabled);
                 this.$emit('itemMounted', api);
             });

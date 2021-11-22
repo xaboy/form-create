@@ -5,12 +5,13 @@ import {err} from '@form-create/utils/lib/console';
 import {baseRule} from '../factory/creator';
 import RuleContext from '../factory/context';
 import mergeProps from '@form-create/utils/lib/mergeprops';
+import {nextTick} from 'vue';
 
 export default function useLoader(Handler) {
     extend(Handler.prototype, {
         nextRefresh(fn) {
             const id = this.loadedId;
-            this.vm.$nextTick(() => {
+            nextTick(() => {
                 id === this.loadedId && (fn ? fn() : this.refresh());
             });
         },
@@ -56,7 +57,7 @@ export default function useLoader(Handler) {
                 on: rule.sync.reduce((pre, prop) => {
                     pre[`update:${prop}`] = (val) => {
                         rule.props[prop] = val;
-                        this.vm.$emit('sync', prop, val, rule, this.fapi);
+                        this.vm.emit('sync', prop, val, rule, this.fapi);
                     }
                     return pre
                 }, {})
@@ -78,7 +79,7 @@ export default function useLoader(Handler) {
                 if (this.pageEnd) {
                     this.bus.$emit('load-end');
                 }
-                this.vm.renderRule();
+                this.vm.setupState.renderRule();
                 this.syncForm();
             });
         },
@@ -134,7 +135,7 @@ export default function useLoader(Handler) {
                 this.ruleEffect(rule, 'init', {repeat: isRepeat()});
 
                 if (isRepeat()) {
-                    this.vm.$emit('repeat-field', _rule, this.api);
+                    this.vm.emit('repeat-field', _rule, this.api);
                 }
 
                 let ctx;
@@ -238,7 +239,7 @@ export default function useLoader(Handler) {
                             valid
                         })
                             : ctx.ctrlRule.splice(ctx.ctrlRule.indexOf(ctrl), 1);
-                        this.vm.$nextTick(() => {
+                        nextTick(() => {
                             this.api.hidden(!valid, rule);
                         });
                         return;
@@ -269,7 +270,7 @@ export default function useLoader(Handler) {
                     }
                 });
             });
-            this.vm.$emit('control', ctx.origin, this.api);
+            this.vm.emit('control', ctx.origin, this.api);
             this.effect(ctx, 'control');
             return flag;
         },
@@ -301,7 +302,7 @@ export default function useLoader(Handler) {
         },
         //todo 组件生成全部通过 alias
         refresh() {
-            this.vm.refresh();
+            this.vm.setupState.refresh();
         },
     });
 }

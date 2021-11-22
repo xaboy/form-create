@@ -15,7 +15,7 @@ export default function useInput(Handler) {
             this.setFormData(ctx, formValue);
             this.syncValue();
             this.valueChange(ctx, value);
-            this.vm.$emit('change', ctx.field, value, ctx.origin, this.api, setFlag);
+            this.vm.emit('change', ctx.field, value, ctx.origin, this.api, setFlag);
             this.effect(ctx, 'value');
         },
         onInput(ctx, value) {
@@ -80,7 +80,7 @@ export default function useInput(Handler) {
             if (this.deferSyncFn) {
                 return this.deferSyncFn.sync = true;
             }
-            this.vm.updateValue({...this.form});
+            this.vm.setupState.updateValue({...this.form});
         },
         isChange(ctx, value) {
             return JSON.stringify(this.getFormData(ctx)) !== JSON.stringify(value);

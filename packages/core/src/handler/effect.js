@@ -1,6 +1,7 @@
 import extend from '@form-create/utils/lib/extend';
 import is, {hasProperty} from '@form-create/utils/lib/type';
 import mergeProps from '@form-create/utils/lib/mergeprops';
+import {watch} from 'vue';
 
 
 export default function useEffect(Handler) {
@@ -29,7 +30,7 @@ export default function useEffect(Handler) {
         watchEffect(ctx) {
             const vm = this.vm;
             Object.keys(ctx.rule.effect || {}).forEach(k => {
-                ctx.watch.push(vm.$watch(() => ctx.rule.effect[k], (n) => {
+                ctx.watch.push(watch(() => ctx.rule.effect[k], (n) => {
                     this.effect(ctx, 'watch', {[k]: n});
                 }, {deep: true}));
             });

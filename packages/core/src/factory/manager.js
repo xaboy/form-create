@@ -40,7 +40,7 @@ extend(Manager.prototype, {
     beforeRender() {
     },
     form() {
-        return this.vm.$refs[this.ref];
+        return this.vm.refs[this.ref];
     },
     mergeOptions(args, opt) {
         return mergeProps(args.map(v => this.tidyOptions(v)), opt, this.mergeOptionsRule);

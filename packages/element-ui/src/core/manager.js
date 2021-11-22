@@ -37,7 +37,7 @@ export default {
         });
     },
     clearValidateState(ctx) {
-        const fItem = this.vm.$refs[ctx.wrapRef];
+        const fItem = this.vm.refs[ctx.wrapRef];
         if (fItem) {
             fItem.clearValidate();
         }

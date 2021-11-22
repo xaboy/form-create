@@ -1,6 +1,6 @@
 import toArray from '@form-create/utils/lib/toarray';
 import Mitt from '@form-create/utils/lib/mitt';
-import {defineComponent, resolveComponent} from 'vue';
+import {defineComponent, resolveComponent, nextTick} from 'vue';
 import {CloseCircleOutlined, FolderOutlined, FileOutlined, DeleteOutlined, EyeOutlined} from '@ant-design/icons-vue';
 import './style.css';
 
@@ -309,7 +309,7 @@ export default defineComponent({
             Node = this.makeFiles();
 
         const {width = '30%', height, src, title, modalTitle} = this.$props;
-        this.$nextTick(() => {
+        nextTick(() => {
             if (this.$refs.frame) {
                 this.frameLoad(this.$refs.frame.contentWindow || {});
             }

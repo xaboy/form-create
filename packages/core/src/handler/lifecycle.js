@@ -19,7 +19,7 @@ export default function useLifecycle(Handler) {
         lifecycle(name) {
             const fn = this.options[name];
             is.Function(fn) && invoke(() => fn(this.api));
-            this.vm.$emit(name, this.api);
+            this.vm.emit(name, this.api);
         },
     })
 }

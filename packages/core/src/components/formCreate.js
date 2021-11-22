@@ -37,7 +37,7 @@ export default function $FormCreate(FormCreate) {
         },
         setup(props) {
             const vm = getCurrentInstance();
-            provide('parentFC', vm.ctx);
+            provide('parentFC', vm);
             const parent = inject('parentFC');
 
             const {rule, modelValue} = toRefs(props);
@@ -69,7 +69,7 @@ export default function $FormCreate(FormCreate) {
             watch(() => [...rule.value], function (n) {
                 if (fc.$handle.isBreakWatch() || n.length === data.renderRule.length && n.every(v => data.renderRule.indexOf(v) > -1)) return;
                 fc.$handle.reloadRule(rule.value);
-                vm.ctx.renderRule();
+                vm.setupState.renderRule();
             })
 
             watch(props.option, function (n) {
@@ -96,13 +96,14 @@ export default function $FormCreate(FormCreate) {
                 updateValue(value) {
                     if (data.destroyed) return;
                     data.updateValue = JSON.stringify(value);
-                    this.$emit('update:modelValue', value);
+                    vm.emit('update:modelValue', value);
                 }
             }
         },
-        beforeCreate() {
-            this.fc.init();
-            this.$emit('update:api', this.fapi);
+        created() {
+            const vm = getCurrentInstance();
+            vm.setupState.fc.init();
+            vm.emit('update:api', vm.setupState.fapi);
         },
     })
 }

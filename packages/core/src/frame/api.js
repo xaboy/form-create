@@ -65,7 +65,7 @@ export default function Api(h) {
             return h.rules
         },
         get parent() {
-            return h.vm.parent && h.vm.parent.fapi
+            return h.vm.parent && h.vm.parent.setupState.fapi
         },
         get children() {
             return allSubForm();
@@ -247,7 +247,7 @@ export default function Api(h) {
             api.refresh();
         },
         hideForm: (hide) => {
-            h.vm._.setupState.isShow = !hide;
+            h.vm.setupState.isShow = !hide;
         },
         changeStatus: () => {
             return h.changeStatus;
@@ -325,7 +325,7 @@ export default function Api(h) {
         },
         el(id) {
             const ctx = h.getCtx(id);
-            if (ctx) return ctx.el || h.vm.$refs[ctx.ref];
+            if (ctx) return ctx.el || h.vm.refs[ctx.ref];
         },
         closeModal: (id) => {
             h.bus.$emit('fc:closeModal:'+id);

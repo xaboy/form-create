@@ -1,5 +1,5 @@
 import {hasProperty} from '@form-create/utils/lib/type';
-import {defineComponent, markRaw} from 'vue';
+import {defineComponent, markRaw, nextTick} from 'vue';
 import {PlusCircleOutlined, MinusCircleOutlined} from '@ant-design/icons-vue';
 
 const NAME = 'fcGroup';
@@ -144,13 +144,13 @@ export default defineComponent({
             };
             this.cacheRule[++this.len] = {rule, options};
             if (emit) {
-                this.$nextTick(() => this.$emit('add', rule, Object.keys(this.cacheRule).length - 1));
+                nextTick(() => this.$emit('add', rule, Object.keys(this.cacheRule).length - 1));
             }
         },
         add$f(i, key, $f) {
             this.cacheRule[key].$f = $f;
             this.subForm();
-            this.$nextTick(() => {
+            nextTick(() => {
                 if (this.syncDisabled) {
                     $f.disabled(this.disabled);
                 }
@@ -165,7 +165,7 @@ export default defineComponent({
             delete this.cacheRule[key];
             delete this.cacheValue[key];
             if (emit) {
-                this.$nextTick(() => this.$emit('remove', index));
+                nextTick(() => this.$emit('remove', index));
             }
         },
         add() {

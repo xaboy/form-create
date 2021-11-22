@@ -4,7 +4,7 @@ import is from '@form-create/utils/lib/type';
 import {makeSlotBag, mergeRule} from '../frame/util';
 import toCase, {lower} from '@form-create/utils/lib/tocase';
 import {deepSet, toLine} from '@form-create/utils';
-import {computed} from 'vue';
+import {computed, nextTick} from 'vue';
 
 export default function useRender(Render) {
     extend(Render.prototype, {
@@ -13,7 +13,7 @@ export default function useRender(Render) {
         },
         render() {
             // console.warn('renderrrrr', this.id);
-            if (!this.vm.isShow) {
+            if (!this.vm.setupState.isShow) {
                 return;
             }
             this.$manager.beforeRender();
@@ -98,8 +98,8 @@ export default function useRender(Render) {
                     }
                     const slot = 'type-' + toLine(ctx.type);
                     let _vn;
-                    if (this.vm.$slots[slot]) {
-                        _vn = this.vm.$slots[slot]({
+                    if (this.vm.slots[slot]) {
+                        _vn = this.vm.slots[slot]({
                             rule,
                             prop,
                             children,
@@ -207,7 +207,7 @@ export default function useRender(Render) {
             return ctx.prop;
         },
         onMounted(ctx, el) {
-            ctx.el = this.vm.$refs[ctx.ref] || el;
+            ctx.el = this.vm.refs[ctx.ref] || el;
             ctx.parser.mounted(ctx);
             this.$handle.effect(ctx, 'mounted');
         },
@@ -226,7 +226,7 @@ export default function useRender(Render) {
                     return this.renderSlot(slotBag, child.__fc__, ctx);
                 }
                 if (child.type) {
-                    this.vm.$nextTick(() => {
+                    nextTick(() => {
                         this.$handle.loadChildren(children, ctx);
                         this.$handle.refresh();
                     });

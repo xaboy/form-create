@@ -20,13 +20,13 @@ export default function usePage(Handler) {
                 pageEnd: this.rules.length <= first,
             })
 
-            this.bus.$on('page-end', () => this.vm.$emit('page-end', this.api));
+            this.bus.$on('page-end', () => this.vm.emit('page-end', this.api));
             this.pageLoad();
         },
         pageLoad() {
             const pageFn = () => {
                 if (this.pageEnd) {
-                    this.vm.$off(EVENT, pageFn);
+                    this.bus.$off(EVENT, pageFn);
                     this.bus.$emit('page-end');
                 } else {
                     this.first += this.limit;
@@ -35,7 +35,7 @@ export default function usePage(Handler) {
                     this.refresh();
                 }
             }
-            this.vm.$on(EVENT, pageFn);
+            this.bus.$on(EVENT, pageFn);
         },
     })
 }

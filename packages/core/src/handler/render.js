@@ -18,10 +18,10 @@ export default function useRender(Handler) {
             // console.warn('%c render', 'color:green');
             ++this.loadedId;
 
-            if (this.vm.unique > 0)
+            if (this.vm.setupState.unique > 0)
                 return this.$render.render();
             else {
-                this.vm.unique = 1;
+                this.vm.setupState.unique = 1;
                 return [];
             }
         },

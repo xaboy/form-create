@@ -4,7 +4,7 @@ import BaseParser from '../factory/parser';
 import {$del} from '@form-create/utils/lib';
 import is from '@form-create/utils/lib/type';
 import {invoke} from '../frame/util';
-import {toRef} from 'vue';
+import {toRef, watch} from 'vue';
 import {attrs} from '../frame/attrs';
 
 
@@ -48,7 +48,7 @@ export default function useContext(Handler) {
             this.setIdCtx(ctx, field, 'field');
             this.setFormData(ctx, ctx.parser.toFormValue(rule.value, ctx));
             if (this.isMounted && !this.reloading) {
-                this.vm.$emit('change', ctx.field, rule.value, ctx.origin, this.api);
+                this.vm.emit('change', ctx.field, rule.value, ctx.origin, this.api);
             }
         },
         getParser(ctx) {
@@ -79,7 +79,7 @@ export default function useContext(Handler) {
                 const ref = toRef(ctx.rule, key);
                 const flag = key === 'children';
                 ctx.refRule[key] = ref;
-                ctx.watch.push(this.vm.$watch(flag ? () => [...(ref.value || [])] : () => ref.value, (_, o) => {
+                ctx.watch.push(watch(flag ? () => [...(ref.value || [])] : () => ref.value, (_, o) => {
                     const n = ref.value;
                     if (this.isBreakWatch()) return;
                     if (flag && ctx.parser.loadChildren === false) {
@@ -119,7 +119,7 @@ export default function useContext(Handler) {
             });
             if (ctx.input) {
                 const val = toRef(ctx.rule, 'value');
-                ctx.watch.push(this.vm.$watch(() => val.value, () => {
+                ctx.watch.push(watch(() => val.value, () => {
                     const formValue = ctx.parser.toFormValue(val.value, ctx);
                     if (this.isChange(ctx, formValue)) {
                         this.setValue(ctx, val.value, formValue, true);
@@ -152,7 +152,7 @@ export default function useContext(Handler) {
                         }
                     }
                     if (ctx.root === this.rules) {
-                        this.vm.renderRule();
+                        this.vm.setupState.renderRule();
                     }
                 }
             }, input);
@@ -165,8 +165,8 @@ export default function useContext(Handler) {
             this.$render.clearCache(ctx);
             ctx.delete();
             this.effect(ctx, 'deleted');
-            input && !this.fieldCtx[field] && this.vm.$emit('removeField', field, ctx.rule, this.api);
-            ctx.rule.__ctrl || this.vm.$emit('removeRule', ctx.rule, this.api);
+            input && !this.fieldCtx[field] && this.vm.emit('removeField', field, ctx.rule, this.api);
+            ctx.rule.__ctrl || this.vm.emit('removeRule', ctx.rule, this.api);
             return ctx;
         },
     })
