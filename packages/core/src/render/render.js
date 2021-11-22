@@ -3,7 +3,7 @@ import mergeProps from '@form-create/utils/lib/mergeprops';
 import is from '@form-create/utils/lib/type';
 import {makeSlotBag, mergeRule} from '../frame/util';
 import toCase, {lower} from '@form-create/utils/lib/tocase';
-import {$set, deepSet, toLine} from '@form-create/utils';
+import {deepSet, toLine} from '@form-create/utils';
 import {computed} from 'vue';
 
 export default function useRender(Render) {

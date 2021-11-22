@@ -1,4 +1,3 @@
-import data from '../../data/src/province_city'
 
 //自定义属性 自动插入省市区数据
 export default {
@@ -7,7 +6,7 @@ export default {
     //rule初始化
     init(val, rule, fapi) {
         console.log('%c init', 'color:#f56c6c;font-size:20px;', val, rule.field);
-        rule.props.options = data;
+        rule.props.options = [];
     },
     //rule加载完成
     loaded(val, rule, fapi) {

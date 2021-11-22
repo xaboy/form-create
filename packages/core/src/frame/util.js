@@ -4,8 +4,9 @@ import mergeProps from '@form-create/utils/lib/mergeprops';
 import {arrayAttrs, normalAttrs} from './attrs';
 import {logError} from '@form-create/utils/lib/console';
 import {isVNode} from 'vue';
-export {parseJson, parseFn, toJson} from '@form-create/utils/lib/json';
 import {upper} from '@form-create/utils/lib/toline';
+
+export {parseJson, parseFn, toJson} from '@form-create/utils/lib/json';
 
 export function enumerable(value, writable) {
     return {
