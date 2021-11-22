@@ -59,7 +59,12 @@ const ExtendGlobal = packageOptions.extendGlobal || {}
 const isMult = packageOptions.isMulti
 
 
-let hasTSChecked = false
+const _banner = {
+  author: isPackaegs ? `2018-${new Date().getFullYear()} ${pkg.author}\n * Github https://github.com/xaboy/form-create` : `2018-${new Date().getFullYear()} ${pkg.author}\n * Github https://github.com/xaboy/form-create with ${process.env.BUILD_TARGET_COMP}`,
+  license: pkg.license,
+  name: libName,
+  version
+}
 
 /// output config format and file
 const outputConfigs = {
@@ -215,17 +220,20 @@ function createConfig(format, output, plugins = []) {
   const _plugins = createRollupPlugins(plugins, format);
   const _globals = ExtendGlobal ? Object.assign({}, {vue: 'Vue'}, ExtendGlobal) : {vue: 'Vue'};
   let _input = ''
-  let _output = {}
+  let _output = {
+    banner: createBanner(_banner, pkg)
+  }
   if (isMult) {
     _input = createMultiInput()
-    _output = {
+    _output = Object.assign({}, _output, {
       format: 'esm',
       dir: resolve('dist')
-    }
+    })
   } else {
     _input = resolve(entryFile)
     _output = {
       ...output,
+      ..._output,
       globals: _globals,
       name: exportName,
       exports: 'named',
@@ -255,20 +263,6 @@ function createConfig(format, output, plugins = []) {
 
 function createMinifiedConfig(format) {
   /// example
-  /// banner: {
-  ///   author: `2018-${new Date().getFullYear()} ${author}\n * Github https://github.com/xaboy/form-create with ${name}`,
-  ///   license,
-  ///   name,
-  ///   version
-  /// }
-
-  const _banner = {
-    author: isPackaegs ? `2018-${new Date().getFullYear()} ${pkg.author}\n * Github https://github.com/xaboy/form-create` : `2018-${new Date().getFullYear()} ${pkg.author}\n * Github https://github.com/xaboy/form-create with ${process.env.BUILD_TARGET_COMP}`,
-    license: pkg.license,
-    name: libName,
-    version
-  }
-
   return createConfig(
     format,
     {
