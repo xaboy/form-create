@@ -109,6 +109,7 @@ export default function useContext(Handler) {
                                 this.$render.initOrgChildren();
                             }
                             flag && this.loadChildren(n, ctx);
+                            this.vm.$emit('update', this.api);
                         });
                     }
                     this.$render.clearCache(ctx);

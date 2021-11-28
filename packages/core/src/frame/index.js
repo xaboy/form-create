@@ -233,6 +233,7 @@ export default function FormCreateFactory(config) {
         },
         created() {
             this.$handle.init();
+            this.vm.$emit('created', this.api());
         },
         api() {
             return this.$handle.api;

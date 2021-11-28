@@ -86,6 +86,7 @@ export default function $FormCreate(FormCreate) {
             Object.keys(this.formCreate.prop).forEach(k => {
                 extend(this.$options[k], this.formCreate.prop[k]);
             })
+            this.$emit('beforeCreate', this.formCreate.api());
         },
     }
 }

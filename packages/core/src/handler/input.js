@@ -133,6 +133,7 @@ export default function useInput(Handler) {
             if (this.refreshControl(ctx)) {
                 this.$render.clearCacheAll();
                 this.loadRule();
+                this.vm.$emit('update', this.api);
                 this.refresh();
             }
             this.refreshUpdate(ctx, val);
