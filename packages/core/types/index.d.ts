@@ -286,6 +286,7 @@ export interface BaseOptions<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
         [key: string]: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
     };
     injectEvent?: boolean;
+    preview?: boolean;
     formData?: FormData;
     el?: Element | string;
     page?: Boolean | {
@@ -472,6 +473,7 @@ export interface Parser {
     toValue?: (value: any, ctx: Object) => void;
     mounted?: (ctx: Object) => void;
     render?: (children: VNode[], ctx: Object) => VNode | VNode[];
+    preview?: (children: VNode[], ctx: Object) => VNode | VNode[];
     mergeProp?: (ctx: Object) => void;
 }
 

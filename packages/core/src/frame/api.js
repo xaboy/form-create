@@ -43,9 +43,6 @@ export default function Api(h) {
     }
 
     const api = {
-        helper: {
-            tidyFields, props
-        },
         get config() {
             return h.options
         },
@@ -350,6 +347,9 @@ export default function Api(h) {
         },
         emit(name, ...args) {
             h.vm.$emit(name, ...args);
+        },
+        helper: {
+            tidyFields, props
         }
     };
 
