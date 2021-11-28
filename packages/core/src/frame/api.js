@@ -178,6 +178,12 @@ export default function Api(h) {
             });
             h.refresh();
         },
+        all(origin) {
+            return Object.keys(h.ctxs).map(k => {
+                const ctx = h.ctxs[k];
+                return origin ? ctx.origin : ctx.rule;
+            });
+        },
         model(origin) {
             return h.fields().reduce((initial, key) => {
                 const ctx = h.fieldCtx[key][0];
@@ -341,6 +347,9 @@ export default function Api(h) {
         nextRefresh(fn) {
             h.nextRefresh();
             fn && invoke(fn);
+        },
+        emit(name, ...args) {
+            h.vm.$emit(name, ...args);
         }
     };
 
