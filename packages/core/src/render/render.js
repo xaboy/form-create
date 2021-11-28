@@ -157,6 +157,7 @@ export default function useRender(Render) {
         renderCtx(ctx, parent) {
             if (ctx.type === 'hidden') return;
             const rule = ctx.rule;
+            const preview = this.options.preview || false;
             if ((!this.cache[ctx.id]) || this.cache[ctx.id].slot !== rule.slot) {
                 let vn;
                 let cacheFlag = true;
@@ -200,12 +201,13 @@ export default function useRender(Render) {
                             vn = this.vm.$scopedSlots[slot]({
                                 rule,
                                 prop,
+                                preview,
                                 children,
                                 api: this.$handle.api,
                                 model: prop.model || {}
                             });
                         } else {
-                            vn = ctx.parser.render(children, ctx);
+                            vn = preview ? ctx.parser.preview(children, ctx) : ctx.parser.render(children, ctx);
                         }
                     }
                     vn = this.renderSides(vn, ctx);
@@ -255,19 +257,21 @@ export default function useRender(Render) {
         },
         injectProp(ctx) {
             if (!this.vm.ctxInject[ctx.id]) {
-                $set(this.vm.ctxInject, ctx.id, {});
+                $set(this.vm.ctxInject, ctx.id, {
+                    api: this.$handle.api,
+                    form: this.fc.create,
+                    subForm: subForm => {
+                        this.$handle.addSubForm(ctx, subForm);
+                    },
+                    field: ctx.field,
+                    rule: ctx.rule,
+                });
             }
             const inject = this.vm.ctxInject[ctx.id];
             extend(inject, {
-                api: this.$handle.api,
-                form: this.fc.create,
-                subForm: subForm => {
-                    this.$handle.addSubForm(ctx, subForm);
-                },
-                field: ctx.field,
+                preview: this.options.preview || false,
                 options: ctx.prop.options,
                 children: ctx.rule.children,
-                rule: ctx.rule,
                 prop: (function () {
                     const temp = {...ctx.prop};
                     temp.on = temp.on ? {...temp.on} : {};
