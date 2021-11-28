@@ -132,7 +132,7 @@ export default {
         return (inline === true || isFalse(_col) || isFalse(col.show)) ? item : this.makeCol(rule, uni, [item]);
     },
     isTitle(rule) {
-        if(this.options.form.title === false) return false;
+        if (this.options.form.title === false) return false;
         const title = rule.title;
         return !((!title.title && !title.native) || isFalse(title.show))
     },
@@ -142,38 +142,33 @@ export default {
         const isTip = isTooltip(infoProp);
         const form = this.options.form;
         const children = [(titleProp.title || '') + (form.labelSuffix || form['label-suffix'] || '')];
-        const titleFn = (pop) => this.$r(mergeProps([titleProp, {
-            props: titleProp,
-            slot: titleProp.slot || (pop ? (isTip ? 'default' : 'reference') : 'label'),
-            key: `${uni}tit`,
-            type: titleProp.type || 'span',
-        }]), children);
 
-        if (!isFalse(infoProp.show) && (infoProp.info || infoProp.native)) {
-            if (infoProp.icon !== false) {
-                children[infoProp.align !== 'left' ? 'unshift' : 'push'](this.$r({
-                    type: 'i',
-                    class: infoProp.icon === true ? 'el-icon-warning' : infoProp.icon,
-                    key: `${uni}i`
-                }));
-            }
+        if (!isFalse(infoProp.show) && (infoProp.info || infoProp.native) && !isFalse(infoProp.icon)) {
             const prop = {
                 type: infoProp.type || 'popover',
                 props: {...infoProp},
                 key: `${uni}pop`,
                 slot: 'label'
             };
-
             const field = 'content';
             if (infoProp.info && !hasProperty(prop.props, field)) {
                 prop.props[field] = infoProp.info;
             }
-
-            return this.$r(mergeProps([infoProp, prop]), [
-                titleFn(true)
-            ])
+            children[infoProp.align !== 'left' ? 'unshift' : 'push'](this.$r(mergeProps([infoProp, prop]), [
+                this.$r({
+                    type: 'i',
+                    slot: isTip ? 'default' : 'reference',
+                    class: infoProp.icon === true ? 'el-icon-warning' : infoProp.icon,
+                    key: `${uni}i`
+                })
+            ]));
         }
-        return titleFn();
+        return this.$r(mergeProps([titleProp, {
+            props: titleProp,
+            slot: titleProp.slot || 'label',
+            key: `${uni}tit`,
+            type: titleProp.type || 'span',
+        }]), children);
     },
     makeCol(rule, uni, children) {
         const col = rule.col;

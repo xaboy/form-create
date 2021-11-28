@@ -132,33 +132,32 @@ export default {
             type: titleProp.type || 'span',
         }]), children);
 
-        if (!isFalse(infoProp.show) && (infoProp.info || infoProp.native)) {
-            if (infoProp.icon !== false) {
-                children[infoProp.align !== 'left' ? 'unshift' : 'push'](this.$r({
-                    type: 'icon',
-                    props: {type: infoProp.icon === true ? iviewConfig.infoIcon : infoProp.icon, size: 16},
-                    style: 'margin-top: -1px',
-                    key: `${uni}i`
-                }));
-            }
-
+        if (!isFalse(infoProp.show) && (infoProp.info || infoProp.native) && !isFalse(infoProp.icon)) {
             const prop = {
                 type: infoProp.type || 'poptip',
                 props: {...infoProp},
                 key: `${uni}pop`,
                 slot: 'label'
             };
-
             const field = 'content';
             if (infoProp.info && !hasProperty(prop.props, field)) {
                 prop.props[field] = infoProp.info;
             }
-
-            return this.$r(mergeProps([infoProp, prop]), [
-                titleFn(true)
-            ])
+            children[infoProp.align !== 'left' ? 'unshift' : 'push'](this.$r(mergeProps([infoProp, prop]), [
+                this.$r({
+                    type: 'icon',
+                    props: {type: infoProp.icon === true ? iviewConfig.infoIcon : infoProp.icon, size: 16},
+                    style: 'margin-top: -1px',
+                    key: `${uni}i`
+                })
+            ]));
         }
-        return titleFn();
+        return this.$r(mergeProps([titleProp, {
+            props: titleProp,
+            slot: titleProp.slot || 'label',
+            key: `${uni}tit`,
+            type: titleProp.type || 'span',
+        }]), children);
     },
     makeCol(rule, uni, children) {
         const col = rule.col;
