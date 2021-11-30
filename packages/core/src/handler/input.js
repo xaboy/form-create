@@ -7,7 +7,7 @@ import toArray from '@form-create/utils/lib/toarray';
 export default function useInput(Handler) {
     extend(Handler.prototype, {
         getValue(ctx) {
-            if (!hasProperty(ctx, 'cacheValue')) {
+            if (is.Undef(ctx.cacheValue)) {
                 ctx.cacheValue = ctx.parser.toValue(this.getFormData(ctx), ctx);
             }
             return ctx.cacheValue;
