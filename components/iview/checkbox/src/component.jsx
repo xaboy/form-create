@@ -24,18 +24,16 @@ export default {
             trueValue: []
         }
     },
-    computed: {
+    methods: {
         options() {
             const opt = this.formCreateInject.options;
             return Array.isArray(opt) ? opt : [];
-        }
-    },
-    methods: {
+        },
         onInput(n) {
-            this.$emit('input', this.options.filter((opt) => n.indexOf(opt.label) !== -1).map((opt) => opt.value).filter(v => v !== undefined));
+            this.$emit('input', this.options().filter((opt) => n.indexOf(opt.label) !== -1).map((opt) => opt.value).filter(v => v !== undefined));
         },
         update() {
-            this.trueValue = this.value ? this.options.filter((opt) => this.value.indexOf(opt.value) !== -1)
+            this.trueValue = this.value ? this.options().filter((opt) => this.value.indexOf(opt.value) !== -1)
                 .map((option) => option.label) : []
         }
     },
@@ -44,7 +42,7 @@ export default {
     },
     render() {
         return <CheckboxGroup {...this.formCreateInject.prop} value={this.trueValue}
-            on-input={this.onInput}>{this.options.map((opt, index) => {
+            on-input={this.onInput}>{this.options().map((opt, index) => {
                 const props = {...opt};
                 delete props.value;
                 return <Checkbox {...{props}} key={'' + index + opt.value}/>
