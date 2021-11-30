@@ -1,6 +1,6 @@
 {
     "name": "@form-create/iview",
-    "version": "2.5.12",
+    "version": "2.5.13",
     "description": "iview动态表单|form-create is a form generation component that can generate dynamic rendering, data collection, verification and submission functions through JSON. Supports 3 UI frameworks, and supports the generation of any Vue components. Built-in 20 kinds of commonly used form components and custom components, no matter how complex forms can be easily handled.",
     "main": "./dist/form-create.min.js",
     "module": "./dist/form-create.min.js",
@@ -43,22 +43,22 @@
     },
     "homepage": "http://www.form-create.com",
     "dependencies": {
-        "@form-create/component-ivu-checkbox": "^2.5.12",
+        "@form-create/component-ivu-checkbox": "^2.5.13",
         "@form-create/component-ivu-frame": "^2.5.11",
         "@form-create/component-ivu-group": "^2.5.12",
-        "@form-create/component-ivu-radio": "^2.5.12",
+        "@form-create/component-ivu-radio": "^2.5.13",
         "@form-create/component-ivu-select": "^2.5.12",
         "@form-create/component-ivu-tree": "^2.5.11",
         "@form-create/component-ivu-upload": "^2.5.11",
         "@form-create/component-subform": "^2.5.12",
-        "@form-create/core": "^2.5.12",
+        "@form-create/core": "^2.5.13",
         "@form-create/utils": "^2.5.11"
     },
     "publishConfig": {
         "access": "public"
     },
     "devDependencies": {
-        "@form-create/component-wangeditor": "^2.5.5",
+        "@form-create/component-wangeditor": "^2.5.13",
         "@vue/cli-plugin-babel": "^4.5.9",
         "@vue/cli-service": "^4.5.3",
         "@vue/composition-api": "^1.0.0-beta.22",
