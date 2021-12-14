@@ -18,11 +18,11 @@ export default defineComponent({
         const {options} = toRefs(inject('formCreateInject'));
         const trueValue = ref([]);
         const value = toRef(props, 'modelValue');
-        const _options = computed(() => {
-            return Array.isArray(options) ? options : []
-        })
+        const _options = () => {
+            return Array.isArray(options.value) ? options.value : []
+        }
         const update = () => {
-            trueValue.value = value.value ? _options.value.filter((opt) => value.value.indexOf(opt.value) !== -1)
+            trueValue.value = value.value ? _options().filter((opt) => value.value.indexOf(opt.value) !== -1)
                 .map((option) => option.label) : []
         }
         update();
@@ -31,7 +31,7 @@ export default defineComponent({
             trueValue,
             value,
             onInput(n) {
-                _.emit('update:modelValue', _options.value.filter((opt) => n.indexOf(opt.label) !== -1).map((opt) => opt.value).filter(v => v !== undefined));
+                _.emit('update:modelValue', _options().filter((opt) => n.indexOf(opt.label) !== -1).map((opt) => opt.value).filter(v => v !== undefined));
             },
             update
         }
@@ -45,7 +45,7 @@ export default defineComponent({
         const name = this.type === 'button' ? 'ElCheckboxButton' : 'ElCheckbox';
         const Type = resolveComponent(name);
         return <ElCheckboxGroup {...this.$attrs} modelValue={this.trueValue} v-slots={getSlot(this.$slots, ['default'])}
-            onUpdate:modelValue={this.onInput}>{this.options.map((opt, index) => {
+            onUpdate:modelValue={this.onInput}>{this.options().map((opt, index) => {
                 const props = {...opt};
                 delete props.value;
                 return <Type {...props} key={name + index + opt.value}/>
