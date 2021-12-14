@@ -165,8 +165,8 @@ export default function useContext(Handler) {
             this.$render.clearCache(ctx);
             ctx.delete();
             this.effect(ctx, 'deleted');
-            input && !this.fieldCtx[field] && this.vm.emit('removeField', field, ctx.rule, this.api);
-            ctx.rule.__ctrl || this.vm.emit('removeRule', ctx.rule, this.api);
+            input && !this.fieldCtx[field] && this.vm.emit('remove-field', field, ctx.rule, this.api);
+            ctx.rule.__ctrl || this.vm.emit('remove-rule', ctx.rule, this.api);
             return ctx;
         },
     })

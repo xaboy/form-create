@@ -31,14 +31,14 @@ export default function $FormCreate(FormCreate) {
             modelValue: Object,
             api: Object,
         },
-        emits: ['update:api', 'update:modelValue', 'mounted', 'submit', 'change', 'emit-event', 'control', 'remove-rule', 'remove-field', 'sync'],
+        emits: ['update:api', 'update:modelValue', 'mounted', 'submit', 'change', 'emit-event', 'control', 'remove-rule', 'remove-field', 'sync', 'reload', 'repeat-field'],
         render() {
             return this.fc.render();
         },
         setup(props) {
             const vm = getCurrentInstance();
             provide('parentFC', vm);
-            const parent = inject('parentFC');
+            const parent = inject('parentFC', null);
 
             const {rule, modelValue} = toRefs(props);
 
