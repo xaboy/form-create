@@ -1,9 +1,11 @@
-import deepExtend from '@form-create/utils/lib/deepextend';
 import is from '@form-create/utils/lib/type';
 import mergeProps from '@form-create/utils/lib/mergeprops';
 import {arrayAttrs, normalAttrs} from './attrs';
 import {logError} from '@form-create/utils/lib/console';
-export {parseJson,parseFn,toJson} from '@form-create/utils/lib/json';
+import {parseJson, toJson} from '@form-create/utils/lib/json';
+
+export {parseFn} from '@form-create/utils/lib/json';
+export {parseJson, toJson}
 
 export function enumerable(value, writable) {
     return {
@@ -15,12 +17,12 @@ export function enumerable(value, writable) {
 }
 
 //todo 优化位置
-export function copyRule(rule, mode) {
-    return copyRules([rule], mode || false)[0];
+export function copyRule(rule) {
+    return copyRules([rule])[0];
 }
 
-export function copyRules(rules, mode) {
-    return deepExtend([], [...rules], mode || false);
+export function copyRules(rules) {
+    return parseJson(toJson(rules));
 }
 
 export function mergeRule(rule, merge) {
