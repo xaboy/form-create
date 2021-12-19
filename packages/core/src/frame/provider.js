@@ -29,6 +29,9 @@ function parseOpt(option) {
 
 function run(inject, rule, api) {
     let option = inject.value;
+    if (is.Function(option)) {
+        option = option(rule, api);
+    }
     option = parseOpt(option);
     if (!option || !option.action) {
         return false;
