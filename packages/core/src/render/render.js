@@ -263,6 +263,10 @@ export default function useRender(Render) {
                     subForm: subForm => {
                         this.$handle.addSubForm(ctx, subForm);
                     },
+                    options: [],
+                    children: [],
+                    prop: {},
+                    preview: false,
                     field: ctx.field,
                     rule: ctx.rule,
                 });

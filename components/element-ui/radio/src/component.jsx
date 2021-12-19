@@ -13,6 +13,12 @@ export default {
         type: String,
     },
     watch: {
+        'formCreateInject.options': {
+            handler() {
+                this.update();
+            },
+            deep: true,
+        },
         value() {
             this.update();
         }

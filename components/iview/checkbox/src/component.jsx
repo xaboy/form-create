@@ -15,6 +15,12 @@ export default {
         },
     },
     watch: {
+        'formCreateInject.options': {
+            handler() {
+                this.update();
+            },
+            deep: true,
+        },
         value() {
             this.update();
         }
