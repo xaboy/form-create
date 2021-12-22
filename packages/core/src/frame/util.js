@@ -3,6 +3,7 @@ import mergeProps from '@form-create/utils/lib/mergeprops';
 import {arrayAttrs, normalAttrs} from './attrs';
 import {logError} from '@form-create/utils/lib/console';
 import {parseJson, toJson} from '@form-create/utils/lib/json';
+import deepExtend from '@form-create/utils/lib/deepextend';
 
 export {parseFn} from '@form-create/utils/lib/json';
 export {parseJson, toJson}
@@ -21,8 +22,8 @@ export function copyRule(rule) {
     return copyRules([rule])[0];
 }
 
-export function copyRules(rules) {
-    return parseJson(toJson(rules));
+export function copyRules(rules, mode) {
+    return deepExtend([], [...rules], mode || false);
 }
 
 export function mergeRule(rule, merge) {
