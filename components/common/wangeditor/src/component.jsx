@@ -61,7 +61,7 @@ export default {
         return <div on-input={this.result} id={`editor${this.uni}`} style="line-height: normal;"/>
     },
     beforeDestroy() {
-        this.editor.destroy()
+        this.editor && this.editor.destroy()
         this.editor = null
     }
 }
