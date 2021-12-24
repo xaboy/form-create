@@ -116,7 +116,7 @@ export default function useInput(Handler) {
             return JSON.stringify(ctx.rule.value) !== JSON.stringify(value);
         },
         isQuote(ctx, value) {
-            return (is.Object(value) || Array.isArray(value)) && value === ctx.rule.value;
+            return (value === ctx.rule.value || is.Object(value) || Array.isArray(value) || is.Function(value));
         },
         refreshUpdate(ctx, val) {
             if (is.Function(ctx.rule.update)) {
