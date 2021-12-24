@@ -1,6 +1,6 @@
 {
     "name": "@form-create/iview4",
-    "version": "2.5.14",
+    "version": "2.5.15",
     "description": "view-design动态表单|form-create is a form generation component that can generate dynamic rendering, data collection, verification and submission functions through JSON. Supports 3 UI frameworks, and supports the generation of any Vue components. Built-in 20 kinds of commonly used form components and custom components, no matter how complex forms can be easily handled.",
     "main": "./dist/form-create.min.js",
     "module": "./dist/form-create.min.js",
@@ -44,14 +44,14 @@
     },
     "homepage": "http://www.form-create.com",
     "dependencies": {
-        "@form-create/core": "^2.5.14",
-        "@form-create/iview": "^2.5.14"
+        "@form-create/core": "^2.5.15",
+        "@form-create/iview": "^2.5.15"
     },
     "publishConfig": {
         "access": "public"
     },
     "devDependencies": {
-        "@form-create/component-wangeditor": "^2.5.13",
+        "@form-create/component-wangeditor": "^2.5.15",
         "@vue/cli-plugin-babel": "^4.5.9",
         "@vue/cli-service": "^4.5.3",
         "@vue/composition-api": "^1.0.0-beta.22",
