@@ -1,4 +1,4 @@
-import {defineComponent, inject, ref, resolveComponent, toRef, toRefs, computed} from 'vue';
+import {defineComponent, inject, ref, resolveComponent, toRef, toRefs, watch} from 'vue';
 import getSlot from '@form-create/utils/lib/slot';
 
 const NAME = 'fcCheckbox';
@@ -25,7 +25,9 @@ export default defineComponent({
             trueValue.value = value.value ? _options().filter((opt) => value.value.indexOf(opt.value) !== -1)
                 .map((option) => option.label) : []
         }
-        update();
+        watch(options, () => {
+            update();
+        }, {deep: true, immediate: true});
         return {
             options: _options,
             trueValue,

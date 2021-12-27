@@ -1,4 +1,4 @@
-import {computed, defineComponent, inject, ref, resolveComponent, toRef, toRefs} from 'vue';
+import {defineComponent, inject, ref, resolveComponent, toRef, toRefs, watch} from 'vue';
 import getSlot from '@form-create/utils/lib/slot';
 
 const NAME = 'fcRadio';
@@ -24,7 +24,9 @@ export default defineComponent({
         const update = () => {
             trueValue.value = _options().filter((opt) => opt.value === value.value).reduce((initial, opt) => opt.label, '')
         }
-        update();
+        watch(options, () => {
+            update();
+        }, {deep: true, immediate: true});
         return {
             options: _options,
             trueValue,
