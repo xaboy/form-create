@@ -113,10 +113,10 @@ export default function useInput(Handler) {
             this.vm._updateValue({...this.form});
         },
         isChange(ctx, value) {
-            return JSON.stringify(ctx.rule.value) !== JSON.stringify(value);
+            return JSON.stringify(ctx.rule.value, strFn) !== JSON.stringify(value, strFn);
         },
         isQuote(ctx, value) {
-            return (value === ctx.rule.value || is.Object(value) || Array.isArray(value) || is.Function(value));
+            return (is.Object(value) || Array.isArray(value)) && value === ctx.rule.value;
         },
         refreshUpdate(ctx, val) {
             if (is.Function(ctx.rule.update)) {
@@ -151,6 +151,11 @@ export default function useInput(Handler) {
             return Object.keys(this.fieldCtx);
         },
     });
+}
+
+
+function strFn(key, val) {
+    return typeof val === 'function' ? '' + val : val;
 }
 
 function toEmpty(obj) {
