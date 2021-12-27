@@ -54,7 +54,8 @@ export default {
         return {
             uploadList: [],
             previewVisible: false,
-            previewImage: ''
+            previewImage: '',
+            cacheFiles: [],
         }
     },
     created() {
@@ -146,7 +147,10 @@ export default {
         },
         update() {
             let files = this.$refs.upload.uploadFiles.map((file) => file.url).filter((url) => url !== undefined);
-            this.$emit('input', this.limit === 1 ? (files[0] || '') : files);
+            if(this.cacheFiles.length !== files.length){
+                this.cacheFiles = [...files];
+                this.$emit('input', this.limit === 1 ? (files[0] || '') : files);
+            }
         },
         handleCancel() {
             this.previewVisible = false;

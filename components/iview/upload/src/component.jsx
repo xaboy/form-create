@@ -54,7 +54,8 @@ export default function createUpload(config) {
             return {
                 uploadList: [],
                 previewVisible: false,
-                previewImage: ''
+                previewImage: '',
+                cacheFiles:[],
             }
         },
         created() {
@@ -144,7 +145,10 @@ export default function createUpload(config) {
             },
             update() {
                 let files = this.$refs.upload.fileList.map((file) => file.url).filter((url) => url !== undefined);
-                this.$emit('input', this.maxLength === 1 ? (files[0] || '') : files);
+                if(this.cacheFiles.length !== files.length){
+                    this.cacheFiles = [...files];
+                    this.$emit('input', this.maxLength === 1 ? (files[0] || '') : files);
+                }
             },
             handleCancel() {
                 this.previewVisible = false;
