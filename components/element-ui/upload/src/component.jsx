@@ -45,7 +45,8 @@ export default defineComponent({
             uploadList: [],
             previewVisible: false,
             previewImage: '',
-            fileList: []
+            fileList: [],
+            cacheFiles: [],
         }
     },
     created() {
@@ -115,12 +116,12 @@ export default defineComponent({
                     icons.push(this.makeRemoveIcon(file, index));
                 }
 
-                return <div class='fc-upload-cover'>{icons}</div>;
+                return <div class="fc-upload-cover">{icons}</div>;
             }
         },
         makeFiles() {
             return this.uploadList.map((file, index) => <div key={this.key(index)}
-                class='fc-files'>{(file.percentage !== undefined && file.status !== 'success') ? this.makeProgress(file, index) : [this.makeItem(file, index), this.makeIcons(file, index)]}</div>);
+                class="fc-files">{(file.percentage !== undefined && file.status !== 'success') ? this.makeProgress(file, index) : [this.makeItem(file, index), this.makeIcons(file, index)]}</div>);
         },
         makeUpload() {
             const isShow = (!this.limit || this.limit > this.uploadList.length);
@@ -128,14 +129,17 @@ export default defineComponent({
                 style={{display: 'inline-block'}}
                 key={this.key('upload')} v-slots={getSlot(this.$slots, ['default'])}>
                 {isShow ?
-                    (this.$slots.default?.() || <div class='fc-upload-btn'>
+                    (this.$slots.default?.() || <div class="fc-upload-btn">
                         <i class="el-icon-upload2"/>
                     </div>) : undefined}
             </ElUpload>;
         },
         update() {
             let files = this.$refs.upload.uploadFiles.map((file) => file.url).filter((url) => url !== undefined);
-            this.$emit('update:modelValue', this.limit === 1 ? (files[0] || '') : files);
+            if (this.cacheFiles.length !== files.length) {
+                this.cacheFiles = [...files];
+                this.$emit('update:modelValue', this.limit === 1 ? (files[0] || '') : files);
+            }
         },
         handleCancel() {
             this.previewVisible = false;
@@ -144,7 +148,7 @@ export default defineComponent({
     render() {
         return (
             <div
-                class='_fc-upload'>{[this.$attrs.showFileList ? [] : this.makeFiles(), this.makeUpload()]}
+                class="_fc-upload">{[this.$attrs.showFileList ? [] : this.makeFiles(), this.makeUpload()]}
                 <ElDialog appendToBody={true} modal={this.previewMask} title={this.modalTitle}
                     modelValue={this.previewVisible}
                     onClose={this.handleCancel}>

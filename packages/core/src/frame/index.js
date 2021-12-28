@@ -5,7 +5,7 @@ import Handle from '../handler';
 import fetch from './fetch';
 import {creatorFactory} from '..';
 import BaseParser from '../factory/parser';
-import {copyRule, copyRules, mergeGlobal, parseJson, toJson} from './util';
+import {copyRule, copyRules, mergeGlobal, parseJson, toJson, parseFn} from './util';
 import fragment from '../components/fragment';
 import vnode from '../components/vnode';
 import is from '@form-create/utils/lib/type';
@@ -256,6 +256,7 @@ export default function FormCreateFactory(config) {
             copyRules,
             fetch,
             $form,
+            parseFn,
             parseJson,
             toJson,
         });

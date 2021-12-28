@@ -110,7 +110,10 @@ export default function useContext(Handler) {
                                     this.rmCtx(child.__fc__);
                                 }
                             });
-                            is.trueArray(n) && this.loadChildren(n, ctx);
+                            if (is.trueArray(n)) {
+                                this.loadChildren(n, ctx);
+                                this.bus.$emit('update', this.api);
+                            }
                         });
                     }
                     this.$render.clearCache(ctx);

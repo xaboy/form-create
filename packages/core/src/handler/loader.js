@@ -299,6 +299,7 @@ export default function useLoader(Handler) {
 
             this.bus.$off('next-tick', this.nextReload);
             this.bus.$once('next-tick', this.nextReload);
+            this.bus.$emit('update', this.api);
         },
         //todo 组件生成全部通过 alias
         refresh() {

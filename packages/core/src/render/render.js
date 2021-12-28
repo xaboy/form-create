@@ -74,6 +74,7 @@ export default function useRender(Render) {
         renderCtx(ctx, parent) {
             if (ctx.type === 'hidden') return;
             const rule = ctx.rule;
+            const preview = this.options.preview || false;
             if ((!this.cache[ctx.id]) || this.cache[ctx.id].slot !== rule.slot) {
                 let vn;
                 ctx.initProp();
@@ -102,12 +103,13 @@ export default function useRender(Render) {
                         _vn = this.vm.slots[slot]({
                             rule,
                             prop,
+                            preview,
                             children,
                             api: this.$handle.api,
                             model: prop.model || {}
                         })
                     } else {
-                        _vn = ctx.parser.render(this.renderChildren(ctx), ctx)
+                        _vn = preview ? ctx.parser.preview(children, ctx) : ctx.parser.render(children, ctx);
                     }
                     _vn = this.renderSides(_vn, ctx);
                     if ((!(!ctx.input && is.Undef(prop.native))) && prop.native !== true) {
@@ -161,6 +163,7 @@ export default function useRender(Render) {
         },
         injectProp(ctx) {
             return {
+                preview: this.options.preview || false,
                 api: this.$handle.api,
                 form: this.fc.create,
                 subForm: subForm => {

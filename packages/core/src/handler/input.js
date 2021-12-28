@@ -83,7 +83,7 @@ export default function useInput(Handler) {
             this.vm.setupState.updateValue({...this.form});
         },
         isChange(ctx, value) {
-            return JSON.stringify(this.getFormData(ctx)) !== JSON.stringify(value);
+            return JSON.stringify(this.getFormData(ctx), strFn) !== JSON.stringify(value, strFn);
         },
         isQuote(ctx, value) {
             return (is.Object(value) || Array.isArray(value)) && value === ctx.rule.value;
@@ -103,6 +103,7 @@ export default function useInput(Handler) {
             if (this.refreshControl(ctx)) {
                 this.$render.clearCacheAll();
                 this.loadRule();
+                this.bus.$emit('update', this.api);
                 this.refresh();
             }
             this.refreshUpdate(ctx, val);
@@ -120,4 +121,8 @@ export default function useInput(Handler) {
             return Object.keys(this.fieldCtx);
         },
     });
+}
+
+function strFn(key, val) {
+    return typeof val === 'function' ? '' + val : val;
 }
