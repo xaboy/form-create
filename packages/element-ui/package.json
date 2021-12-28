@@ -1,6 +1,6 @@
 {
     "name": "@form-create/element-ui",
-    "version": "3.0.0-alpha.2",
+    "version": "3.0.0-alpha.3",
     "description": "element-ui动态表单|form-create is a form generation component that can generate dynamic rendering, data collection, verification and submission functions through JSON. Supports 3 UI frameworks, and supports the generation of any Vue components. Built-in 20 kinds of commonly used form components and custom components, no matter how complex forms can be easily handled.",
     "main": "./dist/form-create.min.js",
     "module": "./dist/form-create.esm.js",
@@ -42,22 +42,22 @@
     },
     "homepage": "http://www.form-create.com/v3/",
     "dependencies": {
-        "@form-create/component-elm-checkbox": "^3.0.0-alpha.1",
-        "@form-create/component-elm-frame": "^3.0.0-alpha.2",
-        "@form-create/component-elm-group": "^3.0.0-alpha.2",
-        "@form-create/component-elm-radio": "^3.0.0-alpha.1",
-        "@form-create/component-elm-select": "^3.0.0-alpha.1",
-        "@form-create/component-elm-tree": "^3.0.0-alpha.1",
-        "@form-create/component-elm-upload": "^3.0.0-alpha.1",
+        "@form-create/component-elm-checkbox": "^3.0.0-alpha.3",
+        "@form-create/component-elm-frame": "^3.0.0-alpha.3",
+        "@form-create/component-elm-group": "^3.0.0-alpha.3",
+        "@form-create/component-elm-radio": "^3.0.0-alpha.3",
+        "@form-create/component-elm-select": "^3.0.0-alpha.3",
+        "@form-create/component-elm-tree": "^3.0.0-alpha.3",
+        "@form-create/component-elm-upload": "^3.0.0-alpha.3",
         "@form-create/component-subform": "^3.0.0-alpha.2",
-        "@form-create/core": "^3.0.0-alpha.2",
-        "@form-create/utils": "^3.0.0-alpha.1"
+        "@form-create/core": "^3.0.0-alpha.3",
+        "@form-create/utils": "^3.0.0-alpha.3"
     },
     "publishConfig": {
         "access": "public"
     },
     "devDependencies": {
-        "@form-create/component-wangeditor": "^3.0.0-alpha.1",
+        "@form-create/component-wangeditor": "^3.0.0-alpha.3",
         "@vue/cli-plugin-babel": "~4.5.0",
         "@vue/cli-service": "^4.5.3",
         "element-plus": "^1.1.0-beta.12",
