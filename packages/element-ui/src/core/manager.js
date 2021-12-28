@@ -132,36 +132,37 @@ export default {
         const isTip = isTooltip(infoProp);
         const form = this.options.form;
         const children = [(titleProp.title || '') + (form.labelSuffix || form['label-suffix'] || '')];
-        const titleFn = () => this.$r(mergeProps([titleProp, {
-            props: titleProp,
-            key: `${uni}tit`,
-            type: titleProp.type || 'span',
-        }]), children);
 
-        if (!isFalse(infoProp.show) && (infoProp.info || infoProp.native)) {
-            if (infoProp.icon !== false) {
-                children[infoProp.align !== 'left' ? 'unshift' : 'push'](this.$r({
-                    type: 'i',
-                    class: infoProp.icon === true ? 'el-icon-warning' : infoProp.icon,
-                    key: `${uni}i`
-                }, {}, true));
-            }
+        if (!isFalse(infoProp.show) && (infoProp.info || infoProp.native) && !isFalse(infoProp.icon)) {
             const prop = {
                 type: infoProp.type || 'popover',
                 props: {...infoProp},
                 key: `${uni}pop`
             };
 
+            delete prop.props.icon;
+            delete prop.props.show;
+            delete prop.props.info;
+
             const field = 'content';
             if (infoProp.info && !hasProperty(prop.props, field)) {
                 prop.props[field] = infoProp.info;
             }
 
-            return this.$r(mergeProps([infoProp, prop]), {
-                [titleProp.slot || (isTip ? 'default' : 'reference')]: () => titleFn()
-            })
+            children[infoProp.align !== 'left' ? 'unshift' : 'push'](this.$r(mergeProps([infoProp, prop]), {
+                [titleProp.slot || (isTip ? 'default' : 'reference')]: () => this.$r({
+                    type: 'i',
+                    class: infoProp.icon === true ? 'el-icon-warning' : infoProp.icon,
+                    key: `${uni}i`
+                }, {}, true)
+            }));
         }
-        return titleFn();
+
+        return this.$r(mergeProps([titleProp, {
+            props: titleProp,
+            key: `${uni}tit`,
+            type: titleProp.type || 'span',
+        }]), children);
     },
     makeCol(rule, uni, children) {
         const col = rule.col;
