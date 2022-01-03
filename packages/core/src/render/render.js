@@ -28,6 +28,19 @@ export default function useRender(Render) {
         clearOrgChildren() {
             this.orgChildren = {};
         },
+        getTypeSlot(type) {
+            const name = 'type-' + toLine(type);
+            const _fn = (vm) => {
+                if (vm) {
+                    const slot = vm.$scopedSlots[name] || vm.$scopedSlots['type-' + type];
+                    if (slot) {
+                        return slot;
+                    }
+                    return _fn(vm.$pfc);
+                }
+            }
+            return _fn(this.vm);
+        },
         render() {
             if (!this.vm.isShow) {
                 return;
@@ -196,9 +209,9 @@ export default function useRender(Render) {
                         } else if (ctx.parser.loadChildren !== false) {
                             children = this.renderChildren(ctx);
                         }
-                        const slot = 'type-' + toLine(ctx.type);
-                        if (this.vm.$scopedSlots[slot]) {
-                            vn = this.vm.$scopedSlots[slot]({
+                        const slot = this.getTypeSlot(ctx.type);
+                        if (slot) {
+                            vn = slot({
                                 rule,
                                 prop,
                                 preview,
