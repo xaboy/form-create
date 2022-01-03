@@ -73,7 +73,7 @@ export default function useContext(Handler) {
         watchCtx(ctx) {
             const vm = this.vm;
             const none = ['field', 'value', 'vm', 'template', 'name', 'config', 'control', 'inject', 'sync', 'payload', 'optionsTo', 'update'];
-            Object.keys(ctx.rule).filter(k => none.indexOf(k) === -1).forEach((key) => {
+            Object.keys(ctx.rule).filter(k => k[0] !== '_' && none.indexOf(k) === -1).forEach((key) => {
                 const flag = key === 'children';
                 ctx.watch.push(vm.$watch(() => ctx.rule[key], (n, o) => {
                     if (this.loading || this.noWatchFn || this.reloading) return;
