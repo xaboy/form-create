@@ -125,6 +125,7 @@ export interface BindFormData extends FormData {
 }
 
 export interface VNodeData {
+    type?: string;
     slot?: string;
     scopedSlots?: { [key: string]: ScopedSlot | undefined };
     class?: any;
@@ -145,7 +146,6 @@ export interface Control<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
 }
 
 export interface BaseRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> extends VNodeData {
-    type: string;
     field?: string;
     key?: string;
     name?: string;
@@ -160,7 +160,7 @@ export interface BaseRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> extend
     update?: (value: any, $rule: this, api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => Boolean | void;
     options?: Object[];
     optionsTo?: string;
-    deep: Object;
+    deep?: Object;
     native?: Boolean;
     hidden?: Boolean;
     display?: Boolean;

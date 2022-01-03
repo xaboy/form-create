@@ -103,7 +103,7 @@ export interface ApiAttrs {
         show(show: boolean): void;
     }
 
-    submit(success: (formData: FormData, $f: Api) => void, fail: ($f: Api) => void): void;
+    submit(success: (formData: FormData, api: Api) => void, fail: (api: Api) => void): void;
 
     clearValidateState(fields?: string | string[], clearSub?: Boolean): void;
 
