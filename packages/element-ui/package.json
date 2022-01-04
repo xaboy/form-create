@@ -6,6 +6,7 @@
     "module": "./dist/form-create.esm.js",
     "unpkg": "./dist/form-create.min.js",
     "jsdelivr": "./dist/form-create.min.js",
+    "typings": "./types/index.d.ts",
     "scripts": {
         "clean": "rimraf dist/",
         "dev:ele": "vue-cli-service serve",

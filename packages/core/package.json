@@ -6,6 +6,7 @@
     "module": "./dist/index.esm.js",
     "unpkg": "./dist/form-create.min.js",
     "jsdelivr": "./dist/form-create.min.js",
+    "typings": "./types/index.d.ts",
     "scripts": {
         "clean": "rimraf dist/",
         "bili": "cross-env UI_LIB=core bili",
