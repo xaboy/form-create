@@ -6,7 +6,6 @@ import FormCreateFactory from '@form-create/core/src/index';
 import makers from './maker';
 import '../style/index.css';
 import extendApi from './api';
-import ElementPlus from 'element-plus';
 
 function install(FormCreate) {
     FormCreate.componentAlias(alias);
@@ -24,17 +23,11 @@ function install(FormCreate) {
     });
 }
 
-function appUse(app)
-{
-    app.use(ElementPlus);
-}
-
 export default function elmFormCreate() {
     return FormCreateFactory({
         ui:'process.env.UI',
         version: 'process.env.VERSION',
         manager,
-        appUse,
         extendApi,
         install,
         attrs: {

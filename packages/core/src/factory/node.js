@@ -7,11 +7,13 @@ import {createVNode, getCurrentInstance, resolveComponent, resolveDirective, wit
 
 function tidyDirectives(directives) {
     return Object.keys(directives).map(n => {
-        const directive = directives[n];
+        const data = directives[n];
+        const directive = resolveDirective(n);
+        if (!directive) return;
         return [
-            resolveDirective(n), directive.arg, directive.value, directive.modifiers
+            directive, data.value, data.arg, data.modifiers
         ]
-    });
+    }).filter(v => !!v);
 }
 
 function makeDirective(data, vn) {
