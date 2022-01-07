@@ -223,11 +223,11 @@ export default defineComponent({
     },
     created() {
         const d = (this.expand || 0) - this.modelValue.length;
-        if (d > 0) {
-            this.expandRule(d);
-        }
         for (let i = 0; i < this.modelValue.length; i++) {
             this.addRule(i);
+        }
+        if (d > 0) {
+            this.expandRule(d);
         }
     },
     render() {
