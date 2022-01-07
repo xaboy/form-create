@@ -1,5 +1,5 @@
 import extend from '@form-create/utils/lib/extend';
-import {$set} from '@form-create/utils/lib';
+import {$set} from '@form-create/utils/lib/modify';
 import is, {hasProperty} from '@form-create/utils/lib/type';
 import {invoke} from '../frame/util';
 import toArray from '@form-create/utils/lib/toarray';
