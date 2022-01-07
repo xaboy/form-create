@@ -1,7 +1,7 @@
 import extend from '@form-create/utils/lib/extend';
 import toCase from '@form-create/utils/lib/tocase';
 import BaseParser from '../factory/parser';
-import {$del} from '@form-create/utils/lib';
+import {$del} from '@form-create/utils/lib/modify';
 import is from '@form-create/utils/lib/type';
 import {invoke} from '../frame/util';
 import {toRef, watch} from 'vue';
@@ -75,7 +75,7 @@ export default function useContext(Handler) {
         watchCtx(ctx) {
             const none = ['field', 'value', 'vm', 'template', 'name', 'config', 'control', 'inject', 'sync', 'payload', 'optionsTo', 'update'];
             const all = attrs();
-            all.filter(k => none.indexOf(k) === -1).forEach((key) => {
+            all.filter(k => k[0] !== '_' && none.indexOf(k) === -1).forEach((key) => {
                 const ref = toRef(ctx.rule, key);
                 const flag = key === 'children';
                 ctx.refRule[key] = ref;

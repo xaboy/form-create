@@ -11,6 +11,19 @@ export default function useRender(Render) {
         initRender() {
             this.cacheConfig = {};
         },
+        getTypeSlot(type) {
+            const name = 'type-' + toLine(type);
+            const _fn = (vm) => {
+                if (vm) {
+                    const slot = vm.slots[name] || vm.slots['type-' + type];
+                    if (slot) {
+                        return slot;
+                    }
+                    return _fn(vm.setupState.parent);
+                }
+            }
+            return _fn(this.vm);
+        },
         render() {
             // console.warn('renderrrrr', this.id);
             if (!this.vm.setupState.isShow) {
@@ -97,10 +110,10 @@ export default function useRender(Render) {
                     } else if (ctx.parser.loadChildren !== false) {
                         children = this.renderChildren(ctx);
                     }
-                    const slot = 'type-' + toLine(ctx.type);
+                    const slot = this.getTypeSlot(ctx.type);
                     let _vn;
-                    if (this.vm.slots[slot]) {
-                        _vn = this.vm.slots[slot]({
+                    if (slot) {
+                        _vn = slot({
                             rule,
                             prop,
                             preview,

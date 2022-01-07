@@ -26,10 +26,10 @@ export default function deepExtend(origin, target = {}, mode) {
             } else {
                 $set(origin, key, clone);
                 if (!is.Undef(clone)) {
-                    if (clone.__json !== undefined) {
+                    if (!is.Undef(clone.__json)) {
                         origin[key].__json = clone.__json;
                     }
-                    if (clone.__origin !== undefined) {
+                    if (!is.Undef(clone.__origin)) {
                         origin[key].__origin = clone.__origin;
                     }
                 }

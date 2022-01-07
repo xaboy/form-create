@@ -17,7 +17,7 @@ export function toJson(obj, space) {
         if (typeof val !== FUNCTION) {
             return val;
         }
-        if (hasProperty(val, '__json')) {
+        if (val.__json) {
             return val.__json;
         }
         if (val.__origin)
