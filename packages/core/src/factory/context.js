@@ -104,7 +104,7 @@ extend(RuleContext.prototype, {
     },
     watchTo() {
         nextTick(() => {
-            this.$handle.watchCtx(this);
+            this.$handle && this.$handle.watchCtx(this);
         });
     },
     delete() {
