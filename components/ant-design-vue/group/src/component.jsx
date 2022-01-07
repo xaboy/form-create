@@ -99,6 +99,7 @@ export default defineComponent({
                 }
             },
             deep: true,
+            flush: 'post',
         }
     },
     methods: {
