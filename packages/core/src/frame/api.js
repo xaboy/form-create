@@ -347,6 +347,9 @@ export default function Api(h) {
         },
         emit(name, ...args) {
             h.vm.emit(name, ...args);
+        },
+        helper: {
+            tidyFields, props
         }
     };
 
