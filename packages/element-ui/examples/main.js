@@ -7,18 +7,18 @@
  * @FilePath     : /form-create2/packages/element-ui/examples/main.js
  */
 import {createApp,h, defineComponent} from 'vue'
-import ElementUI from 'element-plus/es/index'
-import 'element-plus/dist/index.css'
-import zhCn from 'element-plus/es/locale/lang/zh-cn'
+import Info from "@element-plus/icons-vue/dist/es/info-filled.mjs"
 import FormCreate from '../src'
+import install from '../auto-import'
 import App from './App.vue'
 
 const app = createApp(App)
 
-app.use(ElementUI, {
-    locale: zhCn,
-})
-app.use(FormCreate)
+FormCreate.use(install);
+app.use(FormCreate);
+app.component('info', Info);
+
+
 
 //todo ------------------ Demo 用 ------------------
 

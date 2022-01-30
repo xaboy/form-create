@@ -32,6 +32,7 @@
     "README.md",
     "package.json",
     "LICENSE",
+    "auto-import.js",
     "src",
     "types",
     "dist"

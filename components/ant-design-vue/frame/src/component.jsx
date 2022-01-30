@@ -1,7 +1,6 @@
 import toArray from '@form-create/utils/lib/toarray';
 import Mitt from '@form-create/utils/lib/mitt';
 import {defineComponent, resolveComponent, nextTick} from 'vue';
-import {CloseCircleOutlined, FolderOutlined, FileOutlined, DeleteOutlined, EyeOutlined} from '@ant-design/icons-vue';
 import './style.css';
 
 const NAME = 'fcFrame';
@@ -118,9 +117,6 @@ export default defineComponent({
     },
     inject: ['formCreateInject'],
     emits: ['update:modelValue', 'change'],
-    components: {
-        FolderOutlined, EyeOutlined
-    },
     data() {
         return {
             fileList: toArray(this.modelValue),
@@ -167,17 +163,20 @@ export default defineComponent({
             this.$emit('change', val);
         },
         makeInput() {
-            const props = {
-                type: 'text',
-                value: (this.fileList.map(v => this.getSrc(v))).toString(),
-                readonly: true
-            };
             const Type = resolveComponent(this.icon);
-            return <AInput props={props} key={this.key('input')}>
-                <Type class="_fc-frame-icon" slot="addonAfter" onClick={this.showModal}/>
-                {this.fileList.length ?
-                    <CloseCircleOutlined class="_fc-frame-icon" slot="suffix"
-                        onClick={() => this.fileList = []}/> : null}
+
+            const slots = {
+                addonAfter: () => <Type class="_fc-frame-icon" onClick={this.showModal}/>
+            };
+
+            if (this.fileList.length) {
+                slots.suffix = () => <CloseCircleOutlined class="_fc-frame-icon" onClick={() => {
+                    this.fileList = [];
+                    this.input();
+                }}/>
+            }
+            return <AInput readonly={true} value={(this.fileList.map(v => this.getSrc(v))).toString()}
+                key={this.key('input')} v-slots={slots}>
             </AInput>
         },
 

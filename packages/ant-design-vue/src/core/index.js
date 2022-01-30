@@ -6,9 +6,7 @@ import FormCreateFactory from '@form-create/core/src/index';
 import makers from './maker';
 import '../style/index.css';
 import extendApi from './api';
-// import Antd from 'ant-design-vue';
 import modelFields from './modelFields';
-import {QuestionCircleOutlined} from '@ant-design/icons-vue';
 
 function install(FormCreate) {
     FormCreate.componentAlias(alias);
@@ -21,8 +19,6 @@ function install(FormCreate) {
         FormCreate.component(component.name, component);
     });
 
-    FormCreate.component('QuestionCircleOutlined', QuestionCircleOutlined);
-
     parsers.forEach((parser) => {
         FormCreate.parser(parser);
     });
@@ -30,11 +26,14 @@ function install(FormCreate) {
     Object.keys(makers).forEach(name => {
         FormCreate.maker[name] = makers[name];
     });
-}
 
-// function appUse(app) {
-//     app.use(Antd);
-// }
+    if (typeof window !== 'undefined' && window.antd) {
+        FormCreate.useApp((_, app) => {
+            app.use(window.antd);
+        })
+    }
+
+}
 
 export default function antdvFormCreate() {
     return FormCreateFactory({

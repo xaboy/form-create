@@ -5,7 +5,7 @@ import Handle from '../handler';
 import fetch from './fetch';
 import {creatorFactory} from '..';
 import BaseParser from '../factory/parser';
-import {copyRule, copyRules, mergeGlobal, parseJson, toJson, parseFn} from './util';
+import {copyRule, copyRules, mergeGlobal, parseJson, toJson, parseFn, invoke} from './util';
 import fragment from '../components/fragment';
 import vnode from '../components/vnode';
 import is from '@form-create/utils/lib/type';
@@ -54,6 +54,7 @@ export default function FormCreateFactory(config) {
     const parsers = {};
     const directives = {};
     const modelFields = {};
+    const useApps = [];
     const providers = {
         fetch: $fetch
     };
@@ -63,6 +64,10 @@ export default function FormCreateFactory(config) {
     const CreateNode = CreateNodeFactory();
 
     exportAttrs(config.attrs || {});
+
+    function useApp(fn) {
+        useApps.push(fn);
+    }
 
     function directive() {
         const data = nameProp(...arguments);
@@ -136,7 +141,9 @@ export default function FormCreateFactory(config) {
 
     function create(rules, option) {
         let app = createFormApp(rules, option || {});
-        config.appUse && config.appUse(app);
+        useApps.forEach(v => {
+            invoke(() => v(create, app));
+        })
         const div = document.createElement('div');
         (option?.el || document.body).appendChild(div);
         const vm = app.mount(div);
@@ -259,16 +266,17 @@ export default function FormCreateFactory(config) {
             parseFn,
             parseJson,
             toJson,
+            useApp,
         });
     }
 
     function useStatic(formCreate) {
         extend(formCreate, {
             create,
-            install(Vue, options) {
+            install(app, options) {
                 globalConfig = {...globalConfig, ...(options || {})}
-                if (Vue._installedFormCreate === true) return;
-                Vue._installedFormCreate = true;
+                if (app._installedFormCreate === true) return;
+                app._installedFormCreate = true;
 
                 const $formCreate = function (rules, opt = {}) {
                     return create(rules, opt, this);
@@ -276,9 +284,12 @@ export default function FormCreateFactory(config) {
 
                 useAttr($formCreate);
 
-                Vue.config.globalProperties.$formCreate = $formCreate;
-                Vue.component('FormCreate', $form());
-                Vue.component('fc-vnode', vnode);
+                app.config.globalProperties.$formCreate = $formCreate;
+                app.component('FormCreate', $form());
+                app.component('fc-vnode', vnode);
+                useApps.forEach(v => {
+                    invoke(() => v(formCreate, app));
+                })
             }
         })
     }
@@ -288,7 +299,7 @@ export default function FormCreateFactory(config) {
 
     CreateNode.use({fragment: 'fcFragment'});
 
-    if (config.install) create.use(config);
+    config.install && create.use(config);
 
     return create;
 }

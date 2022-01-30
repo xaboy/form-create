@@ -1,6 +1,6 @@
 import toArray from '@form-create/utils/lib/toarray';
 import Mitt from '@form-create/utils/lib/mitt';
-import {defineComponent, nextTick} from 'vue';
+import {defineComponent, nextTick, resolveComponent} from 'vue';
 import './style.css';
 
 const NAME = 'fcFrame';
@@ -27,7 +27,7 @@ export default defineComponent({
         },
         icon: {
             type: String,
-            default: 'el-icon-upload2'
+            default: 'upload'
         },
         width: {
             type: String,
@@ -50,7 +50,10 @@ export default defineComponent({
             default: '关闭'
         },
         modalTitle: String,
-        handleIcon: [String, Boolean],
+        handleIcon: {
+            type: [String, Boolean],
+            default: undefined,
+        },
         title: String,
         allowRemove: {
             type: Boolean,
@@ -167,10 +170,12 @@ export default defineComponent({
             }} key={this.key('input')} v-slots={{
                 append: () => <ElButton icon={this.icon} onClick={() => this.showModel()}/>,
                 suffix: () => this.fileList.length ?
-                    <i class="el-input__icon el-icon-circle-close" onClick={() => {
+                    <ElIcon class="el-input__icon" onClick={() => {
                         this.fileList = [];
                         this.input();
-                    }}/> : null
+                    }}>
+                        <CircleClose/>
+                    </ElIcon> : null
             }}/>
         },
         makeGroup(children) {
@@ -202,19 +207,21 @@ export default defineComponent({
             }
         },
         makeHandleIcon(val, index) {
-            return <i
-                class={(this.handleIcon === true || this.handleIcon === undefined) ? 'el-icon-view' : this.handleIcon}
-                onClick={() => this.handleClick(val)} key={this.key('hi' + index)}/>
+            const Type = resolveComponent((this.handleIcon === true || this.handleIcon === undefined) ? 'view' : this.handleIcon);
+            return <ElIcon onClick={() => this.handleClick(val)} key={this.key('hi' + index)}><Type/></ElIcon>
         },
 
         makeRemoveIcon(val, index) {
-            return <i class="el-icon-delete" onClick={() => this.handleRemove(val)} key={this.key('ri' + index)}/>
+            return <ElIcon onClick={() => this.handleRemove(val)} key={this.key('ri' + index)}>
+                <delete/>
+            </ElIcon>
         },
 
         makeFiles() {
             return this.makeGroup(this.fileList.map((src, index) => {
-                return this.makeItem(index, [<i class="el-icon-tickets"
-                    onClick={() => this.handleClick(src)}/>, this.makeIcons(src, index)])
+                return this.makeItem(index, [<ElIcon onClick={() => this.handleClick(src)}>
+                    <document/>
+                </ElIcon>, this.makeIcons(src, index)])
             }))
         },
         makeImages() {
@@ -223,8 +230,9 @@ export default defineComponent({
             }))
         },
         makeBtn() {
+            const Type = resolveComponent(this.icon);
             return <div class="fc-upload-btn" onClick={() => this.showModel()} key={this.key('btn')}>
-                <i class={this.icon}/>
+                <ElIcon><Type/></ElIcon>
             </div>
         },
         handleClick(src) {

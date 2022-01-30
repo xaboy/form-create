@@ -33,7 +33,7 @@ export interface Install<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs, ApiAt
     (formCreate: FormCreate<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, opt: any): void;
 }
 
-export interface FormCreateProps<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>{
+export interface FormCreateProps<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
     rule: FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>[];
     option?: Options<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
     extendOption?: Boolean;
@@ -90,6 +90,8 @@ export interface FormCreate<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs, Ap
         install: Install<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>,
         [key: string]: any
     }, Opt?: any): void;
+
+    useApp(formCreate: FormCreate<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, app: App): void;
 
     componentAlias(alias: { [alias: string]: string }): void;
 

@@ -21,11 +21,18 @@ function install(FormCreate) {
     Object.keys(makers).forEach(name => {
         FormCreate.maker[name] = makers[name];
     });
+
+    if (typeof window !== 'undefined' && window.ElementPlus) {
+        FormCreate.useApp((_, app) => {
+            app.use(window.ElementPlus);
+        })
+    }
+
 }
 
 export default function elmFormCreate() {
     return FormCreateFactory({
-        ui:'process.env.UI',
+        ui: 'process.env.UI',
         version: 'process.env.VERSION',
         manager,
         extendApi,

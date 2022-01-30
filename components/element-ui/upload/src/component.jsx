@@ -1,7 +1,7 @@
 import toArray from '@form-create/utils/lib/toarray';
 import getSlot from '@form-create/utils/lib/slot';
 import './style.css';
-import {defineComponent} from 'vue';
+import {defineComponent, resolveComponent} from 'vue';
 
 function parseFile(file, i) {
     return {
@@ -36,7 +36,10 @@ export default defineComponent({
         },
         previewMask: undefined,
         modalTitle: String,
-        handleIcon: [String, Boolean],
+        handleIcon: {
+            type:[String, Boolean],
+            default: undefined,
+        },
         modelValue: [Array, String]
     },
     emits: ['update:modelValue'],
@@ -92,15 +95,16 @@ export default defineComponent({
         makeItem(file, index) {
             return this.uploadType === 'image'
                 ? <img src={file.url} key={this.key('img' + index)}/>
-                : <i class="el-icon-document" key={this.key('i' + index)}/>
+                : <ElIcon key={this.key('i' + index)}><document /></ElIcon>
         },
         makeRemoveIcon(file, index) {
-            return <i class="el-icon-delete" onClick={() => this.onRemove(file)} key={this.key('ri' + index)}/>;
+            return <ElIcon onClick={() => this.onRemove(file)} key={this.key('ri' + index)}>
+                <delete/>
+            </ElIcon>
         },
         makeHandleIcon(file, index) {
-            return <i
-                class={(this.handleIcon === true || this.handleIcon === undefined) ? 'el-icon-view' : this.handleIcon}
-                onClick={() => this.handleClick(file)} key={this.key('hi' + index)}/>;
+            const Type = resolveComponent((this.handleIcon === true || this.handleIcon === undefined) ? 'view' : this.handleIcon);
+            return <ElIcon onClick={() => this.handleClick(file)} key={this.key('hi' + index)}><Type/></ElIcon>
         },
         makeProgress(file, index) {
             return <ElProgress {...{percentage: file.percentage, type: 'circle', width: 52}} style="margin-top:2px;"
@@ -130,7 +134,7 @@ export default defineComponent({
                 key={this.key('upload')} v-slots={getSlot(this.$slots, ['default'])}>
                 {isShow ?
                     (this.$slots.default?.() || <div class="fc-upload-btn">
-                        <i class="el-icon-upload2"/>
+                        <ElIcon><upload/></ElIcon>
                     </div>) : undefined}
             </ElUpload>;
         },

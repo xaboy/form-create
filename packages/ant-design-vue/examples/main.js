@@ -7,24 +7,13 @@
  * @FilePath     : /form-create2/packages/element-ui/examples/main.js
  */
 import {createApp,h, inject, defineComponent} from 'vue'
-import Antd from 'ant-design-vue'
-import 'ant-design-vue/dist/antd.css'
 import FormCreate from '../src'
+import install from '../auto-import'
 import App from './App.vue'
-// import {QuestionCircleOutlined, PlusOutlined, FolderOutlined, EyeOutlined, DeleteOutlined, MinusCircleOutlined, PlusCircleOutlined} from '@ant-design/icons-vue';
 
+FormCreate.use(install);
 const app = createApp(App)
-
-app.use(Antd)
 app.use(FormCreate)
-
-// app.component(QuestionCircleOutlined.name,QuestionCircleOutlined);
-// app.component(PlusOutlined.name,PlusOutlined);
-// app.component(FolderOutlined.name,FolderOutlined);
-// app.component(DeleteOutlined.name,DeleteOutlined);
-// app.component(EyeOutlined.name,EyeOutlined);
-// app.component(MinusCircleOutlined.name,MinusCircleOutlined);
-// app.component(PlusCircleOutlined.name,PlusCircleOutlined);
 
 //todo ------------------ Demo 用 ------------------
 
@@ -33,17 +22,12 @@ import addressEffect from './addressEffect';
 import wangEditor from '@form-create/component-wangeditor/src'
 
 
-// app.use(VueCompositionAPI)
 // app.use(VJsoneditor)
 FormCreate.register(addressEffect);
 FormCreate.component('wangEditor', wangEditor);
 
 //自定义组件
 FormCreate.component('testSlot', defineComponent({
-    // components:{
-    //     ElInput,
-    // },
-    // template:'<el-input />'
     setup(){
         console.log(inject('formCreateInject'));
     },

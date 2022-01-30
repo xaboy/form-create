@@ -1,7 +1,7 @@
 const PRE = 'el';
 export default {
     button: PRE + '-button',
-    icon: 'i',
+    icon: PRE + '-icon',
     slider: PRE + '-slider',
     rate: PRE + '-rate',
     upload: 'fc-upload',

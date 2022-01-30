@@ -20,8 +20,8 @@ function useAlias(maker) {
 function useSelect(maker) {
     const select = 'select';
     const multiple = 'multiple';
-    maker['selectMultiple'] = creatorFactory(select, {[multiple]:true});
-    maker['selectOne'] = creatorFactory(select, {[multiple]:false});
+    maker['selectMultiple'] = creatorFactory(select, {[multiple]: true});
+    maker['selectOne'] = creatorFactory(select, {[multiple]: false});
 }
 
 function useTree(maker) {
@@ -29,7 +29,7 @@ function useTree(maker) {
     const types = {'treeSelected': 'selected', 'treeChecked': 'checked'};
 
     Object.keys(types).reduce((m, key) => {
-        m[key] = creatorFactory(name, {type:types[key]});
+        m[key] = creatorFactory(name, {type: types[key]});
         return m;
     }, maker);
 }

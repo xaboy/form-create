@@ -24,7 +24,6 @@ export default function getConfig() {
             type: 'default',
             loading: false,
             disabled: false,
-            icon: 'el-icon-refresh',
             innerText: '重置',
             show: false,
             col: undefined,

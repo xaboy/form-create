@@ -1,6 +1,5 @@
 import {hasProperty} from '@form-create/utils/lib/type';
 import {defineComponent, markRaw, nextTick} from 'vue';
-import {PlusCircleOutlined, MinusCircleOutlined} from '@ant-design/icons-vue';
 
 const NAME = 'fcGroup';
 

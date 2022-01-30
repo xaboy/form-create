@@ -62,7 +62,7 @@ export default {
             info: {
                 trigger: 'hover',
                 placement: 'top-start',
-                icon: 'el-icon-warning',
+                icon: true,
             },
             title: {},
             col: {span: 24},
@@ -151,10 +151,14 @@ export default {
 
             children[infoProp.align !== 'left' ? 'unshift' : 'push'](this.$r(mergeProps([infoProp, prop]), {
                 [titleProp.slot || (isTip ? 'default' : 'reference')]: () => this.$r({
-                    type: 'i',
-                    class: infoProp.icon === true ? 'el-icon-warning' : infoProp.icon,
+                    type: 'ElIcon',
+                    style: 'top:2px',
                     key: `${uni}i`
-                }, {}, true)
+                }, {
+                    default: () => this.$r({
+                        type: infoProp.icon === true ? 'warning' : infoProp.icon
+                    })
+                }, true)
             }));
         }
 

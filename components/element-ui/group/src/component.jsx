@@ -185,14 +185,18 @@ export default defineComponent({
             this.input(this.modelValue);
         },
         addIcon(key) {
-            return <i key={`a${key}`} class="el-icon-circle-plus-outline"
+            return <el-icon key={`a${key}`}
                 style={`font-size:${this.fontSize}px;cursor:${this.disabled ? 'not-allowed;color:#c9cdd4' : 'pointer'};`}
-                onClick={this.add}/>;
+                onClick={this.add}>
+                <circle-plus/>
+            </el-icon>
         },
         delIcon(index, key) {
-            return <i key={`d${key}`} class="el-icon-remove-outline"
+            return <ElIcon key={`d${key}`} class="el-icon-remove-outline"
                 style={`font-size:${this.fontSize}px;cursor:${this.disabled ? 'not-allowed;color:#c9cdd4' : 'pointer;color:#606266'};`}
-                onClick={() => this.del(index, key)}/>;
+                onClick={() => this.del(index, key)}>
+                <remove/>
+            </ElIcon>
         },
         makeIcon(total, index, key) {
             if (this.$slots.button) {

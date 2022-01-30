@@ -2,7 +2,6 @@ import {defineComponent} from 'vue';
 import toString from '@form-create/utils/lib/tostring';
 import toArray from '@form-create/utils/lib/toarray';
 import getSlot from '@form-create/utils/lib/slot';
-import {PlusOutlined} from '@ant-design/icons-vue';
 
 const parseFile = function (file, uid) {
         return {
@@ -54,9 +53,6 @@ export default defineComponent({
         previewMask: undefined,
     },
     emits: ['update:modelValue'],
-    components: {
-        PlusOutlined
-    },
     data() {
         const fileList = this.modelValue.map(parseFile);
         return {
