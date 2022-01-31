@@ -113,9 +113,8 @@ export default defineComponent({
             type: Boolean,
             default: true
         },
-
+        formCreateInject: Object,
     },
-    inject: ['formCreateInject'],
     emits: ['update:modelValue', 'change'],
     data() {
         return {

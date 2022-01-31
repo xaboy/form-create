@@ -25,7 +25,7 @@ export default function mock() {
             clearable: true,
             disabled: false,
             maxlength: 10,
-            prefixIcon: 'el-icon-info'
+            prefixIcon: 'info',
         }).setProp('prefix', 'prefix').setProp('suffix', 'suffix').validate([
             {required: true, message: '请输入商品名称', trigger: 'change'}
         ]).control([
@@ -121,9 +121,11 @@ export default function mock() {
             type: 'group',
             title: '批量添加',
             field: 'group',
-            value: [{date: '2121-12-12', field: 10, field2: '123123123'}],
+            value: [{date: '2121-12-12', field: 10, field2: '123123123'},{date: '2121-12-12', field: 10, field2: '123123123'}],
             suffix: 'suffixsuffix',
             props: {
+                max: 5,
+                min: 3,
                 rule: [
                     {
                         type: 'col',
@@ -230,14 +232,7 @@ export default function mock() {
 
 
         //switch 开关组件
-        maker.switch('是否上架', 'is_show', '1').props({
-            'activeValue': '1',
-            'inactiveValue': '0',
-            'slot': {
-                open: '上架',
-                close: '下架',
-            }
-        }).col({span: 12}),
+        maker.switch('是否上架', 'is_show', true).col({span: 12}),
 
         //自定义组件
         maker.create('el-button', 'btn').props('disabled', false).col({span: 12}).children([

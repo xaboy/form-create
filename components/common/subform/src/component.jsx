@@ -25,8 +25,8 @@ export default defineComponent({
             type: Boolean,
             default: true
         },
+        formCreateInject: Object,
     },
-    inject: ['formCreateInject'],
     data() {
         return {
             cacheValue: {},

@@ -39,7 +39,11 @@ export function CreateNodeFactory() {
             return makeDirective(data, this.h(tag, toProps(data), children));
         },
         h(tag, data, children) {
-            return createVNode(getCurrentInstance().appContext.config.isNativeTag(tag) ? tag : resolveComponent(tag), data, children);
+            const isNativeTag = getCurrentInstance().appContext.config.isNativeTag(tag);
+            if (isNativeTag) {
+                delete data.formCreateInject;
+            }
+            return createVNode(isNativeTag ? tag : resolveComponent(tag), data, children);
         },
         aliasMap
     });

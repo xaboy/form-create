@@ -7,7 +7,6 @@ import {creatorFactory} from '..';
 import BaseParser from '../factory/parser';
 import {copyRule, copyRules, mergeGlobal, parseJson, toJson, parseFn, invoke} from './util';
 import fragment from '../components/fragment';
-import vnode from '../components/vnode';
 import is from '@form-create/utils/lib/type';
 import toCase from '@form-create/utils/lib/tocase';
 import extend from '@form-create/utils/lib/extend';
@@ -44,6 +43,8 @@ function exportAttrs(attrs) {
 
     appendProto([...key, ...array, ...normal]);
 }
+
+let id = 1;
 
 //todo 表单嵌套
 export default function FormCreateFactory(config) {
@@ -129,7 +130,7 @@ export default function FormCreateFactory(config) {
     }
 
     function $vnode() {
-        return vnode;
+        return fragment;
     }
 
     //todo 检查回调函数作用域
@@ -160,6 +161,7 @@ export default function FormCreateFactory(config) {
 
     function FormCreate(vm) {
         extend(this, {
+            id: id++,
             create,
             vm,
             manager: createManager(config.manager),
@@ -286,7 +288,6 @@ export default function FormCreateFactory(config) {
 
                 app.config.globalProperties.$formCreate = $formCreate;
                 app.component('FormCreate', $form());
-                app.component('fc-vnode', vnode);
                 useApps.forEach(v => {
                     invoke(() => v(formCreate, app));
                 })
@@ -300,6 +301,12 @@ export default function FormCreateFactory(config) {
     CreateNode.use({fragment: 'fcFragment'});
 
     config.install && create.use(config);
+
+    useApp((_, app) => {
+        app.mixin({
+            props: ['formCreateInject'],
+        })
+    })
 
     return create;
 }

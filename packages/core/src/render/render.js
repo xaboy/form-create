@@ -85,60 +85,65 @@ export default function useRender(Render) {
             return ctxs ? ctxs.map(ctx => this.renderCtx(ctx, ctx.parent)) : undefined;
         },
         renderCtx(ctx, parent) {
-            if (ctx.type === 'hidden') return;
-            const rule = ctx.rule;
-            const preview = this.options.preview || false;
-            if ((!this.cache[ctx.id]) || this.cache[ctx.id].slot !== rule.slot) {
-                let vn;
-                ctx.initProp();
-                this.mergeGlobal(ctx);
-                ctx.initNone();
-                this.$manager.tidyRule(ctx);
-                this.deepSet(ctx);
-                this.setOptions(ctx);
-                this.ctxProp(ctx);
-                let prop = ctx.prop;
+            try {
+                if (ctx.type === 'hidden') return;
+                const rule = ctx.rule;
+                const preview = this.options.preview || false;
+                if ((!this.cache[ctx.id]) || this.cache[ctx.id].slot !== rule.slot) {
+                    let vn;
+                    ctx.initProp();
+                    this.mergeGlobal(ctx);
+                    ctx.initNone();
+                    this.$manager.tidyRule(ctx);
+                    this.deepSet(ctx);
+                    this.setOptions(ctx);
+                    this.ctxProp(ctx);
+                    let prop = ctx.prop;
+                    prop.props.formCreateInject = this.injectProp(ctx);
 
-                if (prop.hidden) {
-                    this.setCache(ctx, undefined, parent);
-                    return;
+                    if (prop.hidden) {
+                        this.setCache(ctx, undefined, parent);
+                        return;
+                    }
+                    vn = () => {
+                        let children = {};
+                        if (ctx.parser.renderChildren) {
+                            children = ctx.parser.renderChildren(ctx);
+                        } else if (ctx.parser.loadChildren !== false) {
+                            children = this.renderChildren(ctx);
+                        }
+                        const slot = this.getTypeSlot(ctx.type);
+                        let _vn;
+                        if (slot) {
+                            _vn = slot({
+                                rule,
+                                prop,
+                                preview,
+                                children,
+                                api: this.$handle.api,
+                                model: prop.model || {}
+                            })
+                        } else {
+                            _vn = preview ? ctx.parser.preview(children, ctx) : ctx.parser.render(children, ctx);
+                        }
+                        _vn = this.renderSides(_vn, ctx);
+                        if ((!(!ctx.input && is.Undef(prop.native))) && prop.native !== true) {
+                            _vn = this.$manager.makeWrap(ctx, _vn);
+                        }
+                        if (ctx.none) {
+                            _vn = this.display(_vn);
+                        }
+                        return _vn
+                    };
+                    this.setCache(ctx, vn, parent);
+                    ctx._vnode = vn;
+                    return vn;
                 }
-                vn = () => this.item(ctx, () => {
-                    let children = {};
-                    if (ctx.parser.renderChildren) {
-                        children = ctx.parser.renderChildren(ctx);
-                    } else if (ctx.parser.loadChildren !== false) {
-                        children = this.renderChildren(ctx);
-                    }
-                    const slot = this.getTypeSlot(ctx.type);
-                    let _vn;
-                    if (slot) {
-                        _vn = slot({
-                            rule,
-                            prop,
-                            preview,
-                            children,
-                            api: this.$handle.api,
-                            model: prop.model || {}
-                        })
-                    } else {
-                        _vn = preview ? ctx.parser.preview(children, ctx) : ctx.parser.render(children, ctx);
-                    }
-                    _vn = this.renderSides(_vn, ctx);
-                    if ((!(!ctx.input && is.Undef(prop.native))) && prop.native !== true) {
-                        _vn = this.$manager.makeWrap(ctx, _vn);
-                    }
-                    if (ctx.none) {
-                        _vn = this.display(_vn);
-                    }
-                    return _vn
-                });
-                this.setCache(ctx, vn, parent);
-                ctx._vnode = vn;
-                return vn;
+                return this.getCache(ctx);
+            } catch (e) {
+                console.error(e);
+                return;
             }
-
-            return this.getCache(ctx);
         },
         getModelField(ctx) {
             return ctx.rule.modelField || ctx.parser.modelField || this.fc.modelFields[this.vNode.aliasMap[ctx.field]] || this.fc.modelFields[ctx.field] || this.fc.modelFields[ctx.originType] || 'modelValue';
@@ -165,28 +170,32 @@ export default function useRender(Render) {
                 return vn;
             }
         },
-        item(ctx, vn) {
-            return this.vNode.h('FcFragment', {
-                key: ctx.prop.key,
-                formCreateInject: this.injectProp(ctx)
-            }, vn);
-        },
         isFragment(ctx) {
             return ctx.type === 'fragment' || ctx.type === 'template';
         },
         injectProp(ctx) {
-            return {
-                preview: this.options.preview || false,
-                api: this.$handle.api,
-                form: this.fc.create,
-                subForm: subForm => {
-                    this.$handle.addSubForm(ctx, subForm);
-                },
-                field: ctx.field,
-                options: ctx.prop.options || [],
-                children: ctx.rule.children,
-                rule: ctx.rule,
+            const state = this.vm.setupState;
+            if (!state.ctxInject[ctx.id]) {
+                state.ctxInject[ctx.id] = {
+                    api: this.$handle.api,
+                    form: this.fc.create,
+                    subForm: subForm => {
+                        this.$handle.addSubForm(ctx, subForm);
+                    },
+                    options: [],
+                    children: [],
+                    preview: false,
+                    field: ctx.field,
+                    rule: ctx.rule,
+                }
             }
+            const inject = state.ctxInject[ctx.id];
+            extend(inject, {
+                preview: this.options.preview || false,
+                options: ctx.prop.options,
+                children: ctx.rule.children
+            });
+            return inject;
         },
         ctxProp(ctx, custom) {
             const {ref, key, rule} = ctx;

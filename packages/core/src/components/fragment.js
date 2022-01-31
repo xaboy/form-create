@@ -1,21 +1,12 @@
-import {defineComponent, provide, reactive, toRef, watch} from 'vue';
-import extend from '@form-create/utils/lib/extend';
+import {defineComponent} from 'vue';
 
-const NAME = 'FcFragment';
+const NAME = 'fcFragment';
 
 export default defineComponent({
     name: NAME,
     inheritAttrs: false,
-    props: ['formCreateInject'],
-    setup(props) {
-        const data = toRef(props, 'formCreateInject');
-        const $inject = reactive({...data.value});
-        watch(data, () => {
-            extend($inject, data.value);
-        });
-        provide('formCreateInject', $inject);
-    },
+    props: ['vnode'],
     render() {
-        return this.$slots.default();
+        return this.vnode;
     }
 })

@@ -191,7 +191,7 @@ export default function rule() {
                         }),
 
                         // timePicker 时间选择组件
-                        maker.timeRangePicker('活动时间', 'section_time', '11:11:11').props({
+                        maker.timeRangePicker('活动时间', 'section_time', ['11:11:11', '22:22:22']).props({
                             'placeholder': ['请选择活动时间','请选择活动时间'],
                         }),
 
@@ -242,7 +242,7 @@ export default function rule() {
 
 
         //slider 滑块组件
-        maker.slider('滑块', 'slider', [30, 80]).props({
+        maker.slider('滑块', 'slider', 80).props({
             'min': 0,
             'max': 100,
             // 'range': true,

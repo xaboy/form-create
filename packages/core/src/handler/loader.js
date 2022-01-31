@@ -247,7 +247,7 @@ export default function useLoader(Handler) {
                     if (valid) {
                         flag = true;
                         const ruleCon = {
-                            type: 'template',
+                            type: 'fragment',
                             native: true,
                             __ctrl: true,
                             children: rule,

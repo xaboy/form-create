@@ -43,6 +43,7 @@ export default function $FormCreate(FormCreate) {
             const {rule, modelValue} = toRefs(props);
 
             const data = reactive({
+                ctxInject: {},
                 destroyed: false,
                 isShow: true,
                 unique: 1,

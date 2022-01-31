@@ -4,7 +4,7 @@
  * @LastEditors  : djkloop
  * @LastEditTime : 2020-08-15 22:01:32
  * @Description  : 头部注释
- * @FilePath     : /form-create2/packages/element-ui/examples/main.js
+ * @FilePath     : /form-create2/packages/ant-design-vue/examples/main.js
  */
 import {createApp,h, inject, defineComponent} from 'vue'
 import FormCreate from '../src'
@@ -28,9 +28,6 @@ FormCreate.component('wangEditor', wangEditor);
 
 //自定义组件
 FormCreate.component('testSlot', defineComponent({
-    setup(){
-        console.log(inject('formCreateInject'));
-    },
     render(_,b) {
         return h('div',{}, this.$slots.asd());
     }

@@ -58,7 +58,7 @@ export default function useEffect(Handler) {
                 return undefined;
         },
         emitEffect({ctx, rule, input, type, custom}, event, append) {
-            if (!type || type === 'fcFragment') return;
+            if (!type || ['fcFragment', 'fragment'].indexOf(type) > -1) return;
             const effect = custom ? custom : (rule.effect || {});
             Object.keys(effect).forEach(attr => {
                 const p = this.providers[attr];

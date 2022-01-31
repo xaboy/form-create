@@ -1,4 +1,4 @@
-import {defineComponent, inject, ref, resolveComponent, toRef, toRefs, watch} from 'vue';
+import {defineComponent, ref, resolveComponent, toRef, watch} from 'vue';
 import getSlot from '@form-create/utils/lib/slot';
 
 const NAME = 'fcCheckbox';
@@ -7,6 +7,7 @@ export default defineComponent({
     name: NAME,
     inheritAttrs: false,
     props: {
+        formCreateInject: Object,
         modelValue: {
             type: Array,
             default: () => []
@@ -15,7 +16,7 @@ export default defineComponent({
     },
     emits: ['update:modelValue'],
     setup(props, _) {
-        const {options} = toRefs(inject('formCreateInject'));
+        const options = toRef(props.formCreateInject, 'options', []);
         const trueValue = ref([]);
         const value = toRef(props, 'modelValue');
         const _options = () => {

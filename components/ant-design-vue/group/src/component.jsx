@@ -48,8 +48,8 @@ export default defineComponent({
             default: () => {
             }
         },
+        formCreateInject: Object,
     },
-    inject: ['formCreateInject'],
     data() {
         return {
             len: 0,
