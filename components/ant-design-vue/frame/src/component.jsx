@@ -317,7 +317,7 @@ export default defineComponent({
                 onCancel={() => this.previewVisible = false} footer={null}>
                 <img alt="example" style="width: 100%" src={this.previewImage}/>
             </aModal>
-            <aModal props={{width, title, ...this.modal}} visible={this.frameVisible}
+            <aModal {...{width, title, ...this.modal}} visible={this.frameVisible}
                 onCancel={() => (this.closeModal(true))} v-slots={
                     {footer: () => this.makeFooter()}
                 }>

@@ -27,13 +27,23 @@ function tidyBool(opt, name) {
 
 export default {
     validate() {
-        return this.form().validate();
+        const form = this.form();
+        if (form) {
+            return form.validate();
+        } else {
+            return new Promise(v => v());
+        }
     },
     validateField(field) {
         return new Promise((resolve, reject) => {
-            this.form().validateField(field, (res) => {
-                res ? reject(res) : resolve(null);
-            });
+            const form = this.form();
+            if (form) {
+                form.validateField(field, (res) => {
+                    res ? reject(res) : resolve(null);
+                });
+            } else {
+                resolve();
+            }
         });
     },
     clearValidateState(ctx) {

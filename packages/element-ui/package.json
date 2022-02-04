@@ -71,7 +71,8 @@
         "exportName": "formCreate",
         "extendExternals": [
             "element-plus",
-            "ElementPlus"
+            "ElementPlus",
+            "@element-plus/icons-vue"
         ],
         "extendGlobal": {
             "vue": "Vue"

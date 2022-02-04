@@ -37,9 +37,8 @@ import 'ant-design-vue/lib/popover/style/css';
 import Modal from 'ant-design-vue/lib/modal';
 import 'ant-design-vue/lib/modal/style/css';
 import Col from 'ant-design-vue/lib/col';
-import 'ant-design-vue/lib/col/style/css';
 import Row from 'ant-design-vue/lib/row';
-import 'ant-design-vue/lib/row/style/css';
+import 'ant-design-vue/lib/grid/style/css';
 
 import QuestionCircleOutlined from '@ant-design/icons-vue/QuestionCircleOutlined'
 import PlusOutlined from '@ant-design/icons-vue/PlusOutlined';

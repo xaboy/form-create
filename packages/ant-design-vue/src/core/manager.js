@@ -26,10 +26,20 @@ function tidyBool(opt, name) {
 
 export default {
     validate() {
-        return this.form().validate();
+        const form = this.form();
+        if (form) {
+            return form.validate();
+        } else {
+            return new Promise(v => v());
+        }
     },
     validateField(field) {
-        return this.form().validateFields(field);
+        const form = this.form();
+        if (form) {
+            return form.validateFields(field);
+        } else {
+            return new Promise(v => v());
+        }
     },
     clearValidateState(ctx) {
         const fItem = this.vm.refs[ctx.wrapRef];

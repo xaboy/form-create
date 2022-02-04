@@ -38,6 +38,10 @@
     display: block;
 }
 
+._fc-frame .fc-upload-btn {
+    cursor: pointer;
+}
+
 ._fc-frame .fc-upload-btn, .fc-files {
     display: inline-block;
     width: 58px;
