@@ -1,0 +1,50 @@
+{
+  "name": "@form-create/component-arco-radio",
+  "version": "3.0.0-alpha.4",
+  "description": "@form-create/arco-design 内置组件",
+  "main": "./dist/index.min.js",
+  "module": "./dist/index.esm.js",
+  "unpkg": "./dist/index.min.js",
+  "jsdelivr": "./dist/index.min.js",
+  "scripts": {
+    "clean": "rimraf dist/",
+    "bili": "cross-env bili",
+    "build": "npm-run-all clean bili"
+  },
+  "files": [
+    "README.md",
+    "package.json",
+    "LICENSE",
+    "src",
+    "dist"
+  ],
+  "keywords": [
+    "@form-create",
+    "form-create-component",
+    "arco-design"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xaboy/form-create.git"
+  },
+  "author": "xaboy",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/xaboy/form-create/issues"
+  },
+  "homepage": "http://www.form-create.com",
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@form-create/utils": "^3.0.0-alpha.4"
+  },
+  "buildFormCreateOptions": {
+    "name": "@form-create/component-arco-radio",
+    "exportName": "FcRadio",
+    "formats": [
+      "umd",
+      "esm"
+    ]
+  }
+}

@@ -1,6 +1,7 @@
 {
   "packages": [
     "packages/ant-design-vue",
+    "packages/arco-design",
     "packages/core",
     "packages/element-ui",
     "packages/utils",
@@ -15,7 +16,12 @@
     "components/element-ui/radio",
     "components/element-ui/select",
     "components/element-ui/tree",
-    "components/element-ui/upload"
+    "components/element-ui/upload",
+    "components/arco-design/checkbox",
+    "components/arco-design/frame",
+    "components/arco-design/group",
+    "components/arco-design/radio",
+    "components/arco-design/upload"
   ],
   "version": "3.0.0-alpha.4"
 }

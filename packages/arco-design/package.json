@@ -1,0 +1,82 @@
+{
+  "name": "@form-create/arco-design",
+  "version": "3.0.0-alpha.4",
+  "description": "arco-design动态表单|form-create is a form generation component that can generate dynamic rendering, data collection, verification and submission functions through JSON. Supports 3 UI frameworks, and supports the generation of any Vue components. Built-in 20 kinds of commonly used form components and custom components, no matter how complex forms can be easily handled.",
+  "main": "./dist/form-create.min.js",
+  "module": "./dist/form-create.esm.js",
+  "unpkg": "./dist/form-create.min.js",
+  "jsdelivr": "./dist/form-create.min.js",
+  "typings": "./types/index.d.ts",
+  "scripts": {
+    "clean": "rimraf dist/",
+    "dev:arco": "vue-cli-service serve",
+    "bili": "cross-env UI_LIB=arco-design bili",
+    "build": "npm-run-all clean bili"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xaboy/form-create.git"
+  },
+  "keywords": [
+    "动态表单",
+    "@form-create",
+    "form-builder",
+    "form",
+    "components",
+    "vue3",
+    "arco-design",
+    "json-form",
+    "dynamic-form"
+  ],
+  "files": [
+    "README.md",
+    "package.json",
+    "LICENSE",
+    "auto-import.js",
+    "src",
+    "types",
+    "dist"
+  ],
+  "author": "xaboy",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/xaboy/form-create/issues"
+  },
+  "homepage": "http://www.form-create.com/v3/",
+  "dependencies": {
+    "@form-create/component-arco-checkbox": "^3.0.0-alpha.4",
+    "@form-create/component-arco-radio": "^3.0.0-alpha.4",
+    "@form-create/component-arco-frame": "^3.0.0-alpha.4",
+    "@form-create/component-arco-group": "^3.0.0-alpha.4",
+    "@form-create/component-arco-upload": "^3.0.0-alpha.4",
+    "@form-create/component-subform": "^3.0.0-alpha.2",
+    "@form-create/core": "^3.0.0-alpha.4",
+    "@form-create/utils": "^3.0.0-alpha.4"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "@form-create/component-wangeditor": "^3.0.0-alpha.3",
+    "@vue/cli-plugin-babel": "~4.5.0",
+    "@vue/cli-service": "^4.5.3",
+    "@arco-design/web-vue": "^2.16.2",
+    "v-jsoneditor": "^1.4.2"
+  },
+  "buildFormCreateOptions": {
+    "name": "@form-create/arco-design",
+    "exportName": "formCreate",
+    "extendExternals": [
+      "ArcoVue",
+      "@arco-design/web-vue"
+    ],
+    "extendGlobal": {
+      "vue": "Vue"
+    },
+    "fileName": "form-create",
+    "formats": [
+      "umd",
+      "esm"
+    ]
+  }
+}
