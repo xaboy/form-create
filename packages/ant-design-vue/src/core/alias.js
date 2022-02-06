@@ -17,6 +17,7 @@ export default {
     checkbox: PRE + 'CheckboxGroup',
     radio: PRE + 'RadioGroup',
     inputNumber: PRE + 'InputNumber',
+    treeSelect: PRE + 'TreeSelect',
     search: PRE + 'InputSearch',
     textarea: PRE + 'Textarea',
     formItem: PRE + 'FormItem',

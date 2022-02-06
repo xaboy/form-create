@@ -4,5 +4,6 @@ export default {
     inputNumber: 'value',
     rate: 'value',
     slider: 'value',
+    treeSelect: 'value',
     switch: 'checked',
 }

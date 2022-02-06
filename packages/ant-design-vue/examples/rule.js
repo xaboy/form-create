@@ -15,6 +15,43 @@ export default function rule() {
             maker.input('', 'asd23').slot('asd'),
         ]),
 
+        maker.treeSelect('树选择', 'treeSelect', ['0-1', '0-1-1', '0-1-2']).props({
+            treeCheckable: true,
+            allowClear: true,
+            treeData: [
+                {
+                    title: 'Node1',
+                    value: '0-0',
+                    children: [
+                        {
+                            title: 'Child Node1',
+                            value: '0-0-0',
+                        },
+                    ],
+                },
+                {
+                    title: 'Node2',
+                    value: '0-1',
+
+                    children: [
+                        {
+                            title: 'Child Node3',
+                            value: '0-1-0',
+                            disabled: true,
+                        },
+                        {
+                            title: 'Child Node4',
+                            value: '0-1-1',
+                        },
+                        {
+                            title: 'Child Node5',
+                            value: '0-1-2',
+                        },
+                    ],
+                },
+            ]
+        }),
+
         //cascader 多级联动组件
         maker.cascader({title: '所在区域', style: 'color:red'}, 'address', ['陕西省', '西安市', '新城区']).effect({address: 1}),
 

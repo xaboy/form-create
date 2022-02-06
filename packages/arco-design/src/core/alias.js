@@ -17,6 +17,7 @@ export default {
     radio: 'fc-radio',
     inputNumber: PRE + 'InputNumber',
     search: PRE + 'InputSearch',
+    inputTag: PRE + 'InputTag',
     textarea: PRE + 'Textarea',
     password: PRE + 'InputPassword',
     formItem: PRE + 'FormItem',

@@ -36,6 +36,8 @@ import Tooltip from '@arco-design/web-vue/es/tooltip';
 import '@arco-design/web-vue/es/tooltip/style/css';
 import Popover from '@arco-design/web-vue/es/popover';
 import '@arco-design/web-vue/es/popover/style/css';
+import InputTag from '@arco-design/web-vue/es/input-tag';
+import '@arco-design/web-vue/es/input-tag/style/css';
 import Modal from '@arco-design/web-vue/es/modal';
 import '@arco-design/web-vue/es/modal/style/css';
 import Grid from '@arco-design/web-vue/es/grid';
@@ -53,7 +55,7 @@ import Eye from '@arco-design/web-vue/es/icon/icon-eye';
 export default function install(formCreate) {
     formCreate.useApp((_, app) => {
         app.use(Form).use(Input).use(Number).use(AutoComplete).use(Cascader).use(Checkbox).use(Radio)
-            .use(DatePicker).use(TimePicker).use(Textarea)
+            .use(DatePicker).use(TimePicker).use(Textarea).use(InputTag)
             .use(Grid).use(Button).use(Rate).use(Select).use(Slider).use(Swtich)
             .use(Upload).use(Tree).use(Tooltip).use(Popover).use(Modal);
 

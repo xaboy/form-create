@@ -30,6 +30,8 @@ import Upload from 'ant-design-vue/lib/upload';
 import 'ant-design-vue/lib/upload/style/css';
 import Tree from 'ant-design-vue/lib/tree';
 import 'ant-design-vue/lib/tree/style/css';
+import TreeSelect from 'ant-design-vue/lib/tree-select';
+import 'ant-design-vue/lib/tree-select/style/css';
 import Tooltip from 'ant-design-vue/lib/tooltip';
 import 'ant-design-vue/lib/tooltip/style/css';
 import Popover from 'ant-design-vue/lib/popover';
@@ -53,7 +55,7 @@ import EyeOutlined from '@ant-design/icons-vue/EyeOutlined';
 export default function install(formCreate) {
     formCreate.useApp((_, app) => {
         app.use(Form).use(Input).use(Number).use(AutoComplete).use(Cascader).use(Checkbox).use(Radio)
-            .use(DatePicker).use(TimePicker)
+            .use(DatePicker).use(TimePicker).use(TreeSelect)
             .use(Col).use(Row).use(Button).use(Rate).use(Select).use(Slider).use(Swtich)
             .use(Upload).use(Tree).use(Tooltip).use(Popover).use(Modal);
 

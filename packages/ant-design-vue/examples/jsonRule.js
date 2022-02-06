@@ -374,7 +374,7 @@ export default function jsonMock() {
             field: "tree",
             value: [12, 13, 14],
             props: {
-                replaceFields: {
+                replaceNames: {
                     key: 'id'
                 },
                 defaultExpandAll: true,
