@@ -30,6 +30,7 @@ export default function $FormCreate(FormCreate) {
             extendOption: Boolean,
             modelValue: Object,
             api: Object,
+            name: String,
         },
         emits: ['update:api', 'update:modelValue', 'mounted', 'submit', 'change', 'emit-event', 'control', 'remove-rule', 'remove-field', 'sync', 'reload', 'repeat-field', 'update'],
         render() {

@@ -45,6 +45,7 @@ function exportAttrs(attrs) {
 }
 
 let id = 1;
+const instance = {};
 
 //todo 表单嵌套
 export default function FormCreateFactory(config) {
@@ -65,6 +66,10 @@ export default function FormCreateFactory(config) {
     const CreateNode = CreateNodeFactory();
 
     exportAttrs(config.attrs || {});
+
+    function getApi(name) {
+        return instance[name];
+    }
 
     function useApp(fn) {
         useApps.push(fn);
@@ -169,6 +174,7 @@ export default function FormCreateFactory(config) {
             providers,
             modelFields,
             rules: vm.props.rule,
+            name: vm.props.name,
             prop: {
                 components,
                 directives,
@@ -188,6 +194,9 @@ export default function FormCreateFactory(config) {
         extend(vm.appContext.components, components);
         extend(vm.appContext.directives, directives);
         this.$handle = new Handle(this)
+        if (this.name) {
+            instance[this.name] = this.api();
+        }
     }
 
     extend(FormCreate.prototype, {
@@ -237,6 +246,9 @@ export default function FormCreateFactory(config) {
             this.$handle.mounted();
         },
         unmount() {
+            if (this.name) {
+                delete instance[this.name];
+            }
             this.unwatch && this.unwatch();
             this.$handle.reloadRule([]);
         },
@@ -269,6 +281,7 @@ export default function FormCreateFactory(config) {
             parseJson,
             toJson,
             useApp,
+            getApi,
         });
     }
 
