@@ -2,7 +2,7 @@ import toArray from '@form-create/utils/lib/toarray';
 import Mitt from '@form-create/utils/lib/mitt';
 import {defineComponent, resolveComponent, nextTick} from 'vue';
 import './style.css';
-import IconFolder from './IconFolder';
+import IconFolder from './IconFolder.vue';
 import IconClose from './IconClose';
 import IconFile from './IconFile';
 

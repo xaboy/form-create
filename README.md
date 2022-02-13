@@ -67,6 +67,8 @@
 | ------------------ | ---------------------------------------------------------- |
 | @form-create/element-ui [![version](https://img.shields.io/npm/v/@form-create/element-ui.svg)](https://www.npmjs.com/package/@form-create/element-ui) [![npm](https://img.shields.io/npm/dt/@form-create/element-ui.svg)](https://www.npmjs.com/package/@form-create/element-ui) | [element-plus 版本](http://form-create.com/v3/element-ui/)        |
 | @form-create/ant-design-vue [![version](https://img.shields.io/npm/v/@form-create/ant-design-vue.svg)](https://www.npmjs.com/package/@form-create/ant-design-vue) [![npm](https://img.shields.io/npm/dt/@form-create/ant-design-vue.svg)](https://www.npmjs.com/package/@form-create/ant-design-vue) | [ant-design-vue 版本](http://form-create.com/v3/ant-design-vue/)     |
+| @form-create/acro-design [![version](https://img.shields.io/npm/v/@form-create/acro-design.svg)](https://www.npmjs.com/package/@form-create/acro-design) [![npm](https://img.shields.io/npm/dt/@form-create/acro-design.svg)](https://www.npmjs.com/package/@form-create/acro-design) | [acro-design 版本](http://form-create.com/v3/acro-design/)     |
+| @form-create/naive-ui [![version](https://img.shields.io/npm/v/@form-create/naive-ui.svg)](https://www.npmjs.com/package/@form-create/naive-ui) [![npm](https://img.shields.io/npm/dt/@form-create/naive-ui.svg)](https://www.npmjs.com/package/@form-create/naive-ui) | [acro-design 版本](http://form-create.com/v3/naive-ui/)     |
 
 
 
@@ -109,9 +111,9 @@ npm install @form-create/ant-design-vue@next
 
 element-plus
 ```html
-<link href="https://unpkg.com/element-plus@1.2.0-beta.3/dist/index.css"></link>
+<link href="https://unpkg.com/element-plus@2.0.1/dist/index.css"></link>
 <script src="https://unpkg.com/vue@next"></script>
-<script src="https://unpkg.com/element-plus@1.2.0-beta.3/dist/index.full.js"></script>
+<script src="https://unpkg.com/element-plus@2.0.1/dist/index.full.js"></script>
 <script src="https://unpkg.com/@form-create/element-ui@next/dist/form-create.min.js"></script>
 ```
 
@@ -125,7 +127,7 @@ ant-design-vue
 ```
 **NodeJs:**
 
-element-plus
+element-plus ^2.x
 ```js
 import formCreate from '@form-create/element-ui'
 app.use(formCreate)
@@ -134,6 +136,18 @@ app.use(formCreate)
 ant-design-vue
 ```js
 import formCreate from '@form-create/ant-design-vue'
+app.use(formCreate)
+```
+
+acro-design
+```js
+import formCreate from '@form-create/acro-design'
+app.use(formCreate)
+```
+
+naive-ui
+```js
+import formCreate from '@form-create/naive-ui'
 app.use(formCreate)
 ```
 

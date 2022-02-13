@@ -1,7 +1,7 @@
 import {hasProperty} from '@form-create/utils/lib/type';
 import {defineComponent, markRaw, nextTick} from 'vue';
-import IconMinus from './IconMinus';
-import IconPlus from './IconPlus';
+import IconMinus from './IconMinus.vue';
+import IconPlus from './IconPlus.vue';
 
 const NAME = 'fcGroup';
 
