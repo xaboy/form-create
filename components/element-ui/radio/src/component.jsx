@@ -8,8 +8,8 @@ export default defineComponent({
     inheritAttrs: false,
     props: {
         modelValue: {
-            type: [String, Number],
-            default: () => []
+            type: [String, Number, Boolean],
+            default: ''
         },
         type: String,
     },

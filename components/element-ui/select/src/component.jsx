@@ -1,4 +1,4 @@
-import {computed, defineComponent, inject, toRef, toRefs} from 'vue';
+import {defineComponent, inject, toRef, toRefs} from 'vue';
 import getSlot from '@form-create/utils/lib/slot';
 
 const NAME = 'fcSelect';
@@ -8,8 +8,8 @@ export default defineComponent({
     inheritAttrs: false,
     props: {
         modelValue: {
-            type: Array,
-            default: () => []
+            type: [Array, String, Number, Boolean, Object],
+            default: undefined
         },
         type: String,
     },
