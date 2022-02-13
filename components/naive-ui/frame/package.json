@@ -1,0 +1,50 @@
+{
+  "name": "@form-create/component-naive-frame",
+  "version": "3.0.0-alpha.4",
+  "description": "@form-create/naive-ui 内置组件",
+  "main": "./dist/index.min.js",
+  "module": "./dist/index.esm.js",
+  "unpkg": "./dist/index.min.js",
+  "jsdelivr": "./dist/index.min.js",
+  "scripts": {
+    "clean": "rimraf dist/",
+    "bili": "cross-env bili",
+    "build": "npm-run-all clean bili"
+  },
+  "files": [
+    "README.md",
+    "package.json",
+    "LICENSE",
+    "src",
+    "dist"
+  ],
+  "keywords": [
+    "@form-create",
+    "form-create-component",
+    "naive-ui"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xaboy/form-create.git"
+  },
+  "author": "xaboy",
+  "license": "MIT",
+  "dependencies": {
+    "@form-create/utils": "^3.0.0-alpha.4"
+  },
+  "bugs": {
+    "url": "https://github.com/xaboy/form-create/issues"
+  },
+  "homepage": "http://www.form-create.com",
+  "publishConfig": {
+    "access": "public"
+  },
+  "buildFormCreateOptions": {
+    "name": "@form-create/component-arco-frame",
+    "exportName": "FcFrame",
+    "formats": [
+      "umd",
+      "esm"
+    ]
+  }
+}
