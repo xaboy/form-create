@@ -2,7 +2,7 @@
 
 @form-create 富文本组件
 
-[GitHub](https://github.com/xaboy/form-create) | [文档](http://form-create.com/v2/) | [Document](http://form-create.com/en/v2/)
+[GitHub](https://github.com/xaboy/form-create) | [文档](http://form-create.com/v3/) | [Document](http://form-create.com/v3/)
 
 
 props
