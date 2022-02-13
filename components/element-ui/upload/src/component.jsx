@@ -21,14 +21,11 @@ export default defineComponent({
     name: NAME,
     inheritAttrs: false,
     props: {
-        onHandle: Function,
-        onChange: Function,
-        onRemove: Function,
         previewMask: undefined,
         modalTitle: String,
         modelValue: [Array, String]
     },
-    emits: ['update:modelValue'],
+    emits: ['update:modelValue', 'change', 'remove'],
     data() {
         return {
             previewVisible: false,
@@ -66,13 +63,13 @@ export default defineComponent({
             this.previewVisible = false;
         },
         handleChange(file, fileList) {
-            this.onChange && this.onChange(...arguments);
+            this.$emit('change', ...arguments);
             if (file.status === 'success') {
                 this.update(fileList);
             }
         },
         handleRemove(file, fileList) {
-            this.onRemove && this.onRemove(...arguments);
+            this.$emit('remove', ...arguments);
             this.update(fileList);
         }
     },

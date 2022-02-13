@@ -54,7 +54,7 @@ export default function rule() {
             props: {
                 rule: [
 
-                            maker.date('date', 'date', '').native(false).col({span: 12}),
+                            maker.date('date', 'date', '').native(false).col({span: 8}),
                             {
                                 type: 'inputNumber',
                                 field: 'field',
@@ -66,7 +66,7 @@ export default function rule() {
                                     {required: true, min: 10, type: 'number'}
                                 ],
                                 col: {
-                                    span: 12
+                                    span: 16
                                 }
                             },
                     {
@@ -96,7 +96,7 @@ export default function rule() {
                     {
                         type: 'row',
                         children: [
-                            maker.date('', 'date', '').native(false).col({span: 12}),
+                            maker.date('', 'date', '').native(false).col({span: 8}),
                             {
                                 type: 'inputNumber',
                                 field: 'field',
@@ -107,7 +107,7 @@ export default function rule() {
                                     {required: true, min: 10, type: 'number'}
                                 ],
                                 col: {
-                                    span: 12
+                                    span: 16
                                 }
                             }
                         ]
@@ -246,14 +246,12 @@ export default function rule() {
         //upload 上传组件
         maker.upload('轮播图', 'pic', ['http://file.lotkk.com/form-create.jpeg'])
             .props({
-                // "action": "http://127.0.0.1:8000/index/index/upload",
-                action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
+                'action': 'http://127.0.0.1:8324/api/test',
                 'limit': 2,
                 listType: 'picture-card',
                 'name': 'file',
-                'allowRemove': true,
                 onSuccess: function (file) {
-                    file.url = file.response.url;
+                    file.url = file.response.data.url;
                 }
             }),
 

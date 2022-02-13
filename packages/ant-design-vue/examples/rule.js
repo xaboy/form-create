@@ -295,14 +295,11 @@ export default function rule() {
         //upload 上传组件
         maker.upload('轮播图', 'pic', ['http://file.lotkk.com/form-create.jpeg'])
             .props({
-                // "action": "http://127.0.0.1:8000/index/index/upload",
-                action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
+                'action': 'http://127.0.0.1:8324/api/test',
                 'limit': 2,
-                listType: 'picture-card',
                 'name': 'file',
-                'allowRemove': true,
                 onSuccess: function (file) {
-                    file.url = file.response.url;
+                    file.url = file.response.data.url;
                 }
             }),
 

@@ -41,11 +41,11 @@ export default defineComponent({
             type: Function,
             required: true
         },
-        onHandle: Function,
+        onPreview: Function,
         modalTitle: String,
         previewMask: undefined,
     },
-    emits: ['update:modelValue'],
+    emits: ['update:modelValue', 'finish'],
     data() {
         return {
             previewImage: '',
@@ -59,9 +59,10 @@ export default defineComponent({
         }
     },
     methods: {
-        handleChange({file}) {
+        handleChange({event, file}) {
+            this.$emit('finish', ...arguments);
             const list = this.uploadList;
-            this.onSuccess(file);
+            this.onSuccess(JSON.parse(event.target.response), file);
             if (file.url) list.push({
                 url: file.url,
                 file,
@@ -77,9 +78,9 @@ export default defineComponent({
                 this.input(n);
             }
         },
-        onPreview(file) {
-            if (this.onHandle) {
-                this.onHandle(file)
+        handlePreview(file) {
+            if (this.onPreview) {
+                this.onPreview(...arguments)
             } else {
                 this.previewImage = file.url;
                 this.previewVisible = true;
@@ -89,7 +90,7 @@ export default defineComponent({
     },
     render() {
         return <>
-            <n-upload listType={'image-card'} {...this.$attrs} onPreview={this.onPreview}
+            <n-upload listType={'image-card'} {...this.$attrs} onPreview={this.handlePreview}
                 onFinish={this.handleChange} key={this.uploadList.length}
                 default-file-list={this.uploadList} onUpdate:fileList={this.inputRemove}
                 v-slots={this.$slots}/>

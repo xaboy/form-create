@@ -29,10 +29,6 @@ export default defineComponent({
         }
     },
     props: {
-        limit: {
-            type: Number,
-            default: 0
-        },
         modelValue: {
             type: Array,
             default: () => []
@@ -41,11 +37,11 @@ export default defineComponent({
             type: Function,
             required: true
         },
-        onHandle: Function,
+        onPreview: Function,
         modalTitle: String,
         previewMask: undefined,
     },
-    emits: ['update:modelValue'],
+    emits: ['update:modelValue', 'success'],
     data() {
         return {
             previewImage: '',
@@ -60,14 +56,13 @@ export default defineComponent({
     },
     methods: {
         handleChange(file) {
+            this.onSuccess(...arguments);
             const list = this.uploadList;
-            this.onSuccess(file);
             if (file.url) list.push({
                 url: file.url,
                 file,
             });
             this.input(list);
-
         },
         input(n) {
             this.$emit('update:modelValue', n.map(v => v.url));
@@ -77,19 +72,18 @@ export default defineComponent({
                 this.input(n);
             }
         },
-        onPreview(file) {
-            if (this.onHandle) {
-                this.onHandle(file)
+        handlePreview(file) {
+            if (this.onPreview) {
+                this.onPreview(...arguments)
             } else {
                 this.previewImage = file.url;
                 this.previewVisible = true;
             }
         }
-
     },
     render() {
-        return <div>
-            <AUpload {...this.$attrs} onPreview={this.onPreview}
+        return <>
+            <AUpload list-type={'picture-card'} {...this.$attrs} onPreview={this.handlePreview}
                 onSuccess={this.handleChange}
                 ref="upload" fileList={this.uploadList} onUpdate:fileList={this.inputRemove}
                 v-slots={this.$slots}/>
@@ -97,6 +91,6 @@ export default defineComponent({
                 onCancel={() => this.previewVisible = false} footer={null}>
                 <img style="width: 100%" src={this.previewImage}/>
             </aModal>
-        </div>;
+        </>;
     }
 });

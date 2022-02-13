@@ -244,7 +244,7 @@ export default function mock() {
             {'value': '104', 'label': '生态蔬菜', 'disabled': false},
             {'value': '106', 'label': '植物植物', 'disabled': false},
             {'value': '105', 'label': '新鲜水果', 'disabled': false},
-        ]).props({multiple: true}),
+        ]),
         {
             type: 'div',
             name: 'div2',
@@ -345,18 +345,10 @@ export default function mock() {
             .props({
                 'action': 'http://127.0.0.1:8324/api/test',
                 'limit': 2,
-                'uploadType': 'image',
                 'name': 'file',
                 'onSuccess': function (res, file) {
                     file.url = res.data.url;
                 },
-                'onRemove': function (file, fileList) {
-                    console.log(file, fileList);
-                },
-                'beforeRemove': function () {
-                    console.log('before-remove');
-                },
-                'allowRemove': true,
             }),
 
         //frame 框架组件

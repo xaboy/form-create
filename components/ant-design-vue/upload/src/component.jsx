@@ -42,17 +42,11 @@ export default defineComponent({
             type: Function,
             required: true
         },
-        onHandle: {
-            type: Function,
-            default: function (file) {
-                this.previewImage = file.url;
-                this.previewVisible = true;
-            }
-        },
+        onPreview: Function,
         modalTitle: String,
         previewMask: undefined,
     },
-    emits: ['update:modelValue'],
+    emits: ['update:modelValue', 'change'],
     data() {
         const fileList = this.modelValue.map(parseFile);
         return {
@@ -70,7 +64,16 @@ export default defineComponent({
         }
     },
     methods: {
+        handlePreview(file) {
+            if (this.onPreview) {
+                this.onPreview(...arguments);
+            } else {
+                this.previewImage = file.url;
+                this.previewVisible = true;
+            }
+        },
         handleChange({file, fileList}) {
+            this.$emit('change', ...arguments);
             const list = this.uploadList;
             if (file.status === 'done') {
                 this.onSuccess(file, fileList);
@@ -95,8 +98,8 @@ export default defineComponent({
     },
     render() {
         const isShow = (!this.limit || this.limit > this.uploadList.length);
-        return <div>
-            <AUpload {...this.$attrs} onPreview={this.onHandle.bind(this)}
+        return <>
+            <AUpload list-type={'picture-card'} {...this.$attrs} onPreview={this.handlePreview}
                 onChange={this.handleChange}
                 ref="upload" defaultFileList={this.defaultUploadList} v-slots={getSlot(this.$slots, ['default'])}>
                 {isShow ? (this.$slots.default?.() ||
@@ -106,6 +109,6 @@ export default defineComponent({
                 onCancel={() => this.previewVisible = false} footer={null}>
                 <img style="width: 100%" src={this.previewImage}/>
             </aModal>
-        </div>;
+        </>;
     }
 });
