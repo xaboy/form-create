@@ -43,7 +43,12 @@ export function CreateNodeFactory() {
             if (isNativeTag) {
                 delete data.formCreateInject;
             }
-            return createVNode(isNativeTag ? tag : resolveComponent(tag), data, children);
+            try{
+                return createVNode(isNativeTag ? tag : resolveComponent(tag), data, children);
+            }catch (e){
+                console.error(e);
+                return createVNode('');
+            }
         },
         aliasMap
     });

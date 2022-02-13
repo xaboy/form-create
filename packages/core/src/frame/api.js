@@ -128,7 +128,8 @@ export default function Api(h) {
 
             if (ctx) {
                 if (child) {
-                    rules = ctx.rule.children;
+                    rules = ctx.getPending('children', ctx.rule.children);
+                    if (!Array.isArray(rules)) return;
                     index = ctx.rule.children.length - 1;
                 } else {
                     index = ctx.root.indexOf(ctx.origin);
@@ -143,7 +144,8 @@ export default function Api(h) {
 
             if (ctx) {
                 if (child) {
-                    rules = ctx.rule.children;
+                    rules = ctx.getPending('children', ctx.rule.children);
+                    if (!Array.isArray(rules)) return;
                 } else {
                     index = ctx.root.indexOf(ctx.origin);
                     rules = ctx.root;
@@ -331,7 +333,7 @@ export default function Api(h) {
             if (ctx) return ctx.el || h.vm.refs[ctx.ref];
         },
         closeModal: (id) => {
-            h.bus.$emit('fc:closeModal:'+id);
+            h.bus.$emit('fc:closeModal:' + id);
         },
         getSubForm(field) {
             const ctx = h.getCtx(field);

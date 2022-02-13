@@ -2,9 +2,9 @@ import unique from '@form-create/utils/lib/unique';
 import toCase from '@form-create/utils/lib/tocase';
 import extend from '@form-create/utils/lib/extend';
 import mergeProps from '@form-create/utils/lib/mergeprops';
-import {enumerable} from '../frame/util';
+import {enumerable, invoke} from '../frame/util';
 import {deepCopy} from '@form-create/utils/lib/deepextend';
-import {markRaw, nextTick} from 'vue';
+import {markRaw, nextTick, reactive} from 'vue';
 import is from '@form-create/utils/lib/type';
 
 function isNone(ctx) {
@@ -32,7 +32,7 @@ export default function RuleContext(handle, rule) {
         rule,
         origin: rule.__origin__ || rule,
         name: rule.name,
-
+        pending: {},
         none: false,
         watch: [],
         linkOn: [],
@@ -57,6 +57,77 @@ export default function RuleContext(handle, rule) {
 }
 
 extend(RuleContext.prototype, {
+    loadChildrenPending() {
+        const children = this.rule.children || [];
+        if (Array.isArray(children))
+            return children;
+        return this.loadPending({
+            key: 'children', origin: children, def: [],
+            onLoad: (data) => {
+                this.$handle && this.$handle.loadChildren(data, this);
+            }, onUpdate: (value, oldValue) => {
+                if (this.$handle) {
+                    value === oldValue ? this.$handle.loadChildren(value, this) : this.$handle.updateChildren(this, value, oldValue);
+                }
+            }, onReload: (value) => {
+                if (this.$handle) {
+                    this.$handle.updateChildren(this, [], value);
+                } else {
+                    delete this.pending.children;
+                }
+            }
+        });
+    },
+    loadPending(config) {
+        const {key, origin, def, onLoad, onReload, onUpdate} = config;
+
+        if (this.pending[key] && this.pending[key].origin === origin) {
+            return this.getPending(key, def);
+        }
+
+        delete this.pending[key];
+
+        let value = origin;
+        if (is.Function(origin)) {
+            let source = invoke(() => origin({
+                rule: this.rule, api: this.$api, update: (data) => {
+                    const value = data || def;
+                    const oldValue = this.getPending(key, def);
+                    this.setPending(key, origin, value);
+                    onUpdate && onUpdate(value, oldValue);
+                }, reload: () => {
+                    const oldValue = this.getPending(key, def);
+                    delete this.pending[key];
+                    onReload && onReload(oldValue);
+                    this.$api && this.$api.sync(this.rule);
+                }
+            }));
+            if (source && is.Function(source.then)) {
+                source.then((data) => {
+                    const value = data || def;
+                    this.setPending(key, origin, value);
+                    onLoad && onLoad(value);
+                    this.$api && this.$api.sync(this.rule);
+                })
+                value = def;
+                this.setPending(key, origin, value);
+            } else {
+                value = source || def;
+                this.setPending(key, origin, value);
+                onLoad && onLoad(value);
+            }
+        }
+        return value;
+    },
+    getPending(key, def) {
+        return (this.pending[key] && this.pending[key].value) || def;
+    },
+    setPending(key, origin, value) {
+        this.pending[key] = {
+            origin,
+            value: reactive(value)
+        };
+    },
     effectData(name) {
         if (!this.payload[name]) {
             this.payload[name] = {};

@@ -25,8 +25,6 @@ export default function useLoader(Handler) {
             fullRule(rule);
             this.appendValue(rule);
 
-            rule.options = Array.isArray(rule.options) ? rule.options : [];
-
             [rule, rule['prefix'], rule['suffix']].forEach(item => {
                 if (!item) {
                     return;
@@ -122,7 +120,7 @@ export default function useLoader(Handler) {
                     return err('未定义生成规则的 type 字段', _rule);
 
                 if (_rule.__fc__ && _rule.__fc__.root === rules && this.ctxs[_rule.__fc__.id]) {
-                    loadChildren(_rule.__fc__.rule.children, _rule.__fc__);
+                    loadChildren(_rule.__fc__.loadChildrenPending(), _rule.__fc__);
                     return _rule.__fc__;
                 }
 
@@ -180,7 +178,8 @@ export default function useLoader(Handler) {
 
                 !isCopy && !isInit && this.effect(ctx, 'load');
 
-                ctx.parser.loadChildren === false || loadChildren(ctx.rule.children, ctx);
+                const _load = ctx.loadChildrenPending()
+                ctx.parser.loadChildren === false || loadChildren(_load, ctx);
 
                 if (!parent) {
                     const _preIndex = preIndex(index);

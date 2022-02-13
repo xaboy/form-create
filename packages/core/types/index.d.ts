@@ -147,6 +147,24 @@ export interface Control<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
     rule: FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>[] | string[];
 }
 
+interface loadParams<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
+    rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
+    api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
+    update: (options: []) => void;
+    reload: () => void;
+}
+
+type RuleOptionsFn<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> = (data: loadParams<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => ([] | Promise<[]>)
+
+type RuleOptions<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> =
+    [] | RuleOptionsFn<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>
+
+type RuleChildrenFn<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> = (data: loadParams<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => (FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>[] | Promise<FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>[]>)
+
+type RuleChildren<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> =
+    FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>[]
+    | RuleChildrenFn<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
+
 export interface BaseRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> extends VNodeData {
     field?: string;
     key?: string;
@@ -159,7 +177,7 @@ export interface BaseRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> extend
     prefix?: string | VNodeData;
     suffix?: string | VNodeData;
     update?: (value: any, $rule: this, api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => Boolean | void;
-    options?: Object[];
+    options?: RuleOptions<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
     optionsTo?: string;
     deep?: Object;
     native?: Boolean;
@@ -168,7 +186,7 @@ export interface BaseRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> extend
     inject?: any;
 
     validate?: Object[];
-    children?: FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>[];
+    children?: RuleChildren<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
     control?: Control<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>[];
     effect?: {
         fetch?: String | FetchEffectOption | ((rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => FetchEffectOption),
@@ -251,13 +269,13 @@ export class BaseCreator<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
 
     validate(prop: Object[]): this;
 
-    children(prop: FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>[]): this;
+    children(prop: RuleChildren<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>): this;
 
     control(prop: Control<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>[]): this;
 
     effect(prop: Object): this;
 
-    options(options: Array<Object>): this;
+    options(options: RuleOptions<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>): this;
 
     optionsTo(to: string): this;
 }

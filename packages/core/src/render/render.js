@@ -42,7 +42,7 @@ export default function useRender(Render) {
                 ctx.initProp();
                 this.mergeGlobal(ctx);
                 ctx.initNone();
-                const slots = this.renderChildren(ctx);
+                const slots = this.renderChildren(ctx.loadChildrenPending(), ctx);
                 const def = slots.default;
                 def && slotBag.setSlot(ctx.rule.slot, () => def());
                 delete slots.default;
@@ -63,8 +63,10 @@ export default function useRender(Render) {
             ctx.prop = mergeRule({}, [this.cacheConfig[ctx.trueType].value, ctx.prop]);
         },
         setOptions(ctx) {
-            if (ctx.prop.optionsTo && ctx.prop.options) {
-                deepSet(ctx.prop, ctx.prop.optionsTo, ctx.prop.options);
+            const opt = ctx.loadPending({key: 'options', origin: ctx.prop.options, def: []});
+            ctx.prop.options = opt;
+            if (ctx.prop.optionsTo && opt) {
+                deepSet(ctx.prop, ctx.prop.optionsTo, opt);
             }
         },
         deepSet(ctx) {
@@ -107,11 +109,13 @@ export default function useRender(Render) {
                     }
                     vn = () => {
                         let children = {};
+                        const _load = ctx.loadChildrenPending();
                         if (ctx.parser.renderChildren) {
-                            children = ctx.parser.renderChildren(ctx);
+                            children = ctx.parser.renderChildren(_load, ctx);
                         } else if (ctx.parser.loadChildren !== false) {
-                            children = this.renderChildren(ctx);
+                            children = this.renderChildren(_load, ctx);
                         }
+
                         const slot = this.getTypeSlot(ctx.type);
                         let _vn;
                         if (slot) {
@@ -133,6 +137,7 @@ export default function useRender(Render) {
                         if (ctx.none) {
                             _vn = this.display(_vn);
                         }
+                        this.setCache(ctx, ()=>_vn, parent);
                         return _vn
                     };
                     this.setCache(ctx, vn, parent);
@@ -192,7 +197,7 @@ export default function useRender(Render) {
             extend(inject, {
                 preview: this.options.preview || false,
                 options: ctx.prop.options,
-                children: ctx.rule.children
+                children: ctx.loadChildrenPending()
             });
             return inject;
         },
@@ -238,9 +243,7 @@ export default function useRender(Render) {
         onInput(ctx, value) {
             this.$handle.onInput(ctx, value);
         },
-        renderChildren(ctx) {
-            const {children} = ctx.rule;
-
+        renderChildren(children, ctx) {
             if (!is.trueArray(children)) return {};
             const slotBag = makeSlotBag()
             children.map(child => {
@@ -290,7 +293,10 @@ export default function useRender(Render) {
                     v && slotBag.setSlot(v?.slot, () => this.renderRule(v));
                 });
             }
-            return this.vNode.make(type, rule, slotBag.mergeBag(children).getSlots());
+            const props = {...rule};
+            delete props.type;
+            delete props.is;
+            return this.vNode.make(type, props, slotBag.mergeBag(children).getSlots());
         }
     })
 }

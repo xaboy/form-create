@@ -79,8 +79,8 @@ export default function useContext(Handler) {
                 const ref = toRef(ctx.rule, key);
                 const flag = key === 'children';
                 ctx.refRule[key] = ref;
-                ctx.watch.push(watch(flag ? () => [...(ref.value || [])] : () => ref.value, (_, o) => {
-                    const n = ref.value;
+                ctx.watch.push(watch(flag ? () => is.Function(ref.value) ? ref.value : [...(ref.value || [])] : () => ref.value, (_, o) => {
+                    let n = ref.value;
                     if (this.isBreakWatch()) return;
                     if (flag && ctx.parser.loadChildren === false) {
                         this.$render.clearCache(ctx);
@@ -103,18 +103,14 @@ export default function useContext(Handler) {
                     else if (key === 'type') {
                         ctx.updateType();
                         this.bindParser(ctx);
-                    } else if (key === 'children') {
-                        this.deferSyncValue(() => {
-                            o && o.forEach((child) => {
-                                if ((n || []).indexOf(child) === -1 && child && !is.String(child) && child.__fc__ && !this.ctxs[child.__fc__.id]) {
-                                    this.rmCtx(child.__fc__);
-                                }
-                            });
-                            if (is.trueArray(n)) {
-                                this.loadChildren(n, ctx);
-                                this.bus.$emit('update', this.api);
-                            }
-                        });
+                    } else if (flag) {
+                        if (is.Function(o)) {
+                            o = ctx.getPending('children', []);
+                        }
+                        if (is.Function(n)) {
+                            n = ctx.loadChildrenPending();
+                        }
+                        this.updateChildren(ctx, n, o);
                     }
                     this.$render.clearCache(ctx);
                     this.watching = false;
@@ -131,6 +127,19 @@ export default function useContext(Handler) {
             }
             this.watchEffect(ctx);
         },
+        updateChildren(ctx, n, o) {
+            this.deferSyncValue(() => {
+                o && o.forEach((child) => {
+                    if ((n || []).indexOf(child) === -1 && child && !is.String(child) && child.__fc__) {
+                        this.rmCtx(child.__fc__);
+                    }
+                });
+                if (is.trueArray(n)) {
+                    this.loadChildren(n, ctx);
+                    this.bus.$emit('update', this.api);
+                }
+            });
+        },
         rmSub(sub) {
             is.trueArray(sub) && sub.forEach(r => {
                 r && r.__fc__ && this.rmCtx(r.__fc__);
@@ -143,6 +152,7 @@ export default function useContext(Handler) {
             $del(this.ctxs, id);
             $del(this.formData, id);
             $del(this.subForm, id);
+            $del(this.vm.setupState.ctxInject, id);
 
             input && this.rmIdCtx(ctx, field, 'field');
             name && this.rmIdCtx(ctx, name, 'name');
@@ -150,8 +160,9 @@ export default function useContext(Handler) {
             this.deferSyncValue(() => {
                 if (!this.reloading) {
                     if (ctx.parser.loadChildren !== false) {
-                        if (is.trueArray(ctx.rule.children)) {
-                            ctx.rule.children.forEach(h => h.__fc__ && this.rmCtx(h.__fc__));
+                        const children = ctx.getPending('children', ctx.rule.children);
+                        if (is.trueArray(children)) {
+                            children.forEach(h => h.__fc__ && this.rmCtx(h.__fc__));
                         }
                     }
                     if (ctx.root === this.rules) {
