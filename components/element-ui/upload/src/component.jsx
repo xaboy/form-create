@@ -1,7 +1,7 @@
 import toArray from '@form-create/utils/lib/toarray';
 import getSlot from '@form-create/utils/lib/slot';
 import './style.css';
-import {defineComponent, resolveComponent} from 'vue';
+import {defineComponent} from 'vue';
 
 function parseFile(file, i) {
     return {
@@ -22,34 +22,18 @@ export default defineComponent({
     inheritAttrs: false,
     props: {
         onHandle: Function,
-        uploadType: {
-            type: String,
-            default: 'file'
-        },
-        limit: {
-            type: Number,
-            default: 0
-        },
-        allowRemove: {
-            type: Boolean,
-            default: true
-        },
+        onChange: Function,
+        onRemove: Function,
         previewMask: undefined,
         modalTitle: String,
-        handleIcon: {
-            type:[String, Boolean],
-            default: undefined,
-        },
         modelValue: [Array, String]
     },
     emits: ['update:modelValue'],
     data() {
         return {
-            uploadList: [],
             previewVisible: false,
             previewImage: '',
             fileList: [],
-            cacheFiles: [],
         }
     },
     created() {
@@ -57,12 +41,6 @@ export default defineComponent({
     },
     watch: {
         modelValue(n) {
-            if (this.$refs.upload.uploadFiles.every(file => {
-                return !file.status || file.status === 'success';
-            })) {
-                this.$refs.upload.uploadFiles = toArray(n).map(parseFile);
-                this.uploadList = this.$refs.upload.uploadFiles;
-            }
             this.fileList = toArray(n).map(parseFile);
         },
         limit(n, o) {
@@ -72,98 +50,51 @@ export default defineComponent({
         }
     },
     methods: {
-        key(unique) {
-            return unique;
-        },
-        isDisabled() {
-            return this.$attrs.disabled === true;
-        },
-        onRemove(file) {
-            if (this.isDisabled()) {
-                return;
-            }
-            this.$refs.upload.handleRemove(file);
-        },
-        handleClick(file) {
-            if (this.onHandle) {
-                return this.onHandle(file);
+        handlePreview(file) {
+            if (this.onPreview) {
+                this.onPreview(...arguments);
             } else {
                 this.previewImage = file.url;
                 this.previewVisible = true;
             }
         },
-        makeItem(file, index) {
-            return this.uploadType === 'image'
-                ? <img src={file.url} key={this.key('img' + index)}/>
-                : <ElIcon key={this.key('i' + index)}><document /></ElIcon>
-        },
-        makeRemoveIcon(file, index) {
-            return <ElIcon onClick={() => this.onRemove(file)} key={this.key('ri' + index)}>
-                <delete/>
-            </ElIcon>
-        },
-        makeHandleIcon(file, index) {
-            const Type = resolveComponent((this.handleIcon === true || this.handleIcon === undefined) ? 'view' : this.handleIcon);
-            return <ElIcon onClick={() => this.handleClick(file)} key={this.key('hi' + index)}><Type/></ElIcon>
-        },
-        makeProgress(file, index) {
-            return <ElProgress {...{percentage: file.percentage, type: 'circle', width: 52}} style="margin-top:2px;"
-                key={this.key('pg' + index)}/>
-        },
-        makeIcons(file, index) {
-            const icons = [];
-            if (this.allowRemove || this.handleIcon !== false) {
-                if ((this.uploadType !== 'file' && this.handleIcon !== false) || (this.uploadType === 'file' && this.handleIcon)) {
-                    icons.push(this.makeHandleIcon(file, index));
-                }
-                if (this.allowRemove) {
-                    icons.push(this.makeRemoveIcon(file, index));
-                }
-
-                return <div class="fc-upload-cover">{icons}</div>;
-            }
-        },
-        makeFiles() {
-            return this.uploadList.map((file, index) => <div key={this.key(index)}
-                class="fc-files">{(file.percentage !== undefined && file.status !== 'success') ? this.makeProgress(file, index) : [this.makeItem(file, index), this.makeIcons(file, index)]}</div>);
-        },
-        makeUpload() {
-            const isShow = (!this.limit || this.limit > this.uploadList.length);
-            return <ElUpload {...this.$attrs} showFileList={false} fileList={this.fileList} ref="upload"
-                style={{display: 'inline-block'}}
-                key={this.key('upload')} v-slots={getSlot(this.$slots, ['default'])}>
-                {isShow ?
-                    (this.$slots.default?.() || <div class="fc-upload-btn">
-                        <ElIcon><upload/></ElIcon>
-                    </div>) : undefined}
-            </ElUpload>;
-        },
-        update() {
-            let files = this.$refs.upload.uploadFiles.map((file) => file.url).filter((url) => url !== undefined);
-            if (this.cacheFiles.length !== files.length) {
-                this.cacheFiles = [...files];
-                this.$emit('update:modelValue', this.limit === 1 ? (files[0] || '') : files);
-            }
+        update(fileList) {
+            let files = fileList.map((file) => file.url).filter((url) => url !== undefined);
+            this.$emit('update:modelValue', this.limit === 1 ? (files[0] || '') : files);
         },
         handleCancel() {
             this.previewVisible = false;
         },
+        handleChange(file, fileList) {
+            this.onChange && this.onChange(...arguments);
+            if (file.status === 'success') {
+                this.update(fileList);
+            }
+        },
+        handleRemove(file, fileList) {
+            this.onRemove && this.onRemove(...arguments);
+            this.update(fileList);
+        }
     },
     render() {
         return (
-            <div
-                class="_fc-upload">{[this.$attrs.showFileList ? [] : this.makeFiles(), this.makeUpload()]}
-                <ElDialog appendToBody={true} modal={this.previewMask} title={this.modalTitle}
-                    modelValue={this.previewVisible}
-                    onClose={this.handleCancel}>
-                    <img alt="example" style="width: 100%" src={this.previewImage}/>
-                </ElDialog>
-            </div>);
-    },
-    mounted() {
-        this.uploadList = this.$refs.upload.uploadFiles;
-        this.$watch(() => this.$refs.upload.uploadFiles, () => {
-            this.update();
-        }, {deep: true});
+            <><ElUpload key={this.modelValue.length} list-type="picture-card" {...this.$attrs}
+                class={{'_fc-exceed': this.$attrs.limit ? this.$attrs.limit <= this.modelValue.length : false}}
+                onPreview={this.handlePreview} onChange={this.handleChange}
+                onRemove={this.handleRemove}
+                fileList={this.fileList}
+                v-slots={getSlot(this.$slots, ['default'])}>
+                {(this.$slots.default?.() ||
+                    <ElIcon>
+                        <upload/>
+                    </ElIcon>
+                )}
+            </ElUpload>
+            <ElDialog appendToBody={true} modal={this.previewMask} title={this.modalTitle}
+                modelValue={this.previewVisible}
+                onClose={this.handleCancel}>
+                <img style="width: 100%" src={this.previewImage}/>
+            </ElDialog>
+            </>);
     }
 })

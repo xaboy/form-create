@@ -9,8 +9,8 @@ export default defineComponent({
     props: {
         formCreateInject: Object,
         modelValue: {
-            type: Array,
-            default: () => []
+            type: [Array, String, Number, Boolean, Object],
+            default: undefined
         },
         type: String,
     },

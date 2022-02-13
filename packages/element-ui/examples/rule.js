@@ -13,7 +13,7 @@ export default function mock() {
         ]),
 
         // cascader 多级联动组件
-        maker.cascader({title: '所在区域', style: 'color:red'}, 'address', ['陕西省', '西安市']).props({
+        maker.cascader({title: '所在区域', style: 'color:red'}, 'address', 29).props({
             options: []
         }).effect({
             address: '1'
@@ -343,13 +343,12 @@ export default function mock() {
         //upload 上传组件
         maker.upload('轮播图', 'pic', ['http://file.lotkk.com/form-create.jpeg'])
             .props({
-                'action': 'https://mock.uutool.cn/4erua2dig4i0',
+                'action': 'http://127.0.0.1:8324/api/test',
                 'limit': 2,
                 'uploadType': 'image',
                 'name': 'file',
                 'onSuccess': function (res, file) {
-                    console.log('upload success');
-                    file.url = res.thumbUrl;
+                    file.url = res.data.url;
                 },
                 'onRemove': function (file, fileList) {
                     console.log(file, fileList);
