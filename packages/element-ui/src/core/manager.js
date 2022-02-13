@@ -220,9 +220,10 @@ export default {
                 key: `${this.key}fc`
             }, [item]);
     },
+
     makeResetBtn() {
         const resetBtn = {...this.options.resetBtn};
-        const text = resetBtn.innerText;
+        const innerText = resetBtn.innerText;
         delete resetBtn.innerText;
         return this.$r({
             type: 'button',
@@ -237,13 +238,12 @@ export default {
                 }
             },
             key: `${this.key}b2`,
-        }, [text]);
+        }, [innerText]);
     },
     makeSubmitBtn() {
         const submitBtn = {...this.options.submitBtn};
-        const text = submitBtn.innerText;
+        const innerText = submitBtn.innerText;
         delete submitBtn.innerText;
-
         return this.$r({
             type: 'button',
             props: submitBtn,
@@ -257,6 +257,6 @@ export default {
                 }
             },
             key: `${this.key}b1`,
-        }, [text]);
+        }, [innerText]);
     }
 }

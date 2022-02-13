@@ -46,7 +46,8 @@ export default {
         })
     },
     clearValidateState(ctx) {
-        return this.form().setFields({
+        const form = this.form();
+        return form && form.setFields({
             [ctx.id]: {
                 status: 'success',
                 message: ''
@@ -223,7 +224,9 @@ export default {
             }, [item]);
     },
     makeResetBtn() {
-        const resetBtn = this.options.resetBtn;
+        const resetBtn = {...this.options.resetBtn};
+        const innerText = resetBtn.innerText;
+        delete resetBtn.innerText;
         return this.$r({
             type: 'button',
             props: resetBtn,
@@ -237,11 +240,12 @@ export default {
                 }
             },
             key: `${this.key}b2`,
-        }, [resetBtn.innerText]);
+        }, [innerText]);
     },
     makeSubmitBtn() {
-        const submitBtn = this.options.submitBtn;
-
+        const submitBtn = {...this.options.submitBtn};
+        const innerText = submitBtn.innerText;
+        delete submitBtn.innerText;
         return this.$r({
             type: 'button',
             props: submitBtn,
@@ -255,6 +259,6 @@ export default {
                 }
             },
             key: `${this.key}b1`,
-        }, [submitBtn.innerText]);
+        }, [innerText]);
     }
 }

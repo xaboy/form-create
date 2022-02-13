@@ -2,7 +2,7 @@ import getConfig from './config';
 import mergeProps from '@form-create/utils/lib/mergeprops';
 import is, {hasProperty} from '@form-create/utils/lib/type';
 import extend from '@form-create/utils/lib/extend';
-import {getCurrentInstance, resolveComponent} from 'vue';
+import {resolveComponent} from 'vue';
 
 function tidy(props, name) {
     if (!hasProperty(props, name)) return;
