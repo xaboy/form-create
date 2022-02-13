@@ -17,6 +17,7 @@ import {appendProto} from '../factory/creator';
 import $fetch from './provider';
 import {deepCopy} from '@form-create/utils/lib/deepextend';
 import Mitt from '@form-create/utils/lib/mitt';
+import html from '../parser/html';
 
 function parseProp(name, id) {
     let prop;
@@ -320,6 +321,8 @@ export default function FormCreateFactory(config) {
             props: ['formCreateInject'],
         })
     })
+
+    parser(html);
 
     return create;
 }
