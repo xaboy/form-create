@@ -4,6 +4,7 @@
     "packages/arco-design",
     "packages/core",
     "packages/element-ui",
+    "packages/naive-ui",
     "packages/utils",
     "components/common/subform",
     "components/common/wangeditor",
@@ -21,7 +22,12 @@
     "components/arco-design/frame",
     "components/arco-design/group",
     "components/arco-design/radio",
-    "components/arco-design/upload"
+    "components/arco-design/upload",
+    "components/naive-ui/checkbox",
+    "components/naive-ui/frame",
+    "components/naive-ui/group",
+    "components/naive-ui/radio",
+    "components/naive-ui/upload"
   ],
   "version": "3.0.0-alpha.4"
 }
