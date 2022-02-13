@@ -35,8 +35,8 @@ export default defineComponent({
             default: 500
         },
         height: {
-            type: [Number, String],
-            default: 370
+            type: String,
+            default: '370px'
         },
         maxLength: {
             type: Number,
@@ -317,9 +317,9 @@ export default defineComponent({
         return <div class="_fc-frame">{Node}
             <aModal mask={this.previewMask} title={modalTitle} visible={this.previewVisible}
                 onCancel={() => this.previewVisible = false} footer={null}>
-                <img alt="example" style="width: 100%" src={this.previewImage}/>
+                <img style="width: 100%" src={this.previewImage}/>
             </aModal>
-            <aModal props={{width, title, ...this.modal}} visible={this.frameVisible}
+            <aModal {...{width, title, ...this.modal}} visible={this.frameVisible}
                 onCancel={() => (this.closeModal(true))} v-slots={
                     {footer: () => this.makeFooter()}
                 }>

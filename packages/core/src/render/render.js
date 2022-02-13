@@ -134,7 +134,6 @@ export default function useRender(Render) {
                     return _vn
                 });
                 this.setCache(ctx, vn, parent);
-                ctx._vnode = vn;
                 return vn;
             }
 
@@ -282,7 +281,10 @@ export default function useRender(Render) {
                     v && slotBag.setSlot(v?.slot, () => this.renderRule(v));
                 });
             }
-            return this.vNode.make(type, rule, slotBag.mergeBag(children).getSlots());
+            const props = {...rule};
+            delete props.type;
+            delete props.is;
+            return this.vNode.make(type, props, slotBag.mergeBag(children).getSlots());
         }
     })
 }

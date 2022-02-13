@@ -309,7 +309,7 @@ export default defineComponent({
         return <div class="_fc-frame">{node}
             <ElDialog appendToBody={true} modal={this.previewMask} title={modalTitle} modelValue={this.previewVisible}
                 onClose={this.handleCancel}>
-                <img alt="example" style="width: 100%" src={this.previewImage}/>
+                <img style="width: 100%" src={this.previewImage}/>
             </ElDialog>
             <ElDialog appendToBody={true} {...{width, title, ...this.modal}} modelValue={this.frameVisible}
                 onClose={() => (this.closeModel(true))} v-slots={{

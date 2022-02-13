@@ -15,7 +15,7 @@ export default function useInput(Handler) {
             this.setFormData(ctx, formValue);
             this.syncValue();
             this.valueChange(ctx, value);
-            this.vm.emit('change', ctx.field, value, ctx.origin, this.api, setFlag);
+            this.vm.emit('change', ctx.field, value, ctx.origin, this.api, setFlag || false);
             this.effect(ctx, 'value');
         },
         onInput(ctx, value) {
@@ -25,7 +25,7 @@ export default function useInput(Handler) {
             }
         },
         setFormData(ctx, value) {
-            $set(this.formData, ctx.id, value);
+            $set(this.formData, ctx.id, value === undefined ? null : value);
         },
         getFormData(ctx) {
             return this.formData[ctx.id];
