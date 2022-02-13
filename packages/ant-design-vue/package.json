@@ -71,9 +71,7 @@
       "@ant-design/icons-vue"
     ],
     "extendGlobal": {
-      "vue": "Vue",
-      "antd": "ant-design-vue",
-      "@ant-design/icons-vue": "self"
+      "vue": "Vue"
     },
     "fileName": "form-create",
     "formats": [

@@ -9,8 +9,8 @@ export default defineComponent({
     props: {
         formCreateInject: Object,
         modelValue: {
-            type: [String, Number],
-            default: () => []
+            type: [String, Number, Boolean],
+            default: ''
         }
     },
     emits: ['update:modelValue'],

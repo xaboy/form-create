@@ -28,7 +28,6 @@ export default function useEffect(Handler) {
             provider._used = used;
         },
         watchEffect(ctx) {
-            const vm = this.vm;
             Object.keys(ctx.rule.effect || {}).forEach(k => {
                 ctx.watch.push(watch(() => ctx.rule.effect[k], (n) => {
                     this.effect(ctx, 'watch', {[k]: n});

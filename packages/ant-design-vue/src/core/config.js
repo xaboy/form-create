@@ -28,7 +28,6 @@ export default function getConfig() {
         },
         resetBtn: {
             disabled: false,
-            icon: 'sync',
             loading: false,
             type: 'default',
             innerText: '重置',

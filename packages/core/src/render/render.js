@@ -136,7 +136,6 @@ export default function useRender(Render) {
                         return _vn
                     };
                     this.setCache(ctx, vn, parent);
-                    ctx._vnode = vn;
                     return vn;
                 }
                 return this.getCache(ctx);
