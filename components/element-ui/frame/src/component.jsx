@@ -131,9 +131,6 @@ export default defineComponent({
         }
     },
     methods: {
-        key(unique) {
-            return unique;
-        },
         close() {
             this.closeModel(true);
         },
@@ -166,7 +163,7 @@ export default defineComponent({
                 type: 'text',
                 modelValue: (this.fileList.map(v => this.getSrc(v))).toString(),
                 readonly: true
-            }} key={this.key('input')} v-slots={{
+            }} key={1} v-slots={{
                 append: () => <ElButton icon={this.icon} onClick={() => this.showModel()}/>,
                 suffix: () => this.fileList.length ?
                     <ElIcon class="el-input__icon" onClick={() => {
@@ -181,11 +178,11 @@ export default defineComponent({
             if (!this.maxLength || this.fileList.length < this.maxLength) {
                 children.push(this.makeBtn());
             }
-            return <div key={this.key('group')}>{children}</div>
+            return <div key={2}>{children}</div>
         },
 
         makeItem(index, children) {
-            return <div class="fc-files" key={this.key('file' + index)}>{children}</div>;
+            return <div class="_fc-files" key={'3' + index}>{children}</div>;
         },
         valid(f) {
             const field = this.formCreateInject.field || this.field;
@@ -202,16 +199,16 @@ export default defineComponent({
                 if (this.allowRemove) {
                     icons.push(this.makeRemoveIcon(val, index));
                 }
-                return <div class="fc-upload-cover" key={this.key('uc')}>{icons}</div>
+                return <div class="_fc-upload-cover" key={4}>{icons}</div>
             }
         },
         makeHandleIcon(val, index) {
             const Type = resolveComponent((this.handleIcon === true || this.handleIcon === undefined) ? 'view' : this.handleIcon);
-            return <ElIcon onClick={() => this.handleClick(val)} key={this.key('hi' + index)}><Type/></ElIcon>
+            return <ElIcon onClick={() => this.handleClick(val)} key={'5' + index}><Type/></ElIcon>
         },
 
         makeRemoveIcon(val, index) {
-            return <ElIcon onClick={() => this.handleRemove(val)} key={this.key('ri' + index)}>
+            return <ElIcon onClick={() => this.handleRemove(val)} key={'6' + index}>
                 <delete/>
             </ElIcon>
         },
@@ -230,7 +227,7 @@ export default defineComponent({
         },
         makeBtn() {
             const Type = resolveComponent(this.icon);
-            return <div class="fc-upload-btn" onClick={() => this.showModel()} key={this.key('btn')}>
+            return <div class="_fc-upload-btn" onClick={() => this.showModel()} key={7}>
                 <ElIcon><Type/></ElIcon>
             </div>
         },
@@ -316,14 +313,14 @@ export default defineComponent({
         return <div class="_fc-frame">{node}
             <ElDialog appendToBody={true} modal={this.previewMask} title={modalTitle} modelValue={this.previewVisible}
                 onClose={this.handleCancel}>
-                <img alt="example" style="width: 100%" src={this.previewImage}/>
+                <img style="width: 100%" src={this.previewImage}/>
             </ElDialog>
             <ElDialog appendToBody={true} {...{width, title, ...this.modal}} modelValue={this.frameVisible}
                 onClose={() => (this.closeModel(true))} v-slots={{
                     footer: () => this.makeFooter()
                 }}>
                 {(this.frameVisible || !this.reload) ? <iframe ref="frame" src={src} frameBorder="0" style={{
-                    'height': height,
+                    height,
                     'border': '0 none',
                     'width': '100%'
                 }}/> : null}</ElDialog>

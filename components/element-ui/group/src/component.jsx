@@ -242,10 +242,10 @@ export default defineComponent({
             (this.$slots.default ? (this.$slots.default({
                 vm: this,
                 add: this.add
-            })) : <i key={'a_def'} class="el-icon-circle-plus-outline"
+            })) : <i key={1} class="el-icon-circle-plus-outline"
                 style={`font-size:${this.fontSize}px;vertical-align:middle;color:${this.disabled ? '#c9cdd4;cursor: not-allowed' : '#606266;cursor:pointer'};`}
                 onClick={this.add}/>) :
-            <div key={'con'}>{keys.map((key, index) => {
+            <div key={2}>{keys.map((key, index) => {
                 const {rule, options} = this.cacheRule[key];
                 return <ElRow align="middle" type="flex" key={key}
                     style="border-bottom:1px dashed #DCDFE6;margin-bottom:10px;">

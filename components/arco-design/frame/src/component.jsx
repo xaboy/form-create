@@ -34,8 +34,8 @@ export default defineComponent({
             default: 500
         },
         height: {
-            type: [Number, String],
-            default: 370
+            type: String,
+            default: '370px'
         },
         maxLength: {
             type: Number,
@@ -131,9 +131,6 @@ export default defineComponent({
         }
     },
     methods: {
-        key(unique) {
-            return unique;
-        },
         close() {
             this.closeModal(true);
         },
@@ -175,18 +172,18 @@ export default defineComponent({
                 }}/>
             }
             return <AInput readonly={true} modelValue={(this.fileList.map(v => this.getSrc(v))).toString()}
-                key={this.key('input')} v-slots={slots}>
+                key={1} v-slots={slots}>
             </AInput>
         },
 
         makeGroup(children) {
             if (!this.maxLength || this.fileList.length < this.maxLength)
                 children.push(this.makeBtn());
-            return <div key={this.key('group')}>{children}</div>
+            return <div key={2}>{children}</div>
         },
 
         makeItem(index, children) {
-            return <div class="fc-files" key={this.key('file' + index)}>{children}</div>;
+            return <div class="_fc-files" key={'3' + index}>{children}</div>;
         },
         valid(f) {
             const field = this.formCreateInject.field || this.field;
@@ -203,18 +200,18 @@ export default defineComponent({
                 if (this.allowRemove)
                     icons.push(this.makeRemoveIcon(val, index));
 
-                return <div class="fc-upload-cover" key={this.key('uc')}>{icons}</div>
+                return <div class="_fc-upload-cover" key={4}>{icons}</div>
             }
         },
         makeHandleIcon(val, index) {
             const Type = resolveComponent((this.handleIcon === true || this.handleIcon === undefined) ? 'icon-eye' : this.handleIcon);
             return <Type
-                onClick={() => this.handleClick(val)} key={this.key('hi' + index)}/>
+                onClick={() => this.handleClick(val)} key={'5' + index}/>
         },
 
         makeRemoveIcon(val, index) {
             return <icon-delete onClick={() => this.handleRemove(val)}
-                key={this.key('ri' + index)}/>
+                key={'6' + index}/>
         },
 
         makeFiles() {
@@ -230,7 +227,7 @@ export default defineComponent({
         },
         makeBtn() {
             const Type = resolveComponent(this.icon);
-            return <div class="fc-upload-btn" onClick={() => this.showModal()} key={this.key('btn')}>
+            return <div class="_fc-upload-btn" onClick={() => this.showModal()} key={7}>
                 <Type class="_fc-frame-icon"/>
             </div>
         },
@@ -315,7 +312,7 @@ export default defineComponent({
         return <div class="_fc-frame">{Node}
             <aModal mask={this.previewMask} title={modalTitle} visible={this.previewVisible}
                 onCancel={() => this.previewVisible = false} footer={null}>
-                <img alt="example" style="width: 100%" src={this.previewImage}/>
+                <img style="width: 100%" src={this.previewImage}/>
             </aModal>
             <aModal {...{width, title, ...this.modal}} visible={this.frameVisible}
                 onCancel={() => (this.closeModal(true))} v-slots={

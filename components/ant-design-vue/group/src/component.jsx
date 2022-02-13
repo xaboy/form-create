@@ -238,10 +238,10 @@ export default defineComponent({
             (this.$slots.default ? (this.$slots.default({
                 vm: this,
                 add: this.add
-            })) : <PlusCircleOutlined key={'a_def'}
+            })) : <PlusCircleOutlined key={1}
                 style={`font-size:${this.fontSize}px;vertical-align:middle;color:${this.disabled ? '#c9cdd4;cursor: not-allowed' : '#606266;cursor:pointer'};`}
                 onClick={this.add}/>) :
-            <div key={'con'}>{keys.map((key, index) => {
+            <div key={2}>{keys.map((key, index) => {
                 const {rule, options} = this.cacheRule[key];
                 return <aRow align="middle" type="flex" key={key}
                     style="border-bottom:1px dashed #DCDFE6;margin-bottom:10px;">

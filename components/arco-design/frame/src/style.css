@@ -1,11 +1,11 @@
-._fc-frame .fc-files img {
+._fc-frame ._fc-files img {
     width: 100%;
     height: 100%;
     display: inline-block;
     vertical-align: top;
 }
 
-._fc-frame .fc-upload-cover {
+._fc-frame ._fc-upload-cover {
     opacity: 0;
     position: absolute;
     top: 0;
@@ -16,14 +16,14 @@
     transition: opacity .3s;
 }
 
-._fc-frame .fc-upload-cover ._fc-frame-icon {
+._fc-frame ._fc-upload-cover ._fc-frame-icon {
     color: #fff;
     font-size: 16px;
     cursor: pointer;
     margin: 0 2px;
 }
 
-._fc-frame .fc-files:hover .fc-upload-cover {
+._fc-frame ._fc-files:hover ._fc-upload-cover {
     opacity: 1;
 }
 
@@ -31,11 +31,11 @@
     display: block;
 }
 
-._fc-frame .fc-upload-btn {
+._fc-frame ._fc-upload-btn {
     cursor: pointer;
 }
 
-._fc-frame .fc-upload-btn, .fc-files {
+._fc-frame ._fc-upload-btn, ._fc-files {
     display: inline-block;
     width: 80px;
     height: 80px;
@@ -51,7 +51,7 @@
     box-sizing: border-box;
 }
 
-._fc-frame .fc-upload-cover svg {
+._fc-frame ._fc-upload-cover svg {
     color: #fff;
     font-size: 20px;
     cursor: pointer;
