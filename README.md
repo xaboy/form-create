@@ -22,6 +22,8 @@
 ## 支持
 - **element-plus**
 - **ant-design-vue**
+- **naive-ui**
+- **arco-design**
 
 如果您有适合 form-create 的表单组件, 欢迎[点击这里留言](https://github.com/xaboy/form-create/issues/124)
 
@@ -68,7 +70,7 @@
 | @form-create/element-ui [![version](https://img.shields.io/npm/v/@form-create/element-ui.svg)](https://www.npmjs.com/package/@form-create/element-ui) [![npm](https://img.shields.io/npm/dt/@form-create/element-ui.svg)](https://www.npmjs.com/package/@form-create/element-ui) | [element-plus 版本](http://form-create.com/v3/element-ui/)        |
 | @form-create/ant-design-vue [![version](https://img.shields.io/npm/v/@form-create/ant-design-vue.svg)](https://www.npmjs.com/package/@form-create/ant-design-vue) [![npm](https://img.shields.io/npm/dt/@form-create/ant-design-vue.svg)](https://www.npmjs.com/package/@form-create/ant-design-vue) | [ant-design-vue 版本](http://form-create.com/v3/ant-design-vue/)     |
 | @form-create/acro-design [![version](https://img.shields.io/npm/v/@form-create/acro-design.svg)](https://www.npmjs.com/package/@form-create/acro-design) [![npm](https://img.shields.io/npm/dt/@form-create/acro-design.svg)](https://www.npmjs.com/package/@form-create/acro-design) | [acro-design 版本](http://form-create.com/v3/acro-design/)     |
-| @form-create/naive-ui [![version](https://img.shields.io/npm/v/@form-create/naive-ui.svg)](https://www.npmjs.com/package/@form-create/naive-ui) [![npm](https://img.shields.io/npm/dt/@form-create/naive-ui.svg)](https://www.npmjs.com/package/@form-create/naive-ui) | [acro-design 版本](http://form-create.com/v3/naive-ui/)     |
+| @form-create/naive-ui [![version](https://img.shields.io/npm/v/@form-create/naive-ui.svg)](https://www.npmjs.com/package/@form-create/naive-ui) [![npm](https://img.shields.io/npm/dt/@form-create/naive-ui.svg)](https://www.npmjs.com/package/@form-create/naive-ui) | [naive-ui 版本](http://form-create.com/v3/naive-ui/)     |
 
 
 
@@ -105,6 +107,16 @@ ant-design-vue
 npm install @form-create/ant-design-vue@next
 ```
 
+arco-design
+```shell
+npm install @form-create/arco-design@next
+```
+
+naive-ui
+```shell
+npm install @form-create/naive-ui@next
+```
+
 ## 引入
 
 **CDN:**
@@ -127,25 +139,25 @@ ant-design-vue
 ```
 **NodeJs:**
 
-element-plus ^2.x
+element-plus ^2.0
 ```js
 import formCreate from '@form-create/element-ui'
 app.use(formCreate)
 ```
 
-ant-design-vue
+ant-design-vue ^3.0
 ```js
 import formCreate from '@form-create/ant-design-vue'
 app.use(formCreate)
 ```
 
-acro-design
+acro-design ^2.0
 ```js
 import formCreate from '@form-create/acro-design'
 app.use(formCreate)
 ```
 
-naive-ui
+naive-ui ^2.0
 ```js
 import formCreate from '@form-create/naive-ui'
 app.use(formCreate)
