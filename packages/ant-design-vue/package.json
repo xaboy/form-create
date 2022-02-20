@@ -1,6 +1,6 @@
 {
   "name": "@form-create/ant-design-vue",
-  "version": "3.0.0-alpha.4",
+  "version": "3.1.0",
   "description": "ant-design-vue动态表单|form-create is a form generation component that can generate dynamic rendering, data collection, verification and submission functions through JSON. Supports 3 UI frameworks, and supports the generation of any Vue components. Built-in 20 kinds of commonly used form components and custom components, no matter how complex forms can be easily handled.",
   "main": "./dist/form-create.min.js",
   "module": "./dist/form-create.esm.js",
@@ -44,19 +44,19 @@
   },
   "homepage": "http://www.form-create.com/v3/",
   "dependencies": {
-    "@form-create/component-antdv-frame": "^3.0.0-alpha.4",
-    "@form-create/component-antdv-group": "^3.0.0-alpha.4",
-    "@form-create/component-antdv-upload": "^3.0.0-alpha.4",
-    "@form-create/component-subform": "^3.0.0-alpha.2",
-    "@form-create/core": "^3.0.0-alpha.4",
-    "@form-create/utils": "^3.0.0-alpha.4"
+    "@form-create/component-antdv-frame": "^3.1.0",
+    "@form-create/component-antdv-group": "^3.1.0",
+    "@form-create/component-antdv-upload": "^3.1.0",
+    "@form-create/component-subform": "^3.1.0",
+    "@form-create/core": "^3.1.0",
+    "@form-create/utils": "^3.1.0"
   },
   "publishConfig": {
     "access": "public"
   },
   "devDependencies": {
     "@ant-design/icons-vue": "^6.0.1",
-    "@form-create/component-wangeditor": "^3.0.0-alpha.3",
+    "@form-create/component-wangeditor": "^3.1.0",
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-service": "^4.5.3",
     "ant-design-vue": "^3.0.0-alpha.11",
