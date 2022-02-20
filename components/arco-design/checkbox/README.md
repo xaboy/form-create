@@ -1,4 +1,4 @@
-# @form-create/component-acro-checkbox
+# @form-create/component-arco-checkbox
 
 @form-create/arco-design 内置组件
 

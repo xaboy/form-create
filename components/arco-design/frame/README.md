@@ -1,4 +1,4 @@
-# @form-create/component-acro-frame
+# @form-create/component-arco-frame
 
 @form-create/arco-design 内置组件
 
