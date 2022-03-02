@@ -1,6 +1,6 @@
 {
   "name": "@form-create/component-naive-radio",
-  "version": "3.1.1",
+  "version": "3.1.2",
   "description": "@form-create/naive-ui 内置组件",
   "main": "./dist/index.min.js",
   "module": "./dist/index.esm.js",
@@ -37,7 +37,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@form-create/utils": "^3.1.1"
+    "@form-create/utils": "^3.1.2"
   },
   "buildFormCreateOptions": {
     "name": "@form-create/component-naive-radio",

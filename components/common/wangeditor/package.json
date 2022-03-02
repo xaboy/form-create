@@ -1,6 +1,6 @@
 {
   "name": "@form-create/component-wangeditor",
-  "version": "3.1.1",
+  "version": "3.1.2",
   "description": "@form-create 富文本组件",
   "main": "./dist/index.min.js",
   "module": "./dist/index.esm.js",
