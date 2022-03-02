@@ -57,15 +57,6 @@ import 'element-plus/es/components/date-picker/style/css'
 import 'element-plus/es/components/time-picker/style/css'
 import 'element-plus/es/components/progress/style/css'
 
-import Warning from '@element-plus/icons-vue/dist/es/warning'
-import View from '@element-plus/icons-vue/dist/es/view'
-import Delete from '@element-plus/icons-vue/dist/es/delete'
-import Document from '@element-plus/icons-vue/dist/es/document'
-import UploadIcon from '@element-plus/icons-vue/dist/es/upload'
-import CircleClose from '@element-plus/icons-vue/dist/es/circle-close'
-import CirclePlus from '@element-plus/icons-vue/dist/es/circle-plus'
-import Remove from '@element-plus/icons-vue/dist/es/remove'
-
 export default function install(formCreate) {
     formCreate.useApp((_, app) => {
         app.use(ElForm).use(ElButton).use(ElRow).use(ElCol).use(ElInput).use(ElInputNumber).use(ElCascader)
@@ -73,11 +64,6 @@ export default function install(formCreate) {
             .use(ElRadioGroup).use(ElRadioButton).use(ElRadio).use(ElDialog).use(ElCheckbox).use(ElSelect)
             .use(ElTree).use(ElUpload).use(ElSlider).use(ElRate).use(ElColorPicker).use(ElSwitch).use(ElDatePicker)
             .use(ElIcon).use(ElTimePicker).use(ElProgress);
-
-        app.component(Warning.name, Warning).component(View.name, View).component(Delete.name, Delete)
-            .component(Document.name, Document).component(UploadIcon.name, UploadIcon)
-            .component(CircleClose.name, CircleClose).component(CirclePlus.name, CirclePlus)
-            .component(Remove.name, Remove);
     });
 
 }

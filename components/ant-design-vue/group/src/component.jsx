@@ -1,5 +1,7 @@
 import {hasProperty} from '@form-create/utils/lib/type';
 import {defineComponent, markRaw, nextTick} from 'vue';
+import MinusCircleOutlined from './MinusCircleOutlined.vue';
+import PlusCircleOutlined from './PlusCircleOutlined.vue';
 
 const NAME = 'fcGroup';
 

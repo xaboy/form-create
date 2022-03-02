@@ -19,7 +19,6 @@
 ._fc-frame ._fc-upload-cover ._fc-frame-icon {
     color: #fff;
     font-size: 16px;
-    cursor: pointer;
     margin: 0 2px;
 }
 
@@ -27,11 +26,16 @@
     opacity: 1;
 }
 
+._fc-frame .anticon{
+    font-size: 16px;
+    width: 16px;
+}
+
 ._fc-frame .ant-upload {
     display: block;
 }
 
-._fc-frame ._fc-upload-btn {
+._fc-frame ._fc-upload-btn, ._fc-frame ._fc-frame-icon {
     cursor: pointer;
 }
 

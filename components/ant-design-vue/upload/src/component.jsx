@@ -2,6 +2,7 @@ import {defineComponent} from 'vue';
 import toString from '@form-create/utils/lib/tostring';
 import toArray from '@form-create/utils/lib/toarray';
 import getSlot from '@form-create/utils/lib/slot';
+import PlusOutlined from './PlusOutlined.vue';
 
 const parseFile = function (file, uid) {
         return {
@@ -103,7 +104,7 @@ export default defineComponent({
                 onChange={this.handleChange}
                 ref="upload" defaultFileList={this.defaultUploadList} v-slots={getSlot(this.$slots, ['default'])}>
                 {isShow ? (this.$slots.default?.() ||
-                    <PlusOutlined/>) : null}
+                    <PlusOutlined style='font-size: 16px; width: 16px;'/>) : null}
             </AUpload>
             <aModal mask={this.previewMask} title={this.modalTitle} visible={this.previewVisible}
                 onCancel={() => this.previewVisible = false} footer={null}>

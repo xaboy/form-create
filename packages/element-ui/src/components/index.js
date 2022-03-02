@@ -6,6 +6,7 @@ import tree from '@form-create/component-elm-tree/src/index';
 import upload from '@form-create/component-elm-upload/src/index';
 import group from '@form-create/component-elm-group/src/index';
 import subForm from '@form-create/component-subform/src/index';
+import IconWarning from './icon/IconWarning.vue';
 
 
 export default [
@@ -17,4 +18,5 @@ export default [
     upload,
     group,
     subForm,
+    IconWarning,
 ]

@@ -43,23 +43,11 @@ import '@arco-design/web-vue/es/modal/style/css';
 import Grid from '@arco-design/web-vue/es/grid';
 import '@arco-design/web-vue/es/grid/style/css';
 
-import InfoCircle from '@arco-design/web-vue/es/icon/icon-info-circle'
-import Folder from '@arco-design/web-vue/es/icon/icon-folder';
-import CloseCircle from '@arco-design/web-vue/es/icon/icon-close-circle';
-import PlusCircle from '@arco-design/web-vue/es/icon/icon-plus-circle';
-import MinusCircle from '@arco-design/web-vue/es/icon/icon-minus-circle';
-import Delete from '@arco-design/web-vue/es/icon/icon-delete';
-import File from '@arco-design/web-vue/es/icon/icon-file';
-import Eye from '@arco-design/web-vue/es/icon/icon-eye';
-
 export default function install(formCreate) {
     formCreate.useApp((_, app) => {
         app.use(Form).use(Input).use(Number).use(AutoComplete).use(Cascader).use(Checkbox).use(Radio)
             .use(DatePicker).use(TimePicker).use(Textarea).use(InputTag)
             .use(Grid).use(Button).use(Rate).use(Select).use(Slider).use(Swtich)
             .use(Upload).use(Tree).use(Tooltip).use(Popover).use(Modal);
-
-        app.use(InfoCircle).use(Folder).use(CloseCircle).use(PlusCircle)
-            .use(MinusCircle).use(Delete).use(File).use(Eye);
     });
 }

@@ -2,6 +2,11 @@ import toArray from '@form-create/utils/lib/toarray';
 import Mitt from '@form-create/utils/lib/mitt';
 import {defineComponent, resolveComponent, nextTick} from 'vue';
 import './style.css';
+import IconFolder from './IconFolder.vue';
+import IconDelete from './IconDelete.vue';
+import IconCloseCircle from './IconCloseCircle.vue';
+import IconEye from './IconEye.vue';
+import IconFile from './IconFile.vue';
 
 const NAME = 'fcFrame';
 
@@ -116,6 +121,10 @@ export default defineComponent({
         formCreateInject: Object,
     },
     emits: ['update:modelValue', 'change'],
+    components:{
+        IconFolder,
+        IconEye,
+    },
     data() {
         return {
             fileList: toArray(this.modelValue),
@@ -166,7 +175,7 @@ export default defineComponent({
             };
 
             if (this.fileList.length) {
-                slots.suffix = () => <icon-close-circle class="_fc-frame-icon" onClick={() => {
+                slots.suffix = () => <IconCloseCircle class="_fc-frame-icon" onClick={() => {
                     this.fileList = [];
                     this.input();
                 }}/>
@@ -210,13 +219,13 @@ export default defineComponent({
         },
 
         makeRemoveIcon(val, index) {
-            return <icon-delete onClick={() => this.handleRemove(val)}
+            return <IconDelete onClick={() => this.handleRemove(val)}
                 key={'6' + index}/>
         },
 
         makeFiles() {
             return this.makeGroup(this.fileList.map((src, index) => {
-                return this.makeItem(index, [<icon-file
+                return this.makeItem(index, [<IconFile
                     onClick={() => this.handleClick(src)}/>, this.makeIcons(src, index)])
             }))
         },

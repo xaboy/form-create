@@ -1,5 +1,7 @@
 import {hasProperty} from '@form-create/utils/lib/type';
 import {defineComponent, markRaw, nextTick} from 'vue';
+import IconCirclePlus from './IconCirclePlus.vue';
+import IconRemove from './IconRemove.vue';
 
 const NAME = 'fcGroup';
 
@@ -185,17 +187,17 @@ export default defineComponent({
             this.input(this.modelValue);
         },
         addIcon(key) {
-            return <el-icon key={`a${key}`}
+            return <ElIcon key={`a${key}`}
                 style={`font-size:${this.fontSize}px;cursor:${this.disabled ? 'not-allowed;color:#c9cdd4' : 'pointer'};`}
                 onClick={this.add}>
-                <circle-plus/>
-            </el-icon>
+                <IconCirclePlus/>
+            </ElIcon>
         },
         delIcon(index, key) {
             return <ElIcon key={`d${key}`} class="el-icon-remove-outline"
                 style={`font-size:${this.fontSize}px;cursor:${this.disabled ? 'not-allowed;color:#c9cdd4' : 'pointer;color:#606266'};`}
                 onClick={() => this.del(index, key)}>
-                <remove/>
+                <IconRemove/>
             </ElIcon>
         },
         makeIcon(total, index, key) {
@@ -242,9 +244,11 @@ export default defineComponent({
             (this.$slots.default ? (this.$slots.default({
                 vm: this,
                 add: this.add
-            })) : <i key={1} class="el-icon-circle-plus-outline"
+            })) : <ElIcon key={1}
                 style={`font-size:${this.fontSize}px;vertical-align:middle;color:${this.disabled ? '#c9cdd4;cursor: not-allowed' : '#606266;cursor:pointer'};`}
-                onClick={this.add}/>) :
+                onClick={this.add}>
+                <IconCirclePlus/>
+            </ElIcon>) :
             <div key={2}>{keys.map((key, index) => {
                 const {rule, options} = this.cacheRule[key];
                 return <ElRow align="middle" type="flex" key={key}

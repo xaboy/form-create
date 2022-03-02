@@ -1,5 +1,7 @@
 import {hasProperty} from '@form-create/utils/lib/type';
 import {defineComponent, markRaw, nextTick} from 'vue';
+import IconMinusCircle from './IconMinusCircle.vue';
+import IconPlusCircle from './IconPlusCircle.vue';
 
 const NAME = 'fcGroup';
 
@@ -185,12 +187,12 @@ export default defineComponent({
             this.input(this.modelValue);
         },
         addIcon(key) {
-            return <icon-plus-circle key={`a${key}`}
+            return <IconPlusCircle key={`a${key}`}
                 style={`font-size:${this.fontSize}px;cursor:${this.disabled ? 'not-allowed;color:#c9cdd4' : 'pointer'};`}
                 onClick={this.add}/>;
         },
         delIcon(index, key) {
-            return <icon-minus-circle key={`d${key}`}
+            return <IconMinusCircle key={`d${key}`}
                 style={`font-size:${this.fontSize}px;cursor:${this.disabled ? 'not-allowed;color:#c9cdd4' : 'pointer;color:#606266'};`}
                 onClick={() => this.del(index, key)}/>;
         },
@@ -238,7 +240,7 @@ export default defineComponent({
             (this.$slots.default ? (this.$slots.default({
                 vm: this,
                 add: this.add
-            })) : <icon-plus-circle key={1}
+            })) : <IconPlusCircle key={1}
                 style={`font-size:${this.fontSize}px;vertical-align:middle;color:${this.disabled ? '#c9cdd4;cursor: not-allowed' : '#606266;cursor:pointer'};`}
                 onClick={this.add}/>) :
             <div style="flex: 1 1 0%;" key={2}>{keys.map((key, index) => {

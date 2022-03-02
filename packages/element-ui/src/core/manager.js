@@ -166,7 +166,7 @@ export default {
                     key: `${uni}i`
                 }, {
                     default: () => this.$r({
-                        type: infoProp.icon === true ? 'warning' : infoProp.icon
+                        type: infoProp.icon === true ? 'icon-warning' : infoProp.icon
                     })
                 }, true)
             }));

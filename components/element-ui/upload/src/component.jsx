@@ -2,6 +2,7 @@ import toArray from '@form-create/utils/lib/toarray';
 import getSlot from '@form-create/utils/lib/slot';
 import './style.css';
 import {defineComponent} from 'vue';
+import IconUpload from './IconUpload.vue';
 
 function parseFile(file, i) {
     return {
@@ -83,7 +84,7 @@ export default defineComponent({
                 v-slots={getSlot(this.$slots, ['default'])}>
                 {(this.$slots.default?.() ||
                     <ElIcon>
-                        <upload/>
+                        <IconUpload/>
                     </ElIcon>
                 )}
             </ElUpload>

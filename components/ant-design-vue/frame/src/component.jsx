@@ -1,6 +1,11 @@
 import toArray from '@form-create/utils/lib/toarray';
 import Mitt from '@form-create/utils/lib/mitt';
 import {defineComponent, resolveComponent, nextTick} from 'vue';
+import CloseCircleOutlined from './CloseCircleOutlined.vue';
+import FolderOutlined from './FolderOutlined.vue';
+import FileOutlined from './FileOutlined.vue';
+import DeleteOutlined from './DeleteOutlined.vue';
+import EyeOutlined from './EyeOutlined.vue';
 import './style.css';
 
 const NAME = 'fcFrame';
@@ -116,6 +121,10 @@ export default defineComponent({
         formCreateInject: Object,
     },
     emits: ['update:modelValue', 'change'],
+    components:{
+        FolderOutlined,
+        EyeOutlined,
+    },
     data() {
         return {
             fileList: toArray(this.modelValue),
