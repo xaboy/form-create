@@ -109,7 +109,7 @@ export default function FormCreateFactory(config) {
                 return components[name];
             }
         } else {
-            name = toCase(id.name);
+            name = toCase(id.displayName || id.name);
             component = id;
         }
         if (!name || !component) return;
