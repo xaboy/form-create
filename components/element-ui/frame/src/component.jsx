@@ -266,6 +266,7 @@ export default defineComponent({
             try {
                 if (this.helper === true) {
                     iframe['form_create_helper'] = {
+                        api: this.formCreateInject.api,
                         close: (field) => {
                             this.valid(field);
                             this.closeModel();
