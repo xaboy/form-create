@@ -157,8 +157,23 @@ export default function FormCreateFactory(config) {
         return vm.$refs.fc.fapi;
     }
 
-    function factory() {
-        return FormCreateFactory(config);
+    function factory(inherit) {
+        let _config = {...config};
+        if (inherit) {
+            _config.inherit = {
+                components,
+                parsers,
+                directives,
+                modelFields,
+                providers,
+                useApps,
+                maker,
+                data
+            }
+        } else {
+            delete _config.inherit;
+        }
+        return FormCreateFactory(_config);
     }
 
     function setModelField(name, field) {
@@ -323,6 +338,18 @@ export default function FormCreateFactory(config) {
     })
 
     parser(html);
+
+    if (config.inherit) {
+        const inherit = config.inherit;
+        inherit.components && extend(components, inherit.components);
+        inherit.parsers && extend(parsers, inherit.parsers);
+        inherit.directives && extend(directives, inherit.directives);
+        inherit.modelFields && extend(modelFields, inherit.modelFields);
+        inherit.providers && extend(providers, inherit.providers);
+        inherit.useApps && extend(useApps, inherit.useApps);
+        inherit.maker && extend(maker, inherit.maker);
+        inherit.data && extend(data, inherit.data);
+    }
 
     return create;
 }
