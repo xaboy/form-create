@@ -28,8 +28,17 @@ export default function useEffect(Handler) {
             provider._used = used;
         },
         watchEffect(ctx) {
+            let effect = {};
             Object.keys(ctx.rule.effect || {}).forEach(k => {
-                ctx.watch.push(watch(() => ctx.rule.effect[k], (n) => {
+                effect[k] = () => ctx.rule.effect[k];
+            })
+            Object.keys(ctx.rule).forEach(k => {
+                if (k[0] === '$') {
+                    effect[k.substr(1)] = () => ctx.rule[k];
+                }
+            })
+            Object.keys(effect).forEach(k => {
+                ctx.watch.push(watch(effect[k], (n) => {
                     this.effect(ctx, 'watch', {[k]: n});
                 }, {deep: true}));
             });
@@ -51,14 +60,21 @@ export default function useEffect(Handler) {
             }, event);
         },
         getEffect(rule, name) {
+            if (hasProperty(rule, '$' + name)) {
+                return rule['$' + name];
+            }
             if (hasProperty(rule, 'effect') && hasProperty(rule.effect, name))
                 return rule.effect[name];
-            else
-                return undefined;
+            return undefined;
         },
         emitEffect({ctx, rule, input, type, custom}, event, append) {
             if (!type || ['fcFragment', 'fragment'].indexOf(type) > -1) return;
-            const effect = custom ? custom : (rule.effect || {});
+            const effect = custom ? custom : (Object.keys(rule).reduce((i, k) => {
+                if (k[0] === '$') {
+                    i[k.substr(1)] = rule[k];
+                }
+                return i;
+            }, {...rule.effect || {}}));
             Object.keys(effect).forEach(attr => {
                 const p = this.providers[attr];
                 if (!p || (p.input && !input)) return;
