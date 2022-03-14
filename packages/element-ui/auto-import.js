@@ -59,11 +59,34 @@ import 'element-plus/es/components/progress/style/css'
 
 export default function install(formCreate) {
     formCreate.useApp((_, app) => {
-        app.use(ElForm).use(ElButton).use(ElRow).use(ElCol).use(ElInput).use(ElInputNumber).use(ElCascader)
-            .use(ElPopover).use(ElTooltip).use(ElAutocomplete).use(ElCheckboxGroup).use(ElCheckboxButton)
-            .use(ElRadioGroup).use(ElRadioButton).use(ElRadio).use(ElDialog).use(ElCheckbox).use(ElSelect)
-            .use(ElTree).use(ElUpload).use(ElSlider).use(ElRate).use(ElColorPicker).use(ElSwitch).use(ElDatePicker)
-            .use(ElIcon).use(ElTimePicker).use(ElProgress);
+        app.component(ElForm.name) || app.use(ElForm);
+        app.component(ElButton.name) || app.use(ElButton);
+        app.component(ElRow.name) || app.use(ElRow);
+        app.component(ElCol.name) || app.use(ElCol);
+        app.component(ElInput.name) || app.use(ElInput);
+        app.component(ElInputNumber.name) || app.use(ElInputNumber);
+        app.component(ElCascader.name) || app.use(ElCascader);
+        app.component(ElPopover.name) || app.use(ElPopover);
+        app.component(ElTooltip.name) || app.use(ElTooltip);
+        app.component(ElAutocomplete.name) || app.use(ElAutocomplete);
+        app.component(ElCheckboxGroup.name) || app.use(ElCheckboxGroup);
+        app.component(ElCheckboxButton.name) || app.use(ElCheckboxButton);
+        app.component(ElRadioGroup.name) || app.use(ElRadioGroup);
+        app.component(ElRadioButton.name) || app.use(ElRadioButton);
+        app.component(ElRadio.name) || app.use(ElRadio);
+        app.component(ElDialog.name) || app.use(ElDialog);
+        app.component(ElCheckbox.name) || app.use(ElCheckbox);
+        app.component(ElSelect.name) || app.use(ElSelect);
+        app.component(ElTree.name) || app.use(ElTree);
+        app.component(ElUpload.name) || app.use(ElUpload);
+        app.component(ElSlider.name) || app.use(ElSlider);
+        app.component(ElRate.name) || app.use(ElRate);
+        app.component(ElColorPicker.name) || app.use(ElColorPicker);
+        app.component(ElSwitch.name) || app.use(ElSwitch);
+        app.component(ElDatePicker.name) || app.use(ElDatePicker);
+        app.component(ElIcon.name) || app.use(ElIcon);
+        app.component(ElTimePicker.name) || app.use(ElTimePicker);
+        app.component(ElProgress.name) || app.use(ElProgress);
     });
 
 }

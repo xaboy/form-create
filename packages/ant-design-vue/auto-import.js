@@ -38,16 +38,34 @@ import Popover from 'ant-design-vue/es/popover';
 import 'ant-design-vue/es/popover/style/css';
 import Modal from 'ant-design-vue/es/modal';
 import 'ant-design-vue/es/modal/style/css';
-import Col from 'ant-design-vue/es/col';
-import Row from 'ant-design-vue/es/row';
+import {Col, Row} from 'ant-design-vue/es/grid';
 import 'ant-design-vue/es/grid/style/css';
 
 
 export default function install(formCreate) {
     formCreate.useApp((_, app) => {
-        app.use(Form).use(Input).use(Number).use(AutoComplete).use(Cascader).use(Checkbox).use(Radio)
-            .use(DatePicker).use(TimePicker).use(TreeSelect)
-            .use(Col).use(Row).use(Button).use(Rate).use(Select).use(Slider).use(Swtich)
-            .use(Upload).use(Tree).use(Tooltip).use(Popover).use(Modal);
+        app.component(Form.name) || app.use(Form);
+        app.component(Input.name) || app.use(Input);
+        app.component(Number.name) || app.use(Number);
+        app.component(AutoComplete.name) || app.use(AutoComplete);
+        app.component(Cascader.name) || app.use(Cascader);
+        app.component(Checkbox.name) || app.use(Checkbox);
+        app.component(Radio.name) || app.use(Radio);
+        app.component(DatePicker.name) || app.use(DatePicker);
+        app.component(TimePicker.name) || app.use(TimePicker);
+        app.component(TreeSelect.name) || app.use(TreeSelect);
+        app.component(TreeSelect.name) || app.use(TreeSelect);
+        app.component(Col.name) || app.component(Col.name, Col);
+        app.component(Row.name) || app.component(Row.name, Row);
+        app.component(Button.name) || app.use(Button);
+        app.component(Rate.name) || app.use(Rate);
+        app.component(Select.name) || app.use(Select);
+        app.component(Slider.name) || app.use(Slider);
+        app.component(Swtich.name) || app.use(Swtich);
+        app.component(Upload.name) || app.use(Upload);
+        app.component(Tree.name) || app.use(Tree);
+        app.component(Tooltip.name) || app.use(Tooltip);
+        app.component(Popover.name) || app.use(Popover);
+        app.component(Modal.name) || app.use(Modal);
     });
 }
