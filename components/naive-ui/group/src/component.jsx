@@ -2,6 +2,8 @@ import {hasProperty} from '@form-create/utils/lib/type';
 import {defineComponent, markRaw, nextTick} from 'vue';
 import IconMinus from './IconMinus.vue';
 import IconPlus from './IconPlus.vue';
+import {deepCopy} from '@form-create/utils/lib/deepextend';
+import extend from '@form-create/utils/lib/extend';
 
 const NAME = 'fcGroup';
 
@@ -28,6 +30,7 @@ export default defineComponent({
             type: Array,
             default: () => []
         },
+        defaultValue: Object,
         disabled: {
             type: Boolean,
             default: false
@@ -144,6 +147,11 @@ export default defineComponent({
                 submitBtn: false,
                 resetBtn: false,
             };
+            if (this.defaultValue) {
+                if (!options.formData) options.formData = {};
+                const defVal = deepCopy(this.defaultValue);
+                extend(options.formData, this.field ? {[this.field]: defVal} : defVal);
+            }
             this.cacheRule[++this.len] = {rule, options};
             if (emit) {
                 nextTick(() => this.$emit('add', rule, Object.keys(this.cacheRule).length - 1));
@@ -152,6 +160,7 @@ export default defineComponent({
         add$f(i, key, $f) {
             this.cacheRule[key].$f = $f;
             this.subForm();
+            this.formData(key, $f.formData());
             nextTick(() => {
                 if (this.syncDisabled) {
                     $f.disabled(this.disabled);
@@ -255,7 +264,8 @@ export default defineComponent({
                         onUpdate:api={($f) => this.add$f(index, key, $f)}
                         rule={rule}
                         option={options} extendOption={true}/></n-grid-item>
-                    {button ? <n-grid-item span={2} offset={1} style={'display:flex;align-items: center;'}>{this.makeIcon(keys.length, index, key)}</n-grid-item> : null}
+                    {button ? <n-grid-item span={2} offset={1}
+                        style={'display:flex;align-items: center;'}>{this.makeIcon(keys.length, index, key)}</n-grid-item> : null}
                 </n-grid>
             })}</div>
     }
