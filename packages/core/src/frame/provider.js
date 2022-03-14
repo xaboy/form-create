@@ -17,6 +17,41 @@ const $fetch = {
     }
 };
 
+const $required = {
+    name: 'required',
+    load(inject, rule) {
+        const val = parseVa(inject.getValue());
+        const validate = {
+            ...val,
+            required: true,
+            validator(_, v) {
+                return new Promise((resolve, reject) => {
+                    is.empty(v) ? reject(validate.message) : resolve();
+                })
+            }
+        };
+        if (!validate.message) {
+            validate.message = rule.title + ' is required';
+        }
+        inject.getProp().validate = [validate];
+    },
+    watch(...args) {
+        $required.load(...args);
+    }
+}
+
+function parseVa(val) {
+    if (is.Boolean(val)) {
+        return {}
+    } else if (is.String(val)) {
+        return {message: val};
+    } else if (!is.Object(val)) {
+        return {};
+    } else {
+        return val;
+    }
+}
+
 function parseOpt(option) {
     if (is.String(option)) {
         option = {
@@ -75,4 +110,7 @@ function run(inject, rule, api) {
     return true;
 }
 
-export default $fetch;
+export default {
+    fetch: $fetch,
+    required: $required,
+};

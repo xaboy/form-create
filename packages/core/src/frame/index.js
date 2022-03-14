@@ -14,7 +14,7 @@ import {CreateNodeFactory} from '../factory/node';
 import {createManager} from '../factory/manager';
 import {arrayAttrs, keyAttrs, normalAttrs} from './attrs';
 import {appendProto} from '../factory/creator';
-import $fetch from './provider';
+import $provider from './provider';
 import {deepCopy} from '@form-create/utils/lib/deepextend';
 import Mitt from '@form-create/utils/lib/mitt';
 import html from '../parser/html';
@@ -59,7 +59,7 @@ export default function FormCreateFactory(config) {
     const modelFields = {};
     const useApps = [];
     const providers = {
-        fetch: $fetch
+        ...$provider
     };
     const maker = makerFactory();
     let globalConfig = {global: {}};
