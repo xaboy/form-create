@@ -73,9 +73,9 @@ export default function useContext(Handler) {
             }
         },
         watchCtx(ctx) {
-            const none = ['field', 'value', 'vm', 'template', 'name', 'config', 'control', 'inject', 'sync', 'payload', 'optionsTo', 'update'];
+            const none = ['field', 'value', 'vm', 'template', 'name', 'config', 'control', 'inject', 'sync', 'payload', 'optionsTo', 'update', 'slotUpdate'];
             const all = attrs();
-            all.filter(k => k[0] !== '_' && none.indexOf(k) === -1).forEach((key) => {
+            all.filter(k => k[0] !== '_' && k[0] !== '$' && none.indexOf(k) === -1).forEach((key) => {
                 const ref = toRef(ctx.rule, key);
                 const flag = key === 'children';
                 ctx.refRule[key] = ref;

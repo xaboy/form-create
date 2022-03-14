@@ -165,6 +165,27 @@ type RuleChildren<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> =
     FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>[]
     | RuleChildrenFn<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
 
+interface PropArg<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
+    api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
+    rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
+    prop: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
+    preview: Boolean;
+    slotValue: any[];
+    model: {
+        callback: (value: any) => void;
+        value: any
+    },
+    children?: Object
+}
+
+export interface InjectArg<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
+    api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>,
+    rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
+    self: FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>,
+    option: Options<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>,
+    inject: any
+}
+
 export interface BaseRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> extends VNodeData {
     field?: string;
     key?: string;
@@ -184,6 +205,7 @@ export interface BaseRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> extend
     hidden?: Boolean;
     display?: Boolean;
     inject?: any;
+    slotUpdate?: (arg: PropArg<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
 
     validate?: Object[];
     children?: RuleChildren<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
@@ -264,6 +286,8 @@ export class BaseCreator<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
     display(prop: Boolean): this;
 
     inject(prop: any): this;
+
+    slotUpdate(arg: PropArg<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>): this;
 
     deep(deep: Object): this;
 

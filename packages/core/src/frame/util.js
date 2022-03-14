@@ -82,14 +82,14 @@ export function makeSlotBag() {
             if (!slotBag[slot]) slotBag[slot] = [];
             slotBag[slot].push(vnFn);
         },
-        getSlot(slot) {
+        getSlot(slot, val) {
             slot = slotName(slot);
             const children = [];
             (slotBag[slot] || []).forEach(fn => {
                 if (Array.isArray(fn)) {
                     children.push(...fn);
                 } else if (is.Function(fn)) {
-                    const res = fn();
+                    const res = fn(...(val||[]));
                     if (Array.isArray(res)) {
                         children.push(...res);
                     } else {
@@ -104,8 +104,8 @@ export function makeSlotBag() {
         getSlots() {
             const slots = {};
             Object.keys(slotBag).forEach(k => {
-                slots[k] = () => {
-                    return this.getSlot(k);
+                slots[k] = (...args) => {
+                    return this.getSlot(k, args);
                 }
             })
             return slots

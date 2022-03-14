@@ -1,7 +1,7 @@
 import extend from '@form-create/utils/lib/extend';
 import mergeProps from '@form-create/utils/lib/mergeprops';
 import is from '@form-create/utils/lib/type';
-import {makeSlotBag, mergeRule} from '../frame/util';
+import {invoke, makeSlotBag, mergeRule} from '../frame/util';
 import toCase, {lower} from '@form-create/utils/lib/tocase';
 import {deepSet, toLine} from '@form-create/utils';
 import {computed, nextTick} from 'vue';
@@ -107,7 +107,18 @@ export default function useRender(Render) {
                         this.setCache(ctx, undefined, parent);
                         return;
                     }
-                    vn = () => {
+                    vn = (...slotValue) => {
+                        const inject = {
+                            rule,
+                            prop,
+                            preview,
+                            api: this.$handle.api,
+                            model: prop.model || {},
+                            slotValue
+                        }
+                        if (slotValue.length && rule.slotUpdate) {
+                            invoke(() => rule.slotUpdate(inject))
+                        }
                         let children = {};
                         const _load = ctx.loadChildrenPending();
                         if (ctx.parser.renderChildren) {
@@ -115,18 +126,11 @@ export default function useRender(Render) {
                         } else if (ctx.parser.loadChildren !== false) {
                             children = this.renderChildren(_load, ctx);
                         }
-
                         const slot = this.getTypeSlot(ctx.type);
                         let _vn;
                         if (slot) {
-                            _vn = slot({
-                                rule,
-                                prop,
-                                preview,
-                                children,
-                                api: this.$handle.api,
-                                model: prop.model || {}
-                            })
+                            inject.children = children;
+                            _vn = slot(inject)
                         } else {
                             _vn = preview ? ctx.parser.preview(children, ctx) : ctx.parser.render(children, ctx);
                         }
@@ -137,7 +141,7 @@ export default function useRender(Render) {
                         if (ctx.none) {
                             _vn = this.display(_vn);
                         }
-                        this.setCache(ctx, ()=>_vn, parent);
+                        this.setCache(ctx, () => _vn, parent);
                         return _vn
                     };
                     this.setCache(ctx, vn, parent);
@@ -221,16 +225,21 @@ export default function useRender(Render) {
 
             if (!custom && ctx.input) {
                 const field = this.getModelField(ctx);
+                const model = {
+                    callback: (value) => {
+                        this.onInput(ctx, value);
+                    },
+                    value: this.$handle.getFormData(ctx)
+                };
                 props.push({
                     on: {
-                        [`update:${field}`]: (value) => {
-                            this.onInput(ctx, value);
-                        }
+                        [`update:${field}`]: model.callback
                     },
                     props: {
-                        [field]: this.$handle.getFormData(ctx)
+                        [field]: model.value
                     }
                 })
+                ctx.prop.model = model;
             }
             mergeProps(props, ctx.prop);
             return ctx.prop;
