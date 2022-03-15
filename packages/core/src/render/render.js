@@ -319,15 +319,13 @@ export default function useRender(Render) {
             ]
 
             if (!custom && ctx.input) {
-                props.push({
-                    model: {
-                        value: this.$handle.getFormData(ctx),
-                        callback: (value) => {
-                            this.onInput(ctx, value);
-                        },
-                        expression: `formData.${ctx.id}`
+                ctx.prop.model = {
+                    value: this.$handle.getFormData(ctx),
+                    callback: (value) => {
+                        this.onInput(ctx, value);
                     },
-                })
+                    expression: `formData.${ctx.id}`
+                };
             }
             mergeProps(props, ctx.prop);
             return ctx.prop;

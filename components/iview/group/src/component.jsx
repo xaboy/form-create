@@ -1,4 +1,6 @@
 import {hasProperty} from '@form-create/utils/lib/type';
+import {deepCopy} from '@form-create/utils/lib/deepextend';
+import extend from '@form-create/utils/lib/extend';
 
 const NAME = 'fcGroup';
 
@@ -31,6 +33,7 @@ export default function createGroup(config) {
                 type: Array,
                 default: () => []
             },
+            defaultValue: Object,
             disabled: {
                 type: Boolean,
                 default: false
@@ -153,7 +156,11 @@ export default function createGroup(config) {
                     submitBtn: false,
                     resetBtn: false,
                 };
-                options.formData = this.field ? ({[this.field]: this._value(this.value[i])}) : (this.value[i] || {});
+                if (this.defaultValue) {
+                    if (!options.formData) options.formData = {};
+                    const defVal = deepCopy(this.defaultValue);
+                    extend(options.formData, this.field ? {[this.field]: defVal} : defVal);
+                }
                 this.$set(this.cacheRule, ++this.len, {rule, options});
                 if (emit) {
                     this.$nextTick(() => this.$emit('add', rule, Object.keys(this.cacheRule).length - 1));
@@ -162,6 +169,7 @@ export default function createGroup(config) {
             add$f(i, key, $f) {
                 this.cacheRule[key].$f = $f;
                 this.subForm();
+                this.formData(key, $f.formData());
                 this.$nextTick(() => {
                     if (this.syncDisabled) {
                         $f.disabled(this.disabled);
@@ -264,6 +272,7 @@ export default function createGroup(config) {
                                 'emit-event': (name, ...args) => this.emitEvent(name, args, index, key),
                                 input: ($f) => this.add$f(index, key, $f)
                             }}
+                            value={this.field ? {[this.field]: this._value(this.value[index])} : this.value[index]}
                             rule={rule}
                             option={options} extendOption={true}/></FormItem></Col>
                         {button ? <Col span={2} pull={1} push={1}>{this.makeIcon(keys.length, index, key)}</Col> : null}

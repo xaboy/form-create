@@ -14,8 +14,9 @@ import {CreateNodeFactory} from '../factory/node';
 import {createManager} from '../factory/manager';
 import {arrayAttrs, keyAttrs, normalAttrs} from './attrs';
 import {appendProto} from '../factory/creator';
-import $fetch from './provider';
+import $provider from './provider';
 import {deepCopy} from '@form-create/utils/lib/deepextend';
+import html from '../parser/html';
 
 export let _vue = typeof window !== 'undefined' && window.Vue ? window.Vue : Vue;
 
@@ -66,6 +67,9 @@ function exportAttrs(attrs) {
     appendProto([...key, ...array, ...normal]);
 }
 
+let id = 1;
+const instance = {};
+
 //todo 表单嵌套
 export default function FormCreateFactory(config) {
 
@@ -75,7 +79,7 @@ export default function FormCreateFactory(config) {
     const parsers = {};
     const directives = {};
     const providers = {
-        fetch: $fetch
+        ...$provider
     };
     const maker = makerFactory();
     let globalConfig = {global: {}};
@@ -83,6 +87,10 @@ export default function FormCreateFactory(config) {
     const CreateNode = CreateNodeFactory();
 
     exportAttrs(config.attrs || {});
+
+    function getApi(name) {
+        return instance[name];
+    }
 
     function directive() {
         const data = nameProp(...arguments);
@@ -150,18 +158,33 @@ export default function FormCreateFactory(config) {
         return _this.api();
     }
 
-    function factory() {
-        return FormCreateFactory(config);
+    function factory(inherit) {
+        let _config = {...config};
+        if (inherit) {
+            _config.inherit = {
+                components,
+                parsers,
+                directives,
+                providers,
+                maker,
+                data
+            }
+        } else {
+            delete _config.inherit;
+        }
+        return FormCreateFactory(_config);
     }
 
     function FormCreate(vm, rules, options) {
         extend(this, {
+            id: id++,
             vm,
             create,
             manager: createManager(config.manager),
             parsers,
             providers,
             rules: Array.isArray(rules) ? rules : [],
+            name: vm.$options.propsData.name,
             prop: {
                 components,
                 directives,
@@ -173,6 +196,9 @@ export default function FormCreateFactory(config) {
         })
         this.init();
         this.initOptions(options || {});
+        if (this.name) {
+            instance[this.name] = this.api();
+        }
     }
 
     extend(FormCreate.prototype, {
@@ -200,6 +226,9 @@ export default function FormCreateFactory(config) {
                 vm.destroyed = true;
                 this.unwatch && this.unwatch();
                 h.reloadRule([]);
+                if (this.name) {
+                    delete instance[this.name];
+                }
             });
             vm.$on('hook:updated', () => {
                 h.bindNextTick(() => this.bus.$emit('next-tick', h.api));
@@ -268,6 +297,7 @@ export default function FormCreateFactory(config) {
             parseFn,
             parseJson,
             toJson,
+            getApi,
             init(rules, _opt = {}) {
                 let $vm = mountForm(rules, _opt), _this = $vm.$refs.fc.formCreate;
                 return {
@@ -317,7 +347,19 @@ export default function FormCreateFactory(config) {
 
     CreateNode.use({fragment: 'fcFragment'});
 
+    parser(html);
+
     if (config.install) create.use(config);
+
+    if (config.inherit) {
+        const inherit = config.inherit;
+        inherit.components && extend(components, inherit.components);
+        inherit.parsers && extend(parsers, inherit.parsers);
+        inherit.directives && extend(directives, inherit.directives);
+        inherit.providers && extend(providers, inherit.providers);
+        inherit.maker && extend(maker, inherit.maker);
+        inherit.data && extend(data, inherit.data);
+    }
 
     return create;
 }

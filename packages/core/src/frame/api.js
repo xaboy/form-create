@@ -170,7 +170,7 @@ export default function Api(h) {
         disabled(disabled, fields) {
             tidyFields(fields).forEach((field) => {
                 h.getCtxs(field).forEach(ctx => {
-                    $set(ctx.rule.props, 'disabled', !!disabled);
+                    ctx.rule.props && $set(ctx.rule.props, 'disabled', !!disabled);
                 });
             });
             h.refresh();

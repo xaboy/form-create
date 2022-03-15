@@ -36,8 +36,8 @@ export default {
             default: 500
         },
         height: {
-            type: [Number, String],
-            default: 370
+            type: String,
+            default: '370px'
         },
         maxLength: {
             type: Number,
@@ -245,6 +245,7 @@ export default {
             try {
                 if (this.helper === true) {
                     iframe['form_create_helper'] = {
+                        api: this.formCreateInject.api,
                         close: (field) => {
                             this.valid(field);
                             this.closeModal();
@@ -301,9 +302,9 @@ export default {
         });
         return <div class="_fc-frame">{Node}
             <aModal mask={this.previewMask} title={modalTitle} v-model={this.previewVisible} footer={null}>
-                <img alt="example" style="width: 100%" src={this.previewImage}/>
+                <img style="width: 100%" src={this.previewImage}/>
             </aModal>
-            <aModal props={{width, title, ...this.modal}} visible={this.frameVisible}
+            <aModal {...{width, title, ...this.modal}} visible={this.frameVisible}
                 on-cancel={() => (this.closeModal(true))}>
                 {(this.frameVisible || !this.reload) ? <iframe ref="frame" src={src} frameborder="0" style={{
                     'height': height,

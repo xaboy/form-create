@@ -101,7 +101,9 @@ export interface FormCreate<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs, Ap
 
     create: FormCreate<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
 
-    factory(): FormCreate<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
+    factory(inherit: Boolean): FormCreate<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
+
+    getApi(name: string): Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> | undefined;
 
     init(rule: FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>[], option?: Options<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>): {
         mount($el?: Element): Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
@@ -279,6 +281,8 @@ export interface BaseMaker<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
     createTmp(template: string, vm: Vue | Function, field?: string, title?: string): Creator<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
 
     template(template: string, vm: Vue | Function, field?: string, title?: string): Creator<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
+
+    html: CreatorFactory<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
 
     factory: CreatorFactory<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
 }

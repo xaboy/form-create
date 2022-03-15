@@ -29,6 +29,7 @@ export default function $FormCreate(FormCreate) {
             extendOption: Boolean,
             value: Object,
             api: Object,
+            name: String,
         },
         data() {
             return {
