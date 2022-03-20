@@ -7,6 +7,7 @@ import extend from '@form-create/utils/lib/extend';
 
 const NAME = 'fcGroup';
 
+
 export default defineComponent({
     name: NAME,
     props: {

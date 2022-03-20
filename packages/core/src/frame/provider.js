@@ -75,6 +75,7 @@ function run(inject, rule, api) {
     return true;
 }
 
+
 export default {
     fetch: $fetch,
 };
