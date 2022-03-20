@@ -47,7 +47,8 @@ export default function $FormCreate(FormCreate) {
             subForm: {
                 type: Boolean,
                 default: true
-            }
+            },
+            inFor: Boolean,
         },
         emits: ['update:api', 'update:modelValue', 'mounted', 'submit', 'change', 'emit-event', 'control', 'remove-rule', 'remove-field', 'sync', 'reload', 'repeat-field', 'update'],
         render() {
@@ -58,7 +59,7 @@ export default function $FormCreate(FormCreate) {
             provide('parentFC', vm);
             const parent = inject('parentFC', null);
 
-            const {rule, modelValue, subForm} = toRefs(props);
+            const {rule, modelValue, subForm, inFor} = toRefs(props);
 
             const data = reactive({
                 ctxInject: {},
@@ -72,12 +73,20 @@ export default function $FormCreate(FormCreate) {
             const fc = new FormCreate(vm);
             const fapi = fc.api();
 
+            const isMore = inFor.value;
+
             const addSubForm = () => {
                 if (parent) {
                     const inject = getRuleInject(vm, parent);
                     if (inject) {
-                        const sub = toArray(inject.subForm());
-                        sub.push(fapi);
+                        let sub;
+                        if (isMore) {
+                            sub = toArray(inject.getSubForm());
+                            sub.push(fapi);
+
+                        } else {
+                            sub = fapi;
+                        }
                         inject.subForm(sub);
                     }
                 }
@@ -86,10 +95,14 @@ export default function $FormCreate(FormCreate) {
             const rmSubForm = () => {
                 const inject = getRuleInject(vm, parent);
                 if (inject) {
-                    const sub = toArray(inject.subForm());
-                    const idx = sub.indexOf(fapi);
-                    if (idx > -1) {
-                        sub.splice(idx, 1);
+                    if (isMore) {
+                        const sub = toArray(inject.getSubForm());
+                        const idx = sub.indexOf(fapi);
+                        if (idx > -1) {
+                            sub.splice(idx, 1);
+                        }
+                    } else {
+                        inject.subForm();
                     }
                 }
             };

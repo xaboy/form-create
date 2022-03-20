@@ -188,9 +188,10 @@ export default function useRender(Render) {
                     api: this.$handle.api,
                     form: this.fc.create,
                     subForm: subForm => {
-                        return subForm
-                            ? this.$handle.addSubForm(ctx, subForm)
-                            : this.$handle.subForm[ctx.id];
+                        this.$handle.addSubForm(ctx, subForm);
+                    },
+                    getSubForm: () => {
+                        return this.$handle.subForm[ctx.id];
                     },
                     options: [],
                     children: [],

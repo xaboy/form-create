@@ -252,7 +252,7 @@ export default defineComponent({
                 return <n-grid x-gap="12" key={key} cols={24}
                     style="border-bottom:1px dashed #DCDFE6;margin:0px 0px 10px;">
                     <n-grid-item span={button ? 20 : 24}><Type
-                        key={key}
+                        key={key} inFor={true}
                         onUpdate:modelValue={(formData) => this.formData(key, formData)}
                         modelValue={this.field ? {[this.field]: this._value(this.modelValue[index])} : this.modelValue[index]}
                         onEmit-event={(name, ...args) => this.emitEvent(name, args, index, key)}

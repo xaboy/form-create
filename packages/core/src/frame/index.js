@@ -69,7 +69,10 @@ export default function FormCreateFactory(config) {
     exportAttrs(config.attrs || {});
 
     function getApi(name) {
-        return instance[name];
+        const val = instance[name];
+        if (Array.isArray(val))
+            return [...val];
+        return val;
     }
 
     function useApp(fn) {
@@ -191,6 +194,7 @@ export default function FormCreateFactory(config) {
             modelFields,
             rules: vm.props.rule,
             name: vm.props.name,
+            inFor: vm.props.inFor,
             prop: {
                 components,
                 directives,
@@ -211,7 +215,12 @@ export default function FormCreateFactory(config) {
         extend(vm.appContext.directives, directives);
         this.$handle = new Handle(this)
         if (this.name) {
-            instance[this.name] = this.api();
+            if (this.inFor) {
+                if (!instance[this.name]) instance[this.name] = [];
+                instance[this.name].push(this.api());
+            } else {
+                instance[this.name] = this.api();
+            }
         }
     }
 
@@ -263,7 +272,12 @@ export default function FormCreateFactory(config) {
         },
         unmount() {
             if (this.name) {
-                delete instance[this.name];
+                if (this.inFor) {
+                    const idx = instance[this.name].indexOf(this.api());
+                    instance[this.name].splice(idx, 1);
+                } else {
+                    delete instance[this.name];
+                }
             }
             this.unwatch && this.unwatch();
             this.$handle.reloadRule([]);

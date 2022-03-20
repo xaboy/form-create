@@ -256,7 +256,7 @@ export default defineComponent({
                 return <ElRow align="middle" type="flex" key={key}
                     style="border-bottom:1px dashed #DCDFE6;margin-bottom:10px;">
                     <ElCol span={button ? 20 : 24}><ElFormItem><Type
-                        key={key}
+                        key={key} inFor={true}
                         onUpdate:modelValue={(formData) => this.formData(key, formData)}
                         modelValue={this.field ? {[this.field]: this._value(this.modelValue[index])} : this.modelValue[index]}
                         onEmit-event={(name, ...args) => this.emitEvent(name, args, index, key)}

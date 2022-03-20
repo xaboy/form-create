@@ -250,7 +250,7 @@ export default defineComponent({
                 return <aRow align="center" key={key} gutter={24}
                     style="border-bottom:1px dashed #DCDFE6;margin:0px 0px 10px;">
                     <aCol span={button ? 20 : 24}><Type
-                        key={key}
+                        key={key} inFor={true}
                         onUpdate:modelValue={(formData) => this.formData(key, formData)}
                         modelValue={this.field ? {[this.field]: this._value(this.modelValue[index])} : this.modelValue[index]}
                         onEmit-event={(name, ...args) => this.emitEvent(name, args, index, key)}
