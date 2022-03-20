@@ -19,19 +19,24 @@ const $fetch = {
 
 const $required = {
     name: 'required',
-    load(inject, rule) {
+    load(inject, rule, api) {
         const val = parseVa(inject.getValue());
-        const validate = {
-            ...val,
-            required: true,
-            validator(_, v, c) {
-                is.empty(v) ? c(validate.message) : c();
+        if (val.required === false) {
+            inject.clearProp();
+        } else {
+            const validate = {
+                ...val,
+                required: true,
+                validator(_, v, call) {
+                    is.empty(v) ? call(validate.message) : call();
+                }
+            };
+            if (!validate.message) {
+                validate.message = rule.title + ' is required';
             }
-        };
-        if (!validate.message) {
-            validate.message = rule.title + ' is required';
+            inject.getProp().validate = [validate];
         }
-        inject.getProp().validate = [validate];
+        api.sync(rule);
     },
     watch(...args) {
         $required.load(...args);
@@ -40,7 +45,7 @@ const $required = {
 
 function parseVa(val) {
     if (is.Boolean(val)) {
-        return {}
+        return {required: val}
     } else if (is.String(val)) {
         return {message: val};
     } else if (!is.Object(val)) {
