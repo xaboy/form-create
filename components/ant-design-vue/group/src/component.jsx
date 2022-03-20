@@ -95,7 +95,6 @@ export default defineComponent({
                         for (let i = 0; i < len; i++) {
                             this.removeRule(keys[total - i - 1]);
                         }
-                        this.subForm();
                     }
                     n.forEach((val, i) => {
                         this.setValue(keys[i], n[i]);
@@ -103,7 +102,6 @@ export default defineComponent({
                 }
             },
             deep: true,
-            flush: 'post',
         }
     },
     methods: {
@@ -159,7 +157,6 @@ export default defineComponent({
         },
         add$f(i, key, $f) {
             this.cacheRule[key].$f = $f;
-            this.subForm();
             this.formData(key, $f.formData());
             nextTick(() => {
                 if (this.syncDisabled) {
@@ -167,9 +164,6 @@ export default defineComponent({
                 }
                 this.$emit('itemMounted', $f, Object.keys(this.cacheRule).indexOf(key));
             });
-        },
-        subForm() {
-            this.formCreateInject.subForm(Object.keys(this.cacheRule).map(k => this.cacheRule[k].$f));
         },
         removeRule(key, emit) {
             const index = Object.keys(this.cacheRule).indexOf(key);
@@ -191,7 +185,6 @@ export default defineComponent({
                 return;
             }
             this.removeRule(key, true);
-            this.subForm();
             this.modelValue.splice(index, 1);
             this.input(this.modelValue);
         },

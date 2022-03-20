@@ -188,13 +188,16 @@ export default function useRender(Render) {
                     api: this.$handle.api,
                     form: this.fc.create,
                     subForm: subForm => {
-                        this.$handle.addSubForm(ctx, subForm);
+                        return subForm
+                            ? this.$handle.addSubForm(ctx, subForm)
+                            : this.$handle.subForm[ctx.id];
                     },
                     options: [],
                     children: [],
                     preview: false,
                     field: ctx.field,
                     rule: ctx.rule,
+                    input: ctx.input,
                 }
             }
             const inject = state.ctxInject[ctx.id];

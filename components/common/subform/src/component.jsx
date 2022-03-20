@@ -59,7 +59,6 @@ export default defineComponent({
         },
         add$f(api) {
             this.subApi = api;
-            this.formCreateInject.subForm(api);
             nextTick(() => {
                 this.syncDisabled && api.disabled(this.disabled);
                 this.$emit('itemMounted', api);

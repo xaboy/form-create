@@ -11,8 +11,21 @@ import {
     toRefs,
     watch
 } from 'vue';
+import toArray from '@form-create/utils/lib/toarray';
 
 const NAME = 'FormCreate';
+
+const getRuleInject = (vm, parent) => {
+    if (vm === parent) {
+        return;
+    }
+    if (vm.ctx.formCreateInject) {
+        return vm.ctx.formCreateInject
+    }
+    if (vm.parent) {
+        return getRuleInject(vm.parent, parent);
+    }
+}
 
 export default function $FormCreate(FormCreate) {
     return defineComponent({
@@ -31,6 +44,10 @@ export default function $FormCreate(FormCreate) {
             modelValue: Object,
             api: Object,
             name: String,
+            subForm: {
+                type: Boolean,
+                default: true
+            }
         },
         emits: ['update:api', 'update:modelValue', 'mounted', 'submit', 'change', 'emit-event', 'control', 'remove-rule', 'remove-field', 'sync', 'reload', 'repeat-field', 'update'],
         render() {
@@ -41,7 +58,7 @@ export default function $FormCreate(FormCreate) {
             provide('parentFC', vm);
             const parent = inject('parentFC', null);
 
-            const {rule, modelValue} = toRefs(props);
+            const {rule, modelValue, subForm} = toRefs(props);
 
             const data = reactive({
                 ctxInject: {},
@@ -55,11 +72,35 @@ export default function $FormCreate(FormCreate) {
             const fc = new FormCreate(vm);
             const fapi = fc.api();
 
+            const addSubForm = () => {
+                if (parent) {
+                    const inject = getRuleInject(vm, parent);
+                    if (inject) {
+                        const sub = toArray(inject.subForm());
+                        sub.push(fapi);
+                        inject.subForm(sub);
+                    }
+                }
+            };
+
+            const rmSubForm = () => {
+                const inject = getRuleInject(vm, parent);
+                if (inject) {
+                    const sub = toArray(inject.subForm());
+                    const idx = sub.indexOf(fapi);
+                    if (idx > -1) {
+                        sub.splice(idx, 1);
+                    }
+                }
+            };
+
+
             onMounted(() => {
                 fc.mounted();
             });
 
             onBeforeUnmount(() => {
+                rmSubForm();
                 data.destroyed = true;
                 fc.unmount();
             })
@@ -68,20 +109,24 @@ export default function $FormCreate(FormCreate) {
                 fc.updated();
             });
 
-            watch(() => [...rule.value], function (n) {
+            watch(subForm, (n) => {
+                n ? addSubForm() : rmSubForm();
+            }, {immediate: true});
+
+            watch(() => [...rule.value], (n) => {
                 if (fc.$handle.isBreakWatch() || n.length === data.renderRule.length && n.every(v => data.renderRule.indexOf(v) > -1)) return;
                 fc.$handle.reloadRule(rule.value);
                 vm.setupState.renderRule();
             })
 
-            watch(props.option, function (n) {
+            watch(props.option, (n) => {
                 fc.initOptions(n);
                 fapi.refresh();
             });
 
             watch(modelValue, (n) => {
-                if (JSON.stringify(n) === data.updateValue) return;
-                fapi.setValue(n);
+                if (JSON.stringify(n || {}) === data.updateValue) return;
+                fapi.setValue(n || {});
             }, {deep: true});
 
             return {
