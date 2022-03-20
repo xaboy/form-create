@@ -242,9 +242,11 @@ export default defineComponent({
             (this.$slots.default ? (this.$slots.default({
                 vm: this,
                 add: this.add
-            })) : <n-icon component={IconPlus} key={1}
-                style={`font-size:${this.fontSize}px;vertical-align:middle;color:${this.disabled ? '#c9cdd4;cursor: not-allowed' : '#606266;cursor:pointer'};`}
-                onClick={this.add}/>) :
+            })) : <div
+                style={`font-size:${this.fontSize}px;vertical-align:middle;color:${this.disabled ? '#c9cdd4;cursor: not-allowed' : '#000000;cursor:pointer'};`}>
+                <n-icon component={IconPlus} key={1}
+                    onClick={this.add}/>
+            </div>) :
             <div style="flex: 1 1 0%;" key={2}>{keys.map((key, index) => {
                 const {rule, options} = this.cacheRule[key];
                 return <n-grid x-gap="12" key={key} cols={24}

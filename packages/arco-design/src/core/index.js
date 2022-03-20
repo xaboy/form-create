@@ -6,6 +6,7 @@ import FormCreateFactory from '@form-create/core/src/index';
 import makers from './maker';
 import '../style/index.css';
 import extendApi from './api';
+import required from './provider';
 
 function install(FormCreate) {
     FormCreate.componentAlias(alias);
@@ -17,6 +18,8 @@ function install(FormCreate) {
     parsers.forEach((parser) => {
         FormCreate.parser(parser);
     });
+
+    FormCreate.register(required);
 
     Object.keys(makers).forEach(name => {
         FormCreate.maker[name] = makers[name];
