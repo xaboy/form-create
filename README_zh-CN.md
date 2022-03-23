@@ -218,7 +218,7 @@ export default {
 }
 ```
 
-## 示例
+## 源码运行
 
 下载项目
 ```sh
@@ -227,6 +227,7 @@ $ cd form-create
 ```
 安装依赖
 ```sh
+$ npm install -g rimraf
 $ npm run bootstrap
 ```
 查看 iview 示例
