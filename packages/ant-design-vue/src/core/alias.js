@@ -18,6 +18,7 @@ export default {
     radio: PRE + 'RadioGroup',
     inputNumber: PRE + 'InputNumber',
     search: PRE + 'InputSearch',
+    inputPassword: PRE + 'InputPassword',
     textarea: PRE + 'Textarea',
     formItem: PRE + 'FormItem',
     form: PRE + 'Form',

@@ -3,12 +3,13 @@ import {creatorFactory} from '@form-create/core/src/index';
 const maker = {};
 
 function useAlias(maker) {
-    ['upload', 'frame', 'autoComplete', 'cascader', 'datePicker', 'frame', 'inputNumber', 'radio', 'rate', 'switch', 'rate', 'slider', 'timePicker'].reduce((maker, name) => {
+    ['upload', 'frame', 'autoComplete', 'cascader', 'datePicker', 'frame', 'inputNumber', 'inputPassword', 'radio', 'rate', 'switch', 'rate', 'slider', 'timePicker'].reduce((maker, name) => {
         maker[name] = creatorFactory(name);
         return maker;
     }, maker);
     maker.auto = maker.autoComplete;
     maker.number = maker.inputNumber;
+    maker.password = maker.inputPassword;
     maker.time = maker.timePicker;
 }
 
