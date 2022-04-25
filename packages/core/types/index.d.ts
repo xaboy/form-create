@@ -292,6 +292,7 @@ export interface BaseOptions<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
         [key: string]: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
     };
     injectEvent?: boolean;
+    appendValue?: boolean;
     preview?: boolean;
     formData?: FormData;
     el?: Element | string;

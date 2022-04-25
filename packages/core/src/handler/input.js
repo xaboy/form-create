@@ -53,7 +53,7 @@ export default function useInput(Handler) {
                 handle.configurable = true;
                 initial[field] = handle;
                 return initial;
-            }, Object.keys(this.appendData).reduce((initial, field) => {
+            }, this.options.appendValue ? Object.keys(this.appendData).reduce((initial, field) => {
                 initial[field] = {
                     enumerable: true,
                     configurable: true,
@@ -65,7 +65,7 @@ export default function useInput(Handler) {
                     }
                 }
                 return initial;
-            }, {})));
+            }, {}) : {}));
             this.syncValue();
         },
         valueHandle(ctx) {
