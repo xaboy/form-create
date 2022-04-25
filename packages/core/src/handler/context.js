@@ -141,6 +141,7 @@ export default function useContext(Handler) {
             $del(this.subForm, id);
             $del(ctx, 'cacheValue');
 
+            input && $del(this.form, field);
             input && this.rmIdCtx(ctx, field, 'field');
             name && this.rmIdCtx(ctx, name, 'name');
 

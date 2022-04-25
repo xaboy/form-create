@@ -113,7 +113,7 @@ export default function useInput(Handler) {
             this.vm._updateValue({...this.form});
         },
         isChange(ctx, value) {
-            return JSON.stringify(ctx.rule.value, strFn) !== JSON.stringify(value, strFn);
+            return JSON.stringify(ctx.rule.value, strFn) !== JSON.stringify(value === null ? undefined : value, strFn);
         },
         isQuote(ctx, value) {
             return (is.Object(value) || Array.isArray(value)) && value === ctx.rule.value;
