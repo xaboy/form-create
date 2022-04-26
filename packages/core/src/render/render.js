@@ -388,6 +388,8 @@ export default function useRender(Render) {
         },
         defaultRender(ctx, children) {
             const prop = ctx.prop;
+            if(prop.component)
+                return this.vNode.makeComponent(prop.component, prop, children)
             if (this.vNode[ctx.type])
                 return this.vNode[ctx.type](prop, children);
             if (this.vNode[ctx.originType])

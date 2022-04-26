@@ -166,6 +166,7 @@ export interface BaseRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> extend
     native?: boolean;
     hidden?: boolean;
     preview?: boolean;
+    component?: ExtendedVue<Vue, {}, {}, {}, {}>;
     display?: boolean;
     inject?: any;
 
@@ -232,6 +233,8 @@ export class BaseCreator<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
     type(prop: string): this;
 
     preview(prop: boolean): this;
+
+    component(prop: ExtendedVue<Vue, {}, {}, {}, {}>): this;
 
     field(prop: string): this;
 
