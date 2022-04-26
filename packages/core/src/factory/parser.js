@@ -13,7 +13,7 @@ const BaseParser = {
         return ctx.$render.defaultRender(ctx, children);
     },
     preview(children, ctx) {
-        return ctx.$render.defaultRender(ctx, children);
+        return this.render(children, ctx);
     },
     mergeProp(ctx) {
     }

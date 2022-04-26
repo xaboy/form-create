@@ -101,7 +101,7 @@ export interface FormCreate<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs, Ap
 
     create: FormCreate<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
 
-    factory(inherit?: Boolean): FormCreate<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
+    factory(inherit?: boolean): FormCreate<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
 
     getApi(name: string): Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> | undefined;
 
@@ -159,13 +159,14 @@ export interface BaseRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> extend
     sync?: string[];
     prefix?: string | VNodeData;
     suffix?: string | VNodeData;
-    update?: (value: any, $rule: this, api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => Boolean | void;
+    update?: (value: any, $rule: this, api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => boolean | void;
     options?: Object[];
     optionsTo?: string;
     deep?: Object;
-    native?: Boolean;
-    hidden?: Boolean;
-    display?: Boolean;
+    native?: boolean;
+    hidden?: boolean;
+    preview?: boolean;
+    display?: boolean;
     inject?: any;
 
     validate?: Object[];
@@ -230,6 +231,8 @@ export class BaseCreator<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
 
     type(prop: string): this;
 
+    preview(prop: boolean): this;
+
     field(prop: string): this;
 
     name(prop: string): this;
@@ -248,13 +251,13 @@ export class BaseCreator<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
 
     suffix(prop: string | VNodeData): this;
 
-    update(prop: (value: any, $rule: FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => Boolean | void): this;
+    update(prop: (value: any, $rule: FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => boolean | void): this;
 
-    native(prop: Boolean): this;
+    native(prop: boolean): this;
 
-    hidden(prop: Boolean): this;
+    hidden(prop: boolean): this;
 
-    display(prop: Boolean): this;
+    display(prop: boolean): this;
 
     inject(prop: any): this;
 
@@ -296,7 +299,7 @@ export interface BaseOptions<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
     preview?: boolean;
     formData?: FormData;
     el?: Element | string;
-    page?: Boolean | {
+    page?: boolean | {
         limit?: number;
         first?: number;
     };
@@ -352,21 +355,21 @@ export interface BaseApi<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
 
     prepend(rule: FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, field: string, child: boolean): void;
 
-    hidden(hidden: Boolean): void;
+    hidden(hidden: boolean): void;
 
-    hidden(hidden: Boolean, field: string | Array<string>): void;
+    hidden(hidden: boolean, field: string | Array<string>): void;
 
-    hiddenStatus(field: String): Boolean;
+    hiddenStatus(field: String): boolean;
 
-    display(hidden: Boolean): void;
+    display(hidden: boolean): void;
 
-    display(hidden: Boolean, field: string | Array<string>): void;
+    display(hidden: boolean, field: string | Array<string>): void;
 
-    displayStatus(field: String): Boolean;
+    displayStatus(field: String): boolean;
 
-    disabled(disabled: Boolean): void;
+    disabled(disabled: boolean): void;
 
-    disabled(disabled: Boolean, field: string | Array<string>): void;
+    disabled(disabled: boolean, field: string | Array<string>): void;
 
     model(): Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
 
@@ -392,9 +395,9 @@ export interface BaseApi<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
 
     refreshOptions(): void;
 
-    hideForm(hide?: Boolean): void;
+    hideForm(hide?: boolean): void;
 
-    changeStatus(): Boolean;
+    changeStatus(): boolean;
 
     clearChangeStatus(): void;
 
@@ -412,9 +415,9 @@ export interface BaseApi<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
 
     getRule(id: string, origin: false): Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
 
-    updateValidate(id: string, validate: Object[], merge?: Boolean): void;
+    updateValidate(id: string, validate: Object[], merge?: boolean): void;
 
-    updateValidates(validates: { [id: string]: Object[] }, merge?: Boolean): void;
+    updateValidates(validates: { [id: string]: Object[] }, merge?: boolean): void;
 
     refreshValidate(): void;
 
@@ -462,7 +465,7 @@ export interface EffectValue {
 export interface Effect<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
     name?: string;
     components?: string | string[];
-    init?: (data: { value: any, getValue: () => any; repeat: Boolean; }, rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
+    init?: (data: { value: any, getValue: () => any; repeat: boolean; }, rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
     load?: (data: EffectValue, rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
     loaded?: (data: EffectValue, rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
     watch?: (data: EffectValue, rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
@@ -474,7 +477,7 @@ export interface Effect<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
 
 export interface Parser {
     name?: string;
-    merge?: Boolean;
+    merge?: boolean;
     init?: (ctx: Object) => void;
     toFormValue?: (value: any, ctx: Object) => void;
     toValue?: (value: any, ctx: Object) => void;
@@ -490,7 +493,7 @@ export interface FetchOption {
     data?: Object;
     dataType?: 'json';
     headers?: Object;
-    withCredentials?: Boolean;
+    withCredentials?: boolean;
     onSuccess: (body: any) => void
     onError?: (e: Error | ProgressEvent) => void;
 }
@@ -503,7 +506,7 @@ export interface FetchEffectOption {
     data?: Object;
     dataType?: 'json';
     headers?: Object;
-    withCredentials?: Boolean;
+    withCredentials?: boolean;
     onError?: (e: Error | ProgressEvent, rule: Object, api: Object) => void;
 }
 

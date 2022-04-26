@@ -192,10 +192,11 @@ export default function FormCreateFactory(config) {
             CreateNode,
             bus: new _vue,
             unwatch: null,
+            options: options || {},
             extendApi: config.extendApi || (api => api)
         })
         this.init();
-        this.initOptions(options || {});
+        this.initOptions(this.options);
         if (this.name) {
             instance[this.name] = this.api();
         }

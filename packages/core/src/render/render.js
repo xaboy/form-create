@@ -170,7 +170,6 @@ export default function useRender(Render) {
         renderCtx(ctx, parent) {
             if (ctx.type === 'hidden') return;
             const rule = ctx.rule;
-            const preview = this.options.preview || false;
             if ((!this.cache[ctx.id]) || this.cache[ctx.id].slot !== rule.slot) {
                 let vn;
                 let cacheFlag = true;
@@ -192,7 +191,9 @@ export default function useRender(Render) {
                     this.setOptions(ctx);
                     this.ctxProp(ctx);
                     let prop = ctx.prop;
+                    prop.preview = !!(hasProperty(prop, 'preview') ? prop.preview : (this.options.preview || false))
                     prop.props.formCreateInject = this.injectProp(ctx);
+                    const preview = prop.preview;
 
                     if (prop.hidden) {
                         this.setCache(ctx, undefined, parent);
@@ -286,7 +287,7 @@ export default function useRender(Render) {
             }
             const inject = this.vm.ctxInject[ctx.id];
             extend(inject, {
-                preview: this.options.preview || false,
+                preview: ctx.prop.preview,
                 options: ctx.prop.options,
                 children: ctx.rule.children,
                 prop: (function () {
