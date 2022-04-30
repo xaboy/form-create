@@ -5,6 +5,7 @@ import {$del} from '@form-create/utils/lib/modify';
 import is from '@form-create/utils/lib/type';
 import {invoke} from '../frame/util';
 
+const noneKey = ['field', 'value', 'vm', 'template', 'name', 'config', 'control', 'inject', 'sync', 'payload', 'optionsTo', 'update', 'component', 'cache'];
 
 export default function useContext(Handler) {
     extend(Handler.prototype, {
@@ -72,8 +73,7 @@ export default function useContext(Handler) {
         },
         watchCtx(ctx) {
             const vm = this.vm;
-            const none = ['field', 'value', 'vm', 'template', 'name', 'config', 'control', 'inject', 'sync', 'payload', 'optionsTo', 'update', 'component'];
-            Object.keys(ctx.rule).filter(k => k[0] !== '_' && k[0] !== '$' && none.indexOf(k) === -1).forEach((key) => {
+            Object.keys(ctx.rule).filter(k => k[0] !== '_' && k[0] !== '$' && noneKey.indexOf(k) === -1).forEach((key) => {
                 const flag = key === 'children';
                 ctx.watch.push(vm.$watch(() => ctx.rule[key], (n, o) => {
                     if (this.loading || this.noWatchFn || this.reloading) return;

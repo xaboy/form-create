@@ -172,7 +172,7 @@ export default function useRender(Render) {
             const rule = ctx.rule;
             if ((!this.cache[ctx.id]) || this.cache[ctx.id].slot !== rule.slot) {
                 let vn;
-                let cacheFlag = true;
+                let cacheFlag = rule.cache !== false;
                 const _type = ctx.trueType;
                 const none = !(is.Undef(rule.display) || !!rule.display);
                 if (_type === 'template' && !rule.template) {

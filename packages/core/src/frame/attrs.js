@@ -1,7 +1,7 @@
 import {functionalMerge, normalMerge, toArrayMerge} from '@form-create/utils/lib/mergeprops';
 
 
-export const keyAttrs = ['type', 'slot', 'emitPrefix', 'value', 'name', 'native', 'hidden', 'display', 'inject', 'options', 'emit', 'nativeEmit', 'link', 'prefix', 'suffix', 'update', 'sync', 'optionsTo', 'key', 'preview', 'component'];
+export const keyAttrs = ['type', 'slot', 'emitPrefix', 'value', 'name', 'native', 'hidden', 'display', 'inject', 'options', 'emit', 'nativeEmit', 'link', 'prefix', 'suffix', 'update', 'sync', 'optionsTo', 'key', 'preview', 'component', 'cache'];
 
 export const arrayAttrs = ['validate', 'children', 'control'];
 
