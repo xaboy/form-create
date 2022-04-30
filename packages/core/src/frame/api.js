@@ -282,6 +282,21 @@ export default function Api(h) {
                 return origin ? ctx.origin : ctx.rule;
             }
         },
+        setEffect(id, attr, value) {
+            const ctx = h.getCtx(id);
+            if (ctx && attr) {
+                if (attr[0] === '$') {
+                    attr = attr.substr(1);
+                }
+                if (hasProperty(ctx.rule, '$' + attr)) {
+                    $set(ctx.rule, '$' + attr, value);
+                }
+                if (!hasProperty(ctx.rule, 'effect')) {
+                    ctx.rule.effect = {};
+                }
+                $set(ctx.rule.effect, attr, value);
+            }
+        },
         updateValidate(id, validate, merge) {
             if (merge) {
                 api.mergeRule(id, {validate})
