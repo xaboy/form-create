@@ -106,7 +106,6 @@ export default function createGroup(config) {
                         for (let i = 0; i < len; i++) {
                             this.removeRule(keys[total - i - 1]);
                         }
-                        this.subForm();
                     }
                     n.forEach((val, i) => {
                         this.setValue(keys[i], n[i]);
@@ -168,7 +167,6 @@ export default function createGroup(config) {
             },
             add$f(i, key, $f) {
                 this.cacheRule[key].$f = $f;
-                this.subForm();
                 this.formData(key, $f.formData());
                 this.$nextTick(() => {
                     if (this.syncDisabled) {
@@ -176,9 +174,6 @@ export default function createGroup(config) {
                     }
                     this.$emit('itemMounted', $f, Object.keys(this.cacheRule).indexOf(key));
                 });
-            },
-            subForm() {
-                this.formCreateInject.subForm(Object.keys(this.cacheRule).map(k => this.cacheRule[k].$f));
             },
             removeRule(key, emit) {
                 const index = Object.keys(this.cacheRule).indexOf(key);
@@ -199,7 +194,6 @@ export default function createGroup(config) {
                     return;
                 }
                 this.removeRule(key, true);
-                this.subForm();
                 this.value.splice(index, 1);
                 this.input(this.value);
             },
@@ -266,7 +260,7 @@ export default function createGroup(config) {
                     return <Row align="middle" type="flex" key={key}
                         style="border-bottom:1px dashed #dcdee2;margin-bottom:10px;">
                         <Col span={button ? 20 : 24}><FormItem><Type
-                            key={key}
+                            key={key} inFor={true}
                             on={{
                                 'update:value': (formData) => this.formData(key, formData),
                                 'emit-event': (name, ...args) => this.emitEvent(name, args, index, key),

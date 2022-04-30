@@ -105,7 +105,6 @@ export default {
                     for (let i = 0; i < len; i++) {
                         this.removeRule(keys[total - i - 1]);
                     }
-                    this.subForm();
                 }
                 n.forEach((val, i) => {
                     this.setValue(keys[i], n[i]);
@@ -167,7 +166,6 @@ export default {
         },
         add$f(i, key, $f) {
             this.cacheRule[key].$f = $f;
-            this.subForm();
             this.formData(key, $f.formData());
             this.$nextTick(() => {
                 if (this.syncDisabled) {
@@ -175,9 +173,6 @@ export default {
                 }
                 this.$emit('itemMounted', $f, Object.keys(this.cacheRule).indexOf(key));
             });
-        },
-        subForm() {
-            this.formCreateInject.subForm(Object.keys(this.cacheRule).map(k => this.cacheRule[k].$f));
         },
         removeRule(key, emit) {
             const index = Object.keys(this.cacheRule).indexOf(key);
@@ -198,7 +193,6 @@ export default {
                 return;
             }
             this.removeRule(key, true);
-            this.subForm();
             this.value.splice(index, 1);
             this.input(this.value);
         },
@@ -265,7 +259,7 @@ export default {
                 return <ARow align="middle" type="flex" key={key}
                     style="border-bottom:1px dashed #d9d9d9;margin-bottom:10px;">
                     <ACol span={button ? 20 : 24}><Type
-                        key={key}
+                        key={key} inFor={true}
                         on={{
                             'update:value': (formData) => this.formData(key, formData),
                             'emit-event': (name, ...args) => this.emitEvent(name, args, index, key),

@@ -87,9 +87,7 @@ export default function useInput(Handler) {
             delete this.appendData[rule.field];
         },
         addSubForm(ctx, subForm) {
-            if (ctx.input) {
-                this.subForm[ctx.id] = subForm;
-            }
+            this.subForm[ctx.id] = subForm;
         },
         deferSyncValue(fn, sync) {
             if (!this.deferSyncFn) {

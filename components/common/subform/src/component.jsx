@@ -61,14 +61,10 @@ export default {
         },
         add$f($f) {
             this.cacheRule.$f = $f;
-            this.subForm();
             this.$nextTick(() => {
                 this.syncDisabled && $f.disabled(this.disabled);
                 this.$emit('itemMounted', $f);
             });
-        },
-        subForm() {
-            this.formCreateInject.subForm(this.cacheRule.$f);
         },
         emitEvent(name, ...args) {
             this.$emit(name, ...args);

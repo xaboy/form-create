@@ -1,6 +1,19 @@
 import extend from '@form-create/utils/lib/extend';
+import toArray from '@form-create/utils/lib/toarray';
 
 const NAME = 'FormCreate';
+
+const getRuleInject = (vm, parent) => {
+    if (!vm || vm === parent) {
+        return;
+    }
+    if (vm.formCreateInject) {
+        return vm.formCreateInject
+    }
+    if (vm.$parent) {
+        return getRuleInject(vm.$parent, parent);
+    }
+}
 
 export default function $FormCreate(FormCreate) {
     return {
@@ -30,6 +43,11 @@ export default function $FormCreate(FormCreate) {
             value: Object,
             api: Object,
             name: String,
+            subForm: {
+                type: Boolean,
+                default: true
+            },
+            inFor: Boolean,
         },
         data() {
             return {
@@ -41,7 +59,8 @@ export default function $FormCreate(FormCreate) {
                 unique: 1,
                 renderRule: [...this.rule || []],
                 ctxInject: {},
-                updateValue: ''
+                updateValue: JSON.stringify(this.value || {}),
+                isMore: !!this.inFor,
             };
         },
         render() {
@@ -63,8 +82,8 @@ export default function $FormCreate(FormCreate) {
         watch: {
             value: {
                 handler(n) {
-                    if (JSON.stringify(n) === this.updateValue) return;
-                    this.$f.setValue(n);
+                    if (JSON.stringify(n || {}) === this.updateValue) return;
+                    this.$f.setValue(n || {});
                 },
                 deep: true
             },
@@ -89,5 +108,47 @@ export default function $FormCreate(FormCreate) {
             })
             this.$emit('beforeCreate', this.formCreate.api());
         },
+        created() {
+            const vm = this, fapi = this.formCreate.api();
+            const addSubForm = () => {
+                if (vm.$pfc) {
+                    const inject = getRuleInject(vm, vm.$pfc);
+                    if (inject) {
+                        let sub;
+                        if (vm.isMore) {
+                            sub = toArray(inject.getSubForm());
+                            sub.push(fapi);
+
+                        } else {
+                            sub = fapi;
+                        }
+                        inject.subForm(sub);
+                    }
+                }
+            };
+
+            const rmSubForm = () => {
+                const inject = getRuleInject(vm, vm.$pfc);
+                if (inject) {
+                    if (vm.isMore) {
+                        const sub = toArray(inject.getSubForm());
+                        const idx = sub.indexOf(fapi);
+                        if (idx > -1) {
+                            sub.splice(idx, 1);
+                        }
+                    } else {
+                        inject.subForm();
+                    }
+                }
+            };
+
+            vm.$on('hook:beforeDestroy', () => {
+                rmSubForm();
+            });
+
+            this.$watch(() => this.subForm, (n) => {
+                n ? addSubForm() : rmSubForm();
+            }, {immediate: true});
+        }
     }
 }

@@ -277,12 +277,16 @@ export default function useRender(Render) {
                     subForm: subForm => {
                         this.$handle.addSubForm(ctx, subForm);
                     },
+                    getSubForm: () => {
+                        return this.$handle.subForm[ctx.id];
+                    },
                     options: [],
                     children: [],
                     prop: {},
                     preview: false,
                     field: ctx.field,
                     rule: ctx.rule,
+                    input: ctx.input,
                 });
             }
             const inject = this.vm.ctxInject[ctx.id];

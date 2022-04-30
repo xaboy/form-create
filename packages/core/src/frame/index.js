@@ -89,7 +89,10 @@ export default function FormCreateFactory(config) {
     exportAttrs(config.attrs || {});
 
     function getApi(name) {
-        return instance[name];
+        const val = instance[name];
+        if (Array.isArray(val))
+            return [...val];
+        return val;
     }
 
     function directive() {
@@ -185,6 +188,7 @@ export default function FormCreateFactory(config) {
             providers,
             rules: Array.isArray(rules) ? rules : [],
             name: vm.$options.propsData.name,
+            inFor: vm.$options.propsData.inFor,
             prop: {
                 components,
                 directives,
@@ -198,7 +202,12 @@ export default function FormCreateFactory(config) {
         this.init();
         this.initOptions(this.options);
         if (this.name) {
-            instance[this.name] = this.api();
+            if (this.inFor) {
+                if (!instance[this.name]) instance[this.name] = [];
+                instance[this.name].push(this.api());
+            } else {
+                instance[this.name] = this.api();
+            }
         }
     }
 
@@ -228,7 +237,12 @@ export default function FormCreateFactory(config) {
                 this.unwatch && this.unwatch();
                 h.reloadRule([]);
                 if (this.name) {
-                    delete instance[this.name];
+                    if (this.inFor) {
+                        const idx = instance[this.name].indexOf(this.api());
+                        instance[this.name].splice(idx, 1);
+                    } else {
+                        delete instance[this.name];
+                    }
                 }
             });
             vm.$on('hook:updated', () => {
