@@ -219,7 +219,7 @@ export default {
 ```
 
 
-## Demo
+## Source Code Run
 
 Download project
 ```sh
@@ -228,6 +228,8 @@ $ cd form-create
 ```
 Install dependencies
 ```sh
+$ npm install -g rimraf
+
 $ npm run bootstrap
 ```
 iview Demo
