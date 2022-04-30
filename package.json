@@ -59,6 +59,7 @@
     "dependencies": {
         "@vue/cli-plugin-babel": "^4.5.3",
         "commander": "^6.0.0",
+        "rollup-plugin-cleanup": "^3.2.1",
         "rollup-plugin-commonjs": "^10.1.0"
     }
 }
