@@ -1,5 +1,5 @@
 import {hasProperty} from '@form-create/utils/lib/type';
-import {deepCopy} from '@form-create/utils/lib/deepextend';
+import deepExtend, {deepCopy} from '@form-create/utils/lib/deepextend';
 import extend from '@form-create/utils/lib/extend';
 
 const NAME = 'fcGroup';
@@ -66,16 +66,33 @@ export default {
     },
     computed: {
         formRule() {
-            if (this.rule) {
-                return Array.isArray(this.rule) ? this.rule : [this.rule];
-            }
             if (this.rules) {
                 return this.rules;
+            }
+            if (this.rule) {
+                return Array.isArray(this.rule) ? this.rule : [this.rule];
             }
             return [];
         }
     },
     watch: {
+        formRule: {
+            handler(n, o) {
+                Object.keys(this.cacheRule).forEach(v => {
+                    const item = this.cacheRule[v];
+                    if (n === o) {
+                        deepExtend(item.rule, n)
+                    } else {
+                        const val = item.$f.formData();
+                        item.$f.once('reload', () => {
+                            item.$f.setValue(val);
+                        })
+                        item.rule = deepCopy(n);
+                    }
+                })
+            },
+            deep: true
+        },
         disabled(n) {
             if (this.syncDisabled) {
                 const lst = this.cacheRule;

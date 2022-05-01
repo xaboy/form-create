@@ -5,6 +5,7 @@ import {err} from '@form-create/utils/lib/console';
 import {baseRule} from '../factory/creator';
 import RuleContext from '../factory/context';
 import mergeProps from '@form-create/utils/lib/mergeprops';
+import {$set} from '@form-create/utils';
 
 export default function useLoader(Handler) {
     extend(Handler.prototype, {
@@ -287,17 +288,18 @@ export default function useLoader(Handler) {
             this.$render.clearOrgChildren();
             this.initData(rules);
             this.fc.rules = rules;
-
-            this.bus.$once('load-end', () => {
-                Object.keys(ctxs).filter(id => this.ctxs[id] === undefined)
-                    .forEach(id => this.rmCtx(ctxs[id]));
-                this.$render.clearCacheAll();
+            this.deferSyncValue(() => {
+                this.bus.$once('load-end', () => {
+                    Object.keys(ctxs).filter(id => this.ctxs[id] === undefined)
+                        .forEach(id => this.rmCtx(ctxs[id]));
+                    this.$render.clearCacheAll();
+                });
+                this.reloading = true;
+                this.loadRule();
+                this.reloading = false;
+                this.refresh();
+                this.vm.$emit('reload', this.api);
             });
-            this.reloading = true;
-            this.loadRule();
-            this.reloading = false;
-            this.refresh();
-
             this.bus.$off('next-tick', this.nextReload);
             this.bus.$once('next-tick', this.nextReload);
             this.vm.$emit('update', this.api);
@@ -313,7 +315,7 @@ function fullRule(rule) {
     const def = baseRule();
 
     Object.keys(def).forEach(k => {
-        if (!hasProperty(rule, k)) rule[k] = def[k];
+        if (!hasProperty(rule, k)) $set(rule, k, def[k]);
     });
     return rule;
 }
