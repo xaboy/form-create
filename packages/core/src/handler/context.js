@@ -147,7 +147,8 @@ export default function useContext(Handler) {
             if (ctx.input) {
                 const val = toRef(ctx.rule, 'value');
                 ctx.watch.push(watch(() => val.value, () => {
-                    const formValue = ctx.parser.toFormValue(val.value, ctx);
+                    let formValue = ctx.parser.toFormValue(val.value, ctx);
+                    formValue = formValue === null ? undefined : formValue;
                     if (this.isChange(ctx, formValue)) {
                         this.setValue(ctx, val.value, formValue, true);
                     }
