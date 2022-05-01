@@ -81,6 +81,10 @@ export default function rule() {
             placeholder: '请输入商品名称'
         }),
 
+        maker.password('密码框', 'password', '').props({
+            placeholder: '请输入密码'
+        }),
+
         {
             type: 'object',
             title: '对象组件',
