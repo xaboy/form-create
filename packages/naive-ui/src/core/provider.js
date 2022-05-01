@@ -3,17 +3,17 @@ import is from '@form-create/utils/lib/type';
 const required = {
     name: 'required',
     load(inject, rule, api) {
-        const val = parseVa(inject.getValue());
+        const val = parseVal(inject.getValue());
         if (val.required === false) {
             inject.clearProp();
         } else {
             const validate = {
-                ...val,
                 required: true,
                 trigger: ['change', 'input', 'blur'],
                 asyncValidator(_, v, call) {
                     is.empty(v) ? call(validate.message) : call();
-                }
+                },
+                ...val,
             };
             if (!validate.message) {
                 validate.message = rule.title + ' is required';
@@ -27,11 +27,13 @@ const required = {
     }
 }
 
-function parseVa(val) {
+function parseVal(val) {
     if (is.Boolean(val)) {
         return {required: val}
     } else if (is.String(val)) {
         return {message: val};
+    } else if (is.Function(val)) {
+        return {asyncValidator: val};
     } else if (!is.Object(val)) {
         return {};
     } else {
