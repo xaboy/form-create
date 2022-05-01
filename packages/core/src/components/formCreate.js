@@ -16,7 +16,7 @@ import toArray from '@form-create/utils/lib/toarray';
 const NAME = 'FormCreate';
 
 const getRuleInject = (vm, parent) => {
-    if (vm === parent) {
+    if (!vm || vm === parent) {
         return;
     }
     if (vm.ctx.formCreateInject) {

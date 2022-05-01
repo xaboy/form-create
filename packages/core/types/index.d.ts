@@ -192,6 +192,7 @@ export interface BaseRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> extend
     name?: string;
     emitPrefix?: string;
     value?: any;
+    computed?: string | ((formData: FormData, api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => any);
     emit?: Array<string | { name: string; inject: any }>;
     link?: string[];
     sync?: string[];
@@ -266,6 +267,8 @@ export class BaseCreator<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
     emitPrefix(prop: string): this;
 
     value(prop: any): this;
+
+    computed(prop: string | ((formData: FormData, api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => any)): this;
 
     emit(prop: Array<string | { name: string; inject: any }>): this;
 

@@ -2,11 +2,39 @@ import extend from '@form-create/utils/lib/extend';
 import toCase from '@form-create/utils/lib/tocase';
 import BaseParser from '../factory/parser';
 import {$del} from '@form-create/utils/lib/modify';
-import is from '@form-create/utils/lib/type';
+import is, {hasProperty} from '@form-create/utils/lib/type';
 import {invoke} from '../frame/util';
 import {toRef, watch} from 'vue';
 import {attrs} from '../frame/attrs';
 
+
+const _ = {
+    sum(arr) {
+        if (Array.isArray(arr)) {
+            let val = 0;
+            arr.map(v => val += (v || 0));
+            return val;
+        }
+    },
+    column(arr, field) {
+        if (Array.isArray(arr)) {
+            return arr.map(v => v[field]);
+        }
+        return [];
+    },
+    get(obj, field, def) {
+        const lst = field.split('.');
+        let val = obj;
+        for (let i = 0; i < lst.length; i++) {
+            if (hasProperty(val, lst[i])) {
+                val = val[lst[i]]
+            } else {
+                return def === undefined ? 0 : def;
+            }
+        }
+        return val;
+    }
+};
 
 export default function useContext(Handler) {
     extend(Handler.prototype, {
@@ -73,7 +101,7 @@ export default function useContext(Handler) {
             }
         },
         watchCtx(ctx) {
-            const none = ['field', 'value', 'vm', 'template', 'name', 'config', 'control', 'inject', 'sync', 'payload', 'optionsTo', 'update', 'slotUpdate'];
+            const none = ['field', 'value', 'vm', 'template', 'name', 'config', 'control', 'inject', 'sync', 'payload', 'optionsTo', 'update', 'slotUpdate', 'computed'];
             const all = attrs();
             all.filter(k => k[0] !== '_' && k[0] !== '$' && none.indexOf(k) === -1).forEach((key) => {
                 const ref = toRef(ctx.rule, key);
@@ -124,6 +152,20 @@ export default function useContext(Handler) {
                         this.setValue(ctx, val.value, formValue, true);
                     }
                 }));
+                const computedRef = toRef(ctx.rule, 'computed');
+                ctx.watch.push(watch(() => {
+                    const computed = computedRef.value;
+                    if(!computed) return undefined;
+                    let fn;
+                    if (is.Function(computed)) {
+                        fn = () => computed(this.api.form, this.api);
+                    } else {
+                        fn = () => (new Function('_', `with(this){ return ${computed} }`)).call(this.api.form, _);
+                    }
+                    return invoke(fn, undefined);
+                }, (n) => {
+                    val.value = n;
+                }, {immediate: !!computedRef.value}));
             }
             this.watchEffect(ctx);
         },
@@ -154,6 +196,7 @@ export default function useContext(Handler) {
             $del(this.subForm, id);
             $del(this.vm.setupState.ctxInject, id);
 
+            input && $del(this.form, field);
             input && this.rmIdCtx(ctx, field, 'field');
             name && this.rmIdCtx(ctx, name, 'name');
 
