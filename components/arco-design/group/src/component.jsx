@@ -2,7 +2,7 @@ import {hasProperty} from '@form-create/utils/lib/type';
 import {defineComponent, markRaw, nextTick} from 'vue';
 import IconMinusCircle from './IconMinusCircle.vue';
 import IconPlusCircle from './IconPlusCircle.vue';
-import {deepCopy} from '@form-create/utils/lib/deepextend';
+import deepExtend, {deepCopy} from '@form-create/utils/lib/deepextend';
 import extend from '@form-create/utils/lib/extend';
 
 const NAME = 'fcGroup';
@@ -66,6 +66,23 @@ export default defineComponent({
     },
     emits: ['update:modelValue', 'change', 'itemMounted', 'remove'],
     watch: {
+        rule: {
+            handler(n, o) {
+                Object.keys(this.cacheRule).forEach(v => {
+                    const item = this.cacheRule[v];
+                    if (n === o) {
+                        deepExtend(item.rule, n)
+                    } else {
+                        const val = item.$f.formData();
+                        item.$f.once('reloading', () => {
+                            item.$f.setValue(val);
+                        })
+                        item.rule = deepCopy(n);
+                    }
+                })
+            },
+            deep: true
+        },
         disabled(n) {
             if (this.syncDisabled) {
                 const lst = this.cacheRule;

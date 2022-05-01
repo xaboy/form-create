@@ -4,7 +4,7 @@ import extend from '@form-create/utils/lib/extend';
 import mergeProps from '@form-create/utils/lib/mergeprops';
 import {enumerable, invoke} from '../frame/util';
 import {deepCopy} from '@form-create/utils/lib/deepextend';
-import {markRaw, nextTick, reactive} from 'vue';
+import {markRaw, reactive} from 'vue';
 import is from '@form-create/utils/lib/type';
 
 function isNone(ctx) {
@@ -174,9 +174,7 @@ extend(RuleContext.prototype, {
         this.$handle.appendLink(this);
     },
     watchTo() {
-        nextTick(() => {
-            this.$handle && this.$handle.watchCtx(this);
-        });
+        this.$handle.watchCtx(this);
     },
     delete() {
         const undef = void 0;
