@@ -30,7 +30,7 @@ If you have a form component suitable for form-create, please feel free to [clic
 >  If it helps, you can click on "Star" in the upper right corner. Thank you!
 >  The project is still being developed and improved. If there are any 'recommendations or questions, please ask [here](https://github.com/xaboy/form-create/issues/new)
 
-> 本项目QQ讨论群[28963712](https://jq.qq.com/?_wv=1027&k=54aKUVw)
+> 本项目QQ讨论群[629709230](https://jq.qq.com/?_wv=1027&k=F1FlEFIV)
 
 > [Update log](http://www.form-create.com/en/v2/guide/update.html)
 
