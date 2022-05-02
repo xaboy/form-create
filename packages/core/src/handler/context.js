@@ -36,6 +36,8 @@ const _ = {
     }
 };
 
+const noneKey = ['field', 'value', 'vm', 'template', 'name', 'config', 'control', 'inject', 'sync', 'payload', 'optionsTo', 'update', 'slotUpdate', 'computed', 'component', 'cache'];
+
 export default function useContext(Handler) {
     extend(Handler.prototype, {
         getCtx(id) {
@@ -101,9 +103,8 @@ export default function useContext(Handler) {
             }
         },
         watchCtx(ctx) {
-            const none = ['field', 'value', 'vm', 'template', 'name', 'config', 'control', 'inject', 'sync', 'payload', 'optionsTo', 'update', 'slotUpdate', 'computed', 'component'];
             const all = attrs();
-            all.filter(k => k[0] !== '_' && k[0] !== '$' && none.indexOf(k) === -1).forEach((key) => {
+            all.filter(k => k[0] !== '_' && k[0] !== '$' && noneKey.indexOf(k) === -1).forEach((key) => {
                 const ref = toRef(ctx.rule, key);
                 const flag = key === 'children';
                 ctx.refRule[key] = ref;

@@ -102,6 +102,7 @@ export default function useRender(Render) {
                     let prop = ctx.prop;
                     prop.preview = !!(hasProperty(prop, 'preview') ? prop.preview : (this.options.preview || false))
                     prop.props.formCreateInject = this.injectProp(ctx);
+                    let cacheFlag = prop.cache !== false;
                     const preview = prop.preview;
 
                     if (prop.hidden) {
@@ -142,13 +143,12 @@ export default function useRender(Render) {
                         if (ctx.none) {
                             _vn = this.display(_vn);
                         }
-                        this.setCache(ctx, () => _vn, parent);
+                        cacheFlag && this.setCache(ctx, () => _vn, parent);
                         return _vn
                     };
                     this.setCache(ctx, vn, parent);
-                    return vn;
                 }
-                return this.getCache(ctx);
+                return (...args) => this.getCache(ctx)(...args);
             } catch (e) {
                 console.error(e);
                 return;
@@ -277,7 +277,7 @@ export default function useRender(Render) {
         },
         defaultRender(ctx, children) {
             const prop = ctx.prop;
-            if(prop.component)
+            if (prop.component)
                 return this.vNode.makeComponent(prop.component, prop, children);
             if (this.vNode[ctx.type])
                 return this.vNode[ctx.type](prop, children);
