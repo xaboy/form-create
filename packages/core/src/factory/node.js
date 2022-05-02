@@ -38,6 +38,14 @@ export function CreateNodeFactory() {
         make(tag, data, children) {
             return makeDirective(data, this.h(tag, toProps(data), children));
         },
+        makeComponent(type, data, children) {
+            try {
+                return makeDirective(data, createVNode(type, toProps(data), children));
+            } catch (e) {
+                console.error(e);
+                return createVNode('');
+            }
+        },
         h(tag, data, children) {
             const isNativeTag = getCurrentInstance().appContext.config.isNativeTag(tag);
             if (isNativeTag) {

@@ -206,6 +206,7 @@ export interface BaseRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> extend
     hidden?: Boolean;
     display?: Boolean;
     preview?: Boolean;
+    component?: Component;
     inject?: any;
     slotUpdate?: (arg: PropArg<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
 
@@ -262,6 +263,8 @@ export class BaseCreator<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
     type(prop: string): this;
 
     preview(prop: Boolean): this;
+
+    component(prop: Component): this;
 
     field(prop: string): this;
 
