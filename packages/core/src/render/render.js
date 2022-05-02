@@ -1,6 +1,6 @@
 import extend from '@form-create/utils/lib/extend';
 import mergeProps from '@form-create/utils/lib/mergeprops';
-import is from '@form-create/utils/lib/type';
+import is, {hasProperty} from '@form-create/utils/lib/type';
 import {invoke, makeSlotBag, mergeRule} from '../frame/util';
 import toCase, {lower} from '@form-create/utils/lib/tocase';
 import {deepSet, toLine} from '@form-create/utils';
@@ -90,7 +90,6 @@ export default function useRender(Render) {
             try {
                 if (ctx.type === 'hidden') return;
                 const rule = ctx.rule;
-                const preview = this.options.preview || false;
                 if ((!this.cache[ctx.id]) || this.cache[ctx.id].slot !== rule.slot) {
                     let vn;
                     ctx.initProp();
@@ -101,7 +100,9 @@ export default function useRender(Render) {
                     this.setOptions(ctx);
                     this.ctxProp(ctx);
                     let prop = ctx.prop;
+                    prop.preview = !!(hasProperty(prop, 'preview') ? prop.preview : (this.options.preview || false))
                     prop.props.formCreateInject = this.injectProp(ctx);
+                    const preview = prop.preview;
 
                     if (prop.hidden) {
                         this.setCache(ctx, undefined, parent);
@@ -203,7 +204,7 @@ export default function useRender(Render) {
             }
             const inject = state.ctxInject[ctx.id];
             extend(inject, {
-                preview: this.options.preview || false,
+                preview: ctx.prop.preview,
                 options: ctx.prop.options,
                 children: ctx.loadChildrenPending()
             });

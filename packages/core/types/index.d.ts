@@ -205,6 +205,7 @@ export interface BaseRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> extend
     native?: Boolean;
     hidden?: Boolean;
     display?: Boolean;
+    preview?: Boolean;
     inject?: any;
     slotUpdate?: (arg: PropArg<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
 
@@ -259,6 +260,8 @@ export class BaseCreator<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
     directives(prop: string, val: Directive): this;
 
     type(prop: string): this;
+
+    preview(prop: Boolean): this;
 
     field(prop: string): this;
 
