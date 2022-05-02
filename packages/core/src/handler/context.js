@@ -153,20 +153,22 @@ export default function useContext(Handler) {
                         this.setValue(ctx, val.value, formValue, true);
                     }
                 }));
-                const computedRef = toRef(ctx.rule, 'computed');
-                ctx.watch.push(watch(() => {
-                    const computed = computedRef.value;
-                    if(!computed) return undefined;
-                    let fn;
-                    if (is.Function(computed)) {
-                        fn = () => computed(this.api.form, this.api);
-                    } else {
-                        fn = () => (new Function('_', `with(this){ return ${computed} }`)).call(this.api.form, _);
-                    }
-                    return invoke(fn, undefined);
-                }, (n) => {
-                    val.value = n;
-                }, {immediate: !!computedRef.value}));
+                this.bus.$once('load-end', () => {
+                    const computedRef = toRef(ctx.rule, 'computed');
+                    ctx.watch.push(watch(() => {
+                        const computed = computedRef.value;
+                        if (!computed) return undefined;
+                        let fn;
+                        if (is.Function(computed)) {
+                            fn = () => computed(this.api.form, this.api);
+                        } else {
+                            fn = () => (new Function('_', `with(this){ return ${computed} }`)).call(this.api.form, _);
+                        }
+                        return invoke(fn, undefined);
+                    }, (n) => {
+                        val.value = n;
+                    }, {immediate: !!computedRef.value}));
+                });
             }
             this.watchEffect(ctx);
         },

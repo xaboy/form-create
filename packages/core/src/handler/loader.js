@@ -74,11 +74,11 @@ export default function useLoader(Handler) {
                 if (this.cycleLoad && this.pageEnd) {
                     return this.loadRule();
                 }
+                this.syncForm();
                 if (this.pageEnd) {
                     this.bus.$emit('load-end');
                 }
                 this.vm.setupState.renderRule();
-                this.syncForm();
             });
         },
         loadChildren(children, parent) {
@@ -90,8 +90,8 @@ export default function useLoader(Handler) {
             if (this.cycleLoad) {
                 return this.loadRule();
             } else {
-                this.bus.$emit('load-end');
                 this.syncForm();
+                this.bus.$emit('load-end');
             }
             this.$render.clearCache(parent);
         },

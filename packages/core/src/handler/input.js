@@ -2,7 +2,7 @@ import extend from '@form-create/utils/lib/extend';
 import {$set} from '@form-create/utils/lib/modify';
 import is, {hasProperty} from '@form-create/utils/lib/type';
 import {invoke} from '../frame/util';
-import {customRef, toRef} from 'vue';
+import {customRef, reactive, toRef} from 'vue';
 
 export default function useInput(Handler) {
     extend(Handler.prototype, {
@@ -31,24 +31,13 @@ export default function useInput(Handler) {
             return this.formData[ctx.id];
         },
         syncForm() {
+            const data = reactive({});
             this.fields().reduce((initial, field) => {
                 const ctx = this.getCtx(field);
                 initial[field] = toRef(ctx.rule, 'value');
                 return initial;
-            }, Object.keys(this.appendData).reduce((initial, field) => {
-                initial[field] = customRef((track, trigger) => ({
-                    get: () => {
-                        track();
-                        return this.appendData[field];
-                    },
-                    set: (val) => {
-                        trigger();
-                        this.appendData[field] = val;
-                        this.syncValue();
-                    }
-                }))
-                return initial;
-            }, this.form));
+            }, data);
+            this.form = data;
             this.syncValue();
         },
         appendValue(rule) {

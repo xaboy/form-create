@@ -202,7 +202,7 @@ export default function FormCreateFactory(config) {
             CreateNode,
             bus: new Mitt(),
             unwatch: null,
-            options: ref({}),
+            options: ref(vm.props.option || {}),
             extendApi: config.extendApi || (api => api)
         })
         nextTick(() => {
@@ -232,7 +232,7 @@ export default function FormCreateFactory(config) {
                     this.$handle.api.refresh();
                 }, {deep: true});
             }
-            this.initOptions(this.vm.props.option || {});
+            this.initOptions(this.options || {});
             this.$handle.init();
         },
         isSub() {
