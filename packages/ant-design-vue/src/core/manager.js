@@ -130,8 +130,8 @@ export default {
         return !((!title.title && !title.native) || isFalse(title.show));
     },
     makeInfo(rule, uni) {
-        const titleProp = rule.title;
-        const infoProp = rule.info;
+        const titleProp = {...rule.title};
+        const infoProp = {...rule.info};
         if (this.options.form.title === false) return false;
         if ((!titleProp.title && !titleProp.native) || isFalse(titleProp.show)) return;
         const isTip = isTooltip(infoProp);
@@ -147,6 +147,8 @@ export default {
             delete prop.props.icon;
             delete prop.props.show;
             delete prop.props.info;
+            delete prop.props.align;
+            delete prop.props.native;
 
             const field = isTip ? 'title' : 'content';
             if (infoProp.info && !hasProperty(prop.props, field)) {
@@ -160,11 +162,18 @@ export default {
                 })
             }))
         }
-        return this.$r(mergeProps([titleProp, {
+
+        const _prop = mergeProps([titleProp, {
             props: titleProp,
             key: `${uni}tit`,
             type: titleProp.type || 'span',
-        }]), children);
+        }]);
+
+        delete _prop.props.show;
+        delete _prop.props.title;
+        delete _prop.props.native;
+
+        return this.$r(_prop, children);
     },
     makeCol(rule, uni, children) {
         const col = rule.col;
@@ -222,6 +231,9 @@ export default {
         const resetBtn = {...this.options.resetBtn};
         const innerText = resetBtn.innerText;
         delete resetBtn.innerText;
+        delete resetBtn.click;
+        delete resetBtn.col;
+        delete resetBtn.show;
         return this.$r({
             type: 'button',
             props: resetBtn,
@@ -229,8 +241,8 @@ export default {
             on: {
                 click: () => {
                     const fApi = this.$handle.api;
-                    resetBtn.click
-                        ? resetBtn.click(fApi)
+                    this.options.resetBtn.click
+                        ? this.options.resetBtn.click(fApi)
                         : fApi.resetFields();
                 }
             },
@@ -241,6 +253,9 @@ export default {
         const submitBtn = {...this.options.submitBtn};
         const innerText = submitBtn.innerText;
         delete submitBtn.innerText;
+        delete submitBtn.click;
+        delete submitBtn.col;
+        delete submitBtn.show;
         return this.$r({
             type: 'button',
             props: submitBtn,
@@ -248,8 +263,8 @@ export default {
             on: {
                 click: () => {
                     const fApi = this.$handle.api;
-                    submitBtn.click
-                        ? submitBtn.click(fApi)
+                    this.options.submitBtn.click
+                        ? this.options.submitBtn.click(fApi)
                         : fApi.submit();
                 }
             },

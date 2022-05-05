@@ -232,7 +232,7 @@ export default function FormCreateFactory(config) {
                     this.$handle.api.refresh();
                 }, {deep: true});
             }
-            this.initOptions(this.options || {});
+            this.initOptions(this.options.value);
             this.$handle.init();
         },
         isSub() {
