@@ -148,7 +148,10 @@ export default function useRender(Render) {
                     };
                     this.setCache(ctx, vn, parent);
                 }
-                return (...args) => this.getCache(ctx)(...args);
+                return (...args) => {
+                    const cache = this.getCache(ctx);
+                    return cache && cache(...args);
+                };
             } catch (e) {
                 console.error(e);
                 return;
