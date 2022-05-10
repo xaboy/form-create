@@ -157,7 +157,7 @@ interface loadParams<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
 type RuleOptionsFn<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> = (data: loadParams<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => ([] | Promise<[]>)
 
 type RuleOptions<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> =
-    [] | RuleOptionsFn<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>
+    Array<any> | RuleOptionsFn<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>
 
 type RuleChildrenFn<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> = (data: loadParams<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => (FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>[] | Promise<FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>[]>)
 
