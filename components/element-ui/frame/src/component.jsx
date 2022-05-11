@@ -319,7 +319,7 @@ export default {
                 on-close={this.handleCancel}>
                 <img style="width: 100%" src={this.previewImage}/>
             </el-dialog>
-            <el-dialog appendToBody={true} {...{width, title, ...this.modal}} visible={this.frameVisible}
+            <el-dialog appendToBody={true} {...{props:{width, title, ...this.modal}}} visible={this.frameVisible}
                 on-close={() => (this.closeModel(true))}>
                 {(this.frameVisible || !this.reload) ? <iframe ref="frame" src={src} frameBorder="0" style={{
                     'height': height,
