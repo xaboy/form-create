@@ -362,6 +362,9 @@ export default function Api(h) {
             h.nextRefresh();
             fn && invoke(fn);
         },
+        deferSyncValue(fn, sync) {
+            h.deferSyncValue(fn, sync);
+        },
         emit(name, ...args) {
             h.vm.emit(name, ...args);
         },
