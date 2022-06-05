@@ -158,7 +158,7 @@ export default function useRender(Render) {
             }
         },
         getModelField(ctx) {
-            return ctx.rule.modelField || ctx.parser.modelField || this.fc.modelFields[this.vNode.aliasMap[ctx.field]] || this.fc.modelFields[ctx.field] || this.fc.modelFields[ctx.originType] || 'modelValue';
+            return ctx.rule.modelField || ctx.parser.modelField || this.fc.modelFields[this.vNode.aliasMap[ctx.type]] || this.fc.modelFields[ctx.type] || this.fc.modelFields[ctx.originType] || 'modelValue';
         },
         display(vn) {
             if (Array.isArray(vn)) {
