@@ -80,14 +80,20 @@ export default {
             handler(n, o) {
                 Object.keys(this.cacheRule).forEach(v => {
                     const item = this.cacheRule[v];
-                    if (n === o) {
-                        deepExtend(item.rule, n)
-                    } else {
+                    if (item.$f) {
                         const val = item.$f.formData();
-                        item.$f.once('reload', () => {
-                            item.$f.setValue(val);
-                        })
-                        item.rule = deepCopy(n);
+                        if (n === o) {
+                            item.$f.deferSyncValue(() => {
+                                deepExtend(item.rule, n);
+                                item.$f.setValue(val);
+                            }, true);
+                        } else {
+                            const val = item.$f.formData();
+                            item.$f.once('reloading', () => {
+                                item.$f.setValue(val);
+                            })
+                            item.rule = deepCopy(n);
+                        }
                     }
                 })
             },

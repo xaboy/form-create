@@ -298,7 +298,7 @@ export default function useLoader(Handler) {
                 this.loadRule();
                 this.reloading = false;
                 this.refresh();
-                this.vm.$emit('reload', this.api);
+                this.vm.$emit('reloading', this.api);
             });
             this.bus.$off('next-tick', this.nextReload);
             this.bus.$once('next-tick', this.nextReload);
