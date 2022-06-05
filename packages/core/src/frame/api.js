@@ -363,6 +363,9 @@ export default function Api(h) {
         emit(name, ...args) {
             h.vm.$emit(name, ...args);
         },
+        deferSyncValue(fn, sync){
+            h.deferSyncValue(fn, sync);
+        },
         helper: {
             tidyFields, props
         }

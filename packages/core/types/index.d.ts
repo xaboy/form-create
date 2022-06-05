@@ -451,6 +451,8 @@ export interface BaseApi<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
 
     nextRefresh(fn: Function): void;
 
+    deferSyncValue(fn: Function, autoSync?: boolean): void;
+
     set<T>(object: object, key: string | number, value: T): T;
 
     on(event: string | string[], callback: Function): this;
