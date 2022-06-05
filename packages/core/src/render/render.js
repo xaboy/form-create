@@ -257,6 +257,8 @@ export default function useRender(Render) {
             if (vn && vn.data) {
                 if (Array.isArray(vn.data.style)) {
                     vn.data.style.push({display: 'none'});
+                } else if(is.String(vn.data.style)) {
+                    vn.data.style += ';display:none;';
                 } else {
                     vn.data.style = [vn.data.style, {display: 'none'}];
                 }
