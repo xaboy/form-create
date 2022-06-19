@@ -9,12 +9,12 @@ const parseFile = function (file, uid) {
             url: file,
             name: getFileName(file),
             status: 'done',
-            uid: uid + 1
+            uid: -1 * (uid + 1)
         };
     }, getFileName = function (file) {
         return toString(file).split('/').pop()
     }, parseUpload = function (file) {
-        return {url: file.url, file};
+        return {url: file.url, file, uid: file.uid};
     };
 
 const NAME = 'fcUpload';
@@ -49,19 +49,15 @@ export default defineComponent({
     },
     emits: ['update:modelValue', 'change'],
     data() {
-        const fileList = this.modelValue.map(parseFile);
         return {
-            defaultUploadList: fileList,
             previewImage: '',
             previewVisible: false,
-            uploadList: fileList.map(parseUpload)
+            uploadList: this.modelValue.map(parseFile).map(parseUpload)
         };
     },
     watch: {
         modelValue(n) {
-            const fileList = n.map(parseFile);
-            this.$refs.upload.sFileList = fileList;
-            this.uploadList = fileList.map(parseUpload)
+            this.uploadList = n.map(parseFile).map(parseUpload)
         }
     },
     methods: {
@@ -75,18 +71,14 @@ export default defineComponent({
         },
         handleChange({file, fileList}) {
             this.$emit('change', ...arguments);
-            const list = this.uploadList;
+            this.uploadList = fileList;
             if (file.status === 'done') {
                 this.onSuccess(file, fileList);
-                if (file.url) list.push({
-                    url: file.url,
-                    file: fileList[fileList.length - 1]
-                });
                 this.input();
             } else if (file.status === 'removed') {
-                list.forEach((v, i) => {
+                fileList.forEach((v, i) => {
                     if (v.file === file) {
-                        list.splice(i, 1);
+                        fileList.splice(i, 1);
                     }
                 });
                 this.input();
@@ -95,16 +87,15 @@ export default defineComponent({
         input() {
             this.$emit('update:modelValue', this.uploadList.map(v => v.url));
         },
-
     },
     render() {
         const isShow = (!this.limit || this.limit > this.uploadList.length);
         return <>
-            <AUpload list-type={'picture-card'} {...this.$attrs} onPreview={this.handlePreview}
-                onChange={this.handleChange}
-                ref="upload" defaultFileList={this.defaultUploadList} v-slots={getSlot(this.$slots, ['default'])}>
+            <AUpload maxCount={this.limit} list-type={'picture-card'} {...this.$attrs} onPreview={this.handlePreview}
+                onChange={this.handleChange} fileList={this.uploadList}
+                ref="upload" v-slots={getSlot(this.$slots, ['default'])}>
                 {isShow ? (this.$slots.default?.() ||
-                    <PlusOutlined style='font-size: 16px; width: 16px;'/>) : null}
+                    <PlusOutlined style="font-size: 16px; width: 16px;"/>) : null}
             </AUpload>
             <aModal mask={this.previewMask} title={this.modalTitle} visible={this.previewVisible}
                 onCancel={() => this.previewVisible = false} footer={null}>

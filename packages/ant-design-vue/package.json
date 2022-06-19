@@ -59,7 +59,7 @@
     "@form-create/component-wangeditor": "^3.1.2",
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-service": "^4.5.3",
-    "ant-design-vue": "^3.0.0-alpha.11",
+    "ant-design-vue": "^3.2.7",
     "v-jsoneditor": "^1.4.2"
   },
   "buildFormCreateOptions": {
