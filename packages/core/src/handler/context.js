@@ -2,7 +2,7 @@ import extend from '@form-create/utils/lib/extend';
 import toCase from '@form-create/utils/lib/tocase';
 import BaseParser from '../factory/parser';
 import {$del} from '@form-create/utils/lib/modify';
-import is from '@form-create/utils/lib/type';
+import is, {hasProperty} from '@form-create/utils/lib/type';
 import {invoke} from '../frame/util';
 
 const noneKey = ['field', 'value', 'vm', 'template', 'name', 'config', 'control', 'inject', 'sync', 'payload', 'optionsTo', 'update', 'component', 'cache'];
@@ -141,9 +141,12 @@ export default function useContext(Handler) {
             $del(this.subForm, id);
             $del(ctx, 'cacheValue');
 
-            input && $del(this.form, field);
             input && this.rmIdCtx(ctx, field, 'field');
             name && this.rmIdCtx(ctx, name, 'name');
+
+            if (input && !hasProperty(this.fieldCtx, field)) {
+                $del(this.form, field);
+            }
 
             this.deferSyncValue(() => {
                 if (!this.reloading) {
