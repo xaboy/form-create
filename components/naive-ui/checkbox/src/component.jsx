@@ -32,7 +32,7 @@ export default defineComponent({
     render() {
         return <NCheckboxGroup {...this.$attrs} value={this.value} v-slots={getSlot(this.$slots, ['default'])}
             onUpdate:value={this.onInput}>{this.options().map((opt, index) => {
-                return <NCheckbox {...opt} key={name + index + opt.value}/>
+                return <NCheckbox {...opt} key={'' + index + '-' + opt.value}/>
             })}{this.$slots.default?.()}</NCheckboxGroup>
     }
 });

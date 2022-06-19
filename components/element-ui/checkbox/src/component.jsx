@@ -38,7 +38,7 @@ export default defineComponent({
                 const value = props.value;
                 delete props.value;
                 return <Type {...props} label={value}
-                    key={name + index + opt.value}>{props.label || props.value || ''}</Type>
+                    key={name + index + '-' + opt.value}>{props.label || props.value || ''}</Type>
             })}{this.$slots.default?.()}</ElCheckboxGroup>
     }
 });

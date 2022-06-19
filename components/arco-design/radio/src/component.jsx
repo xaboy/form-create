@@ -32,7 +32,7 @@ export default defineComponent({
     render() {
         return <ARadioGroup {...this.$attrs} modelValue={this.value} v-slots={getSlot(this.$slots, ['default'])}
             onUpdate:modelValue={this.onInput}>{this.options().map((opt, index) => {
-                return <ARadio {...opt} key={name + index + opt.value}>{opt.label || opt.value || ''}</ARadio>
+                return <ARadio {...opt} key={'' + index + '-' + opt.value}>{opt.label || opt.value || ''}</ARadio>
             })}{this.$slots.default?.()}</ARadioGroup>
     }
 });

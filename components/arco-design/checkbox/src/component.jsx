@@ -31,7 +31,7 @@ export default defineComponent({
     render() {
         return <ACheckboxGroup {...this.$attrs} modelValue={this.value} v-slots={getSlot(this.$slots, ['default'])}
             onUpdate:modelValue={this.onInput}>{this.options().map((opt, index) => {
-                return <ACheckbox {...opt} key={name + index + opt.value}>{opt.label || opt.value || ''}</ACheckbox>
+                return <ACheckbox {...opt} key={'' + index + '-' + opt.value}>{opt.label || opt.value || ''}</ACheckbox>
             })}{this.$slots.default?.()}</ACheckboxGroup>
     }
 });

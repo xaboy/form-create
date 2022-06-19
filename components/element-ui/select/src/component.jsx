@@ -30,7 +30,7 @@ export default defineComponent({
         return <ElSelect {...this.$attrs} modelValue={this.value}
             onUpdate:modelValue={(v) => this.$emit('update:modelValue', v)}
             v-slots={getSlot(this.$slots, ['default'])}>{this.options().map((props, index) => {
-                return <ElOption {...props} key={'' + index + props.value}/>
+                return <ElOption {...props} key={'' + index + '-' + props.value}/>
             })}{this.$slots.default?.()}</ElSelect>;
     }
 });

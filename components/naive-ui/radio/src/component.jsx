@@ -35,7 +35,7 @@ export default defineComponent({
         const Type = resolveComponent(name);
         return <NRadioGroup {...this.$attrs} value={this.value} v-slots={getSlot(this.$slots, ['default'])}
             onUpdate:value={this.onInput}>{this.options().map((opt, index) => {
-                return <Type {...opt} key={name + index + opt.value}>{opt.label || opt.value || ''}</Type>
+                return <Type {...opt} key={name + index + '-' + opt.value}>{opt.label || opt.value || ''}</Type>
             })}{this.$slots.default?.()}</NRadioGroup>
     }
 });
