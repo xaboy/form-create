@@ -200,9 +200,12 @@ export default function useContext(Handler) {
             $del(this.subForm, id);
             $del(this.vm.setupState.ctxInject, id);
 
-            input && $del(this.form, field);
             input && this.rmIdCtx(ctx, field, 'field');
             name && this.rmIdCtx(ctx, name, 'name');
+
+            if (input && !hasProperty(this.fieldCtx, field)) {
+                $del(this.form, field);
+            }
 
             this.deferSyncValue(() => {
                 if (!this.reloading) {
