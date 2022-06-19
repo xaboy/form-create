@@ -51,7 +51,7 @@ export default {
             on-input={this.onInput}>{this.options().map((opt, index) => {
                 const props = {...opt};
                 delete props.value;
-                return <Checkbox {...{props}} key={'' + index + opt.value}/>
+                return <Checkbox {...{props}} key={'' + index + '-' + opt.value}/>
             })}{getSlot(this.$slots)}</CheckboxGroup>
     }
 }

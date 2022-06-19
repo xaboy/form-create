@@ -53,7 +53,7 @@ export default {
                 const props = {...opt};
                 const Type = this.type === 'button' ? 'ElCheckboxButton' : 'ElCheckbox';
                 delete props.value;
-                return <Type {...{props}} key={Type + index + opt.value}/>
+                return <Type {...{props}} key={Type + index + '-' + opt.value}/>
             })}{getSlot(this.$slots)}</ElCheckboxGroup>
     }
 }

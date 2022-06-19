@@ -49,7 +49,7 @@ export default {
                 const props = {...opt};
                 const Type = this.type === 'button' ? 'ElRadioButton' : 'ElRadio';
                 delete props.value;
-                return <Type {...{props}} key={Type + index + opt.value}/>
+                return <Type {...{props}} key={Type + index + '-' + opt.value}/>
             })}{getSlot(this.$slots)}</ElRadioGroup>
     }
 }

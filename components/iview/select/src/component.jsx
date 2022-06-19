@@ -15,7 +15,7 @@ export default {
         return <Select {...ctx.data}>{(Array.isArray(options) ? options : []).map((props, index) => {
             const slot = props.slot;
             return <Option {...{props}}
-                key={'' + index + props.value}>
+                key={'' + index + '-' + props.value}>
                 {slot ? <template
                     slot={props.slotName || 'default'}>{is.Function(slot) ? props.slot(h) : slot}</template> : null}
             </Option>
