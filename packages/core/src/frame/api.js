@@ -318,7 +318,6 @@ export default function Api(h) {
                 h.getCtxs(field).forEach(ctx => {
                     h.$render.clearCache(ctx);
                     ctx.rule.value = copy(ctx.defaultValue);
-                    h.refreshControl(ctx);
                 });
             });
         },
