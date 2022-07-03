@@ -16,7 +16,7 @@ const required = {
                 ...val,
             };
             if (!validate.message) {
-                validate.message = rule.title + ' is required';
+                validate.message = rule.title + '不能为空';
             }
             inject.getProp().validate = [validate];
         }
