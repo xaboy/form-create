@@ -230,6 +230,7 @@ export default function useLoader(Handler) {
             }
             if (!validate.length) return false;
 
+            const hideLst = [];
             let flag = false;
             this.deferSyncValue(() => {
                 validate.reverse().forEach(({isHidden, valid, rule, prepend, append, child, ctrl}) => {
@@ -240,7 +241,7 @@ export default function useLoader(Handler) {
                             valid
                         })
                             : ctx.ctrlRule.splice(ctx.ctrlRule.indexOf(ctrl), 1);
-                        this.vm.$nextTick(() => {
+                        hideLst[valid ? 'push' : 'unshift'](() => {
                             this.api.hidden(!valid, rule);
                         });
                         return;
@@ -270,6 +271,9 @@ export default function useLoader(Handler) {
                         ctrlCtx && ctrlCtx.rm();
                     }
                 });
+            });
+            hideLst.length && this.vm.$nextTick(() => {
+                hideLst.forEach(v => v());
             });
             this.vm.$emit('control', ctx.origin, this.api);
             this.effect(ctx, 'control');
