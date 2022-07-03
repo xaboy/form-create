@@ -172,7 +172,7 @@ export interface BaseRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> extend
     inject?: any;
 
     validate?: Object[];
-    children?: FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>[];
+    children?: Array<FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> | string>;
     control?: Control<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>[];
     effect?: {
         fetch?: String | FetchEffectOption | ((rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => FetchEffectOption),
@@ -271,7 +271,7 @@ export class BaseCreator<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
 
     validate(prop: Object[]): this;
 
-    children(prop: FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>[]): this;
+    children(prop: Array<FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> | string>): this;
 
     control(prop: Control<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>[]): this;
 
