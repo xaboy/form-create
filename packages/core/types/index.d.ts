@@ -212,7 +212,7 @@ export interface BaseRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> extend
     slotUpdate?: (arg: PropArg<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
 
     validate?: Object[];
-    children?: RuleChildren<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
+    children?: Array<RuleChildren<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> | string>;
     control?: Control<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>[];
     effect?: {
         fetch?: String | FetchEffectOption | ((rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => FetchEffectOption),
@@ -305,7 +305,7 @@ export class BaseCreator<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
 
     validate(prop: Object[]): this;
 
-    children(prop: RuleChildren<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>): this;
+    children(prop: Array<RuleChildren<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> | string>): this;
 
     control(prop: Control<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>[]): this;
 
