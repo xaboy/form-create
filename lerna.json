@@ -4,6 +4,7 @@
     "packages/arco-design",
     "packages/core",
     "packages/element-ui",
+    "packages/tdesign-vue",
     "packages/naive-ui",
     "packages/utils",
     "components/common/subform",
