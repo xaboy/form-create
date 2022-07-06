@@ -4,7 +4,7 @@
  * @LastEditors  : djkloop
  * @LastEditTime : 2021-09-21 17:18:46
  * @Description  : 头部注释
- * @FilePath     : /form-create2/packages/element-ui/vue.config.js
+ * @FilePath     : /form-create2/packages/tdsign-vue/vue.config.js
  */
 module.exports = {
     pages: {

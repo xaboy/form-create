@@ -4,7 +4,7 @@
     "packages/arco-design",
     "packages/core",
     "packages/element-ui",
-    "packages/tdesign-vue",
+    "packages/tdesign",
     "packages/naive-ui",
     "packages/utils",
     "components/common/subform",
@@ -28,7 +28,8 @@
     "components/naive-ui/frame",
     "components/naive-ui/group",
     "components/naive-ui/radio",
-    "components/naive-ui/upload"
+    "components/naive-ui/upload",
+    "components/tdesign/radio"
   ],
   "version": "3.1.11"
 }

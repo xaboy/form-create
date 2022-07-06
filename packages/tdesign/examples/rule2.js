@@ -55,6 +55,10 @@ const cascader = function () {
         .props({
             options: opts
         })
+        .effect({
+            aaa: '1.1'
+        })
+    console.log('rule', rule)
     return rule
 }
 

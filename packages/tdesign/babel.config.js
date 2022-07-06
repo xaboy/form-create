@@ -4,7 +4,7 @@
  * @LastEditors   : djkloop
  * @LastEditTime  : 2020-12-17 19:56:31
  * @Description  : 头部注释
- * @FilePath      : /form-create2/packages/element-ui/babel.config.js
+ * @FilePath      : /form-create2/packages/tdsign-vue/babel.config.js
  */
 module.exports = {
     presets: [

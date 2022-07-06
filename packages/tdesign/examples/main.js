@@ -4,7 +4,7 @@
  * @LastEditors  : djkloop
  * @LastEditTime : 2020-08-15 22:01:32
  * @Description  : 头部注释
- * @FilePath     : /form-create2/packages/element-ui/examples/main.js
+ * @FilePath     : /form-create2/packages/tdsign-vue/examples/main.js
  */
 import {createApp,h, defineComponent} from 'vue'
 
@@ -14,21 +14,20 @@ import 'tdesign-vue-next/es/style/index.css';
 
 import FormCreate from '../src'
 import App from './App.vue'
-import App2 from './App2.vue'
 
-const app = createApp(App2)
+const app = createApp(App)
 
 app.use(TDesign);
 app.use(FormCreate)
 
 //todo ------------------ Demo 用 ------------------
 
-// import VJsoneditor from 'v-jsoneditor'
 import addressEffect from './addressEffect';
-import wangEditor from '@form-create/component-wangeditor/src'
-
-
+// import VJsoneditor from 'v-jsoneditor'
 // app.use(VJsoneditor)
+
+
+import wangEditor from '@form-create/component-wangeditor/src'
 FormCreate.register(addressEffect);
 FormCreate.component('wangEditor', wangEditor);
 

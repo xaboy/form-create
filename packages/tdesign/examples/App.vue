@@ -4,83 +4,85 @@
  * @LastEditors  : djkloop
  * @LastEditTime : 2020-08-15 22:00:47
  * @Description  : 头部注释
- * @FilePath     : /form-create2/packages/element-ui/examples/App.vue
+ * @FilePath     : /form-create2/packages/tdsign-vue/examples/App.vue
 -->
 <template>
   <div>
-    <h1 class="title">FormCreate ElementUI Demo</h1>
+    <h1 class="title">FormCreate TDesignVue Demo</h1>
 
-    <ElRow>
-      <ElCol :span="12">
+      <section>
+    <TRow>
+      <TCol :span="12">
         <h3>FormData (sync)</h3>
         <v-jsoneditor v-model="json"
                       :options="{mode:'code',onBlur:syncFormData,mainMenuBar:false,statusBar:false}"
                       :plus="false"
                       height="300px"/>
-      </ElCol>
-      <ElCol :span="11" :push="1">
+      </TCol>
+      <TCol :span="11" :push="1">
         <h3>FormOption (sync)</h3>
         <v-jsoneditor v-model="optionJson"
                       :options="{mode:'code',onBlur:syncFormOption,mainMenuBar:false,statusBar:false}"
                       :plus="false"
                       height="300px"/>
-      </ElCol>
-    </ElRow>
+      </TCol>
+    </TRow>
     <div>
       <h3>Api</h3>
-      <ElRow>
-        <ElButton @click="getOption">获取表单配置(option)</ElButton>
-        <ElButton @click="getFormData">获取表单值(formData)</ElButton>
-        <ElButton @click="fields">获取表单字段(fields)</ElButton>
-      </ElRow>
+      <TRow>
+        <TButton @click="getOption">获取表单配置(option)</TButton>
+        <TButton @click="getFormData">获取表单值(formData)</TButton>
+        <TButton @click="fields">获取表单字段(fields)</TButton>
+      </TRow>
       <br/>
-      <ElRow>
-        <ElButton @click="append">添加规则(append)</ElButton>
-        <ElButton @click="prepend">添加规则(prepend)</ElButton>
-        <ElButton @click="appendChild">添加规则(appendChild)</ElButton>
-        <ElButton @click="removeField">删除字段(removeField)</ElButton>
-        <ElButton @click="getRule">获取规则(getRule)</ElButton>
-      </ElRow>
+      <TRow>
+        <TButton @click="append">添加规则(append)</TButton>
+        <TButton @click="prepend">添加规则(prepend)</TButton>
+        <TButton @click="appendChild">添加规则(appendChild)</TButton>
+        <TButton @click="removeField">删除字段(removeField)</TButton>
+        <TButton @click="getRule">获取规则(getRule)</TButton>
+      </TRow>
       <br/>
-      <ElRow>
-        <ElButton @click="hidden">隐藏字段(hidden)</ElButton>
-        <ElButton @click="disabled">禁用字段(disabled)</ElButton>
-        <ElButton @click="resetField">重置字段(resetFields)</ElButton>
-        <ElButton @click="validateField">字段验证(validateField)</ElButton>
-        <ElButton @click="method">执行组件方法(exec)</ElButton>
-        <ElButton @click="setValue">设置组件值(setValue)</ElButton>
-        <ElButton @click="getValue">获取组件值(getValue)</ElButton>
-      </ElRow>
+      <TRow>
+        <TButton @click="hidden">隐藏字段(hidden)</TButton>
+        <TButton @click="disabled">禁用字段(disabled)</TButton>
+        <TButton @click="resetField">重置字段(resetFields)</TButton>
+        <TButton @click="validateField">字段验证(validateField)</TButton>
+        <TButton @click="method">执行组件方法(exec)</TButton>
+        <TButton @click="setValue">设置组件值(setValue)</TButton>
+        <TButton @click="getValue">获取组件值(getValue)</TButton>
+      </TRow>
       <br/>
-      <ElRow>
-        <ElButton @click="submitBtnProps">设置提交按钮(submitBtnProps)</ElButton>
-        <ElButton @click="resetBtnProps">设置重置按钮(resetBtnProps)</ElButton>
-        <ElButton @click="inline">行内模式(updateOptions)</ElButton>
-      </ElRow>
+      <TRow>
+        <TButton @click="submitBtnProps">设置提交按钮(submitBtnProps)</TButton>
+        <TButton @click="resetBtnProps">设置重置按钮(resetBtnProps)</TButton>
+        <TButton @click="inline">行内模式(updateOptions)</TButton>
+      </TRow>
       <br/>
-      <ElRow>
-        <ElButton @click="disabled2">禁用表单(disabled)</ElButton>
-        <ElButton @click="submit">提交表单(submit)</ElButton>
-        <ElButton @click="hideForm">隐藏表单(hideForm)</ElButton>
-        <ElButton @click="validate">表单验证(validate)</ElButton>
-        <ElButton @click="resetFields">重置表单(resetFields)</ElButton>
-        <ElButton @click="clearValidateState">清空验证(clearValidateState)</ElButton>
-      </ElRow>
+      <TRow>
+        <TButton @click="disabled2">禁用表单(disabled)</TButton>
+        <TButton @click="submit">提交表单(submit)</TButton>
+        <TButton @click="hideForm">隐藏表单(hideForm)</TButton>
+        <TButton @click="validate">表单验证(validate)</TButton>
+        <TButton @click="resetFields">重置表单(resetFields)</TButton>
+        <TButton @click="clearValidateState">清空验证(clearValidateState)</TButton>
+      </TRow>
       <br/>
-      <ElRow>
-        <ElButton @click="refresh">刷新(refresh)</ElButton>
-        <ElButton @click="reload">重载(reload)</ElButton>
-      </ElRow>
+      <TRow>
+        <TButton @click="refresh">刷新(refresh)</TButton>
+        <TButton @click="reload">重载(reload)</TButton>
+      </TRow>
       <br/>
-      <ElButton @click="jsonCreate">使用Json生成</ElButton>
-      <ElButton @click="create">默认生成</ElButton>
-      <ElButton @click="createJson" style="color:#ff7271;">获取 json 字符串生成规则(toJson)</ElButton>
+      <TButton @click="jsonCreate">使用Json生成</TButton>
+      <TButton @click="create">默认生成</TButton>
+      <TButton @click="createJson" style="color:#ff7271;">获取 json 字符串生成规则(toJson)</TButton>
     </div>
-    <ElRow>
+      </section>
+    <TRow>
       <h3>Render</h3>
       <form-create :rule="rule" :test="true" v-model:api="fapi" :option="option" v-model="formData"
                    @prefix-change="change" @xaboy-change="change"/>
-    </ElRow>
+    </TRow>
   </div>
 </template>
 
@@ -323,6 +325,9 @@ export default defineComponent({
   background-size: 200% 100%;
   -webkit-animation: flowlight 5s linear infinite;
   animation: flowlight 5s linear infinite;
+}
+section .t-button{
+    margin-right: 20px;
 }
 
 @keyframes flowlight {

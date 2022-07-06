@@ -1,6 +1,24 @@
 import {maker} from '../src'
 
 window.mock = mock;
+const opts = [
+    {
+        label: '选项一',
+        value: '1',
+        children: [
+            { label: '子选项一', value: '1.1' },
+            { label: '子选项二', value: '1.2' },
+        ],
+    },
+    {
+        label: '选项二',
+        value: '2',
+        children: [
+            { label: '子选项三', value: '2.1' },
+            { label: '子选项四', value: '2.2' },
+        ],
+    },
+]
 export default function mock() {
     return [
 
@@ -13,10 +31,9 @@ export default function mock() {
         ]),
 
         // cascader 多级联动组件
-        maker.cascader({title: '所在区域', style: 'color:red'}, 'address', ['陕西省', '西安市']).props({
-            options: []
-        }).effect({
-            address: '1'
+        maker.cascader({ title: '所在区域', style: 'color:red' }, 'address', ['陕西省', '西安市'])
+        .props({
+            options: opts
         }),
 
         // input 输入框组件
@@ -51,7 +68,7 @@ export default function mock() {
         ]).style('color:red').wrap({style:'color:red',class:'asdfasdf'})
             .info('请输入商品名称!!!!!'),
 
-        // autoComplete 自动选择组件
+        // todo autoComplete 自动选择组件
         maker.auto('自动完成', 'auto', 'xaboy').props({
             fetchSuggestions: function (queryString, cb) {
                 cb([
@@ -173,44 +190,19 @@ export default function mock() {
 
 
         //radio 单选框组件
-        maker.radio('是否包邮', 'is_postage', 1).options([
+        maker.radio('是否包邮', 'is_postage', 0).options([
             {value: 0, label: '不包邮', disabled: false},
             {value: 1, label: '包邮', disabled: false},
             {value: 2, label: '未知', disabled: true},
-        ]).col({span: 8}).control([
-            {
-                value: 1,
-                prepend: 'is_postage',
-                rule: [
-                    maker.number('满额包邮1', 'postage_money1', 0).effect({
-                        open: '1'
-                    }).control([
-                        {
-                            value: 0,
-                            append: 'rate',
-                            rule: [
-                                maker.number('满额包邮2', 'postage_money2', 0)
-                            ]
-                        }
-                    ])
-                ]
-            },
-            {
-                value: 0,
-                append: 'goods_info',
-                rule: [
-                    maker.number('满额包邮3', 'postage_money3', 0).control([
-                        {
-                            value: 0,
-                            // prepend: 'goods_name',
-                            rule: [
-                                maker.number('满额包邮4', 'postage_money4', 0)
-                            ]
-                        }
-                    ])
-                ]
-            }
-        ]),
+        ]).props({optionType: 'button'})
+            .control([
+                {
+                    value: 1,
+                    rule: [
+                        maker.number('满额包邮', 'postage_money', 0)
+                    ]
+                }
+            ]),
 
 
         //checkbox 复选框付选择

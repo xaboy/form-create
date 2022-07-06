@@ -6,7 +6,7 @@
         "build:test": "npm-run-all clear-dist \"build -- --{1}\" --",
         "dev:ele": "cd packages/element-ui && npm run dev:ele",
         "dev:antdv": "cd packages/ant-design-vue && npm run dev:antdv",
-        "dev:tdv": "cd packages/tdesign-vue && npm run dev:tdv",
+        "dev:td": "cd packages/tdesign && npm run dev:td",
         "dev:arco": "cd packages/arco-design && npm run dev:arco",
         "dev:naive": "cd packages/naive-ui && npm run dev:naive",
         "commit": "git cz",
@@ -90,6 +90,7 @@
     "dependencies": {
         "commander": "^6.0.0",
         "postcss": "^8.3.6",
+        "tdesign-vue-next": "^0.17.3",
         "vue": "^3.1.5",
         "wangeditor": "^4.7.8"
     }
