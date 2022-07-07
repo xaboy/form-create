@@ -25,10 +25,6 @@ export default function mock() {
         // hidden 组件
         maker.hidden('id', '14'),
 
-        maker.create('testSlot', 'testSlot', 'testSlotTitle123').children([
-            maker.date('', 'asd').slot('test').display(true),
-            maker.date('', 'asd23').slot('test'),
-        ]),
 
         // cascader 多级联动组件
         maker.cascader({ title: '所在区域', style: 'color:red' }, 'address', ['陕西省', '西安市'])
@@ -259,10 +255,21 @@ export default function mock() {
                     },
                     name: 'cal',
                     children: [
+                        maker.create('testSlot', 'testSlot', 'testSlotTitle123').children([
+                            maker.date('', 'asd').slot('test').display(true),
+                            maker.date('', 'asd23').slot('test'),
+                        ]),
+                        maker.rangePicker('TDateRangePicker','TDateRangePicker'),
+                        {
+                            type:'TDateRangePicker',
+                            field:'tr',
+                            title:'活动日期111111'
+                        },
 
                         //datePicker 日期选择组件
-                        maker.date('活动日期', 'section_day', ['2018-02-20 12:12:12', '2018-03-20 12:12:12']).props({
-                            'type': 'datetimerange',
+                        maker.date('活动日期', 'section_day')
+                            .props({
+
                         }),
 
                         //timePicker 时间选择组件

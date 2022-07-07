@@ -10,6 +10,7 @@ export default {
     tooltip: PRE + '-tooltip',
     colorPicker: PRE + '-colorPicker',
     timePicker: PRE + '-time-picker',
+    rangePicker: PRE + '-date-range-picker',
     timeSelect: PRE + '-time-select',
     datePicker: PRE + '-date-picker',
     'switch': PRE + '-switch',
