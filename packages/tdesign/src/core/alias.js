@@ -25,7 +25,7 @@ export default {
     frame: 'fc-frame',
     col: PRE + '-col',
     row: PRE + '-row',
-    tree: 'fc-tree',
+    tree: PRE + '-tree-select',
     autoComplete: PRE + '-autocomplete',
     auto: PRE + '-autocomplete',
     group: 'fc-group',

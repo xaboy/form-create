@@ -385,60 +385,50 @@ export default function mock() {
             {required: true, type: 'array', min: 2, message: '请选择2张图片', trigger: 'change'}
         ]),
 
-
+        {
+            type:'TTreeSelect',
+            title:'tree',
+            field:'tree',
+            props:{
+                data:treeData
+            }
+        },
         //tree 树形组件
-        maker.tree('权限', 'tree', [11, 12]).props({
-            type: 'checked',
-            multiple: true,
-            showCheckbox: true,
-            emptyText: '暂无数据',
-            defaultExpandAll: true,
-            expandOnClickNode: false,
-            data: [
-                {
-                    title: 'parent 1',
-                    expand: true,
-                    selected: false,
-                    id: 1,
-                    children: [
-                        {
-                            title: 'parent 1-1',
-                            expand: true,
-                            id: 2,
-                            children: [
-                                {
-                                    title: 'leaf 1-1-1',
-                                    disabled: true,
-                                    id: 11
-                                },
-                                {
-                                    title: 'leaf 1-1-2',
-                                    selected: true,
-                                    id: 12
-                                }
-                            ]
-                        },
-                        {
-                            title: 'parent 1-2',
-                            expand: true,
-                            id: 3,
-                            children: [
-                                {
-                                    title: 'leaf 1-2-1',
-                                    checked: true,
-                                    id: 13,
-                                },
-                                {
-                                    title: 'leaf 1-2-1',
-                                    id: 14,
-                                }
-                            ]
-                        }
-                    ]
-                }
-            ],
+        maker.tree('权限', 'tree').props({
+            data: treeData
         }).validate([
             {required: true, type: 'array', min: 2, message: '至少选择2个', trigger: 'change'}
         ])
     ];
 }
+
+var treeData = [
+    {
+        label: '广东省',
+        value: 'guangdong',
+        children: [
+            {
+                label: '广州市',
+                value: 'guangzhou',
+            },
+            {
+                label: '深圳市',
+                value: 'shenzhen',
+            },
+        ],
+    },
+    {
+        label: '江苏省',
+        value: 'jiangsu',
+        children: [
+            {
+                label: '南京市',
+                value: 'nanjing',
+            },
+            {
+                label: '苏州市',
+                value: 'suzhou',
+            },
+        ],
+    },
+]
