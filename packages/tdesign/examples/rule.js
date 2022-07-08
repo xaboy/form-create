@@ -273,8 +273,15 @@ export default function mock() {
                         }),
 
                         //timePicker 时间选择组件
-                        maker.time('活动时间', 'section_time', ['11:11:11', '22:22:22']).props({
-                            'isRange': true,
+                        maker.time('活动时间', 'section_time',).props({
+                            'placeholder': '请选择活动时间'
+                        }),
+                        maker.time('时分', 'section_time',).props({
+                            format:"HH:mm",
+                            'placeholder': '请选择活动时间'
+                        }),
+                        maker.time('12小时', 'section_time',).props({
+                            format:"A hh:mm:ss",
                             'placeholder': '请选择活动时间'
                         }),
 
