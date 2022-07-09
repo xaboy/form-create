@@ -9,3 +9,6 @@
 .form-create{
     width: 100%;
 }
+.t-tree .t-tree__icon{
+    line-height: inherit;
+}
