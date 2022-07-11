@@ -1,0 +1,56 @@
+._fc-frame ._fc-files img {
+    width: 100%;
+    height: 100%;
+    display: inline-block;
+    vertical-align: top;
+}
+
+._fc-frame ._fc-upload-cover {
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, .6);
+    transition: opacity .3s;
+}
+
+._fc-frame ._fc-upload-cover ._fc-frame-icon {
+    color: #fff;
+    font-size: 16px;
+    margin: 0 2px;
+}
+
+._fc-frame ._fc-files:hover ._fc-upload-cover {
+    opacity: 1;
+}
+
+._fc-frame .anticon{
+    font-size: 16px;
+    width: 16px;
+}
+
+._fc-frame .t-upload {
+    display: block;
+}
+
+._fc-frame ._fc-upload-btn, ._fc-frame ._fc-frame-icon {
+    cursor: pointer;
+}
+
+._fc-frame ._fc-upload-btn, ._fc-files {
+    display: inline-block;
+    width: 104px;
+    height: 104px;
+    text-align: center;
+    line-height: 104px;
+    border: 1px solid #c0ccda;
+    border-radius: 4px;
+    overflow: hidden;
+    background: #fff;
+    position: relative;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, .1);
+    margin-right: 4px;
+    box-sizing: border-box;
+}

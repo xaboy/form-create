@@ -311,7 +311,7 @@ export default function rule() {
         maker.frame('素材', 'fodder', ['http://file.lotkk.com/form-create.jpeg']).props({
             src: '../iframe.html',
             maxLength: 0,
-            type: 'image',
+            type: 'file',
             width: '80%',
             modalTitle: '预览~~~',
             okBtnText: 'ok',

@@ -88,7 +88,7 @@ export default {
             props: {...form},
             on: {
                 submit: (e) => {
-                    e.preventDefault();
+                    e.preventDefault && e.preventDefault();
                 }
             },
             class: [form.className, form.class, 'form-create'],

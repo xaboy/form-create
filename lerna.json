@@ -29,7 +29,8 @@
     "components/naive-ui/group",
     "components/naive-ui/radio",
     "components/naive-ui/upload",
-    "components/tdesign/radio"
+    "components/tdesign/radio",
+    "components/tdesign/frame"
   ],
   "version": "3.1.11"
 }

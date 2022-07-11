@@ -82,6 +82,7 @@
       <h3>Render</h3>
       <form-create :rule="rule" :test="true" v-model:api="fapi" :option="option" v-model="formData"
                    @prefix-change="change" @xaboy-change="change"/>
+        {{formData.fodder}}
     </TRow>
   </div>
 </template>

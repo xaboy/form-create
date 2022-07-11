@@ -383,7 +383,15 @@ export default function mock() {
             title: 'select'
         }).validate([
             {required: true, type: 'array', min: 2, message: '请选择2张图片', trigger: 'change'}
-        ]),
+        ]).event({
+            remove: function () {
+                alert('删除了');
+            },
+            open: console.log,
+            change() {
+                console.log('change');
+            }
+        }),
 
         {
             type:'TTreeSelect',
