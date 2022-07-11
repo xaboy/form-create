@@ -11,22 +11,22 @@
     <h1 class="title">FormCreate TDesignVue Demo</h1>
 
       <section>
-    <TRow>
-      <TCol :span="12">
-        <h3>FormData (sync)</h3>
-        <v-jsoneditor v-model="json"
-                      :options="{mode:'code',onBlur:syncFormData,mainMenuBar:false,statusBar:false}"
-                      :plus="false"
-                      height="300px"/>
-      </TCol>
-      <TCol :span="11" :push="1">
-        <h3>FormOption (sync)</h3>
-        <v-jsoneditor v-model="optionJson"
-                      :options="{mode:'code',onBlur:syncFormOption,mainMenuBar:false,statusBar:false}"
-                      :plus="false"
-                      height="300px"/>
-      </TCol>
-    </TRow>
+<!--    <TRow>-->
+<!--      <TCol :span="12">-->
+<!--        <h3>FormData (sync)</h3>-->
+<!--        <v-jsoneditor v-model="json"-->
+<!--                      :options="{mode:'code',onBlur:syncFormData,mainMenuBar:false,statusBar:false}"-->
+<!--                      :plus="false"-->
+<!--                      height="300px"/>-->
+<!--      </TCol>-->
+<!--      <TCol :span="11" :push="1">-->
+<!--        <h3>FormOption (sync)</h3>-->
+<!--        <v-jsoneditor v-model="optionJson"-->
+<!--                      :options="{mode:'code',onBlur:syncFormOption,mainMenuBar:false,statusBar:false}"-->
+<!--                      :plus="false"-->
+<!--                      height="300px"/>-->
+<!--      </TCol>-->
+<!--    </TRow>-->
     <div>
       <h3>Api</h3>
       <TRow>

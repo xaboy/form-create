@@ -12,7 +12,7 @@ export default function getConfig() {
             gutter: 0,
         },
         submitBtn: {
-            type: 'primary',
+            theme: 'primary',
             loading: false,
             disabled: false,
             innerText: '提交',
@@ -21,10 +21,9 @@ export default function getConfig() {
             click: undefined,
         },
         resetBtn: {
-            type: 'default',
+            theme: 'default',
             loading: false,
             disabled: false,
-            icon: 'el-icon-refresh',
             innerText: '重置',
             show: false,
             col: undefined,

@@ -9,7 +9,7 @@ useUpload(maker);
 useFrame(maker);
 
 function useAlias(maker) {
-    ['group', 'tree', 'switch', 'upload', 'autoComplete', 'checkbox', 'cascader', 'colorPicker', 'datePicker','rangePicker', 'frame', 'inputNumber', 'radio', 'rate'].forEach(name => {
+    ['group', 'tree', 'switch', 'upload', 'autoComplete', 'checkbox', 'cascader', 'colorPicker', 'datePicker','rangePicker', 'textarea','checkboxGroup','frame', 'inputNumber', 'radio', 'rate'].forEach(name => {
         maker[name] = creatorFactory(name);
     });
     maker.auto = maker.autoComplete;
