@@ -336,24 +336,32 @@ export default function mock() {
         },
 
 
+        {
+            type:'TUpload',
+            title:'轮播图111',
+            field:'pic1',
+            props:{
+                action: 'https://mock.uutool.cn/4erua2dig4i0',
+            }
+        },
         //upload 上传组件
         maker.upload('轮播图', 'pic', ['http://file.lotkk.com/form-create.jpeg'])
             .props({
                 'action': 'https://mock.uutool.cn/4erua2dig4i0',
-                'limit': 2,
-                'uploadType': 'image',
-                'name': 'file',
-                'onSuccess': function (res, file) {
-                    console.log('upload success');
-                    file.url = res.thumbUrl;
-                },
-                'onRemove': function (file, fileList) {
-                    console.log(file, fileList);
-                },
-                'beforeRemove': function () {
-                    console.log('before-remove');
-                },
-                'allowRemove': true,
+                // 'limit': 2,
+                // 'uploadType': 'image',
+                // 'name': 'file',
+                // 'onSuccess': function (res, file) {
+                //     console.log('upload success');
+                //     file.url = res.thumbUrl;
+                // },
+                // 'onRemove': function (file, fileList) {
+                //     console.log(file, fileList);
+                // },
+                // 'beforeRemove': function () {
+                //     console.log('before-remove');
+                // },
+                // 'allowRemove': true,
             }),
 
         //frame 框架组件

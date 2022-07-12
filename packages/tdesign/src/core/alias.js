@@ -4,7 +4,7 @@ export default {
     icon: 'i',
     slider: PRE + '-slider',
     rate: PRE + '-rate',
-    upload: 'fc-upload',
+    upload: PRE + '-upload',
     cascader: PRE + '-cascader',
     popover: PRE + '-popover',
     tooltip: PRE + '-tooltip',
