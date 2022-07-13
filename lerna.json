@@ -30,7 +30,8 @@
     "components/naive-ui/radio",
     "components/naive-ui/upload",
     "components/tdesign/radio",
-    "components/tdesign/frame"
+    "components/tdesign/frame",
+    "components/tdesign/upload"
   ],
   "version": "3.1.11"
 }

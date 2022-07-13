@@ -335,34 +335,19 @@ export default function mock() {
             value: '<h1 style="color: #419bf7;">form-create</h1><a href="https://github.com/xaboy/form-create">GitHub</a>'
         },
 
-
-        {
-            type:'TUpload',
-            title:'轮播图111',
-            field:'pic1',
-            props:{
-                action: 'https://mock.uutool.cn/4erua2dig4i0',
-            }
-        },
         //upload 上传组件
         maker.upload('轮播图', 'pic', ['http://file.lotkk.com/form-create.jpeg'])
             .props({
-                'action': 'https://mock.uutool.cn/4erua2dig4i0',
-                // 'limit': 2,
-                // 'uploadType': 'image',
-                // 'name': 'file',
-                // 'onSuccess': function (res, file) {
-                //     console.log('upload success');
-                //     file.url = res.thumbUrl;
-                // },
-                // 'onRemove': function (file, fileList) {
-                //     console.log(file, fileList);
-                // },
-                // 'beforeRemove': function () {
-                //     console.log('before-remove');
-                // },
-                // 'allowRemove': true,
-            }),
+                onSuccess(res){
+                    console.log('外面success',res)
+                },
+                'action': 'https://service-bv448zsw-1257786608.gz.apigw.tencentcs.com/api/upload-demo',
+                'limit': 2,
+                'theme': 'image',
+                'onRemove': function (file, fileList) {
+                    console.log('remove',file, fileList);
+                },
+        }),
 
         //frame 框架组件
         maker.frame('素材', 'fodder', ['http://file.lotkk.com/form-create.jpeg']).props({
