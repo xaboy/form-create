@@ -55,7 +55,8 @@
     "devDependencies": {
         "@form-create/component-wangeditor": "^3.0.0-alpha.3",
         "@vue/cli-plugin-babel": "~4.5.0",
-        "@vue/cli-service": "^4.5.3"
+        "@vue/cli-service": "^4.5.3",
+        "tdesign-vue-next": "^0.17.3"
     },
     "buildFormCreateOptions": {
         "name": "@form-create/tdesign",

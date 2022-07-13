@@ -90,7 +90,6 @@
     "dependencies": {
         "commander": "^6.0.0",
         "postcss": "^8.3.6",
-        "tdesign-vue-next": "^0.17.3",
         "vue": "^3.1.5",
         "wangeditor": "^4.7.8"
     }
