@@ -343,11 +343,14 @@ export default function mock() {
                 },
                 'action': 'https://service-bv448zsw-1257786608.gz.apigw.tencentcs.com/api/upload-demo',
                 'limit': 2,
+                multiple:true,
                 'theme': 'image',
                 'onRemove': function (file, fileList) {
                     console.log('remove',file, fileList);
                 },
-        }),
+        }).validate([
+            { required: true, type: 'array', min: 2, message: '请选择2张图片', trigger: 'change' }
+        ]),
 
         //frame 框架组件
         maker.frame('素材', 'fodder', ['http://file.lotkk.com/form-create.jpeg']).props({

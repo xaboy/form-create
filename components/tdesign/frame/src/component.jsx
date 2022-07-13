@@ -165,7 +165,6 @@ export default defineComponent({
         input() {
             const n = this.fileList;
             const val = this.maxLength === 1 ? (n[0] || '') : n;
-            console.log('-> val', val);
             this.$emit('update:modelValue', val);
             this.$emit('change', val);
         },
@@ -225,7 +224,7 @@ export default defineComponent({
         },
         makeFiles() {
             return this.makeGroup(this.fileList.map((src, index) => {
-                return this.makeItem(index, [<t-icon component={IconFile} size={20}
+                return this.makeItem(index, [<t-icon component={IconFile} size='20'
                     onClick={() => this.handleClick(src)} />, this.makeIcons(src, index)])
             }))
         },
@@ -237,7 +236,7 @@ export default defineComponent({
         makeBtn() {
             const Type = resolveComponent(this.icon);
             return <div class="_fc-upload-btn" onClick={() => this.showModal()} key={7}>
-                <t-icon component={Type} size={20} class="_fc-frame-icon" />
+                <t-icon component={Type} size='20' class="_fc-frame-icon" />
             </div>
         },
         handleClick(src) {
@@ -272,8 +271,7 @@ export default defineComponent({
                         set: (field, value) => {
                             this.valid(field);
                             if (!this.disabled){
-                                console.log('-> value11111111', value);
-
+                                console.log(value)
                                 this.$emit('update:modelValue', value);
                                 this.$emit('change',value)
                             }

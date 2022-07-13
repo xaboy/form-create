@@ -1,14 +1,18 @@
 import {defineComponent} from 'vue';
+
 const NAME = 'fcUpload';
 
-import {parseFile,parseUpload} from '@form-create/utils/lib/file'
+import {parseFile, parseUpload} from '@form-create/utils/lib/file'
 
 export default defineComponent({
     name: NAME,
     inheritAttrs: false,
     props: {
         formCreateInject: Object,
-        action:String,
+        action: String,
+        theme: String,
+        accept: String,
+        multiple: Boolean,
         limit: {
             type: Number,
             default: 0
@@ -24,9 +28,9 @@ export default defineComponent({
             type: Function,
         },
     },
-    data(){
+    data() {
         return {
-            uploadList:[]
+            uploadList: []
         }
     },
     watch: {
@@ -34,37 +38,42 @@ export default defineComponent({
             this.uploadList = n.map(parseFile).map(parseUpload)
         }
     },
-    methods:{
-        handleRemove({file,index}){
-            this.uploadList.splice(index,1)
-            this.onRemove && this.onRemove(file,this.uploadList)
+    methods: {
+        handleRemove({file, index}) {
+            this.uploadList.splice(index, 1)
+            this.onRemove && this.onRemove(file, this.uploadList)
             this.input()
         },
-        handleSuccess({file, fileList}){
+        handleSuccess({file, fileList}) {
             this.uploadList = fileList;
             const {onSuccess} = this
-            if(file.status === 'success'){
-                onSuccess && onSuccess(file,this.uploadList)
+            if (file.status === 'success') {
+                onSuccess && onSuccess(file, this.uploadList)
             }
             this.input()
             this.$emit('change', ...arguments);
         },
-        input(){
+        input() {
             this.$emit('update:modelValue', this.uploadList.map(v => v.url));
         }
     },
     render() {
+        const {
+            action, theme = 'image', accept = 'image/*',
+            multiple, limit, uploadList,
+            handleSuccess, handleRemove, $slots
+        } = this
         return <>
             <t-upload
-                action={this.action}
-                theme={this.theme || 'image'}
-                accept={this.accept || 'image/*'}
-                multiple={this.multiple}
-                max={this.limit}
-                modelValue={this.uploadList}
-                onSuccess={this.handleSuccess}
-                onRemove={this.handleRemove}
-                v-slots={this.$slots}
+                action={action}
+                theme={theme}
+                accept={accept}
+                multiple={multiple}
+                max={limit}
+                modelValue={uploadList}
+                onSuccess={handleSuccess}
+                onRemove={handleRemove}
+                v-slots={$slots}
             >
             </t-upload>
         </>
