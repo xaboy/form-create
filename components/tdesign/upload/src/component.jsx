@@ -1,20 +1,7 @@
-import {defineComponent, toRef} from 'vue';
-import getSlot from '@form-create/utils/lib/slot';
+import {defineComponent} from 'vue';
 const NAME = 'fcUpload';
-import toString from '@form-create/utils/lib/tostring';
 
-const parseFile = function (file, uid) {
-        return {
-            url: file,
-            name: getFileName(file),
-            status: 'done',
-            uid: -1 * (uid + 1)
-        };
-    }, getFileName = function (file) {
-        return toString(file).split('/').pop()
-    }, parseUpload = function (file) {
-        return {url: file.url, file, uid: file.uid};
-    };
+import {parseFile,parseUpload} from '@form-create/utils/lib/file'
 
 export default defineComponent({
     name: NAME,

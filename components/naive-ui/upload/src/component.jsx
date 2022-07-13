@@ -1,19 +1,7 @@
 import {defineComponent} from 'vue';
-import toString from '@form-create/utils/lib/tostring';
 import toArray from '@form-create/utils/lib/toarray';
 
-const parseFile = function (file, uid) {
-        return {
-            url: file,
-            name: getFileName(file),
-            status: 'finished',
-            id: uid + 1
-        };
-    }, getFileName = function (file) {
-        return toString(file).split('/').pop()
-    }, parseUpload = function (file) {
-        return {...file, file};
-    };
+import {parseFile,parseUpload} from '@form-create/utils/lib/file'
 
 const NAME = 'fcUpload';
 

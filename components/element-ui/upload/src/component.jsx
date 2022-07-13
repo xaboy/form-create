@@ -3,18 +3,7 @@ import getSlot from '@form-create/utils/lib/slot';
 import './style.css';
 import {defineComponent} from 'vue';
 import IconUpload from './IconUpload.vue';
-
-function parseFile(file, i) {
-    return {
-        url: file,
-        name: getFileName(file),
-        uid: i
-    };
-}
-
-function getFileName(file) {
-    return ('' + file).split('/').pop()
-}
+import {parseFile,getFileName} from '@form-create/utils/lib/file'
 
 const NAME = 'fcUpload';
 
