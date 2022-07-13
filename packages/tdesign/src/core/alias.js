@@ -30,7 +30,7 @@ export default {
     tree: PRE + '-tree',
     // autoComplete: PRE + '-autocomplete',
     auto: PRE + '-autocomplete',
-    // group: 'fc-group',
+    group: 'fc-group',
     object: 'fc-sub-form',
     subForm: 'fc-sub-form',
 }

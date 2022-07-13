@@ -134,7 +134,7 @@ export default function mock() {
             title: '批量添加',
             field: 'group',
             value: [{ date: '2121-12-12', field: 10, field2: '123123123' }],
-            suffix: 'suffixsuffix',
+            // suffix: 'suffixsuffix',
             props: {
                 rule: [
                     {
