@@ -81,10 +81,10 @@
         </section>
         <TRow>
             <h3>Render</h3>
-            {{formData.goods_info}}
             <form-create :rule="rule" :test="true" v-model:api="fapi" :option="option" v-model="formData"
                          @prefix-change="change" @xaboy-change="change" />
-            {{ formData.fodder }}
+            -------- {{formData.tree}} ---------
+
         </TRow>
     </div>
 </template>

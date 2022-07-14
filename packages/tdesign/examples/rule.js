@@ -229,11 +229,15 @@ export default function mock() {
         ]).emitPrefix('btn'),
 
         //select 下拉选择组件
-        maker.select('产品分类', 'cate_id', '105').options([
-            { 'value': '104', 'label': '生态蔬菜', 'disabled': false },
-            { 'value': '106', 'label': '植物植物', 'disabled': false },
-            { 'value': '105', 'label': '新鲜水果', 'disabled': false },
-        ]).props({ multiple: true }),
+        maker.select('产品分类', 'cate_id', '105')
+            .props({
+                multiple: true,
+                options:[
+                    { 'value': '104', 'label': '生态蔬菜', 'disabled': false },
+                    { 'value': '106', 'label': '植物植物', 'disabled': false },
+                    { 'value': '105', 'label': '新鲜水果', 'disabled': false },
+                ]
+            }),
         {
             type: 'div',
             name: 'div',
@@ -389,10 +393,12 @@ export default function mock() {
             }
         },
         //tree 树形组件
-        maker.tree('权限', 'tree').props({
-            data: treeData
+        maker.tree('权限', 'tree',['guangzhou', 'shenzhen']).props({
+            data: treeData,
+            checkable:true
         }).validate([
-            { required: true, type: 'array', min: 2, message: '至少选择2个', trigger: 'change' }
+            { required: true,  trigger: 'change' },
+            {validator: val => val.length >= 2, message: '至少选择2个'}
         ])
     ];
 }
