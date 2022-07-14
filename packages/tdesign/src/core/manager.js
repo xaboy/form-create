@@ -100,7 +100,7 @@ export default {
         const {key, ref, $handle} = this;
         extend(this.rule, {key, ref});
         extend(this.rule.props, {
-            model: $handle.formData,
+            data: $handle.formData,
         });
     },
     render(children) {
@@ -121,7 +121,7 @@ export default {
                 labelWidth: labelWidth === void 0 ? labelWidth : toString(labelWidth),
                 label: isTitle ? rule.title.title : undefined,
                 ...(rule.wrap || {}),
-                prop: ctx.id,
+                name: ctx.id,
                 rules: rule.validate,
             },
             class: rule.className,

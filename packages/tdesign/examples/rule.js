@@ -82,7 +82,7 @@ export default function mock() {
             return 'val' === api.getValue('auto');
         }).link(['auto']).wrap({
             show: true
-        }).validate([{ required: true }]),
+        }).validate([{ required: true,trigger: 'blur',message:'请输入商品简介' }]),
 
         {
             type: 'object',
@@ -197,7 +197,8 @@ export default function mock() {
                         maker.number('满额包邮', 'postage_money', 0)
                     ]
                 }
-            ]),
+            ])
+            .validate([{required:true}]),
         //checkbox 复选框付选择
         maker.checkboxGroup('标签', 'label', [1])
             .props({

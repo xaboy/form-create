@@ -27,7 +27,6 @@
             <!--                      height="300px"/>-->
             <!--      </TCol>-->
             <!--    </TRow>-->
-            <Upload></Upload>
 
             <div>
                 <h3>Api</h3>
@@ -65,7 +64,7 @@
                     <TButton @click="disabled2">禁用表单(disabled)</TButton>
                     <TButton @click="submit">提交表单(submit)</TButton>
                     <TButton @click="hideForm">隐藏表单(hideForm)</TButton>
-                    <TButton @click="validate">表单验证(validate)</TButton>
+                    <TButton @click="validate" theme="danger">表单验证(validate)</TButton>
                     <TButton @click="resetFields">重置表单(resetFields)</TButton>
                     <TButton @click="clearValidateState">清空验证(clearValidateState)</TButton>
                 </TRow>
@@ -82,6 +81,7 @@
         </section>
         <TRow>
             <h3>Render</h3>
+            {{formData.goods_info}}
             <form-create :rule="rule" :test="true" v-model:api="fapi" :option="option" v-model="formData"
                          @prefix-change="change" @xaboy-change="change" />
             {{ formData.fodder }}
@@ -90,15 +90,11 @@
 </template>
 
 <script>
-import Upload from './upload'
 import { defineComponent, ref, watch, onMounted } from 'vue'
 import mock from './rule';
 import jsonMock from './jsonRule';
 
 export default defineComponent({
-    components: {
-        Upload
-    },
     setup() {
         const fapi = ref({ b: 2 });
         const rule = ref(mock())
@@ -237,11 +233,13 @@ export default defineComponent({
         }
 
         const validate = function () {
+            console.log(fapi.value)
+            debugger
             fapi.value.validate();
         }
 
         const validateField = function () {
-            fapi.value.validateField('goods_name');
+            fapi.value.validateField('goods_info');
         }
 
         const resetFields = function () {
