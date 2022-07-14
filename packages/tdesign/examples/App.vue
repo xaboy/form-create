@@ -233,8 +233,6 @@ export default defineComponent({
         }
 
         const validate = function () {
-            console.log(fapi.value)
-            debugger
             fapi.value.validate();
         }
 

@@ -37,7 +37,7 @@ export default function mock() {
             placeholder: '请输入商品名称',
             clearable: true,
             disabled: false,
-            maxlength: 10,
+            maxlength: 10
         }).setProp('prefix', 'prefix').setProp('suffix', 'suffix').validate([
             { required: true, message: '请输入商品名称', trigger: 'change' }
         ]).control([
@@ -57,8 +57,11 @@ export default function mock() {
         ]).on({
             input(v) {
                 console.log(v);
+            },
+            change(){
+                console.log('change')
             }
-        }).emit(['change']).className('goods-name').children([
+        }).className('goods-name').children([
             maker.create('template').children(['append']).slot('append')
         ]).style('color:red').wrap({ style: 'color:red', class: 'asdfasdf' })
             .info('请输入商品名称!!!!!'),
@@ -223,7 +226,7 @@ export default function mock() {
         //自定义组件
         maker.create('t-button', 'btn').props('disabled', false).col({ span: 12 }).children([
             '测试自定义按钮'
-        ]).emit(['click']).emitPrefix('btn'),
+        ]).emitPrefix('btn'),
 
         //select 下拉选择组件
         maker.select('产品分类', 'cate_id', '105').options([
@@ -350,7 +353,8 @@ export default function mock() {
                     console.log('remove',file, fileList);
                 },
         }).validate([
-            { required: true, type: 'array', min: 2, message: '请选择2张图片', trigger: 'change' }
+            { required: true,  trigger: 'change' },
+            {validator: val => val.length >= 2, message: '请选择2张图片'}
         ]),
 
         //frame 框架组件
@@ -364,7 +368,8 @@ export default function mock() {
             closeBtnText: 'close',
             title: 'select'
         }).validate([
-            { required: true, type: 'array', min: 2, message: '请选择2张图片', trigger: 'change' }
+            { required: true,  trigger: 'change' },
+            {validator: val => val.length >= 2, message: '请选择2张图片'}
         ]).event({
             remove: function () {
                 alert('删除了');

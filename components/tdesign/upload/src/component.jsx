@@ -30,12 +30,7 @@ export default defineComponent({
     },
     data() {
         return {
-            uploadList: []
-        }
-    },
-    watch: {
-        modelValue(n) {
-            this.uploadList = n.map(parseFile).map(parseUpload)
+            uploadList: this.modelValue.map(parseFile).map(parseUpload)
         }
     },
     methods: {

@@ -133,11 +133,6 @@ export default defineComponent({
             bus: new Mitt()
         }
     },
-    watch: {
-        modelValue(n) {
-            this.fileList = toArray(n);
-        }
-    },
     methods: {
         key(unique) {
             return unique;
