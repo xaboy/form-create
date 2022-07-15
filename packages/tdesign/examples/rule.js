@@ -386,8 +386,8 @@ export default function mock() {
 
         {
             type: 'TTreeSelect',
-            title: 'tree',
-            field: 'tree',
+            title: 'tree1',
+            field: 'tree1',
             props: {
                 data: treeData
             }

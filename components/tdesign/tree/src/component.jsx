@@ -7,13 +7,13 @@ export default defineComponent({
     name: NAME,
     inheritAttrs: false,
     formCreateParser: {
-        mergeProp(ctx) {
-            const props = ctx.prop.props;
-            if (!props.nodeKey) props.nodeKey = 'id';
-            if (!props.props) props.props = {
-                label: 'title'
-            };
-        }
+        // mergeProp(ctx) {
+        //     const props = ctx.prop.props;
+        //     if (!props.nodeKey) props.nodeKey = 'id';
+        //     if (!props.props) props.props = {
+        //         label: 'title'
+        //     };
+        // }
     },
     props: {
         type: String,
@@ -36,9 +36,13 @@ export default defineComponent({
     },
     methods: {
         onChange(value) {
-            this.$emit('update:modelValue', value);
-            this.$emit('change', value);
-            this.$emit('input', value);
+            this.value = value
+            this.input()
+        },
+        input(){
+            const {value} = this
+            this.$emit('update:modelValue', value)
+            this.$emit('change', value)
         }
     },
     render() {
