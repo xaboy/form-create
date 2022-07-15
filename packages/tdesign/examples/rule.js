@@ -27,9 +27,20 @@ export default function mock() {
 
 
         // cascader 多级联动组件
-        maker.cascader({ title: '所在区域', style: 'color:red' }, 'address', ['陕西省', '西安市'])
-            .props({
-                options: opts
+        maker.cascader({
+            title: '所在区域',
+            style: 'color:red',
+        }, 'address', ['陕西省', '西安市']).props({
+            options: opts
+        })
+            .info('自定义内容')
+            .info({
+                type: 'tooltip',
+                info: '自定义内容tooltip',
+            })
+            .info({
+                type: 'popup',
+                info: '自定义内容popup'
             }),
 
         // input 输入框组件
@@ -58,7 +69,7 @@ export default function mock() {
             input(v) {
                 console.log(v);
             },
-            change(){
+            change() {
                 console.log('change')
             }
         }).className('goods-name').children([
@@ -85,7 +96,7 @@ export default function mock() {
             return 'val' === api.getValue('auto');
         }).link(['auto']).wrap({
             show: true
-        }).validate([{ required: true,trigger: 'blur',message:'请输入商品简介' }]),
+        }).validate([{ required: true, trigger: 'blur', message: '请输入商品简介' }]),
 
         {
             type: 'object',
@@ -201,7 +212,7 @@ export default function mock() {
                     ]
                 }
             ])
-            .validate([{required:true}]),
+            .validate([{ required: true }]),
         //checkbox 复选框付选择
         maker.checkboxGroup('标签', 'label', [1])
             .props({
@@ -211,7 +222,7 @@ export default function mock() {
                     { value: 3, label: '实用', disabled: false },
                     { value: 4, label: '有效', disabled: false },
                 ]
-        }),
+            }),
 
         //switch 开关组件
         maker.switch('是否上架', 'is_show', '1').props({
@@ -232,7 +243,7 @@ export default function mock() {
         maker.select('产品分类', 'cate_id', '105')
             .props({
                 multiple: true,
-                options:[
+                options: [
                     { 'value': '104', 'label': '生态蔬菜', 'disabled': false },
                     { 'value': '106', 'label': '植物植物', 'disabled': false },
                     { 'value': '105', 'label': '新鲜水果', 'disabled': false },
@@ -346,19 +357,19 @@ export default function mock() {
         //upload 上传组件
         maker.upload('轮播图', 'pic', ['http://file.lotkk.com/form-create.jpeg'])
             .props({
-                onSuccess(res){
-                    console.log('外面success',res)
+                onSuccess(res) {
+                    console.log('外面success', res)
                 },
                 'action': 'https://service-bv448zsw-1257786608.gz.apigw.tencentcs.com/api/upload-demo',
                 'limit': 2,
-                multiple:true,
+                multiple: true,
                 'theme': 'image',
                 'onRemove': function (file, fileList) {
-                    console.log('remove',file, fileList);
+                    console.log('remove', file, fileList);
                 },
-        }).validate([
-            { required: true,  trigger: 'change' },
-            {validator: val => val.length >= 2, message: '请选择2张图片'}
+            }).validate([
+            { required: true, trigger: 'change' },
+            { validator: val => val.length >= 2, message: '请选择2张图片' }
         ]),
 
         //frame 框架组件
@@ -372,8 +383,8 @@ export default function mock() {
             closeBtnText: 'close',
             title: 'select'
         }).validate([
-            { required: true,  trigger: 'change' },
-            {validator: val => val.length >= 2, message: '请选择2张图片'}
+            { required: true, trigger: 'change' },
+            { validator: val => val.length >= 2, message: '请选择2张图片' }
         ]).event({
             remove: function () {
                 alert('删除了');
@@ -393,12 +404,12 @@ export default function mock() {
             }
         },
         //tree 树形组件
-        maker.tree('权限', 'tree',['guangzhou', 'shenzhen']).props({
+        maker.tree('权限', 'tree', ['guangzhou', 'shenzhen']).props({
             data: treeData,
-            checkable:true
+            checkable: true
         }).validate([
-            { required: true,  trigger: 'change' },
-            {validator: val => val.length >= 2, message: '至少选择2个'}
+            { required: true, trigger: 'change' },
+            { validator: val => val.length >= 2, message: '至少选择2个' }
         ])
     ];
 }

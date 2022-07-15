@@ -69,9 +69,9 @@ export default {
             col: this.options.col || {},
         }, ctx.prop], {
             info: {
-                trigger: 'hover',
-                placement: 'top-start',
-                icon: 'el-icon-warning',
+                type: 'popup',
+                placement: 'top-left',
+                icon: 'QuestionCircleOutlined',
             },
             title: {},
             col: {span: 24},
@@ -115,19 +115,31 @@ export default {
         const isTitle = this.isTitle(rule);
         const labelWidth = (!col.labelWidth && !isTitle) ? 0 : col.labelWidth;
         const {inline, col: _col} = this.rule.props;
-        const item = isFalse(rule.wrap.show) ? children : this.$r(mergeProps([rule.wrap, {
-            props: {
-                labelWidth: labelWidth === void 0 ? labelWidth : toString(labelWidth),
-                label: isTitle ? rule.title.title : undefined,
-                ...(rule.wrap || {}),
-                name: ctx.id,
-                rules: rule.validate,
-            },
-            class: rule.className,
-            key: `${uni}fi`,
-            ref: ctx.wrapRef,
-            type: 'formItem',
-        }]), {default: () => children, ...(isTitle ? {label: () => this.makeInfo(rule, uni)} : {})});
+        let item
+        if(isFalse(rule.wrap.show)){
+            item = children
+        }else{
+
+            let label = undefined,
+                rChild = {};
+            if(isTitle){
+                label = rule.title.title
+                rChild = {label: () => this.makeInfo(rule, uni)}
+            }
+            item = this.$r(mergeProps([rule.wrap, {
+                props: {
+                    labelWidth: labelWidth === void 0 ? labelWidth : toString(labelWidth),
+                    label,
+                    ...(rule.wrap || {}),
+                    name: ctx.id,
+                    rules: rule.validate,
+                },
+                class: rule.className,
+                key: `${uni}fi`,
+                ref: ctx.wrapRef,
+                type: 'formItem',
+            }]), {default: () => children, ...rChild});
+        }
         return (inline === true || isFalse(_col) || isFalse(col.show)) ? item : this.makeCol(rule, uni, [item]);
     },
     isTitle(rule) {
@@ -144,7 +156,7 @@ export default {
 
         if (!isFalse(infoProp.show) && (infoProp.info || infoProp.native) && !isFalse(infoProp.icon)) {
             const prop = {
-                type: infoProp.type || 'popover',
+                type: infoProp.type || 'popup',
                 props: {...infoProp},
                 key: `${uni}pop`
             };
@@ -160,8 +172,8 @@ export default {
 
             children[infoProp.align !== 'left' ? 'unshift' : 'push'](this.$r(mergeProps([infoProp, prop]), {
                 [titleProp.slot || (isTip ? 'default' : 'reference')]: () => this.$r({
-                    type: 'i',
-                    class: infoProp.icon === true ? 'el-icon-warning' : infoProp.icon,
+                    type: infoProp.icon === true ? 'QuestionCircleOutlined' : (infoProp.icon || ''),
+                    props: {type: infoProp.icon === true ? 'QuestionCircleOutlined' : infoProp.icon},
                     key: `${uni}i`
                 }, {}, true)
             }));
@@ -171,7 +183,7 @@ export default {
             props: titleProp,
             key: `${uni}tit`,
             type: titleProp.type || 'span',
-        }]), children);
+        }]), 123);
     },
     makeCol(rule, uni, children) {
         const col = rule.col;
