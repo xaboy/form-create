@@ -47,14 +47,18 @@ export default function extendApi(api, h) {
             });
         },
         clearValidateState(fields, clearSub = true) {
-            h.$manager.clearValidateState(fields);
+            let ids = [];
             api.helper.tidyFields(fields).forEach(field => {
                 if (clearSub) this.clearSubValidateState(field);
-
-                // h.getCtxs(field).forEach(ctx => {
-                //     h.$manager.clearValidateState(fields);
-                // });
+                if (fields) {
+                    ids = ids.concat(h.getCtxs(field).map(ctx => ctx.id));
+                }
             });
+            if (fields && ids.length) {
+                h.$manager.clearValidateState(ids);
+            } else if (!fields) {
+                h.$manager.clearValidateState();
+            }
         },
         clearSubValidateState(fields) {
             api.helper.tidyFields(fields).forEach(field => {

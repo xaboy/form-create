@@ -49,8 +49,6 @@ export default {
         const form = this.form();
         if (form) {
             return form.clearValidate(fields);
-        } else {
-            return new Promise(v => v());
         }
     },
     tidyOptions(options) {
