@@ -48,7 +48,6 @@
                     <TButton @click="hidden">隐藏字段(hidden)</TButton>
                     <TButton @click="disabled">禁用字段(disabled)</TButton>
                     <TButton @click="resetField">重置字段(resetFields)</TButton>
-                    <TButton @click="validateField">字段验证(validateField)</TButton>
                     <TButton @click="method">执行组件方法(exec)</TButton>
                     <TButton @click="setValue">设置组件值(setValue)</TButton>
                     <TButton @click="getValue">获取组件值(getValue)</TButton>
@@ -64,10 +63,18 @@
                     <TButton @click="disabled2">禁用表单(disabled)</TButton>
                     <TButton @click="submit">提交表单(submit)</TButton>
                     <TButton @click="hideForm">隐藏表单(hideForm)</TButton>
-                    <TButton @click="validate" theme="danger">表单验证(validate)</TButton>
+
                     <TButton @click="resetFields">重置表单(resetFields)</TButton>
-                    <TButton @click="clearValidateState">清空验证(clearValidateState)</TButton>
+
                 </TRow>
+                <br>
+                <TRow>
+                  <TButton @click="validate" theme="danger">表单验证(validate)</TButton>
+                  <TButton @click="validateField">字段验证(validateField)</TButton>
+                  <TButton @click="clearValidateState">清空验证(clearValidateState)</TButton>
+                  <TButton @click="clearFieldValidateState">清空字段验证(clearFieldValidateState)</TButton>
+                </TRow>
+
                 <br />
                 <TRow>
                     <TButton @click="refresh">刷新(refresh)</TButton>
@@ -259,12 +266,16 @@ export default defineComponent({
         const clearValidateState = function () {
             fapi.value.clearValidateState();
         }
+        const clearFieldValidateState = function () {
+            fapi.value.clearValidateState(['goods_info']);
+        }
 
         const method = function () {
             fapi.value.exec('goods_name', 'focus');
         }
         const setValue = function () {
             fapi.value.setValue('goods_name', fapi.value.form.goods_name + '1');
+            fapi.value.setValue('goods_info', fapi.value.form.goods_info + '1');
         }
         const getValue = function () {
             alert(JSON.stringify(fapi.value.getValue('goods_name')));
@@ -311,6 +322,7 @@ export default defineComponent({
             resetField,
             submit,
             clearValidateState,
+            clearFieldValidateState,
             method,
             getValue,
             setValue,

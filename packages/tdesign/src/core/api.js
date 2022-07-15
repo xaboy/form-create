@@ -47,11 +47,13 @@ export default function extendApi(api, h) {
             });
         },
         clearValidateState(fields, clearSub = true) {
+            h.$manager.clearValidateState(fields);
             api.helper.tidyFields(fields).forEach(field => {
                 if (clearSub) this.clearSubValidateState(field);
-                h.getCtxs(field).forEach(ctx => {
-                    h.$manager.clearValidateState(ctx);
-                });
+
+                // h.getCtxs(field).forEach(ctx => {
+                //     h.$manager.clearValidateState(fields);
+                // });
             });
         },
         clearSubValidateState(fields) {
