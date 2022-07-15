@@ -6,43 +6,32 @@ const NAME = 'fcTree';
 export default defineComponent({
     name: NAME,
     inheritAttrs: false,
-    formCreateParser: {
-        // mergeProp(ctx) {
-        //     const props = ctx.prop.props;
-        //     if (!props.nodeKey) props.nodeKey = 'id';
-        //     if (!props.props) props.props = {
-        //         label: 'title'
-        //     };
-        // }
-    },
     props: {
-        type: String,
-        checkable:Boolean,
+        checkable: {
+            type: Boolean,
+            default: true
+        },
         modelValue: {
             type: [Array, String, Number],
             default: () => ([])
         }
     },
-    data(){
-        return{
-            value:toArray(this.modelValue)
+    data() {
+        return {
+            value: toArray(this.modelValue)
         }
     },
-    emits: ['update:modelValue','change'],
-    watch:{
-        modelValue(v){
+    emits: ['update:modelValue', 'change', 'input'],
+    watch: {
+        modelValue(v) {
             this.value = toArray(v)
         }
     },
     methods: {
-        onChange(value) {
-            this.value = value
-            this.input()
-        },
-        input(){
-            const {value} = this
-            this.$emit('update:modelValue', value)
-            this.$emit('change', value)
+        onInput(value) {
+            this.$emit('update:modelValue', value);
+            this.$emit('change', value);
+            this.$emit('input', value);
         }
     },
     render() {
@@ -50,8 +39,7 @@ export default defineComponent({
             {...this.$attrs}
             modelValue={this.value}
             checkable={this.checkable}
-            ref="tree"
-            onChange={this.onChange}
+            onUpdate:modelValue={this.onInput}
             v-slots={this.$slots}/>;
     }
 });
