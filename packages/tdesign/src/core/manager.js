@@ -183,7 +183,7 @@ export default {
             props: titleProp,
             key: `${uni}tit`,
             type: titleProp.type || 'span',
-        }]), 123);
+        }]), children);
     },
     makeCol(rule, uni, children) {
         const col = rule.col;
