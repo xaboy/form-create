@@ -162,7 +162,7 @@ type RuleOptions<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> =
 type RuleChildrenFn<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> = (data: loadParams<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => (FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>[] | Promise<FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>[]>)
 
 type RuleChildren<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> =
-    FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>[]
+    string | FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>
     | RuleChildrenFn<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
 
 interface PropArg<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
@@ -186,6 +186,10 @@ export interface InjectArg<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
     inject: any
 }
 
+export interface VNodeRule extends VNodeData {
+    children?: Array<VNodeRule | string>;
+}
+
 export interface BaseRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> extends VNodeData {
     field?: string;
     key?: string;
@@ -196,8 +200,8 @@ export interface BaseRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> extend
     emit?: Array<string | { name: string; inject: any }>;
     link?: string[];
     sync?: string[];
-    prefix?: string | VNodeData;
-    suffix?: string | VNodeData;
+    prefix?: string | VNodeRule;
+    suffix?: string | VNodeRule;
     update?: (value: any, $rule: this, api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => Boolean | void;
     options?: RuleOptions<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
     optionsTo?: string;
@@ -212,7 +216,7 @@ export interface BaseRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> extend
     slotUpdate?: (arg: PropArg<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
 
     validate?: Object[];
-    children?: Array<RuleChildren<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> | string>;
+    children?: Array<RuleChildren<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>>;
     control?: Control<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>[];
     effect?: {
         fetch?: String | FetchEffectOption | ((rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => FetchEffectOption),
@@ -285,9 +289,9 @@ export class BaseCreator<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
 
     sync(prop: string[]): this;
 
-    prefix(prop: string | VNodeData): this;
+    prefix(prop: string | VNodeRule): this;
 
-    suffix(prop: string | VNodeData): this;
+    suffix(prop: string | VNodeRule): this;
 
     update(prop: (value: any, $rule: FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => Boolean | void): this;
 
@@ -305,7 +309,7 @@ export class BaseCreator<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
 
     validate(prop: Object[]): this;
 
-    children(prop: Array<RuleChildren<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> | string>): this;
+    children(prop: Array<RuleChildren<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>>): this;
 
     control(prop: Control<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>[]): this;
 
@@ -474,7 +478,7 @@ export interface BaseApi<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
 
     nextRefresh(fn: Function): void;
 
-    deferSyncValue(fn: Function, autoSync?:boolean): void;
+    deferSyncValue(fn: Function, autoSync?: boolean): void;
 
     set<T>(object: object, key: string | number, value: T): T;
 

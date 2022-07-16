@@ -1,4 +1,4 @@
-import {FormData, VNodeData} from "@form-create/core";
+import {FormData, VNodeRule} from "@form-create/core";
 import {ButtonProps, ValidateFieldCallback} from "element-plus";
 import {Api} from "./index";
 
@@ -37,14 +37,14 @@ export interface OptionAttrs {
     row?: Boolean | RowProps & {
         show?: Boolean;
     };
-    info?: Boolean | VNodeData & {
+    info?: Boolean | VNodeRule & {
         show?: Boolean;
         native?: Boolean;
         icon?: string;
         align?: 'left' | 'right';
         info?: string;
     };
-    wrap?: Boolean | VNodeData & {
+    wrap?: Boolean | VNodeRule & {
         labelWidth?: string
         required?: boolean
         error?: string
@@ -83,25 +83,21 @@ export interface OptionAttrs {
 }
 
 declare const optionAttrs: OptionAttrs & {
-    title?: Boolean | VNodeData & {
+    title?: Boolean | VNodeRule & {
         show?: Boolean;
         native?: Boolean;
-        title?: string;
+        title: string;
     };
 };
-
-interface children {
-    children?: VNodeData[]
-}
 
 export interface CreatorAttrs {
     col(props: typeof optionAttrs.col): this;
 
     wrap(props: typeof optionAttrs.wrap): this;
 
-    title(props: string | typeof optionAttrs.title & children): this;
+    title(props: string | typeof optionAttrs.title): this;
 
-    info(props: string | typeof optionAttrs.info & children): this;
+    info(props: string | typeof optionAttrs.info): this;
 
     className(prop: string): this;
 
@@ -110,8 +106,8 @@ export interface CreatorAttrs {
 export interface RuleAttrs {
     col?: typeof optionAttrs.col;
     wrap?: typeof optionAttrs.wrap;
-    title?: string | typeof optionAttrs.title & children;
-    info?: string | typeof optionAttrs.info & children;
+    title?: string | typeof optionAttrs.title;
+    info?: string | typeof optionAttrs.info;
     className?: string;
 }
 

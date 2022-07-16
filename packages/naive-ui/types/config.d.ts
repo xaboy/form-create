@@ -1,4 +1,4 @@
-import {FormData, VNodeData} from "@form-create/core";
+import {FormData, VNodeRule} from "@form-create/core";
 import {ButtonProps,TooltipProps, PopoverProps, ColProps, RowProps, FormItemProps, FormProps} from "naive-ui";
 import {Api} from "./index";
 import {ValidateError} from "async-validator/dist-types/interface";
@@ -11,14 +11,14 @@ export interface OptionAttrs {
     row?: Boolean | RowProps & {
         show?: Boolean;
     };
-    info?: Boolean | (TooltipProps | PopoverProps) & VNodeData & {
+    info?: Boolean | (TooltipProps | PopoverProps) & VNodeRule & {
         show?: Boolean;
         native?: Boolean;
         icon?: string;
         align?: 'left' | 'right';
         info?: string;
     };
-    wrap?: Boolean | VNodeData & FormItemProps & {
+    wrap?: Boolean | VNodeRule & FormItemProps & {
         show?: Boolean;
     };
     form?: FormProps & {
@@ -41,25 +41,21 @@ export interface OptionAttrs {
 }
 
 declare const optionAttrs: OptionAttrs & {
-    title?: Boolean | VNodeData & {
+    title?: Boolean | VNodeRule & {
         show?: Boolean;
         native?: Boolean;
         title?: string;
     };
 };
 
-interface children {
-    children?: VNodeData[]
-}
-
 export interface CreatorAttrs {
     col(props: typeof optionAttrs.col): this;
 
     wrap(props: typeof optionAttrs.wrap): this;
 
-    title(props: string | typeof optionAttrs.title & children): this;
+    title(props: string | typeof optionAttrs.title): this;
 
-    info(props: string | typeof optionAttrs.info & children): this;
+    info(props: string | typeof optionAttrs.info): this;
 
     className(prop: string): this;
 
@@ -68,8 +64,8 @@ export interface CreatorAttrs {
 export interface RuleAttrs {
     col?: typeof optionAttrs.col;
     wrap?: typeof optionAttrs.wrap;
-    title?: string | typeof optionAttrs.title & children;
-    info?: string | typeof optionAttrs.info & children;
+    title?: string | typeof optionAttrs.title;
+    info?: string | typeof optionAttrs.info;
     className?: string;
 }
 
