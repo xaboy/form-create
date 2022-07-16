@@ -32,7 +32,7 @@ export default function mock() {
             style: 'color:red',
         }, 'address', ['陕西省', '西安市']).props({
             options: opts
-        })
+        }).col({span: 6})
             .info('自定义内容')
             .info({
                 type: 'tooltip',
@@ -75,7 +75,7 @@ export default function mock() {
         }).className('goods-name').children([
             maker.create('template').children(['append']).slot('append')
         ]).style('color:red').wrap({ style: 'color:red', class: 'asdfasdf' })
-            .info('请输入商品名称!!!!!'),
+            .info('请输入商品名称!!!!!').col({span:6}),
 
         // todo autoComplete 自动选择组件
         // maker.auto('自动完成', 'auto', 'xaboy').props({

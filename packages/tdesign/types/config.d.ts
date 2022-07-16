@@ -11,7 +11,7 @@ type ComponentSize = 'large' | 'default' | 'small'
 
 type ColProps = {
     tag: string | 'div';
-    span: number | 24;
+    span: number | 12;
     offset: number | 0;
     pull: number | 0;
     push: number | 0;

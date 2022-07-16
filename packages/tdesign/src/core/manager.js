@@ -74,7 +74,7 @@ export default {
                 icon: 'QuestionCircleOutlined',
             },
             title: {},
-            col: {span: 24},
+            col: {span: 12},
             wrap: {},
         }, {normal: ['title', 'info', 'col', 'wrap']});
     },
@@ -190,7 +190,7 @@ export default {
         return this.$r({
             class: col.class,
             type: 'col',
-            props: col || {span: 24},
+            props: col || {span: 12},
             key: `${uni}col`
         }, children);
     },
@@ -223,7 +223,7 @@ export default {
             ? item
             : this.$r({
                 type: 'col',
-                props: {span: 24},
+                props: {span: 12},
                 key: `${this.key}fc`
             }, [item]);
     },
