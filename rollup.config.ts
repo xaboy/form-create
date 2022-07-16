@@ -202,7 +202,7 @@ function createMultiInput() {
   const _path = resolve('src')
   const rootFolderFiles = fs.readdirSync(_path)
   let files = [];
-  rootFolderFiles.forEach(function (item, index) {
+  rootFolderFiles.forEach(function (item) {
     let fPath = path.join(_path, item);
     let stat = fs.statSync(fPath);
     let ext = path.extname(fPath)
@@ -219,7 +219,7 @@ function createConfig(format, output, plugins = []) {
   let entryFile = `src/index.js`
   const _plugins = createRollupPlugins(plugins, format);
   const _globals = ExtendGlobal ? Object.assign({}, {vue: 'Vue'}, ExtendGlobal) : {vue: 'Vue'};
-  let _input = ''
+  let _input
   let _output = {
     banner: createBanner(_banner, pkg)
   }
