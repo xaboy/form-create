@@ -6,7 +6,7 @@ export default {
     rate: PRE + '-rate',
     upload: 'fc-upload',
     cascader: PRE + '-cascader',
-    popover: PRE + '-popover',
+    popup: PRE + '-popup',
     tooltip: PRE + '-tooltip',
     colorPicker: PRE + '-colorPicker',
     timePicker: PRE + '-time-picker',
