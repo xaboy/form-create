@@ -22,7 +22,7 @@ function useAlias(maker) {
 }
 
 function useInput(maker) {
-    ['password', 'url', 'text', 'url', 'tel'].reduce((maker, type) => {
+    ['password', 'url', 'text', 'tel'].reduce((maker, type) => {
         maker[type] = creatorFactory(name, {type});
         return maker;
     }, maker);

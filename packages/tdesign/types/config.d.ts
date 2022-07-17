@@ -1,33 +1,6 @@
-import {FormData, VNodeData} from "@form-create/core";
-import {ButtonProps} from "tdesign-vue-next";
+import {FormData, VNodeRule} from "@form-create/core";
+import {ButtonProps, ColProps, RowProps, TooltipProps, PopupProps, FormItemProps, FormProps} from "tdesign-vue-next";
 import {Api} from "./index";
-
-type SizeObject = {
-    span: number
-    offset: number
-}
-
-type ComponentSize = 'large' | 'default' | 'small'
-
-type ColProps = {
-    tag: string | 'div';
-    span: number | 12;
-    offset: number | 0;
-    pull: number | 0;
-    push: number | 0;
-    xs: number | SizeObject;
-    sm: number | SizeObject;
-    md: number | SizeObject;
-    lg: number | SizeObject;
-    xl: number | SizeObject;
-}
-
-type RowProps = {
-    tag: string | 'div',
-    gutter: number | 0,
-    justify: string | 'start',
-    align: string | 'top',
-}
 
 export interface OptionAttrs {
     col?: Boolean | ColProps & {
@@ -37,33 +10,17 @@ export interface OptionAttrs {
     row?: Boolean | RowProps & {
         show?: Boolean;
     };
-    info?: Boolean | VNodeData & {
+    info?: Boolean | VNodeRule & (TooltipProps | PopupProps) & {
         show?: Boolean;
         native?: Boolean;
         icon?: string;
         align?: 'left' | 'right';
         info?: string;
     };
-    wrap?: Boolean | VNodeData & {
-        labelWidth?: string
-        required?: boolean
-        error?: string
-        showMessage?: boolean
-        inlineMessage?: boolean
-        size?: ComponentSize
+    wrap?: Boolean | VNodeRule & FormItemProps & {
         show?: Boolean;
     };
-    form?: {
-        inline?: boolean
-        disabled?: boolean
-        labelPosition?: string
-        labelWidth?: string
-        labelSuffix?: string
-        showMessage?: boolean
-        inlineMessage?: boolean
-        statusIcon?: boolean
-        validateOnRuleChange?: boolean
-        size?: ComponentSize
+    form?: FormProps & {
         className?: any;
         col?: Boolean;
     };
@@ -83,25 +40,21 @@ export interface OptionAttrs {
 }
 
 declare const optionAttrs: OptionAttrs & {
-    title?: Boolean | VNodeData & {
+    title?: Boolean | VNodeRule & {
         show?: Boolean;
         native?: Boolean;
-        title?: string;
+        title: string;
     };
 };
-
-interface children {
-    children?: VNodeData[]
-}
 
 export interface CreatorAttrs {
     col(props: typeof optionAttrs.col): this;
 
     wrap(props: typeof optionAttrs.wrap): this;
 
-    title(props: string | typeof optionAttrs.title & children): this;
+    title(props: string | typeof optionAttrs.title): this;
 
-    info(props: string | typeof optionAttrs.info & children): this;
+    info(props: string | typeof optionAttrs.info): this;
 
     className(prop: string): this;
 
@@ -110,8 +63,8 @@ export interface CreatorAttrs {
 export interface RuleAttrs {
     col?: typeof optionAttrs.col;
     wrap?: typeof optionAttrs.wrap;
-    title?: string | typeof optionAttrs.title & children;
-    info?: string | typeof optionAttrs.info & children;
+    title?: string | typeof optionAttrs.title;
+    info?: string | typeof optionAttrs.info;
     className?: string;
 }
 
@@ -133,9 +86,9 @@ export interface ApiAttrs {
 
     clearSubValidateState(fields?: string | string[]): void;
 
-    validate(callback?: (callback?: (boolean: boolean, object: Object) => void) => void): Promise<any>;
+    validate(callback?: Function): Promise<any>;
 
-    ValidateField(field: string, callback?: (errorMessage: string) => void): Promise<any>;
+    validateField(field: string, callback?: Function): Promise<any>;
 
     submitBtnProps(props: ButtonProps): void;
 

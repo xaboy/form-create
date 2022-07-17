@@ -4,7 +4,7 @@ import {CreatorAttrs, OptionAttrs, RuleAttrs, ApiAttrs} from "./config";
 declare const makerFactory: CreatorHelper<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>
 
 declare enum MakerName {
-    "datePicker", "year", "month", "date", "dates", "week", "datetime", "datetimeRange", "dateRange", "monthRange", "hidden", "input", "password", "url", "email", "text", "textarea", "idate", "slider", "sliderRange", "timePicker", "time", "timeRange", "group", "tree", "switch", "upload", "autoComplete", "checkbox", "cascader", "colorPicker", "frame", "inputNumber", "radio", "rate", "select", "auto", "number", "color", "selectMultiple", "selectOne", "treeSelected", "treeChecked", "image", "file", "uploadFileOne", "uploadImageOne", "uploadImage", "uploadFile", "frameInputs", "frameFiles", "frameImages", "frameInputOne", "frameFileOne", "frameImageOne", "frameInput", "frameFile", "frameImage"
+    "rangeInput", "transfer", "tag", "tagInput", "datePicker", "date", "dateRangePicker", "dateRange", "hidden", "input", "password", "url", "tel", "text", "textarea", "slider", "sliderRange", "timePicker", "time", "timeRange", "group", "tree", "switch", "upload", "checkbox", "cascader", "colorPicker", "frame", "inputNumber", "radio", "select", "number", "color", "selectMultiple", "selectOne", "image", "file", "uploadFileOne", "uploadImageOne", "uploadImage", "uploadFile", "frameInputs", "frameFiles", "frameImages", "frameInputOne", "frameFileOne", "frameImageOne", "frameInput", "frameFile", "frameImage"
 }
 
 type Maker = {

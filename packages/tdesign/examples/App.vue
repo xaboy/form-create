@@ -221,10 +221,8 @@ export default defineComponent({
             optionJson.value = { ...fapi.value.options }
         }
 
-        let inlineFlag = false;
         const inline = function () {
-            inlineFlag = !inlineFlag;
-            fapi.value.updateOptions({ form: { inline: inlineFlag } })
+            fapi.value.updateOptions({ form: { layout: 'inline' } })
             optionJson.value = { ...fapi.value.options }
         }
 
