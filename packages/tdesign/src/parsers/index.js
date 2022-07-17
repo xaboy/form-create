@@ -1,17 +1,17 @@
-import datePicker from './datePicker';
 import hidden from './hidden';
-import input from './input';
 import slider from './slider';
-import timePicker from './timePicker';
 import row from './row';
 import select from './select';
+import radio from './radio';
+import checkbox from './checkbox';
+import tree from './tree';
 
 export default [
-    datePicker,
     hidden,
-    input,
+    radio,
+    checkbox,
+    tree,
     slider,
-    timePicker,
     row,
     select
 ]

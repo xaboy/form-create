@@ -4,10 +4,6 @@ import is, {hasProperty} from '@form-create/utils/lib/type';
 import toString from '@form-create/utils/lib/tostring';
 import extend from '@form-create/utils/lib/extend';
 
-function isTooltip(info) {
-    return info.type === 'tooltip';
-}
-
 function tidy(props, name) {
     if (!hasProperty(props, name)) return;
     if (is.String(props[name])) {
@@ -26,24 +22,20 @@ function tidyBool(opt, name) {
 }
 
 export default {
-    validate() {
-        const form = this.form();
-        if (form) {
-            return form.validate();
-        } else {
-            return new Promise(v => v());
-        }
-    },
-    validateField(field) {
+    validate(params) {
         return new Promise((resolve, reject) => {
             const form = this.form();
             if (form) {
-                form.validate([field])
-                    .then(resolve,reject)
+                return form.validate(params).then(v => {
+                    v === true ? resolve(v) : reject(v);
+                });
             } else {
-                resolve();
+                resolve(true);
             }
         });
+    },
+    validateField(field) {
+        return this.validate([field]);
     },
     clearValidateState(fields) {
         const form = this.form();
@@ -71,10 +63,11 @@ export default {
             info: {
                 type: 'popup',
                 placement: 'top-left',
+                showArrow: true,
                 icon: 'QuestionCircleOutlined',
             },
             title: {},
-            col: {span: 24},
+            col: {span: 12},
             wrap: {},
         }, {normal: ['title', 'info', 'col', 'wrap']});
     },
@@ -114,33 +107,26 @@ export default {
         const col = rule.col;
         const isTitle = this.isTitle(rule);
         const labelWidth = (!col.labelWidth && !isTitle) ? 0 : col.labelWidth;
-        const {inline, col: _col} = this.rule.props;
+        const {layout, col: _col} = this.rule.props;
         let item
-        if(isFalse(rule.wrap.show)){
+        if (isFalse(rule.wrap.show)) {
             item = children
-        }else{
-
-            let label = undefined,
-                rChild = {};
-            if(isTitle){
-                label = rule.title.title
-                rChild = {label: () => this.makeInfo(rule, uni)}
-            }
+        } else {
             item = this.$r(mergeProps([rule.wrap, {
                 props: {
                     labelWidth: labelWidth === void 0 ? labelWidth : toString(labelWidth),
-                    label,
                     ...(rule.wrap || {}),
                     name: ctx.id,
                     rules: rule.validate,
+                    label: isTitle ? () => this.makeInfo(rule, uni) : undefined,
                 },
                 class: rule.className,
                 key: `${uni}fi`,
                 ref: ctx.wrapRef,
                 type: 'formItem',
-            }]), {default: () => children, ...rChild});
+            }]), {default: () => children});
         }
-        return (inline === true || isFalse(_col) || isFalse(col.show)) ? item : this.makeCol(rule, uni, [item]);
+        return (layout === 'inline' || isFalse(_col) || isFalse(col.show)) ? item : this.makeCol(rule, uni, [item]);
     },
     isTitle(rule) {
         if (this.options.form.title === false) return false;
@@ -148,9 +134,8 @@ export default {
         return !((!title.title && !title.native) || isFalse(title.show))
     },
     makeInfo(rule, uni) {
-        const titleProp = rule.title;
-        const infoProp = rule.info;
-        const isTip = isTooltip(infoProp);
+        const titleProp = {...rule.title};
+        const infoProp = {...rule.info};
         const form = this.options.form;
         const children = [(titleProp.title || '') + (form.labelSuffix || form['label-suffix'] || '')];
 
@@ -164,6 +149,8 @@ export default {
             delete prop.props.icon;
             delete prop.props.show;
             delete prop.props.info;
+            delete prop.props.align;
+            delete prop.props.native;
 
             const field = 'content';
             if (infoProp.info && !hasProperty(prop.props, field)) {
@@ -171,26 +158,31 @@ export default {
             }
 
             children[infoProp.align !== 'left' ? 'unshift' : 'push'](this.$r(mergeProps([infoProp, prop]), {
-                [titleProp.slot || (isTip ? 'default' : 'reference')]: () => this.$r({
+                [titleProp.slot || 'default']: () => this.$r({
                     type: infoProp.icon === true ? 'QuestionCircleOutlined' : (infoProp.icon || ''),
-                    props: {type: infoProp.icon === true ? 'QuestionCircleOutlined' : infoProp.icon},
                     key: `${uni}i`
-                }, {}, true)
+                })
             }));
         }
 
-        return this.$r(mergeProps([titleProp, {
+        const _prop = mergeProps([titleProp, {
             props: titleProp,
             key: `${uni}tit`,
             type: titleProp.type || 'span',
-        }]), children);
+        }]);
+
+        delete _prop.props.show;
+        delete _prop.props.title;
+        delete _prop.props.native;
+
+        return this.$r(_prop, children);
     },
     makeCol(rule, uni, children) {
         const col = rule.col;
         return this.$r({
             class: col.class,
             type: 'col',
-            props: col || {span: 24},
+            props: col || {span: 12},
             key: `${uni}col`
         }, children);
     },
@@ -223,7 +215,7 @@ export default {
             ? item
             : this.$r({
                 type: 'col',
-                props: {span: 24},
+                props: {span: 12},
                 key: `${this.key}fc`
             }, [item]);
     },
@@ -231,15 +223,18 @@ export default {
         const resetBtn = {...this.options.resetBtn};
         const innerText = resetBtn.innerText;
         delete resetBtn.innerText;
+        delete resetBtn.click;
+        delete resetBtn.col;
+        delete resetBtn.show;
         return this.$r({
             type: 'button',
             props: resetBtn,
-            style: {width: resetBtn.width},
+            style: {width: resetBtn.width, marginLeft: '10px'},
             on: {
                 click: () => {
                     const fApi = this.$handle.api;
-                    resetBtn.click
-                        ? resetBtn.click(fApi)
+                    this.options.resetBtn.click
+                        ? this.options.resetBtn.click(fApi)
                         : fApi.resetFields();
                 }
             },
@@ -250,6 +245,10 @@ export default {
         const submitBtn = {...this.options.submitBtn};
         const innerText = submitBtn.innerText;
         delete submitBtn.innerText;
+        delete submitBtn.click;
+        delete submitBtn.col;
+        delete submitBtn.show;
+
         return this.$r({
             type: 'button',
             props: submitBtn,
@@ -257,8 +256,8 @@ export default {
             on: {
                 click: () => {
                     const fApi = this.$handle.api;
-                    submitBtn.click
-                        ? submitBtn.click(fApi)
+                    this.options.submitBtn.click
+                        ? this.options.submitBtn.click(fApi)
                         : fApi.submit();
                 }
             },

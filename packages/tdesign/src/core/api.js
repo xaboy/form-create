@@ -38,8 +38,8 @@ export default function extendApi(api, h) {
                     all.push(v.validate());
                 })
                 Promise.all(all).then(() => {
-                    resolve(null);
-                    callback && callback(null);
+                    resolve(true);
+                    callback && callback(true);
                 }).catch((e) => {
                     reject(e);
                     callback && callback(e);

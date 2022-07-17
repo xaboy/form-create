@@ -3,35 +3,36 @@ import {creatorFactory} from '@form-create/core/src/index';
 const maker = {};
 
 useAlias(maker);
+useInput(maker);
 useSelect(maker);
-useTree(maker);
 useUpload(maker);
 useFrame(maker);
 
 function useAlias(maker) {
-    ['group', 'tree', 'switch', 'upload', 'autoComplete', 'checkbox', 'cascader', 'colorPicker', 'datePicker','rangePicker', 'textarea','checkboxGroup','frame', 'inputNumber', 'radio', 'rate'].forEach(name => {
+    ['group', 'tree', 'switch', 'upload', 'cascader', 'rangeInput', 'transfer', 'tagInput', 'colorPicker', 'datePicker', 'dateRangePicker', 'timePicker', 'timeRangePicker', 'textarea', 'input', 'frame', 'inputNumber'].forEach(name => {
         maker[name] = creatorFactory(name);
     });
-    maker.auto = maker.autoComplete;
     maker.number = maker.inputNumber;
     maker.color = maker.colorPicker;
+    maker.date = maker.datePicker;
+    maker.dateRange = maker.dateRangePicker;
+    maker.time = maker.timePicker;
+    maker.timeRange = maker.timeRangePicker;
+    maker.tag = maker.tagInput;
+}
+
+function useInput(maker) {
+    ['password', 'url', 'text', 'url', 'tel'].reduce((maker, type) => {
+        maker[type] = creatorFactory(name, {type});
+        return maker;
+    }, maker);
 }
 
 function useSelect(maker) {
     const select = 'select';
     const multiple = 'multiple';
-    maker['selectMultiple'] = creatorFactory(select, {[multiple]:true});
-    maker['selectOne'] = creatorFactory(select, {[multiple]:false});
-}
-
-function useTree(maker) {
-    const name = 'tree';
-    const types = {'treeSelected': 'selected', 'treeChecked': 'checked'};
-
-    Object.keys(types).reduce((m, key) => {
-        m[key] = creatorFactory(name, {type:types[key]});
-        return m;
-    }, maker);
+    maker['selectMultiple'] = creatorFactory(select, {[multiple]: true});
+    maker['selectOne'] = creatorFactory(select, {[multiple]: false});
 }
 
 function useUpload(maker) {
@@ -44,7 +45,7 @@ function useUpload(maker) {
     };
 
     Object.keys(types).reduce((m, key) => {
-        m[key] = creatorFactory(name, m => m.props({uploadType: types[key][0], maxLength: types[key][1]}));
+        m[key] = creatorFactory(name, m => m.props({uploadType: types[key][0], max: types[key][1]}));
         return m
     }, maker);
 

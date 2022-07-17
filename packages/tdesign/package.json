@@ -43,10 +43,8 @@
     },
     "homepage": "http://www.form-create.com/v3/",
     "dependencies": {
-        "@form-create/component-td-tree": "^3.0.1",
         "@form-create/component-td-group": "^3.0.1",
         "@form-create/component-td-frame": "^3.0.1",
-        "@form-create/component-td-radio": "^3.0.1",
         "@form-create/component-td-upload": "^3.0.1",
         "@form-create/component-subform": "^3.0.0-alpha.2",
         "@form-create/core": "^3.0.1",

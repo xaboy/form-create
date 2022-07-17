@@ -1,11 +1,9 @@
 export default function getConfig() {
     return {
         form: {
-            inline: false,
-            labelPosition: 'right',
+            layout: 'vertical',
+            labelAlign: 'right',
             labelWidth: '125px',
-            disabled: false,
-            size: undefined,
         },
         row: {
             show: true,

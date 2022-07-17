@@ -18,17 +18,12 @@
 
 ._fc-frame ._fc-upload-cover ._fc-frame-icon {
     color: #fff;
-    font-size: 16px;
+    font-size: 20px;
     margin: 0 2px;
 }
 
 ._fc-frame ._fc-files:hover ._fc-upload-cover {
     opacity: 1;
-}
-
-._fc-frame .anticon{
-    font-size: 16px;
-    width: 16px;
 }
 
 ._fc-frame .t-upload {
@@ -37,16 +32,18 @@
 
 ._fc-frame ._fc-upload-btn, ._fc-frame ._fc-frame-icon {
     cursor: pointer;
+    font-size: 20px;
+    width: 20px;
 }
 
 ._fc-frame ._fc-upload-btn, ._fc-files {
     display: inline-block;
-    width: 104px;
-    height: 104px;
+    width: 112px;
+    height: 112px;
     text-align: center;
-    line-height: 104px;
+    line-height: 112px;
     border: 1px solid #c0ccda;
-    border-radius: 4px;
+    border-radius: 8px;
     overflow: hidden;
     background: #fff;
     position: relative;

@@ -1,14 +1,19 @@
-.form-create .form-create .el-form-item {
-    margin-bottom: 22px;
-}
-
-.form-create .form-create .el-form-item .el-form-item {
-    margin-bottom: 0px;
-}
-
-.form-create{
+.form-create {
     width: 100%;
 }
-.t-tree .t-tree__icon{
+
+.form-create .t-tree .t-tree__icon {
     line-height: inherit;
+}
+
+.form-create.t-form:not(.t-form-inline) .t-form__item:last-of-type {
+    margin-bottom: 24px;
+}
+
+.form-create .form-create .t-is-error .t-input__extra {
+    color: var(--td-error-color);
+}
+
+.form-create .form-create .t-is-warning .t-input__extra {
+    color: var(--td-warning-color);
 }

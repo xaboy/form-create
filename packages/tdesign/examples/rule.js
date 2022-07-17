@@ -25,46 +25,29 @@ export default function mock() {
         // hidden 组件
         maker.hidden('id', '14'),
 
+        maker.create('testSlot', 'testSlot', 'testSlotTitle123').children([
+            maker.date('', 'asd').slot('test').display(true),
+            maker.date('', 'asd23').slot('test'),
+        ]),
 
         // cascader 多级联动组件
         maker.cascader({
             title: '所在区域',
             style: 'color:red',
-        }, 'address', ['陕西省', '西安市']).props({
-            options: opts
+        }, 'address', '2.1').props({
+            options: opts,
         })
-            .info('自定义内容')
-            .info({
-                type: 'tooltip',
-                info: '自定义内容tooltip',
-            })
-            .info({
-                type: 'popup',
-                info: '自定义内容popup'
-            }),
+            .info('自定义内容'),
 
         // input 输入框组件
         maker.input('商品名称', 'goods_name', 'iphone').props({
             placeholder: '请输入商品名称',
             clearable: true,
             disabled: false,
-            maxlength: 10
+            maxlength: 10,
+            type:'password',
         }).setProp('prefix', 'prefix').setProp('suffix', 'suffix').validate([
             { required: true, message: '请输入商品名称', trigger: 'change' }
-        ]).control([
-            {
-                value: 'append',
-                child: true,
-                rule: [maker.create('template').children(['append']).slot('append').setProp('suffix', {
-                    type: 'span',
-                    children: ['asdf']
-                })]
-            },
-            {
-                value: 'prepend',
-                child: true,
-                rule: [maker.create('template').children(['prepend']).slot('prepend')]
-            },
         ]).on({
             input(v) {
                 console.log(v);
@@ -77,17 +60,7 @@ export default function mock() {
         ]).style('color:red').wrap({ style: 'color:red', class: 'asdfasdf' })
             .info('请输入商品名称!!!!!'),
 
-        // todo autoComplete 自动选择组件
-        // maker.auto('自动完成', 'auto', 'xaboy').props({
-        //     fetchSuggestions: function (queryString, cb) {
-        //         cb([
-        //             { value: queryString }, { value: queryString + queryString }
-        //         ]);
-        //     }
-        // }).emitPrefix('xaboy').emit(['change']).validate([{ required: true }]),
-
-
-        //textarea 组件
+        // textarea 组件
         maker.textarea('商品简介', 'goods_info', '').props({
             autosize: { minRows: 4, maxRows: 8 },
             placeholder: '请输入商品名称'
@@ -142,7 +115,6 @@ export default function mock() {
                 ]
             }
         },
-
         {
             type: 'group',
             title: '批量添加',
@@ -150,6 +122,7 @@ export default function mock() {
             value: [{ date: '2121-12-12', field: 10, field2: '123123123' }],
             // suffix: 'suffixsuffix',
             props: {
+                min:3,
                 rule: [
                     {
                         type: 'col',
@@ -193,7 +166,7 @@ export default function mock() {
                 ]
             },
             validate: [
-                { required: true, min: 3, type: 'array', message: '最少增加3项', trigger: 'change' },
+                { validator:(v)=>v.length > 2, message: '最少增加3项', trigger: 'change' },
             ]
         },
 
@@ -203,88 +176,72 @@ export default function mock() {
             { value: 0, label: '不包邮', disabled: false },
             { value: 1, label: '包邮', disabled: false },
             { value: 2, label: '未知', disabled: true },
-        ]).props({ optionType: 'button' })
+        ]).props({ variant: 'primary-filled' })
             .control([
                 {
                     value: 1,
                     rule: [
-                        maker.number('满额包邮', 'postage_money', 0)
+                        maker.number('满额包邮', 'postage_money', 0).effect({required:true})
                     ]
                 }
             ])
             .validate([{ required: true }]),
         //checkbox 复选框付选择
-        maker.checkboxGroup('标签', 'label', [1])
-            .props({
-                options: [
-                    { value: 1, label: '好用', disabled: true },
-                    { value: 2, label: '方便', disabled: false },
-                    { value: 3, label: '实用', disabled: false },
-                    { value: 4, label: '有效', disabled: false },
-                ]
-            }),
+        maker.checkbox('标签', 'label', [1])
+            .options([
+                { value: 1, label: '好用', disabled: true },
+                { value: 2, label: '方便', disabled: false },
+                { value: 3, label: '实用', disabled: false },
+                { value: 4, label: '有效', disabled: false },
+            ]),
 
         //switch 开关组件
         maker.switch('是否上架', 'is_show', '1').props({
-            'activeValue': '1',
-            'inactiveValue': '0',
-            'slot': {
-                open: '上架',
-                close: '下架',
-            }
+            customValue:['1', '0'],
+            label:['开','关'],
         }).col({ span: 12 }),
-
-        //自定义组件
-        maker.create('t-button', 'btn').props('disabled', false).col({ span: 12 }).children([
-            '测试自定义按钮'
-        ]).emitPrefix('btn'),
 
         //select 下拉选择组件
         maker.select('产品分类', 'cate_id', '105')
             .props({
                 multiple: true,
-                options: [
-                    { 'value': '104', 'label': '生态蔬菜', 'disabled': false },
-                    { 'value': '106', 'label': '植物植物', 'disabled': false },
-                    { 'value': '105', 'label': '新鲜水果', 'disabled': false },
-                ]
-            }),
+
+            }).options([
+        { 'value': '104', 'label': '生态蔬菜', 'disabled': false },
+        { 'value': '106', 'label': '植物植物', 'disabled': false },
+        { 'value': '105', 'label': '新鲜水果', 'disabled': false },
+    ]),
         {
-            type: 'div',
+            type: 'fcRow',
             name: 'div',
             children: [
-                'asdfasf',
                 {
                     type: 't-col',
                     props: {
-                        span: 12
+                        span: 6
                     },
                     name: 'cal',
                     children: [
-                        maker.create('testSlot', 'testSlot', 'testSlotTitle123').children([
-                            maker.date('', 'asd').slot('test').display(true),
-                            maker.date('', 'asd23').slot('test'),
-                        ]),
-                        maker.rangePicker('TDateRangePicker', 'TDateRangePicker'),
                         {
-                            type: 'TDateRangePicker',
+                            type: 'dateRangePicker',
                             field: 'tr',
-                            title: '活动日期111111'
+                            props:{
+                                enableTimePicker:true,
+                            },
+                            title: '活动日期'
                         },
 
                         //datePicker 日期选择组件
-                        maker.date('活动日期', 'section_day')
-                            .props({}),
+                        maker.dateRangePicker('活动日期', 'section_day')
+                            .props({
+                                enableTimePicker: true,
+                            }),
 
                         //timePicker 时间选择组件
+                        maker.timeRange('时分', 'section_time',).props({
+                            'placeholder': '请选择活动时间'
+                        }),
                         maker.time('活动时间', 'section_time',).props({
-                            'placeholder': '请选择活动时间'
-                        }),
-                        maker.time('时分', 'section_time',).props({
-                            format: "HH:mm",
-                            'placeholder': '请选择活动时间'
-                        }),
-                        maker.time('12小时', 'section_time',).props({
                             format: "A hh:mm:ss",
                             'placeholder': '请选择活动时间'
                         }),
@@ -294,20 +251,20 @@ export default function mock() {
                 {
                     type: 't-col',
                     props: {
-                        span: 12
+                        span: 6
                     },
                     children: [
                         //inputNumber 数组输入框组件
                         maker.number('排序', 'sort', 0).props({
-                            precision: 2
-                        }).col({ span: 12 }).validate(
+                            decimalPlaces: 2
+                        }).col({ span: 6 }).validate(
                             [{ require: true, type: 'number', min: 10 }]
                         ),
 
                         //colorPicker 颜色选择组件
                         maker.color('颜色', 'color', '#ff7271').props({
-                            'color-format': 'hex'
-                        }).col({ span: 12 }),
+                            'format': 'HEX'
+                        }).col({ span: 6 }),
 
                     ]
                 }
@@ -315,29 +272,6 @@ export default function mock() {
             native: true
         },
 
-        //rate 评分组件
-        // maker.rate('推荐级别', 'rate', 2)
-        //     .props({
-        //         'max': 10,
-        //     })
-        //     .validate({required: true, type: 'number', min: 3, message: '请大于3颗星', trigger: 'change'})
-        //     .col({span: 12}).control([
-        //     {
-        //         handle: function (val) {
-        //             return val > 5;
-        //         },
-        //         rule: [
-        //             maker.input('好评原因', 'goods_reason', '').props({disabled: false})
-        //         ]
-        //     }, {
-        //         handle: function (val) {
-        //             return val < 5;
-        //         },
-        //         rule: [
-        //             maker.input('差评原因', 'bad_reason', '').props({disabled: false})
-        //         ]
-        //     }
-        // ]),
 
 
         //slider 滑块组件
@@ -345,7 +279,7 @@ export default function mock() {
             'min': 0,
             'max': 100,
             'range': true,
-        }).col({ span: 12 }),
+        }).col({ span: 6 }),
 
         {
             type: 'wangEditor',
@@ -358,13 +292,13 @@ export default function mock() {
         maker.upload('轮播图', 'pic', ['http://file.lotkk.com/form-create.jpeg'])
             .props({
                 onSuccess(res) {
+                    res.file.url = 'http://file.lotkk.com/form-create.jpeg';
                     console.log('外面success', res)
                 },
-                'action': 'https://service-bv448zsw-1257786608.gz.apigw.tencentcs.com/api/upload-demo',
-                'limit': 2,
+                action: 'https://service-bv448zsw-1257786608.gz.apigw.tencentcs.com/api/upload-demo',
+                max: 2,
                 multiple: true,
-                'theme': 'image',
-                'onRemove': function (file, fileList) {
+                onRemove: function (file, fileList) {
                     console.log('remove', file, fileList);
                 },
             }).validate([
@@ -396,21 +330,29 @@ export default function mock() {
         }),
 
         {
-            type: 'TTreeSelect',
+            type: 'treeSelect',
             title: 'tree1',
             field: 'tree1',
+            value: ['guangzhou'],
             props: {
+                multiple: true,
                 data: treeData
             }
         },
         //tree 树形组件
         maker.tree('权限', 'tree', ['guangzhou', 'shenzhen']).props({
             data: treeData,
-            checkable: true
+            // checkable: true
         }).validate([
             { required: true, trigger: 'change' },
             { validator: val => val.length >= 2, message: '至少选择2个' }
-        ])
+        ]),
+
+        maker.transfer('穿梭框','transfer').props({
+            data:treeData
+        }),
+        maker.tagInput('标签输入框','tag'),
+        maker.rangeInput('范围输入框','range'),
     ];
 }
 

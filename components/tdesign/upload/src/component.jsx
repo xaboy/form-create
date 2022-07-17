@@ -9,14 +9,6 @@ export default defineComponent({
     inheritAttrs: false,
     props: {
         formCreateInject: Object,
-        action: String,
-        theme: String,
-        accept: String,
-        multiple: Boolean,
-        limit: {
-            type: Number,
-            default: 0
-        },
         modelValue: {
             type: Array,
             default: []
@@ -34,19 +26,17 @@ export default defineComponent({
         }
     },
     methods: {
-        handleRemove({file, index}) {
+        handleRemove({index}) {
             this.uploadList.splice(index, 1)
-            this.onRemove && this.onRemove(file, this.uploadList)
+            this.onRemove && this.onRemove(...arguments)
             this.input()
         },
         handleSuccess({file, fileList}) {
             this.uploadList = fileList;
-            const {onSuccess} = this
             if (file.status === 'success') {
-                onSuccess && onSuccess(file, this.uploadList)
+                this.onSuccess && this.onSuccess(...arguments)
             }
             this.input()
-            this.$emit('change', ...arguments);
         },
         input() {
             this.$emit('update:modelValue', this.uploadList.map(v => v.url));
@@ -54,18 +44,15 @@ export default defineComponent({
     },
     render() {
         const {
-            action, theme = 'image', accept = 'image/*',
-            multiple, limit, uploadList,
+            uploadList,
             handleSuccess, handleRemove, $slots
         } = this
         return <>
             <t-upload
-                action={action}
-                theme={theme}
-                accept={accept}
-                multiple={multiple}
-                max={limit}
+                theme="image"
+                accept="image/*"
                 modelValue={uploadList}
+                {...this.$attrs}
                 onSuccess={handleSuccess}
                 onRemove={handleRemove}
                 v-slots={$slots}
