@@ -45,139 +45,123 @@ export default function jsonMock() {
 
         //input 输入框组件
         {
-            type: 'input',
+            type: 'textarea',
             title: '商品简介',
             field: 'goods_info',
             value: '',
             props: {
-                type: 'textarea', //输入框类型，text，textarea 和其他 原生 input 的 type 值
-                rows: 10, //输入框行数，只对 type="textarea" 有效
                 autosize: {minRows: 4, maxRows: 8}, //自适应内容高度，只对 type="textarea" 有效，可传入对象，如，{ minRows: 2, maxRows: 6 }
             },
             children: ['asd']
         },
 
 
-        //autoComplete 自动选择组件
+
         {
-            type: 'autoComplete',
-            title: '自动完成',
-            field: 'auto',
-            value: 'xaboy',
+            type: 'object',
+            title: '对象组件',
+            field: 'object',
+            value: {date: '2121-12-12', field: 10, field2: '123123123'},
             props: {
-                fetchSuggestions: function (queryString, cb) {
-                    cb([
-                        {value: queryString}, {value: queryString + queryString}
-                    ]);
-                },
+                rule: [
+                    {
+                        type: 'col',
+                        wrap: {show: true},
+                        children: [
+                            {
+                                type: 'datePicker',
+                                field: 'date',
+                                title: 'date',
+                                col: {
+                                    span: 12
+                                }
+                            },
+                            {
+                                type: 'inputNumber',
+                                field: 'field',
+                                title: 'field',
+                                props: {
+                                    disabled: false
+                                },
+                                validate: [
+                                    {required: true, min: 10, type: 'number'}
+                                ],
+                                col: {
+                                    span: 12
+                                }
+                            }
+                        ]
+
+                    },
+                    {
+                        type: 'input',
+                        field: 'field2',
+                        title: 'field2',
+                        props: {
+                            disabled: false
+                        },
+                        validate: [
+                            {required: true}
+                        ]
+                    }
+                ]
             }
         },
 
-        // {
-        //     type: 'object',
-        //     title: '对象组件',
-        //     field: 'object',
-        //     value: {date: '2121-12-12', field: 10, field2: '123123123'},
-        //     props: {
-        //         rule: [
-        //             {
-        //                 type: 'col',
-        //                 wrap: {show: true},
-        //                 children: [
-        //                     {
-        //                         type: 'datePicker',
-        //                         field: 'date',
-        //                         title: 'date',
-        //                         col: {
-        //                             span: 12
-        //                         }
-        //                     },
-        //                     {
-        //                         type: 'inputNumber',
-        //                         field: 'field',
-        //                         title: 'field',
-        //                         props: {
-        //                             disabled: false
-        //                         },
-        //                         validate: [
-        //                             {required: true, min: 10, type: 'number'}
-        //                         ],
-        //                         col: {
-        //                             span: 12
-        //                         }
-        //                     }
-        //                 ]
-        //
-        //             },
-        //             {
-        //                 type: 'input',
-        //                 field: 'field2',
-        //                 title: 'field2',
-        //                 props: {
-        //                     disabled: false
-        //                 },
-        //                 validate: [
-        //                     {required: true}
-        //                 ]
-        //             }
-        //         ]
-        //     }
-        // },
-        //
-        // {
-        //     type: 'group',
-        //     title: '批量添加',
-        //     field: 'group',
-        //     value: [{date: '2121-12-12', field: 10, field2: '123123123'}],
-        //     suffix: 'suffixsuffix',
-        //     props: {
-        //         // field: 'field',
-        //         rules: [
-        //             {
-        //                 type: 'col',
-        //                 wrap: {show: true},
-        //                 children: [
-        //                     {
-        //                         type: 'DatePicker',
-        //                         field: 'date',
-        //                         title: 'date',
-        //                         native: false,
-        //                         col: {span: 12}
-        //                     },
-        //                     {
-        //                         type: 'inputNumber',
-        //                         field: 'field',
-        //                         title: 'field',
-        //                         props: {
-        //                             disabled: false
-        //                         },
-        //                         validate: [
-        //                             {required: true, min: 10, type: 'number'}
-        //                         ],
-        //                         col: {
-        //                             span: 12
-        //                         }
-        //                     }
-        //                 ]
-        //
-        //             },
-        //             {
-        //                 type: 'input',
-        //                 field: 'field2',
-        //                 title: 'field2',
-        //                 props: {
-        //                     disabled: false
-        //                 },
-        //                 validate: [
-        //                     {required: true}
-        //                 ]
-        //             }
-        //         ]
-        //     },
-        //     validate: [
-        //         {required: true, min: 3, type: 'array', message: '最少增加3项', trigger: 'change'},
-        //     ]
-        // },
+        {
+            type: 'group',
+            title: '批量添加',
+            field: 'group',
+            value: [{date: '2121-12-12', field: 10, field2: '123123123'}],
+            suffix: 'suffixsuffix',
+            props: {
+                // field: 'field',
+                rule: [
+                    {
+                        type: 'col',
+                        wrap: {show: true},
+                        children: [
+                            {
+                                type: 'DatePicker',
+                                field: 'date',
+                                title: 'date',
+                                native: false,
+                                col: {span: 12}
+                            },
+                            {
+                                type: 'inputNumber',
+                                field: 'field',
+                                title: 'field',
+                                props: {
+                                    disabled: false
+                                },
+                                validate: [
+                                    {required: true, min: 10, type: 'number'}
+                                ],
+                                col: {
+                                    span: 12
+                                }
+                            }
+                        ]
+
+                    },
+                    {
+                        type: 'input',
+                        field: 'field2',
+                        title: 'field2',
+                        props: {
+                            disabled: false
+                        },
+                        validate: [
+                            {required: true}
+                        ]
+                    }
+                ]
+            },
+            validate: [
+                {required: true, min: 3, type: 'array', message: '最少增加3项', trigger: 'change'},
+            ]
+        },
 
         //
         //     //radio 单选框组件
@@ -253,7 +237,6 @@ export default function jsonMock() {
             title: '活动日期',
             // value: '2018-02-20',
             props: {
-                type: 'week', //显示类型 year/month/date/dates/ week/datetime/datetimerange/daterange
                 disabled: false, //禁用
             }
         },
@@ -264,10 +247,9 @@ export default function jsonMock() {
             type: 'timePicker',
             field: 'section_time',
             title: '活动时间',
-            value: ['01:01:01', '12:12:12'],
+            value: '12:12:12',
             props: {
                 disabled: false, //禁用
-                isRange: true
             }
         },
 
@@ -280,7 +262,6 @@ export default function jsonMock() {
             value: 0,
             props: {
                 step: 0.1, //计数器步长,
-                precision: 2, //数值精度
             }
         },
 
@@ -295,20 +276,6 @@ export default function jsonMock() {
                 disabled: false, //是否禁用
             },
         },
-
-
-        //rate 评分组件
-        {
-            type: 'rate',
-            field: 'rate',
-            title: '推荐级别',
-            value: 3.5,
-            props: {
-                max: 10, //最大分值
-                disabled: false, //是否为只读
-            }
-        },
-
 
         //slider 滑块组件
         {
@@ -364,56 +331,38 @@ export default function jsonMock() {
             type: 'tree',
             title: '权限',
             field: 'tree',
-            value: [12, 13, 14],
+            value: [],
             props: {
-                showCheckbox: true,
                 data: [
                     {
-                        title: 'parent 1',
-                        expand: true,
-                        selected: false,
-                        id: 1,
+                        label: '广东省',
+                        value: 'guangdong',
                         children: [
                             {
-                                title: 'parent 1-1',
-                                expand: true,
-                                id: 2,
-                                children: [
-                                    {
-                                        title: 'leaf 1-1-1',
-                                        disabled: true,
-                                        id: 11
-                                    },
-                                    {
-                                        title: 'leaf 1-1-2',
-                                        selected: true,
-                                        id: 12
-                                    }
-                                ]
+                                label: '广州市',
+                                value: 'guangzhou',
                             },
                             {
-                                title: 'parent 1-2',
-                                expand: true,
-                                id: 3,
-                                children: [
-                                    {
-                                        title: 'leaf 1-2-1',
-                                        checked: true,
-                                        id: 13,
-                                    },
-                                    {
-                                        title: 'leaf 1-2-1',
-                                        id: 14,
-                                    }
-                                ]
-                            }
-                        ]
-                    }
+                                label: '深圳市',
+                                value: 'shenzhen',
+                            },
+                        ],
+                    },
+                    {
+                        label: '江苏省',
+                        value: 'jiangsu',
+                        children: [
+                            {
+                                label: '南京市',
+                                value: 'nanjing',
+                            },
+                            {
+                                label: '苏州市',
+                                value: 'suzhou',
+                            },
+                        ],
+                    },
                 ],//展示数据
-                props: {
-                    label: 'title'
-                }, //配置选项
-                type: 'indeterminate',
             }
         }
     ]

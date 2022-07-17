@@ -103,7 +103,7 @@ import jsonMock from './jsonRule';
 export default defineComponent({
     setup() {
         const fapi = ref({ b: 2 });
-        const rule = ref(mock())
+        const rule = ref(jsonMock())
 
         //formData
         const formData = ref({ goods_name: 'asdf12312' })
