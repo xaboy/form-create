@@ -15,7 +15,8 @@ const required = {
                 ...val,
             };
             if (!validate.message) {
-                validate.message = rule.title + '不能为空';
+                let title = rule.title || '';
+                validate.message = ((typeof title === 'object' ? title.title : title) || '') + '不能为空';
             }
             inject.getProp().validate = [validate];
         }
