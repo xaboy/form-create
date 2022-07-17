@@ -1,5 +1,5 @@
 import {FormData, VNodeData} from "@form-create/core";
-import {ButtonProps, ValidateFieldCallback} from "element-plus";
+import {ButtonProps} from "tdesign-vue-next";
 import {Api} from "./index";
 
 type SizeObject = {
@@ -11,7 +11,7 @@ type ComponentSize = 'large' | 'default' | 'small'
 
 type ColProps = {
     tag: string | 'div';
-    span: number | 24;
+    span: number | 12;
     offset: number | 0;
     pull: number | 0;
     push: number | 0;
@@ -135,7 +135,7 @@ export interface ApiAttrs {
 
     validate(callback?: (callback?: (boolean: boolean, object: Object) => void) => void): Promise<any>;
 
-    validateField(field: string, callback?: ValidateFieldCallback): Promise<any>;
+    ValidateField(field: string, callback?: (errorMessage: string) => void): Promise<any>;
 
     submitBtnProps(props: ButtonProps): void;
 
