@@ -2,8 +2,8 @@ import {hasProperty} from '@form-create/utils/lib/type';
 import {defineComponent, markRaw, nextTick} from 'vue';
 import deepExtend, {deepCopy} from '@form-create/utils/lib/deepextend';
 import extend from '@form-create/utils/lib/extend';
-import PlusCircleOutlined from './PlusCircleOutlined';
-import MinusCircleOutlined from './MinusCircleOutlined';
+import PlusCircleOutlined from './PlusCircleOutlined.vue';
+import MinusCircleOutlined from './MinusCircleOutlined.vue';
 
 const NAME = 'fcGroup';
 
