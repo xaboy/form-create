@@ -30,8 +30,11 @@ export default function useCache(Render) {
         },
         getCache(ctx) {
             const cache = this.cache[ctx.id];
-            cache.use = true;
-            return cache.vnode;
+            if(cache){
+                cache.use = true;
+                return cache.vnode;
+            }
+            return undefined;
         }
     })
 
