@@ -2,7 +2,19 @@ import {defineComponent} from 'vue';
 
 const NAME = 'fcUpload';
 
-import {parseFile, parseUpload} from '@form-create/utils/lib/file'
+
+function parseFile(file, i) {
+    return {
+        url: file,
+        name: getFileName(file),
+        status: 'success',
+        uid: i
+    };
+}
+
+function getFileName(file) {
+    return ('' + file).split('/').pop()
+}
 
 export default defineComponent({
     name: NAME,
@@ -22,7 +34,7 @@ export default defineComponent({
     },
     data() {
         return {
-            uploadList: this.modelValue.map(parseFile).map(parseUpload)
+            uploadList: this.modelValue.map(parseFile)
         }
     },
     methods: {

@@ -3,7 +3,18 @@ import toArray from '@form-create/utils/lib/toarray';
 import getSlot from '@form-create/utils/lib/slot';
 import PlusOutlined from './PlusOutlined.vue';
 
-import {parseFile,parseUpload} from '@form-create/utils/lib/file'
+const parseFile = function (file, uid) {
+        return {
+            url: file,
+            name: getFileName(file),
+            status: 'done',
+            uid: -1 * (uid + 1)
+        };
+    }, getFileName = function (file) {
+        return ('' + file).split('/').pop()
+    }, parseUpload = function (file) {
+        return {url: file.url, file, uid: file.uid};
+    };
 
 const NAME = 'fcUpload';
 
