@@ -1,6 +1,6 @@
 {
   "name": "@form-create/component-elm-frame",
-  "version": "2.5.21",
+  "version": "2.5.25",
   "description": "@form-create/element-ui 内置组件",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
