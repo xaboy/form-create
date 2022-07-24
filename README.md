@@ -24,7 +24,7 @@
 - **ant-design-vue**
 - **naive-ui**
 - **arco-design**
-- **tdesign-vue**
+- **tdesign**
 
 > 如果对您有帮助，您可以点右上角 "Star" 支持一下 谢谢！本项目还在不断开发完善中,如有任何建议或问题[请在这里提出](https://github.com/xaboy/form-create/issues/new)
 
@@ -70,7 +70,7 @@
 | @form-create/ant-design-vue [![version](https://img.shields.io/npm/v/@form-create/ant-design-vue/next.svg)](https://www.npmjs.com/package/@form-create/ant-design-vue) [![npm](https://img.shields.io/npm/dt/@form-create/ant-design-vue.svg)](https://www.npmjs.com/package/@form-create/ant-design-vue) | [ant-design-vue 版本](http://form-create.com/v3/ant-design-vue/)     |
 | @form-create/arco-design [![version](https://img.shields.io/npm/v/@form-create/arco-design/next.svg)](https://www.npmjs.com/package/@form-create/arco-design) [![npm](https://img.shields.io/npm/dt/@form-create/arco-design.svg)](https://www.npmjs.com/package/@form-create/arco-design) | [arco-design 版本](http://form-create.com/v3/arco-design/)     |
 | @form-create/naive-ui [![version](https://img.shields.io/npm/v/@form-create/naive-ui/next.svg)](https://www.npmjs.com/package/@form-create/naive-ui) [![npm](https://img.shields.io/npm/dt/@form-create/naive-ui.svg)](https://www.npmjs.com/package/@form-create/naive-ui) | [naive-ui 版本](http://form-create.com/v3/naive-ui/)     |
-| @form-create/tdesign [![version](https://img.shields.io/npm/v/@form-create/tdesign/next.svg)](https://www.npmjs.com/package/@form-create/tdesign) [![npm](https://img.shields.io/npm/dt/@form-create/tdesign.svg)](https://www.npmjs.com/package/@form-create/tdesign) | [tdesign-vue 版本](http://form-create.com/v3/tdesign/)     |
+| @form-create/tdesign [![version](https://img.shields.io/npm/v/@form-create/tdesign/next.svg)](https://www.npmjs.com/package/@form-create/tdesign) [![npm](https://img.shields.io/npm/dt/@form-create/tdesign.svg)](https://www.npmjs.com/package/@form-create/tdesign) | [tdesign 版本](http://form-create.com/v3/tdesign/)     |
 
 
 
@@ -115,7 +115,7 @@ naive-ui
 npm install @form-create/naive-ui@next
 ```
 
-tdesign-vue
+tdesign
 ```shell
 npm install @form-create/tdesign@next
 ```
@@ -167,7 +167,7 @@ app.use(formCreate)
 ```
 
 
-tdesign-vue ^0.17.3
+tdesign ^0.17.3
 ```js
 import formCreate from '@form-create/tdesign'
 app.use(formCreate)

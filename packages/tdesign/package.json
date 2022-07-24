@@ -63,8 +63,7 @@
         "name": "@form-create/tdesign",
         "exportName": "formCreate",
         "extendExternals": [
-            "element-plus",
-            "ElementPlus"
+            "TDesign"
         ],
         "extendGlobal": {
             "vue": "Vue"
