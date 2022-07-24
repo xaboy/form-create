@@ -8,16 +8,17 @@
  */
 import {createApp,h, defineComponent} from 'vue'
 
-import TDesign from 'tdesign-vue-next';
+// import TDesign from 'tdesign-vue-next';
 // 引入组件库全局样式资源
-import 'tdesign-vue-next/es/style/index.css';
+// import 'tdesign-vue-next/es/style/index.css';
+import install from '../auto-import';
 
 import FormCreate from '../src'
 import App from './App.vue'
 
 const app = createApp(App)
-
-app.use(TDesign);
+FormCreate.use(install);
+// app.use(TDesign);
 app.use(FormCreate)
 
 //todo ------------------ Demo 用 ------------------
