@@ -301,10 +301,10 @@ export default {
             }
         });
         return <div class="_fc-frame">{Node}
-            <aModal mask={this.previewMask} title={modalTitle} v-model={this.previewVisible} footer={null}>
+            <aModal props={{mask: this.previewMask, title: modalTitle, footer: null}} v-model={this.previewVisible}>
                 <img style="width: 100%" src={this.previewImage}/>
             </aModal>
-            <aModal {...{props:{width, title, ...this.modal}}} visible={this.frameVisible}
+            <aModal props={{width, title, ...this.modal, visible: this.frameVisible}}
                 on-cancel={() => (this.closeModal(true))}>
                 {(this.frameVisible || !this.reload) ? <iframe ref="frame" src={src} frameborder="0" style={{
                     'height': height,

@@ -315,11 +315,12 @@ export default {
             }
         });
         return <div class="_fc-frame">{node}
-            <el-dialog appendToBody={true} modal={this.previewMask} title={modalTitle} visible={this.previewVisible}
+            <el-dialog
+                props={{appendToBody: true, modal: this.previewMask, title: modalTitle, visible: this.previewVisible}}
                 on-close={this.handleCancel}>
                 <img style="width: 100%" src={this.previewImage}/>
             </el-dialog>
-            <el-dialog appendToBody={true} {...{props:{width, title, ...this.modal}}} visible={this.frameVisible}
+            <el-dialog props={{width, title, appendToBody: true, ...this.modal, visible: this.frameVisible}}
                 on-close={() => (this.closeModel(true))}>
                 {(this.frameVisible || !this.reload) ? <iframe ref="frame" src={src} frameBorder="0" style={{
                     'height': height,

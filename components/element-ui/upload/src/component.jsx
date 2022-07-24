@@ -147,7 +147,7 @@ export default {
         },
         update() {
             let files = this.$refs.upload.uploadFiles.map((file) => file.url).filter((url) => url !== undefined);
-            if(this.cacheFiles.length !== files.length){
+            if (this.cacheFiles.length !== files.length) {
                 this.cacheFiles = [...files];
                 this.$emit('input', this.limit === 1 ? (files[0] || '') : files);
             }
@@ -166,8 +166,13 @@ export default {
         return (
             <div
                 class='_fc-upload'>{[this.formCreateInject.prop.props.showFileList ? [] : this.makeFiles(), this.makeUpload()]}
-                <el-dialog appendToBody={true} modal={this.previewMask} title={this.modalTitle}
-                    visible={this.previewVisible}
+                <el-dialog
+                    props={{
+                        appendToBody: true,
+                        modal: this.previewMask,
+                        title: this.modalTitle,
+                        visible: this.previewVisible
+                    }}
                     on-close={this.handleCancel}>
                     <img alt="example" style="width: 100%" src={this.previewImage}/>
                 </el-dialog>

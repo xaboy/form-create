@@ -24,7 +24,7 @@ export default {
         toFormValue(value) {
             return toArray(value);
         },
-        toValue(formValue,ctx) {
+        toValue(formValue, ctx) {
             return ctx.prop.props.limit === 1 ? (formValue[0] || '') : formValue;
         }
     },
@@ -102,10 +102,12 @@ export default {
         return <div>
             <AUpload {...ctx} on-preview={this.onHandle.bind(this)}
                 on-change={this.handleChange}
-                ref="upload" defaultFileList={this.defaultUploadList}>
-                {isShow ? <template slot="default">{this.$slots.default || <AIcon type="plus"/>}</template> : null}{getSlot(this.$slots, ['default'])}
+                ref="upload" props={{defaultFileList: this.defaultUploadList}}>
+                {isShow ? <template slot="default">{this.$slots.default ||
+                <AIcon type="plus"/>}</template> : null}{getSlot(this.$slots, ['default'])}
             </AUpload>
-            <aModal mask={this.previewMask} title={this.modalTitle} v-model={this.previewVisible} footer={null}>
+            <aModal props={{mask: this.previewMask, title: this.modalTitle, footer: null}}
+                v-model={this.previewVisible}>
                 <img style="width: 100%" src={this.previewImage}/>
             </aModal>
         </div>;

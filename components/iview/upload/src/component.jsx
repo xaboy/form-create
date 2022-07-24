@@ -55,7 +55,7 @@ export default function createUpload(config) {
                 uploadList: [],
                 previewVisible: false,
                 previewImage: '',
-                cacheFiles:[],
+                cacheFiles: [],
             }
         },
         created() {
@@ -140,12 +140,12 @@ export default function createUpload(config) {
                                 size: 20
                             }}/>
                         </div>}
-                    </template> : null}{getSlot(this.$slots,['default'])}
+                    </template> : null}{getSlot(this.$slots, ['default'])}
                 </Upload>;
             },
             update() {
                 let files = this.$refs.upload.fileList.map((file) => file.url).filter((url) => url !== undefined);
-                if(this.cacheFiles.length !== files.length){
+                if (this.cacheFiles.length !== files.length) {
                     this.cacheFiles = [...files];
                     this.$emit('input', this.maxLength === 1 ? (files[0] || '') : files);
                 }
@@ -163,7 +163,8 @@ export default function createUpload(config) {
             return (
                 <div
                     class="_fc-upload">{[this.formCreateInject.prop.props.showUploadList ? [] : this.makeFiles(), this.makeUpload()]}
-                    <Modal title={this.modalTitle} v-model={this.previewVisible} footerHide={true}>
+                    <Modal v-model={this.previewVisible}
+                        props={{title: this.modalTitle, footerHide: true}}>
                         <img alt="example" style="width: 100%" src={this.previewImage}/>
                     </Modal>
                 </div>);

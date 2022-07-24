@@ -83,7 +83,6 @@ export default {
                 'emit-event': this.emitEvent,
                 input: this.add$f
             }}
-            rule={rule}
-            option={options} extendOption={true}/>
+            props={{rule, option: options, extendOption: true}}/>
     }
 }

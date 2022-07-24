@@ -43,11 +43,11 @@ export default {
         this.update();
     },
     render() {
-        return <RadioGroup {...this.formCreateInject.prop} value={this.trueValue}
+        return <RadioGroup {...this.formCreateInject.prop} props={{value: this.trueValue}}
             on-input={this.onInput}>{this.options().map((opt, index) => {
                 const props = {...opt};
                 delete props.value;
-                return <Radio {...{props}} key={'' + index + '-' + opt.value}/>
+                return <Radio props={props} key={'' + index + '-' + opt.value}/>
             })}{getSlot(this.$slots)}</RadioGroup>
     }
 }

@@ -47,11 +47,12 @@ export default {
         this.update();
     },
     render() {
-        return <CheckboxGroup {...this.formCreateInject.prop} value={this.trueValue}
+        return <CheckboxGroup {...this.formCreateInject.prop}
+            props={{value: this.trueValue}}
             on-input={this.onInput}>{this.options().map((opt, index) => {
                 const props = {...opt};
                 delete props.value;
-                return <Checkbox {...{props}} key={'' + index + '-' + opt.value}/>
+                return <Checkbox props={props} key={'' + index + '-' + opt.value}/>
             })}{getSlot(this.$slots)}</CheckboxGroup>
     }
 }

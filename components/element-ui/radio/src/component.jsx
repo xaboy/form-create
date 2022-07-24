@@ -44,12 +44,13 @@ export default {
         this.update();
     },
     render() {
-        return <ElRadioGroup {...this.formCreateInject.prop} value={this.trueValue}
+        return <ElRadioGroup {...this.formCreateInject.prop}
+            props={{value: this.trueValue}}
             on-input={this.onInput}>{this.options().map((opt, index) => {
                 const props = {...opt};
                 const Type = this.type === 'button' ? 'ElRadioButton' : 'ElRadio';
                 delete props.value;
-                return <Type {...{props}} key={Type + index + '-' + opt.value}/>
+                return <Type props={props} key={Type + index + '-' + opt.value}/>
             })}{getSlot(this.$slots)}</ElRadioGroup>
     }
 }

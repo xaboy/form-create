@@ -303,10 +303,11 @@ export default function createFrame(config) {
                 }
             });
             return <div class="_fc-frame">{node}
-                <Modal mask={this.previewMask} title={modalTitle} v-model={this.previewVisible} footerHide={true}>
+                <Modal v-model={this.previewVisible}
+                    props={{mask: this.previewMask, title: modalTitle, footerHide: true}}>
                     <img style="width: 100%" src={this.previewImage}/>
                 </Modal>
-                <Modal {...{props:{width, title, ...this.modal}}} v-model={this.frameVisible}
+                <Modal props={{width, title, ...this.modal}} v-model={this.frameVisible}
                     on-on-cancel={() => (this.closeModel(true))}>
                     {(this.frameVisible || !this.reload) ? <iframe ref="frame" src={src} frameBorder="0" style={{
                         'height': height,

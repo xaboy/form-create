@@ -282,16 +282,22 @@ export default {
                 return <ARow align="middle" type="flex" key={key}
                     style="border-bottom:1px dashed #d9d9d9;margin-bottom:10px;">
                     <ACol span={button ? 20 : 24}><Type
-                        key={key} inFor={true}
+                        key={key}
                         on={{
                             'update:value': (formData) => this.formData(key, formData),
                             'emit-event': (name, ...args) => this.emitEvent(name, args, index, key),
                             input: ($f) => this.add$f(index, key, $f)
                         }}
-                        value={this.field ? {[this.field]: this._value(this.value[index])} : this.value[index]}
-                        rule={rule}
-                        option={options} extendOption={true}/></ACol>
-                    {button ? <ACol span={2} pull={1} push={1}>{this.makeIcon(keys.length, index, key)}</ACol> : null}
+                        props={{
+                            inFor: true,
+                            value: this.field ? {[this.field]: this._value(this.value[index])} : this.value[index],
+                            rule,
+                            option: options,
+                            extendOption: true
+                        }}
+                    /></ACol>
+                    {button ? <ACol
+                        props={{span: 1, pull: 1, push: 1}}>{this.makeIcon(keys.length, index, key)}</ACol> : null}
                 </ARow>
             })}</div>
     }

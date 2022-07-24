@@ -282,16 +282,21 @@ export default {
                 return <ElRow align="middle" type="flex" key={key}
                     style="border-bottom:1px dashed #DCDFE6;margin-bottom:10px;">
                     <ElCol span={button ? 20 : 24}><ElFormItem><Type
-                        key={key} inFor={true}
+                        key={key}
                         on={{
                             'update:value': (formData) => this.formData(key, formData),
                             'emit-event': (name, ...args) => this.emitEvent(name, args, index, key),
                             input: ($f) => this.add$f(index, key, $f)
                         }}
-                        value={this.field ? {[this.field]: this._value(this.value[index])} : this.value[index]}
-                        rule={rule}
-                        option={options} extendOption={true}/></ElFormItem></ElCol>
-                    {button ? <ElCol span={2} pull={1} push={1}>{this.makeIcon(keys.length, index, key)}</ElCol> : null}
+                        props={{
+                            value: this.field ? {[this.field]: this._value(this.value[index])} : this.value[index],
+                            rule,
+                            option: options,
+                            extendOption: true,
+                            inFor: true
+                        }}/></ElFormItem></ElCol>
+                    {button ? <ElCol
+                        props={{span: 2, pull: 1, push: 1}}>{this.makeIcon(keys.length, index, key)}</ElCol> : null}
                 </ElRow>
             })}</div>
     }
