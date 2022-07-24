@@ -25,8 +25,6 @@
 - **element-ui**
 - **ant-design-vue**
 
-If you have a form component suitable for form-create, please feel free to [click here to leave a message](https://github.com/xaboy/form-create/issues/124)
-
 >  If it helps, you can click on "Star" in the upper right corner. Thank you!
 >  The project is still being developed and improved. If there are any 'recommendations or questions, please ask [here](https://github.com/xaboy/form-create/issues/new)
 
@@ -76,8 +74,6 @@ If you have a form component suitable for form-create, please feel free to [clic
 | @form-create/designer [![version](https://img.shields.io/npm/v/@form-create/designer.svg)](https://www.npmjs.com/package/@form-create/designer) [![npm](https://img.shields.io/npm/dt/@form-create/designer.svg)](https://www.npmjs.com/package/@form-create/designer) | [Form Designer](http://form-create.com/designer)     |
 
 ## Example
-
-- [Demo case](https://github.com/HeyMrLin/fc-demo) ([Demo station](http://jeekweb.pro/form-create-demo))
 
 - [Generate a form using the maker generator](https://jsrun.net/NQhKp/edit)
 
