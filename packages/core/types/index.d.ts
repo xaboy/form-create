@@ -141,6 +141,11 @@ export interface VNodeData {
     directives?: VNodeDirective[];
 }
 
+
+export interface VNodeRule extends VNodeData {
+    children?: Array<VNodeRule | string>;
+}
+
 export interface Control<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
     value?: any;
     handle?: (val: any, api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => boolean;
@@ -157,8 +162,8 @@ export interface BaseRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> extend
     nativeEmit?: Array<string | { name: string; inject: any }>;
     link?: string[];
     sync?: string[];
-    prefix?: string | VNodeData;
-    suffix?: string | VNodeData;
+    prefix?: string | VNodeRule;
+    suffix?: string | VNodeRule;
     update?: (value: any, $rule: this, api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => boolean | void;
     options?: Object[];
     optionsTo?: string;
@@ -253,9 +258,9 @@ export class BaseCreator<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
 
     sync(prop: string[]): this;
 
-    prefix(prop: string | VNodeData): this;
+    prefix(prop: string | VNodeRule): this;
 
-    suffix(prop: string | VNodeData): this;
+    suffix(prop: string | VNodeRule): this;
 
     update(prop: (value: any, $rule: FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => boolean | void): this;
 
