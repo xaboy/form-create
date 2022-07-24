@@ -103,7 +103,11 @@ function run(inject, rule, api) {
         ...option,
         onSuccess(body) {
             if (check()) return;
-            set((option.parse || ((v) => v.data))(body, rule, api))
+            let fn = (v) => v.data;
+            if(is.Function(option.parse)){
+                fn = option.parse;
+            }
+            set(fn(body, rule, api))
             api.sync(rule);
         },
         onError(e) {
