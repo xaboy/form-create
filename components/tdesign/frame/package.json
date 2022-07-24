@@ -1,7 +1,7 @@
 {
-  "name": "@form-create/component-td-frame",
+  "name": "@form-create/component-tdesign-frame",
   "version": "3.1.3",
-  "description": "@form-create/td-ui 内置组件",
+  "description": "@form-create/tdesign 内置组件",
   "main": "./dist/index.min.js",
   "module": "./dist/index.esm.js",
   "unpkg": "./dist/index.min.js",
@@ -21,7 +21,7 @@
   "keywords": [
     "@form-create",
     "form-create-component",
-    "tdesign"
+    "tdesign-vue"
   ],
   "repository": {
     "type": "git",
@@ -40,7 +40,7 @@
     "access": "public"
   },
   "buildFormCreateOptions": {
-    "name": "@form-create/component-arco-frame",
+    "name": "@form-create/component-tdesign-frame",
     "exportName": "FcFrame",
     "formats": [
       "umd",

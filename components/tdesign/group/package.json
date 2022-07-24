@@ -1,5 +1,5 @@
 {
-  "name": "@form-create/component-td-group",
+  "name": "@form-create/component-tdesign-group",
   "version": "3.0.1",
   "description": "@form-create/tdesign 内置组件",
   "main": "./dist/index.min.js",
@@ -21,7 +21,7 @@
   "keywords": [
     "@form-create",
     "form-create-component",
-    "tdesign"
+    "tdesign-vue"
   ],
   "repository": {
     "type": "git",
@@ -40,7 +40,7 @@
     "access": "public"
   },
   "buildFormCreateOptions": {
-    "name": "@form-create/component-elm-group",
+    "name": "@form-create/component-tdesign-group",
     "exportName": "FcGroup",
     "formats": [
       "umd",

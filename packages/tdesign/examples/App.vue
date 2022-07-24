@@ -4,7 +4,7 @@
  * @LastEditors  : djkloop
  * @LastEditTime : 2020-08-15 22:00:47
  * @Description  : 头部注释
- * @FilePath     : /form-create2/packages/tdsign-vue/examples/App.vue
+ * @FilePath     : /form-create2/packages/tdesign/examples/App.vue
 -->
 <template>
     <div>

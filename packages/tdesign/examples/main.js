@@ -4,7 +4,7 @@
  * @LastEditors  : djkloop
  * @LastEditTime : 2020-08-15 22:01:32
  * @Description  : 头部注释
- * @FilePath     : /form-create2/packages/tdsign-vue/examples/main.js
+ * @FilePath     : /form-create2/packages/tdesign/examples/main.js
  */
 import {createApp,h, defineComponent} from 'vue'
 

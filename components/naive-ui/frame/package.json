@@ -40,7 +40,7 @@
     "access": "public"
   },
   "buildFormCreateOptions": {
-    "name": "@form-create/component-arco-frame",
+    "name": "@form-create/component-naive-frame",
     "exportName": "FcFrame",
     "formats": [
       "umd",

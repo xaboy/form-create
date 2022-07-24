@@ -24,6 +24,7 @@
 - **ant-design-vue**
 - **naive-ui**
 - **arco-design**
+- **tdesign-vue**
 
 如果您有适合 form-create 的表单组件, 欢迎[点击这里留言](https://github.com/xaboy/form-create/issues/124)
 
@@ -71,6 +72,7 @@
 | @form-create/ant-design-vue [![version](https://img.shields.io/npm/v/@form-create/ant-design-vue/next.svg)](https://www.npmjs.com/package/@form-create/ant-design-vue) [![npm](https://img.shields.io/npm/dt/@form-create/ant-design-vue.svg)](https://www.npmjs.com/package/@form-create/ant-design-vue) | [ant-design-vue 版本](http://form-create.com/v3/ant-design-vue/)     |
 | @form-create/arco-design [![version](https://img.shields.io/npm/v/@form-create/arco-design/next.svg)](https://www.npmjs.com/package/@form-create/arco-design) [![npm](https://img.shields.io/npm/dt/@form-create/arco-design.svg)](https://www.npmjs.com/package/@form-create/arco-design) | [arco-design 版本](http://form-create.com/v3/arco-design/)     |
 | @form-create/naive-ui [![version](https://img.shields.io/npm/v/@form-create/naive-ui/next.svg)](https://www.npmjs.com/package/@form-create/naive-ui) [![npm](https://img.shields.io/npm/dt/@form-create/naive-ui.svg)](https://www.npmjs.com/package/@form-create/naive-ui) | [naive-ui 版本](http://form-create.com/v3/naive-ui/)     |
+| @form-create/tdesign [![version](https://img.shields.io/npm/v/@form-create/tdesign/next.svg)](https://www.npmjs.com/package/@form-create/tdesign) [![npm](https://img.shields.io/npm/dt/@form-create/tdesign.svg)](https://www.npmjs.com/package/@form-create/tdesign) | [tdesign-vue 版本](http://form-create.com/v3/tdesign/)     |
 
 
 
@@ -117,6 +119,11 @@ naive-ui
 npm install @form-create/naive-ui@next
 ```
 
+tdesign-vue
+```shell
+npm install @form-create/tdesign@next
+```
+
 ## 引入
 
 **CDN:**
@@ -160,6 +167,13 @@ app.use(formCreate)
 naive-ui ^2.0
 ```js
 import formCreate from '@form-create/naive-ui'
+app.use(formCreate)
+```
+
+
+tdesign-vue ^0.17.3
+```js
+import formCreate from '@form-create/tdesign'
 app.use(formCreate)
 ```
 
@@ -222,7 +236,7 @@ $ npm run dev:antd
 
 ## 感谢
 
-[时光弧线](https://github.com/shiguanghuxian)  |  [wxxtqk](https://github.com/wxxtqk)  |  [williamBoss](https://github.com/williamBoss)  |  [HeyMrLin](https://github.com/HeyMrLin)  |  [djkloop](https://github.com/djkloop) | [JetBrains](https://www.jetbrains.com/?from=form-create)
+[时光弧线](https://github.com/shiguanghuxian)  |  [wxxtqk](https://github.com/wxxtqk)  |  [williamBoss](https://github.com/williamBoss)  |  [HeyMrLin](https://github.com/HeyMrLin)  |  [djkloop](https://github.com/djkloop)  |  [daiwenyong](https://github.com/daiwenyong) | [JetBrains](https://www.jetbrains.com/?from=form-create)
 
 
 ## 捐赠
