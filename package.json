@@ -35,10 +35,10 @@
         "ora": "^5.0.0",
         "rimraf": "^3.0.2",
         "shelljs": "^0.8.4",
-        "vue": "^2.6.11",
+        "vue": "^2.7.8",
         "vue-loader": "^15.9.3",
         "vue-style-loader": "^4.1.2",
-        "vue-template-compiler": "^2.6.11"
+        "vue-template-compiler": "^2.7.8"
     },
     "config": {
         "commitizen": {

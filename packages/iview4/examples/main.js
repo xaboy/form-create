@@ -11,7 +11,6 @@ import ViewUI from 'view-design'
 import 'view-design/dist/styles/iview.css'
 import FormCreate from '../src'
 
-Vue.use(VueCompositionAPI)
 Vue.use(ViewUI)
 Vue.use(FormCreate)
 
@@ -19,12 +18,10 @@ Vue.use(FormCreate)
 
 import VJsoneditor from 'v-jsoneditor'
 import addressEffect from './addressEffect';
-import VueCompositionAPI from '@vue/composition-api'
 import App from './App.vue'
 import wangEditor from '@form-create/component-wangeditor/src'
 
 
-Vue.use(VueCompositionAPI)
 Vue.use(VJsoneditor)
 FormCreate.register(addressEffect);
 FormCreate.component('wangEditor', wangEditor);

@@ -85,7 +85,7 @@
 </template>
 
 <script>
-    import {defineComponent, ref, watch, onMounted} from '@vue/composition-api'
+    import {defineComponent, ref, watch, onMounted} from 'vue'
     import mock from './rule';
     import jsonMock from './jsonRule';
 
