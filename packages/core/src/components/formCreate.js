@@ -132,7 +132,7 @@ export default function $FormCreate(FormCreate) {
                 vm.setupState.renderRule();
             })
 
-            watch(props.option, (n) => {
+            watch(() => props.option, (n) => {
                 fc.initOptions(n);
                 fapi.refresh();
             });
