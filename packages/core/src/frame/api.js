@@ -79,8 +79,8 @@ export default function Api(h) {
             h.deferSyncValue(() => {
                 api.fields().forEach(key => {
                     const ctxs = h.fieldCtx[key];
-                    const flag = hasProperty(data, key);
                     if (ctxs) {
+                        const flag = hasProperty(data, key);
                         ctxs.forEach(ctx => {
                             ctx.rule.value = flag ? data[key] : undefined;
                         })
