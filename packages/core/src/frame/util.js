@@ -32,7 +32,11 @@ export function mergeRule(rule, merge) {
 }
 
 export function getRule(rule) {
-    return is.Function(rule.getRule) ? rule.getRule() : rule;
+    const r = is.Function(rule.getRule) ? rule.getRule() : rule;
+    if (!r.type) {
+        r.type = 'input';
+    }
+    return r;
 }
 
 export function mergeGlobal(target, merge) {
