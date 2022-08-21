@@ -108,7 +108,7 @@ export default function useInput(Handler) {
             if (this.deferSyncFn) {
                 return this.deferSyncFn.sync = true;
             }
-            this.vm._updateValue({...this.form});
+            this.vm._updateValue({...(this.options.appendValue ? this.appendData : {}), ...this.form});
         },
         isChange(ctx, value) {
             return JSON.stringify(ctx.rule.value, strFn) !== JSON.stringify(value === null ? undefined : value, strFn);

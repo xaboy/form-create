@@ -75,15 +75,19 @@ export default function Api(h) {
             return copy(ctx.rule.value);
         },
         coverValue(formData) {
+            const data = {...(formData || {})};
             h.deferSyncValue(() => {
                 api.fields().forEach(key => {
                     const ctxs = h.fieldCtx[key];
-                    if (!ctxs) return h.appendData[key] = formData[key];
-                    const flag = hasProperty(formData, key);
-                    ctxs.forEach(ctx => {
-                        ctx.rule.value = flag ? formData[key] : undefined;
-                    })
+                    const flag = hasProperty(data, key);
+                    if (ctxs) {
+                        ctxs.forEach(ctx => {
+                            ctx.rule.value = flag ? data[key] : undefined;
+                        })
+                        delete data[key];
+                    }
                 });
+                extend(h.appendData, data);
             })
         },
         setValue(field) {
