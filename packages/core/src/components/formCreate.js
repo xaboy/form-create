@@ -135,7 +135,7 @@ export default function $FormCreate(FormCreate) {
             watch(() => props.option, (n) => {
                 fc.initOptions(n);
                 fapi.refresh();
-            });
+            }, {deep: true});
 
             watch(modelValue, (n) => {
                 if (JSON.stringify(n || {}) === data.updateValue) return;
