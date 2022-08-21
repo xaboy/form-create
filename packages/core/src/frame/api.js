@@ -308,7 +308,7 @@ export default function Api(h) {
                     attr = attr.substr(1);
                 }
                 ctx.clearEffectData(attr);
-                h.refresh();
+                api.sync(id);
             }
         },
         updateValidate(id, validate, merge) {

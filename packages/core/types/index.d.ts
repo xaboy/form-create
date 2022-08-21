@@ -66,7 +66,7 @@ export interface FormCreate<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs, Ap
 
     (rule: FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>[], option?: Options<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>): Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
 
-    fetch(option: FetchOption): void,
+    fetch(option: FetchOption, effectArgs: Object): void,
 
     component(name: string, component: any): void;
 
