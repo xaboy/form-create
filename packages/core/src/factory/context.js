@@ -22,7 +22,7 @@ function bind(ctx) {
     });
 }
 
-export default function RuleContext(handle, rule) {
+export default function RuleContext(handle, rule, defaultValue) {
     const id = unique();
     const isInput = !!rule.field;
     extend(this, {
@@ -46,7 +46,7 @@ export default function RuleContext(handle, rule) {
         refRule: {},
         input: isInput,
         el: undefined,
-        defaultValue: isInput ? deepCopy(rule.value) : undefined,
+        defaultValue: isInput ? deepCopy(defaultValue) : undefined,
         field: rule.field || undefined
     })
 

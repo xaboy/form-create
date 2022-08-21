@@ -139,8 +139,10 @@ export default function useLoader(Handler) {
                 let ctx;
                 let isCopy = false;
                 let isInit = !!_rule.__fc__;
+                let defaultValue = rule.value;
                 if (isInit) {
                     ctx = _rule.__fc__;
+                    defaultValue = ctx.defaultValue;
                     const check = !ctx.check(this);
                     if (ctx.deleted) {
                         if (check) {
@@ -161,7 +163,8 @@ export default function useLoader(Handler) {
                     }
                 }
                 if (!ctx) {
-                    ctx = new RuleContext(this, this.parseRule(_rule));
+                    const rule = this.parseRule(_rule);
+                    ctx = new RuleContext(this, rule, isInit ? defaultValue : rule.value);
                     this.bindParser(ctx);
                 } else {
                     if (ctx.originType !== ctx.rule.type) {
