@@ -281,7 +281,7 @@ export default {
                 const {rule, options} = this.cacheRule[key];
                 return <ElRow align="middle" type="flex" key={key}
                     style="border-bottom:1px dashed #DCDFE6;margin-bottom:10px;">
-                    <ElCol span={button ? 20 : 24}><ElFormItem><Type
+                    <ElCol span={button ? 20 : 24}><Type
                         key={key}
                         on={{
                             'update:value': (formData) => this.formData(key, formData),
@@ -294,7 +294,7 @@ export default {
                             option: options,
                             extendOption: true,
                             inFor: true
-                        }}/></ElFormItem></ElCol>
+                        }}/></ElCol>
                     {button ? <ElCol
                         props={{span: 2, pull: 1, push: 1}}>{this.makeIcon(keys.length, index, key)}</ElCol> : null}
                 </ElRow>

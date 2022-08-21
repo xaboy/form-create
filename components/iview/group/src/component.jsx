@@ -282,7 +282,7 @@ export default function createGroup(config) {
                     const {rule, options} = this.cacheRule[key];
                     return <Row align="middle" type="flex" key={key}
                         style="border-bottom:1px dashed #dcdee2;margin-bottom:10px;">
-                        <Col span={button ? 20 : 24}><FormItem><Type
+                        <Col span={button ? 20 : 24}><Type
                             key={key}
                             on={{
                                 'update:value': (formData) => this.formData(key, formData),
@@ -296,7 +296,7 @@ export default function createGroup(config) {
                                 extendOption: true,
                                 inFor: true
                             }}
-                        /></FormItem></Col>
+                        /></Col>
                         {button ? <Col
                             props={{span: 2, pull: 1, push: 1}}>{this.makeIcon(keys.length, index, key)}</Col> : null}
                     </Row>
