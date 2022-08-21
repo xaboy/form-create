@@ -135,7 +135,11 @@ extend(RuleContext.prototype, {
         return this.payload[name];
     },
     clearEffectData(name) {
-        delete this.payload[name]
+        if (name === undefined) {
+            this.payload = {};
+        } else {
+            delete this.payload[name];
+        }
     },
     updateKey(flag) {
         this.key = unique();

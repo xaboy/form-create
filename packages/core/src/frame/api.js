@@ -301,6 +301,16 @@ export default function Api(h) {
                 $set(ctx.rule.effect, attr, value);
             }
         },
+        clearEffectData(id, attr){
+            const ctx = h.getCtx(id);
+            if (ctx) {
+                if (attr && attr[0] === '$') {
+                    attr = attr.substr(1);
+                }
+                ctx.clearEffectData(attr);
+                h.refresh();
+            }
+        },
         updateValidate(id, validate, merge) {
             if (merge) {
                 api.mergeRule(id, {validate})
