@@ -334,6 +334,8 @@ export interface BaseOptions<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
     };
     injectEvent?: boolean;
     preview?: boolean;
+    appendValue?: boolean;
+    forceCoverValue?: boolean;
     formData?: FormData;
     el?: Element | string;
     onSubmit?: (formData: FormData, api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;

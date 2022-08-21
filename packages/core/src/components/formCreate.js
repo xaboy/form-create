@@ -139,7 +139,7 @@ export default function $FormCreate(FormCreate) {
 
             watch(modelValue, (n) => {
                 if (JSON.stringify(n || {}) === data.updateValue) return;
-                fapi.setValue(n || {});
+                fapi.config.forceCoverValue ? fapi.coverValue(n || {}) : fapi.setValue(n || {});
             }, {deep: true});
 
             return {
