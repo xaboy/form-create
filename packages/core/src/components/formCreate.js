@@ -83,7 +83,7 @@ export default function $FormCreate(FormCreate) {
             value: {
                 handler(n) {
                     if (JSON.stringify(n || {}) === this.updateValue) return;
-                    (this.option && this.option.forceCoverValue) ? this.$f.coverValue(n || {}) : this.$f.setValue(n || {});
+                    this.$f.config.forceCoverValue ? this.$f.coverValue(n || {}) : this.$f.setValue(n || {});
                 },
                 deep: true
             },
