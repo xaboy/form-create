@@ -9,7 +9,10 @@ export default function useEffect(Handler) {
         useProvider() {
             const ps = this.fc.providers;
             Object.keys(ps).forEach(k => {
-                const prop = ps[k];
+                let prop = ps[k];
+                if(is.Function(prop)){
+                    prop = prop(this.fc);
+                }
                 prop._c = getComponent(prop);
                 this.onEffect(prop);
                 this.providers[k] = prop;
