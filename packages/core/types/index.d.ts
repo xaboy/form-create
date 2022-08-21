@@ -307,6 +307,7 @@ export interface BaseOptions<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
     };
     injectEvent?: boolean;
     appendValue?: boolean;
+    forceCoverValue?: boolean;
     preview?: boolean;
     formData?: FormData;
     el?: Element | string;
