@@ -1,7 +1,6 @@
 import extend from '@form-create/utils/lib/extend';
 import {byCtx, copyRule, enumerable, getRule, invoke, parseFn} from '../frame/util';
 import is, {hasProperty} from '@form-create/utils/lib/type';
-import {err} from '@form-create/utils/lib/console';
 import {baseRule} from '../factory/creator';
 import RuleContext from '../factory/context';
 import mergeProps from '@form-create/utils/lib/mergeprops';
@@ -115,9 +114,6 @@ export default function useLoader(Handler) {
             rules.map((_rule, index) => {
                 if (parent && (is.String(_rule) || is.Undef(_rule))) return;
                 if (!this.pageEnd && !parent && index >= this.first) return;
-
-                if (!is.Object(_rule) || !getRule(_rule).type)
-                    return err('未定义生成规则的 type 字段', _rule);
 
                 if (_rule.__fc__ && _rule.__fc__.root === rules && this.ctxs[_rule.__fc__.id]) {
                     loadChildren(_rule.__fc__.loadChildrenPending(), _rule.__fc__);

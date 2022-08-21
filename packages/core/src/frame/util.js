@@ -32,7 +32,11 @@ export function mergeRule(rule, merge) {
 }
 
 export function getRule(rule) {
-    return is.Function(rule.getRule) ? rule.getRule() : rule;
+    const r = is.Function(rule.getRule) ? rule.getRule() : rule;
+    if (!r.type) {
+        r.type = 'input';
+    }
+    return r;
 }
 
 export function mergeGlobal(target, merge) {
@@ -89,7 +93,7 @@ export function makeSlotBag() {
                 if (Array.isArray(fn)) {
                     children.push(...fn);
                 } else if (is.Function(fn)) {
-                    const res = fn(...(val||[]));
+                    const res = fn(...(val || []));
                     if (Array.isArray(res)) {
                         children.push(...res);
                     } else {
