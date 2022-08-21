@@ -11,7 +11,7 @@ function bind(ctx) {
     });
 }
 
-export default function RuleContext(handle, rule) {
+export default function RuleContext(handle, rule, defaultValue) {
     const id = unique();
 
     extend(this, {
@@ -33,7 +33,7 @@ export default function RuleContext(handle, rule) {
         payload: {},
         input: !!rule.field,
         el: undefined,
-        defaultValue: rule.field ? deepCopy(rule.value) : undefined,
+        defaultValue: rule.field ? deepCopy(defaultValue) : undefined,
         field: rule.field || undefined,
     })
 
