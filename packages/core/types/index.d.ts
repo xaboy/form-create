@@ -60,7 +60,7 @@ export interface FormCreate<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs, Ap
 
     (rule: FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>[], option?: Options<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>): Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
 
-    fetch(option: FetchOption): void,
+    fetch(option: FetchOption, effectArgs: Object): void,
 
     component(name: string, component: any): void;
 
@@ -414,6 +414,8 @@ export interface BaseApi<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
     clearChangeStatus(): void;
 
     setEffect(id: string, attr: string, value: any): void;
+
+    clearEffectData(id: string, attr?: string): void;
 
     updateRule(field: string, rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>): void;
 
