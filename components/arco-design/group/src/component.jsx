@@ -64,7 +64,7 @@ export default defineComponent({
             form: markRaw(this.formCreateInject.form.$form())
         }
     },
-    emits: ['update:modelValue', 'change', 'itemMounted', 'remove'],
+    emits: ['update:modelValue', 'change', 'itemMounted', 'remove', 'add'],
     watch: {
         rule: {
             handler(n, o) {
@@ -109,7 +109,7 @@ export default defineComponent({
                 let keys = Object.keys(this.cacheRule), total = keys.length, len = total - n.length;
                 if (len < 0) {
                     for (let i = len; i < 0; i++) {
-                        this.addRule(n.length + i);
+                        this.addRule(n.length + i, true);
                     }
                     for (let i = 0; i < total; i++) {
                         this.setValue(keys[i], n[i]);
