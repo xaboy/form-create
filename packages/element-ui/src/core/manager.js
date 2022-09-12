@@ -161,7 +161,6 @@ export default {
             delete prop.props.info;
             delete prop.props.align;
             delete prop.props.native;
-            delete prop.props.children;
 
             const field = 'content';
             if (infoProp.info && !hasProperty(prop.props, field)) {
