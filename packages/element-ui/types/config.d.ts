@@ -3,30 +3,30 @@ import {ButtonProps, ValidateFieldCallback} from "element-plus";
 import {Api} from "./index";
 
 type SizeObject = {
-    span: number
-    offset: number
+    span?: number
+    offset?: number
 }
 
 type ComponentSize = 'large' | 'default' | 'small'
 
 type ColProps = {
-    tag: string | 'div';
-    span: number | 24;
-    offset: number | 0;
-    pull: number | 0;
-    push: number | 0;
-    xs: number | SizeObject;
-    sm: number | SizeObject;
-    md: number | SizeObject;
-    lg: number | SizeObject;
-    xl: number | SizeObject;
+    tag?: string | 'div';
+    span?: number | 24;
+    offset?: number | 0;
+    pull?: number | 0;
+    push?: number | 0;
+    xs?: number | SizeObject;
+    sm?: number | SizeObject;
+    md?: number | SizeObject;
+    lg?: number | SizeObject;
+    xl?: number | SizeObject;
 }
 
 type RowProps = {
-    tag: string | 'div',
-    gutter: number | 0,
-    justify: string | 'start',
-    align: string | 'top',
+    tag?: string | 'div',
+    gutter?: number | 0,
+    justify?: string | 'start',
+    align?: string | 'top',
 }
 
 export interface OptionAttrs {
