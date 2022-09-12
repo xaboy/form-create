@@ -25,7 +25,7 @@ export default function useInput(Handler) {
             }
         },
         setFormData(ctx, value) {
-            $set(this.formData, ctx.id, value === null ? undefined : value);
+            $set(this.formData, ctx.id, value);
         },
         getFormData(ctx) {
             return this.formData[ctx.id];
