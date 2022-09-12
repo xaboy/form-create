@@ -21,6 +21,12 @@ function tidyBool(opt, name) {
     }
 }
 
+function tidyRule(rule) {
+    const _rule = {...rule};
+    delete _rule.children;
+    return _rule;
+}
+
 export default {
     validate(params) {
         return new Promise((resolve, reject) => {
@@ -142,7 +148,7 @@ export default {
         if (!isFalse(infoProp.show) && (infoProp.info || infoProp.native) && !isFalse(infoProp.icon)) {
             const prop = {
                 type: infoProp.type || 'popup',
-                props: {...infoProp},
+                props: tidyRule(infoProp),
                 key: `${uni}pop`
             };
 
@@ -166,7 +172,7 @@ export default {
         }
 
         const _prop = mergeProps([titleProp, {
-            props: titleProp,
+            props: tidyRule(titleProp),
             key: `${uni}tit`,
             type: titleProp.type || 'span',
         }]);

@@ -25,6 +25,12 @@ function tidyBool(opt, name) {
     }
 }
 
+function tidyRule(rule) {
+    const _rule = {...rule};
+    delete _rule.children;
+    return _rule;
+}
+
 export default {
     validate() {
         const form = this.form();
@@ -146,7 +152,7 @@ export default {
         if (!isFalse(infoProp.show) && (infoProp.info || infoProp.native) && !isFalse(infoProp.icon)) {
             const prop = {
                 type: infoProp.type || 'popover',
-                props: {...infoProp},
+                props: tidyRule(infoProp),
                 key: `${uni}pop`
             };
 
@@ -155,6 +161,7 @@ export default {
             delete prop.props.info;
             delete prop.props.align;
             delete prop.props.native;
+            delete prop.props.children;
 
             const field = 'content';
             if (infoProp.info && !hasProperty(prop.props, field)) {
@@ -174,7 +181,7 @@ export default {
             }));
         }
         const _prop = mergeProps([titleProp, {
-            props: titleProp,
+            props: tidyRule(titleProp),
             key: `${uni}tit`,
             type: titleProp.type || 'span',
         }]);
