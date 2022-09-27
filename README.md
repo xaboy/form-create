@@ -130,6 +130,13 @@ element-plus
 import formCreate from '@form-create/element-ui'
 app.use(formCreate)
 ```
+element-plus (with unplugin-vue-components/vite & ElementPlusResolver)
+```js
+import formCreate from '@form-create/element-ui'
+import install from '@form-create/element-ui/auto-import'
+formCreate.use(install)
+app.use(formCreate)
+```
 
 ant-design-vue
 ```js
