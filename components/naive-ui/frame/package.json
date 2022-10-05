@@ -1,6 +1,6 @@
 {
   "name": "@form-create/component-naive-frame",
-  "version": "3.1.12",
+  "version": "3.1.15",
   "description": "@form-create/naive-ui 内置组件",
   "main": "./dist/index.min.js",
   "module": "./dist/index.esm.js",
@@ -30,7 +30,7 @@
   "author": "xaboy",
   "license": "MIT",
   "dependencies": {
-    "@form-create/utils": "^3.1.12"
+    "@form-create/utils": "^3.1.15"
   },
   "bugs": {
     "url": "https://github.com/xaboy/form-create/issues"
