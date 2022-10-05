@@ -71,7 +71,7 @@
 | @form-create/arco-design [![version](https://img.shields.io/npm/v/@form-create/arco-design/next.svg)](https://www.npmjs.com/package/@form-create/arco-design) [![npm](https://img.shields.io/npm/dt/@form-create/arco-design.svg)](https://www.npmjs.com/package/@form-create/arco-design) | [arco-design 版本](http://form-create.com/v3/arco-design/)     |
 | @form-create/naive-ui [![version](https://img.shields.io/npm/v/@form-create/naive-ui/next.svg)](https://www.npmjs.com/package/@form-create/naive-ui) [![npm](https://img.shields.io/npm/dt/@form-create/naive-ui.svg)](https://www.npmjs.com/package/@form-create/naive-ui) | [naive-ui 版本](http://form-create.com/v3/naive-ui/)     |
 | @form-create/tdesign [![version](https://img.shields.io/npm/v/@form-create/tdesign/next.svg)](https://www.npmjs.com/package/@form-create/tdesign) [![npm](https://img.shields.io/npm/dt/@form-create/tdesign.svg)](https://www.npmjs.com/package/@form-create/tdesign) | [tdesign 版本](http://form-create.com/v3/tdesign/)     |
-
+| @form-create/designer [![version](https://img.shields.io/npm/v/@form-create/designer.svg)](https://www.npmjs.com/package/@form-create/designer) [![npm](https://img.shields.io/npm/dt/@form-create/designer.svg)](https://www.npmjs.com/package/@form-create/designer) | [表单设计器](http://form-create.com/designer) (已适配 Vue3)   |
 
 
 ## 示例
