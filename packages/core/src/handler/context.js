@@ -105,7 +105,7 @@ export default function useContext(Handler) {
                         const flag = is.trueArray(n);
                         this.deferSyncValue(() => {
                             if (n !== o) {
-                                this.rmSub(o);
+                                this.rmSub(o, ctx);
                                 this.$render.initOrgChildren();
                             }
                             flag && this.loadChildren(n, ctx);
@@ -113,14 +113,15 @@ export default function useContext(Handler) {
                         });
                     }
                     this.$render.clearCache(ctx);
+                    this.refresh();
                     this.watching = false;
                 }, {deep: !flag, sync: flag}));
             });
             this.watchEffect(ctx);
         },
-        rmSub(sub) {
+        rmSub(sub, ctx) {
             is.trueArray(sub) && sub.forEach(r => {
-                r && r.__fc__ && this.rmCtx(r.__fc__);
+                r && r.__fc__ && r.__fc__.parent === ctx && this.rmCtx(r.__fc__);
             })
         },
         rmCtx(ctx) {
