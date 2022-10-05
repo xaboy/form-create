@@ -17,7 +17,7 @@
 
 **这个是 Vue3 版本**
 
-[开源的vue可视化表单设计器组件](https://github.com/xaboy/form-create-designer) ([功能演示](http://form-create.com/designer?fr=fc))
+[开源的vue可视化表单设计器组件](https://github.com/xaboy/form-create-designer) ([功能演示](http://form-create.com/v3/designer?fr=fc))
 
 ## 支持
 - **element-plus**
