@@ -113,7 +113,7 @@ export default {
         const {inline, col: _col} = this.rule.props;
         const item = isFalse(rule.wrap.show) ? children : this.$r(mergeProps([rule.wrap, {
             props: {
-                ...(rule.wrap || {}),
+                ...tidyRule(rule.wrap || {}),
                 path: ctx.id,
                 rule: rule.validate
             },

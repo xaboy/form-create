@@ -121,7 +121,7 @@ export default {
             item = this.$r(mergeProps([rule.wrap, {
                 props: {
                     labelWidth: labelWidth === void 0 ? labelWidth : toString(labelWidth),
-                    ...(rule.wrap || {}),
+                    ...tidyRule(rule.wrap || {}),
                     name: ctx.id,
                     rules: rule.validate,
                     label: isTitle ? () => this.makeInfo(rule, uni) : undefined,

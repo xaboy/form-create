@@ -126,7 +126,7 @@ export default {
             props: {
                 labelWidth: labelWidth === void 0 ? labelWidth : toString(labelWidth),
                 label: isTitle ? rule.title.title : undefined,
-                ...(rule.wrap || {}),
+                ...tidyRule(rule.wrap || {}),
                 prop: ctx.id,
                 rules: rule.validate,
             },

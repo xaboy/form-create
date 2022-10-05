@@ -118,7 +118,7 @@ export default {
         const {layout, col: _col} = this.rule.props;
         const item = isFalse(rule.wrap.show) ? children : this.$r(mergeProps([rule.wrap, {
             props: {
-                ...(rule.wrap || {}),
+                ...tidyRule(rule.wrap || {}),
                 name: ctx.id,
                 rules: rule.validate,
                 ...(layout !== 'horizontal' ? {labelCol: {}, wrapperCol: {}} : {})
