@@ -1,4 +1,5 @@
 import {defineComponent} from 'vue';
+import toArray from '@form-create/utils/lib/toarray';
 
 const NAME = 'fcUpload';
 
@@ -34,7 +35,12 @@ export default defineComponent({
     },
     data() {
         return {
-            uploadList: this.modelValue.map(parseFile)
+            uploadList: toArray(this.modelValue).map(parseFile)
+        }
+    },
+    watch: {
+        modelValue(n) {
+            this.uploadList = toArray(n).map(parseFile)
         }
     },
     methods: {

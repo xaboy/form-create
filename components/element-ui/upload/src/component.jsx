@@ -75,9 +75,10 @@ export default defineComponent({
         }
     },
     render() {
+        const len = toArray(this.modelValue).length;
         return (
-            <><ElUpload key={this.modelValue.length} list-type="picture-card" {...this.$attrs}
-                class={{'_fc-exceed': this.$attrs.limit ? this.$attrs.limit <= this.modelValue.length : false}}
+            <><ElUpload key={len} list-type="picture-card" {...this.$attrs}
+                class={{'_fc-exceed': this.$attrs.limit ? this.$attrs.limit <= len : false}}
                 onPreview={this.handlePreview} onChange={this.handleChange}
                 onRemove={this.handleRemove}
                 fileList={this.fileList}
