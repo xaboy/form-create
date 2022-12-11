@@ -33,6 +33,7 @@
         "package.json",
         "LICENSE",
         "auto-import.js",
+        "auto-import.d.ts",
         "src",
         "types",
         "dist"
