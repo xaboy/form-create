@@ -40,6 +40,9 @@
         "url": "https://github.com/xaboy/form-create/issues"
     },
     "homepage": "http://www.form-create.com/v3/",
+    "peerDependencies": {
+        "vue": "^3.1.0"
+    },
     "dependencies": {
         "@form-create/utils": "^3.1.15"
     },
