@@ -23,6 +23,7 @@ export default defineComponent({
     inheritAttrs: false,
     props: {
         previewMask: undefined,
+        onPreview: Function,
         modalTitle: String,
         modelValue: [Array, String]
     },
