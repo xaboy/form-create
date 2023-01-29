@@ -19,8 +19,8 @@ const getRuleInject = (vm, parent) => {
     if (!vm || vm === parent) {
         return;
     }
-    if (vm.ctx.formCreateInject) {
-        return vm.ctx.formCreateInject
+    if (vm.props.formCreateInject) {
+        return vm.props.formCreateInject
     }
     if (vm.parent) {
         return getRuleInject(vm.parent, parent);
