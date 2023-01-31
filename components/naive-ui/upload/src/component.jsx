@@ -89,7 +89,7 @@ export default defineComponent({
     },
     render() {
         return <>
-            <n-upload listType={'image-card'} {...this.$attrs} onPreview={this.handlePreview}
+            <n-upload max={this.limit} listType={'image-card'} {...this.$attrs} onPreview={this.handlePreview}
                 onFinish={this.handleChange} key={this.uploadList.length}
                 default-file-list={this.uploadList} onUpdate:fileList={this.inputRemove}
                 v-slots={this.$slots}/>

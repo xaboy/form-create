@@ -21,6 +21,14 @@ const NAME = 'fcUpload';
 export default defineComponent({
     name: NAME,
     inheritAttrs: false,
+    formCreateParser: {
+        toFormValue(value) {
+            return toArray(value);
+        },
+        toValue(formValue, ctx) {
+            return ctx.prop.props.limit === 1 ? (formValue[0] || '') : formValue;
+        }
+    },
     props: {
         previewMask: undefined,
         onPreview: Function,
@@ -41,11 +49,6 @@ export default defineComponent({
     watch: {
         modelValue(n) {
             this.fileList = toArray(n).map(parseFile);
-        },
-        limit(n, o) {
-            if (o === 1 || n === 1) {
-                this.update();
-            }
         }
     },
     methods: {
@@ -59,7 +62,7 @@ export default defineComponent({
         },
         update(fileList) {
             let files = fileList.map((file) => file.url).filter((url) => url !== undefined);
-            this.$emit('update:modelValue', this.limit === 1 ? (files[0] || '') : files);
+            this.$emit('update:modelValue', files);
         },
         handleCancel() {
             this.previewVisible = false;

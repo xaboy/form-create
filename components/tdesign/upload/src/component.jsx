@@ -20,7 +20,19 @@ function getFileName(file) {
 export default defineComponent({
     name: NAME,
     inheritAttrs: false,
+    formCreateParser: {
+        toFormValue(value) {
+            return toArray(value);
+        },
+        toValue(formValue, ctx) {
+            return ctx.prop.props.limit === 1 ? (formValue[0] || '') : formValue;
+        }
+    },
     props: {
+        limit: {
+            type: Number,
+            default: 0
+        },
         formCreateInject: Object,
         modelValue: {
             type: Array,
@@ -67,6 +79,7 @@ export default defineComponent({
         } = this
         return <>
             <t-upload
+                max={this.limit}
                 theme="image"
                 accept="image/*"
                 modelValue={uploadList}
