@@ -115,7 +115,7 @@ export default function useLoader(Handler) {
             };
 
             rules.map((_rule, index) => {
-                if (parent && (is.String(_rule) || is.Undef(_rule))) return;
+                if (parent && !is.Object(_rule)) return;
                 if (!this.pageEnd && !parent && index >= this.first) return;
 
                 if (_rule.__fc__ && _rule.__fc__.root === rules && this.ctxs[_rule.__fc__.id]) {
