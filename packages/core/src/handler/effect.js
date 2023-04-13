@@ -1,6 +1,6 @@
 import extend from '@form-create/utils/lib/extend';
 import is, {hasProperty} from '@form-create/utils/lib/type';
-import mergeProps from '@form-create/utils/lib/mergeprops';
+import {mergeRule} from '../frame/util';
 
 
 export default function useEffect(Handler) {
@@ -93,7 +93,7 @@ export default function useEffect(Handler) {
                 if (ctx) {
                     data.getProp = () => ctx.effectData(attr);
                     data.clearProp = () => ctx.clearEffectData(attr);
-                    data.mergeProp = (prop) => mergeProps([prop], data.getProp());
+                    data.mergeProp = (prop) => mergeRule(data.getProp(), [prop]);
                 }
                 this.bus.$emit(`p:${attr}:${_type}:${p.input ? 1 : 0}`, event, [data, rule, this.api]);
             });
