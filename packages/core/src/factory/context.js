@@ -1,8 +1,7 @@
 import unique from '@form-create/utils/lib/unique';
 import toCase from '@form-create/utils/lib/tocase';
 import extend from '@form-create/utils/lib/extend';
-import mergeProps from '@form-create/utils/lib/mergeprops';
-import {enumerable, invoke} from '../frame/util';
+import {enumerable, invoke, mergeRule} from '../frame/util';
 import {deepCopy} from '@form-create/utils/lib/deepextend';
 import {markRaw, reactive} from 'vue';
 import is from '@form-create/utils/lib/type';
@@ -156,7 +155,7 @@ extend(RuleContext.prototype, {
     initProp() {
         const rule = {...this.rule};
         delete rule.children;
-        this.prop = mergeProps([rule, ...Object.keys(this.payload).map(k => this.payload[k]), this.computed]);
+        this.prop = mergeRule({}, [rule, ...Object.keys(this.payload).map(k => this.payload[k]), this.computed]);
     },
     initNone() {
         this.none = isNone(this);
