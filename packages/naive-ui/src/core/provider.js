@@ -33,6 +33,8 @@ function parseVal(val) {
         return {required: val}
     } else if (is.String(val)) {
         return {message: val};
+    } else if (is.Undef(val)) {
+        return {required: false};
     } else if (is.Function(val)) {
         return {asyncValidator: val};
     } else if (!is.Object(val)) {
