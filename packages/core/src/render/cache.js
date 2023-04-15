@@ -6,6 +6,9 @@ export default function useCache(Render) {
             this.clearCacheAll();
         },
         clearCache(ctx) {
+            if(ctx.rule.cache){
+                return;
+            }
             if (!this.cache[ctx.id]) {
                 ctx.parent && this.clearCache(ctx.parent);
                 return;
