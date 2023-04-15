@@ -105,7 +105,7 @@ export interface ApiAttrs {
 
     clearSubValidateState(fields?: string | string[]): void;
 
-    validate(callback?: (callback?: (boolean: boolean, object: Object) => void) => void): Promise<any>;
+    validate(callback?: (boolean: boolean, object: Object) => void): Promise<any>;
 
     validateField(field: string, callback?: (errorMessage: string) => void): Promise<any>;
 
