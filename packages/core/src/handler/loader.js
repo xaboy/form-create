@@ -6,6 +6,22 @@ import RuleContext from '../factory/context';
 import mergeProps from '@form-create/utils/lib/mergeprops';
 import {nextTick} from 'vue';
 
+const condition = {
+    '==': (b) => (a) => a === b,
+    '!=': (b) => (a) => a !== b,
+    '<>': (b) => (a) => a !== b,
+    '>': (b) => (a) => a > b,
+    '>=': (b) => (a) => a >= b,
+    '<': (b) => (a) => a < b,
+    '<=': (b) => (a) => a <= b,
+    'in': (b) => (a) => (b && b.indexOf && b.indexOf(a) > -1),
+    'on': (b) => (a) => (a && a.indexOf && a.indexOf(b) > -1),
+    'notIn': (b) => (a) => !(condition.in(b)(a)),
+    'notOn': (b) => (a) => !(condition.on(b)(a)),
+    'between': (b) => (a) => a > b[0] && a < b[1],
+    'notBetween': (b) => (a) => a < b[0] || a > b[1],
+}
+
 export default function useLoader(Handler) {
     extend(Handler.prototype, {
         nextRefresh(fn) {
@@ -214,7 +230,7 @@ export default function useLoader(Handler) {
             if (!controls.length) return false;
 
             for (let i = 0; i < controls.length; i++) {
-                const control = controls[i], handleFn = control.handle || (val => val === control.value);
+                const control = controls[i], handleFn = control.handle || ((condition[control.condition || '=='] || condition['=='])(control.value));
                 if (!is.trueArray(control.rule)) continue;
                 const data = {
                     ...control,
@@ -230,7 +246,7 @@ export default function useLoader(Handler) {
             const hideLst = [];
             let flag = false;
             this.deferSyncValue(() => {
-                validate.reverse().forEach(({isHidden, valid, rule, prepend, append, child, ctrl}) => {
+                validate.reverse().forEach(({isHidden, valid, rule, prepend, append, child, ctrl, method}) => {
                     if (isHidden) {
                         valid ? ctx.ctrlRule.push({
                             __ctrl: true,
@@ -239,7 +255,20 @@ export default function useLoader(Handler) {
                         })
                             : ctx.ctrlRule.splice(ctx.ctrlRule.indexOf(ctrl), 1);
                         hideLst[valid ? 'push' : 'unshift'](() => {
-                            this.api.hidden(!valid, rule);
+                            if (method === 'disabled') {
+                                this.api.disabled(!valid, rule);
+                            } else if (method === 'display') {
+                                this.api.display(valid, rule);
+                            } else if (method === 'required') {
+                                rule.forEach(item => {
+                                    this.api.setEffect(item, 'required', valid);
+                                })
+                                if(!valid){
+                                    this.api.clearValidateState(rule);
+                                }
+                            } else {
+                                this.api.hidden(!valid, rule);
+                            }
                         });
                         return;
                     }
