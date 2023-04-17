@@ -107,12 +107,12 @@ export default function FormCreateFactory(config) {
     function component(id, component) {
         let name;
         if (is.String(id)) {
-            name = toCase(id);
+            name = id;
             if (component === undefined) {
                 return components[name];
             }
         } else {
-            name = toCase(id.displayName || id.name);
+            name = id.displayName || id.name;
             component = id;
         }
         if (!name || !component) return;
