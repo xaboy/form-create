@@ -296,7 +296,7 @@ export default function Api(h) {
                     $set(ctx.rule, '$' + attr, value);
                 }
                 if (!hasProperty(ctx.rule, 'effect')) {
-                    ctx.rule.effect = {};
+                    $set(ctx.rule, 'effect', {});
                 }
                 $set(ctx.rule.effect, attr, value);
             }

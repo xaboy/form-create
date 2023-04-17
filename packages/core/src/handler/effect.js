@@ -31,7 +31,11 @@ export default function useEffect(Handler) {
         },
         watchEffect(ctx) {
             const vm = this.vm;
-            let effect = {};
+            let effect = {
+                required: () => {
+                    return (hasProperty(ctx.rule, '$required') ? ctx.rule['$required'] : ctx.rule?.effect?.required) || false;
+                }
+            };
             Object.keys(ctx.rule.effect || {}).forEach(k => {
                 effect[k] = () => ctx.rule.effect[k];
             })

@@ -10,6 +10,7 @@ export function baseRule() {
         on: {},
         options: [],
         children: [],
+        effect: {},
         hidden: false,
         display: true,
         value: undefined,
