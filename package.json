@@ -90,7 +90,7 @@
     "dependencies": {
         "commander": "^6.0.0",
         "postcss": "^8.3.6",
-        "vue": "^3.1.5",
+        "vue": "3.2",
         "wangeditor": "^4.7.8"
     }
 }
