@@ -243,7 +243,7 @@ export default {
             if (index === 0) {
                 return [(this.max !== 0 && total >= this.max) ? null : this.addIcon(key), (this.min === 0 || total > this.min) ? this.delIcon(index, key) : null];
             }
-            if (index >= this.min) {
+            if (total > this.min) {
                 return this.delIcon(index, key);
             }
         },
