@@ -117,6 +117,7 @@ export default function FormCreateFactory(config) {
         }
         if (!name || !component) return;
         components[name] = component;
+        components[toCase(name)] = component;
         if (component.formCreateParser) parser(name, component.formCreateParser);
     }
 
