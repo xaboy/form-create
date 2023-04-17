@@ -240,7 +240,7 @@ export default defineComponent({
             if (index === 0) {
                 return [(this.max !== 0 && total >= this.max) ? null : this.addIcon(key), (this.min === 0 || total > this.min) ? this.delIcon(index, key) : null];
             }
-            if (index >= this.min) {
+            if (total >= this.min) {
                 return this.delIcon(index, key);
             }
         },
@@ -275,9 +275,9 @@ export default defineComponent({
                 onClick={this.add}>
                 <IconCirclePlus/>
             </ElIcon>) :
-            <div key={2}>{keys.map((key, index) => {
+            <div style="width: 100%;" key={2}>{keys.map((key, index) => {
                 const {rule, options} = this.cacheRule[key];
-                return <ElRow align="middle" type="flex" key={key}
+                return <ElRow align="middle" key={key}
                     style="border-bottom:1px dashed #DCDFE6;margin-bottom:10px;">
                     <ElCol span={button ? 20 : 24}><Type
                         key={key} inFor={true}
