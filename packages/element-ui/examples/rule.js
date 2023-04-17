@@ -251,55 +251,46 @@ export default function mock() {
             children: []
         },
         {
-            type: 'div',
-            name: 'div',
+            type: 'el-col',
+            props: {
+                span: 12
+            },
+            name: 'cal',
             children: [
-                'asdfasf',
-                {
-                    type: 'el-col',
-                    props: {
-                        span: 12
-                    },
-                    name: 'cal',
-                    children: [
 
-                        //datePicker 日期选择组件
-                        maker.date('活动日期', 'section_day', ['2018-02-20 12:12:12', '2018-03-20 12:12:12']).props({
-                            'type': 'datetimerange',
-                        }),
+                //datePicker 日期选择组件
+                maker.date('活动日期', 'section_day', ['2018-02-20 12:12:12', '2018-03-20 12:12:12']).props({
+                    'type': 'datetimerange',
+                }),
 
-                        //timePicker 时间选择组件
-                        maker.time('活动时间', 'section_time', ['11:11:11', '22:22:22']).props({
-                            'isRange': true,
-                            'placeholder': '请选择活动时间'
-                        }),
+                //timePicker 时间选择组件
+                maker.time('活动时间', 'section_time', ['11:11:11', '22:22:22']).props({
+                    'isRange': true,
+                    'placeholder': '请选择活动时间'
+                }),
 
-                    ]
-                },
-                {
-                    type: 'el-col',
-                    props: {
-                        span: 12
-                    },
-                    children: [
-                        //inputNumber 数组输入框组件
-                        maker.number('排序', 'sort', 0).props({
-                            precision: 2
-                        }).col({span: 12}).validate(
-                            [{require: true, type: 'number', min: 10}]
-                        ),
-
-                        //colorPicker 颜色选择组件
-                        maker.color('颜色', 'color', '#ff7271').props({
-                            'color-format': 'hex'
-                        }).col({span: 12}),
-
-                    ]
-                }
-            ],
-            native: true
+            ]
         },
+        {
+            type: 'el-col',
+            props: {
+                span: 12
+            },
+            children: [
+                //inputNumber 数组输入框组件
+                maker.number('排序', 'sort', 0).props({
+                    precision: 2
+                }).col({span: 12}).validate(
+                    [{require: true, type: 'number', min: 10}]
+                ),
 
+                //colorPicker 颜色选择组件
+                maker.color('颜色', 'color', '#ff7271').props({
+                    'color-format': 'hex'
+                }).col({span: 12}),
+
+            ]
+        },
         //rate 评分组件
         maker.rate('推荐级别', 'rate', 2)
             .props({

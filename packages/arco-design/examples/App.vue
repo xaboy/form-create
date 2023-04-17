@@ -205,7 +205,7 @@ export default defineComponent({
     let inlineFlag = false;
     const inline = function () {
       inlineFlag = !inlineFlag;
-      fapi.value.updateOptions({form: {layout: inlineFlag ? 'inline' : undefined}})
+      fapi.value.updateOptions({form: {layout: inlineFlag ? 'inline' : 'horizontal'}})
       optionJson.value = {...fapi.value.options}
     }
 
