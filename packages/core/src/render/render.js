@@ -150,7 +150,13 @@ export default function useRender(Render) {
                 }
                 return (...args) => {
                     const cache = this.getCache(ctx);
-                    return cache ? cache(...args) : this.renderCtx(ctx, ctx.parent);
+                    if(cache){
+                        return cache(...args);
+                    }
+                    const _vn = this.renderCtx(ctx, ctx.parent);
+                    if(_vn){
+                        return _vn();
+                    }
                 };
             } catch (e) {
                 console.error(e);
