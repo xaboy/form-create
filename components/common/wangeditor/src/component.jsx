@@ -53,6 +53,7 @@ export default defineComponent({
         this.$nextTick(() => {
             this.editor = new WangEditor(`#editor${this.uni}`);
             this.editor.config.zIndex = 2;
+            this.editor.config.force = false;
             this.config && _extends(this.editor.config, this.config);
             this.init && this.init(this.editor);
             this.editor.create();
