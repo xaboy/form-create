@@ -75,12 +75,12 @@ export default function useRender(Render) {
                 deepSet(ctx.prop, str, deep[str]);
             });
         },
-        parseSide(side) {
-            return is.Object(side) ? mergeRule({}, side) : side;
+        parseSide(side, ctx) {
+            return is.Object(side) ? mergeRule({props: {formCreateInject: ctx.prop.props.formCreateInject}}, side) : side;
         },
         renderSides(vn, ctx, temp) {
             const prop = ctx[temp ? 'rule' : 'prop'];
-            return [this.renderRule(this.parseSide(prop.prefix)), vn, this.renderRule(this.parseSide(prop.suffix))];
+            return [this.renderRule(this.parseSide(prop.prefix, ctx)), vn, this.renderRule(this.parseSide(prop.suffix, ctx))];
         },
         renderId(name, type) {
             const ctxs = this.$handle[type === 'field' ? 'fieldCtx' : 'nameCtx'][name]
