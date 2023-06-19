@@ -10,15 +10,12 @@ export default function useCache(Render) {
                 return;
             }
             if (!this.cache[ctx.id]) {
-                ctx.parent && this.clearCache(ctx.parent);
                 return;
             }
             if (this.cache[ctx.id].use === true || this.cache[ctx.id].parent) {
                 this.$handle.refresh();
             }
-            const parent = this.cache[ctx.id].parent;
             this.cache[ctx.id] = null;
-            parent && this.clearCache(parent);
         },
         clearCacheAll() {
             this.cache = {};
