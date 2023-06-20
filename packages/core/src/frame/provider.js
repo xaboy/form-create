@@ -1,7 +1,35 @@
 import {err} from '@form-create/utils/lib/console';
-import {invoke} from './util';
+import {byCtx, invoke} from './util';
 import is from '@form-create/utils/lib/type';
 import deepSet from '@form-create/utils/lib/deepset';
+
+
+const componentValidate = {
+    name: 'componentValidate',
+    load(attr, rule, api) {
+        const method = attr.getValue();
+        if (!method) {
+            attr.clearProp();
+            api.clearValidateState([rule.field]);
+        } else {
+            attr.getProp().validate = [{
+                validator(...args) {
+                    const ctx = byCtx(rule);
+                    if (ctx) {
+                        return api.exec(ctx.id, method === true ? 'formCreateValidate' : method, ...args, {
+                            attr,
+                            rule,
+                            api
+                        });
+                    }
+                }
+            }];
+        }
+    },
+    watch(...args) {
+        componentValidate.load(...args);
+    }
+};
 
 
 const fetch = function (fc) {
@@ -85,4 +113,5 @@ const fetch = function (fc) {
 
 export default {
     fetch,
+    componentValidate,
 };
