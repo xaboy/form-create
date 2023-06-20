@@ -11,11 +11,16 @@ export default function useRender(Render) {
         initRender() {
             this.cacheConfig = {};
         },
-        getTypeSlot(type) {
-            const name = 'type-' + toLine(type);
+        getTypeSlot(ctx) {
             const _fn = (vm) => {
                 if (vm) {
-                    const slot = vm.slots[name] || vm.slots['type-' + type];
+                    let slot = undefined;
+                    if (ctx.rule.field) {
+                        slot = vm.slots['field-' + toLine(ctx.rule.field)] || vm.slots['field-' + ctx.rule.field];
+                    }
+                    if (!slot) {
+                        slot = vm.slots['type-' + toLine(ctx.type)] || vm.slots['type-' + ctx.type];
+                    }
                     if (slot) {
                         return slot;
                     }
@@ -128,7 +133,7 @@ export default function useRender(Render) {
                         } else if (ctx.parser.loadChildren !== false) {
                             children = this.renderChildren(_load, ctx);
                         }
-                        const slot = this.getTypeSlot(ctx.type);
+                        const slot = this.getTypeSlot(ctx);
                         let _vn;
                         if (slot) {
                             inject.children = children;
