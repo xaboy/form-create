@@ -27,9 +27,11 @@ const getRuleInject = (vm, parent) => {
     }
 }
 
-export default function $FormCreate(FormCreate) {
+export default function $FormCreate(FormCreate, components, directives) {
     return defineComponent({
         name: NAME,
+        components,
+        directives,
         props: {
             rule: {
                 type: Array,

@@ -122,7 +122,7 @@ export default function FormCreateFactory(config) {
     }
 
     function $form() {
-        return $FormCreate(FormCreate);
+        return $FormCreate(FormCreate, components, directives);
     }
 
     function createFormApp(rule, option) {
