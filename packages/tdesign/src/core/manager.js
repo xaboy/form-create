@@ -41,7 +41,7 @@ export default {
         });
     },
     validateField(field) {
-        return this.validate([field]);
+        return this.validate({fields:[field]});
     },
     clearValidateState(fields) {
         const form = this.form();
