@@ -52,7 +52,7 @@ export default function $FormCreate(FormCreate, components, directives) {
             },
             inFor: Boolean,
         },
-        emits: ['update:api', 'update:modelValue', 'mounted', 'submit', 'change', 'emit-event', 'control', 'remove-rule', 'remove-field', 'sync', 'reload', 'repeat-field', 'update'],
+        emits: ['update:api', 'update:modelValue', 'mounted', 'submit', 'change', 'emit-event', 'control', 'remove-rule', 'remove-field', 'sync', 'reload', 'repeat-field', 'update', 'validate-field-fail', 'validate-fail'],
         render() {
             return this.fc.render();
         },

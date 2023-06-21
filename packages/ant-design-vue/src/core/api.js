@@ -25,6 +25,7 @@ export default function extendApi(api, h) {
                 }).catch((e) => {
                     reject(e);
                     callback && callback(e);
+                    h.vm.emit('validate-fail', e, {api});
                 })
             });
         },
@@ -43,6 +44,7 @@ export default function extendApi(api, h) {
                 }).catch((e) => {
                     reject(e);
                     callback && callback(e);
+                    h.vm.emit('validate-field-fail', e, {field, api});
                 })
             });
         },
