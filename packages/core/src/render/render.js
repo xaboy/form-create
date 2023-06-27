@@ -153,12 +153,13 @@ export default function useRender(Render) {
             vn.data.key = key;
             return vn;
         },
-        parseSide(side) {
-            return is.Object(side) ? mergeRule({}, side) : side;
+        parseSide(side, ctx) {
+            return is.Object(side) ? mergeRule({props: {formCreateInject: ctx.prop.props.formCreateInject}}, side) : side;
         },
         renderSides(vn, ctx, temp) {
             const prop = ctx[temp ? 'rule' : 'prop'];
-            return [this.renderRule(this.parseSide(prop.prefix)), vn, this.renderRule(this.parseSide(prop.suffix))];
+            return [this.renderRule(this.parseSide(prop.prefix, ctx)), vn, this.renderRule(this.parseSide(prop.suffix, ctx))];
+
         },
         renderSlot(ctx, slot) {
             return ctx.rule.slot === slot ? this.renderCtx(ctx) : undefined;
