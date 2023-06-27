@@ -213,7 +213,7 @@ export default function useLoader(Handler) {
                     ctx.updated = true;
                     if (is.Function(r.update)) {
                         this.bus.$once('load-end', () => {
-                            this.refreshUpdate(ctx, r.value);
+                            this.refreshUpdate(ctx, r.value, 'init');
                         });
                     }
                     this.effect(ctx, 'loaded');
