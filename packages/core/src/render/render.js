@@ -216,7 +216,7 @@ export default function useRender(Render) {
                         } else if (ctx.parser.loadChildren !== false) {
                             children = this.renderChildren(ctx);
                         }
-                        const slot = this.getTypeSlot(ctx.type);
+                        const slot = this.getTypeSlot(ctx);
                         if (slot) {
                             vn = slot({
                                 rule,
