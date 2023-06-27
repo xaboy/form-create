@@ -28,11 +28,16 @@ export default function useRender(Render) {
         clearOrgChildren() {
             this.orgChildren = {};
         },
-        getTypeSlot(type) {
-            const name = 'type-' + toLine(type);
+        getTypeSlot(ctx) {
             const _fn = (vm) => {
                 if (vm) {
-                    const slot = vm.$scopedSlots[name] || vm.$scopedSlots['type-' + type];
+                    let slot = undefined;
+                    if (ctx.rule.field) {
+                        slot = vm.$scopedSlots['field-' + toLine(ctx.rule.field)] || vm.$scopedSlots['field-' + ctx.rule.field];
+                    }
+                    if (!slot) {
+                        slot = vm.$scopedSlots['type-' + toLine(ctx.type)] || vm.$scopedSlots['type-' + ctx.type];
+                    }
                     if (slot) {
                         return slot;
                     }
