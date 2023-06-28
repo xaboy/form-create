@@ -40,8 +40,9 @@ export default {
             this.$emit('input', this.options().filter((opt) => n.indexOf(opt.label) !== -1).map((opt) => opt.value).filter(v => v !== undefined));
         },
         update() {
-            this.trueValue = this.value ? this.options().filter((opt) => this.value.indexOf(opt.value) !== -1)
-                .map((option) => option.label) : []
+            const checked = Array.isArray(this.value) ? this.value : [this.value];
+            this.trueValue = this.options().filter((opt) => checked.indexOf(opt.value) !== -1)
+                .map((option) => option.label);
         }
     },
     created() {
