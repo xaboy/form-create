@@ -13,75 +13,42 @@ function tidyBtnProp(btn, def) {
 export default function extendApi(api, h) {
     extend(api, {
         validate(callback) {
-            let flag;
-            const forms = api.children;
-            let len = forms.length;
-            const validate = () => {
-                h.$manager.validate((...args) => {
-                    if (!args[0] || !flag) {
-                        flag = args;
-                    }
-                    callback && callback(...flag);
-                });
-            };
-
-            const validFn = (args) => {
-                setTimeout(() => {
-                    if (!args[0]) {
-                        if (!flag) {
-                            flag = args;
-                        }
-                    }
-                    if (!--len) {
-                        validate();
-                    }
-                });
-            };
-
-            forms.forEach(form => {
-                form.validate((...args) => validFn(args))
-            })
-
-            if (!len) {
-                validate();
-            }
+            return new Promise((resolve, reject) => {
+                const forms = api.children;
+                const all = [h.$manager.validate()];
+                forms.forEach(v => {
+                    all.push(v.validate());
+                })
+                Promise.all(all).then(() => {
+                    resolve(true);
+                    callback && callback(true);
+                }).catch((e) => {
+                    reject(e);
+                    callback && callback(e);
+                    h.vm.$emit('validate-fail', e, {api});
+                })
+            });
         },
         validateField: (field, callback) => {
-            const ctx = h.getFieldCtx(field);
-            if (!ctx) return;
-            const sub = h.subForm[ctx.id];
-            let len = 0;
-            let flag;
-            const validate = () => {
-                h.$manager.validateField(ctx.id, (...args) => {
-                    if (args[0]) {
-                        flag = args;
-                    } else if (flag) {
-                        return callback && callback('子表单验证未通过');
-                    }
-                    callback && callback(...flag || args);
-                });
-            };
-            const validFn = (args) => {
-                setTimeout(() => {
-                    if (!args[0]) {
-                        if (!flag) {
-                            flag = args;
-                        }
-                    }
-                    if (!--len) {
-                        validate();
-                    }
-                });
-            };
-            sub && toArray(sub).forEach(form => {
-                len++;
-                form.validate((...args) => validFn(args))
+            return new Promise((resolve, reject) => {
+                const ctx = h.getFieldCtx(field);
+                if (!ctx) return;
+                const sub = h.subForm[ctx.id];
+                const all = [h.$manager.validateField(ctx.id)];
+                toArray(sub).forEach(v => {
+                    all.push(v.validate().catch(() => {
+                        return Promise.reject('子表单验证未通过');
+                    }));
+                })
+                Promise.all(all).then(() => {
+                    resolve(null);
+                    callback && callback(null);
+                }).catch((e) => {
+                    reject(e);
+                    callback && callback(e);
+                    h.vm.$emit('validate-field-fail', e, {field, api});
+                })
             });
-
-            if (!len) {
-                validate();
-            }
         },
         clearValidateState(fields, clearSub = true) {
             api.helper.tidyFields(fields).forEach(field => {
