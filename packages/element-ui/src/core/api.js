@@ -24,7 +24,7 @@ export default function extendApi(api, h) {
                     callback && callback(true);
                 }).catch((e) => {
                     reject(e);
-                    callback && callback(e);
+                    callback && callback(false, e);
                     h.vm.$emit('validate-fail', e, {api});
                 })
             });
