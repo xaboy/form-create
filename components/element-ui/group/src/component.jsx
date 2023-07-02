@@ -287,7 +287,7 @@ export default defineComponent({
                         onUpdate:api={($f) => this.add$f(index, key, $f)}
                         rule={rule}
                         option={options} extendOption={true}/></ElCol>
-                    {button ? <ElCol span={2} pull={1} push={1}>{this.makeIcon(keys.length, index, key)}</ElCol> : null}
+                    {button ? <ElCol span={4} pull={1} push={1}>{this.makeIcon(keys.length, index, key)}</ElCol> : null}
                 </ElRow>
             })}</div>
     }
