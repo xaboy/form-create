@@ -237,7 +237,7 @@ export default function FormCreateFactory(config) {
             this.$handle.init();
         },
         isSub() {
-            return this.vm.setupState.parent && this.vm.setupState.extendOption;
+            return this.vm.setupState.parent && this.vm.props.extendOption;
         },
         initOptions(options) {
             this.options.value = {formData: {}, submitBtn: {}, resetBtn: {}, ...deepCopy(globalConfig)};
