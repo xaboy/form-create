@@ -1,7 +1,6 @@
 import {FormData, VNodeRule} from "@form-create/core";
 import {ButtonProps,TooltipProps, PopoverProps, ColProps, RowProps, FormItemProps, FormProps} from "naive-ui";
 import {Api} from "./index";
-import {ValidateError} from "async-validator/dist-types/interface";
 
 export interface OptionAttrs {
     col?: Boolean | ColProps & {
@@ -87,9 +86,9 @@ export interface ApiAttrs {
 
     clearSubValidateState(fields?: string | string[]): void;
 
-    validate(callback?: ((errors?: ValidateError[]) => void)): Promise<any>;
+    validate(callback?: (state: any) => void): Promise<any>;
 
-    validateField(field: string, callback?: ((errors?: ValidateError[]) => void)): Promise<any>;
+    validateField(field: string, callback?: (state: any) => void): Promise<any>;
 
     submitBtnProps(props: ButtonProps): void;
 

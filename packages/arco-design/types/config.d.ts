@@ -99,9 +99,9 @@ export interface ApiAttrs {
 
     clearSubValidateState(fields?: string | string[]): void;
 
-    validate(callback?: ((errors: undefined | Record<string, ValidatedError>) => void)): Promise<any>;
+    validate(callback?: (state: any) => void): Promise<any>;
 
-    validateField(field: string, callback?: ((errors: undefined | Record<string, ValidatedError>) => void)): Promise<any>;
+    validateField(field: string, callback?: (state: any) => void): Promise<any>;
 
     submitBtnProps(props: ButtonProps): void;
 
