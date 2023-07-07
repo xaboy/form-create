@@ -30,7 +30,7 @@ export function toJson(obj, space) {
 }
 
 function makeFn(fn) {
-    return eval('(' + FUNCTION + '(){return ' + fn + ' })()')
+    return (new Function('return ' + fn))();
 }
 
 export function parseFn(fn, mode) {
