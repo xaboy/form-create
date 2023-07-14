@@ -1,4 +1,5 @@
 import {creatorFactory} from '@form-create/core/src/index';
+import is from '@form-create/utils/lib/type';
 
 const name = 'input';
 export default {
@@ -9,7 +10,7 @@ export default {
             return maker;
         }, {});
 
-        maker.idate = creatorFactory(name, {type:'date'});
+        maker.idate = creatorFactory(name, {type: 'date'});
         return maker;
     }()),
     modelField: 'value',
@@ -18,5 +19,8 @@ export default {
         if (props && props.autosize && props.autosize.minRows) {
             props.rows = props.autosize.minRows || 2;
         }
+    },
+    toFormValue(value) {
+        return is.Undef(value) ? '' : value;
     }
 }
