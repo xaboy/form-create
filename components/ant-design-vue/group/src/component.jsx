@@ -189,7 +189,6 @@ export default {
         },
         add$f(i, key, $f) {
             this.cacheRule[key].$f = $f;
-            this.formData(key, $f.formData());
             this.$nextTick(() => {
                 if (this.syncDisabled) {
                     $f.disabled(this.disabled);
@@ -216,8 +215,9 @@ export default {
                 return;
             }
             this.removeRule(key, true);
-            this.value.splice(index, 1);
-            this.input(this.value);
+            const value = [...this.value];
+            value.splice(index, 1);
+            this.input(value);
         },
         addIcon(key) {
             return <AIcon key={`a${key}`} type="plus-circle"
