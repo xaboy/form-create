@@ -99,17 +99,28 @@ export default {
         const isShow = (!this.limit || this.limit > this.uploadList.length);
         const ctx = {...this.formCreateInject.prop};
         ctx.on = deepExtend({}, ctx.on || {});
-        return <div>
-            <AUpload {...ctx} on-preview={this.onHandle.bind(this)}
-                on-change={this.handleChange}
-                ref="upload" props={{defaultFileList: this.defaultUploadList}}>
+        return <div class='_fc-upload'>
+            <AUpload {...ctx}
+                {...{
+                    on: {
+                        preview: this.onHandle.bind(this),
+                        change: this.handleChange.bind(this),
+                    },
+                    props: {
+                        defaultFileList: this.defaultUploadList
+                    },
+                    ref: 'upload'
+                }}>
                 {isShow ? <template slot="default">{this.$slots.default ||
-                <AIcon type="plus"/>}</template> : null}{getSlot(this.$slots, ['default'])}
+                    <AIcon type="plus"/>}</template> : null}{getSlot(this.$slots, ['default'])}
             </AUpload>
             <aModal props={{mask: this.previewMask, title: this.modalTitle, footer: null}}
                 v-model={this.previewVisible}>
                 <img style="width: 100%" src={this.previewImage}/>
             </aModal>
         </div>;
+    },
+    mounted(){
+        this.$emit('fc.el', this.$refs.upload);
     }
 }

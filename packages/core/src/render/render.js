@@ -326,6 +326,12 @@ export default function useRender(Render) {
                         },
                         'fc.sub-form': (subForm) => {
                             this.$handle.addSubForm(ctx, subForm);
+                        },
+                        'fc.el': (el) => {
+                            ctx.exportEl = el;
+                            if (el) {
+                                (el.$el || el).__rule__ = ctx.rule;
+                            }
                         }
                     },
                 }

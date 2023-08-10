@@ -32,6 +32,7 @@ export default function RuleContext(handle, rule, defaultValue) {
         payload: {},
         input: !!rule.field,
         el: undefined,
+        exportEl: undefined,
         defaultValue: rule.field ? deepCopy(defaultValue) : undefined,
         field: rule.field || undefined,
     })

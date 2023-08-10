@@ -130,9 +130,11 @@ export default function createUpload(config) {
             },
             makeUpload() {
                 const isShow = (!this.maxLength || this.maxLength > this.uploadList.length);
-                return <Upload {...this.formCreateInject.prop} ref="upload"
-                    style={{display: 'inline-block'}}
-                    key={this.key('upload')}>
+                return <Upload {...this.formCreateInject.prop} {...{
+                    style: {display: 'inline-block'},
+                    key: this.key('upload'),
+                    ref: 'upload'
+                }}>
                     {isShow ? <template slot="default">
                         {this.$slots.default || <div class="fc-upload-btn">
                             <icon props={{
@@ -174,6 +176,7 @@ export default function createUpload(config) {
             this.$watch(() => this.$refs.upload.fileList, () => {
                 this.update();
             }, {deep: true});
+            this.$emit('fc.el', this.$refs.upload);
         }
     };
 }

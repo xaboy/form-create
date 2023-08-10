@@ -355,7 +355,7 @@ export default function Api(h) {
         },
         el(id) {
             const ctx = h.getCtx(id);
-            if (ctx) return ctx.el || h.vm.$refs[ctx.ref];
+            if (ctx) return ctx.exportEl || ctx.el || h.vm.$refs[ctx.ref];
         },
         closeModal: (id) => {
             const el = api.el(id);

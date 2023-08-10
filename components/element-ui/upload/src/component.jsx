@@ -135,9 +135,11 @@ export default {
         },
         makeUpload() {
             const isShow = (!this.limit || this.limit > this.uploadList.length);
-            return <ElUpload {...this.formCreateInject.prop} ref="upload"
-                style={{display: 'inline-block'}}
-                key={this.key('upload')}>
+            return <ElUpload {...this.formCreateInject.prop} {...{
+                style: {display: 'inline-block'},
+                key: this.key('upload'),
+                ref: 'upload'
+            }}>
                 {isShow ? <template slot="default">
                     {this.$slots.default || <div class='fc-upload-btn'>
                         <i class="el-icon-upload2"/>
@@ -183,5 +185,6 @@ export default {
         this.$watch(() => this.$refs.upload.uploadFiles, () => {
             this.update();
         }, {deep: true});
+        this.$emit('fc.el', this.$refs.upload);
     }
 }
