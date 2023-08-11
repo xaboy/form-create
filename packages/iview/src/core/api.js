@@ -12,6 +12,14 @@ function tidyBtnProp(btn, def) {
 
 export default function extendApi(api, h) {
     extend(api, {
+        formEl() {
+            return h.$manager.form();
+        },
+        wrapEl(id) {
+            const ctx = h.getFieldCtx(id);
+            if (!ctx) return;
+            return h.vm.$refs[ctx.wrapRef];
+        },
         validate(callback) {
             return new Promise((resolve, reject) => {
                 const forms = api.children;
