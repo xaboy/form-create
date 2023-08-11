@@ -12,7 +12,7 @@ export default {
     },
     render(h, ctx) {
         const options = ctx.props.formCreateInject.options;
-        return <Select {...ctx.data}>{(Array.isArray(options) ? options : []).map((props, index) => {
+        return <Select {...ctx.data} ref="el">{(Array.isArray(options) ? options : []).map((props, index) => {
             const slot = props.slot;
             return <Option props={props}
                 key={'' + index + '-' + props.value}>
@@ -20,5 +20,8 @@ export default {
                     slot={props.slotName || 'default'}>{is.Function(slot) ? props.slot(h) : slot}</template> : null}
             </Option>
         })}{ctx.children}</Select>;
+    },
+    mounted() {
+        this.$emit('fc.el', this.$refs.el);
     }
 }

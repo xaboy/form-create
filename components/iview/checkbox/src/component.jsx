@@ -48,12 +48,15 @@ export default {
         this.update();
     },
     render() {
-        return <CheckboxGroup {...this.formCreateInject.prop}
+        return <CheckboxGroup {...this.formCreateInject.prop} ref="el"
             props={{value: this.trueValue}}
             on-input={this.onInput}>{this.options().map((opt, index) => {
                 const props = {...opt};
                 delete props.value;
                 return <Checkbox props={props} key={'' + index + '-' + opt.value}/>
             })}{getSlot(this.$slots)}</CheckboxGroup>
+    },
+    mounted() {
+        this.$emit('fc.el', this.$refs.el);
     }
 }

@@ -66,5 +66,6 @@ export default {
     },
     mounted() {
         this.setValue();
+        this.$emit('fc.el', this.$refs.tree);
     }
 }

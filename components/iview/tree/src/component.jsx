@@ -58,5 +58,8 @@ export default {
             on['on-check-change'] = this.onInput;
         }
         return <Tree {...this.formCreateInject.prop} ref="tree" on={on}>{getSlot(this.$slots)}</Tree>;
+    },
+    mounted() {
+        this.$emit('fc.el', this.$refs.tree);
     }
 }

@@ -49,12 +49,15 @@ export default {
         this.update();
     },
     render() {
-        return <ElCheckboxGroup {...this.formCreateInject.prop} props={{value: this.trueValue}}
+        return <ElCheckboxGroup {...this.formCreateInject.prop} props={{value: this.trueValue}} ref="el"
             on-input={this.onInput}>{this.options().map((opt, index) => {
                 const props = {...opt};
                 const Type = this.type === 'button' ? 'ElCheckboxButton' : 'ElCheckbox';
                 delete props.value;
                 return <Type props={props} key={Type + index + '-' + opt.value}/>
             })}{getSlot(this.$slots)}</ElCheckboxGroup>
+    },
+    mounted(){
+        this.$emit('fc.el', this.$refs.el);
     }
 }

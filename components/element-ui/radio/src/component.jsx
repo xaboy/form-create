@@ -44,7 +44,7 @@ export default {
         this.update();
     },
     render() {
-        return <ElRadioGroup {...this.formCreateInject.prop}
+        return <ElRadioGroup {...this.formCreateInject.prop} ref="el"
             props={{value: this.trueValue}}
             on-input={this.onInput}>{this.options().map((opt, index) => {
                 const props = {...opt};
@@ -52,5 +52,8 @@ export default {
                 delete props.value;
                 return <Type props={props} key={Type + index + '-' + opt.value}/>
             })}{getSlot(this.$slots)}</ElRadioGroup>
+    },
+    mounted(){
+        this.$emit('fc.el', this.$refs.el);
     }
 }
