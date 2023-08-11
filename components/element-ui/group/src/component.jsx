@@ -33,6 +33,10 @@ export default {
             type: Array,
             default: () => []
         },
+        sortBtn: {
+            type: Boolean,
+            default: true
+        },
         defaultValue: Object,
         disabled: {
             type: Boolean,
@@ -52,6 +56,7 @@ export default {
             default: () => {
             }
         },
+        parse: Function,
     },
     data() {
         return {
@@ -136,7 +141,7 @@ export default {
                 n.forEach((val, i) => {
                     this.setValue(keys[i], n[i]);
                 });
-                if(o.length && !n.length) {
+                if (o.length && !n.length) {
                     this.input([]);
                 }
             }
@@ -189,6 +194,7 @@ export default {
                 const defVal = deepCopy(this.defaultValue);
                 extend(options.formData, this.field ? {[this.field]: defVal} : defVal);
             }
+            this.parse && this.parse({rule, options, index: this.sort.length});
             this.$set(this.cacheRule, ++this.len, {rule, options});
             if (emit) {
                 this.$nextTick(() => this.$emit('add', rule, Object.keys(this.cacheRule).length - 1));
@@ -259,16 +265,16 @@ export default {
                 });
             }
             const btn = [];
-            if((!this.max || total < this.max) && total === index + 1){
+            if ((!this.max || total < this.max) && total === index + 1) {
                 btn.push(this.addIcon(key));
             }
-            if(total > this.min){
+            if (total > this.min) {
                 btn.push(this.delIcon(index, key));
             }
-            if(index){
+            if (this.sortBtn && index) {
                 btn.push(this.sortUpIcon(index));
             }
-            if(index !== total - 1){
+            if (this.sortBtn && index !== total - 1) {
                 btn.push(this.sortDownIcon(index));
             }
             return btn;
@@ -305,6 +311,7 @@ export default {
             })) : <div key={'a_def'} class="_fc-group-plus-minus _fc-group-add"
                 on-click={this.add}/>) : keys.map((key, index) => {
                 const {rule, options} = this.cacheRule[key];
+                const btn = button && !disabled ? this.makeIcon(keys.length, index, key) : [];
                 return <div class="_fc-group-container" key={key}>
                     <Type
                         key={key}
@@ -320,8 +327,9 @@ export default {
                             option: options,
                             extendOption: true
                         }}
-                    /> <div class="_fc-group-idx">{index + 1}</div>
-                    {(button && !disabled) ? <div class="_fc-group-handle">{this.makeIcon(keys.length, index, key)}</div> : null}
+                    />
+                    <div class="_fc-group-idx">{index + 1}</div>
+                    {(btn.length) ? <div class="_fc-group-handle">{btn}</div> : null}
                 </div>
             });
         return <div key={'con'} class={'_fc-group ' + (disabled ? '_fc-group-disabled' : '')}>{children}</div>
