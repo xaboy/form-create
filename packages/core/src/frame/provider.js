@@ -80,6 +80,15 @@ const fetch = function (fc) {
                 let fn = (v) => v.data;
                 if (is.Function(option.parse)) {
                     fn = option.parse;
+                } else if (option.parse && is.String(option.parse)) {
+                    fn = (v) => {
+                        option.parse.split('.').forEach(k => {
+                            if (v) {
+                                v = v[k];
+                            }
+                        })
+                        return v;
+                    }
                 }
                 set(fn(body, rule, api))
                 api.sync(rule);
