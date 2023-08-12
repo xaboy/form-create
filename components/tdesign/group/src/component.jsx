@@ -1,9 +1,8 @@
 import {hasProperty} from '@form-create/utils/lib/type';
-import {defineComponent, markRaw, nextTick} from 'vue';
+import {defineComponent, markRaw, nextTick, watch} from 'vue';
 import deepExtend, {deepCopy} from '@form-create/utils/lib/deepextend';
 import extend from '@form-create/utils/lib/extend';
-import PlusCircleOutlined from './PlusCircleOutlined.vue';
-import MinusCircleOutlined from './MinusCircleOutlined.vue';
+import './style.css';
 
 const NAME = 'fcGroup';
 
@@ -32,6 +31,10 @@ export default defineComponent({
             default: () => []
         },
         defaultValue: Object,
+        sortBtn: {
+            type: Boolean,
+            default: true
+        },
         disabled: {
             type: Boolean,
             default: false
@@ -39,10 +42,6 @@ export default defineComponent({
         syncDisabled: {
             type: Boolean,
             default: true
-        },
-        fontSize: {
-            type: Number,
-            default: 28
         },
         onBeforeRemove: {
             type: Function,
@@ -55,17 +54,26 @@ export default defineComponent({
             }
         },
         formCreateInject: Object,
+        parse: Function,
     },
     data() {
         return {
             len: 0,
             cacheRule: {},
             cacheValue: {},
+            sort: [],
             form: markRaw(this.formCreateInject.form.$form())
         }
     },
     emits: ['update:modelValue', 'change', 'itemMounted', 'remove', 'add'],
     watch: {
+        // cacheRule: {
+        //     handler(n) {
+        //         this.sort = Object.keys(this.cacheRule);
+        //         console.log(n);
+        //     },
+        //     immediate: true
+        // },
         rule: {
             handler(n, o) {
                 Object.keys(this.cacheRule).forEach(v => {
@@ -106,7 +114,7 @@ export default defineComponent({
         modelValue: {
             handler(n) {
                 n = n || [];
-                let keys = Object.keys(this.cacheRule), total = keys.length, len = total - n.length;
+                let keys = Object.keys(this.sort), total = keys.length, len = total - n.length;
                 if (len < 0) {
                     for (let i = len; i < 0; i++) {
                         this.addRule(n.length + i, true);
@@ -141,7 +149,7 @@ export default defineComponent({
         },
         formData(key, formData) {
             const cacheRule = this.cacheRule;
-            const keys = Object.keys(cacheRule);
+            const keys = this.sort;
             if (keys.filter(k => cacheRule[k].$f).length !== keys.length) {
                 return;
             }
@@ -174,6 +182,7 @@ export default defineComponent({
                 const defVal = deepCopy(this.defaultValue);
                 extend(options.formData, this.field ? {[this.field]: defVal} : defVal);
             }
+            this.parse && this.parse({rule, options, index: this.sort.length});
             this.cacheRule[++this.len] = {rule, options};
             if (emit) {
                 nextTick(() => this.$emit('add', rule, Object.keys(this.cacheRule).length - 1));
@@ -181,7 +190,6 @@ export default defineComponent({
         },
         add$f(i, key, $f) {
             this.cacheRule[key].$f = $f;
-            this.formData(key, $f.formData());
             nextTick(() => {
                 if (this.syncDisabled) {
                     $f.disabled(this.disabled);
@@ -197,30 +205,43 @@ export default defineComponent({
                 nextTick(() => this.$emit('remove', index));
             }
         },
-        add() {
+        add(i) {
             if (this.disabled || false === this.onBeforeAdd(this.modelValue)) {
                 return;
             }
-            this.modelValue.push(this.field ? null : {});
-            this.$emit('update:modelValue', this.modelValue);
+            const value = [...this.modelValue];
+            value.push(this.defaultValue ? deepCopy(this.defaultValue) : (this.field ? null : {}));
+            this.input(value);
         },
         del(index, key) {
             if (this.disabled || false === this.onBeforeRemove(this.modelValue, index)) {
                 return;
             }
             this.removeRule(key, true);
-            this.modelValue.splice(index, 1);
-            this.input(this.modelValue);
+            const value = [...this.modelValue];
+            value.splice(index, 1);
+            this.input(value);
         },
         addIcon(key) {
-            return <PlusCircleOutlined key={`a${key}`}
-                style={`font-size:${this.fontSize}px;cursor:${this.disabled ? 'not-allowed;color:#c9cdd4' : 'pointer'};`}
-                onClick={this.add}/>;
+            return <div class="_fc-group-btn _fc-group-plus-minus" onClick={this.add}></div>;
         },
         delIcon(index, key) {
-            return <MinusCircleOutlined key={`d${key}`}
-                style={`font-size:${this.fontSize}px;cursor:${this.disabled ? 'not-allowed;color:#c9cdd4' : 'pointer;color:#606266'};`}
-                onClick={() => this.del(index, key)}/>;
+            return <div class="_fc-group-btn _fc-group-plus-minus _fc-group-minus"
+                onClick={() => this.del(index, key)}></div>
+        },
+        sortUpIcon(index) {
+            return <div class="_fc-group-btn _fc-group-arrow _fc-group-up"
+                onClick={() => this.changeSort(index, -1)}></div>
+        },
+        sortDownIcon(index) {
+            return <div class="_fc-group-btn _fc-group-arrow _fc-group-down"
+                onClick={() => this.changeSort(index, 1)}></div>
+        },
+        changeSort(index, sort) {
+            const a = this.sort[index];
+            this.sort[index] = this.sort[index + sort];
+            this.sort[index + sort] = a;
+            this.formData(0);
         },
         makeIcon(total, index, key) {
             if (this.$slots.button) {
@@ -233,12 +254,20 @@ export default defineComponent({
                     add: this.add
                 });
             }
-            if (index === 0) {
-                return [(this.max !== 0 && total >= this.max) ? null : this.addIcon(key), (this.min === 0 || total > this.min) ? this.delIcon(index, key) : null];
+            const btn = [];
+            if ((!this.max || total < this.max) && total === index + 1) {
+                btn.push(this.addIcon(key));
             }
             if (total > this.min) {
-                return this.delIcon(index, key);
+                btn.push(this.delIcon(index, key));
             }
+            if (this.sortBtn && index) {
+                btn.push(this.sortUpIcon(index));
+            }
+            if (this.sortBtn && index !== total - 1) {
+                btn.push(this.sortDownIcon(index));
+            }
+            return btn;
         },
         emitEvent(name, args, index, key) {
             this.$emit(name, ...args, this.cacheRule[key].$f, index);
@@ -250,6 +279,9 @@ export default defineComponent({
         }
     },
     created() {
+        watch(() => ({...this.cacheRule}), (n) => {
+            this.sort = Object.keys(n);
+        }, {immediate: true})
         const d = (this.expand || 0) - this.modelValue.length;
         for (let i = 0; i < this.modelValue.length; i++) {
             this.addRule(i);
@@ -259,30 +291,37 @@ export default defineComponent({
         }
     },
     render() {
-        const keys = Object.keys(this.cacheRule);
+        const keys = this.sort;
         const button = this.button;
         const Type = this.form;
-        return keys.length === 0 ?
+        const disabled = this.disabled;
+
+        const children = keys.length === 0 ?
             (this.$slots.default ? (this.$slots.default({
                 vm: this,
                 add: this.add
-            })) : <PlusCircleOutlined key={1}
-                style={`font-size:${this.fontSize}px;vertical-align:middle;color:${this.disabled ? '#c9cdd4;cursor: not-allowed' : '#606266;cursor:pointer'};`}
-                onClick={this.add}/>) :
-            <div style="flex: 1 1 0%;" key={2}>{keys.map((key, index) => {
+            })) : <div key={'a_def'} class="_fc-group-plus-minus _fc-group-add"
+                onClick={this.add}/>) : keys.map((key, index) => {
                 const {rule, options} = this.cacheRule[key];
-                return <TRow align="middle" type="flex" key={key}
-                    style="border-bottom:1px dashed #DCDFE6;margin-bottom:10px;">
-                    <TCol span={button ? 9 : 12}><Type
-                        key={key} inFor={true}
-                        onUpdate:modelValue={(formData) => this.formData(key, formData)}
-                        modelValue={this.field ? {[this.field]: this._value(this.modelValue[index])} : this.modelValue[index]}
-                        onEmit-event={(name, ...args) => this.emitEvent(name, args, index, key)}
-                        onUpdate:api={($f) => this.add$f(index, key, $f)}
-                        rule={rule}
-                        option={options} extendOption={true}/></TCol>
-                    {button ? <TCol span={2} push={1}>{this.makeIcon(keys.length, index, key)}</TCol> : null}
-                </TRow>
-            })}</div>
+                const btn = button && !disabled ? this.makeIcon(keys.length, index, key) : [];
+                return <div class="_fc-group-container" key={key}>
+                    <Type
+                        key={key}
+                        {...{
+                            'onUpdate:modelValue': (formData) => this.formData(key, formData),
+                            'onEmit-event': (name, ...args) => this.emitEvent(name, args, index, key),
+                            'onUpdate:api': ($f) => this.add$f(index, key, $f),
+                            inFor: true,
+                            modelValue: this.field ? {[this.field]: this._value(this.modelValue[index])} : this.modelValue[index],
+                            rule,
+                            option: options,
+                            extendOption: true
+                        }}
+                    />
+                    <div class="_fc-group-idx">{index + 1}</div>
+                    {(btn.length) ? <div class="_fc-group-handle">{btn}</div> : null}
+                </div>
+            });
+        return <div key={'con'} class={'_fc-group ' + (disabled ? '_fc-group-disabled' : '')}>{children}</div>
     }
 });
