@@ -551,7 +551,7 @@ export interface FetchOption {
 export interface FetchEffectOption {
     action: String;
     to?: String;
-    parse?: (body: any, rule: Object, api: Object) => any;
+    parse?: String | ((body: any, rule: Object, api: Object) => any);
     method?: String;
     data?: Object;
     dataType?: 'json';
