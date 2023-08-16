@@ -1,6 +1,7 @@
 import {FormData, VNodeRule} from "@form-create/core";
 import {ButtonProps} from "element-plus";
 import {Api} from "./index";
+import {ComponentInternalInstance} from "@vue/runtime-core";
 
 type SizeObject = {
     span?: number
@@ -122,6 +123,10 @@ export interface ApiAttrs {
         disabled(disabled: boolean): void;
         show(show: boolean): void;
     }
+
+    formEl(): undefined | ComponentInternalInstance;
+
+    wrapEl(id: string): undefined | ComponentInternalInstance;
 
     submit(success: (formData: FormData, $f: Api) => void, fail: ($f: Api) => void): Promise<any>;
 

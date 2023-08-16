@@ -1,6 +1,7 @@
 import {FormData, VNodeRule} from "@form-create/core";
 import {ColProps, RowProps, TooltipProps, ButtonProps} from "ant-design-vue";
 import {Api} from "./index";
+import {ComponentInternalInstance} from "@vue/runtime-core";
 
 export interface OptionAttrs {
     col?: Boolean | ColProps & {
@@ -99,7 +100,11 @@ export interface ApiAttrs {
         show(show: boolean): void;
     }
 
-    submit(success: (formData: FormData, $f: Api) => void, fail: ($f: Api) => void):  Promise<any>;
+    formEl(): undefined | ComponentInternalInstance;
+
+    wrapEl(id: string): undefined | ComponentInternalInstance;
+
+    submit(success: (formData: FormData, $f: Api) => void, fail: ($f: Api) => void): Promise<any>;
 
     clearValidateState(fields?: string | string[], clearSub?: Boolean): void;
 

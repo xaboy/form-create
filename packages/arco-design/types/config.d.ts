@@ -5,7 +5,7 @@ import {PopoverInstance} from "@arco-design/web-vue/es/popover";
 import {FormItemInstance, FormInstance} from "@arco-design/web-vue/es/form";
 import {Row, Col} from "@arco-design/web-vue/es/grid";
 import {Api} from "./index";
-import {ValidatedError} from "@arco-design/web-vue/es/form/interface";
+import {ComponentInternalInstance} from "@vue/runtime-core";
 
 
 declare type TooltipProps = TooltipInstance['$props'];
@@ -92,6 +92,10 @@ export interface ApiAttrs {
         disabled(disabled: boolean): void;
         show(show: boolean): void;
     }
+
+    formEl(): undefined | ComponentInternalInstance;
+
+    wrapEl(id: string): undefined | ComponentInternalInstance;
 
     submit(success: (formData: FormData, $f: Api) => void, fail: ($f: Api) => void): Promise<any>;
 
