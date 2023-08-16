@@ -67,13 +67,6 @@ export default defineComponent({
     },
     emits: ['update:modelValue', 'change', 'itemMounted', 'remove', 'add'],
     watch: {
-        // cacheRule: {
-        //     handler(n) {
-        //         this.sort = Object.keys(this.cacheRule);
-        //         console.log(n);
-        //     },
-        //     immediate: true
-        // },
         rule: {
             handler(n, o) {
                 Object.keys(this.cacheRule).forEach(v => {
