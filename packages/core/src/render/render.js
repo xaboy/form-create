@@ -239,6 +239,12 @@ export default function useRender(Render) {
                         vnodeMounted: (vn) => {
                             vn.el.__rule__ = ctx.rule;
                             this.onMounted(ctx, vn.el);
+                        },
+                        'fc.el': (el) => {
+                            ctx.exportEl = el;
+                            if (el) {
+                                (el.$el || el).__rule__ = ctx.rule;
+                            }
                         }
                     }
                 }

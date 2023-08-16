@@ -22,7 +22,7 @@ export default defineComponent({
             default: () => ([])
         }
     },
-    emits: ['update:modelValue'],
+    emits: ['update:modelValue', 'fc.el'],
     watch: {
         modelValue() {
             this.setValue();
@@ -57,5 +57,6 @@ export default defineComponent({
     },
     mounted() {
         this.setValue();
+        this.$emit('fc.el',this.$refs.tree);
     }
 });

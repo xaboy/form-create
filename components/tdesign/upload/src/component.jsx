@@ -45,6 +45,7 @@ export default defineComponent({
             type: Function,
         },
     },
+    emits: ['update:modelValue', 'fc.el'],
     data() {
         return {
             uploadList: toArray(this.modelValue).map(parseFile)
@@ -87,8 +88,12 @@ export default defineComponent({
                 onSuccess={handleSuccess}
                 onRemove={handleRemove}
                 v-slots={$slots}
+                ref="el"
             >
             </t-upload>
         </>
+    },
+    mounted(){
+        this.$emit('fc.el',this.$refs.el);
     }
 });

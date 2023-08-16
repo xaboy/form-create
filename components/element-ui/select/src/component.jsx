@@ -14,7 +14,7 @@ export default defineComponent({
         },
         type: String,
     },
-    emits: ['update:modelValue'],
+    emits: ['update:modelValue', 'fc.el'],
     setup(props) {
         const options = toRef(props.formCreateInject, 'options', []);
         const value = toRef(props, 'modelValue');
@@ -29,8 +29,11 @@ export default defineComponent({
     render() {
         return <ElSelect {...this.$attrs} modelValue={this.value}
             onUpdate:modelValue={(v) => this.$emit('update:modelValue', v)}
-            v-slots={getSlot(this.$slots, ['default'])}>{this.options().map((props, index) => {
+            v-slots={getSlot(this.$slots, ['default'])} ref="el">{this.options().map((props, index) => {
                 return <ElOption {...props} key={'' + index + '-' + props.value}/>
             })}{this.$slots.default?.()}</ElSelect>;
+    },
+    mounted(){
+        this.$emit('fc.el',this.$refs.el);
     }
 });

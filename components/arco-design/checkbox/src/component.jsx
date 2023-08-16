@@ -13,7 +13,7 @@ export default defineComponent({
             default: () => []
         },
     },
-    emits: ['update:modelValue'],
+    emits: ['update:modelValue', 'fc.el'],
     setup(props, _) {
         const options = toRef(props.formCreateInject, 'options', []);
         const value = toRef(props, 'modelValue');
@@ -30,8 +30,11 @@ export default defineComponent({
     },
     render() {
         return <ACheckboxGroup {...this.$attrs} modelValue={this.value} v-slots={getSlot(this.$slots, ['default'])}
-            onUpdate:modelValue={this.onInput}>{this.options().map((opt, index) => {
+            onUpdate:modelValue={this.onInput} ref="el">{this.options().map((opt, index) => {
                 return <ACheckbox {...opt} key={'' + index + '-' + opt.value}>{opt.label || opt.value || ''}</ACheckbox>
             })}{this.$slots.default?.()}</ACheckboxGroup>
+    },
+    mounted(){
+        this.$emit('fc.el',this.$refs.el);
     }
 });

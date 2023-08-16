@@ -14,7 +14,7 @@ export default defineComponent({
         },
         type: String,
     },
-    emits: ['update:modelValue'],
+    emits: ['update:modelValue', 'fc.el'],
     setup(props, _) {
         const options = toRef(props.formCreateInject, 'options', []);
         const value = toRef(props, 'modelValue');
@@ -33,12 +33,15 @@ export default defineComponent({
         const name = this.type === 'button' ? 'ElRadioButton' : 'ElRadio';
         const Type = resolveComponent(name);
         return <ElRadioGroup {...this.$attrs} modelValue={this.value} v-slots={getSlot(this.$slots, ['default'])}
-            onUpdate:modelValue={this.onInput}>{this.options().map((opt, index) => {
+            onUpdate:modelValue={this.onInput} ref="el">{this.options().map((opt, index) => {
                 const props = {...opt};
                 const value = props.value;
                 delete props.value;
                 return <Type {...props} label={value}
                     key={name + index + '-' + opt.value}>{props.label || props.value || ''}</Type>
             })}{this.$slots.default?.()}</ElRadioGroup>
+    },
+    mounted(){
+        this.$emit('fc.el',this.$refs.el);
     }
 });

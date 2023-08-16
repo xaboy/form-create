@@ -44,7 +44,7 @@ export default defineComponent({
         modalTitle: String,
         previewMask: undefined,
     },
-    emits: ['update:modelValue', 'finish'],
+    emits: ['update:modelValue', 'finish', 'fc.el'],
     data() {
         return {
             previewImage: '',
@@ -92,12 +92,15 @@ export default defineComponent({
             <n-upload max={this.limit} listType={'image-card'} {...this.$attrs} onPreview={this.handlePreview}
                 onFinish={this.handleChange} key={this.uploadList.length}
                 default-file-list={this.uploadList} onUpdate:fileList={this.inputRemove}
-                v-slots={this.$slots}/>
+                v-slots={this.$slots} ref="el"/>
             <NModal preset={'card'} mask={this.previewMask} title={this.modalTitle} show={this.previewVisible}
                 style="width: 600px;"
                 onUpdate:show={(n) => this.previewVisible = n}>
                 <img style="width: 100%" src={this.previewImage}/>
             </NModal>
         </>;
+    },
+    mounted(){
+        this.$emit('fc.el',this.$refs.el);
     }
 });

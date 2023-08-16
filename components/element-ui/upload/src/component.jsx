@@ -35,7 +35,7 @@ export default defineComponent({
         modalTitle: String,
         modelValue: [Array, String]
     },
-    emits: ['update:modelValue', 'change', 'remove'],
+    emits: ['update:modelValue', 'change', 'remove', 'fc.el'],
     data() {
         return {
             previewVisible: false,
@@ -86,7 +86,7 @@ export default defineComponent({
                 onPreview={this.handlePreview} onChange={this.handleChange}
                 onRemove={this.handleRemove}
                 fileList={this.fileList}
-                v-slots={getSlot(this.$slots, ['default'])}>
+                v-slots={getSlot(this.$slots, ['default'])} ref="upload">
                 {(this.$slots.default?.() ||
                     <ElIcon>
                         <IconUpload/>
@@ -99,5 +99,8 @@ export default defineComponent({
                 <img style="width: 100%" src={this.previewImage}/>
             </ElDialog>
             </>);
+    },
+    mounted(){
+        this.$emit('fc.el',this.$refs.upload);
     }
 })

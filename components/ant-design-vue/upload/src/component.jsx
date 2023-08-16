@@ -46,7 +46,7 @@ export default defineComponent({
         modalTitle: String,
         previewMask: undefined,
     },
-    emits: ['update:modelValue', 'change'],
+    emits: ['update:modelValue', 'change', 'fc.el'],
     data() {
         return {
             previewImage: '',
@@ -101,5 +101,8 @@ export default defineComponent({
                 <img style="width: 100%" src={this.previewImage}/>
             </aModal>
         </>;
+    },
+    mounted(){
+        this.$emit('fc.el',this.$refs.upload);
     }
 });

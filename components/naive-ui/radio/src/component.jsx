@@ -14,7 +14,7 @@ export default defineComponent({
         },
         type: String,
     },
-    emits: ['update:modelValue'],
+    emits: ['update:modelValue', 'fc.el'],
     setup(props, _) {
         const options = toRef(props.formCreateInject, 'options', []);
         const value = toRef(props, 'modelValue');
@@ -34,8 +34,11 @@ export default defineComponent({
         const name = this.type === 'button' ? 'NRadioButton' : 'NRadio';
         const Type = resolveComponent(name);
         return <NRadioGroup {...this.$attrs} value={this.value} v-slots={getSlot(this.$slots, ['default'])}
-            onUpdate:value={this.onInput}>{this.options().map((opt, index) => {
+            onUpdate:value={this.onInput} ref="el">{this.options().map((opt, index) => {
                 return <Type {...opt} key={name + index + '-' + opt.value}>{opt.label || opt.value || ''}</Type>
             })}{this.$slots.default?.()}</NRadioGroup>
+    },
+    mounted(){
+        this.$emit('fc.el',this.$refs.el);
     }
 });
