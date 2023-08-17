@@ -1,6 +1,5 @@
 import extend from '@form-create/utils/lib/extend';
 import is, {hasProperty} from '@form-create/utils/lib/type';
-import mergeProps from '@form-create/utils/lib/mergeprops';
 import {mergeRule} from '../frame/util';
 import {watch} from 'vue';
 
@@ -11,7 +10,7 @@ export default function useEffect(Handler) {
             const ps = this.fc.providers;
             Object.keys(ps).forEach(k => {
                 let prop = ps[k];
-                if(is.Function(prop)){
+                if (is.Function(prop)) {
                     prop = prop(this.fc);
                 }
                 prop._c = getComponent(prop);
@@ -114,7 +113,9 @@ function unique(arr) {
 
 function getComponent(p) {
     const c = p.components;
-    if (Array.isArray(c)) return unique(c.filter(v => v !== '*'));
-    else if (is.String(c)) return [c];
+    if (Array.isArray(c)) {
+        const arr = unique(c.filter(v => v !== '*'));
+        return arr.length ? arr : false;
+    } else if (is.String(c)) return [c];
     else return false;
 }
