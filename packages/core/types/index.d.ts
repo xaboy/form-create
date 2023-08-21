@@ -113,6 +113,9 @@ export interface FormCreate<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs, Ap
 
     getApi(name: string): Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> | undefined;
 
+    setData(attr: string, data: any): void;
+
+    removeData(attr: string): void;
 }
 
 export interface FormData {
