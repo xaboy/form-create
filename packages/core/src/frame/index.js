@@ -18,6 +18,7 @@ import $provider from './provider';
 import {deepCopy} from '@form-create/utils/lib/deepextend';
 import Mitt from '@form-create/utils/lib/mitt';
 import html from '../parser/html';
+import uniqueId from '@form-create/utils/lib/unique';
 
 function parseProp(name, id) {
     let prop;
@@ -63,16 +64,20 @@ export default function FormCreateFactory(config) {
     };
     const maker = makerFactory();
     let globalConfig = {global: {}};
-    const data = {};
+    const loadData = {};
     const CreateNode = CreateNodeFactory();
 
     exportAttrs(config.attrs || {});
 
     function getApi(name) {
         const val = instance[name];
-        if (Array.isArray(val))
-            return [...val];
-        return val;
+        if (Array.isArray(val)) {
+            return val.map(v => {
+                return v.api();
+            });
+        } else if (val) {
+            return val.api();
+        }
     }
 
     function useApp(fn) {
@@ -172,7 +177,7 @@ export default function FormCreateFactory(config) {
                 providers,
                 useApps,
                 maker,
-                data
+                loadData
             }
         } else {
             delete _config.inherit;
@@ -182,6 +187,25 @@ export default function FormCreateFactory(config) {
 
     function setModelField(name, field) {
         modelFields[name] = field;
+    }
+
+    function _emitData(id) {
+        Object.keys(instance).forEach(v => {
+            const apis = Array.isArray(instance[v]) ? instance[v] : [instance[v]];
+            apis.forEach(that => {
+                that.bus.$emit('p.loadData.' + id);
+            })
+        })
+    }
+
+    function setData(id, data) {
+        loadData[id] = data;
+        _emitData(id);
+    }
+
+    function removeData(id) {
+        delete loadData[id];
+        _emitData(id);
     }
 
     function FormCreate(vm) {
@@ -194,12 +218,13 @@ export default function FormCreateFactory(config) {
             providers,
             modelFields,
             rules: vm.props.rule,
-            name: vm.props.name,
+            name: vm.props.name || uniqueId(),
             inFor: vm.props.inFor,
             prop: {
                 components,
                 directives,
             },
+            loadData,
             CreateNode,
             bus: new Mitt(),
             unwatch: null,
@@ -218,9 +243,9 @@ export default function FormCreateFactory(config) {
         if (this.name) {
             if (this.inFor) {
                 if (!instance[this.name]) instance[this.name] = [];
-                instance[this.name].push(this.api());
+                instance[this.name].push(this);
             } else {
-                instance[this.name] = this.api();
+                instance[this.name] = this;
             }
         }
     }
@@ -274,7 +299,7 @@ export default function FormCreateFactory(config) {
         unmount() {
             if (this.name) {
                 if (this.inFor) {
-                    const idx = instance[this.name].indexOf(this.api());
+                    const idx = instance[this.name].indexOf(this);
                     instance[this.name].splice(idx, 1);
                 } else {
                     delete instance[this.name];
@@ -293,7 +318,8 @@ export default function FormCreateFactory(config) {
         extend(formCreate, {
             version: config.version,
             ui: config.ui,
-            data,
+            setData,
+            removeData,
             maker,
             component,
             directive,
@@ -363,7 +389,7 @@ export default function FormCreateFactory(config) {
         inherit.providers && extend(providers, inherit.providers);
         inherit.useApps && extend(useApps, inherit.useApps);
         inherit.maker && extend(maker, inherit.maker);
-        inherit.data && extend(data, inherit.data);
+        inherit.loadData && extend(loadData, inherit.loadData);
     }
 
     return create;
