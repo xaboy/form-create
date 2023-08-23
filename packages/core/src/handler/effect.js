@@ -113,7 +113,9 @@ function unique(arr) {
 
 function getComponent(p) {
     const c = p.components;
-    if (Array.isArray(c)) return unique(c.filter(v => v !== '*'));
-    else if (is.String(c)) return [c];
+    if (Array.isArray(c)) {
+        const arr = unique(c.filter(v => v !== '*'));
+        return arr.length ? arr : false;
+    } else if (is.String(c)) return [c];
     else return false;
 }
