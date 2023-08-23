@@ -181,7 +181,7 @@ export default {
                 return;
             }
             this.cache(key, value);
-            $f.coverValue(value || {});
+            $f && $f.coverValue(value || {});
         },
         addRule(i, emit) {
             const rule = this.formCreateInject.form.copyRules(this.formRule);
