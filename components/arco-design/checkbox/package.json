@@ -1,6 +1,6 @@
 {
   "name": "@form-create/component-arco-checkbox",
-  "version": "3.1.23",
+  "version": "3.1.24",
   "description": "@form-create/arco-design 内置组件",
   "main": "./dist/index.min.js",
   "module": "./dist/index.esm.js",
