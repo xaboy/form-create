@@ -197,6 +197,8 @@ export default function useLoader(Handler) {
 
                 !isCopy && !isInit && this.effect(ctx, 'load');
 
+                this.effect(ctx, 'created');
+
                 ctx.parser.loadChildren === false || loadChildren(ctx.rule.children, ctx);
 
                 if (!parent) {
