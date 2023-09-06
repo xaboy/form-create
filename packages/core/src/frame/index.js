@@ -17,6 +17,7 @@ import {appendProto} from '../factory/creator';
 import $provider from './provider';
 import {deepCopy} from '@form-create/utils/lib/deepextend';
 import html from '../parser/html';
+import uniqueId from '@form-create/utils/lib/unique';
 
 export let _vue = typeof window !== 'undefined' && window.Vue ? window.Vue : Vue;
 
@@ -83,16 +84,20 @@ export default function FormCreateFactory(config) {
     };
     const maker = makerFactory();
     let globalConfig = {global: {}};
-    const data = {};
+    const loadData = {};
     const CreateNode = CreateNodeFactory();
 
     exportAttrs(config.attrs || {});
 
     function getApi(name) {
         const val = instance[name];
-        if (Array.isArray(val))
-            return [...val];
-        return val;
+        if (Array.isArray(val)) {
+            return val.map(v => {
+                return v.api();
+            });
+        } else if (val) {
+            return val.api();
+        }
     }
 
     function directive() {
@@ -138,6 +143,25 @@ export default function FormCreateFactory(config) {
         if (component.formCreateParser) parser(name, component.formCreateParser);
     }
 
+    function _emitData(id) {
+        Object.keys(instance).forEach(v => {
+            const apis = Array.isArray(instance[v]) ? instance[v] : [instance[v]];
+            apis.forEach(that => {
+                that.bus.$emit('p.loadData.' + id);
+            })
+        })
+    }
+
+    function setData(id, data) {
+        loadData[id] = data;
+        _emitData(id);
+    }
+
+    function removeData(id) {
+        delete loadData[id];
+        _emitData(id);
+    }
+
     function $form() {
         return _vue.extend($FormCreate(FormCreate));
     }
@@ -170,7 +194,7 @@ export default function FormCreateFactory(config) {
                 directives,
                 providers,
                 maker,
-                data
+                loadData
             }
         } else {
             delete _config.inherit;
@@ -187,12 +211,13 @@ export default function FormCreateFactory(config) {
             parsers,
             providers,
             rules: Array.isArray(rules) ? rules : [],
-            name: vm.$options.propsData.name,
+            name: vm.$options.propsData.name || uniqueId(),
             inFor: vm.$options.propsData.inFor,
             prop: {
                 components,
                 directives,
             },
+            loadData,
             CreateNode,
             bus: new _vue,
             unwatch: null,
@@ -204,9 +229,9 @@ export default function FormCreateFactory(config) {
         if (this.name) {
             if (this.inFor) {
                 if (!instance[this.name]) instance[this.name] = [];
-                instance[this.name].push(this.api());
+                instance[this.name].push(this);
             } else {
-                instance[this.name] = this.api();
+                instance[this.name] = this;
             }
         }
     }
@@ -238,8 +263,11 @@ export default function FormCreateFactory(config) {
                 h.reloadRule([]);
                 if (this.name) {
                     if (this.inFor) {
-                        const idx = instance[this.name].indexOf(this.api());
+                        const idx = instance[this.name].indexOf(this);
                         instance[this.name].splice(idx, 1);
+                        if(!instance[this.name].length){
+                            delete instance[this.name];
+                        }
                     } else {
                         delete instance[this.name];
                     }
@@ -295,7 +323,8 @@ export default function FormCreateFactory(config) {
         extend(formCreate, {
             version: config.version,
             ui: config.ui,
-            data,
+            setData,
+            removeData,
             maker,
             component,
             directive,
@@ -373,7 +402,7 @@ export default function FormCreateFactory(config) {
         inherit.directives && extend(directives, inherit.directives);
         inherit.providers && extend(providers, inherit.providers);
         inherit.maker && extend(maker, inherit.maker);
-        inherit.data && extend(data, inherit.data);
+        inherit.loadData && extend(loadData, inherit.loadData);
     }
 
     return create;

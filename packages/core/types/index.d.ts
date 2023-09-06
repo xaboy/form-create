@@ -185,6 +185,7 @@ export interface BaseRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> extend
         fetch?: String | FetchEffectOption | ((rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => FetchEffectOption),
         componentValidate?: string | boolean;
         required?:boolean | string | object;
+        loadData?:LoadDataEffectOption | Array<LoadDataEffectOption>
         [key: string]: any
     };
 
@@ -532,5 +533,11 @@ export interface FetchEffectOption {
     onError?: (e: Error | ProgressEvent, rule: Object, api: Object) => void;
 }
 
+export interface LoadDataEffectOption {
+    attr: String;
+    to?: String;
+    copy?: boolean;
+    watch?: boolean;
+}
 
 

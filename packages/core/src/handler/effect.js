@@ -98,6 +98,7 @@ export default function useEffect(Handler) {
                     data.getProp = () => ctx.effectData(attr);
                     data.clearProp = () => ctx.clearEffectData(attr);
                     data.mergeProp = (prop) => mergeRule(data.getProp(), [prop]);
+                    data.id = ctx.id;
                 }
                 this.bus.$emit(`p:${attr}:${_type}:${p.input ? 1 : 0}`, event, [data, rule, this.api]);
             });

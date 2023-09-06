@@ -2,6 +2,53 @@ import {err} from '@form-create/utils/lib/console';
 import {byCtx, invoke} from './util';
 import is from '@form-create/utils/lib/type';
 import deepSet from '@form-create/utils/lib/deepset';
+import {deepCopy} from '@form-create/utils/lib/deepextend';
+import toArray from '@form-create/utils/lib/toarray';
+
+const loadData = function (fc) {
+    const loadData = {
+        name: 'loadData',
+        _fn: [],
+        created(inject, rule, api) {
+            this.deleted(inject);
+            let attrs = toArray(inject.getValue());
+            const events = [];
+            attrs.forEach(attr => {
+                if (attr) {
+                    const on = () => {
+                        if (attr.watch !== false) {
+                            fc.bus.$off('p.loadData.' + attr.attr, on);
+                            fc.bus.$once('p.loadData.' + attr.attr, on);
+                        }
+                        let value = undefined;
+                        if (attr.attr) {
+                            value = fc.loadData[attr.attr] || attr.default;
+                            if (attr.copy) {
+                                value = deepCopy(value)
+                            }
+                        }
+                        deepSet(inject.getProp(), attr.to || 'options', value);
+                        api.sync(rule);
+                    }
+                    events.push(() => fc.bus.$off('p.loadData.' + attr.attr, on));
+                    on();
+                }
+            })
+            this._fn[inject.id] = events;
+        },
+        deleted(inject){
+            if (this._fn[inject.id]) {
+                this._fn[inject.id].forEach(un => {
+                    un();
+                })
+                delete this._fn[inject.id];
+            }
+            inject.clearProp();
+        },
+    };
+    loadData.watch = loadData.created;
+    return loadData;
+}
 
 const componentValidate = {
     name: 'componentValidate',
@@ -162,6 +209,7 @@ function parseVal(val) {
 
 export default {
     fetch,
+    loadData,
     required: $required,
     componentValidate,
 };
