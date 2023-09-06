@@ -1,7 +1,8 @@
 import {Button, Col, Popover, Row, Tooltip} from "element-ui";
 import {FormData, VNodeRule} from "@form-create/core";
 import {ElementUIComponentSize} from "element-ui/types/component";
-import {FormItemLabelPosition, ValidateCallback, ValidateFieldCallback} from "element-ui/types/form";
+import {ElForm, FormItemLabelPosition, ValidateCallback, ValidateFieldCallback} from "element-ui/types/form";
+import {ElFormItem} from "element-ui/types/form-item";
 import {Api} from "./index";
 
 export interface OptionAttrs {
@@ -97,6 +98,10 @@ export interface ApiAttrs {
         disabled(disabled: boolean): void;
         show(show: boolean): void;
     }
+
+    formEl(): undefined | ElForm;
+
+    wrapEl(id: string): undefined | ElFormItem;
 
     submit(success: (formData: FormData, api: Api) => void, fail: (api: Api) => void): void;
 

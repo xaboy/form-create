@@ -1,5 +1,6 @@
 import {FormData, VNodeRule} from "@form-create/core";
-import {Button, Col, Popover, Row, Tooltip} from "ant-design-vue";
+import {Button, Col, Popover, Row, Tooltip, FormModel} from "ant-design-vue";
+import {FormModelItem} from "ant-design-vue/types/form-model/form-item";
 import {Api} from "./index";
 
 export interface OptionAttrs {
@@ -98,6 +99,10 @@ export interface ApiAttrs {
         disabled(disabled: boolean): void;
         show(show: boolean): void;
     }
+
+    formEl(): undefined | FormModel;
+
+    wrapEl(id: string): undefined | FormModelItem;
 
     submit(success: (formData: FormData, api: Api) => void, fail: (api: Api) => void): void;
 

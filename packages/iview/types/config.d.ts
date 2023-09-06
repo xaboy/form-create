@@ -1,5 +1,5 @@
 import {FormData, VNodeRule} from "@form-create/core";
-import {Col, Row, Tooltip, Poptip, Button} from "iview";
+import {Col, Row, Tooltip, Poptip, Button, Form, FormItem} from "iview";
 import {Api} from "./index";
 
 export interface OptionAttrs {
@@ -89,6 +89,10 @@ export interface ApiAttrs {
         disabled(disabled: boolean): void;
         show(show: boolean): void;
     }
+
+    formEl(): undefined | Form;
+
+    wrapEl(id: string): undefined | FormItem;
 
     submit(success: (formData: FormData, api: Api) => void, fail: (api: Api) => void): void;
 
