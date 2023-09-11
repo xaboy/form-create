@@ -148,6 +148,7 @@ extend(RuleContext.prototype, {
             trueType: handle.getType(this.originType),
             vNode: handle.$render.vNode,
             updated: false,
+            cacheValue: this.rule.value
         });
         !init && this.unwatch();
         this.watchTo();
