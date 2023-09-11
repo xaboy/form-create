@@ -416,7 +416,7 @@ export default function mock() {
 
 
         //upload 上传组件
-        maker.upload('轮播图', 'pic', ['http://file.lotkk.com/form-create.jpeg'])
+        maker.upload('轮播图', 'pic', ['http://form-create.com/logo.png'])
             .props({
                 'action': 'https://mock.uutool.cn/4erua2dig4i0',
                 'limit': 2,
@@ -436,7 +436,7 @@ export default function mock() {
             }),
 
         //frame 框架组件
-        maker.frame('素材', 'fodder', ['http://file.lotkk.com/form-create.jpeg']).props({
+        maker.frame('素材', 'fodder', ['http://form-create.com/logo.png']).props({
             src: '/iframe.html',
             maxLength: 0,
             type: 'image',

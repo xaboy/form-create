@@ -1,6 +1,6 @@
 <p align="center">
     <a href="http://www.form-create.com">
-        <img width="200" src="http://file.lotkk.com/form-create.png">
+        <img width="200" src="http://form-create.com/logo.png">
     </a>
 </p>
 
