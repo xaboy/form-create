@@ -141,9 +141,6 @@ export default {
                 n.forEach((val, i) => {
                     this.setValue(keys[i], n[i]);
                 });
-                if (o.length && !n.length) {
-                    this.input([]);
-                }
             }
         }
     },
