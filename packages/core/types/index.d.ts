@@ -321,6 +321,12 @@ export interface BaseOptions<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
         first?: number;
     };
     onSubmit?: (formData: FormData, api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
+    beforeFetch?: (config: FetchOption, form: {
+        api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>,
+        rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>
+    }) => void;
+    mounted?: (api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
+    reload?: (api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
 }
 
 
