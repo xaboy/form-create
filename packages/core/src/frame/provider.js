@@ -37,7 +37,7 @@ const loadData = function (fc) {
             this._fn[inject.id] = events;
 
         },
-        deleted(inject){
+        deleted(inject) {
             if (this._fn[inject.id]) {
                 this._fn[inject.id].forEach(un => {
                     un();
@@ -93,12 +93,21 @@ const fetch = function (fc) {
 
     function run(inject, rule, api) {
         let option = inject.value;
+        const set = (val) => {
+            if (val === undefined) {
+                inject.clearProp();
+                api.sync(rule);
+            } else {
+                deepSet(inject.getProp(), option.to || 'options', val);
+            }
+        }
         if (is.Function(option)) {
             option = option(rule, api);
         }
         option = parseOpt(option);
         if (!option || !option.action) {
-            return false;
+            set(undefined);
+            return;
         }
         if (!option.to) {
             option.to = 'options';
@@ -113,21 +122,12 @@ const fetch = function (fc) {
             }
         }
 
-        const set = (val) => {
-            if (val === undefined) {
-                inject.clearProp();
-                api.sync(rule);
-            } else {
-                deepSet(inject.getProp(), option.to, val);
-            }
-        }
-
         const config = {
             headers: {},
             ...option,
-            onSuccess(body) {
+            onSuccess(body, flag) {
                 if (check()) return;
-                let fn = (v) => v.data;
+                let fn = (v) => flag ? v : v.data;
                 if (is.Function(option.parse)) {
                     fn = option.parse;
                 } else if (option.parse && is.String(option.parse)) {
@@ -144,14 +144,21 @@ const fetch = function (fc) {
                 api.sync(rule);
             },
             onError(e) {
-                set(undefined)
+                set(undefined);
                 if (check()) return;
                 (onError || ((e) => err(e.message || 'fetch fail ' + option.action)))(e, rule, api);
             }
         };
-        fc.options.beforeFetch && invoke(() => fc.options.beforeFetch(config, {rule, api}))
+        fc.options.beforeFetch && invoke(() => fc.options.beforeFetch(config, {rule, api}));
+        if (is.Function(option.action)) {
+            option.action(rule, api).then((val) => {
+                config.onSuccess(val, true);
+            }).catch((e) => {
+                config.onError(e);
+            });
+            return;
+        }
         invoke(() => fc.create.fetch(config, {inject, rule, api}));
-        return true;
     }
 
     return {
@@ -159,11 +166,8 @@ const fetch = function (fc) {
         loaded(...args) {
             run(...args);
         },
-        watch(inject, rule, api) {
-            if (!run(inject, rule, api)) {
-                inject.clearProp();
-                api.sync(rule);
-            }
+        watch(...args) {
+            run(...args);
         }
     };
 }

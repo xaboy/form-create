@@ -346,7 +346,7 @@ export interface BaseOptions<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
     formData?: FormData;
     el?: Element | string;
     onSubmit?: (formData: FormData, api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
-    beforeFetch?: (config: FetchOption, form: {
+    beforeFetch?: (config: FetchEffectOption, form: {
         api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>,
         rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>
     }) => void;
@@ -559,7 +559,7 @@ export interface FetchOption {
 }
 
 export interface FetchEffectOption {
-    action: String;
+    action: String | ((rule: object,api: object)=>Promise<any>);
     to?: String;
     parse?: String | ((body: any, rule: Object, api: Object) => any);
     method?: String;
