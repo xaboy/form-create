@@ -122,7 +122,8 @@ const fetch = function (fc) {
             }
         }
 
-        invoke(() => fc.create.fetch({
+        const config = {
+            headers: {},
             ...option,
             onSuccess(body) {
                 if (check()) return;
@@ -147,8 +148,9 @@ const fetch = function (fc) {
                 if (check()) return;
                 (onError || ((e) => err(e.message || 'fetch fail ' + option.action)))(e, rule, api);
             }
-        }, {inject, rule, api}));
-
+        };
+        fc.options.beforeFetch && invoke(() => fc.options.beforeFetch(config, {rule, api}))
+        invoke(() => fc.create.fetch(config, {inject, rule, api}));
         return true;
     }
 
