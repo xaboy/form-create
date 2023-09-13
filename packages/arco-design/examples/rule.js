@@ -244,7 +244,7 @@ export default function rule() {
         },
 
         //upload 上传组件
-        maker.upload('轮播图', 'pic', ['http://file.lotkk.com/form-create.jpeg'])
+        maker.upload('轮播图', 'pic', ['http://form-create.com/logo.png'])
             .props({
                 'action': 'http://127.0.0.1:8324/api/test',
                 'limit': 2,
@@ -256,7 +256,7 @@ export default function rule() {
             }),
 
         //frame 框架组件
-        maker.frame('素材', 'fodder', ['http://file.lotkk.com/form-create.jpeg']).props({
+        maker.frame('素材', 'fodder', ['http://form-create.com/logo.png']).props({
             src: '../iframe.html',
             maxLength: 0,
             type: 'image',

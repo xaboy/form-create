@@ -350,7 +350,7 @@ export default function jsonMock() {
             type: "frame",
             title: "素材",
             field: "fodder",
-            value: ["http://file.lotkk.com/form-create.jpeg"],
+            value: ["http://form-create.com/logo.png"],
             props: {
                 type: "file", //frame类型,有input,file,image
                 src: "../iframe.html", //iframe地址
