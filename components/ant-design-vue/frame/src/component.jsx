@@ -321,11 +321,11 @@ export default defineComponent({
             }
         });
         return <div class="_fc-frame">{Node}
-            <aModal mask={this.previewMask} title={modalTitle} visible={this.previewVisible}
+            <aModal mask={this.previewMask} title={modalTitle} open={this.previewVisible}
                 onCancel={() => this.previewVisible = false} footer={null}>
                 <img style="width: 100%" src={this.previewImage}/>
             </aModal>
-            <aModal {...{width, title, ...this.modal}} visible={this.frameVisible}
+            <aModal {...{width, title, ...this.modal}} open={this.frameVisible}
                 onCancel={() => (this.closeModal(true))} v-slots={
                     {footer: () => this.makeFooter()}
                 }>
