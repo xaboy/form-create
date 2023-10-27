@@ -96,7 +96,7 @@ export default defineComponent({
                 {isShow ? (this.$slots.default?.() ||
                     <PlusOutlined style="font-size: 16px; width: 16px;"/>) : null}
             </AUpload>
-            <aModal mask={this.previewMask} title={this.modalTitle} visible={this.previewVisible}
+            <aModal mask={this.previewMask} title={this.modalTitle} open={this.previewVisible}
                 onCancel={() => this.previewVisible = false} footer={null}>
                 <img style="width: 100%" src={this.previewImage}/>
             </aModal>
