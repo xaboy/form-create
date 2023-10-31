@@ -174,7 +174,7 @@ export default defineComponent({
                 readonly: true
             }} key={1} v-slots={{
                 append: () => <ElButton icon={resolveComponent(this.icon)} onClick={() => this.showModel()}/>,
-                suffix: () => this.fileList.length ?
+                suffix: () => this.fileList.length && !this.disabled ?
                     <ElIcon class="el-input__icon _fc-upload-icon" onClick={() => {
                         this.fileList = [];
                         this.input();
@@ -320,7 +320,7 @@ export default defineComponent({
                 this.frameLoad(this.$refs.frame.contentWindow || {});
             }
         });
-        return <div class="_fc-frame">{node}
+        return <div class={{'_fc-frame': true, '_fc-disabled': this.disabled}}>{node}
             <ElDialog appendToBody={true} modal={this.previewMask} title={modalTitle} modelValue={this.previewVisible}
                 onClose={this.handleCancel}>
                 <img style="width: 100%" src={this.previewImage}/>

@@ -34,6 +34,11 @@
     cursor: pointer;
 }
 
+._fc-frame._fc-disabled ._fc-upload-btn, ._fc-frame._fc-disabled ._fc-frame-icon{
+    cursor: not-allowed !important;
+    color: #999;
+}
+
 ._fc-frame ._fc-upload-btn, ._fc-files {
     display: inline-block;
     width: 80px;

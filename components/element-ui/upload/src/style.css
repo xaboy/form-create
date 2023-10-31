@@ -1,3 +1,7 @@
-._fc-exceed .el-upload{
+._fc-exceed .el-upload {
     display: none;
+}
+
+.el-upload-list.is-disabled .el-upload {
+    cursor: not-allowed !important;
 }

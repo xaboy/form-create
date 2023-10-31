@@ -10,6 +10,11 @@
     cursor: pointer;
 }
 
+._fc-frame._fc-disabled ._fc-upload-btn ,._fc-frame._fc-disabled .el-button {
+    cursor: not-allowed !important;
+    color: #999;
+}
+
 ._fc-frame ._fc-upload-cover {
     opacity: 0;
     position: absolute;

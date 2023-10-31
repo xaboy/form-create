@@ -174,7 +174,7 @@ export default defineComponent({
                 append: () => <Type class="_fc-frame-icon" onClick={this.showModal}/>
             };
 
-            if (this.fileList.length) {
+            if (this.fileList.length && !this.disabled) {
                 slots.suffix = () => <IconCloseCircle class="_fc-frame-icon" onClick={() => {
                     this.fileList = [];
                     this.input();
@@ -319,7 +319,7 @@ export default defineComponent({
                 this.frameLoad(this.$refs.frame.contentWindow || {});
             }
         });
-        return <div class="_fc-frame">{Node}
+        return <div class={{'_fc-frame': true, '_fc-disabled': this.disabled}}>{Node}
             <aModal mask={this.previewMask} title={modalTitle} visible={this.previewVisible}
                 onCancel={() => this.previewVisible = false} footer={null}>
                 <img style="width: 100%" src={this.previewImage}/>

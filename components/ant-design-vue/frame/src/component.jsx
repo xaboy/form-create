@@ -174,7 +174,7 @@ export default defineComponent({
                 addonAfter: () => <Type class="_fc-frame-icon" onClick={this.showModal}/>
             };
 
-            if (this.fileList.length) {
+            if (this.fileList.length && !this.disabled) {
                 slots.suffix = () => <CloseCircleOutlined class="_fc-frame-icon" onClick={() => {
                     this.fileList = [];
                     this.input();
@@ -320,7 +320,7 @@ export default defineComponent({
             }
         });
         const aModal = resolveComponent('AModal');
-        return <div class="_fc-frame">{Node}
+        return <div class={{'_fc-frame': true, '_fc-disabled': this.disabled}}>{Node}
             <aModal mask={this.previewMask} title={modalTitle} {...{[aModal && aModal.props.open ? 'open' : 'visible']: this.previewVisible}}
                 onCancel={() => this.previewVisible = false} footer={null}>
                 <img style="width: 100%" src={this.previewImage}/>

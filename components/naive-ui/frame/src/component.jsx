@@ -171,7 +171,7 @@ export default defineComponent({
 
             const slots = {};
 
-            if (this.fileList.length) {
+            if (this.fileList.length && !this.disabled) {
                 slots.suffix = () => <n-icon component={IconClose} class="_fc-frame-icon"
                     onClick={() => {
                         this.fileList = [];
@@ -318,7 +318,7 @@ export default defineComponent({
                 this.frameLoad(this.$refs.frame.contentWindow || {});
             }
         });
-        return <div class="_fc-frame">{Node}
+        return <div class={{'_fc-frame': true, '_fc-disabled': this.disabled}}>{Node}
             <nModal preset={'card'} mask={this.previewMask} title={modalTitle} show={this.previewVisible}
                 style="width: 600px;"
                 onUpdate:show={(n) => this.previewVisible = n}>

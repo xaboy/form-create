@@ -174,8 +174,8 @@ export default defineComponent({
             return <t-input-adornment append={() => <Type onClick={this.showModal} class="_fc-frame-icon"/>}>
                 <TInput
                     readonly={true}
-                    clearable={true}
-                    showClearIconOnEmpty={true}
+                    clearable={!this.disabled}
+                    showClearIconOnEmpty={!this.disabled}
                     value={(this.fileList.map(v => this.getSrc(v))).toString()}
                     onClear={() => {
                         this.fileList = [];
@@ -317,7 +317,7 @@ export default defineComponent({
                 this.frameLoad(this.$refs.frame.contentWindow || {});
             }
         });
-        return <div class="_fc-frame">{Node}
+        return <div class={{'_fc-frame': true, '_fc-disabled': this.disabled}}>{Node}
             <TDialog mask={this.previewMask} header={modalTitle} visible={this.previewVisible}
                 style="width: 600px;" attach="body"
                 onUpdate:visible={n => this.previewVisible = n}

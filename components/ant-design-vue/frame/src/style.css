@@ -26,7 +26,7 @@
     opacity: 1;
 }
 
-._fc-frame .anticon{
+._fc-frame .anticon {
     font-size: 16px;
     width: 16px;
 }
@@ -37,6 +37,11 @@
 
 ._fc-frame ._fc-upload-btn, ._fc-frame ._fc-frame-icon {
     cursor: pointer;
+}
+
+._fc-frame._fc-disabled ._fc-upload-btn, ._fc-frame._fc-disabled ._fc-frame-icon {
+    cursor: not-allowed !important;
+    color: #999;
 }
 
 ._fc-frame ._fc-upload-btn, ._fc-files {
