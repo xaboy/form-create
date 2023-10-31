@@ -34,6 +34,8 @@ export default {
             if (form) {
                 return form.validate(params).then(v => {
                     v === true ? resolve(v) : reject(v);
+                }).catch(e=>{
+                    //
                 });
             } else {
                 resolve(true);

@@ -5,6 +5,7 @@ import {enumerable, invoke, mergeRule} from '../frame/util';
 import {deepCopy} from '@form-create/utils/lib/deepextend';
 import {markRaw, reactive} from 'vue';
 import is from '@form-create/utils/lib/type';
+import {err} from '@form-create/utils/lib/console';
 
 function isNone(ctx) {
     const none = !(is.Undef(ctx.prop.display) || !!ctx.prop.display);
@@ -108,6 +109,8 @@ extend(RuleContext.prototype, {
                     this.setPending(key, origin, value);
                     onLoad && onLoad(value);
                     this.$api && this.$api.sync(this.rule);
+                }).catch(e=>{
+                    err(e);
                 })
                 value = def;
                 this.setPending(key, origin, value);
