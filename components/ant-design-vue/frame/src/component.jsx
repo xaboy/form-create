@@ -214,7 +214,6 @@ export default defineComponent({
         },
         makeHandleIcon(val, index) {
             const Type = resolveComponent((this.handleIcon === true || this.handleIcon === undefined) ? 'EyeOutlined' : this.handleIcon);
-            console.log('-> Type', Type);
             return <Type class="_fc-frame-icon"
                 onClick={() => this.handleClick(val)} key={'5' + index}/>
         },
@@ -320,12 +319,13 @@ export default defineComponent({
                 this.frameLoad(this.$refs.frame.contentWindow || {});
             }
         });
+        const aModal = resolveComponent('AModal');
         return <div class="_fc-frame">{Node}
-            <aModal mask={this.previewMask} title={modalTitle} visible={this.previewVisible}
+            <aModal mask={this.previewMask} title={modalTitle} {...{[aModal && aModal.props.open ? 'open' : 'visible']: this.previewVisible}}
                 onCancel={() => this.previewVisible = false} footer={null}>
                 <img style="width: 100%" src={this.previewImage}/>
             </aModal>
-            <aModal {...{width, title, ...this.modal}} visible={this.frameVisible}
+            <aModal {...{width, title, ...this.modal}} {...{[aModal && aModal.props.open ? 'open' : 'visible']: this.frameVisible}}
                 onCancel={() => (this.closeModal(true))} v-slots={
                     {footer: () => this.makeFooter()}
                 }>

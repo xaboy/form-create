@@ -1,4 +1,4 @@
-import {defineComponent} from 'vue';
+import {defineComponent, resolveComponent} from 'vue';
 import toArray from '@form-create/utils/lib/toarray';
 import getSlot from '@form-create/utils/lib/slot';
 import PlusOutlined from './PlusOutlined.vue';
@@ -89,6 +89,8 @@ export default defineComponent({
     },
     render() {
         const isShow = (!this.limit || this.limit > this.uploadList.length);
+        const aModal = resolveComponent('AModal');
+        const props = {[aModal.props.open ? 'open' : 'visible']: this.previewVisible}
         return <>
             <AUpload maxCount={this.limit} list-type={'picture-card'} {...this.$attrs} onPreview={this.handlePreview}
                 onChange={this.handleChange} fileList={this.uploadList}
@@ -96,7 +98,7 @@ export default defineComponent({
                 {isShow ? (this.$slots.default?.() ||
                     <PlusOutlined style="font-size: 16px; width: 16px;"/>) : null}
             </AUpload>
-            <aModal mask={this.previewMask} title={this.modalTitle} visible={this.previewVisible}
+            <aModal mask={this.previewMask} title={this.modalTitle} {...props}
                 onCancel={() => this.previewVisible = false} footer={null}>
                 <img style="width: 100%" src={this.previewImage}/>
             </aModal>
