@@ -276,7 +276,7 @@ export default {
                     const fApi = this.$handle.api;
                     this.options.submitBtn.click
                         ? this.options.submitBtn.click(fApi)
-                        : fApi.submit();
+                        : fApi.submit().catch(()=>{});
                 }
             },
             key: `${this.key}b1`,
