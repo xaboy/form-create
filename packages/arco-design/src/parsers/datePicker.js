@@ -13,11 +13,11 @@ const name = 'datePicker';
 export default {
     name,
     maker: (function () {
-        return ['date', 'month', 'week', 'year', 'quarter'].reduce((initial, type) => {
-            initial[type] = creatorFactory(name, {type});
+        return ['date', 'month', 'week', 'year', 'quarter'].reduce((initial, mode) => {
+            initial[mode] = creatorFactory(name, {mode});
             return initial
         }, {
-            dateRange: creatorFactory(name, {type: 'range'}),
+            dateRange: creatorFactory(name, {range: true}),
             datetimeRange: creatorFactory(name, m => m.props({range: true, showTime: true}))
         })
     }()),
