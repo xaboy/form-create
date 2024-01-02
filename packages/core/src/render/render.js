@@ -148,7 +148,7 @@ export default function useRender(Render) {
                         if (ctx.none) {
                             _vn = this.display(_vn);
                         }
-                        cacheFlag && this.setCache(ctx, () => _vn, parent);
+                        cacheFlag && (!Object.keys(children).length) && this.setCache(ctx, () => _vn, parent);
                         return _vn
                     };
                     this.setCache(ctx, vn, parent);
