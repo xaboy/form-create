@@ -267,7 +267,7 @@ export default defineComponent({
         },
         expandRule(n) {
             for (let i = 0; i < n; i++) {
-                this.modelValue.push(this.field ? null : {});
+                this.addRule(i);
             }
         }
     },
