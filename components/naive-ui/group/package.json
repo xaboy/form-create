@@ -1,6 +1,6 @@
 {
   "name": "@form-create/component-naive-group",
-  "version": "3.1.24",
+  "version": "3.1.27",
   "description": "@form-create/naive 内置组件",
   "main": "./dist/index.min.js",
   "module": "./dist/index.esm.js",
