@@ -129,6 +129,7 @@ export default {
                 for (let i = len; i < 0; i++) {
                     this.addRule(n.length + i);
                 }
+                this.sort = Object.keys(this.cacheRule);
                 for (let i = 0; i < total; i++) {
                     this.setValue(keys[i], n[i]);
                 }
@@ -137,6 +138,7 @@ export default {
                     for (let i = 0; i < len; i++) {
                         this.removeRule(keys[total - i - 1]);
                     }
+                    this.sort = Object.keys(this.cacheRule);
                 }
                 n.forEach((val, i) => {
                     this.setValue(keys[i], n[i]);
