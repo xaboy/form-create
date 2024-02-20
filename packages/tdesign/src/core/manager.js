@@ -126,7 +126,7 @@ export default {
                     ...tidyRule(rule.wrap || {}),
                     name: ctx.id,
                     rules: rule.validate,
-                    label: isTitle ? () => this.makeInfo(rule, uni) : undefined,
+                    label: isTitle ? () => this.makeInfo(rule, uni, ctx) : undefined,
                 },
                 class: rule.className,
                 key: `${uni}fi`,
@@ -141,11 +141,11 @@ export default {
         const title = rule.title;
         return !((!title.title && !title.native) || isFalse(title.show))
     },
-    makeInfo(rule, uni) {
+    makeInfo(rule, uni, ctx) {
         const titleProp = {...rule.title};
         const infoProp = {...rule.info};
         const form = this.options.form;
-        const children = [(titleProp.title || '') + (form.labelSuffix || form['label-suffix'] || '')];
+        const children = [this.vm.slots.title ? this.vm.slots.title({title: titleProp.title || '', rule: ctx.rule, options: this.options}) : ((titleProp.title || '') + (form.labelSuffix || form['label-suffix'] || ''))];
 
         if (!isFalse(infoProp.show) && (infoProp.info || infoProp.native) && !isFalse(infoProp.icon)) {
             const prop = {

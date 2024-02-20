@@ -127,7 +127,7 @@ export default {
             key: `${uni}fi`,
             ref: ctx.wrapRef,
             type: 'formItem',
-        }]), {default: () => children, ...(isTitle ? {label: () => this.makeInfo(rule, uni)} : {})});
+        }]), {default: () => children, ...(isTitle ? {label: () => this.makeInfo(rule, uni, ctx)} : {})});
         return (layout === 'inline' || isFalse(_col) || isFalse(col.show)) ? item : this.makeCol(rule, uni, [item]);
     },
     isTitle(rule) {
@@ -135,13 +135,13 @@ export default {
         const title = rule.title;
         return !((!title.title && !title.native) || isFalse(title.show));
     },
-    makeInfo(rule, uni) {
+    makeInfo(rule, uni, ctx) {
         const titleProp = {...rule.title};
         const infoProp = {...rule.info};
         if (this.options.form.title === false) return false;
         if ((!titleProp.title && !titleProp.native) || isFalse(titleProp.show)) return;
         const isTip = isTooltip(infoProp);
-        const children = [titleProp.title];
+        const children = [this.vm.slots.title ? this.vm.slots.title({title: titleProp.title || '', rule: ctx.rule, options: this.options}) : titleProp.title];
 
         if (!isFalse(infoProp.show) && (infoProp.info || infoProp.native) && !isFalse(infoProp.icon)) {
             const prop = {
