@@ -42,6 +42,19 @@ extend(Manager.prototype, {
     form() {
         return this.vm.refs[this.ref];
     },
+    getSlot(name){
+        const _fn = (vm) => {
+            if (vm) {
+                let slot = vm.slots[name];
+                if (slot) {
+                    return slot;
+                }
+                return _fn(vm.setupState.parent);
+            }
+            return undefined;
+        }
+        return _fn(this.vm);
+    },
     mergeOptions(args, opt) {
         return mergeProps(args.map(v => this.tidyOptions(v)), opt, this.mergeOptionsRule);
     },

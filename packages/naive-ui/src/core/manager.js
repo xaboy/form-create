@@ -134,7 +134,8 @@ export default {
         const infoProp = {...rule.info};
         if (this.options.form.title === false) return false;
         if ((!titleProp.title && !titleProp.native) || isFalse(titleProp.show)) return;
-        const children = [this.vm.slots.title ? this.vm.slots.title({title: titleProp.title || '', rule: ctx.rule, options: this.options}) : titleProp.title];
+        const titleSlot = this.getSlot('title');
+        const children = [titleSlot ? titleSlot({title: titleProp.title || '', rule: ctx.rule, options: this.options}) : titleProp.title];
 
         if (!isFalse(infoProp.show) && (infoProp.info || infoProp.native) && !isFalse(infoProp.icon)) {
             const prop = {

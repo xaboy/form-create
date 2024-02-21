@@ -147,7 +147,8 @@ export default {
         const infoProp = {...rule.info};
         const isTip = isTooltip(infoProp);
         const form = this.options.form;
-        const children = [this.vm.slots.title ? this.vm.slots.title({title: titleProp.title || '', rule: ctx.rule, options: this.options}) : ((titleProp.title || '') + (form.labelSuffix || form['label-suffix'] || ''))];
+        const titleSlot = this.getSlot('title');
+        const children = [titleSlot ? titleSlot({title: titleProp.title || '', rule: ctx.rule, options: this.options}) : ((titleProp.title || '') + (form.labelSuffix || form['label-suffix'] || ''))];
 
         if (!isFalse(infoProp.show) && (infoProp.info || infoProp.native) && !isFalse(infoProp.icon)) {
             const prop = {
