@@ -228,7 +228,7 @@ export default function FormCreateFactory(config) {
             CreateNode,
             bus: new Mitt(),
             unwatch: null,
-            options: ref(vm.proxy.option || {}),
+            options: ref({}),
             extendApi: config.extendApi || (api => api)
         })
         nextTick(() => {
@@ -254,18 +254,19 @@ export default function FormCreateFactory(config) {
         init() {
             if (this.isSub()) {
                 this.unwatch = watch(() => this.vm.proxy.parent.proxy.option, () => {
-                    this.initOptions(this.options.value);
+                    this.initOptions();
                     this.$handle.api.refresh();
                 }, {deep: true});
             }
-            this.initOptions(this.options.value);
+            this.initOptions();
             this.$handle.init();
         },
         isSub() {
             return this.vm.proxy.parent && this.vm.proxy.extendOption;
         },
-        initOptions(options) {
-            this.options.value = {formData: {}, submitBtn: {}, resetBtn: {}, ...deepCopy(globalConfig)};
+        initOptions() {
+            this.options.value = {};
+            let options  = this.mergeOptions({formData: {}, submitBtn: {}, resetBtn: {}, ...deepCopy(globalConfig)}, this.vm.proxy.option);
             if (this.isSub()) {
                 options = this.mergeOptions(options, this.vm.proxy.parent.proxy.option || {}, true);
             }

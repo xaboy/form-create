@@ -134,8 +134,8 @@ export default function $FormCreate(FormCreate, components, directives) {
                 vm.proxy.renderRule();
             })
 
-            watch(() => props.option, (n) => {
-                fc.initOptions(n);
+            watch(() => props.option, () => {
+                fc.initOptions();
                 fapi.refresh();
             }, {deep: true});
 
