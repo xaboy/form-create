@@ -198,7 +198,7 @@ export default function useContext(Handler) {
             $del(this.ctxs, id);
             $del(this.formData, id);
             $del(this.subForm, id);
-            $del(this.vm.setupState.ctxInject, id);
+            $del(this.vm.proxy.ctxInject, id);
 
             input && this.rmIdCtx(ctx, field, 'field');
             name && this.rmIdCtx(ctx, name, 'name');
@@ -216,7 +216,7 @@ export default function useContext(Handler) {
                         }
                     }
                     if (ctx.root === this.rules) {
-                        this.vm.setupState.renderRule();
+                        this.vm.proxy.renderRule();
                     }
                 }
             }, input);

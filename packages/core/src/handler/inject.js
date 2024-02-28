@@ -66,7 +66,7 @@ export default function useInject(Handler) {
             return event;
         },
         getInjectData(self, inject) {
-            const {option, rule} = this.vm.props;
+            const {option, rule} = this.vm.proxy;
             return {
                 $f: this.api,
                 api: this.api,

@@ -19,8 +19,8 @@ const getRuleInject = (vm, parent) => {
     if (!vm || vm === parent) {
         return;
     }
-    if (vm.props.formCreateInject) {
-        return vm.props.formCreateInject
+    if (vm.proxy.formCreateInject) {
+        return vm.proxy.formCreateInject
     }
     if (vm.parent) {
         return getRuleInject(vm.parent, parent);
@@ -131,7 +131,7 @@ export default function $FormCreate(FormCreate, components, directives) {
             watch(() => [...rule.value], (n) => {
                 if (fc.$handle.isBreakWatch() || n.length === data.renderRule.length && n.every(v => data.renderRule.indexOf(v) > -1)) return;
                 fc.$handle.reloadRule(rule.value);
-                vm.setupState.renderRule();
+                vm.proxy.renderRule();
             })
 
             watch(() => props.option, (n) => {
@@ -164,8 +164,8 @@ export default function $FormCreate(FormCreate, components, directives) {
         },
         created() {
             const vm = getCurrentInstance();
-            vm.setupState.fc.init();
-            vm.emit('update:api', vm.setupState.fapi);
+            vm.proxy.fc.init();
+            vm.emit('update:api', vm.proxy.fapi);
         },
     })
 }

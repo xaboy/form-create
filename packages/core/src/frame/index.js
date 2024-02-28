@@ -217,9 +217,9 @@ export default function FormCreateFactory(config) {
             parsers,
             providers,
             modelFields,
-            rules: vm.props.rule,
-            name: vm.props.name || uniqueId(),
-            inFor: vm.props.inFor,
+            rules: vm.proxy.rule,
+            name: vm.proxy.name || uniqueId(),
+            inFor: vm.proxy.inFor,
             prop: {
                 components,
                 directives,
@@ -228,7 +228,7 @@ export default function FormCreateFactory(config) {
             CreateNode,
             bus: new Mitt(),
             unwatch: null,
-            options: ref(vm.props.option || {}),
+            options: ref(vm.proxy.option || {}),
             extendApi: config.extendApi || (api => api)
         })
         nextTick(() => {
@@ -253,7 +253,7 @@ export default function FormCreateFactory(config) {
     extend(FormCreate.prototype, {
         init() {
             if (this.isSub()) {
-                this.unwatch = watch(() => this.vm.parent.option, () => {
+                this.unwatch = watch(() => this.vm.proxy.parent.proxy.option, () => {
                     this.initOptions(this.options.value);
                     this.$handle.api.refresh();
                 }, {deep: true});
@@ -262,12 +262,12 @@ export default function FormCreateFactory(config) {
             this.$handle.init();
         },
         isSub() {
-            return this.vm.setupState.parent && this.vm.props.extendOption;
+            return this.vm.proxy.parent && this.vm.proxy.extendOption;
         },
         initOptions(options) {
             this.options.value = {formData: {}, submitBtn: {}, resetBtn: {}, ...deepCopy(globalConfig)};
             if (this.isSub()) {
-                this.options.value = this.mergeOptions(this.options.value, this.vm.setupState.parent.setupState.fapi.config || {}, true);
+                options = this.mergeOptions(options, this.vm.proxy.parent.proxy.option || {}, true);
             }
             this.updateOptions(options);
         },

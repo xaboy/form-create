@@ -256,7 +256,7 @@ export default function Api(h) {
             api.refresh();
         },
         hideForm: (hide) => {
-            h.vm.setupState.isShow = !hide;
+            h.vm.proxy.isShow = !hide;
         },
         changeStatus: () => {
             return h.changeStatus;
