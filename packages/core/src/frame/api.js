@@ -62,7 +62,13 @@ export default function Api(h) {
             return h.rules
         },
         get parent() {
-            return h.vm.parent && h.vm.parent.setupState.fapi
+            return h.vm.proxy.parent && h.vm.proxy.parent.proxy.fapi
+        },
+        get top() {
+            if(api.parent){
+                return api.parent.top;
+            }
+            return api;
         },
         get children() {
             return allSubForm();
