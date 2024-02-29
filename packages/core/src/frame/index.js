@@ -254,7 +254,7 @@ export default function FormCreateFactory(config) {
     extend(FormCreate.prototype, {
         init() {
             if (this.isSub()) {
-                this.unwatch = watch(() => this.vm.proxy.parent.proxy.option, () => {
+                this.unwatch = watch(() => this.vm.proxy.parent.proxy.fc.options.value, () => {
                     this.initOptions();
                     this.$handle.api.refresh();
                 }, {deep: true});
@@ -267,10 +267,11 @@ export default function FormCreateFactory(config) {
         },
         initOptions() {
             this.options.value = {};
-            let options  = this.mergeOptions({formData: {}, submitBtn: {}, resetBtn: {}, ...deepCopy(globalConfig)}, this.vm.proxy.option);
+            let options = {formData: {}, submitBtn: {}, resetBtn: {}, ...deepCopy(globalConfig)};
             if (this.isSub()) {
-                options = this.mergeOptions(options, this.vm.proxy.parent.proxy.option || {}, true);
+                options = this.mergeOptions(options, this.vm.proxy.parent.proxy.fc.options.value || {}, true);
             }
+            options = this.mergeOptions(options, this.vm.props.option);
             this.updateOptions(options);
         },
         mergeOptions(target, opt, parent) {
