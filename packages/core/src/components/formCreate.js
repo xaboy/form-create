@@ -69,7 +69,7 @@ export default function $FormCreate(FormCreate, components, directives) {
                 isShow: true,
                 unique: 1,
                 renderRule: [...rule.value || []],
-                updateValue: JSON.stringify(modelValue || {})
+                updateValue: JSON.stringify(modelValue.value || {}),
             });
 
             const fc = new FormCreate(vm);
