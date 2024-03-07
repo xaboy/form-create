@@ -5,7 +5,7 @@ import Handle from '../handler';
 import fetch from './fetch';
 import {creatorFactory} from '..';
 import BaseParser from '../factory/parser';
-import {copyRule, copyRules, mergeGlobal, parseJson, toJson, parseFn, invoke} from './util';
+import {copyRule, copyRules, mergeGlobal, parseJson, toJson, parseFn, invoke, setPrototypeOf} from './util';
 import fragment from '../components/fragment';
 import is from '@form-create/utils/lib/type';
 import toCase from '@form-create/utils/lib/tocase';
@@ -66,6 +66,7 @@ export default function FormCreateFactory(config) {
     let globalConfig = {global: {}};
     const loadData = {};
     const CreateNode = CreateNodeFactory();
+    const formulas ={};
 
     exportAttrs(config.attrs || {});
 
@@ -104,8 +105,7 @@ export default function FormCreateFactory(config) {
         const name = toCase(data.id);
         const parser = data.prop;
         const base = parser.merge === true ? parsers[name] : undefined;
-        parsers[name] = parser;
-        Object.setPrototypeOf(parser, base || BaseParser);
+        parsers[name] = setPrototypeOf(parser, base || BaseParser);
         maker[name] = creatorFactory(name);
         parser.maker && extend(maker, parser.maker);
     }
@@ -178,6 +178,7 @@ export default function FormCreateFactory(config) {
                 providers,
                 useApps,
                 maker,
+                formulas,
                 loadData
             }
         } else {
@@ -188,6 +189,10 @@ export default function FormCreateFactory(config) {
 
     function setModelField(name, field) {
         modelFields[name] = field;
+    }
+
+    function setFormula(name, fn) {
+        formulas[name] = fn;
     }
 
     function _emitData(id) {
@@ -218,6 +223,7 @@ export default function FormCreateFactory(config) {
             parsers,
             providers,
             modelFields,
+            formulas,
             rules: vm.proxy.rule,
             name: vm.proxy.name || uniqueId(),
             inFor: vm.proxy.inFor,
@@ -327,6 +333,7 @@ export default function FormCreateFactory(config) {
             component,
             directive,
             setModelField,
+            setFormula,
             register,
             $vnode,
             parser,
@@ -393,6 +400,7 @@ export default function FormCreateFactory(config) {
         inherit.useApps && extend(useApps, inherit.useApps);
         inherit.maker && extend(maker, inherit.maker);
         inherit.loadData && extend(loadData, inherit.loadData);
+        inherit.formulas && extend(formulas, inherit.formulas);
     }
 
     return create;

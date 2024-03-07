@@ -37,7 +37,9 @@ export default function RuleContext(handle, rule, defaultValue) {
         linkOn: [],
         root: [],
         ctrlRule: [],
+        children: [],
         parent: null,
+        group: rule.subRule ? this : null,
         cacheConfig: null,
         prop: {...rule},
         computed: {},
@@ -57,6 +59,15 @@ export default function RuleContext(handle, rule, defaultValue) {
 }
 
 extend(RuleContext.prototype, {
+    getParentGroup() {
+        let ctx = this.parent;
+        while (ctx) {
+            if (ctx.group) {
+                return ctx;
+            }
+            ctx = ctx.parent;
+        }
+    },
     loadChildrenPending() {
         const children = this.rule.children || [];
         if (Array.isArray(children))
@@ -108,7 +119,7 @@ extend(RuleContext.prototype, {
                     this.setPending(key, origin, value);
                     onLoad && onLoad(value);
                     this.$api && this.$api.sync(this.rule);
-                }).catch(e=>{
+                }).catch(e => {
                     console.error(e);
                 })
                 value = def;
@@ -187,6 +198,9 @@ extend(RuleContext.prototype, {
         this.unwatch();
         this.unlink();
         this.rmCtrl();
+        if (this.parent) {
+            this.parent.children.splice(this.parent.children.indexOf(this) >>> 0, 1);
+        }
         extend(this, {
             deleted: true,
             prop: {...this.rule},
@@ -198,6 +212,7 @@ extend(RuleContext.prototype, {
             vm: undef,
             vNode: undef,
             parent: null,
+            children: [],
             cacheConfig: null,
             none: false,
         })

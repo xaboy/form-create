@@ -127,7 +127,7 @@ export default function useLoader(Handler) {
                 }
             };
 
-            rules.map((_rule, index) => {
+            const ctxs = rules.map((_rule, index) => {
                 if (parent && !is.Object(_rule)) return;
                 if (!this.pageEnd && !parent && index >= this.first) return;
 
@@ -184,6 +184,9 @@ export default function useLoader(Handler) {
                         this.bindParser(ctx);
                     }
                     this.appendValue(ctx.rule);
+                    if(ctx.parent && ctx.parent !== parent) {
+                        this.rmSubRuleData(ctx);
+                    }
                 }
                 this.parseEmit(ctx);
                 this.syncProp(ctx);
@@ -222,7 +225,10 @@ export default function useLoader(Handler) {
                 //     Object.defineProperty(r, 'value', this.valueHandle(ctx));
                 if (this.refreshControl(ctx)) this.cycleLoad = true;
                 return ctx;
-            });
+            }).filter(v=>!!v);
+            if(parent){
+                parent.children = ctxs;
+            }
         },
         refreshControl(ctx) {
             return ctx.input && ctx.rule.control && this.useCtrl(ctx);

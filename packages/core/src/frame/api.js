@@ -65,7 +65,7 @@ export default function Api(h) {
             return h.vm.proxy.parent && h.vm.proxy.parent.proxy.fapi
         },
         get top() {
-            if(api.parent){
+            if (api.parent) {
                 return api.parent.top;
             }
             return api;
@@ -311,7 +311,7 @@ export default function Api(h) {
                 $set(ctx.rule.effect, attr, value);
             }
         },
-        clearEffectData(id, attr){
+        clearEffectData(id, attr) {
             const ctx = h.getCtx(id);
             if (ctx) {
                 if (attr && attr[0] === '$') {
@@ -372,6 +372,45 @@ export default function Api(h) {
         getSubForm(field) {
             const ctx = h.getCtx(field);
             return ctx ? h.subForm[ctx.id] : undefined;
+        },
+        getChildrenRuleList(id) {
+            const flag = typeof id === 'object';
+            const ctx = flag ? byCtx(id) : h.getCtx(id);
+            const rule = ctx ? ctx.rule : (flag ? id : api.getRule(id));
+            if (!rule) {
+                return [];
+            }
+            const rules = [];
+            const findRules = children => {
+                children && children.forEach(item => {
+                    if (typeof item !== 'object') {
+                        return;
+                    }
+                    if (item.field) {
+                        rules.push(item);
+                    }
+                    rules.push(...api.getChildrenRuleList(item));
+                });
+            }
+            findRules(ctx ? ctx.loadChildrenPending() : rule.children);
+            return rules;
+        },
+        getChildrenFormData(id) {
+            const rules = api.getChildrenRuleList(id);
+            return rules.reduce((formData, rule) => {
+                formData[rule.field] = copy(rule.value);
+                return formData;
+            }, {});
+        },
+        setChildrenFormData(id, formData, cover) {
+            const rules = api.getChildrenRuleList(id);
+            rules.forEach(rule => {
+                if (hasProperty(formData, rule.field)) {
+                    rule.value = formData[rule.field];
+                } else if (cover) {
+                    rule.value = undefined;
+                }
+            });
         },
         nextTick(fn) {
             h.bus.$once('next-tick', fn);

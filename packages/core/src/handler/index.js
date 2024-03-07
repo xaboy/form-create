@@ -32,6 +32,7 @@ export default function Handler(fc) {
         deferSyncFn: null,
         isMounted: false,
         formData: reactive({}),
+        subRuleData: reactive({}),
         subForm: {},
         form: reactive({}),
         appendData: {},

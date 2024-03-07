@@ -115,6 +115,10 @@ export interface FormCreate<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs, Ap
 
     setData(attr: string, data: any): void;
 
+    setModelField(type: string, field: string): void;
+
+    setFormula(name: string, fn: Function): void;
+
     removeData(attr: string): void;
 }
 
@@ -361,6 +365,7 @@ export interface BaseApi<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
     readonly form: BindFormData;
     readonly rule: FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>[];
     readonly parent: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> | undefined;
+    readonly top: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
     readonly children: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>[];
 
     formData(): FormData;
@@ -488,6 +493,12 @@ export interface BaseApi<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
     resetFields(): void;
 
     resetFields(field: string | string[]): void;
+
+    getChildrenRuleList(field: string | Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>): Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>[];
+
+    getChildrenFormData(field: string | Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>): FormData;
+
+    setChildrenFormData(field: string | Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, formData: FormData, cover:boolean): void;
 
     getSubForm(field: string): Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> | Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>[];
 

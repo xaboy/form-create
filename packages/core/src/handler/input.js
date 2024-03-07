@@ -25,7 +25,20 @@ export default function useInput(Handler) {
             }
         },
         setFormData(ctx, value) {
+            const group = ctx.getParentGroup();
+            if(group){
+                if(!this.subRuleData[group.id]) {
+                    this.subRuleData[group.id] = {};
+                }
+                this.subRuleData[group.id][ctx.field] = ctx.rule.value;
+            }
             $set(this.formData, ctx.id, value);
+        },
+        rmSubRuleData(ctx) {
+            const group = ctx.getParentGroup();
+            if(group && this.subRuleData[group.id]){
+                delete this.subRuleData[group.id][ctx.field];
+            }
         },
         getFormData(ctx) {
             return this.formData[ctx.id];

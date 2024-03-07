@@ -6,6 +6,7 @@ import is, {hasProperty} from '@form-create/utils/lib/type';
 import {invoke} from '../frame/util';
 import {toRef, watch} from 'vue';
 import {attrs} from '../frame/attrs';
+import {deepSet} from '@form-create/utils';
 
 
 const _ = {
@@ -155,20 +156,30 @@ export default function useContext(Handler) {
                     }
                 }));
                 this.bus.$once('load-end', () => {
-                    const computedRef = toRef(ctx.rule, 'computed');
-                    ctx.watch.push(watch(() => {
-                        const computed = computedRef.value;
-                        if (!computed) return undefined;
-                        let fn;
-                        if (is.Function(computed)) {
-                            fn = () => computed(this.api.form, this.api);
-                        } else {
-                            fn = () => (new Function('_', `with(this){ return ${computed} }`)).call(this.api.form, _);
-                        }
-                        return invoke(fn, undefined);
-                    }, (n) => {
-                        val.value = n;
-                    }, {immediate: !!computedRef.value}));
+                    let computed = ctx.rule.computed;
+                    if(!computed){
+                        return ;
+                    }
+                    if(typeof computed !== 'object'){
+                        computed = {value: computed}
+                    }
+                    Object.keys(computed).forEach(k => {
+                        ctx.watch.push(watch(() => {
+                            const item = computed[k];
+                            if (!item) return undefined;
+                            let fn;
+                            if (is.Function(item)) {
+                                fn = () => item(this.api.form, this.api);
+                            } else {
+                                const group = ctx.getParentGroup();
+                                fn = () => (new Function('formulas', 'top', 'group', `with(top){with(this){with(group){with(formulas){ return ${item} }}}}`)).call(this.api.form, this.fc.formulas, this.api.top.form, group ? (this.subRuleData[group.id] || {}) : {});
+                            }
+                            return invoke(fn, undefined);
+                        }, (n) => {
+                            deepSet(ctx.rule, k, n);
+                        }, {immediate: true}));
+                    });
+
                 });
             }
             this.watchEffect(ctx);
@@ -176,7 +187,7 @@ export default function useContext(Handler) {
         updateChildren(ctx, n, o) {
             this.deferSyncValue(() => {
                 o && o.forEach((child) => {
-                    if ((n || []).indexOf(child) === -1 && child && !is.String(child) && child.__fc__ && child.__fc__.parent === ctx && child.__fc__.root === o) {
+                    if ((n || []).indexOf(child) === -1 && child && !is.String(child) && child.__fc__ && child.__fc__.parent === ctx && child.__fc__.root !== n) {
                         this.rmCtx(child.__fc__);
                     }
                 });
@@ -199,6 +210,13 @@ export default function useContext(Handler) {
             $del(this.formData, id);
             $del(this.subForm, id);
             $del(this.vm.proxy.ctxInject, id);
+            const group = ctx.getParentGroup();
+            if (group && this.subRuleData[group.id]) {
+                $del(this.subRuleData[group.id], field);
+            }
+            if (ctx.group) {
+                $del(this.subRuleData, id);
+            }
 
             input && this.rmIdCtx(ctx, field, 'field');
             name && this.rmIdCtx(ctx, name, 'name');
