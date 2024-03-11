@@ -51,7 +51,7 @@ export default {
         }
     },
     tidyOptions(options) {
-        ['submitBtn', 'resetBtn', 'row', 'info', 'wrap', 'col'].forEach(name => {
+        ['submitBtn', 'resetBtn', 'row', 'info', 'wrap', 'col', 'title'].forEach(name => {
             tidyBool(options, name);
         })
         return options;
@@ -66,6 +66,7 @@ export default {
             info: this.options.info || {},
             wrap: this.options.wrap || {},
             col: this.options.col || {},
+            title: this.options.title || {},
         }, ctx.prop], {
             info: info(),
             title: {},
