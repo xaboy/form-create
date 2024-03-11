@@ -148,7 +148,7 @@ const fetch = function (fc) {
                 (onError || ((e) => err(e.message || 'fetch fail ' + option.action)))(e, rule, api);
             }
         };
-        fc.options.beforeFetch && invoke(() => fc.options.beforeFetch(config, {rule, api}))
+        fc.options.beforeFetch && invoke(() => fc.options.beforeFetch(config, {rule, api}));
         if (is.Function(option.action)) {
             option.action(rule, api).then((val) => {
                 config.onSuccess(val, true);

@@ -140,7 +140,7 @@ export default {
             key: `${uni}fi`,
             ref: ctx.wrapRef,
             type: 'formItem',
-        }]), [children, isTitle ? this.makeInfo(rule, uni) : null]);
+        }]), [children, isTitle ? this.makeInfo(rule, uni, ctx) : null]);
         return (inline === true || isFalse(_col) || isFalse(col.show)) ? item : this.makeCol(rule, uni, [item]);
     },
     isTitle(rule) {
@@ -148,12 +148,13 @@ export default {
         const title = rule.title;
         return !((!title.title && !title.native) || isFalse(title.show))
     },
-    makeInfo(rule, uni) {
+    makeInfo(rule, uni, ctx) {
         const titleProp = rule.title;
         const infoProp = rule.info;
         const isTip = isTooltip(infoProp);
         const form = this.options.form;
-        const children = [(titleProp.title || '') + (form.labelSuffix || form['label-suffix'] || '')];
+        const titleSlot = this.getSlot('title');
+        const children = [titleSlot ? titleSlot({title: titleProp.title || '', rule: ctx.rule, options: this.options}) : ((titleProp.title || '') + (form.labelSuffix || form['label-suffix'] || ''))];
 
         if (!isFalse(infoProp.show) && (infoProp.info || infoProp.native) && !isFalse(infoProp.icon)) {
             const prop = {

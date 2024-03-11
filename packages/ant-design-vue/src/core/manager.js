@@ -124,16 +124,17 @@ export default {
             key: `${uni}fi`,
             ref: ctx.wrapRef,
             type: 'formItem',
-        }]), [children, this.makeInfo(rule, uni)]);
+        }]), [children, this.makeInfo(rule, uni, ctx)]);
         return (layout === 'inline' || isFalse(_col) || isFalse(col.show)) ? item : this.makeCol(rule, uni, [item]);
     },
-    makeInfo(rule, uni) {
+    makeInfo(rule, uni, ctx) {
         const titleProp = rule.title;
         const infoProp = rule.info;
         if (this.options.form.title === false) return false;
         if ((!titleProp.title && !titleProp.native) || isFalse(titleProp.show)) return;
         const isTool = isTooltip(infoProp);
-        const children = [titleProp.title];
+        const titleSlot = this.getSlot('title');
+        const children = [titleSlot ? titleSlot({title: titleProp.title || '', rule: ctx.rule, options: this.options}) :titleProp.title];
 
         if (!isFalse(infoProp.show) && (infoProp.info || infoProp.native) && !isFalse(infoProp.icon)) {
             const prop = {
