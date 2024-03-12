@@ -4,7 +4,7 @@ import is, {hasProperty} from '@form-create/utils/lib/type';
 import {invoke, makeSlotBag, mergeRule} from '../frame/util';
 import toCase, {lower} from '@form-create/utils/lib/tocase';
 import {deepSet, toLine} from '@form-create/utils';
-import {computed, nextTick} from 'vue';
+import {computed, nextTick, vShow, withDirectives} from 'vue';
 
 export default function useRender(Render) {
     extend(Render.prototype, {
@@ -145,8 +145,15 @@ export default function useRender(Render) {
                         if ((!(!ctx.input && is.Undef(prop.native))) && prop.native !== true) {
                             _vn = this.$manager.makeWrap(ctx, _vn);
                         }
-                        if (ctx.none) {
-                            _vn = this.display(_vn);
+                        if (Array.isArray(_vn)) {
+                            _vn = _vn.map(v => {
+                                if (!v || !v.__v_isVNode) {
+                                    return v;
+                                }
+                                return withDirectives(v, [[vShow, !ctx.none]]);
+                            });
+                        } else {
+                            _vn = withDirectives(_vn, [[vShow, !ctx.none]]);
                         }
                         cacheFlag && (!Object.keys(children).length) && this.setCache(ctx, () => _vn, parent);
                         return _vn
@@ -172,28 +179,6 @@ export default function useRender(Render) {
         },
         getModelField(ctx) {
             return ctx.rule.modelField || ctx.parser.modelField || this.fc.modelFields[this.vNode.aliasMap[ctx.type]] || this.fc.modelFields[ctx.type] || this.fc.modelFields[ctx.originType] || 'modelValue';
-        },
-        display(vn) {
-            if (Array.isArray(vn)) {
-                const data = [];
-                vn.forEach(v => {
-                    if (Array.isArray(v)) return this.display(v);
-                    if (this.none(v)) data.push(v);
-                })
-                return data;
-            } else {
-                return this.none(vn);
-            }
-        },
-        none(vn) {
-            if (vn) {
-                if (Array.isArray(vn.props.style)) {
-                    vn.props.style.push({display: 'none'});
-                } else {
-                    vn.props.style = [vn.props.style, {display: 'none'}];
-                }
-                return vn;
-            }
         },
         isFragment(ctx) {
             return ctx.type === 'fragment' || ctx.type === 'template';
