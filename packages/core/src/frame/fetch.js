@@ -1,5 +1,8 @@
 // https://github.com/ElemeFE/element/blob/dev/packages/upload/src/ajax.js
 
+import is from '@form-create/utils/lib/type';
+import {parseFn} from '@form-create/utils/lib/json';
+
 function getError(action, option, xhr) {
     const msg = `fail to ${action} ${xhr.status}'`;
     const err = new Error(msg);
@@ -69,4 +72,33 @@ export default function fetch(option) {
         }
     });
     xhr.send(formData);
+}
+
+
+export function asyncFetch(config) {
+    return new Promise((resolve, reject) => {
+        fetch({
+            ...config,
+            onSuccess(res) {
+                let fn = (v) => v;
+                const parse = parseFn(config.parse);
+                if (is.Function(parse)) {
+                    fn = parse;
+                } else if (parse && is.String(parse)) {
+                    fn = (v) => {
+                        parse.split('.').forEach(k => {
+                            if (v) {
+                                v = v[k];
+                            }
+                        })
+                        return v;
+                    }
+                }
+                resolve(fn(res));
+            },
+            onError(err) {
+                reject(err);
+            }
+        })
+    });
 }

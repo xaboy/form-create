@@ -155,3 +155,8 @@ export function toProps(rule) {
 
     return prop;
 }
+
+export function setPrototypeOf(o, proto) {
+    Object.setPrototypeOf(o, proto);
+    return o;
+}

@@ -273,7 +273,7 @@ export default function FormCreateFactory(config) {
         },
         initOptions() {
             this.options.value = {};
-            let options = {formData: {}, submitBtn: {}, resetBtn: {}, ...deepCopy(globalConfig)};
+            let options = {formData: {}, submitBtn: {}, resetBtn: {}, globalEvent: {}, globalData: {}, ...deepCopy(globalConfig)};
             if (this.isSub()) {
                 options = this.mergeOptions(options, this.vm.proxy.parent.proxy.fc.options.value || {}, true);
             }

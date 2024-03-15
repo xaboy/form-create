@@ -1,9 +1,10 @@
-import {byCtx, invoke, mergeRule, toJson} from './util';
+import {byCtx, invoke, mergeRule, parseFn, toJson} from './util';
 import {$set} from '@form-create/utils/lib/modify';
 import {deepCopy} from '@form-create/utils/lib/deepextend';
 import is, {hasProperty} from '@form-create/utils/lib/type';
 import extend from '@form-create/utils/lib/extend';
 import {format} from '@form-create/utils/lib/console';
+import {asyncFetch} from './fetch';
 
 
 function copy(value) {
@@ -409,6 +410,31 @@ export default function Api(h) {
                     rule.value = formData[rule.field];
                 } else if (cover) {
                     rule.value = undefined;
+                }
+            });
+        },
+        getGlobalEvent(name) {
+            let event = api.options.globalEvent[name];
+            if (event) {
+                if (typeof event === 'object') {
+                    event = event.handle;
+                }
+                return parseFn(event);
+            }
+            return undefined;
+        },
+        getGlobalData(name) {
+            return new Promise((resolve, inject) => {
+                let config = api.options.globalData[name];
+                if (!config) {
+                    resolve(h.fc.loadData[name]);
+                }
+                if (config.type === 'fetch') {
+                    asyncFetch(config).then(res => {
+                        resolve({res, config});
+                    }).catch(inject);
+                } else {
+                    resolve(config.data);
                 }
             });
         },

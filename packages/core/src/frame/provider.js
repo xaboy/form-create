@@ -1,5 +1,5 @@
 import {err} from '@form-create/utils/lib/console';
-import {byCtx, invoke} from './util';
+import {byCtx, invoke, parseFn} from './util';
 import is from '@form-create/utils/lib/type';
 import deepSet from '@form-create/utils/lib/deepset';
 import {deepCopy} from '@form-create/utils/lib/deepextend';
@@ -93,25 +93,42 @@ const fetch = function (fc) {
 
     function run(inject, rule, api) {
         let option = inject.value;
-        const set = (val) => {
-            if (val === undefined) {
-                inject.clearProp();
-                api.sync(rule);
-            } else {
-                deepSet(inject.getProp(), option.to || 'options', val);
-            }
-        }
         if (is.Function(option)) {
             option = option(rule, api);
         }
         option = parseOpt(option);
-        if (!option || !option.action) {
+
+        const set = (val) => {
+            if (val === undefined) {
+                inject.clearProp();
+            } else {
+                deepSet(inject.getProp(), option.to || 'options', val);
+            }
+            api.sync(rule);
+        }
+
+        if (!option || (!option.action && !option.key)) {
             set(undefined);
             return;
         }
         if (!option.to) {
             option.to = 'options';
         }
+
+        if (option.key) {
+            const item = fc.$handle.options.globalData[option.key];
+            if (!item) {
+                set(undefined);
+                return;
+            }
+            if (item.type === 'static') {
+                set(item.data);
+                return ;
+            } else {
+                option = {...option, ...item}
+            }
+        }
+
         const onError = option.onError;
 
         const check = () => {
@@ -128,11 +145,12 @@ const fetch = function (fc) {
             onSuccess(body, flag) {
                 if (check()) return;
                 let fn = (v) => flag ? v : v.data;
-                if (is.Function(option.parse)) {
-                    fn = option.parse;
-                } else if (option.parse && is.String(option.parse)) {
+                const parse = parseFn(option.parse);
+                if (is.Function(parse)) {
+                    fn = parse;
+                } else if (parse && is.String(parse)) {
                     fn = (v) => {
-                        option.parse.split('.').forEach(k => {
+                        parse.split('.').forEach(k => {
                             if (v) {
                                 v = v[k];
                             }
@@ -140,7 +158,7 @@ const fetch = function (fc) {
                         return v;
                     }
                 }
-                set(fn(body, rule, api))
+                set(fn(body, rule, api));
                 api.sync(rule);
             },
             onError(e) {
