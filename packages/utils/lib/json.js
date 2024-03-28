@@ -1,12 +1,13 @@
 import deepExtend from './deepextend';
 import {err} from './console';
-import is, {hasProperty} from './type';
+import is from './type';
 
 const PREFIX = '[[FORM-CREATE-PREFIX-';
 const SUFFIX = '-FORM-CREATE-SUFFIX]]';
 
 const $T = '$FN:';
 const $TX = '$FNX:';
+const $ON = '$GLOBAL:';
 const FUNCTION = 'function';
 
 export function toJson(obj, space) {
@@ -44,6 +45,18 @@ export function parseFn(fn, mode) {
             } else if (v.indexOf($T) === 0) {
                 v = v.replace($T, '');
                 flag = true;
+            } else if (v.indexOf($ON) === 0) {
+                const name = v.replace($ON, '');
+                v = function (...args) {
+                    const callback = args[0].api.getGlobalEvent(name);
+                    if (callback) {
+                        return callback.call(this, ...args);
+                    }
+                    return undefined;
+                }
+                v.__json = fn;
+                v.__inject = true;
+                return v;
             } else if (v.indexOf($TX) === 0) {
                 v = makeFn('function($inject){' + v.replace($TX, '') + '}');
                 v.__json = fn;
