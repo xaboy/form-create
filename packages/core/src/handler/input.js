@@ -24,7 +24,14 @@ export default function useInput(Handler) {
                 this.setValue(ctx, val, value);
             }
         },
+        onBaseInput(ctx, value){
+            this.setFormData(ctx, value);
+            ctx.modelValue = value;
+            this.nextRefresh();
+            this.$render.clearCache(ctx);
+        },
         setFormData(ctx, value) {
+            ctx.modelValue = value;
             const group = ctx.getParentGroup();
             if(group){
                 if(!this.subRuleData[group.id]) {

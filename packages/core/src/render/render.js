@@ -1,4 +1,4 @@
-import extend from '@form-create/utils/lib/extend';
+import extend, {copy} from '@form-create/utils/lib/extend';
 import mergeProps from '@form-create/utils/lib/mergeprops';
 import is, {hasProperty} from '@form-create/utils/lib/type';
 import {invoke, makeSlotBag, mergeRule} from '../frame/util';
@@ -139,7 +139,7 @@ export default function useRender(Render) {
                             inject.children = children;
                             _vn = slot(inject)
                         } else {
-                            _vn = preview ? ctx.parser.preview(children, ctx) : ctx.parser.render(children, ctx);
+                            _vn = preview ? ctx.parser.preview(copy(children), ctx) : ctx.parser.render(copy(children), ctx);
                         }
                         _vn = this.renderSides(_vn, ctx);
                         if ((!(!ctx.input && is.Undef(prop.native))) && prop.native !== true) {
@@ -211,6 +211,7 @@ export default function useRender(Render) {
                     options: [],
                     children: [],
                     preview: false,
+                    id: ctx.id,
                     field: ctx.field,
                     rule: ctx.rule,
                     input: ctx.input,
@@ -258,7 +259,10 @@ export default function useRender(Render) {
                 };
                 props.push({
                     on: {
-                        [`update:${field}`]: model.callback
+                        [`update:${field}`]: model.callback,
+                        ...(ctx.prop.modelEmit ? {
+                            [ctx.prop.modelEmit]: () => this.onEmitInput(ctx)
+                        } : {}),
                     },
                     props: {
                         [field]: model.value
@@ -275,7 +279,14 @@ export default function useRender(Render) {
             this.$handle.effect(ctx, 'mounted');
         },
         onInput(ctx, value) {
+            if (ctx.prop.modelEmit) {
+                this.$handle.onBaseInput(ctx, value);
+                return;
+            }
             this.$handle.onInput(ctx, value);
+        },
+        onEmitInput(ctx) {
+            this.$handle.setValue(ctx, ctx.parser.toValue(ctx.modelValue, ctx), ctx.modelValue);
         },
         renderChildren(children, ctx) {
             if (!is.trueArray(children)) return {};
