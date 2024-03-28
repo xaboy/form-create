@@ -44,6 +44,7 @@ export default function $FormCreate(FormCreate, components, directives) {
             },
             extendOption: Boolean,
             modelValue: Object,
+            disabled: Boolean,
             api: Object,
             name: String,
             subForm: {
@@ -144,6 +145,10 @@ export default function $FormCreate(FormCreate, components, directives) {
                 fapi.config.forceCoverValue ? fapi.coverValue(n || {}) : fapi.setValue(n || {});
             }, {deep: true});
 
+            watch(() => props.disabled, (n) => {
+                fapi.disabled(!!n);
+            });
+
             return {
                 fc: markRaw(fc),
                 parent: parent ? markRaw(parent) : parent,
@@ -166,6 +171,7 @@ export default function $FormCreate(FormCreate, components, directives) {
             const vm = getCurrentInstance();
             vm.proxy.fc.init();
             vm.emit('update:api', vm.proxy.fapi);
+            vm.proxy.disabled && vm.proxy.fapi.disabled(true)
         },
     })
 }
