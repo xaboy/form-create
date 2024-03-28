@@ -145,15 +145,17 @@ export default function useRender(Render) {
                         if ((!(!ctx.input && is.Undef(prop.native))) && prop.native !== true) {
                             _vn = this.$manager.makeWrap(ctx, _vn);
                         }
-                        if (Array.isArray(_vn)) {
-                            _vn = _vn.map(v => {
-                                if (!v || !v.__v_isVNode) {
-                                    return v;
-                                }
-                                return withDirectives(v, [[vShow, !ctx.none]]);
-                            });
-                        } else {
-                            _vn = withDirectives(_vn, [[vShow, !ctx.none]]);
+                        if (ctx.none) {
+                            if (Array.isArray(_vn)) {
+                                _vn = _vn.map(v => {
+                                    if (!v || !v.__v_isVNode) {
+                                        return v;
+                                    }
+                                    return this.none(v);
+                                });
+                            } else {
+                                _vn = this.none(_vn);
+                            }
                         }
                         cacheFlag && (!Object.keys(children).length) && this.setCache(ctx, () => _vn, parent);
                         return _vn
@@ -177,6 +179,17 @@ export default function useRender(Render) {
                 return;
             }
         },
+        none(vn) {
+            if (vn) {
+                if (Array.isArray(vn.props.class)) {
+                    vn.props.class.push('fc-none');
+                } else {
+                    vn.props.class = [vn.props.class, 'fc-none'];
+                }
+                return vn;
+            }
+        },
+
         getModelField(ctx) {
             return ctx.rule.modelField || ctx.parser.modelField || this.fc.modelFields[this.vNode.aliasMap[ctx.type]] || this.fc.modelFields[ctx.type] || this.fc.modelFields[ctx.originType] || 'modelValue';
         },

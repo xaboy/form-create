@@ -6,15 +6,6 @@ import {deepCopy} from '@form-create/utils/lib/deepextend';
 import {markRaw, reactive} from 'vue';
 import is from '@form-create/utils/lib/type';
 
-function isNone(ctx) {
-    const none = !(is.Undef(ctx.prop.display) || !!ctx.prop.display);
-    if (ctx.parent) {
-        return ctx.parent.none || none;
-    } else {
-        return none;
-    }
-}
-
 function bind(ctx) {
     Object.defineProperties(ctx.origin, {
         __fc__: enumerable(markRaw(ctx), true)
@@ -172,7 +163,7 @@ extend(RuleContext.prototype, {
         this.prop = mergeRule({}, [rule, ...Object.keys(this.payload).map(k => this.payload[k]), this.computed]);
     },
     initNone() {
-        this.none = isNone(this);
+        this.none = !(is.Undef(this.prop.display) || !!this.prop.display)
     },
     check(handle) {
         return this.vm === handle.vm
