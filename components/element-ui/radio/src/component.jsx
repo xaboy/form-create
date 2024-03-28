@@ -36,9 +36,11 @@ export default defineComponent({
             onUpdate:modelValue={this.onInput} ref="el">{this.options().map((opt, index) => {
                 const props = {...opt};
                 const value = props.value;
+                const label = props.label;
                 delete props.value;
-                return <Type {...props} label={value}
-                    key={name + index + '-' + opt.value}>{props.label || props.value || ''}</Type>
+                delete props.label;
+                return <Type {...props} value={value}
+                    key={name + index + '-' + value}>{label || value || ''}</Type>
             })}{this.$slots.default?.()}</ElRadioGroup>
     },
     mounted(){
