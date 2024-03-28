@@ -88,7 +88,7 @@ export default {
                     e.preventDefault();
                 }
             },
-            class: [form.className, form.class, 'form-create'],
+            class: [form.className, form.class, 'form-create', this.options.preview ? 'is-preview' : ''],
             style: form.style,
             type: 'form',
         };
@@ -101,7 +101,7 @@ export default {
         });
     },
     render(children) {
-        if (children.slotLen()) {
+        if (children.slotLen() && !this.options.preview) {
             children.setSlot(undefined, this.makeFormBtn());
         }
         return this.$r(this.rule, isFalse(this.options.row.show) ? children.getSlots() : [this.makeRow(children)]);

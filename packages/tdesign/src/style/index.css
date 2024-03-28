@@ -17,3 +17,7 @@
 .form-create .form-create .t-is-warning .t-input__extra {
     color: var(--td-warning-color);
 }
+
+.form-create.is-preview .fc-clock, .form-create .fc-none {
+    display: none;
+}
