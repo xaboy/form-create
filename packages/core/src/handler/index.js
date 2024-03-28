@@ -65,7 +65,7 @@ extend(Handler.prototype, {
         });
     },
     init() {
-        this.appendData = {...(this.options.formData || {}), ...(this.fc.vm.proxy.modelValue || {}), ...this.appendData};
+        this.appendData = {...(this.options.formData || {}), ...(this.fc.vm.props.modelValue || {}), ...this.appendData};
         this.useProvider();
         this.usePage();
         this.loadRule();

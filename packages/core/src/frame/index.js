@@ -224,9 +224,9 @@ export default function FormCreateFactory(config) {
             providers,
             modelFields,
             formulas,
-            rules: vm.proxy.rule,
-            name: vm.proxy.name || uniqueId(),
-            inFor: vm.proxy.inFor,
+            rules: vm.props.rule,
+            name: vm.props.name || uniqueId(),
+            inFor: vm.props.inFor,
             prop: {
                 components,
                 directives,
@@ -260,7 +260,7 @@ export default function FormCreateFactory(config) {
     extend(FormCreate.prototype, {
         init() {
             if (this.isSub()) {
-                this.unwatch = watch(() => this.vm.proxy.parent.proxy.fc.options.value, () => {
+                this.unwatch = watch(() => this.vm.setupState.parent.setupState.fc.options.value, () => {
                     this.initOptions();
                     this.$handle.api.refresh();
                 }, {deep: true});
@@ -269,13 +269,13 @@ export default function FormCreateFactory(config) {
             this.$handle.init();
         },
         isSub() {
-            return this.vm.proxy.parent && this.vm.proxy.extendOption;
+            return this.vm.setupState.parent && this.vm.props.extendOption;
         },
         initOptions() {
             this.options.value = {};
             let options = {formData: {}, submitBtn: {}, resetBtn: {}, globalEvent: {}, globalData: {}, ...deepCopy(globalConfig)};
             if (this.isSub()) {
-                options = this.mergeOptions(options, this.vm.proxy.parent.proxy.fc.options.value || {}, true);
+                options = this.mergeOptions(options, this.vm.setupState.parent.setupState.fc.options.value || {}, true);
             }
             options = this.mergeOptions(options, this.vm.props.option);
             this.updateOptions(options);

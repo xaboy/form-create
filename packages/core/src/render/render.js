@@ -24,14 +24,14 @@ export default function useRender(Render) {
                     if (slot) {
                         return slot;
                     }
-                    return _fn(vm.proxy.parent);
+                    return _fn(vm.setupState.parent);
                 }
             }
             return _fn(this.vm);
         },
         render() {
             // console.warn('renderrrrr', this.id);
-            if (!this.vm.proxy.isShow) {
+            if (!this.vm.setupState.isShow) {
                 return;
             }
             this.$manager.beforeRender();
@@ -197,7 +197,7 @@ export default function useRender(Render) {
             return ctx.type === 'fragment' || ctx.type === 'template';
         },
         injectProp(ctx) {
-            const state = this.vm.proxy;
+            const state = this.vm.setupState;
             if (!state.ctxInject[ctx.id]) {
                 state.ctxInject[ctx.id] = {
                     api: this.$handle.api,

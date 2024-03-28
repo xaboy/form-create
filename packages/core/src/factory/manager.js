@@ -49,7 +49,7 @@ extend(Manager.prototype, {
                 if (slot) {
                     return slot;
                 }
-                return _fn(vm.proxy.parent);
+                return _fn(vm.setupState.parent);
             }
             return undefined;
         }

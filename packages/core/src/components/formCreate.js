@@ -132,7 +132,7 @@ export default function $FormCreate(FormCreate, components, directives) {
             watch(() => [...rule.value], (n) => {
                 if (fc.$handle.isBreakWatch() || n.length === data.renderRule.length && n.every(v => data.renderRule.indexOf(v) > -1)) return;
                 fc.$handle.reloadRule(rule.value);
-                vm.proxy.renderRule();
+                vm.setupState.renderRule();
             })
 
             watch(() => props.option, () => {
@@ -169,9 +169,9 @@ export default function $FormCreate(FormCreate, components, directives) {
         },
         created() {
             const vm = getCurrentInstance();
-            vm.proxy.fc.init();
-            vm.emit('update:api', vm.proxy.fapi);
-            vm.proxy.disabled && vm.proxy.fapi.disabled(true)
+            vm.setupState.fc.init();
+            vm.emit('update:api', vm.setupState.fapi);
+            vm.props.disabled && vm.setupState.fapi.disabled(true)
         },
     })
 }

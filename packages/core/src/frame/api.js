@@ -63,7 +63,7 @@ export default function Api(h) {
             return h.rules
         },
         get parent() {
-            return h.vm.proxy.parent && h.vm.proxy.parent.proxy.fapi
+            return h.vm.setupState.parent && h.vm.setupState.parent.setupState.fapi
         },
         get top() {
             if (api.parent) {
@@ -263,7 +263,7 @@ export default function Api(h) {
             api.refresh();
         },
         hideForm: (hide) => {
-            h.vm.proxy.isShow = !hide;
+            h.vm.setupState.isShow = !hide;
         },
         changeStatus: () => {
             return h.changeStatus;

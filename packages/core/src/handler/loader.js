@@ -93,7 +93,7 @@ export default function useLoader(Handler) {
                 if (this.pageEnd) {
                     this.bus.$emit('load-end');
                 }
-                this.vm.proxy.renderRule();
+                this.vm.setupState.renderRule();
             });
         },
         loadChildren(children, parent) {
@@ -345,7 +345,7 @@ export default function useLoader(Handler) {
         },
         //todo 组件生成全部通过 alias
         refresh() {
-            this.vm.proxy.refresh();
+            this.vm.setupState.refresh();
         },
     });
 }

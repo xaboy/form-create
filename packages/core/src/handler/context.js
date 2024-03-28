@@ -209,7 +209,7 @@ export default function useContext(Handler) {
             $del(this.ctxs, id);
             $del(this.formData, id);
             $del(this.subForm, id);
-            $del(this.vm.proxy.ctxInject, id);
+            $del(this.vm.setupState.ctxInject, id);
             const group = ctx.getParentGroup();
             if (group && this.subRuleData[group.id]) {
                 $del(this.subRuleData[group.id], field);
@@ -234,7 +234,7 @@ export default function useContext(Handler) {
                         }
                     }
                     if (ctx.root === this.rules) {
-                        this.vm.proxy.renderRule();
+                        this.vm.setupState.renderRule();
                     }
                 }
             }, input);

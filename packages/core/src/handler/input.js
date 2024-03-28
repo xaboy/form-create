@@ -87,7 +87,7 @@ export default function useInput(Handler) {
             if (this.deferSyncFn) {
                 return this.deferSyncFn.sync = true;
             }
-            this.vm.proxy.updateValue({...this.form});
+            this.vm.setupState.updateValue({...this.form});
         },
         isChange(ctx, value) {
             return JSON.stringify(this.getFormData(ctx), strFn) !== JSON.stringify(value, strFn);
