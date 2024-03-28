@@ -203,6 +203,8 @@ export interface BaseRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> extend
     field?: string;
     key?: string;
     name?: string;
+    modelField?: string;
+    modelEmit?: string;
     emitPrefix?: string;
     value?: any;
     computed?: string | ((formData: FormData, api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => any);
@@ -288,6 +290,10 @@ export class BaseCreator<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
     field(prop: string): this;
 
     name(prop: string): this;
+
+    modelField(prop: string): this;
+
+    modelEmit(prop: string): this;
 
     emitPrefix(prop: string): this;
 
