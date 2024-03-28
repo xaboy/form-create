@@ -221,13 +221,6 @@ export default function mock() {
             {value: 2, label: '方便', disabled: false},
             {value: 3, label: '实用', disabled: false},
             {value: 4, label: '有效', disabled: false},
-        ]).children([
-            {
-                type: 'el-checkbox',
-                value:'asd',
-                children: ['asdf'],
-                slot: 'default'
-            }
         ]),
 
 
