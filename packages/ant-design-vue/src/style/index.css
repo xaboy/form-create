@@ -15,5 +15,5 @@
 }
 
 .form-create.is-preview .fc-clock, .form-create .fc-none {
-    display: none;
+    display: none !important;
 }
