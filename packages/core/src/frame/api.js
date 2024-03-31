@@ -58,6 +58,12 @@ export default function Api(h) {
         get parent() {
             return h.vm.$pfc && h.vm.$pfc.$f
         },
+        get top() {
+            if(api.parent){
+                return api.parent.top;
+            }
+            return api;
+        },
         get children() {
             return allSubForm();
         },
