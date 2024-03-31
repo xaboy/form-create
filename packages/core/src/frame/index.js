@@ -202,7 +202,8 @@ export default function FormCreateFactory(config) {
         return FormCreateFactory(_config);
     }
 
-    function FormCreate(vm, rules, options) {
+    function FormCreate(vm) {
+        const rules = vm.$options.propsData.rule;
         extend(this, {
             id: id++,
             vm,
@@ -221,11 +222,11 @@ export default function FormCreateFactory(config) {
             CreateNode,
             bus: new _vue,
             unwatch: null,
-            options: options || {},
+            options: {},
             extendApi: config.extendApi || (api => api)
         })
         this.init();
-        this.initOptions(this.options);
+        this.initOptions();
         if (this.name) {
             if (this.inFor) {
                 if (!instance[this.name]) instance[this.name] = [];
@@ -247,10 +248,10 @@ export default function FormCreateFactory(config) {
             vm.$on('hook:created', () => {
                 if (this.isSub()) {
                     this.unwatch = vm.$watch(() => vm.$pfc.option, () => {
-                        this.initOptions(this.options);
+                        this.initOptions();
                         vm.$f.refresh();
                     }, {deep: true});
-                    this.initOptions(this.options);
+                    this.initOptions();
                 }
                 this.created();
             })
@@ -280,8 +281,9 @@ export default function FormCreateFactory(config) {
         isSub() {
             return this.vm.$pfc && this.vm.extendOption;
         },
-        initOptions(options) {
-            this.options = {formData: {}, submitBtn: {}, resetBtn: {}, ...deepCopy(globalConfig)};
+        initOptions() {
+            this.options = {};
+            let options  = this.mergeOptions({formData: {}, submitBtn: {}, resetBtn: {}, ...deepCopy(globalConfig)}, this.vm.$options.propsData.option);
             if (this.isSub()) {
                 this.mergeOptions(this.options, this.vm.$pfc.$f.config || {}, true);
             }

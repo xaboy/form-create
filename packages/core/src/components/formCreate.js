@@ -88,8 +88,8 @@ export default function $FormCreate(FormCreate) {
                 deep: true
             },
             option: {
-                handler(n) {
-                    this.formCreate.initOptions(n);
+                handler() {
+                    this.formCreate.initOptions();
                     this.$f.refresh();
                 },
                 deep: true
@@ -101,8 +101,7 @@ export default function $FormCreate(FormCreate) {
             }
         },
         beforeCreate() {
-            const {rule, option} = this.$options.propsData;
-            this.formCreate = new FormCreate(this, rule, option);
+            this.formCreate = new FormCreate(this);
             Object.keys(this.formCreate.prop).forEach(k => {
                 extend(this.$options[k], this.formCreate.prop[k]);
             })
