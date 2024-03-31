@@ -141,6 +141,8 @@ export default function FormCreateFactory(config) {
         }
         if (!name || !component) return;
         components[name] = component;
+        delete CreateNode.aliasMap[name];
+        delete parsers[name];
         if (component.formCreateParser) parser(name, component.formCreateParser);
     }
 
