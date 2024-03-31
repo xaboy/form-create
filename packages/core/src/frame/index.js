@@ -255,6 +255,7 @@ export default function FormCreateFactory(config) {
                     this.initOptions();
                 }
                 this.created();
+                vm.disabled && vm.$f.disabled(true)
             })
             vm.$on('hook:mounted', () => {
                 this.mounted();

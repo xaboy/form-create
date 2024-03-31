@@ -40,6 +40,7 @@ export default function $FormCreate(FormCreate) {
                 }
             },
             extendOption: Boolean,
+            disabled: Boolean,
             value: Object,
             api: Object,
             name: String,
@@ -98,6 +99,9 @@ export default function $FormCreate(FormCreate) {
                 if (n.length === this.renderRule.length && n.every(v => this.renderRule.indexOf(v) > -1)) return;
                 this.formCreate.$handle.reloadRule(n);
                 this._renderRule();
+            },
+            disabled(n) {
+                this.$f.disabled(!!n);
             }
         },
         beforeCreate() {
