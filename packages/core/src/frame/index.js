@@ -284,10 +284,11 @@ export default function FormCreateFactory(config) {
         },
         initOptions() {
             this.options = {};
-            let options  = this.mergeOptions({formData: {}, submitBtn: {}, resetBtn: {}, ...deepCopy(globalConfig)}, this.vm.$options.propsData.option);
+            let options  = {formData: {}, submitBtn: {}, resetBtn: {}, ...deepCopy(globalConfig)};
             if (this.isSub()) {
                 this.mergeOptions(this.options, this.vm.$pfc.$f.config || {}, true);
             }
+            options = this.mergeOptions(options, this.vm.$options.propsData.option);
             this.updateOptions(options);
         },
         mergeOptions(target, opt, parent) {
