@@ -184,7 +184,7 @@ export default function useRender(Render) {
                 if (Array.isArray(vn.props.class)) {
                     vn.props.class.push('fc-none');
                 } else {
-                    vn.props.class = [vn.props.class, 'fc-none'];
+                    vn.props.class = vn.props.class ? [vn.props.class, 'fc-none'] : 'fc-none';
                 }
                 return vn;
             }
