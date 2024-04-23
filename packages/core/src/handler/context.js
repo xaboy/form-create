@@ -157,10 +157,10 @@ export default function useContext(Handler) {
                 }));
                 this.bus.$once('load-end', () => {
                     let computed = ctx.rule.computed;
-                    if(!computed){
-                        return ;
+                    if (!computed) {
+                        return;
                     }
-                    if(typeof computed !== 'object'){
+                    if (typeof computed !== 'object') {
                         computed = {value: computed}
                     }
                     Object.keys(computed).forEach(k => {
@@ -176,7 +176,15 @@ export default function useContext(Handler) {
                             }
                             return invoke(fn, undefined);
                         }, (n) => {
-                            deepSet(ctx.rule, k, n);
+                            setTimeout(() => {
+                                if (k === 'value') {
+                                    this.onInput(ctx, n);
+                                } else if (k === 'required') {
+                                    this.api.setEffect(ctx.id, 'required', n);
+                                } else {
+                                    deepSet(ctx.rule, k, n);
+                                }
+                            });
                         }, {immediate: true}));
                     });
 
