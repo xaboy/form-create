@@ -17,6 +17,11 @@ export default function useInput(Handler) {
             this.valueChange(ctx, value);
             this.vm.emit('change', ctx.field, value, ctx.origin, this.api, setFlag || false);
             this.effect(ctx, 'value');
+            this.emitEvent('change', ctx.field, value, {
+                rule: ctx.origin,
+                api: this.api,
+                setFlag: setFlag || false
+            })
         },
         onInput(ctx, value) {
             let val;
@@ -24,7 +29,7 @@ export default function useInput(Handler) {
                 this.setValue(ctx, val, value);
             }
         },
-        onBaseInput(ctx, value){
+        onBaseInput(ctx, value) {
             this.setFormData(ctx, value);
             ctx.modelValue = value;
             this.nextRefresh();
@@ -33,8 +38,8 @@ export default function useInput(Handler) {
         setFormData(ctx, value) {
             ctx.modelValue = value;
             const group = ctx.getParentGroup();
-            if(group){
-                if(!this.subRuleData[group.id]) {
+            if (group) {
+                if (!this.subRuleData[group.id]) {
                     this.subRuleData[group.id] = {};
                 }
                 this.subRuleData[group.id][ctx.field] = ctx.rule.value;
@@ -43,7 +48,7 @@ export default function useInput(Handler) {
         },
         rmSubRuleData(ctx) {
             const group = ctx.getParentGroup();
-            if(group && this.subRuleData[group.id]){
+            if (group && this.subRuleData[group.id]) {
                 delete this.subRuleData[group.id][ctx.field];
             }
         },

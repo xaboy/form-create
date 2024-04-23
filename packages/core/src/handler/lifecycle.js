@@ -18,13 +18,16 @@ export default function useLifecycle(Handler) {
             }
         },
         lifecycle(name) {
+            this.vm.emit(name, this.api);
+            this.emitEvent(name, this.api);
+        },
+        emitEvent(name, ...args) {
             const _fn = this.options[name] || this.options[toCase('on-' + name)];
             if (_fn) {
                 const fn = parseFn(_fn);
-                is.Function(fn) && invoke(() => fn(this.api));
+                is.Function(fn) && invoke(() => fn(...args));
             }
-            this.vm.emit(name, this.api);
-            this.bus.$emit(name, this.api);
-        },
+            this.bus.$emit(name, ...args);
+        }
     })
 }
