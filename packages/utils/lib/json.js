@@ -11,7 +11,7 @@ const $ON = '$GLOBAL:';
 const FUNCTION = 'function';
 
 export function toJson(obj, space) {
-    return JSON.stringify(deepExtend([], obj, true), function (key, val) {
+    return JSON.stringify(deepExtend(Array.isArray(obj) ? [] : {}, obj, true), function (key, val) {
         if (val && val._isVue === true)
             return undefined;
 
