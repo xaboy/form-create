@@ -116,7 +116,7 @@ export default {
             props: {
                 ...tidyRule(rule.wrap || {}),
                 path: ctx.id,
-                rule: rule.validate
+                rule: ctx.injectValidate()
             },
             class: rule.className,
             key: `${uni}fi`,

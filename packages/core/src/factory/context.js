@@ -5,6 +5,7 @@ import {enumerable, invoke, mergeRule} from '../frame/util';
 import {deepCopy} from '@form-create/utils/lib/deepextend';
 import {markRaw, reactive} from 'vue';
 import is from '@form-create/utils/lib/type';
+import toArray from '@form-create/utils/lib/toarray';
 
 function bind(ctx) {
     Object.defineProperties(ctx.origin, {
@@ -164,6 +165,18 @@ extend(RuleContext.prototype, {
     },
     initNone() {
         this.none = !(is.Undef(this.prop.display) || !!this.prop.display)
+    },
+    injectValidate() {
+        return toArray(this.prop.validate).map(item => {
+            return {
+                ...item, inject: {
+                    id: this.id,
+                    field: this.field,
+                    rule: this.rule,
+                    api: this.$handle.api,
+                }
+            }
+        });
     },
     check(handle) {
         return this.vm === handle.vm

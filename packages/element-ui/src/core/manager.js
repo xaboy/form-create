@@ -129,7 +129,7 @@ export default {
                 label: isTitle ? rule.title.title : undefined,
                 ...tidyRule(rule.wrap || {}),
                 prop: ctx.id,
-                rules: rule.validate,
+                rules: ctx.injectValidate(),
             },
             class: rule.className,
             key: `${uni}fi`,

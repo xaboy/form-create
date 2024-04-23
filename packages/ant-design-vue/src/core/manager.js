@@ -121,7 +121,7 @@ export default {
             props: {
                 ...tidyRule(rule.wrap || {}),
                 name: ctx.id,
-                rules: rule.validate,
+                rules: ctx.injectValidate(),
                 ...(layout !== 'horizontal' ? {labelCol: {}, wrapperCol: {}} : {})
             },
             class: rule.className,
