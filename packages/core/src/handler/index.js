@@ -70,6 +70,7 @@ extend(Handler.prototype, {
         this.usePage();
         this.loadRule();
         this.$manager.__init();
+        this.lifecycle('created');
     },
     isBreakWatch() {
         return this.loading || this.noWatchFn || this.reloading;
