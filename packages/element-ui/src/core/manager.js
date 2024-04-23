@@ -44,8 +44,8 @@ export default {
         return new Promise((resolve, reject) => {
             const form = this.form();
             if (form) {
-                form.validateField(field, (res) => {
-                    res ? reject(res) : resolve(null);
+                form.validateField(field, (res, err) => {
+                    err ? reject(err) : resolve(res);
                 });
             } else {
                 resolve();
