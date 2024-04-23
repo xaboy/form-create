@@ -162,15 +162,19 @@ export default function $FormCreate(FormCreate, components, directives) {
                 },
                 updateValue(value) {
                     if (data.destroyed) return;
-                    data.updateValue = JSON.stringify(value);
+                    const json = JSON.stringify(value);
+                    if (data.updateValue === json) {
+                        return;
+                    }
+                    data.updateValue = json;
                     vm.emit('update:modelValue', value);
                 }
             }
         },
         created() {
             const vm = getCurrentInstance();
-            vm.setupState.fc.init();
             vm.emit('update:api', vm.setupState.fapi);
+            vm.setupState.fc.init();
             vm.props.disabled && vm.setupState.fapi.disabled(true)
         },
     })
