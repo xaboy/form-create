@@ -2,7 +2,7 @@ import {
     defineComponent,
     getCurrentInstance,
     inject,
-    markRaw,
+    markRaw, onBeforeMount,
     onBeforeUnmount,
     onMounted,
     onUpdated,
@@ -12,6 +12,7 @@ import {
     watch
 } from 'vue';
 import toArray from '@form-create/utils/lib/toarray';
+import {toLine} from '@form-create/utils';
 
 const NAME = 'FormCreate';
 
@@ -110,12 +111,37 @@ export default function $FormCreate(FormCreate, components, directives) {
                 }
             };
 
+            let styleEl = null;
+
+            onBeforeMount(() => {
+                let content = '';
+                const globalClass = (props.option && props.option.globalClass) || {};
+                Object.keys(globalClass).forEach(k => {
+                    let subCss = '';
+                    globalClass[k].style && Object.keys(globalClass[k].style).forEach(key => {
+                        subCss += toLine(key) + ':' + globalClass[k].style[key] + ';';
+                    });
+                    if (globalClass[k].content) {
+                        subCss += globalClass[k].content + ';';
+                    }
+                    if (subCss) {
+                        content += `.${k}{${subCss}}`;
+                    }
+                });
+                if (content) {
+                    styleEl = document.createElement('style');
+                    styleEl.type = 'text/css';
+                    styleEl.innerHTML = content;
+                    document.head.appendChild(styleEl);
+                }
+            });
 
             onMounted(() => {
                 fc.mounted();
             });
 
             onBeforeUnmount(() => {
+                styleEl && document.head.removeChild(styleEl);
                 rmSubForm();
                 data.destroyed = true;
                 fc.unmount();

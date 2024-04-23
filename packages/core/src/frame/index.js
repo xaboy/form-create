@@ -66,7 +66,7 @@ export default function FormCreateFactory(config) {
     let globalConfig = {global: {}};
     const loadData = {};
     const CreateNode = CreateNodeFactory();
-    const formulas ={};
+    const formulas = {};
 
     exportAttrs(config.attrs || {});
 
@@ -278,7 +278,13 @@ export default function FormCreateFactory(config) {
         },
         initOptions() {
             this.options.value = {};
-            let options = {formData: {}, submitBtn: {}, resetBtn: {}, globalEvent: {}, globalData: {}, ...deepCopy(globalConfig)};
+            let options = {
+                formData: {},
+                submitBtn: {},
+                resetBtn: {},
+                globalEvent: {},
+                globalData: {}, ...deepCopy(globalConfig)
+            };
             if (this.isSub()) {
                 options = this.mergeOptions(options, this.vm.setupState.parent.setupState.fc.options.value || {}, true);
             }
@@ -287,7 +293,7 @@ export default function FormCreateFactory(config) {
         },
         mergeOptions(target, opt, parent) {
             opt = deepCopy(opt);
-            parent && ['page', 'onSubmit', 'mounted', 'reload', 'formData', 'el'].forEach((n) => {
+            parent && ['page', 'onSubmit', 'mounted', 'reload', 'formData', 'el', 'globalClass'].forEach((n) => {
                 delete opt[n];
             });
             if (opt.global) {
