@@ -1,6 +1,7 @@
 import extend from '@form-create/utils/lib/extend';
 import is from '@form-create/utils/lib/type';
-import {invoke} from '../frame/util';
+import {invoke, parseFn} from '../frame/util';
+import toCase from '@form-create/utils/lib/tocase';
 
 
 export default function useLifecycle(Handler) {
@@ -17,9 +18,13 @@ export default function useLifecycle(Handler) {
             }
         },
         lifecycle(name) {
-            const fn = this.options[name];
-            is.Function(fn) && invoke(() => fn(this.api));
+            const _fn = this.options[name] || this.options[toCase('on-' + name)];
+            if (_fn) {
+                const fn = parseFn(_fn);
+                is.Function(fn) && invoke(() => fn(this.api));
+            }
             this.vm.emit(name, this.api);
+            this.bus.$emit(name, this.api);
         },
     })
 }
