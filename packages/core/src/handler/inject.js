@@ -47,6 +47,9 @@ export default function useInject(Handler) {
                     if (emitKey) {
                         const fieldKey = toLine(`${emitKey}-${eventName}`);
                         const fn = (...arg) => {
+                            if (this.vm.emitsOptions) {
+                                this.vm.emitsOptions[fieldKey] = null;
+                            }
                             this.vm.emit(fieldKey, ...arg);
                             this.vm.emit('emit-event', fieldKey, ...arg);
                             this.bus.$emit(fieldKey, ...arg);
