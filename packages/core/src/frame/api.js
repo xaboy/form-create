@@ -436,7 +436,7 @@ export default function Api(h) {
                     resolve(h.fc.loadData[name]);
                 }
                 if (config.type === 'fetch') {
-                    asyncFetch(config).then(res => {
+                    api.fetch(config).then(res => {
                         resolve({res, config});
                     }).catch(inject);
                 } else {
