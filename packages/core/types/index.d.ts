@@ -41,6 +41,64 @@ export interface FormCreateProps<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>
     api?: Object;
 }
 
+//静态数据
+export interface StaticDataItem {
+    //数据名称
+    label: string;
+    //数据类型
+    type: 'static';
+    //数据
+    result: any;
+}
+
+//远程数据
+export interface FetchDataItem {
+    //数据名称
+    label: string;
+    //数据类型
+    type: 'fetch';
+    //请求链接
+    action: string;
+    //请求方式
+    method: 'GET' | 'POST';
+    //请求头部
+    headers?: Object;
+    //附带数据
+    data?: Object;
+    //远程数据解析
+    parse?: string | ((res: any) => any);
+    //远程异常处理
+    onError?: string | ((e) => void);
+}
+
+//全局数据源
+export interface GlobalData {
+    [id: string]: StaticDataItem | FetchDataItem;
+}
+
+//全局事件
+export interface GlobalEvent {
+    [id: string]: {
+        //数据名称
+        label: string;
+        //回调事件
+        handle: string | (($inject: Object) => void);
+    }
+}
+
+//全局样式
+export interface GlobalClass {
+    [className: string]: {
+        //数据名称
+        label: string;
+        //样式内容
+        content?: string;
+        //回调事件
+        style: {
+            [name: string]: string;
+        };
+    }
+}
 
 export interface FormCreateFactoryConfig<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
     manager: {
@@ -213,7 +271,10 @@ export interface BaseRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> extend
     sync?: string[];
     prefix?: string | VNodeRule;
     suffix?: string | VNodeRule;
-    update?: (value: any, $rule: this, api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, arg: {origin: 'change' | 'init' | 'link'}) => Boolean | void;
+    update?: (value: any, $rule: this, api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, arg: {
+        origin: 'change' | 'init' | 'link';
+        linkField?: string;
+    }) => Boolean | void;
     options?: RuleOptions<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
     optionsTo?: string;
     deep?: Object;
@@ -232,9 +293,9 @@ export interface BaseRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> extend
     effect?: {
         fetch?: String | FetchEffectOption | ((rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => FetchEffectOption),
         componentValidate?: string | boolean;
-        required?:boolean | string | object;
-        loadData?:LoadDataEffectOption | Array<LoadDataEffectOption>
-        [key: string]: any
+        required?: boolean | string | object;
+        loadData?: LoadDataEffectOption | Array<LoadDataEffectOption>;
+        [key: string]: any;
     };
 
     [key: string]: any;
@@ -362,6 +423,16 @@ export interface BaseOptions<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
     }) => void;
     mounted?: (api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
     reload?: (api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
+    onMounted?: (api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
+    onReload?: (api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
+    onChange?: (field: string, value: any, opt: {
+        rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
+        api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
+        setFlag: boolean;
+    }) => void;
+    globalClass: GlobalClass;
+    globalEvent: GlobalEvent;
+    globalData: GlobalData;
 }
 
 
@@ -478,6 +549,8 @@ export interface BaseApi<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
 
     getRule(id: string, origin: false): Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
 
+    getRenderRule(id: string): Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
+
     updateValidate(id: string, validate: Object[], merge?: Boolean): Promise<any>;
 
     updateValidates(validates: { [id: string]: Object[] }, merge?: Boolean): Promise<any>;
@@ -504,7 +577,7 @@ export interface BaseApi<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
 
     getChildrenFormData(field: string | Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>): FormData;
 
-    setChildrenFormData(field: string | Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, formData: FormData, cover:boolean): void;
+    setChildrenFormData(field: string | Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, formData: FormData, cover: boolean): void;
 
     getSubForm(field: string): Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> | Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>[];
 
@@ -517,6 +590,15 @@ export interface BaseApi<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
     set<T>(object: object, key: string | number, value: T): T;
 
     emit(event: string, ...args: any[]): void;
+
+    fetch(opt: FetchOption): Promise<any>;
+
+    bus: {
+        $emit(event: string, ...args: any[]): void;
+        $on(event: string | string[], callback: Function): void;
+        $once(event: string | string[], callback: Function): void;
+        $off(event?: string | string[], callback?: Function): void;
+    }
 
     on(event: string | string[], callback: Function): this;
 
@@ -538,7 +620,11 @@ export interface EffectValue {
 export interface Effect<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
     name?: string;
     components?: string | string[];
-    init?: (data: { value: any, getValue: () => any; repeat: Boolean; }, rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
+    init?: (data: {
+        value: any,
+        getValue: () => any;
+        repeat: Boolean;
+    }, rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
     load?: (data: EffectValue, rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
     loaded?: (data: EffectValue, rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
     watch?: (data: EffectValue, rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
@@ -576,7 +662,7 @@ export interface FetchOption {
 }
 
 export interface FetchEffectOption {
-    action: String | ((rule: object,api: object)=>Promise<any>);
+    action: String | ((rule: object, api: object) => Promise<any>);
     to?: String;
     parse?: String | ((body: any, rule: Object, api: Object) => any);
     method?: String;
