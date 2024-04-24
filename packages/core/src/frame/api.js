@@ -458,12 +458,17 @@ export default function Api(h) {
         emit(name, ...args) {
             h.vm.emit(name, ...args);
         },
+        bus: h.bus,
+        fetch(opt) {
+            h.options.beforeFetch && invoke(() => h.options.beforeFetch(opt, {api}));
+            return asyncFetch(opt);
+        },
         helper: {
             tidyFields, props
         }
     };
 
-    ['on', 'once', 'off', 'emit'].forEach(n => {
+    ['on', 'once', 'off'].forEach(n => {
         api[n] = function (...args) {
             h.bus[`$${n}`](...args);
         }
