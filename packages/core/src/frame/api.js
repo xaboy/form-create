@@ -463,7 +463,7 @@ export default function Api(h) {
         }
     };
 
-    ['on', 'once', 'off', 'set'].forEach(n => {
+    ['on', 'once', 'off', 'emit'].forEach(n => {
         api[n] = function (...args) {
             h.bus[`$${n}`](...args);
         }
