@@ -155,41 +155,41 @@ export default function useContext(Handler) {
                         this.setValue(ctx, val.value, formValue, true);
                     }
                 }));
-                this.bus.$once('load-end', () => {
-                    let computed = ctx.rule.computed;
-                    if (!computed) {
-                        return;
-                    }
-                    if (typeof computed !== 'object') {
-                        computed = {value: computed}
-                    }
-                    Object.keys(computed).forEach(k => {
-                        ctx.watch.push(watch(() => {
-                            const item = computed[k];
-                            if (!item) return undefined;
-                            let fn;
-                            if (is.Function(item)) {
-                                fn = () => item(this.api.form, this.api);
-                            } else {
-                                const group = ctx.getParentGroup();
-                                fn = () => (new Function('formulas', 'top', 'group', `with(top){with(this){with(group){with(formulas){ return ${item} }}}}`)).call(this.api.form, this.fc.formulas, this.api.top.form, group ? (this.subRuleData[group.id] || {}) : {});
-                            }
-                            return invoke(fn, undefined);
-                        }, (n) => {
-                            setTimeout(() => {
-                                if (k === 'value') {
-                                    this.onInput(ctx, n);
-                                } else if (k[0] === '$') {
-                                    this.api.setEffect(ctx.id, k, n);
-                                } else {
-                                    deepSet(ctx.rule, k, n);
-                                }
-                            });
-                        }, {immediate: true}));
-                    });
-
-                });
             }
+            this.bus.$once('load-end', () => {
+                let computed = ctx.rule.computed;
+                if (!computed) {
+                    return;
+                }
+                if (typeof computed !== 'object') {
+                    computed = {value: computed}
+                }
+                Object.keys(computed).forEach(k => {
+                    ctx.watch.push(watch(() => {
+                        const item = computed[k];
+                        if (!item) return undefined;
+                        let fn;
+                        if (is.Function(item)) {
+                            fn = () => item(this.api.form, this.api);
+                        } else {
+                            const group = ctx.getParentGroup();
+                            fn = () => (new Function('formulas', 'top', 'group', '$rule', '$api', `with(top){with(this){with(group){with(formulas){ return ${item} }}}}`)).call(this.api.form, this.fc.formulas, this.api.top.form, group ? (this.subRuleData[group.id] || {}) : {}, ctx.rule, this.api);
+                        }
+                        return invoke(fn, undefined);
+                    }, (n) => {
+                        setTimeout(() => {
+                            if (k === 'value') {
+                                this.onInput(ctx, n);
+                            } else if (k[0] === '$') {
+                                this.api.setEffect(ctx.id, k, n);
+                            } else {
+                                deepSet(ctx.rule, k, n);
+                            }
+                        });
+                    }, {immediate: true}));
+                });
+
+            });
             this.watchEffect(ctx);
         },
         updateChildren(ctx, n, o) {

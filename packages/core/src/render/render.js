@@ -194,7 +194,7 @@ export default function useRender(Render) {
         stable(vn) {
             const list = Array.isArray(vn) ? vn : [vn];
             list.forEach(v => {
-                if (v && v.__v_isVNode && v.children) {
+                if (v && v.__v_isVNode && v.children && typeof v.children === 'object') {
                     v.children.$stable = true;
                     this.stable(v.children);
                 }
