@@ -6,14 +6,20 @@ export default function useCache(Render) {
             this.clearCacheAll();
         },
         clearCache(ctx) {
-            if(ctx.rule.cache){
+            if (ctx.rule.cache) {
                 return;
             }
             if (!this.cache[ctx.id]) {
+                if (ctx.parent) {
+                    this.clearCache(ctx.parent);
+                }
                 return;
             }
             if (this.cache[ctx.id].use === true || this.cache[ctx.id].parent) {
                 this.$handle.refresh();
+            }
+            if (this.cache[ctx.id].parent) {
+                this.clearCache(this.cache[ctx.id].parent);
             }
             this.cache[ctx.id] = null;
         },
@@ -30,7 +36,7 @@ export default function useCache(Render) {
         },
         getCache(ctx) {
             const cache = this.cache[ctx.id];
-            if(cache){
+            if (cache) {
                 cache.use = true;
                 return cache.vnode;
             }

@@ -157,7 +157,9 @@ export default function useRender(Render) {
                                 _vn = this.none(_vn);
                             }
                         }
-                        cacheFlag && (!Object.keys(children).length) && this.setCache(ctx, () => _vn, parent);
+                        cacheFlag && this.setCache(ctx, () => {
+                            return this.stable(_vn);
+                        }, parent);
                         return _vn
                     };
                     this.setCache(ctx, vn, parent);
@@ -189,7 +191,16 @@ export default function useRender(Render) {
                 return vn;
             }
         },
-
+        stable(vn) {
+            const list = Array.isArray(vn) ? vn : [vn];
+            list.forEach(v => {
+                if (v && v.__v_isVNode && v.children) {
+                    v.children.$stable = true;
+                    this.stable(v.children);
+                }
+            });
+            return vn;
+        },
         getModelField(ctx) {
             return ctx.rule.modelField || ctx.parser.modelField || this.fc.modelFields[this.vNode.aliasMap[ctx.type]] || this.fc.modelFields[ctx.type] || this.fc.modelFields[ctx.originType] || 'modelValue';
         },
@@ -225,10 +236,10 @@ export default function useRender(Render) {
             });
             return inject;
         },
-        ctxProp(ctx, custom) {
+        ctxProp(ctx) {
             const {ref, key, rule} = ctx;
-            this.$manager.mergeProp(ctx, custom);
-            ctx.parser.mergeProp(ctx, custom);
+            this.$manager.mergeProp(ctx);
+            ctx.parser.mergeProp(ctx);
             const props = [
                 {
                     ref: ref,
@@ -249,7 +260,10 @@ export default function useRender(Render) {
                 }
             ]
 
-            if (!custom && ctx.input) {
+            if (ctx.input) {
+                if (this.vm.props.disabled !== undefined) {
+                    rule.props.disabled = !!this.vm.props.disabled;
+                }
                 const field = this.getModelField(ctx);
                 const model = {
                     callback: (value) => {

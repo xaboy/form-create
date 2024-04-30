@@ -179,8 +179,8 @@ export default function useContext(Handler) {
                             setTimeout(() => {
                                 if (k === 'value') {
                                     this.onInput(ctx, n);
-                                } else if (k === 'required') {
-                                    this.api.setEffect(ctx.id, 'required', n);
+                                } else if (k[0] === '$') {
+                                    this.api.setEffect(ctx.id, k, n);
                                 } else {
                                     deepSet(ctx.rule, k, n);
                                 }

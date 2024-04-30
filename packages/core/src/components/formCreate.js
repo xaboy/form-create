@@ -201,7 +201,6 @@ export default function $FormCreate(FormCreate, components, directives) {
             const vm = getCurrentInstance();
             vm.emit('update:api', vm.setupState.fapi);
             vm.setupState.fc.init();
-            vm.props.disabled && vm.setupState.fapi.disabled(true)
         },
     })
 }
