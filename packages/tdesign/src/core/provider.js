@@ -6,6 +6,7 @@ const required = {
         const val = parseVal(inject.getValue());
         if (val.required === false) {
             inject.clearProp();
+            api.clearValidateState([rule.field]);
         } else {
             const validate = {
                 trigger: 'change',
