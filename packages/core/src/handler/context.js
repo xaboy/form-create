@@ -126,9 +126,11 @@ export default function useContext(Handler) {
                         if (key === 'props' && ctx.input) {
                             this.setFormData(ctx, ctx.parser.toFormValue(ctx.rule.value, ctx));
                         }
-                    } else if (key === 'emit')
+                    } else if (key === 'emit') {
                         this.parseEmit(ctx);
-                    else if (['prefix', 'suffix'].indexOf(key) > -1)
+                    } else if (key === 'hidden' && Boolean(n) !== Boolean(o)) {
+                        this.$render.clearCacheAll();
+                    } else if (['prefix', 'suffix'].indexOf(key) > -1)
                         n && this.loadFn(n, ctx.rule);
                     else if (key === 'type') {
                         ctx.updateType();
