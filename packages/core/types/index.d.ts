@@ -430,9 +430,9 @@ export interface BaseOptions<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
         api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
         setFlag: boolean;
     }) => void;
-    globalClass: GlobalClass;
-    globalEvent: GlobalEvent;
-    globalData: GlobalData;
+    globalClass?: GlobalClass;
+    globalEvent?: GlobalEvent;
+    globalData?: GlobalData;
 }
 
 
