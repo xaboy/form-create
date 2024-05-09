@@ -549,6 +549,8 @@ export interface BaseApi<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
 
     getRule(id: string, origin: false): Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
 
+    getRefRule(name: string): Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> | Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>[];
+
     getRenderRule(id: string): Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
 
     updateValidate(id: string, validate: Object[], merge?: Boolean): Promise<any>;

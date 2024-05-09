@@ -303,6 +303,15 @@ export default function Api(h) {
                 return ctx.prop;
             }
         },
+        getRefRule: (id) => {
+            const ctxs = h.getCtxs(id);
+            if (ctxs) {
+                const rules = ctxs.map(ctx => {
+                    return ctx.rule;
+                })
+                return rules.length === 1 ? rules[0] : rules;
+            }
+        },
         setEffect(id, attr, value) {
             const ctx = h.getCtx(id);
             if (ctx && attr) {
