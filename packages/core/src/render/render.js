@@ -262,7 +262,7 @@ export default function useRender(Render) {
 
             if (ctx.input) {
                 if (this.vm.props.disabled !== undefined) {
-                    rule.props.disabled = !!this.vm.props.disabled;
+                    ctx.prop.props.disabled = !!this.vm.props.disabled;
                 }
                 const field = this.getModelField(ctx);
                 const model = {
