@@ -17,3 +17,7 @@
 .form-create.is-preview .fc-clock, .form-create .fc-none {
     display: none !important;
 }
+
+.form-create.is-preview .ant-form-item .ant-form-item-label >label.ant-form-item-required::before{
+    content: "" !important;
+}

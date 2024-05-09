@@ -2,10 +2,14 @@
     margin-bottom: 22px;
 }
 
-.form-create{
+.form-create {
     width: 100%;
 }
 
 .form-create.is-preview .fc-clock, .form-create .fc-none {
     display: none !important;
+}
+
+.form-create.is-preview .el-form-item.is-required > .el-form-item__label-wrap > .el-form-item__label:before, .form-create.is-preview .el-form-item.is-required > .el-form-item__label:before {
+    content: "" !important;
 }
