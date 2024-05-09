@@ -1,6 +1,6 @@
 {
   "name": "@form-create/component-elm-radio",
-  "version": "3.1.30",
+  "version": "3.1.31",
   "description": "@form-create/element-ui 内置组件",
   "main": "./dist/index.min.js",
   "module": "./dist/index.esm.js",
