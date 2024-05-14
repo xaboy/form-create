@@ -131,6 +131,9 @@ export default function $FormCreate(FormCreate, components, directives) {
                         content += `.${k}{${subCss}}`;
                     }
                 });
+                if (props.option && props.option.style) {
+                    content += props.option.style;
+                }
                 if (content) {
                     styleEl = document.createElement('style');
                     styleEl.type = 'text/css';
