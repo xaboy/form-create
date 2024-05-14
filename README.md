@@ -241,11 +241,6 @@ $ npm run dev:antd
 
 [时光弧线](https://github.com/shiguanghuxian)  |  [wxxtqk](https://github.com/wxxtqk)  |  [williamBoss](https://github.com/williamBoss)  |  [HeyMrLin](https://github.com/HeyMrLin)  |  [djkloop](https://github.com/djkloop)  |  [daiwenyong](https://github.com/daiwenyong) | [JetBrains](https://www.jetbrains.com/?from=form-create)
 
-
-## 捐赠
-
-![donation.jpg](http://form-create.com/img/donation.jpg)
-
 ## 联系
 
 ##### email : xaboy2005@qq.com
