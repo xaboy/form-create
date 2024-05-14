@@ -1,6 +1,6 @@
 {
   "name": "@form-create/naive-ui",
-  "version": "3.1.31",
+  "version": "3.1.32",
   "description": "naive-ui动态表单|form-create is a form generation component that can generate dynamic rendering, data collection, verification and submission functions through JSON. Supports 5 UI frameworks, and supports the generation of any Vue components. Built-in 20 kinds of commonly used form components and custom components, no matter how complex forms can be easily handled.",
   "main": "./dist/form-create.min.js",
   "module": "./dist/form-create.esm.js",
@@ -51,7 +51,7 @@
     "@form-create/component-naive-radio": "^3.1.30",
     "@form-create/component-naive-upload": "^3.1.30",
     "@form-create/component-subform": "^3.1.5",
-    "@form-create/core": "^3.1.31",
+    "@form-create/core": "^3.1.32",
     "@form-create/utils": "^3.1.30"
   },
   "publishConfig": {
