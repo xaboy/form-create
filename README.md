@@ -1,23 +1,26 @@
 <p align="center">
-    <a href="http://www.form-create.com">
-        <img width="200" src="http://form-create.com/logo.png">
+    <a href="https://www.form-create.com">
+        <img width="300" alt="FormCreate" src="https://static.form-create.com/file/img/info-logo2.png">
     </a>
 </p>
 
 
-# FormCreate v3
-
 [![MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/xaboy/form-create)
 [![github](https://img.shields.io/badge/Author-xaboy-blue.svg)](https://github.com/xaboy)
-[![document](https://img.shields.io/badge/Doc-welcome-red.svg)](http://www.form-create.com/v3/)
-[![vue3](https://img.shields.io/badge/VUE-3.0-green.svg)](http://www.form-create.com/v3/)
+[![document](https://img.shields.io/badge/Doc-welcome-red.svg)](https://www.form-create.com/v3/)
+[![vue3](https://img.shields.io/badge/VUE-3.0-green.svg)](https://www.form-create.com/v3/)
 
 
 **FormCreate 是一个可以通过 JSON 生成具有动态渲染、数据收集、验证和提交功能的表单生成组件。支持5个UI框架，并且支持生成任何 Vue 组件。内置20种常用表单组件和自定义组件，再复杂的表单都可以轻松搞定。**
 
-**这个是 Vue3 版本**
 
-[开源的vue可视化表单设计器组件](https://github.com/xaboy/form-create-designer) ([功能演示](http://form-create.com/v3/designer?fr=fc))
+![FcDesigner](https://static.form-create.com/file/img/146171715603824_.pic.jpg)
+
+> [开源的vue可视化表单设计器组件](https://form-create.com/v3/designer)
+
+## 文档
+
+[帮助文档](https://www.form-create.com/v3/)
 
 ## 支持
 - **element-plus**
@@ -30,7 +33,7 @@
 
 > 本项目QQ讨论群[629709230](https://jq.qq.com/?_wv=1027&k=F1FlEFIV)
 
-> [更新日志](http://www.form-create.com/v3/guide/update.html)
+> [更新日志](https://www.form-create.com/v3/guide/update.html)
 
 - **预览**
 
@@ -41,26 +44,22 @@
 
 - **操作表单**
 
-[详细说明](http://www.form-create.com/v3/instance.html)
+[详细说明](https://www.form-create.com/v3/instance.html)
 
 ![demo2](https://raw.githubusercontent.com/xaboy/form-create/dev/images/demo-live2.gif)
 
 - **`group` 组件**
 
-[详细说明](http://www.form-create.com/v3/guide/group.html)
+[详细说明](https://www.form-create.com/v3/guide/group.html)
 
 ![demo3](https://raw.githubusercontent.com/xaboy/form-create/dev/images/demo-group.gif)
 
 - **`control` 配置项**
 
-[详细说明](http://www.form-create.com/v3/guide/control.html)
+[详细说明](https://www.form-create.com/v3/guide/control.html)
 
 ![demo2](https://raw.githubusercontent.com/xaboy/form-create/dev/images/demo-live4.gif)
 </details>
-
-## 文档
-
-[简体中文](http://www.form-create.com/v3/)
 
 ## 包说明
 
@@ -80,7 +79,7 @@
 
 - [使用 json 生成](https://jsrun.net/NQhKp/edit)
 
-- [各种示例](http://www.form-create.com/v3/guide/demo.html)
+- [各种示例](https://www.form-create.com/v3/guide/demo.html)
 
 
 
