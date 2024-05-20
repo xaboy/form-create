@@ -237,7 +237,8 @@ export default function useRender(Render) {
             return inject;
         },
         ctxProp(ctx) {
-            const {ref, key, rule} = ctx;
+            const {ref, key, rule} = ctx;            
+            const  api = this.$handle.api;
             this.$manager.mergeProp(ctx);
             ctx.parser.mergeProp(ctx);
             const props = [
@@ -270,13 +271,26 @@ export default function useRender(Render) {
                         this.onInput(ctx, value);
                     },
                     value: this.$handle.getFormData(ctx)
-                };
+                };            
+                var formEvents = ['change','input','focus','blur']
+                var defineOn = {}
+                if (ctx.rule.props._on){
+                    formEvents.forEach(event =>{
+                        if(event in ctx.rule.props._on){
+                            const eventFn = ctx.rule.props._on[event]
+                            defineOn[event] = function () {
+                                eventFn(ctx.rule.value, api);
+                            }
+                        }
+                    })
+                }
                 props.push({
                     on: {
                         [`update:${field}`]: model.callback,
                         ...(ctx.prop.modelEmit ? {
                             [ctx.prop.modelEmit]: () => this.onEmitInput(ctx)
                         } : {}),
+                        ...defineOn
                     },
                     props: {
                         [field]: model.value
