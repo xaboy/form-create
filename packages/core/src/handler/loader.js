@@ -160,7 +160,7 @@ export default function useLoader(Handler) {
                 }
                 if (!ctx) {
                     const rule = this.parseRule(_rule);
-                    ctx = new RuleContext(this, rule, isInit ? defaultValue : rule.value);
+                    ctx = new RuleContext(this, rule, defaultValue);
                     this.bindParser(ctx);
                 } else {
                     if (ctx.originType !== ctx.rule.type) {
