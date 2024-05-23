@@ -1,26 +1,10 @@
 import extend from '@form-create/utils/lib/extend';
-import {byCtx, copyRule, enumerable, getRule, invoke, parseFn} from '../frame/util';
+import {byCtx, copyRule, enumerable, getRule, invoke, parseFn, condition} from '../frame/util';
 import is, {hasProperty} from '@form-create/utils/lib/type';
 import {baseRule} from '../factory/creator';
 import RuleContext from '../factory/context';
 import mergeProps from '@form-create/utils/lib/mergeprops';
 import {nextTick} from 'vue';
-
-const condition = {
-    '==': (b) => (a) => a === b,
-    '!=': (b) => (a) => a !== b,
-    '<>': (b) => (a) => a !== b,
-    '>': (b) => (a) => a > b,
-    '>=': (b) => (a) => a >= b,
-    '<': (b) => (a) => a < b,
-    '<=': (b) => (a) => a <= b,
-    'in': (b) => (a) => (b && b.indexOf && b.indexOf(a) > -1),
-    'on': (b) => (a) => (a && a.indexOf && a.indexOf(b) > -1),
-    'notIn': (b) => (a) => !(condition.in(b)(a)),
-    'notOn': (b) => (a) => !(condition.on(b)(a)),
-    'between': (b) => (a) => a > b[0] && a < b[1],
-    'notBetween': (b) => (a) => a < b[0] || a > b[1],
-}
 
 export default function useLoader(Handler) {
     extend(Handler.prototype, {
@@ -184,7 +168,7 @@ export default function useLoader(Handler) {
                         this.bindParser(ctx);
                     }
                     this.appendValue(ctx.rule);
-                    if(ctx.parent && ctx.parent !== parent) {
+                    if (ctx.parent && ctx.parent !== parent) {
                         this.rmSubRuleData(ctx);
                     }
                 }
@@ -225,8 +209,8 @@ export default function useLoader(Handler) {
                 //     Object.defineProperty(r, 'value', this.valueHandle(ctx));
                 if (this.refreshControl(ctx)) this.cycleLoad = true;
                 return ctx;
-            }).filter(v=>!!v);
-            if(parent){
+            }).filter(v => !!v);
+            if (parent) {
                 parent.children = ctxs;
             }
         },
@@ -238,7 +222,9 @@ export default function useLoader(Handler) {
             if (!controls.length) return false;
 
             for (let i = 0; i < controls.length; i++) {
-                const control = controls[i], handleFn = control.handle || ((condition[control.condition || '=='] || condition['=='])(control.value));
+                const control = controls[i], handleFn = control.handle || function (val) {
+                    return ((condition[control.condition || '=='] || condition['=='])(val, control.value));
+                };
                 if (!is.trueArray(control.rule)) continue;
                 const data = {
                     ...control,
@@ -271,7 +257,7 @@ export default function useLoader(Handler) {
                                 rule.forEach(item => {
                                     this.api.setEffect(item, 'required', valid);
                                 })
-                                if(!valid){
+                                if (!valid) {
                                     this.api.clearValidateState(rule);
                                 }
                             } else {

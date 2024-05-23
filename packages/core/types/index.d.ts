@@ -210,7 +210,7 @@ export interface Control<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
     value?: any;
     handle?: (val: any, api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => boolean;
     method?: 'display' | 'disabled' | 'hidden' | 'required';
-    condition?: '==' | '!=' | '<>' | '>' | '>=' | '<' | '<=' | 'in' | 'notIn' | 'on' | 'notOn' | 'between' | 'notBetween';
+    condition?: '==' | '!=' | '<>' | '>' | '>=' | '<' | '<=' | 'in' | 'notIn' | 'on' | 'notOn' | 'between' | 'notBetween' | 'empty' | 'notEmpty' | 'pattern';
     rule: FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>[] | string[];
 }
 

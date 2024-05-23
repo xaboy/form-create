@@ -3,39 +3,10 @@ import toCase from '@form-create/utils/lib/tocase';
 import BaseParser from '../factory/parser';
 import {$del} from '@form-create/utils/lib/modify';
 import is, {hasProperty} from '@form-create/utils/lib/type';
-import {invoke} from '../frame/util';
+import {condition, invoke} from '../frame/util';
 import {toRef, watch} from 'vue';
 import {attrs} from '../frame/attrs';
 import {deepSet} from '@form-create/utils';
-
-
-const _ = {
-    sum(arr) {
-        if (Array.isArray(arr)) {
-            let val = 0;
-            arr.map(v => val += (v || 0));
-            return val;
-        }
-    },
-    column(arr, field) {
-        if (Array.isArray(arr)) {
-            return arr.map(v => v[field]);
-        }
-        return [];
-    },
-    get(obj, field, def) {
-        const lst = field.split('.');
-        let val = obj;
-        for (let i = 0; i < lst.length; i++) {
-            if (hasProperty(val, lst[i])) {
-                val = val[lst[i]]
-            } else {
-                return def === undefined ? 0 : def;
-            }
-        }
-        return val;
-    }
-};
 
 const noneKey = ['field', 'value', 'vm', 'template', 'name', 'config', 'control', 'inject', 'sync', 'payload', 'optionsTo', 'update', 'slotUpdate', 'computed', 'component', 'cache'];
 
@@ -171,7 +142,36 @@ export default function useContext(Handler) {
                         const item = computed[k];
                         if (!item) return undefined;
                         let fn;
-                        if (is.Function(item)) {
+                        if (typeof item === 'object') {
+                            const group = ctx.getParentGroup();
+                            const checkCondition = (item) => {
+                                item = Array.isArray(item) ? {mode: 'AND', group: item} : item;
+                                if (!is.trueArray(item.group)) {
+                                    return true;
+                                }
+                                const or = item.mode === 'OR';
+                                let valid = true;
+                                for (let i = 0; i < item.group.length; i++) {
+                                    const one = item.group[i];
+                                    let flag;
+                                    if (one.mode) {
+                                        flag = checkCondition(one);
+                                    } else if (!condition[one.condition]) {
+                                        flag = false;
+                                    } else {
+                                        flag = (new Function('_$', '_$val', 'top', 'group', `with(top){with(this){with(group){ return _$['${one.condition}'](${one.field}, ${one.compare ? one.compare : '_$val'}); }}}`)).call(this.api.form, condition, one.value, this.api.top.form, group ? (this.subRuleData[group.id] || {}) : {});
+                                    }
+                                    if (or && flag) {
+                                        return true;
+                                    }
+                                    if (!or) {
+                                        valid = valid && flag;
+                                    }
+                                }
+                                return or ? false : valid;
+                            }
+                            return checkCondition(item);
+                        } else if (is.Function(item)) {
                             fn = () => item(this.api.form, this.api);
                         } else {
                             const group = ctx.getParentGroup();

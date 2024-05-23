@@ -446,7 +446,7 @@ export default function Api(h) {
                 }
                 if (config.type === 'fetch') {
                     api.fetch(config).then(res => {
-                        resolve({res, config});
+                        resolve(res);
                     }).catch(inject);
                 } else {
                     resolve(config.data);
