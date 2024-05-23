@@ -105,7 +105,7 @@ export default function useRender(Render) {
                     this.setOptions(ctx);
                     this.ctxProp(ctx);
                     let prop = ctx.prop;
-                    prop.preview = !!(hasProperty(prop, 'preview') ? prop.preview : (this.options.preview || false))
+                    prop.preview = !!(prop.preview != null ? prop.preview : (this.vm.props.preview !== undefined ? this.vm.props.preview : (this.options.preview || false)));
                     prop.props.formCreateInject = this.injectProp(ctx);
                     let cacheFlag = prop.cache !== false;
                     const preview = prop.preview;

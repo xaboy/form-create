@@ -49,6 +49,10 @@ export default function $FormCreate(FormCreate, components, directives) {
                 type: Boolean,
                 default: undefined,
             },
+            preview: {
+                type: Boolean,
+                default: undefined,
+            },
             api: Object,
             name: String,
             subForm: {
@@ -172,7 +176,7 @@ export default function $FormCreate(FormCreate, components, directives) {
                 fapi.refresh();
             }, {deep: true});
 
-            watch(() => props.disabled, () => {
+            watch(() => [props.disabled, props.preview], () => {
                 fapi.refresh();
             });
 

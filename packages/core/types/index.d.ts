@@ -37,6 +37,8 @@ export interface FormCreateProps<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>
     rule: FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>[];
     option?: Options<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
     extendOption?: Boolean;
+    disabled?: Boolean;
+    preview?: Boolean;
     modelValue?: Object;
     api?: Object;
 }
