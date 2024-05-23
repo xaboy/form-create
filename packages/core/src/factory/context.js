@@ -1,7 +1,7 @@
 import unique from '@form-create/utils/lib/unique';
 import toCase from '@form-create/utils/lib/tocase';
 import extend from '@form-create/utils/lib/extend';
-import {enumerable, invoke, mergeRule} from '../frame/util';
+import {enumerable, invoke, mergeRule, setPrototypeOf} from '../frame/util';
 import {deepCopy} from '@form-create/utils/lib/deepextend';
 import {markRaw, reactive} from 'vue';
 import is from '@form-create/utils/lib/type';
@@ -168,14 +168,14 @@ extend(RuleContext.prototype, {
     },
     injectValidate() {
         return toArray(this.prop.validate).map(item => {
-            return {
-                ...item, inject: {
+            return setPrototypeOf({...item}, {
+                inject: {
                     id: this.id,
                     field: this.field,
                     rule: this.rule,
                     api: this.$handle.api,
                 }
-            }
+            });
         });
     },
     check(handle) {
