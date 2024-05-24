@@ -22,20 +22,20 @@
 [![FcDesigner](https://static.form-create.com/file/img/146171715603824_.pic.jpg)](https://pro.form-create.com/view)
 
 ## 特点
-- **使用JSON数据生成表单**
-- **支持扩展，生成任何Vue组件和HTML标签**
-- **支持5种UI框架**
-- **支持组件之间联动**
-- **提供丰富的表单操作API**
-- **支持子表单和分组**
-- **内置渲染缓存，提升渲染速度**
+- 使用JSON数据生成表单
+- 支持扩展，生成任何Vue组件和HTML标签
+- 支持5种UI框架
+- 支持组件之间联动
+- 提供丰富的表单操作API
+- 支持子表单和分组
+- 内置渲染缓存，提升渲染速度
 
 ## 支持的UI框架
-- **element-plus**
-- **ant-design-vue**
-- **naive-ui**
-- **arco-design**
-- **tdesign**
+- element-plus
+- ant-design-vue
+- naive-ui
+- arco-design
+- tdesign
 
 > 如果对您有帮助，您可以点右上角 "Star" 支持一下 谢谢！本项目还在不断开发完善中,如有任何建议或问题[请在这里提出](https://github.com/xaboy/form-create/issues/new)
 
@@ -82,9 +82,7 @@
 
 ## 示例
 
-- [使用生成器生成](https://jsrun.net/NQhKp/edit)
-
-- [使用 json 生成](https://jsrun.net/NQhKp/edit)
+- [使用JSON生成](https://jsrun.net/NQhKp/edit)
 
 - [各种示例](https://www.form-create.com/v3/guide/demo.html)
 
