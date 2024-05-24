@@ -111,6 +111,7 @@ const fetch = function (fc) {
             set(undefined);
             return;
         }
+        option = deepCopy(option);
         if (!option.to) {
             option.to = 'options';
         }
@@ -123,7 +124,7 @@ const fetch = function (fc) {
             }
             if (item.type === 'static') {
                 set(item.data);
-                return ;
+                return;
             } else {
                 option = {...option, ...item}
             }
