@@ -180,6 +180,7 @@ extend(RuleContext.prototype, {
                         api: that.$handle.api,
                     }, ...args)
                 }
+                return temp;
             }
             return item;
         });
