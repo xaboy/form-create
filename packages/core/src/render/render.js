@@ -292,6 +292,7 @@ export default function useRender(Render) {
                     children: [],
                     prop: {},
                     preview: false,
+                    id: ctx.id,
                     field: ctx.field,
                     rule: ctx.rule,
                     input: ctx.input,
