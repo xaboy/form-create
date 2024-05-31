@@ -72,3 +72,60 @@ export function invoke(fn, def) {
     }
     return def;
 }
+
+const changeType = (a, b) => {
+    if (typeof a === 'string') {
+        return String(b);
+    } else if (typeof a === 'number') {
+        return Number(b);
+    }
+    return b;
+}
+
+export const condition = {
+    '==': (a, b) => {
+        return JSON.stringify(a) === JSON.stringify(changeType(a, b));
+    },
+    '!=': (a, b) => {
+        return !condition['=='](a, b);
+    },
+    '>': (a, b) => {
+        return a > b;
+    },
+    '>=': (a, b) => {
+        return a >= b;
+    },
+    '<': (a, b) => {
+        return a < b;
+    },
+    '<=': (a, b) => {
+        return a <= b;
+    },
+    on(a, b) {
+        return a && a.indexOf && a.indexOf(changeType(a[0], b)) > -1;
+    },
+    notOn(a, b) {
+        return !condition.on(a, b);
+    },
+    in(a, b) {
+        return b && b.indexOf && b.indexOf(a) > -1;
+    },
+    notIn(a, b) {
+        return !condition.in(a, b);
+    },
+    between(a, b) {
+        return a > b[0] && a < b[1];
+    },
+    notBetween(a, b) {
+        return a < b[0] || a > b[1];
+    },
+    empty(a) {
+        return is.empty(a);
+    },
+    notEmpty(a) {
+        return !is.empty(a);
+    },
+    pattern(a, b) {
+        return new RegExp(b, 'g').test(a);
+    }
+};
