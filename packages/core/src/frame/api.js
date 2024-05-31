@@ -60,7 +60,7 @@ export default function Api(h) {
             return h.vm.$pfc && h.vm.$pfc.$f
         },
         get top() {
-            if(api.parent){
+            if (api.parent) {
                 return api.parent.top;
             }
             return api;
@@ -398,12 +398,15 @@ export default function Api(h) {
         emit(name, ...args) {
             h.vm.$emit(name, ...args);
         },
-        deferSyncValue(fn, sync){
+        deferSyncValue(fn, sync) {
             h.deferSyncValue(fn, sync);
         },
         fetch(opt) {
             h.options.beforeFetch && invoke(() => h.options.beforeFetch(opt, {api}));
             return asyncFetch(opt);
+        },
+        getData(id, def) {
+            return hasProperty(h.fc.loadData, id) ? h.fc.loadData[id] : def;
         },
         helper: {
             tidyFields, props
