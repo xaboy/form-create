@@ -292,6 +292,12 @@ export default function Api(h) {
                 return origin ? ctx.origin : ctx.rule;
             }
         },
+        getRenderRule: (id) => {
+            const ctx = h.getCtx(id);
+            if (ctx) {
+                return ctx.prop;
+            }
+        },
         setEffect(id, attr, value) {
             const ctx = h.getCtx(id);
             if (ctx && attr) {
