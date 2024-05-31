@@ -69,6 +69,7 @@ extend(Handler.prototype, {
         this.usePage();
         this.loadRule();
         this.$manager.__init();
+        this.lifecycle('created');
         this.vm.$set(this.vm, 'formData', this.formData);
     },
 })

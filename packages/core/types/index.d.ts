@@ -327,6 +327,13 @@ export interface BaseOptions<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
     }) => void;
     mounted?: (api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
     reload?: (api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
+    onMounted?: (api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
+    onReload?: (api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
+    onChange?: (field: string, value: any, opt: {
+        rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
+        api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
+        setFlag: boolean;
+    }) => void;
 }
 
 
