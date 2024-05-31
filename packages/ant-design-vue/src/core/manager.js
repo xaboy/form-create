@@ -100,7 +100,7 @@ export default {
         extend(this.rule, {key, ref});
         extend(this.rule.props, {
             model: $handle.formData,
-            rules: $handle.validate(),
+            // rules: $handle.validate(),
         });
     },
     render(children) {
@@ -118,7 +118,7 @@ export default {
             props: {
                 ...(rule.wrap || {}),
                 prop: ctx.id,
-                rules: rule.validate,
+                rules: ctx.injectValidate(),
                 ...(layout !== 'horizontal' ? {labelCol: {}, wrapperCol: {}} : {})
             },
             class: rule.className,

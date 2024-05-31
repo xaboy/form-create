@@ -102,7 +102,7 @@ export default {
         extend(this.rule, {key, ref});
         extend(this.rule.props, {
             model: $handle.formData,
-            rules: $handle.validate(),
+            // rules: $handle.validate(),
         });
     },
     render(children) {
@@ -123,7 +123,7 @@ export default {
                 labelWidth,
                 ...(rule.wrap || {}),
                 prop: ctx.id,
-                rules: rule.validate,
+                rules: ctx.injectValidate(),
             },
             class: rule.className,
             key: `${uni}fi`,
