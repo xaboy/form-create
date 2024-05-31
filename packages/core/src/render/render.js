@@ -311,10 +311,10 @@ export default function useRender(Render) {
             });
             return inject;
         },
-        ctxProp(ctx, custom) {
+        ctxProp(ctx) {
             const {ref, key, rule} = ctx;
-            this.$manager.mergeProp(ctx, custom);
-            ctx.parser.mergeProp(ctx, custom);
+            this.$manager.mergeProp(ctx);
+            ctx.parser.mergeProp(ctx);
             const props = [
                 {
                     ref: ref,
@@ -337,7 +337,10 @@ export default function useRender(Render) {
                 }
             ]
 
-            if (!custom && ctx.input) {
+            if (ctx.input) {
+                if (this.vm.$props.disabled !== undefined) {
+                    ctx.prop.props.disabled = !!this.vm.$props.disabled;
+                }
                 ctx.prop.model = {
                     value: this.$handle.getFormData(ctx),
                     callback: (value) => {

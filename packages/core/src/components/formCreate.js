@@ -40,7 +40,10 @@ export default function $FormCreate(FormCreate) {
                 }
             },
             extendOption: Boolean,
-            disabled: Boolean,
+            disabled: {
+                type: Boolean,
+                default: undefined,
+            },
             value: Object,
             api: Object,
             name: String,
@@ -100,8 +103,8 @@ export default function $FormCreate(FormCreate) {
                 this.formCreate.$handle.reloadRule(n);
                 this._renderRule();
             },
-            disabled(n) {
-                this.$f.disabled(!!n);
+            disabled() {
+                this.$f.refresh();
             }
         },
         beforeCreate() {

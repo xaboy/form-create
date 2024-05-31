@@ -481,6 +481,8 @@ export interface BaseApi<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
 
     deferSyncValue(fn: Function, autoSync?: boolean): void;
 
+    fetch(opt: FetchOption): Promise<any>;
+
     set<T>(object: object, key: string | number, value: T): T;
 
     on(event: string | string[], callback: Function): this;
@@ -488,6 +490,8 @@ export interface BaseApi<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
     once(event: string | string[], callback: Function): this;
 
     off(event?: string | string[], callback?: Function): this;
+
+    emit(event: string, ...args: any[]): void;
 
     [key: string]: any;
 }
