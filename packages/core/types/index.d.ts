@@ -485,7 +485,7 @@ export interface BaseApi<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
 
     fetch(opt: FetchOption): Promise<any>;
 
-    getData(id: string, defaultValue: any): any;
+    getData(id: string, defaultValue?: any): any;
 
     set<T>(object: object, key: string | number, value: T): T;
 
