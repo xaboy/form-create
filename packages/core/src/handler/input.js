@@ -121,9 +121,12 @@ export default function useInput(Handler) {
         isQuote(ctx, value) {
             return (is.Object(value) || Array.isArray(value)) && value === ctx.rule.value;
         },
-        refreshUpdate(ctx, val, origin) {
+        refreshUpdate(ctx, val, origin, field) {
             if (is.Function(ctx.rule.update)) {
-                const state = invoke(() => ctx.rule.update(val, ctx.origin, this.api, {origin: origin || 'change'}));
+                const state = invoke(() => ctx.rule.update(val, ctx.origin, this.api, {
+                    origin: origin || 'change',
+                    linkField: field
+                }));
                 if (state === undefined) return;
                 ctx.rule.hidden = state === true;
             }
@@ -132,19 +135,19 @@ export default function useInput(Handler) {
             this.refreshRule(ctx, val);
             this.bus.$emit('change-' + ctx.field, val);
         },
-        refreshRule(ctx, val, origin) {
+        refreshRule(ctx, val, origin, field) {
             if (this.refreshControl(ctx)) {
                 this.$render.clearCacheAll();
                 this.loadRule();
                 this.vm.$emit('update', this.api);
                 this.refresh();
             }
-            this.refreshUpdate(ctx, val, origin);
+            this.refreshUpdate(ctx, val, origin, field);
         },
         appendLink(ctx) {
             const link = ctx.rule.link;
             is.trueArray(link) && link.forEach(field => {
-                const fn = () => this.refreshRule(ctx, ctx.rule.value, 'link');
+                const fn = () => this.refreshRule(ctx, ctx.rule.value, 'link', field);
 
                 this.bus.$on('change-' + field, fn);
                 ctx.linkOn.push(() => this.bus.$off('change-' + field, fn));
