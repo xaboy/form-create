@@ -35,16 +35,17 @@ export default function useInject(Handler) {
             let event = {}, rule = ctx.rule, {emitPrefix, field, name, inject} = rule;
             let emit = rule[on ? 'emit' : 'nativeEmit'] || [];
             if (is.trueArray(emit)) {
-                let emitKey = emitPrefix || field || name;
-                if (emitKey) {
-                    if (!on) emitKey = `native-${emitKey}`;
-                    emit.forEach(eventName => {
-                        if (!eventName) return;
-                        let eventInject;
-                        if (is.Object(eventName)) {
-                            eventInject = eventName.inject;
-                            eventName = eventName.name;
-                        }
+                emit.forEach(eventName => {
+                    if (!eventName) return;
+                    let eventInject;
+                    let emitKey = emitPrefix || field || name;
+                    if (is.Object(eventName)) {
+                        eventInject = eventName.inject;
+                        eventName = eventName.name;
+                        emitKey = eventName.prefix || emitKey;
+                    }
+                    if (emitKey) {
+                        if (!on) emitKey = `native-${emitKey}`;
                         const fieldKey = toLine(`${emitKey}-${eventName}`);
                         const fn = (...arg) => {
                             this.vm.$emit(fieldKey, ...arg);
@@ -58,8 +59,8 @@ export default function useInject(Handler) {
                             let _inject = eventInject || inject || this.options.injectEvent;
                             event[eventName] = is.Undef(_inject) ? fn : this.inject(rule, fn, _inject);
                         }
-                    });
-                }
+                    }
+                });
 
             }
             ctx.computed[on ? 'on' : 'nativeOn'] = event;
