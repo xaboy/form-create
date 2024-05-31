@@ -108,6 +108,7 @@ const fetch = function (fc) {
             set(undefined);
             return;
         }
+        option = deepCopy(option);
         if (!option.to) {
             option.to = 'options';
         }
