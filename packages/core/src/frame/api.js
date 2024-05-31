@@ -4,6 +4,7 @@ import {deepCopy} from '@form-create/utils/lib/deepextend';
 import is, {hasProperty} from '@form-create/utils/lib/type';
 import extend from '@form-create/utils/lib/extend';
 import {format} from '@form-create/utils/lib/console';
+import {asyncFetch} from './fetch';
 
 
 function copy(value) {
@@ -391,12 +392,16 @@ export default function Api(h) {
         deferSyncValue(fn, sync){
             h.deferSyncValue(fn, sync);
         },
+        fetch(opt) {
+            h.options.beforeFetch && invoke(() => h.options.beforeFetch(opt, {api}));
+            return asyncFetch(opt);
+        },
         helper: {
             tidyFields, props
         }
     };
 
-    ['on', 'once', 'off', 'set'].forEach(n => {
+    ['on', 'once', 'off', 'set', 'emit'].forEach(n => {
         api[n] = function (...args) {
             h.vm[`$${n}`](...args);
         }
