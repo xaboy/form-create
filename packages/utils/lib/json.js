@@ -1,6 +1,6 @@
 import deepExtend from './deepextend';
 import {err} from './console';
-import is, {hasProperty} from './type';
+import is from './type';
 
 const PREFIX = '[[FORM-CREATE-PREFIX-';
 const SUFFIX = '-FORM-CREATE-SUFFIX]]';
@@ -10,7 +10,7 @@ const $TX = '$FNX:';
 const FUNCTION = 'function';
 
 export function toJson(obj, space) {
-    return JSON.stringify(deepExtend([], obj, true), function (key, val) {
+    return JSON.stringify(deepExtend(Array.isArray(obj) ? [] : {}, obj, true), function (key, val) {
         if (val && val._isVue === true)
             return undefined;
 
