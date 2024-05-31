@@ -599,6 +599,8 @@ export interface BaseApi<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
 
     fetch(opt: FetchOption): Promise<any>;
 
+    getData(id: string, defaultValue?: any): any;
+
     bus: {
         $emit(event: string, ...args: any[]): void;
         $on(event: string | string[], callback: Function): void;

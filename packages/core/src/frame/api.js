@@ -472,6 +472,9 @@ export default function Api(h) {
             h.options.beforeFetch && invoke(() => h.options.beforeFetch(opt, {api}));
             return asyncFetch(opt);
         },
+        getData(id, def) {
+            return hasProperty(h.fc.loadData, id) ? h.fc.loadData[id] : def;
+        },
         helper: {
             tidyFields, props
         }
