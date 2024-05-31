@@ -140,9 +140,13 @@ export default function FormCreateFactory(config) {
             component = id;
         }
         if (!name || !component) return;
+        const nameAlias = toCase(name);
         components[name] = component;
+        components[nameAlias] = component;
         delete CreateNode.aliasMap[name];
+        delete CreateNode.aliasMap[nameAlias];
         delete parsers[name];
+        delete parsers[nameAlias];
         if (component.formCreateParser) parser(name, component.formCreateParser);
     }
 
