@@ -451,6 +451,8 @@ export interface BaseApi<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
 
     getRenderRule(id: string): Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
 
+    getRefRule(name: string): Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> | Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>[];
+
     updateValidate(id: string, validate: Object[], merge?: boolean): void;
 
     updateValidates(validates: { [id: string]: Object[] }, merge?: boolean): void;
