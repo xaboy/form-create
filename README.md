@@ -1,11 +1,8 @@
 <p align="center">
-    <a href="http://www.form-create.com">
-        <img width="200" src="http://form-create.com/logo.png">
+    <a href="https://www.form-create.com" target="_blank">
+        <img width="300" alt="FormCreate" src="https://static.form-create.com/file/img/info-logo2.png">
     </a>
 </p>
-
-
-# form-create
 
 [![MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/xaboy/form-create)
 [![github](https://img.shields.io/badge/Author-xaboy-blue.svg)](https://github.com/xaboy)
@@ -249,13 +246,10 @@ $ npm run dev:antd
 
 [时光弧线](https://github.com/shiguanghuxian)  |  [wxxtqk](https://github.com/wxxtqk)  |  [williamBoss](https://github.com/williamBoss)  |  [HeyMrLin](https://github.com/HeyMrLin)  |  [djkloop](https://github.com/djkloop) | [JetBrains](https://www.jetbrains.com/?from=form-create)
 
-## Donation
-
-![donation.jpg](http://form-create.com/img/donation.jpg)
 
 ## Contact
 
-##### email : xaboy2005@qq.com
+![http://static.form-create.com/file/img/support.jpg](http://static.form-create.com/file/img/support.jpg)
 
 ## License
 
