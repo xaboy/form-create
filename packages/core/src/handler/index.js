@@ -52,7 +52,12 @@ export default function Handler(fc) {
 
     this.$manager = new fc.manager(this);
     this.$render = new Render(this);
-    this.api = fc.extendApi(Api(this), this);
+    this.api = fc.extendApiFn.reduce((api, fn) => {
+        return {
+            ...api,
+            ...invoke(() => fn({...api}, this), {})
+        };
+    }, Api(this));
 }
 
 extend(Handler.prototype, {

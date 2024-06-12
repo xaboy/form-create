@@ -11,7 +11,7 @@ function tidyBtnProp(btn, def) {
 }
 
 export default function extendApi(api, h) {
-    extend(api, {
+    return {
         formEl() {
             return h.$manager.form();
         },
@@ -127,7 +127,5 @@ export default function extendApi(api, h) {
                 })
             });
         },
-    });
-
-    return api;
+    };
 }

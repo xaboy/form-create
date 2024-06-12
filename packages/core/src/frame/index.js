@@ -59,6 +59,9 @@ export default function FormCreateFactory(config) {
     const directives = {};
     const modelFields = {};
     const useApps = [];
+    const extendApiFn = [
+        config.extendApi
+    ];
     const providers = {
         ...$provider
     };
@@ -218,6 +221,10 @@ export default function FormCreateFactory(config) {
         return hasProperty(loadData, id) ? loadData[id] : def;
     }
 
+    function extendApi(fn) {
+        extendApiFn.push(fn);
+    }
+
     function removeData(id) {
         delete loadData[id];
         _emitData(id);
@@ -247,7 +254,7 @@ export default function FormCreateFactory(config) {
             bus: new Mitt(),
             unwatch: null,
             options: ref({}),
-            extendApi: config.extendApi || (api => api)
+            extendApiFn,
         })
         nextTick(() => {
             watch(this.options, () => {
@@ -344,6 +351,7 @@ export default function FormCreateFactory(config) {
         extend(formCreate, {
             version: config.version,
             ui: config.ui,
+            extendApi,
             getData,
             setData,
             removeData,
