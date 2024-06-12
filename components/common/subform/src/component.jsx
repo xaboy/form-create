@@ -37,9 +37,6 @@ export default defineComponent({
     },
     emits: ['fc:subform', 'update:modelValue', 'change', 'itemMounted'],
     watch: {
-        disabled(n) {
-            this.syncDisabled && this.subApi.disabled(n);
-        },
         modelValue(n) {
             this.setValue(n);
         }
@@ -61,7 +58,6 @@ export default defineComponent({
         add$f(api) {
             this.subApi = api;
             nextTick(() => {
-                this.syncDisabled && api.disabled(this.disabled);
                 this.$emit('itemMounted', api);
             });
         }
@@ -69,6 +65,7 @@ export default defineComponent({
     render() {
         const Type = this.form;
         return <Type
+            disabled={this.disabled}
             onUpdate:modelValue={this.formData}
             modelValue={this.modelValue}
             onEmit-event={this.$emit}

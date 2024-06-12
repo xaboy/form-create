@@ -90,14 +90,6 @@ export default defineComponent({
             },
             deep: true
         },
-        disabled(n) {
-            if (this.syncDisabled) {
-                const lst = this.cacheRule;
-                Object.keys(lst).forEach(k => {
-                    lst[k].$f.disabled(n);
-                })
-            }
-        },
         expand(n) {
             let d = n - this.modelValue.length;
             if (d > 0) {
@@ -184,9 +176,6 @@ export default defineComponent({
         add$f(i, key, $f) {
             this.cacheRule[key].$f = $f;
             nextTick(() => {
-                if (this.syncDisabled) {
-                    $f.disabled(this.disabled);
-                }
                 this.$emit('itemMounted', $f, Object.keys(this.cacheRule).indexOf(key));
             });
         },
@@ -301,6 +290,7 @@ export default defineComponent({
                     <Type
                         key={key}
                         {...{
+                            disabled,
                             'onUpdate:modelValue': (formData) => this.formData(key, formData),
                             'onEmit-event': (name, ...args) => this.emitEvent(name, args, index, key),
                             'onUpdate:api': ($f) => this.add$f(index, key, $f),
