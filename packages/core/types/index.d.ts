@@ -177,6 +177,8 @@ export interface FormCreate<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs, Ap
 
     getData(id: string, defaultValue?: any): any;
 
+    extendApi(fn: (api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>)=>Object): void;
+
     setModelField(type: string, field: string): void;
 
     setFormula(name: string, fn: Function): void;
