@@ -1,6 +1,6 @@
 {
   "name": "@form-create/component-antdv-group",
-  "version": "3.1.30",
+  "version": "3.1.34",
   "description": "@form-create/ant-design-vue 内置组件",
   "main": "./dist/index.min.js",
   "module": "./dist/index.esm.js",
