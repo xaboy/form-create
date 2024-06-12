@@ -1,7 +1,7 @@
 import Api from '../frame/api';
 import Render from '../render';
 import extend from '@form-create/utils/lib/extend';
-import {funcProxy} from '../frame/util';
+import {funcProxy, invoke} from '../frame/util';
 import useInject from './inject';
 import usePage from './page';
 import useRender from './render';
@@ -11,6 +11,7 @@ import useContext from './context';
 import useLifecycle from './lifecycle';
 import useEffect from './effect';
 import {reactive} from 'vue';
+import is from '@form-create/utils/lib/type';
 
 
 export default function Handler(fc) {
@@ -74,7 +75,17 @@ extend(Handler.prototype, {
     },
     isBreakWatch() {
         return this.loading || this.noWatchFn || this.reloading;
-    }
+    },
+    beforeFetch(opt) {
+        return new Promise((resolve) => {
+            const source = this.options.beforeFetch && invoke(() => this.options.beforeFetch(opt, {api: this.api}));
+            if (source && is.Function(source.then)) {
+                source.then(resolve);
+            } else {
+                resolve();
+            }
+        });
+    },
 })
 
 useInject(Handler);

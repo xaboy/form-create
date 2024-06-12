@@ -425,7 +425,7 @@ export interface BaseOptions<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
     beforeFetch?: (config: FetchEffectOption, form: {
         api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>,
         rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>
-    }) => void;
+    }) => void | Promise<any>;
     mounted?: (api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
     reload?: (api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
     onMounted?: (api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;

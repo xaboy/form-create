@@ -469,8 +469,11 @@ export default function Api(h) {
         },
         bus: h.bus,
         fetch(opt) {
-            h.options.beforeFetch && invoke(() => h.options.beforeFetch(opt, {api}));
-            return asyncFetch(opt);
+            return new Promise((resolve, reject) => {
+                h.beforeFetch(opt).then(() => {
+                    return asyncFetch(opt).then(resolve).catch(reject);
+                });
+            });
         },
         getData(id, def) {
             return h.fc.getData(id, def);
