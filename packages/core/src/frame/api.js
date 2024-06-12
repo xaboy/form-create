@@ -473,7 +473,10 @@ export default function Api(h) {
             return asyncFetch(opt);
         },
         getData(id, def) {
-            return hasProperty(h.fc.loadData, id) ? h.fc.loadData[id] : def;
+            return h.fc.getData(id, def);
+        },
+        setData(id, data) {
+            return h.fc.setData(id, data);
         },
         helper: {
             tidyFields, props

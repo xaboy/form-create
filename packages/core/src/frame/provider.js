@@ -23,7 +23,7 @@ const loadData = function (fc) {
                         let value = undefined;
                         if (attr.attr) {
                             value = fc.loadData[attr.attr] || attr.default;
-                            if (attr.copy) {
+                            if (attr.copy !== false) {
                                 value = deepCopy(value)
                             }
                         }

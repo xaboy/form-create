@@ -173,7 +173,9 @@ export interface FormCreate<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs, Ap
 
     getApi(name: string): Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> | undefined;
 
-    setData(attr: string, data: any): void;
+    setData(id: string, data: any): void;
+
+    getData(id: string, defaultValue?: any): any;
 
     setModelField(type: string, field: string): void;
 
@@ -600,6 +602,8 @@ export interface BaseApi<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
     fetch(opt: FetchOption): Promise<any>;
 
     getData(id: string, defaultValue?: any): any;
+
+    setData(id: string, value?: any): void;
 
     bus: {
         $emit(event: string, ...args: any[]): void;

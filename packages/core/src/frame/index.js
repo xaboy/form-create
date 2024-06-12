@@ -7,7 +7,7 @@ import {creatorFactory} from '..';
 import BaseParser from '../factory/parser';
 import {copyRule, copyRules, mergeGlobal, parseJson, toJson, parseFn, invoke, setPrototypeOf} from './util';
 import fragment from '../components/fragment';
-import is from '@form-create/utils/lib/type';
+import is, {hasProperty} from '@form-create/utils/lib/type';
 import toCase from '@form-create/utils/lib/tocase';
 import extend from '@form-create/utils/lib/extend';
 import {CreateNodeFactory} from '../factory/node';
@@ -64,7 +64,7 @@ export default function FormCreateFactory(config) {
     };
     const maker = makerFactory();
     let globalConfig = {global: {}};
-    const loadData = {};
+    const loadData = reactive({});
     const CreateNode = CreateNodeFactory();
     const formulas = {};
 
@@ -214,6 +214,10 @@ export default function FormCreateFactory(config) {
         _emitData(id);
     }
 
+    function getData(id, def) {
+        return hasProperty(loadData, id) ? loadData[id] : def;
+    }
+
     function removeData(id) {
         delete loadData[id];
         _emitData(id);
@@ -236,6 +240,8 @@ export default function FormCreateFactory(config) {
                 components,
                 directives,
             },
+            setData,
+            getData,
             loadData,
             CreateNode,
             bus: new Mitt(),
@@ -338,6 +344,7 @@ export default function FormCreateFactory(config) {
         extend(formCreate, {
             version: config.version,
             ui: config.ui,
+            getData,
             setData,
             removeData,
             maker,
