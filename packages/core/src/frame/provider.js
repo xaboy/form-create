@@ -1,6 +1,6 @@
 import {err} from '@form-create/utils/lib/console';
 import {byCtx, invoke} from './util';
-import is from '@form-create/utils/lib/type';
+import is, {hasProperty} from '@form-create/utils/lib/type';
 import deepSet from '@form-create/utils/lib/deepset';
 import {deepCopy} from '@form-create/utils/lib/deepextend';
 import toArray from '@form-create/utils/lib/toarray';
@@ -127,7 +127,7 @@ const fetch = function (fc) {
             ...option,
             onSuccess(body, flag) {
                 if (check()) return;
-                let fn = (v) => flag ? v : v.data;
+                let fn = (v) => flag ? v : (hasProperty(v, 'data') ? v.data : v);
                 if (is.Function(option.parse)) {
                     fn = option.parse;
                 } else if (option.parse && is.String(option.parse)) {
@@ -149,16 +149,17 @@ const fetch = function (fc) {
                 (onError || ((e) => err(e.message || 'fetch fail ' + option.action)))(e, rule, api);
             }
         };
-        fc.options.beforeFetch && invoke(() => fc.options.beforeFetch(config, {rule, api}));
-        if (is.Function(option.action)) {
-            option.action(rule, api).then((val) => {
-                config.onSuccess(val, true);
-            }).catch((e) => {
-                config.onError(e);
-            });
-            return;
-        }
-        invoke(() => fc.create.fetch(config, {inject, rule, api}));
+        fc.$handle.beforeFetch(config, {rule, api}).then(() => {
+            if (is.Function(option.action)) {
+                option.action(rule, api).then((val) => {
+                    config.onSuccess(val, true);
+                }).catch((e) => {
+                    config.onError(e);
+                });
+                return;
+            }
+            invoke(() => fc.create.fetch(config, {inject, rule, api}));
+        });
     }
 
     return {
