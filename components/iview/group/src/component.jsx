@@ -108,14 +108,6 @@ export default {
             },
             deep: true
         },
-        disabled(n) {
-            if (this.syncDisabled) {
-                const lst = this.cacheRule;
-                Object.keys(lst).forEach(k => {
-                    lst[k].$f.disabled(n);
-                })
-            }
-        },
         expand(n) {
             let d = n - this.value.length;
             if (d > 0) {
@@ -202,9 +194,6 @@ export default {
         add$f(i, key, $f) {
             this.cacheRule[key].$f = $f;
             this.$nextTick(() => {
-                if (this.syncDisabled) {
-                    $f.disabled(this.disabled);
-                }
                 this.$emit('itemMounted', $f, Object.keys(this.cacheRule).indexOf(key));
             });
         },
@@ -320,6 +309,7 @@ export default {
                             input: ($f) => this.add$f(index, key, $f)
                         }}
                         props={{
+                            disabled,
                             inFor: true,
                             value: this.field ? {[this.field]: this._value(this.value[index])} : this.value[index],
                             rule,

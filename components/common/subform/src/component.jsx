@@ -30,9 +30,6 @@ export default {
         }
     },
     watch: {
-        disabled(n) {
-            this.syncDisabled && this.cacheRule.$f.disabled(n);
-        },
         value(n) {
             this.setValue(n);
         }
@@ -62,7 +59,6 @@ export default {
         add$f($f) {
             this.cacheRule.$f = $f;
             this.$nextTick(() => {
-                this.syncDisabled && $f.disabled(this.disabled);
                 this.$emit('itemMounted', $f);
             });
         },
@@ -83,6 +79,6 @@ export default {
                 'emit-event': this.emitEvent,
                 input: this.add$f
             }}
-            props={{rule, option: options, extendOption: true}}/>
+            props={{rule, option: options, disabled: this.disabled, extendOption: true}}/>
     }
 }
