@@ -7,7 +7,7 @@ import {creatorFactory} from '..';
 import BaseParser from '../factory/parser';
 import {copyRule, copyRules, mergeGlobal, parseJson, toJson, parseFn} from './util';
 import fragment from '../components/fragment';
-import is from '@form-create/utils/lib/type';
+import is, {hasProperty} from '@form-create/utils/lib/type';
 import toCase from '@form-create/utils/lib/tocase';
 import extend from '@form-create/utils/lib/extend';
 import {CreateNodeFactory} from '../factory/node';
@@ -164,6 +164,10 @@ export default function FormCreateFactory(config) {
         _emitData(id);
     }
 
+    function getData(id, def) {
+        return hasProperty(loadData, id) ? loadData[id] : def;
+    }
+
     function removeData(id) {
         delete loadData[id];
         _emitData(id);
@@ -225,6 +229,8 @@ export default function FormCreateFactory(config) {
                 components,
                 directives,
             },
+            setData,
+            getData,
             loadData,
             CreateNode,
             bus: new _vue,
@@ -334,6 +340,7 @@ export default function FormCreateFactory(config) {
             version: config.version,
             ui: config.ui,
             setData,
+            getData,
             removeData,
             maker,
             component,

@@ -105,6 +105,10 @@ export interface FormCreate<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs, Ap
 
     getApi(name: string): Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> | undefined;
 
+    setData(id: string, data: any): void;
+
+    getData(id: string, defaultValue?: any): any;
+
     init(rule: FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>[], option?: Options<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>): {
         mount($el?: Element): Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
 
@@ -486,6 +490,8 @@ export interface BaseApi<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
     fetch(opt: FetchOption): Promise<any>;
 
     getData(id: string, defaultValue?: any): any;
+
+    setData(id: string, value?: any): void;
 
     set<T>(object: object, key: string | number, value: T): T;
 
