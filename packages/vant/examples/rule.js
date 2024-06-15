@@ -218,15 +218,6 @@ export default function mock() {
             title: '单选框',
             field: 'radio',
             value: '1',
-            $fetch: {
-                action: 'http://mer.crmeb.net/api/config',
-                parse(res){
-                    return Object.keys(res.data).map(v=>{
-                        return {label: v, value: v};
-                    })
-                },
-                to: 'props.options',
-            },
             props: {
                 options: [
                     {

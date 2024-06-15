@@ -46,6 +46,7 @@
     },
     "homepage": "http://www.form-create.com/v3/",
     "dependencies": {
+        "dayjs": "^1.11.11",
         "@form-create/component-subform": "^3.1.5",
         "@form-create/core": "^3.1.33",
         "@form-create/utils": "^3.1.30"
@@ -59,7 +60,6 @@
     "devDependencies": {
         "@vue/cli-plugin-babel": "~4.5.0",
         "@vue/cli-service": "^4.5.3",
-        "dayjs": "^1.11.11",
         "v-jsoneditor": "^1.4.2",
         "vant": "^4.9"
     },

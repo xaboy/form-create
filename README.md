@@ -17,18 +17,19 @@
   <a href="https://github.com/xaboy/form-create" target="_blank"><img src="https://img.shields.io/npm/dt/@form-create/element-ui.svg" alt="dt" /></a>
 </p>
 
-**FormCreate 是一个可以通过 JSON 生成具有动态渲染、数据收集、验证和提交功能的表单生成组件。支持5个UI框架，并且支持生成任何 Vue 组件。内置20种常用表单组件和自定义组件，再复杂的表单都可以轻松搞定。**
+**FormCreate 是一个可以通过 JSON 生成具有动态渲染、数据收集、验证和提交功能的表单生成组件。支持6个UI框架，并且支持生成任何 Vue 组件。内置20种常用表单组件和自定义组件，再复杂的表单都可以轻松搞定。**
 
 [![FcDesigner](https://static.form-create.com/file/img/146171715603824_.pic.jpg)](https://pro.form-create.com/view)
 
 ## 特点
 - 使用JSON数据生成表单
 - 支持扩展，生成任何Vue组件和HTML标签
-- 支持5种UI框架
+- 支持6个UI框架
 - 支持组件之间联动
 - 提供丰富的表单操作API
 - 支持子表单和分组
 - 内置渲染缓存，提升渲染速度
+- 适配移动端UI
 
 ## 支持的UI框架
 - element-plus
@@ -36,6 +37,7 @@
 - naive-ui
 - arco-design
 - tdesign
+- vant
 
 > 如果对您有帮助，您可以点右上角 "Star" 支持一下 谢谢！本项目还在不断开发完善中,如有任何建议或问题[请在这里提出](https://github.com/xaboy/form-create/issues/new)
 
@@ -70,21 +72,20 @@
 
 ## 包说明
 
-| 包名             | 说明                                                           |
-| ------------------ |--------------------------------------------------------------|
-| @form-create/element-ui [![version](https://img.shields.io/npm/v/@form-create/element-ui/next.svg)](https://www.npmjs.com/package/@form-create/element-ui) [![npm](https://img.shields.io/npm/dt/@form-create/element-ui.svg)](https://www.npmjs.com/package/@form-create/element-ui) | [element-plus 版本](http://form-create.com/v3/element-ui/)     |
+| 包名                                                                                                                                                                                                                                                                                                        | 说明                                                           |
+|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------|
+| @form-create/element-ui [![version](https://img.shields.io/npm/v/@form-create/element-ui/next.svg)](https://www.npmjs.com/package/@form-create/element-ui) [![npm](https://img.shields.io/npm/dt/@form-create/element-ui.svg)](https://www.npmjs.com/package/@form-create/element-ui)                     | [element-plus 版本](http://form-create.com/v3/element-ui/)     |
 | @form-create/ant-design-vue [![version](https://img.shields.io/npm/v/@form-create/ant-design-vue/next.svg)](https://www.npmjs.com/package/@form-create/ant-design-vue) [![npm](https://img.shields.io/npm/dt/@form-create/ant-design-vue.svg)](https://www.npmjs.com/package/@form-create/ant-design-vue) | [ant-design-vue 版本](http://form-create.com/v3/ant-design-vue/) |
-| @form-create/arco-design [![version](https://img.shields.io/npm/v/@form-create/arco-design/next.svg)](https://www.npmjs.com/package/@form-create/arco-design) [![npm](https://img.shields.io/npm/dt/@form-create/arco-design.svg)](https://www.npmjs.com/package/@form-create/arco-design) | [arco-design 版本](http://form-create.com/v3/arco-design/)     |
-| @form-create/naive-ui [![version](https://img.shields.io/npm/v/@form-create/naive-ui/next.svg)](https://www.npmjs.com/package/@form-create/naive-ui) [![npm](https://img.shields.io/npm/dt/@form-create/naive-ui.svg)](https://www.npmjs.com/package/@form-create/naive-ui) | [naive-ui 版本](http://form-create.com/v3/naive-ui/)           |
-| @form-create/tdesign [![version](https://img.shields.io/npm/v/@form-create/tdesign/next.svg)](https://www.npmjs.com/package/@form-create/tdesign) [![npm](https://img.shields.io/npm/dt/@form-create/tdesign.svg)](https://www.npmjs.com/package/@form-create/tdesign) | [tdesign 版本](http://form-create.com/v3/tdesign/)             |
-| @form-create/designer [![version](https://img.shields.io/npm/v/@form-create/designer.svg)](https://www.npmjs.com/package/@form-create/designer) [![npm](https://img.shields.io/npm/dt/@form-create/designer.svg)](https://www.npmjs.com/package/@form-create/designer) | [可视化表单设计器](http://form-create.com/designer)          |
+| @form-create/arco-design [![version](https://img.shields.io/npm/v/@form-create/arco-design/next.svg)](https://www.npmjs.com/package/@form-create/arco-design) [![npm](https://img.shields.io/npm/dt/@form-create/arco-design.svg)](https://www.npmjs.com/package/@form-create/arco-design)                | [arco-design 版本](http://form-create.com/v3/arco-design/)     |
+| @form-create/naive-ui [![version](https://img.shields.io/npm/v/@form-create/naive-ui/next.svg)](https://www.npmjs.com/package/@form-create/naive-ui) [![npm](https://img.shields.io/npm/dt/@form-create/naive-ui.svg)](https://www.npmjs.com/package/@form-create/naive-ui)                               | [naive-ui 版本](http://form-create.com/v3/naive-ui/)           |
+| @form-create/tdesign [![version](https://img.shields.io/npm/v/@form-create/tdesign/next.svg)](https://www.npmjs.com/package/@form-create/tdesign) [![npm](https://img.shields.io/npm/dt/@form-create/tdesign.svg)](https://www.npmjs.com/package/@form-create/tdesign)                                    | [tdesign 版本](http://form-create.com/v3/tdesign/)             |
+| @form-create/vant [![version](https://img.shields.io/npm/v/@form-create/vant.svg)](https://www.npmjs.com/package/@form-create/vant) [![npm](https://img.shields.io/npm/dt/@form-create/vant.svg)](https://www.npmjs.com/package/@form-create/vant)                                       | [tdesign 版本](http://form-create.com/v3/tdesign/)             |
+| @form-create/designer [![version](https://img.shields.io/npm/v/@form-create/designer.svg)](https://www.npmjs.com/package/@form-create/designer) [![npm](https://img.shields.io/npm/dt/@form-create/designer.svg)](https://www.npmjs.com/package/@form-create/designer)                                    | [可视化表单设计器](http://form-create.com/designer)          |
 
 
 ## 示例
 
-- [使用JSON生成](https://jsrun.net/NQhKp/edit)
-
-- [各种示例](https://www.form-create.com/v3/guide/demo.html)
+- [在线示例](https://www.form-create.com/v3/guide/demo.html)
 
 
 

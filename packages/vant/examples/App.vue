@@ -18,11 +18,11 @@ import mock from './rule';
 
 export default defineComponent({
   setup() {
-    const fapi = ref({b: 2});
+    const fapi = ref({});
     const rule = ref(mock())
 
     //formData
-    const formData = ref({goods_23name: 'asdf12312'})
+    const formData = ref({goods_name2: 'goods_name2'})
     const json = ref({});
     watch(formData, value => {
       json.value = value;

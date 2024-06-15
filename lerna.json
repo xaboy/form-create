@@ -6,6 +6,7 @@
     "packages/element-ui",
     "packages/tdesign",
     "packages/naive-ui",
+    "packages/vant",
     "packages/utils",
     "components/common/subform",
     "components/common/wangeditor",
