@@ -70,6 +70,7 @@ export default function FormCreateFactory(config) {
     const loadData = reactive({});
     const CreateNode = CreateNodeFactory();
     const formulas = {};
+    const isMobile= config.isMobile === true;
 
     exportAttrs(config.attrs || {});
 
@@ -240,6 +241,7 @@ export default function FormCreateFactory(config) {
             providers,
             modelFields,
             formulas,
+            isMobile,
             rules: vm.props.rule,
             name: vm.props.name || uniqueId(),
             inFor: vm.props.inFor,
@@ -274,6 +276,8 @@ export default function FormCreateFactory(config) {
             }
         }
     }
+
+    FormCreate.isMobile = isMobile;
 
     extend(FormCreate.prototype, {
         init() {
@@ -381,6 +385,7 @@ export default function FormCreateFactory(config) {
     function useStatic(formCreate) {
         extend(formCreate, {
             create,
+            isMobile,
             install(app, options) {
                 globalConfig = {...globalConfig, ...(options || {})}
                 if (app._installedFormCreate === true) return;
@@ -393,7 +398,8 @@ export default function FormCreateFactory(config) {
                 useAttr($formCreate);
 
                 app.config.globalProperties.$formCreate = $formCreate;
-                app.component('FormCreate', $form());
+                const $component = $form();
+                app.component($component.name, $component);
                 useApps.forEach(v => {
                     invoke(() => v(formCreate, app));
                 })

@@ -113,6 +113,7 @@ export interface FormCreateFactoryConfig<MakerAttrs, OptionAttrs, CreatorAttrs, 
     },
     extendApi?: (api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, h: Object) => Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
     version?: string;
+    isMobile?: Boolean;
     ui?: string;
     install?: Install<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>
 }
@@ -184,6 +185,8 @@ export interface FormCreate<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs, Ap
     setFormula(name: string, fn: Function): void;
 
     removeData(attr: string): void;
+
+    isMobile?: Boolean;
 }
 
 export interface FormData {

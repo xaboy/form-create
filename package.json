@@ -9,6 +9,7 @@
         "dev:td": "cd packages/tdesign && npm run dev:td",
         "dev:arco": "cd packages/arco-design && npm run dev:arco",
         "dev:naive": "cd packages/naive-ui && npm run dev:naive",
+        "dev:vant": "cd packages/vant && npm run dev:vant",
         "commit": "git cz",
         "lint": "eslint *.js",
         "clear-all": "rimraf package-lock.json node_modules packages/*/node_modules components/*/*/node_modules packages/*/package-lock.json components/*/*/package-lock.json",

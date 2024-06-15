@@ -1,0 +1,82 @@
+{
+    "name": "@form-create/vant",
+    "version": "3.1.33",
+    "description": "vant-ui动态表单|form-create is a form generation component that can generate dynamic rendering, data collection, verification and submission functions through JSON. Supports 5 UI frameworks, and supports the generation of any Vue components. Built-in 20 kinds of commonly used form components and custom components, no matter how complex forms can be easily handled.",
+    "main": "./dist/form-create.min.js",
+    "module": "./dist/form-create.esm.js",
+    "unpkg": "./dist/form-create.min.js",
+    "jsdelivr": "./dist/form-create.min.js",
+    "typings": "./types/index.d.ts",
+    "scripts": {
+        "clean": "rimraf dist/",
+        "dev:vant": "vue-cli-service serve",
+        "bili": "cross-env UI_LIB=vant bili",
+        "build": "npm-run-all clean bili"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/xaboy/form-create.git"
+    },
+    "keywords": [
+        "动态表单",
+        "@form-create",
+        "form-builder",
+        "form",
+        "components",
+        "vue3",
+        "mobile",
+        "vant",
+        "json-form",
+        "dynamic-form"
+    ],
+    "files": [
+        "README.md",
+        "package.json",
+        "LICENSE",
+        "auto-import.js",
+        "auto-import.d.ts",
+        "src",
+        "types",
+        "dist"
+    ],
+    "author": "xaboy",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/xaboy/form-create/issues"
+    },
+    "homepage": "http://www.form-create.com/v3/",
+    "dependencies": {
+        "@form-create/component-subform": "^3.1.5",
+        "@form-create/core": "^3.1.33",
+        "@form-create/utils": "^3.1.30"
+    },
+    "publishConfig": {
+        "access": "public"
+    },
+    "peerDependencies": {
+        "vue": "^3.1.0"
+    },
+    "devDependencies": {
+        "@vue/cli-plugin-babel": "~4.5.0",
+        "@vue/cli-service": "^4.5.3",
+        "dayjs": "^1.11.11",
+        "v-jsoneditor": "^1.4.2",
+        "vant": "^4.9"
+    },
+    "buildFormCreateOptions": {
+        "name": "@form-create/vant",
+        "exportName": "formCreateMobile",
+        "extendExternals": [
+            "vant"
+        ],
+        "extendGlobal": {
+            "vue": "Vue"
+        },
+        "fileName": "form-create",
+        "formats": [
+            "umd",
+            "esm"
+        ]
+    },
+    "gitHead": "3d024534b3ee103a96da1d3629582c0cdf19d9a8"
+}

@@ -14,8 +14,6 @@ import {
 import toArray from '@form-create/utils/lib/toarray';
 import {toLine} from '@form-create/utils';
 
-const NAME = 'FormCreate';
-
 const getRuleInject = (vm, parent) => {
     if (!vm || vm === parent) {
         return;
@@ -30,7 +28,7 @@ const getRuleInject = (vm, parent) => {
 
 export default function $FormCreate(FormCreate, components, directives) {
     return defineComponent({
-        name: NAME,
+        name: 'FormCreate' + (FormCreate.isMobile ? 'Mobile' : ''),
         components,
         directives,
         props: {
