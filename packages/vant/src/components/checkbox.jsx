@@ -6,7 +6,6 @@ export default defineComponent({
     name: NAME,
     inheritAttrs: false,
     props: {
-        disabled: Boolean,
         modelValue: Array,
         options: Array,
     },
@@ -24,14 +23,14 @@ export default defineComponent({
         }
     },
     render() {
-        return <van-checkbox-group disabled={this.$props.disabled} modelValue={[...Array.isArray(this.modelValue) ? this.modelValue : []]}
-            onUpdate:modelValue={this.onInput} direction="horizontal" {...this.$attrs}>
+        return <van-checkbox-group direction="horizontal" {...this.$attrs} modelValue={[...Array.isArray(this.modelValue) ? this.modelValue : []]}
+            onUpdate:modelValue={this.onInput}>
             {(this.options || []).map(opt => {
                 const tmp = {...opt};
-                const {label, value} = opt;
-                delete tmp.label;
+                const {text, value} = opt;
+                delete tmp.text;
                 delete tmp.value;
-                return <van-checkbox name={value} shape="square" {...tmp}>{label || value}</van-checkbox>
+                return <van-checkbox name={value} shape="square" {...tmp}>{text || opt.label || value}</van-checkbox>
             })}
         </van-checkbox-group>
     }

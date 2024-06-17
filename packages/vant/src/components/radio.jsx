@@ -6,7 +6,6 @@ export default defineComponent({
     name: NAME,
     inheritAttrs: false,
     props: {
-        disabled: Boolean,
         modelValue: [String, Number],
         options: Array,
     },
@@ -24,14 +23,14 @@ export default defineComponent({
         }
     },
     render() {
-        return <van-radio-group direction="horizontal" {...this.$attrs} disabled={this.$props.disabled} modelValue={this.modelValue}
+        return <van-radio-group direction="horizontal" {...this.$attrs} modelValue={this.modelValue}
             onUpdate:modelValue={this.onInput}>
             {(this.options || []).map(opt => {
                 const tmp = {...opt};
-                const {label, value} = opt;
-                delete tmp.label;
+                const {text, value} = opt;
+                delete tmp.text;
                 delete tmp.value;
-                return <van-radio name={value} {...tmp}>{label || value}</van-radio>
+                return <van-radio name={value} {...tmp}>{text || opt.label || value}</van-radio>
             })}
         </van-radio-group>
     }

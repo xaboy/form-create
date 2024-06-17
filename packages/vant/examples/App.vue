@@ -37,7 +37,7 @@ export default defineComponent({
           }, 5000)
         });
       },
-      resetBtn: true, global: {'*': {emit: ['aaa']}}
+      resetBtn: true
     })
 
     return {

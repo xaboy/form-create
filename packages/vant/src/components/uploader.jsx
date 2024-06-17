@@ -26,9 +26,10 @@ export default defineComponent({
         headers: Object,
         method: String,
         data: Object,
-        name: String,
+        uploadName: String,
         onSuccess: Function,
         onError: Function,
+        maxCount: Number,
     },
     emits: ['update:modelValue', 'delete'],
     setup(props, _) {
@@ -44,7 +45,7 @@ export default defineComponent({
 
         const uploadValue = () => {
             let files = fileList.value.map((file) => file.url).filter((url) => url !== undefined);
-            _.emit('update:modelValue', files);
+            _.emit('update:modelValue', props.maxCount === 1 ? (files[0] || '') : files);
         };
 
         return {
@@ -60,7 +61,7 @@ export default defineComponent({
                     return afterRead.value(file);
                 } else {
                     const data = props.data || {};
-                    data[props.name || 'file'] = file.file;
+                    data[props.uploadName || 'file'] = file.file;
                     props.formCreateInject.api.fetch({
                         action: props.action,
                         dataType: 'formData',
@@ -82,7 +83,8 @@ export default defineComponent({
         }
     },
     render() {
-        return <van-uploader {...this.$attrs} model-value={this.fileList} onUpdate:model-value={(v) => this.fileList = v}
+        return <van-uploader {...this.$attrs} model-value={this.fileList}
+            onUpdate:model-value={(v) => this.fileList = v}
             afterRead={this.uploadFile} onDelete={this.onDelete}/>
     }
 

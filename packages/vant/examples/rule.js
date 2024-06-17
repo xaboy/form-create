@@ -63,7 +63,7 @@ export default function mock() {
                     {
                         type: 'calendar',
                         title: '日期选择',
-                        field: 'Calendar',
+                        field: 'Calendar1',
                         value: '2024-06-11',
                         props: {
                             placeholder: '请选择',
@@ -83,7 +83,7 @@ export default function mock() {
                     {
                         type: 'calendar',
                         title: '日期区间',
-                        field: 'Calendar',
+                        field: 'Calendar2',
                         value: ['2024-06-11', '2024-07-11'],
                         props: {
                             type: 'range',
@@ -127,7 +127,7 @@ export default function mock() {
                     {
                         type: 'calendar',
                         title: '日期选择',
-                        field: 'Calendar',
+                        field: 'Calendar1',
                         value: '2024-06-11',
                         props: {
                             placeholder: '请选择',
@@ -139,7 +139,7 @@ export default function mock() {
                     {
                         type: 'calendar',
                         title: '日期区间',
-                        field: 'Calendar',
+                        field: 'Calendar2',
                         value: ['2024-06-11', '2024-07-11'],
                         props: {
                             type: 'range',
@@ -155,7 +155,7 @@ export default function mock() {
         {
             type: 'calendar',
             title: '日期多选',
-            field: 'Calendar',
+            field: 'Calendar3',
             value: ['2024-06-11', '2024-07-11', '2024-07-12'],
             props: {
                 type: 'multiple',
@@ -171,7 +171,7 @@ export default function mock() {
         {
             type: 'cascader',
             title: '多级选择',
-            field: 'Cascader',
+            field: 'Cascader1',
             value: '330100',
             props: {
                 options: [
@@ -279,7 +279,7 @@ export default function mock() {
         {
             type: 'slider',
             title: '双滑块',
-            field: 'slider',
+            field: 'slider2',
             value: [30, 70],
             props: {
                 range: true,
@@ -396,7 +396,7 @@ export default function mock() {
         {
             type: 'timePicker',
             title: '时间选择',
-            field: 'time',
+            field: 'time1',
             value: '12:47',
             props: {
                 title: '时间选择',
@@ -408,7 +408,7 @@ export default function mock() {
         {
             type: 'timePicker',
             title: '时分秒选择',
-            field: 'time',
+            field: 'time2',
             value: '12:47:58',
             props: {
                 title: '时分秒选择',
@@ -421,7 +421,7 @@ export default function mock() {
         {
             type: 'timePicker',
             title: '小时选择',
-            field: 'time',
+            field: 'time3',
             value: '12',
             props: {
                 title: '小时选择',
@@ -434,7 +434,7 @@ export default function mock() {
         {
             type: 'timePicker',
             title: '分钟选择',
-            field: 'time',
+            field: 'time4',
             value: '58',
             props: {
                 title: '分钟选择',
