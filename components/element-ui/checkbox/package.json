@@ -1,6 +1,6 @@
 {
   "name": "@form-create/component-elm-checkbox",
-  "version": "3.1.32",
+  "version": "3.2.0",
   "description": "@form-create/element-ui 内置组件",
   "main": "./dist/index.min.js",
   "module": "./dist/index.esm.js",
@@ -37,7 +37,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@form-create/utils": "^3.1.30"
+    "@form-create/utils": "^3.2.0"
   },
   "buildFormCreateOptions": {
     "name": "@form-create/component-elm-checkbox",

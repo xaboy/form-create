@@ -1,6 +1,6 @@
 {
   "name": "@form-create/component-tdesign-group",
-  "version": "3.1.34",
+  "version": "3.2.0",
   "description": "@form-create/tdesign 内置组件",
   "main": "./dist/index.min.js",
   "module": "./dist/index.esm.js",
@@ -30,7 +30,7 @@
   "author": "xaboy",
   "license": "MIT",
   "dependencies": {
-    "@form-create/utils": "^3.1.30"
+    "@form-create/utils": "^3.2.0"
   },
   "bugs": {
     "url": "https://github.com/xaboy/form-create/issues"
