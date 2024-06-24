@@ -1,5 +1,5 @@
 import {computed, defineComponent, ref, toRef, watch} from 'vue';
-import {hasProperty} from '@form-create/utils/lib/type';
+import is, {hasProperty} from '@form-create/utils/lib/type';
 import dayjs from 'dayjs';
 
 const NAME = 'fcCalendar';
@@ -10,6 +10,7 @@ export default defineComponent({
     props: {
         placeholder: String,
         disabled: Boolean,
+        clearable: Boolean,
         type: String,
         modelValue: [String, Array],
         minDate: [String, Date],
@@ -93,13 +94,27 @@ export default defineComponent({
                     return hasProperty(strValue, props.type) ? strValue[props.type]() : (inputValue.value || '');
                 }
                 return '';
+            },
+            clear(e) {
+                e.stopPropagation();
+                const value = Array.isArray(inputValue.value) ? [] : '';
+                formatValue(value);
+                onInput();
             }
         }
     },
     render() {
+        const clearIcon = () => {
+            return this.$props.clearable && !is.empty(this.inputValue) ?
+                <i class="van-badge__wrapper van-icon van-icon-clear van-field__clear"
+                    onClick={this.clear}></i> : undefined;
+        }
         return <>
-            <van-field ref="el" placeholder={this.placeholder} readonly disabled={this.$props.disabled} onClick={this.open}
-                model-value={this.getStrValue()} isLink/>
+            <van-field ref="el" placeholder={this.placeholder} readonly disabled={this.$props.disabled}
+                onClick={this.open}
+                model-value={this.getStrValue()} isLink border={false} v-slots={{
+                    'right-icon': clearIcon
+                }}/>
             <van-calendar {...{...this.$attrs, ...this.dateRange}} show={this.show} onUpdate:show={v => (this.show = v)}
                 type={this.type}
                 onConfirm={this.confirm} defaultDate={this.defaultDate}/>

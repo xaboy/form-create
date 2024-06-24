@@ -15,9 +15,7 @@ export default function mock() {
                 disabled: false, //禁用
             },
             validate: [
-                {message: '请输入商品名称', validator(){
-                    console.log(arguments);
-                    }}
+                {required: true, message: '请输入商品名称', trigger: 'onBlur'}
             ]
         },
         {
@@ -31,8 +29,6 @@ export default function mock() {
                 type: 'textarea', //禁用
                 autosize: true,
             },
-            validate: [
-            ]
         },
         {
             type: 'subform',
@@ -53,12 +49,6 @@ export default function mock() {
                             placeholder: '请输入商品名称', //输入框占位文本
                             disabled: false, //禁用
                         },
-                        validate: [
-                            {message: '请输入商品名称', validator(){
-                                    console.log(arguments);
-                                    return false;
-                                }}
-                        ]
                     },
                     {
                         type: 'calendar',
@@ -76,9 +66,6 @@ export default function mock() {
                                 console.log('confirm');
                             },
                         },
-                        validate: [
-                            {required: true, message: '请输入商品名称', trigger: 'onBlur'}
-                        ]
                     },
                     {
                         type: 'calendar',
@@ -89,9 +76,7 @@ export default function mock() {
                             type: 'range',
                             placeholder: '请选择',
                         },
-                        validate: [
-                            {required: true, message: '请输入商品名称', trigger: 'onBlur'}
-                        ]
+
                     },
                 ]
             }
@@ -117,12 +102,6 @@ export default function mock() {
                             placeholder: '请输入商品名称', //输入框占位文本
                             disabled: true, //禁用
                         },
-                        validate: [
-                            {message: '请输入商品名称', validator(){
-                                    console.log(arguments);
-                                    return false;
-                                }}
-                        ]
                     },
                     {
                         type: 'calendar',
@@ -132,9 +111,6 @@ export default function mock() {
                         props: {
                             placeholder: '请选择',
                         },
-                        validate: [
-                            {required: true, message: '请输入商品名称', trigger: 'onBlur'}
-                        ]
                     },
                     {
                         type: 'calendar',
@@ -145,9 +121,6 @@ export default function mock() {
                             type: 'range',
                             placeholder: '请选择',
                         },
-                        validate: [
-                            {required: true, message: '请输入商品名称', trigger: 'onBlur'}
-                        ]
                     },
                 ]
             }
@@ -160,13 +133,9 @@ export default function mock() {
             props: {
                 type: 'multiple',
                 placeholder: '请选择',
+                clearable: true,
                 minDate: '2024-06-10'
             },
-            validate: [
-                {message: '请输入商品名称', validator(){
-                        console.log(arguments);
-                    }},
-            ]
         },
         {
             type: 'cascader',
@@ -174,6 +143,7 @@ export default function mock() {
             field: 'Cascader1',
             value: '330100',
             props: {
+                clearable: true,
                 options: [
                     {
                         text: '浙江省',
@@ -188,9 +158,6 @@ export default function mock() {
                 ],
                 placeholder: '请选择',
             },
-            validate: [
-                {required: true, message: '请输入商品名称', trigger: 'onBlur'}
-            ]
         },
         {
             type: 'checkbox',
@@ -209,9 +176,6 @@ export default function mock() {
                     },
                 ],
             },
-            validate: [
-                {required: true, message: '请输入商品名称', trigger: 'onBlur'}
-            ]
         },
         {
             type: 'radio',
@@ -230,9 +194,6 @@ export default function mock() {
                     },
                 ],
             },
-            validate: [
-                {required: true, message: '请输入商品名称', trigger: 'onBlur'}
-            ]
         },
         {
             type: 'select',
@@ -250,9 +211,6 @@ export default function mock() {
                 ],
                 placeholder: '请选择',
             },
-            validate: [
-                {required: true, message: '请输入商品名称', trigger: 'onBlur'}
-            ]
         },
         {
             type: 'rate',
@@ -261,9 +219,6 @@ export default function mock() {
             value: 5,
             props: {
             },
-            validate: [
-                {required: true, message: '请输入商品名称', trigger: 'onBlur'}
-            ]
         },
         {
             type: 'slider',
@@ -272,9 +227,6 @@ export default function mock() {
             value: 50,
             props: {
             },
-            validate: [
-                {required: true, message: '请输入商品名称', trigger: 'onBlur'}
-            ]
         },
         {
             type: 'slider',
@@ -284,9 +236,6 @@ export default function mock() {
             props: {
                 range: true,
             },
-            validate: [
-                {required: true, message: '请输入商品名称', trigger: 'onBlur'}
-            ]
         },
         {
             type: 'stepper',
@@ -300,9 +249,6 @@ export default function mock() {
                 min:5,
                 max:10
             },
-            validate: [
-                {required: true, message: '请输入商品名称', trigger: 'onBlur'}
-            ]
         },
         {
             type: 'switch',
@@ -316,9 +262,6 @@ export default function mock() {
                 activeValue:1,
                 inactiveValue:0
             },
-            validate: [
-                {required: true, message: '请输入商品名称', trigger: 'onBlur'}
-            ]
         },
         {
             type: 'uploader',
@@ -331,9 +274,6 @@ export default function mock() {
                     file.url = res.url;
                 }
             },
-            validate: [
-                {required: true, message: '请输入商品名称', trigger: 'onBlur'}
-            ]
         },
         {
             type: 'datePicker',
@@ -341,12 +281,10 @@ export default function mock() {
             field: 'date',
             value: '2024-06-12',
             props: {
+                clearable: true,
                 title: '年月日选择',
                 // minDate: '2024-06-11'
             },
-            validate: [
-                {required: true, message: '请输入商品名称', trigger: 'onBlur'}
-            ]
         },
         {
             type: 'datePicker',
@@ -357,9 +295,6 @@ export default function mock() {
                 title: '年月选择',
                 columnsType: ['year', 'month']
             },
-            validate: [
-                {required: true, message: '请输入商品名称', trigger: 'onBlur'}
-            ]
         },
         {
             type: 'datePicker',
@@ -373,9 +308,6 @@ export default function mock() {
                 title: '年选择',
                 columnsType: ['year'],
             },
-            validate: [
-                {required: true, message: '请输入商品名称', trigger: 'onBlur'}
-            ]
         },
         {
             type: 'datePicker',
@@ -389,9 +321,6 @@ export default function mock() {
                 title: '月日选择',
                 columnsType: ['month', 'day'],
             },
-            validate: [
-                {required: true, message: '请输入商品名称', trigger: 'onBlur'}
-            ]
         },
         {
             type: 'timePicker',
@@ -399,11 +328,9 @@ export default function mock() {
             field: 'time1',
             value: '12:47',
             props: {
+                clearable: true,
                 title: '时间选择',
             },
-            validate: [
-                {required: true, message: '请输入商品名称', trigger: 'onBlur'}
-            ]
         },
         {
             type: 'timePicker',
@@ -414,9 +341,6 @@ export default function mock() {
                 title: '时分秒选择',
                 columnsType: ['hour', 'minute', 'second']
             },
-            validate: [
-                {required: true, message: '请输入商品名称', trigger: 'onBlur'},
-            ]
         },
         {
             type: 'timePicker',
@@ -427,9 +351,6 @@ export default function mock() {
                 title: '小时选择',
                 columnsType: ['hour']
             },
-            validate: [
-                {required: true, message: '请输入商品名称', trigger: 'onBlur'}
-            ]
         },
         {
             type: 'timePicker',
@@ -440,8 +361,6 @@ export default function mock() {
                 title: '分钟选择',
                 columnsType: ['minute']
             },
-            validate: [
-            ]
         },
     ];
 }

@@ -8,6 +8,7 @@ export default defineComponent({
     props: {
         placeholder: String,
         disabled: Boolean,
+        clearable: Boolean,
         fieldNames: Object,
         modelValue: [String, Number],
         options: Array,
@@ -35,7 +36,7 @@ export default defineComponent({
         }
 
         const updateInputValue = (n) => {
-            if(n == null || n === '') {
+            if (n == null || n === '') {
                 return '';
             }
             const path = findOptions(options.value, n, []);
@@ -57,8 +58,8 @@ export default defineComponent({
             inputValue,
             options,
             open() {
-                if(props.disabled){
-                    return ;
+                if (props.disabled) {
+                    return;
                 }
                 show.value = true;
             },
@@ -67,12 +68,26 @@ export default defineComponent({
                 show.value = false;
                 onInput(value);
             },
+            clear(e) {
+                e.stopPropagation();
+                inputValue.value = '';
+                onInput('');
+            }
         }
     },
     render() {
+        const clearIcon = () => {
+            return this.$props.clearable && this.inputValue ?
+                <i class="van-badge__wrapper van-icon van-icon-clear van-field__clear"
+                    onClick={this.clear}></i> : undefined;
+        }
+
         return <>
-            <van-field ref="el" placeholder={this.placeholder} readonly disabled={this.$props.disabled} onClick={this.open}
-                model-value={this.inputValue} isLink />
+            <van-field ref="el" placeholder={this.placeholder} readonly disabled={this.$props.disabled}
+                onClick={this.open}
+                model-value={this.inputValue} border={false} isLink v-slots={{
+                    'right-icon': clearIcon
+                }}/>
             <van-popup show={this.show} onUpdate:show={(v) => this.show = v} round position="bottom">
                 <van-cascader
                     {...this.$attrs}

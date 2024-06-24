@@ -40,7 +40,6 @@
         "css-loader": "^4.2.1",
         "cz-conventional-changelog": "^3.2.0",
         "cz-customizable": "^6.3.0",
-        "dayjs": "^1.10.7",
         "eslint": "^7.7.0",
         "eslint-plugin-vue": "^6.2.2",
         "esno": "^0.9.1",
@@ -92,6 +91,7 @@
         "commander": "^6.0.0",
         "postcss": "^8.3.6",
         "vue": "3.2",
+        "dayjs": "^1.10.7",
         "wangeditor": "^4.7.8"
     }
 }

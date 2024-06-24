@@ -6,6 +6,7 @@ import FormCreateFactory from '@form-create/core/src/index';
 import '../style/index.css';
 import extendApi from './api';
 import required from './provider';
+import {Field} from 'vant';
 
 function install(FormCreate) {
     FormCreate.componentAlias(alias);
@@ -19,6 +20,13 @@ function install(FormCreate) {
     parsers.forEach((parser) => {
         FormCreate.parser(parser);
     });
+
+    if (Field.props) {
+        Field.props.modelValue = {
+            type: [String, Number, Array, Object],
+            default: '',
+        };
+    }
 }
 
 export default function VantFormCreate() {
