@@ -59,6 +59,7 @@ export default function FormCreateFactory(config) {
     const directives = {};
     const modelFields = {};
     const useApps = [];
+    const listener = [];
     const extendApiFn = [
         config.extendApi
     ];
@@ -70,7 +71,7 @@ export default function FormCreateFactory(config) {
     const loadData = reactive({});
     const CreateNode = CreateNodeFactory();
     const formulas = {};
-    const isMobile= config.isMobile === true;
+    const isMobile = config.isMobile === true;
 
     exportAttrs(config.attrs || {});
 
@@ -231,6 +232,10 @@ export default function FormCreateFactory(config) {
         _emitData(id);
     }
 
+    function on(name, callback) {
+        listener.push({name, callback});
+    }
+
     function FormCreate(vm) {
         extend(this, {
             id: id++,
@@ -258,6 +263,9 @@ export default function FormCreateFactory(config) {
             options: ref({}),
             extendApiFn,
         })
+        listener.forEach(item => {
+            this.bus.$on(item.name,item.callback);
+        });
         nextTick(() => {
             watch(this.options, () => {
                 this.$handle.$manager.updateOptions(this.options.value);
@@ -379,6 +387,7 @@ export default function FormCreateFactory(config) {
             toJson,
             useApp,
             getApi,
+            on,
         });
     }
 
