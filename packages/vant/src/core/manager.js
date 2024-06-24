@@ -235,6 +235,7 @@ export default {
         return this.$r({
             type: 'button',
             props: submitBtn,
+            class: '_fc-submit-btn',
             style: {width: submitBtn.width},
             on: {
                 click: () => {

@@ -239,6 +239,7 @@ export default {
         return this.$r({
             type: 'button',
             props: resetBtn,
+            class: '_fc-reset-btn',
             style: {width: resetBtn.width, marginLeft: '10px'},
             on: {
                 click: () => {
@@ -262,6 +263,7 @@ export default {
         return this.$r({
             type: 'button',
             props: submitBtn,
+            class: '_fc-submit-btn',
             style: {width: submitBtn.width},
             on: {
                 click: () => {
