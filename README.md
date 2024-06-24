@@ -10,6 +10,8 @@
     <a href="https://form-create.com/v3/guide/" target="_blank">帮助文档</a>
     <span>&nbsp;|&nbsp;</span>
     <a href="https://pro.form-create.com/view/" target="_blank">可视化表单设计器</a>
+    <span>&nbsp;|&nbsp;</span>
+    <a href="https://pro.form-create.com/mobile/" target="_blank">移动端表单设计器</a>
 </p>
 
 <p align="center">
