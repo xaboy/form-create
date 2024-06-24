@@ -6,6 +6,10 @@
     display: none !important;
 }
 
+.form-create-m .van-field .van-field:after {
+    display: none;
+}
+
 .form-create-m > .van-row > .van-col > .van-cell:after {
     display: block;
 }
