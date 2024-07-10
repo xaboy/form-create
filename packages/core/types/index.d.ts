@@ -1,6 +1,5 @@
 import {ScopedSlot, VNodeDirective} from "vue/types/vnode";
-import Vue, {VNode} from "vue";
-import {ExtendedVue} from "vue/types/vue";
+import Vue, {VNode,Component} from "vue";
 import {PluginObject} from "vue/types/plugin";
 
 export type Options<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> =
@@ -91,7 +90,7 @@ export interface FormCreate<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs, Ap
 
     copyRules(rules: FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>[]): FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>[];
 
-    $form(): ExtendedVue<Vue, {}, {}, {}, {}>;
+    $form(): Component;
 
     parseJson(json: string): FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>[];
 
@@ -178,7 +177,7 @@ export interface BaseRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> extend
     hidden?: boolean;
     preview?: boolean;
     cache?: boolean;
-    component?: ExtendedVue<Vue, {}, {}, {}, {}>;
+    component?: Component;
     display?: boolean;
     inject?: any;
 
@@ -251,7 +250,7 @@ export class BaseCreator<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
 
     cache(prop: boolean): this;
 
-    component(prop: ExtendedVue<Vue, {}, {}, {}, {}>): this;
+    component(prop: Component): this;
 
     field(prop: string): this;
 
