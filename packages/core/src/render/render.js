@@ -250,6 +250,9 @@ export default function useRender(Render) {
                             vn.el.__rule__ = ctx.rule;
                             this.onMounted(ctx, vn.el);
                         },
+                        'fc.updateValue': (data) => {
+                            this.$handle.onUpdateValue(ctx, data);
+                        },
                         'fc.el': (el) => {
                             ctx.exportEl = el;
                             if (el) {

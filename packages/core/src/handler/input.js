@@ -29,6 +29,25 @@ export default function useInput(Handler) {
                 this.setValue(ctx, val, value);
             }
         },
+        onUpdateValue(ctx, data) {
+            this.deferSyncValue(() => {
+                const group = ctx.getParentGroup();
+                const subForm = group ? this.subRuleData[group.id] : null;
+                const subData = {};
+                Object.keys(data || {}).forEach(k => {
+                    if (subForm && hasProperty(subForm, k)) {
+                        subData[k] = data[k];
+                    } else if (hasProperty(this.api.form, k)) {
+                        this.api.form[k] = data[k];
+                    } else if (this.api.top !== this.api && hasProperty(this.api.top.form, k)) {
+                        this.api.top.form[k] = data[k];
+                    }
+                });
+                if (Object.keys(subData).length) {
+                    this.api.setChildrenFormData(group.rule, subData);
+                }
+            })
+        },
         onBaseInput(ctx, value) {
             this.setFormData(ctx, value);
             ctx.modelValue = value;

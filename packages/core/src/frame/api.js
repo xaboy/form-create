@@ -420,12 +420,14 @@ export default function Api(h) {
         },
         setChildrenFormData(id, formData, cover) {
             const rules = api.getChildrenRuleList(id);
-            rules.forEach(rule => {
-                if (hasProperty(formData, rule.field)) {
-                    rule.value = formData[rule.field];
-                } else if (cover) {
-                    rule.value = undefined;
-                }
+            h.deferSyncValue(() => {
+                rules.forEach(rule => {
+                    if (hasProperty(formData, rule.field)) {
+                        rule.value = formData[rule.field];
+                    } else if (cover) {
+                        rule.value = undefined;
+                    }
+                });
             });
         },
         getGlobalEvent(name) {
