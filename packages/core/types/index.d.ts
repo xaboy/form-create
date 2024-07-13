@@ -591,6 +591,8 @@ export interface BaseApi<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
 
     resetFields(field: string | string[]): void;
 
+    getParentSubRule(field: string | Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>): Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> | undefined;
+
     getChildrenRuleList(field: string | Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>): Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>[];
 
     getChildrenFormData(field: string | Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>): FormData;

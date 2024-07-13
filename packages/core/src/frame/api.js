@@ -411,6 +411,16 @@ export default function Api(h) {
             findRules(ctx ? ctx.loadChildrenPending() : rule.children);
             return rules;
         },
+        getParentSubRule(id) {
+            const flag = typeof id === 'object';
+            const ctx = flag ? byCtx(id) : h.getCtx(id);
+            if (ctx) {
+                const group = ctx.getParentGroup();
+                if (group) {
+                    return group.rule;
+                }
+            }
+        },
         getChildrenFormData(id) {
             const rules = api.getChildrenRuleList(id);
             return rules.reduce((formData, rule) => {
