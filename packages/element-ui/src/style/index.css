@@ -9,3 +9,34 @@
 .form-create.is-preview .fc-clock, .form-create .fc-none, .form-create.is-preview .el-form-item.is-required > .el-form-item__label-wrap > .el-form-item__label:before, .form-create.is-preview .el-form-item.is-required > .el-form-item__label:before {
     display: none !important;
 }
+
+.fc-wrap-left .el-form-item__label {
+    justify-content: flex-start
+}
+
+.fc-wrap-top.el-form-item {
+    display: block
+}
+
+.fc-wrap-top.el-form-item .el-form-item__label {
+    display: block;
+    height: auto;
+    line-height: 22px;
+    margin-bottom: 8px;
+    text-align: left
+}
+
+.el-form--large .fc-wrap-top.el-form-item .el-form-item__label {
+    line-height: 22px;
+    margin-bottom: 12px
+}
+
+.el-form--default .fc-wrap-top.el-form-item .el-form-item__label {
+    line-height: 22px;
+    margin-bottom: 8px
+}
+
+.el-form--small .fc-wrap-top.el-form-item .el-form-item__label {
+    line-height: 20px;
+    margin-bottom: 4px
+}
