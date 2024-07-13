@@ -2,6 +2,7 @@
 
 import is from '@form-create/utils/lib/type';
 import {parseFn} from '@form-create/utils/lib/json';
+import {deepGet} from './util';
 
 function getError(action, option, xhr) {
     const msg = `fail to ${action} ${xhr.status}'`;
@@ -67,7 +68,7 @@ export default function fetch(option) {
     const headers = option.headers || {};
 
     Object.keys(headers).forEach(item => {
-        if (headers[item] !== null) {
+        if (headers[item] != null) {
             xhr.setRequestHeader(item, headers[item]);
         }
     });
@@ -86,12 +87,7 @@ export function asyncFetch(config) {
                     fn = parse;
                 } else if (parse && is.String(parse)) {
                     fn = (v) => {
-                        parse.split('.').forEach(k => {
-                            if (v) {
-                                v = v[k];
-                            }
-                        })
-                        return v;
+                        return deepGet(v, parse);
                     }
                 }
                 resolve(fn(res));

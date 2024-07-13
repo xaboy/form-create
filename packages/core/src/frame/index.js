@@ -5,7 +5,7 @@ import Handle from '../handler';
 import fetch from './fetch';
 import {creatorFactory} from '..';
 import BaseParser from '../factory/parser';
-import {copyRule, copyRules, mergeGlobal, parseJson, toJson, parseFn, invoke, setPrototypeOf} from './util';
+import {copyRule, copyRules, mergeGlobal, parseJson, toJson, parseFn, invoke, setPrototypeOf, deepGet} from './util';
 import fragment from '../components/fragment';
 import is, {hasProperty} from '@form-create/utils/lib/type';
 import toCase from '@form-create/utils/lib/tocase';
@@ -19,6 +19,8 @@ import {deepCopy} from '@form-create/utils/lib/deepextend';
 import Mitt from '@form-create/utils/lib/mitt';
 import html from '../parser/html';
 import uniqueId from '@form-create/utils/lib/unique';
+import {cookieDriver, localStorageDriver} from './dataDriver';
+import debounce from '@form-create/utils/lib/debounce';
 
 function parseProp(name, id) {
     let prop;
@@ -205,7 +207,7 @@ export default function FormCreateFactory(config) {
         formulas[name] = fn;
     }
 
-    function _emitData(id) {
+    function emitData(id) {
         Object.keys(instance).forEach(v => {
             const apis = Array.isArray(instance[v]) ? instance[v] : [instance[v]];
             apis.forEach(that => {
@@ -216,11 +218,32 @@ export default function FormCreateFactory(config) {
 
     function setData(id, data) {
         loadData[id] = data;
-        _emitData(id);
+        emitData(id);
+    }
+
+    function setDataDriver(id, data) {
+        const callback = (...args) => {
+            return invoke(() => data(...args));
+        }
+        callback._driver = true;
+        setData(id, callback);
     }
 
     function getData(id, def) {
-        return hasProperty(loadData, id) ? loadData[id] : def;
+        const split = (id || '').split('.');
+        id = split.shift();
+        const field = split.join('.');
+        if (hasProperty(loadData, id)) {
+            let val = loadData[id];
+            if (val && val._driver) {
+                val = val(field);
+            } else if (split.length) {
+                val = deepGet(val, split);
+            }
+            return (val == null || val === '') ? def : val;
+        } else {
+            return def;
+        }
     }
 
     function extendApi(fn) {
@@ -229,7 +252,7 @@ export default function FormCreateFactory(config) {
 
     function removeData(id) {
         delete loadData[id];
-        _emitData(id);
+        emitData(id);
     }
 
     function on(name, callback) {
@@ -256,15 +279,17 @@ export default function FormCreateFactory(config) {
             },
             setData,
             getData,
+            emitData,
             loadData,
             CreateNode,
             bus: new Mitt(),
             unwatch: null,
             options: ref({}),
             extendApiFn,
+            dataWatch: {},
         })
         listener.forEach(item => {
-            this.bus.$on(item.name,item.callback);
+            this.bus.$on(item.name, item.callback);
         });
         nextTick(() => {
             watch(this.options, () => {
@@ -297,6 +322,61 @@ export default function FormCreateFactory(config) {
             }
             this.initOptions();
             this.$handle.init();
+        },
+        getWatchData(id, def) {
+            const val = this.getLoadData(id, def);
+            this.watchLoadData(id, val, def);
+            return val;
+        },
+        getLoadData(id, def) {
+            let val = null;
+            if (id != null) {
+                let split = id.split('.');
+                const key = split.shift();
+                if (key === '$topForm') {
+                    val = this.$handle.api.top.formData();
+                } else if (key === '$form') {
+                    val = this.$handle.api.formData();
+                } else if (key === '$options') {
+                    val = this.options.value;
+                } else {
+                    split = [];
+                    val = getData(id, def);
+                }
+                if (split.length) {
+                    val = deepGet(val, split);
+                }
+            }
+            return (val == null || val === '') ? def : val;
+        },
+        watchLoadData(id, val, def) {
+            if (!this.dataWatch[id]) {
+                let split = id.split('.');
+                const key = split.shift();
+                if (id !== key) {
+                    const fn = () => {
+                        const temp = this.getLoadData(id, def);
+                        if (JSON.stringify(temp) !== JSON.stringify(this.dataWatch[id].val)) {
+                            this.dataWatch[id].val = temp;
+                            this.bus.$emit('p.loadData.' + id);
+                        }
+                    };
+                    this.bus.$on('p.loadData.' + key, fn);
+                    this.dataWatch[id] = {
+                        key,
+                        fn,
+                        val
+                    };
+                }
+            } else {
+                this.dataWatch[id].val = val;
+            }
+        },
+        unwatchLoadData() {
+            Object.keys(this.dataWatch).forEach(k => {
+                this.dataWatch[k].fn();
+            });
+            this.dataWatch = {};
         },
         isSub() {
             return this.vm.setupState.parent && this.vm.props.extendOption;
@@ -331,6 +411,7 @@ export default function FormCreateFactory(config) {
         updateOptions(options) {
             this.options.value = this.mergeOptions(this.options.value, options);
             this.$handle.$manager.updateOptions(this.options.value);
+            this.bus.$emit('p.loadData.$options');
         },
         api() {
             return this.$handle.api;
@@ -342,6 +423,7 @@ export default function FormCreateFactory(config) {
             this.$handle.mounted();
         },
         unmount() {
+            this.unwatchLoadData();
             if (this.name) {
                 if (this.inFor) {
                     const idx = instance[this.name].indexOf(this);
@@ -365,6 +447,7 @@ export default function FormCreateFactory(config) {
             ui: config.ui,
             extendApi,
             getData,
+            setDataDriver,
             setData,
             removeData,
             maker,
@@ -418,6 +501,9 @@ export default function FormCreateFactory(config) {
 
     useAttr(create);
     useStatic(create);
+
+    setDataDriver('$cookie', cookieDriver);
+    setDataDriver('$localStorage', localStorageDriver);
 
     CreateNode.use({fragment: 'fcFragment'});
 

@@ -1,28 +1,29 @@
 import {err} from '@form-create/utils/lib/console';
-import {byCtx, invoke, parseFn} from './util';
+import {byCtx, deepGet, invoke, parseFn} from './util';
 import is, {hasProperty} from '@form-create/utils/lib/type';
 import deepSet from '@form-create/utils/lib/deepset';
 import {deepCopy} from '@form-create/utils/lib/deepextend';
 import toArray from '@form-create/utils/lib/toarray';
+import debounce from '@form-create/utils/lib/debounce';
 
 const loadData = function (fc) {
     const loadData = {
         name: 'loadData',
         _fn: [],
-        created(inject, rule, api) {
+        mounted(inject, rule, api) {
             this.deleted(inject);
             let attrs = toArray(inject.getValue());
             const events = [];
             attrs.forEach(attr => {
                 if (attr) {
-                    const on = () => {
+                    const callback = () => {
                         if (attr.watch !== false) {
                             fc.bus.$off('p.loadData.' + attr.attr, on);
                             fc.bus.$once('p.loadData.' + attr.attr, on);
                         }
                         let value = undefined;
                         if (attr.attr) {
-                            value = fc.loadData[attr.attr] || attr.default;
+                            value = fc.getWatchData(attr.attr, attr.default);
                             if (attr.copy !== false) {
                                 value = deepCopy(value)
                             }
@@ -30,8 +31,9 @@ const loadData = function (fc) {
                         deepSet(inject.getProp(), attr.to || 'options', value);
                         api.sync(rule);
                     }
+                    const on = debounce(callback, attr.wait || 300);
                     events.push(() => fc.bus.$off('p.loadData.' + attr.attr, on));
-                    on();
+                    callback();
                 }
             })
             this._fn[inject.id] = events;
@@ -93,6 +95,7 @@ const fetch = function (fc) {
 
     function run(inject, rule, api) {
         let option = inject.value;
+        fetchAttr.deleted(inject);
         if (is.Function(option)) {
             option = option(rule, api);
         }
@@ -130,6 +133,34 @@ const fetch = function (fc) {
             }
         }
 
+        const fields = [];
+
+        const loadVal = str => {
+            const res = fc.$handle.loadStrVar(str, true);
+            fields.push(res.fields);
+            return res.str;
+        }
+
+        const loadOptionsVal = _options => {
+            _options.action = loadVal(_options.action);
+            if (_options.headers) {
+                const _headers = {};
+                Object.keys(_options.headers).forEach(k => {
+                    _headers[loadVal(k)] = loadVal(_options.headers[k]);
+                });
+                _options.headers = _headers;
+            }
+            if (_options.data) {
+                const _data = {};
+                Object.keys(_options.data).forEach(k => {
+                    _data[loadVal(k)] = loadVal(_options.data[k]);
+                });
+                _options.data = _data;
+            }
+
+            return _options;
+        };
+
         const onError = option.onError;
 
         const check = () => {
@@ -139,6 +170,19 @@ const fetch = function (fc) {
                 return true;
             }
         }
+
+        const on = debounce(function () {
+            return run(inject, rule, api);
+        }, option.wait || 1000);
+
+        option = loadOptionsVal(option);
+        const events = [];
+        fields.filter((item, index) => fields.indexOf(item) === index).forEach(field => {
+            fc.bus.$off('p.loadData.' + field, on);
+            fc.bus.$once('p.loadData.' + field, on);
+            events.push(() => fc.bus.$off('p.loadData.' + field, on));
+        });
+        fetchAttr._fn[inject.id] = events;
 
         const config = {
             headers: {},
@@ -151,12 +195,7 @@ const fetch = function (fc) {
                     fn = parse;
                 } else if (parse && is.String(parse)) {
                     fn = (v) => {
-                        parse.split('.').forEach(k => {
-                            if (v) {
-                                v = v[k];
-                            }
-                        })
-                        return v;
+                        return deepGet(v, parse);
                     }
                 }
                 set(fn(body, rule, api));
@@ -181,15 +220,26 @@ const fetch = function (fc) {
         });
     }
 
-    return {
+    const fetchAttr = {
         name: 'fetch',
-        loaded(...args) {
+        _fn: [],
+        mounted(...args) {
             run(...args);
         },
         watch(...args) {
             run(...args);
-        }
+        },
+        deleted(inject) {
+            if (this._fn[inject.id]) {
+                this._fn[inject.id].forEach(un => {
+                    un();
+                })
+            }
+            inject.clearProp();
+        },
     };
+
+    return fetchAttr;
 }
 
 

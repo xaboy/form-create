@@ -478,7 +478,7 @@ export default function Api(h) {
             });
         },
         getData(id, def) {
-            return h.fc.getData(id, def);
+            return h.fc.getLoadData(id, def);
         },
         setData(id, data) {
             return h.fc.setData(id, data);

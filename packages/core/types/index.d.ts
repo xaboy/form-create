@@ -176,6 +176,8 @@ export interface FormCreate<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs, Ap
 
     setData(id: string, data: any): void;
 
+    setDataDriver(callback: (key: string) => any): void;
+
     getData(id: string, defaultValue?: any): any;
 
     extendApi(fn: (api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>)=>Object): void;

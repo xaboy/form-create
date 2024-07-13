@@ -1,7 +1,7 @@
 import extend from '@form-create/utils/lib/extend';
 import is from '@form-create/utils/lib/type';
 import toLine from '@form-create/utils/lib/toline';
-import {parseFn} from '../frame/util';
+import {parseFn, extractVar} from '../frame/util';
 
 
 export default function useInject(Handler) {
@@ -99,5 +99,22 @@ export default function useInject(Handler) {
             fn.__json = _fn.__json;
             return fn;
         },
+        loadStrVar(str, flag) {
+            const fields = [];
+            if (str && typeof str === 'string') {
+                const vars = extractVar(str);
+                vars.forEach(v => {
+                    const split = v.split('||');
+                    const field = split[0].trim();
+                    if (field) {
+                        const def = (split[1] || '').trim();
+                        const val = flag ? this.fc.getWatchData(field, def) : this.fc.getLoadData(field, def);
+                        str = str.replaceAll(`{{${v}}}`, val == null ? '' : val);
+                        fields.push(field);
+                    }
+                })
+            }
+            return {str, fields};
+        }
     })
 }

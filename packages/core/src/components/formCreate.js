@@ -2,7 +2,7 @@ import {
     defineComponent,
     getCurrentInstance,
     inject,
-    markRaw, onBeforeMount,
+    markRaw, nextTick, onBeforeMount,
     onBeforeUnmount,
     onMounted,
     onUpdated,
@@ -12,7 +12,8 @@ import {
     watch
 } from 'vue';
 import toArray from '@form-create/utils/lib/toarray';
-import {toLine} from '@form-create/utils';
+import debounce from '@form-create/utils/lib/debounce';
+import toLine from '@form-create/utils/lib/toline';
 
 const getRuleInject = (vm, parent) => {
     if (!vm || vm === parent) {
@@ -144,11 +145,25 @@ export default function $FormCreate(FormCreate, components, directives) {
                 }
             });
 
+            const emit$topForm = debounce(() => {
+                fc.bus.$emit('p.loadData.$topForm');
+            }, 100);
+
+            const emit$form = debounce(() => {
+                fc.bus.$emit('p.loadData.$form');
+            }, 100);
+
             onMounted(() => {
+                if (parent) {
+                    fapi.top.bus.$on('p.loadData.$form', emit$topForm);
+                }
                 fc.mounted();
             });
 
             onBeforeUnmount(() => {
+                if (parent) {
+                    fapi.top.bus.$off('p.loadData.$form', emit$topForm);
+                }
                 styleEl && document.head.removeChild(styleEl);
                 rmSubForm();
                 data.destroyed = true;
@@ -202,6 +217,12 @@ export default function $FormCreate(FormCreate, components, directives) {
                     }
                     data.updateValue = json;
                     vm.emit('update:modelValue', value);
+                    nextTick(() => {
+                        emit$form();
+                        if (!parent) {
+                            emit$topForm();
+                        }
+                    });
                 }
             }
         },

@@ -218,3 +218,24 @@ export const condition = {
         return new RegExp(b, 'g').test(a);
     }
 };
+
+export function deepGet(val, split) {
+    (Array.isArray(split) ? split : (split || '').split('.')).forEach(k => {
+        if (val != null) {
+            val = val[k];
+        }
+    });
+    return val;
+}
+
+export function extractVar(str) {
+    const regex = /{{\s*(.*?)\s*}}/g;
+    let match;
+    const matches = {};
+    while ((match = regex.exec(str)) !== null) {
+        if (match[1]) {
+            matches[match[1]] = true;
+        }
+    }
+    return Object.keys(matches);
+}
