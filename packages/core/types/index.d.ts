@@ -118,8 +118,7 @@ export interface FormCreateFactoryConfig<MakerAttrs, OptionAttrs, CreatorAttrs, 
     install?: Install<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>
 }
 
-
-export interface FormCreate<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
+export interface util<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
     readonly version: string;
     readonly ui: string;
     readonly data: Object;
@@ -168,9 +167,9 @@ export interface FormCreate<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs, Ap
 
     install: (app: App, ...options: any[]) => any;
 
-    create: FormCreate<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
+    create: util<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
 
-    factory(inherit?: Boolean): FormCreate<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
+    factory(inherit?: Boolean): util<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
 
     getApi(name: string): Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> | undefined;
 
@@ -190,6 +189,10 @@ export interface FormCreate<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs, Ap
 
     isMobile?: Boolean;
 }
+
+export type FormCreate<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> = Component & util<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> & {
+    util: util<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>
+};
 
 export interface FormData {
     [field: string]: any

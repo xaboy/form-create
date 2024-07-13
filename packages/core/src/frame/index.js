@@ -531,5 +531,10 @@ export default function FormCreateFactory(config) {
         inherit.formulas && extend(formulas, inherit.formulas);
     }
 
-    return create;
+    const FcComponent = $form();
+    setPrototypeOf(FcComponent, create);
+
+    FcComponent.util = create;
+
+    return FcComponent;
 }
