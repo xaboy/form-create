@@ -44,7 +44,6 @@ export default function RuleContext(handle, rule, defaultValue) {
         field: rule.field || undefined
     })
 
-    this.updateType();
     this.updateKey();
     bind(this);
     this.update(handle, true);
@@ -153,7 +152,7 @@ extend(RuleContext.prototype, {
     updateType() {
         this.originType = this.rule.type;
         this.type = toCase(this.rule.type);
-        this.trueType = this.handle.getType(this.originType);
+        this.trueType = this.$handle.getType(this.originType);
     },
     setParser(parser) {
         this.parser = parser;
@@ -219,7 +218,6 @@ extend(RuleContext.prototype, {
             computed: {},
             el: undef,
             $handle: undef,
-            $render: undef,
             $api: undef,
             vm: undef,
             vNode: undef,
@@ -263,7 +261,6 @@ extend(RuleContext.prototype, {
             $render: handle.$render,
             $api: handle.api,
             vm: handle.vm,
-            trueType: handle.getType(this.originType),
             vNode: handle.$render.vNode,
             updated: false,
             cacheValue: this.rule.value
@@ -271,5 +268,6 @@ extend(RuleContext.prototype, {
         !init && this.unwatch();
         this.watchTo();
         this.link();
+        this.updateType();
     }
 })
