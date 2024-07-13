@@ -480,8 +480,9 @@ export default function FormCreateFactory(config) {
             isMobile,
             install(app, options) {
                 globalConfig = {...globalConfig, ...(options || {})}
-                if (app._installedFormCreate === true) return;
-                app._installedFormCreate = true;
+                const key = '_installedFormCreate_' + config.ui;
+                if (app[key] === true) return;
+                app[key] = true;
 
                 const $formCreate = function (rules, opt = {}) {
                     return create(rules, opt, this);
