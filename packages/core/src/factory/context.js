@@ -153,6 +153,7 @@ extend(RuleContext.prototype, {
     updateType() {
         this.originType = this.rule.type;
         this.type = toCase(this.rule.type);
+        this.trueType = this.handle.getType(this.originType);
     },
     setParser(parser) {
         this.parser = parser;
