@@ -286,7 +286,6 @@ export default function FormCreateFactory(config) {
             unwatch: null,
             options: ref({}),
             extendApiFn,
-            dataWatch: {},
             fetchCache: new WeakMap(),
         })
         listener.forEach(item => {
