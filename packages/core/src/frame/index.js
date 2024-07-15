@@ -494,6 +494,9 @@ export default function FormCreateFactory(config) {
                     delete instance[this.name];
                 }
             }
+            listener.forEach(item => {
+                this.bus.$off(item.name, item.callback);
+            });
             this.unwatch && this.unwatch();
             this.$handle.reloadRule([]);
         },
