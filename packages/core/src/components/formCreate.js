@@ -148,23 +148,23 @@ export default function $FormCreate(FormCreate, components, directives) {
             });
 
             const emit$topForm = debounce(() => {
-                fc.bus.$emit('p.loadData.$topForm');
+                fc.bus.$emit('$loadData.$topForm');
             }, 100);
 
             const emit$form = debounce(() => {
-                fc.bus.$emit('p.loadData.$form');
+                fc.bus.$emit('$loadData.$form');
             }, 100);
 
             onMounted(() => {
                 if (parent) {
-                    fapi.top.bus.$on('p.loadData.$form', emit$topForm);
+                    fapi.top.bus.$on('$loadData.$form', emit$topForm);
                 }
                 fc.mounted();
             });
 
             onBeforeUnmount(() => {
                 if (parent) {
-                    fapi.top.bus.$off('p.loadData.$form', emit$topForm);
+                    fapi.top.bus.$off('$loadData.$form', emit$topForm);
                 }
                 styleEl && document.head.removeChild(styleEl);
                 rmSubForm();

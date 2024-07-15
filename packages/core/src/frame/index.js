@@ -211,7 +211,7 @@ export default function FormCreateFactory(config) {
         Object.keys(instance).forEach(v => {
             const apis = Array.isArray(instance[v]) ? instance[v] : [instance[v]];
             apis.forEach(that => {
-                that.bus.$emit('p.loadData.' + id);
+                that.bus.$emit('$loadData.' + id);
             })
         })
     }
@@ -354,7 +354,7 @@ export default function FormCreateFactory(config) {
                                 res.loading = true;
                                 this.fetchCache.set(option, res);
                             }
-                            this.bus.$emit('p.loadData.$globalData');
+                            this.bus.$emit('$loadData.$globalData');
                         } else {
                             this.fetchCache.delete(option);
                         }
@@ -367,7 +367,7 @@ export default function FormCreateFactory(config) {
                         const options = this.$handle.loadFetchVar(copy(option), get);
                         this.$handle.api.fetch(options).then(res => {
                             this.fetchCache.set(option, {status: true, data: res});
-                            this.bus.$emit('p.loadData.$globalData');
+                            this.bus.$emit('$loadData.$globalData');
                         });
                     };
                     const unwatch = this.watchLoadData(callback);
@@ -426,10 +426,10 @@ export default function FormCreateFactory(config) {
                         run(true);
                     }
                 }
-                this.bus.$on('p.loadData.' + key, callback);
+                this.bus.$on('$loadData.' + key, callback);
                 unwatch[id] = {
                     fn: (() => {
-                        this.bus.$off('p.loadData.' + key, callback);
+                        this.bus.$off('$loadData.' + key, callback);
                     }),
                     val,
                 }
@@ -474,7 +474,7 @@ export default function FormCreateFactory(config) {
         updateOptions(options) {
             this.options.value = this.mergeOptions(this.options.value, options);
             this.$handle.$manager.updateOptions(this.options.value);
-            this.bus.$emit('p.loadData.$options');
+            this.bus.$emit('$loadData.$options');
         },
         api() {
             return this.$handle.api;
