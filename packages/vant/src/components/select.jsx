@@ -28,7 +28,7 @@ export default defineComponent({
                     return options.value[i][fieldNames.value.text || 'text'];
                 }
             }
-            return '';
+            return modelValue.value;
         });
 
         const onInput = (val) => {

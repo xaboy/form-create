@@ -47,7 +47,13 @@ export default defineComponent({
 
         watch(() => modelValue.value, (n) => {
             inputValue.value = updateInputValue(n);
-        })
+        });
+
+        watch(() => options.value, () => {
+            if (modelValue.value != null && modelValue.value !== '') {
+                inputValue.value = updateInputValue(modelValue.value);
+            }
+        }, {deep: true});
 
         const onInput = (val) => {
             _.emit('update:modelValue', val);
