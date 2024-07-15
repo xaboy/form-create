@@ -1,15 +1,15 @@
 import $FormCreate from '../components/formCreate';
-import {createApp, h, reactive, ref, watch, nextTick} from 'vue';
+import {createApp, h, nextTick, reactive, ref, watch} from 'vue';
 import makerFactory from '../factory/maker';
 import Handle from '../handler';
 import fetch from './fetch';
 import {creatorFactory} from '..';
 import BaseParser from '../factory/parser';
-import {copyRule, copyRules, mergeGlobal, parseJson, toJson, parseFn, invoke, setPrototypeOf, deepGet} from './util';
+import {copyRule, copyRules, deepGet, invoke, mergeGlobal, parseFn, parseJson, setPrototypeOf, toJson} from './util';
 import fragment from '../components/fragment';
 import is, {hasProperty} from '@form-create/utils/lib/type';
 import toCase from '@form-create/utils/lib/tocase';
-import extend from '@form-create/utils/lib/extend';
+import extend, {copy} from '@form-create/utils/lib/extend';
 import {CreateNodeFactory} from '../factory/node';
 import {createManager} from '../factory/manager';
 import {arrayAttrs, keyAttrs, normalAttrs} from './attrs';
@@ -287,6 +287,7 @@ export default function FormCreateFactory(config) {
             options: ref({}),
             extendApiFn,
             dataWatch: {},
+            fetchCache: new WeakMap(),
         })
         listener.forEach(item => {
             this.bus.$on(item.name, item.callback);
@@ -323,60 +324,122 @@ export default function FormCreateFactory(config) {
             this.initOptions();
             this.$handle.init();
         },
-        getWatchData(id, def) {
-            const val = this.getLoadData(id, def);
-            this.watchLoadData(id, val, def);
-            return val;
+        globalDataDriver(id) {
+            let split = id.split('.');
+            const key = split.shift();
+            const option = this.options.value.globalData && this.options.value.globalData[key];
+            if (option) {
+                if (option.type === 'static') {
+                    return deepGet(option.data, split);
+                } else {
+                    let val;
+                    const res = this.fetchCache.get(option);
+                    if (res) {
+                        if (res.status) {
+                            val = deepGet(res.data, split);
+                        }
+                        if (!res.loading) {
+                            return val;
+                        }
+                        res.loading = false;
+                        this.fetchCache.set(option, res);
+                    } else {
+                        this.fetchCache.set(option, {status: false});
+                    }
+                    const reload = debounce(() => {
+                        unwatch();
+                        const res = this.fetchCache.get(option);
+                        if ((this.options.value.globalData && Object.values(this.options.value.globalData).indexOf(option) !== -1)) {
+                            if (res) {
+                                res.loading = true;
+                                this.fetchCache.set(option, res);
+                            }
+                            this.bus.$emit('p.loadData.$globalData');
+                        } else {
+                            this.fetchCache.delete(option);
+                        }
+                    }, option.wait || 1000)
+                    const callback = (get, change) => {
+                        if (change) {
+                            reload();
+                            return;
+                        }
+                        const options = this.$handle.loadFetchVar(copy(option), get);
+                        this.$handle.api.fetch(options).then(res => {
+                            this.fetchCache.set(option, {status: true, data: res});
+                            this.bus.$emit('p.loadData.$globalData');
+                        });
+                    };
+                    const unwatch = this.watchLoadData(callback);
+                    return val;
+                }
+            }
         },
         getLoadData(id, def) {
             let val = null;
             if (id != null) {
                 let split = id.split('.');
                 const key = split.shift();
-                if (key === '$topForm') {
+                if (key === '$form') {
                     val = this.$handle.api.top.formData();
-                } else if (key === '$form') {
+                } else if (key === '$subForm') {
                     val = this.$handle.api.formData();
                 } else if (key === '$options') {
                     val = this.options.value;
-                } else {
+                } else if (key === '$globalData') {
+                    val = this.globalDataDriver(split.join('.'));
                     split = [];
+                } else {
                     val = getData(id, def);
+                    split = [];
                 }
                 if (split.length) {
                     val = deepGet(val, split);
                 }
             }
+            console.log(id, val);
             return (val == null || val === '') ? def : val;
         },
-        watchLoadData(id, val, def) {
-            if (!this.dataWatch[id]) {
-                let split = id.split('.');
-                const key = split.shift();
-                if (id !== key) {
-                    const fn = () => {
-                        const temp = this.getLoadData(id, def);
-                        if (JSON.stringify(temp) !== JSON.stringify(this.dataWatch[id].val)) {
-                            this.dataWatch[id].val = temp;
-                            this.bus.$emit('p.loadData.' + id);
-                        }
-                    };
-                    this.bus.$on('p.loadData.' + key, fn);
-                    this.dataWatch[id] = {
-                        key,
-                        fn,
-                        val
-                    };
+        watchLoadData(fn) {
+            let unwatch = {};
+
+            const run = (flag) => {
+                invoke(() => {
+                    fn(get, flag);
+                });
+            };
+
+            const get = (id, def) => {
+                if (unwatch[id]) {
+                    return unwatch[id].val;
                 }
-            } else {
-                this.dataWatch[id].val = val;
+                let val = this.getLoadData(id, def);
+                const key = id.split('.').shift();
+                const callback = () => {
+                    if (key !== id) {
+                        const temp = this.getLoadData(id, def);
+                        if (JSON.stringify(temp) !== JSON.stringify(unwatch[id].val)) {
+                            unwatch[id].val = temp;
+                            run(true);
+                        }
+                    } else {
+                        run(true);
+                    }
+                }
+                this.bus.$on('p.loadData.' + key, callback);
+                unwatch[id] = {
+                    fn: (() => {
+                        this.bus.$off('p.loadData.' + key, callback);
+                    }),
+                    val,
+                }
+                return val;
             }
-        },
-        unwatchLoadData() {
-            Object.keys(this.dataWatch).forEach(k => {
-                this.dataWatch[k].fn();
-            });
-            this.dataWatch = {};
+            run(false);
+            return () => {
+                Object.keys(unwatch).forEach(k => unwatch[k].fn());
+                unwatch = {};
+            }
         },
         isSub() {
             return this.vm.setupState.parent && this.vm.props.extendOption;
@@ -423,7 +486,6 @@ export default function FormCreateFactory(config) {
             this.$handle.mounted();
         },
         unmount() {
-            this.unwatchLoadData();
             if (this.name) {
                 if (this.inFor) {
                     const idx = instance[this.name].indexOf(this);

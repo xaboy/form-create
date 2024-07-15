@@ -1,5 +1,5 @@
 import extend from '@form-create/utils/lib/extend';
-import {byCtx, copyRule, enumerable, getRule, invoke, parseFn, condition} from '../frame/util';
+import {byCtx, condition, copyRule, enumerable, getRule, invoke, parseFn} from '../frame/util';
 import is, {hasProperty} from '@form-create/utils/lib/type';
 import {baseRule} from '../factory/creator';
 import RuleContext from '../factory/context';

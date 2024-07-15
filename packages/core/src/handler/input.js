@@ -2,7 +2,7 @@ import extend from '@form-create/utils/lib/extend';
 import {$set} from '@form-create/utils/lib/modify';
 import is, {hasProperty} from '@form-create/utils/lib/type';
 import {invoke} from '../frame/util';
-import {customRef, reactive, toRef} from 'vue';
+import {reactive, toRef} from 'vue';
 
 export default function useInput(Handler) {
     extend(Handler.prototype, {

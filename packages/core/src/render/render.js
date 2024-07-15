@@ -1,10 +1,10 @@
 import extend, {copy} from '@form-create/utils/lib/extend';
 import mergeProps from '@form-create/utils/lib/mergeprops';
-import is, {hasProperty} from '@form-create/utils/lib/type';
+import is from '@form-create/utils/lib/type';
 import {invoke, makeSlotBag, mergeRule} from '../frame/util';
 import toCase, {lower} from '@form-create/utils/lib/tocase';
 import {deepSet, toLine} from '@form-create/utils';
-import {computed, nextTick, vShow, withDirectives} from 'vue';
+import {computed, nextTick} from 'vue';
 
 export default function useRender(Render) {
     extend(Render.prototype, {

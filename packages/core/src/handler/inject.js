@@ -1,7 +1,7 @@
 import extend from '@form-create/utils/lib/extend';
 import is from '@form-create/utils/lib/type';
 import toLine from '@form-create/utils/lib/toline';
-import {parseFn, extractVar} from '../frame/util';
+import {extractVar, parseFn} from '../frame/util';
 
 
 export default function useInject(Handler) {
@@ -99,22 +99,43 @@ export default function useInject(Handler) {
             fn.__json = _fn.__json;
             return fn;
         },
-        loadStrVar(str, flag) {
-            const fields = [];
-            if (str && typeof str === 'string') {
+        loadStrVar(str, get) {
+            if (str && typeof str === 'string' && str.indexOf('{{') > -1 && str.indexOf('}}') > -1) {
                 const vars = extractVar(str);
                 vars.forEach(v => {
                     const split = v.split('||');
                     const field = split[0].trim();
                     if (field) {
                         const def = (split[1] || '').trim();
-                        const val = flag ? this.fc.getWatchData(field, def) : this.fc.getLoadData(field, def);
+                        const val = get ? get(field, def) : this.fc.getLoadData(field, def);
                         str = str.replaceAll(`{{${v}}}`, val == null ? '' : val);
-                        fields.push(field);
                     }
                 })
             }
-            return {str, fields};
+            return str;
+        },
+        loadFetchVar(options, get) {
+            const loadVal = str => {
+                return this.loadStrVar(str, get);
+            }
+
+            options.action = loadVal(options.action);
+            if (options.headers) {
+                const _headers = {};
+                Object.keys(options.headers).forEach(k => {
+                    _headers[loadVal(k)] = loadVal(options.headers[k]);
+                });
+                options.headers = _headers;
+            }
+            if (options.data) {
+                const _data = {};
+                Object.keys(options.data).forEach(k => {
+                    _data[loadVal(k)] = loadVal(options.data[k]);
+                });
+                options.data = _data;
+            }
+
+            return options;
         }
     })
 }
