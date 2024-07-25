@@ -283,7 +283,7 @@ export default function FormCreateFactory(config) {
             loadData,
             CreateNode,
             bus: new Mitt(),
-            unwatch: null,
+            unwatch: [],
             options: ref({}),
             extendApiFn,
             fetchCache: new WeakMap(),
@@ -315,10 +315,10 @@ export default function FormCreateFactory(config) {
     extend(FormCreate.prototype, {
         init() {
             if (this.isSub()) {
-                this.unwatch = watch(() => this.vm.setupState.parent.setupState.fc.options.value, () => {
+                this.unwatch.push(watch(() => this.vm.setupState.parent.setupState.fc.options.value, () => {
                     this.initOptions();
                     this.$handle.api.refresh();
-                }, {deep: true});
+                }, {deep: true}));
             }
             this.initOptions();
             this.$handle.init();
@@ -365,7 +365,7 @@ export default function FormCreateFactory(config) {
                     };
 
                     const callback = (get, change) => {
-                        if(change && option.watch === false) {
+                        if (change && option.watch === false) {
                             return unwatch();
                         }
                         if (change) {
@@ -375,11 +375,12 @@ export default function FormCreateFactory(config) {
                         const options = this.$handle.loadFetchVar(copy(option), get);
                         this.$handle.api.fetch(options).then(res => {
                             _emit(res);
-                        }).catch(e=>{
+                        }).catch(e => {
                             _emit(null);
                         });
                     };
                     const unwatch = this.watchLoadData(callback);
+                    this.unwatch.push(unwatch);
                     return val;
                 }
             }
@@ -399,7 +400,7 @@ export default function FormCreateFactory(config) {
                         }
                         val = invoke(() => handle(get, this.$handle.api))
                     })
-
+                    this.unwatch.push(unwatch);
                     return val;
                 }
             }
@@ -475,10 +476,12 @@ export default function FormCreateFactory(config) {
                 return val;
             }
             run(false);
-            return () => {
+            const un = () => {
                 Object.keys(unwatch).forEach(k => unwatch[k].fn());
                 unwatch = {};
             }
+            this.unwatch.push(un);
+            return un;
         },
         isSub() {
             return this.vm.setupState.parent && this.vm.props.extendOption;
@@ -536,7 +539,8 @@ export default function FormCreateFactory(config) {
             listener.forEach(item => {
                 this.bus.$off(item.name, item.callback);
             });
-            this.unwatch && this.unwatch();
+            this.unwatch.forEach(fn => fn());
+            this.unwatch = [];
             this.$handle.reloadRule([]);
         },
         updated() {
