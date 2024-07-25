@@ -76,7 +76,16 @@ export default function useInput(Handler) {
         },
         syncForm() {
             const data = reactive({});
-            this.fields().reduce((initial, field) => {
+            const fields = this.fields();
+            if (this.options.appendValue !== false) {
+                Object.keys(this.appendData).reduce((initial, field) => {
+                    if (fields.indexOf(field) === -1) {
+                        initial[field] = toRef(this.appendData, field);
+                    }
+                    return initial;
+                }, data);
+            }
+            fields.reduce((initial, field) => {
                 const ctx = this.getCtx(field);
                 initial[field] = toRef(ctx.rule, 'value');
                 return initial;
@@ -111,7 +120,7 @@ export default function useInput(Handler) {
             if (this.deferSyncFn) {
                 return this.deferSyncFn.sync = true;
             }
-            this.vm.setupState.updateValue({...(this.options.appendValue !== false ? this.appendData : {}), ...this.form});
+            this.vm.setupState.updateValue({...this.form});
         },
         isChange(ctx, value) {
             return JSON.stringify(this.getFormData(ctx), strFn) !== JSON.stringify(value, strFn);
