@@ -197,7 +197,7 @@ export default function useContext(Handler) {
         updateChildren(ctx, n, o) {
             this.deferSyncValue(() => {
                 o && o.forEach((child) => {
-                    if ((n || []).indexOf(child) === -1 && child && !is.String(child) && child.__fc__ && child.__fc__.parent === ctx && child.__fc__.root !== n) {
+                    if ((n || []).indexOf(child) === -1 && child && !is.String(child) && child.__fc__ && child.__fc__.parent === ctx) {
                         this.rmCtx(child.__fc__);
                     }
                 });
