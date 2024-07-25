@@ -155,9 +155,14 @@ export default function $FormCreate(FormCreate, components, directives) {
                 fc.bus.$emit('$loadData.$form');
             }, 100);
 
+            const emit$change = (field) => {
+                fc.bus.$emit('change-$form.' + field);
+            };
+
             onMounted(() => {
                 if (parent) {
                     fapi.top.bus.$on('$loadData.$form', emit$topForm);
+                    fapi.top.bus.$on('change', emit$change);
                 }
                 fc.mounted();
             });
@@ -165,6 +170,7 @@ export default function $FormCreate(FormCreate, components, directives) {
             onBeforeUnmount(() => {
                 if (parent) {
                     fapi.top.bus.$off('$loadData.$form', emit$topForm);
+                    fapi.top.bus.$off('change', emit$change);
                 }
                 styleEl && document.head.removeChild(styleEl);
                 rmSubForm();
