@@ -141,7 +141,10 @@ const fetch = function (fc) {
                 return true;
             }
         }
-        fetchAttr._fn[inject.id] = fc.watchLoadData(debounce((get) => {
+        fetchAttr._fn[inject.id] = fc.watchLoadData(debounce((get, change) => {
+            if(change && option.watch === false) {
+                return fetchAttr._fn[inject.id]();
+            }
             const _option = fc.$handle.loadFetchVar(deepCopy(option), get);
             const config = {
                 headers: {},
@@ -177,7 +180,7 @@ const fetch = function (fc) {
                 }
                 invoke(() => fc.create.fetch(config, {inject, rule, api}));
             });
-        }, option.wait || 1000));
+        }, option.wait || 600));
     }
 
     const fetchAttr = {

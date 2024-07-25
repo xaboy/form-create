@@ -353,23 +353,53 @@ export default function FormCreateFactory(config) {
                                 res.loading = true;
                                 this.fetchCache.set(option, res);
                             }
-                            this.bus.$emit('$loadData.$globalData');
+                            this.bus.$emit('$loadData.$globalData.' + key);
                         } else {
                             this.fetchCache.delete(option);
                         }
-                    }, option.wait || 1000)
+                    }, option.wait || 600)
+
+                    const _emit = (data) => {
+                        this.fetchCache.set(option, {status: true, data});
+                        this.bus.$emit('$loadData.$globalData.' + key);
+                    };
+
                     const callback = (get, change) => {
+                        if(change && option.watch === false) {
+                            return unwatch();
+                        }
                         if (change) {
                             reload();
                             return;
                         }
                         const options = this.$handle.loadFetchVar(copy(option), get);
                         this.$handle.api.fetch(options).then(res => {
-                            this.fetchCache.set(option, {status: true, data: res});
-                            this.bus.$emit('$loadData.$globalData');
+                            _emit(res);
+                        }).catch(e=>{
+                            _emit(null);
                         });
                     };
                     const unwatch = this.watchLoadData(callback);
+                    return val;
+                }
+            }
+        },
+        globalVarDriver(id) {
+            let split = id.split('.');
+            const key = split.shift();
+            const option = this.options.value.globalVariable && this.options.value.globalVariable[key];
+            if (option) {
+                const handle = is.Function(option) ? option : option.handle;
+                if (handle) {
+                    let val;
+                    const unwatch = this.watchLoadData((get, change) => {
+                        if (change) {
+                            unwatch();
+                            this.bus.$emit('$loadData.$var.' + key);
+                        }
+                        val = invoke(() => handle(get, this.$handle.api))
+                    })
+
                     return val;
                 }
             }
@@ -388,6 +418,9 @@ export default function FormCreateFactory(config) {
                 } else if (key === '$globalData') {
                     val = this.globalDataDriver(split.join('.'));
                     split = [];
+                } else if (key === '$var') {
+                    val = this.globalVarDriver(split.join('.'));
+                    split = [];
                 } else {
                     val = getData(id, def);
                     split = [];
@@ -396,7 +429,6 @@ export default function FormCreateFactory(config) {
                     val = deepGet(val, split);
                 }
             }
-            console.log(id, val);
             return (val == null || val === '') ? def : val;
         },
         watchLoadData(fn) {
@@ -413,8 +445,10 @@ export default function FormCreateFactory(config) {
                     return unwatch[id].val;
                 }
                 let val = this.getLoadData(id, def);
-                const key = id.split('.').shift();
-                const callback = () => {
+                const split = id.split('.');
+                const key = split.shift();
+                const key2 = split.shift() || '';
+                const callback = debounce(() => {
                     if (key !== id) {
                         const temp = this.getLoadData(id, def);
                         if (JSON.stringify(temp) !== JSON.stringify(unwatch[id].val)) {
@@ -424,11 +458,17 @@ export default function FormCreateFactory(config) {
                     } else {
                         run(true);
                     }
-                }
+                }, 0);
                 this.bus.$on('$loadData.' + key, callback);
+                if (key2) {
+                    this.bus.$on('$loadData.' + key + '.' + key2, callback);
+                }
                 unwatch[id] = {
                     fn: (() => {
                         this.bus.$off('$loadData.' + key, callback);
+                        if (key2) {
+                            this.bus.$off('$loadData.' + key + '.' + key2, callback);
+                        }
                     }),
                     val,
                 }
