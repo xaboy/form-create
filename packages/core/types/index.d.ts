@@ -695,6 +695,8 @@ export interface FetchEffectOption {
     headers?: Object;
     withCredentials?: Boolean;
     onError?: (e: Error | ProgressEvent, rule: Object, api: Object) => void;
+    watch?: Boolean;
+    wait?: Number;
 }
 
 
@@ -703,4 +705,6 @@ export interface LoadDataEffectOption {
     to?: String;
     copy?: boolean;
     watch?: boolean;
+    modify?: boolean;
+    wait?: number;
 }

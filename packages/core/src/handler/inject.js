@@ -101,16 +101,22 @@ export default function useInject(Handler) {
         },
         loadStrVar(str, get) {
             if (str && typeof str === 'string' && str.indexOf('{{') > -1 && str.indexOf('}}') > -1) {
+                const tmp = str;
                 const vars = extractVar(str);
+                let lastVal;
                 vars.forEach(v => {
                     const split = v.split('||');
                     const field = split[0].trim();
                     if (field) {
                         const def = (split[1] || '').trim();
                         const val = get ? get(field, def) : this.fc.getLoadData(field, def);
+                        lastVal = val;
                         str = str.replaceAll(`{{${v}}}`, val == null ? '' : val);
                     }
                 })
+                if(vars.length === 1 && tmp === `{{${vars[0]}}}`) {
+                    return lastVal;
+                }
             }
             return str;
         },

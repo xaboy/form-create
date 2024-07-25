@@ -26,7 +26,7 @@ const loadData = function (fc) {
                         if (attr.copy !== false) {
                             value = deepCopy(value)
                         }
-                        deepSet(inject.getProp(), attr.to || 'options', value);
+                        deepSet(attr.modify ? rule : inject.getProp(), attr.to || 'options', value);
                         api.sync(rule);
                     }, attr.wait || 300));
                     if (attr.watch !== false) {
