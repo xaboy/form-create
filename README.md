@@ -21,7 +21,7 @@
 
 **FormCreate 是一个可以通过 JSON 生成具有动态渲染、数据收集、验证和提交功能的表单生成组件。支持6个UI框架，适配移动端，并且支持生成任何 Vue 组件。内置20种常用表单组件和自定义组件，再复杂的表单都可以轻松搞定。**
 
-[![FcDesigner](https://static.form-create.com/file/img/146171715603824_.pic.jpg)](https://pro.form-create.com/view)
+[![FcDesigner](https://static.form-create.com/file/img/banner-m2.jpg)](https://pro.form-create.com/view)
 
 ## 特点
 - 使用JSON数据生成表单
