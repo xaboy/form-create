@@ -45,6 +45,7 @@ export default function $FormCreate(FormCreate, components, directives) {
                 default: () => ({})
             },
             extendOption: Boolean,
+            driver: String,
             modelValue: Object,
             disabled: {
                 type: Boolean,

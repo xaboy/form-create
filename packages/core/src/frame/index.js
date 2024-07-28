@@ -60,6 +60,7 @@ export default function FormCreateFactory(config) {
     const parsers = {};
     const directives = {};
     const modelFields = {};
+    const drivers = {};
     const useApps = [];
     const listener = [];
     const extendApiFn = [
@@ -207,18 +208,30 @@ export default function FormCreateFactory(config) {
         formulas[name] = fn;
     }
 
-    function emitData(id) {
-        Object.keys(instance).forEach(v => {
-            const apis = Array.isArray(instance[v]) ? instance[v] : [instance[v]];
-            apis.forEach(that => {
-                that.bus.$emit('$loadData.' + id);
+    function setDriver(name, driver){
+        if(driver.parsers) {
+            Object.keys(driver.parsers).forEach(k=> {
+                driver.parsers[k] = setPrototypeOf(driver.parsers[k],  BaseParser);
+            });
+        }
+        driver.name = name;
+        drivers[name] = driver;
+    }
+
+    function refreshData(id) {
+        if(id) {
+            Object.keys(instance).forEach(v => {
+                const apis = Array.isArray(instance[v]) ? instance[v] : [instance[v]];
+                apis.forEach(that => {
+                    that.bus.$emit('$loadData.' + id);
+                })
             })
-        })
+        }
     }
 
     function setData(id, data) {
         loadData[id] = data;
-        emitData(id);
+        refreshData(id);
     }
 
     function setDataDriver(id, data) {
@@ -252,7 +265,7 @@ export default function FormCreateFactory(config) {
 
     function removeData(id) {
         delete loadData[id];
-        emitData(id);
+        refreshData(id);
     }
 
     function on(name, callback) {
@@ -277,9 +290,11 @@ export default function FormCreateFactory(config) {
                 components,
                 directives,
             },
+            drivers,
+            renderDriver: null,
             setData,
             getData,
-            emitData,
+            refreshData,
             loadData,
             CreateNode,
             bus: new Mitt(),
@@ -320,6 +335,8 @@ export default function FormCreateFactory(config) {
                     this.$handle.api.refresh();
                 }, {deep: true}));
             }
+            const driver = this.vm.setupState.parent ? this.vm.setupState.parent.setupState.fc.renderDriver : this.vm.props.driver;
+            this.renderDriver = this.drivers[driver];
             this.initOptions();
             this.$handle.init();
         },
@@ -558,11 +575,13 @@ export default function FormCreateFactory(config) {
             setDataDriver,
             setData,
             removeData,
+            refreshData,
             maker,
             component,
             directive,
             setModelField,
             setFormula,
+            setDriver,
             register,
             $vnode,
             parser,

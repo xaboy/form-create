@@ -1,6 +1,7 @@
 import mergeProps from '@form-create/utils/lib/mergeprops';
 import unique from '@form-create/utils/lib/unique';
 import extend from '@form-create/utils/lib/extend';
+import {invoke} from '../frame/util';
 
 export function createManager(proto) {
     class CustomManager extends Manager {
@@ -59,6 +60,11 @@ extend(Manager.prototype, {
         return mergeProps(args.map(v => this.tidyOptions(v)), opt, this.mergeOptionsRule);
     },
     updateOptions(options) {
+        if (this.$handle.fc.renderDriver && this.$handle.fc.renderDriver.updateOptions) {
+            invoke(() => {
+                this.$handle.fc.renderDriver.updateOptions(options, {handle: this.$handle, api: this.$handle.api});
+            })
+        }
         this.options = this.mergeOptions([options], this.getDefaultOptions());
         this.update();
     },

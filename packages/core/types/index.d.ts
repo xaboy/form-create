@@ -102,6 +102,15 @@ export interface GlobalClass {
     }
 }
 
+export interface Driver {
+    parsers: {
+        [id: string]: Parser;
+    };
+    updateOptions: (options:Object) => void;
+    defaultRender: (children: Slots, ctx: Object) => VNodeChild | VNodeChild[];
+    defaultPreview: (children: Slots, ctx: Object) => VNodeChild | VNodeChild[];
+}
+
 export interface FormCreateFactoryConfig<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
     manager: {
         [key: string]: Object | Function;
@@ -179,11 +188,15 @@ export interface util<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs
 
     getData(id: string, defaultValue?: any): any;
 
+    refreshData(id: string): void;
+
     extendApi(fn: (api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>)=>Object): void;
 
     setModelField(type: string, field: string): void;
 
     setFormula(name: string, fn: Function): void;
+
+    setDriver(name: string, driver: Driver): void;
 
     removeData(attr: string): void;
 
@@ -616,6 +629,8 @@ export interface BaseApi<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
     getData(id: string, defaultValue?: any): any;
 
     setData(id: string, value?: any): void;
+
+    refreshData(id: string): void;
 
     bus: {
         $emit(event: string, ...args: any[]): void;

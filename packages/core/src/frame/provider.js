@@ -26,7 +26,16 @@ const loadData = function (fc) {
                         if (attr.copy !== false) {
                             value = deepCopy(value)
                         }
-                        deepSet(attr.modify ? rule : inject.getProp(), attr.to || 'options', value);
+                        const _rule = (attr.modify ? rule : inject.getProp());
+                        if (attr.to === 'child') {
+                            if (_rule.children) {
+                                _rule.children[0] = value;
+                            } else {
+                                _rule.children = [value];
+                            }
+                        } else {
+                            deepSet(_rule, attr.to || 'options', value);
+                        }
                         api.sync(rule);
                     }, attr.wait || 300));
                     if (attr.watch !== false) {
@@ -142,7 +151,7 @@ const fetch = function (fc) {
             }
         }
         fetchAttr._fn[inject.id] = fc.watchLoadData(debounce((get, change) => {
-            if(change && option.watch === false) {
+            if (change && option.watch === false) {
                 return fetchAttr._fn[inject.id]();
             }
             const _option = fc.$handle.loadFetchVar(deepCopy(option), get);

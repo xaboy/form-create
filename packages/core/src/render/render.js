@@ -202,7 +202,7 @@ export default function useRender(Render) {
             return vn;
         },
         getModelField(ctx) {
-            return ctx.rule.modelField || ctx.parser.modelField || this.fc.modelFields[this.vNode.aliasMap[ctx.type]] || this.fc.modelFields[ctx.type] || this.fc.modelFields[ctx.originType] || 'modelValue';
+            return ctx.prop.modelField || ctx.parser.modelField || this.fc.modelFields[this.vNode.aliasMap[ctx.type]] || this.fc.modelFields[ctx.type] || this.fc.modelFields[ctx.originType] || 'modelValue';
         },
         isFragment(ctx) {
             return ctx.type === 'fragment' || ctx.type === 'template';
@@ -325,13 +325,18 @@ export default function useRender(Render) {
         },
         defaultRender(ctx, children) {
             const prop = ctx.prop;
-            if (prop.component)
-                return this.vNode.makeComponent(prop.component, prop, children);
+            if (prop.component){
+                if(typeof prop.component === 'string'){
+                    return this.vNode.make(prop.component, prop, children);
+                }else{
+                    return this.vNode.makeComponent(prop.component, prop, children);
+                }
+            }
             if (this.vNode[ctx.type])
                 return this.vNode[ctx.type](prop, children);
             if (this.vNode[ctx.originType])
                 return this.vNode[ctx.originType](prop, children);
-            return this.vNode.make(lower(ctx.originType), prop, children);
+            return this.vNode.make(lower(prop.type), prop, children);
         },
         renderRule(rule, children, origin) {
             if (!rule) return undefined;

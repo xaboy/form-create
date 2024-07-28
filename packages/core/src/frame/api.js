@@ -493,6 +493,9 @@ export default function Api(h) {
         setData(id, data) {
             return h.fc.setData(id, data);
         },
+        refreshData(id) {
+            return h.fc.refreshData(id);
+        },
         helper: {
             tidyFields, props
         }
