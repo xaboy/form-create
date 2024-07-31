@@ -208,14 +208,16 @@ export default function FormCreateFactory(config) {
         formulas[name] = fn;
     }
 
-    function setDriver(name, driver){
-        if(driver.parsers) {
-            Object.keys(driver.parsers).forEach(k=> {
-                driver.parsers[k] = setPrototypeOf(driver.parsers[k],  BaseParser);
+    function setDriver(name, driver) {
+        const parent = drivers[name] || {};
+        const parsers = parent.parsers || {};
+        if (driver.parsers) {
+            Object.keys(driver.parsers).forEach(k => {
+                parsers[k] = setPrototypeOf(driver.parsers[k], BaseParser);
             });
         }
         driver.name = name;
-        drivers[name] = driver;
+        drivers[name] = {...parent, ...driver, parsers};
     }
 
     function refreshData(id) {
