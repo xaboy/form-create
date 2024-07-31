@@ -626,6 +626,8 @@ export interface BaseApi<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
 
     fetch(opt: FetchOption): Promise<any>;
 
+    watchFetch(opt: FetchOption, success: ((res: any, change: boolean) => void), error: Function): Function;
+
     getData(id: string, defaultValue?: any): any;
 
     setData(id: string, value?: any): void;

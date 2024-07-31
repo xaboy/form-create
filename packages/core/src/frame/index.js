@@ -660,6 +660,16 @@ export default function FormCreateFactory(config) {
 
     const FcComponent = $form();
     setPrototypeOf(FcComponent, create);
+    Object.defineProperties(FcComponent,  {
+        fetch: {
+            get() {
+                return create.fetch;
+            },
+            set(val) {
+                create.fetch = val;
+            }
+        }
+    })
 
     FcComponent.util = create;
 

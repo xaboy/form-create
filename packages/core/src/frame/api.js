@@ -482,8 +482,23 @@ export default function Api(h) {
         bus: h.bus,
         fetch(opt) {
             return new Promise((resolve, reject) => {
+                opt = deepCopy(opt);
+                opt = h.loadFetchVar(opt);
                 h.beforeFetch(opt).then(() => {
-                    return asyncFetch(opt).then(resolve).catch(reject);
+                    return asyncFetch(opt, h.fc.create.fetch).then(resolve).catch(reject);
+                });
+            });
+        },
+        watchFetch(opt, callback, error) {
+            return h.fc.watchLoadData((get, change) => {
+                let _opt = deepCopy(opt);
+                _opt = h.loadFetchVar(_opt, get);
+                h.beforeFetch(_opt).then(() => {
+                    return asyncFetch(_opt, h.fc.create.fetch).then(res => {
+                        callback && callback(res, change);
+                    }).catch(e => {
+                        error && error(e);
+                    });
                 });
             });
         },

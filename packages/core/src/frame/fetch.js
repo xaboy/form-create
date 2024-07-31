@@ -76,9 +76,9 @@ export default function fetch(option) {
 }
 
 
-export function asyncFetch(config) {
+export function asyncFetch(config, _fetch) {
     return new Promise((resolve, reject) => {
-        fetch({
+        (_fetch || fetch)({
             ...config,
             onSuccess(res) {
                 let fn = (v) => v;
