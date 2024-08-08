@@ -3,7 +3,7 @@ import toCase from '@form-create/utils/lib/tocase';
 import BaseParser from '../factory/parser';
 import {$del} from '@form-create/utils/lib/modify';
 import is, {hasProperty} from '@form-create/utils/lib/type';
-import {condition, invoke} from '../frame/util';
+import {condition, deepGet, invoke} from '../frame/util';
 import {toRef, watch} from 'vue';
 import {attrs} from '../frame/attrs';
 import {deepSet} from '@form-create/utils';
@@ -146,6 +146,7 @@ export default function useContext(Handler) {
                     computed = {value: computed}
                 }
                 Object.keys(computed).forEach(k => {
+                    const _val = deepGet(ctx.rule, k);
                     ctx.watch.push(watch(() => {
                         const item = computed[k];
                         if (!item) return undefined;
@@ -167,7 +168,7 @@ export default function useContext(Handler) {
                                     } else if (!condition[one.condition]) {
                                         flag = false;
                                     } else {
-                                        flag = (new Function('_$', '_$val', 'top', 'group', `with(top){with(this){with(group){ return _$['${one.condition}'](${one.field}, ${one.compare ? one.compare : '_$val'}); }}}`)).call(this.api.form, condition, one.value, this.api.top.form, group ? (this.subRuleData[group.id] || {}) : {});
+                                        flag = (new Function('_$', '_$val', '$form', 'group', `with($form){with(this){with(group){ return _$['${one.condition}'](${one.field}, ${one.compare ? one.compare : '_$val'}); }}}`)).call(this.api.form, condition, one.value, this.api.top.form, group ? (this.subRuleData[group.id] || {}) : {});
                                     }
                                     if (or && flag) {
                                         return true;
@@ -183,7 +184,7 @@ export default function useContext(Handler) {
                             fn = () => item(this.api.form, this.api);
                         } else {
                             const group = ctx.getParentGroup();
-                            fn = () => (new Function('formulas', 'top', 'group', '$rule', '$api', `with(top){with(this){with(group){with(formulas){ return ${item} }}}}`)).call(this.api.form, this.fc.formulas, this.api.top.form, group ? (this.subRuleData[group.id] || {}) : {}, ctx.rule, this.api);
+                            fn = () => (new Function('formulas', '$form', 'group', '$rule', '$api', `with($form){with(this){with(group){with(formulas){ return ${item} }}}}`)).call(this.api.form, this.fc.formulas, this.api.top.form, group ? (this.subRuleData[group.id] || {}) : {}, ctx.rule, this.api);
                         }
                         return invoke(fn, undefined);
                     }, (n) => {
@@ -196,7 +197,7 @@ export default function useContext(Handler) {
                                 deepSet(ctx.rule, k, n);
                             }
                         });
-                    }, {immediate: true}));
+                    }, {immediate: _val == null || _val === ''}));
                 });
 
             });

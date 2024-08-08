@@ -205,7 +205,6 @@ extend(RuleContext.prototype, {
         this.$handle.watchCtx(this);
     },
     delete() {
-        const undef = void 0;
         this.unwatch();
         this.unlink();
         this.rmCtrl();
