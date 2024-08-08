@@ -139,16 +139,13 @@ export default function useLoader(Handler) {
                 if (isInit) {
                     ctx = _rule.__fc__;
                     defaultValue = ctx.defaultValue;
-                    const check = !ctx.check(this);
                     if (ctx.deleted) {
-                        if (check) {
-                            if (isCtrl(ctx)) {
-                                return;
-                            }
-                            ctx.update(this);
+                        if (isCtrl(ctx)) {
+                            return;
                         }
+                        ctx.update(this);
                     } else {
-                        if (check) {
+                        if (!ctx.check(this)) {
                             if (isCtrl(ctx)) {
                                 return;
                             }

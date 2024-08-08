@@ -214,13 +214,7 @@ extend(RuleContext.prototype, {
         }
         extend(this, {
             deleted: true,
-            prop: {...this.rule},
             computed: {},
-            el: undef,
-            $handle: undef,
-            $api: undef,
-            vm: undef,
-            vNode: undef,
             parent: null,
             children: [],
             cacheConfig: null,
