@@ -1,5 +1,4 @@
 import {computed, defineComponent, ref, toRef} from 'vue';
-import dayjs from 'dayjs';
 
 const NAME = 'fcTimePicker';
 
@@ -11,8 +10,6 @@ export default defineComponent({
         clearable: Boolean,
         placeholder: String,
         modelValue: [String, Number],
-        minDate: [String, Date],
-        maxDate: [String, Date],
     },
     emits: ['update:modelValue', 'fc.el'],
     setup(props, _) {
@@ -26,13 +23,6 @@ export default defineComponent({
             return modelValue.value.split(':');
         });
 
-        const dateRange = computed(() => {
-            return {
-                minDate: props.minDate ? dayjs(props.minDate).toDate() : undefined,
-                maxDate: props.maxDate ? dayjs(props.maxDate).toDate() : undefined,
-            }
-        })
-
         const onInput = (val) => {
             _.emit('update:modelValue', val);
         }
@@ -40,7 +30,6 @@ export default defineComponent({
         return {
             show,
             formValue,
-            dateRange,
             open() {
                 if (props.disabled) {
                     return;
@@ -72,7 +61,7 @@ export default defineComponent({
             <van-popup show={this.show} onUpdate:show={(v) => this.show = v} round position="bottom">
                 <van-time-picker
                     columnsType={['hour', 'minute']}
-                    {...{...this.$attrs, ...this.dateRange}}
+                    {...this.$attrs}
                     modelValue={this.formValue}
                     onConfirm={this.confirm}
                     onCancel={() => this.show = false}
