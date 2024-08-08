@@ -37,7 +37,7 @@ export default defineComponent({
         },
         modelValue(n) {
             if (n !== this.editor.txt.html()) {
-                this.editor.txt.html(n);
+                this.editor.txt.html(n || '');
             }
         }
     },

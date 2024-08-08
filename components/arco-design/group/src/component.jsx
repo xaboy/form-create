@@ -99,7 +99,7 @@ export default defineComponent({
         modelValue: {
             handler(n) {
                 n = n || [];
-                let keys = Object.keys(this.sort), total = keys.length, len = total - n.length;
+                let keys = this.sort, total = keys.length, len = total - n.length;
                 if (len < 0) {
                     for (let i = len; i < 0; i++) {
                         this.addRule(n.length + i, true);
