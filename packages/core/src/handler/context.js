@@ -168,7 +168,7 @@ export default function useContext(Handler) {
                                     } else if (!condition[one.condition]) {
                                         flag = false;
                                     } else {
-                                        flag = (new Function('_$', '_$val', '$form', 'group', `with($form){with(this){with(group){ return _$['${one.condition}'](${one.field}, ${one.compare ? one.compare : '_$val'}); }}}`)).call(this.api.form, condition, one.value, this.api.top.form, group ? (this.subRuleData[group.id] || {}) : {});
+                                        flag = (new Function('_$', '_$val', '$form', '_group', `with($form){with(this){with(_group){ return _$['${one.condition}'](${one.field}, ${one.compare ? one.compare : '_$val'}); }}}`)).call(this.api.form, condition, one.value, this.api.top.form, group ? (this.subRuleData[group.id] || {}) : {});
                                     }
                                     if (or && flag) {
                                         return true;
@@ -184,7 +184,7 @@ export default function useContext(Handler) {
                             fn = () => item(this.api.form, this.api);
                         } else {
                             const group = ctx.getParentGroup();
-                            fn = () => (new Function('formulas', '$form', 'group', '$rule', '$api', `with($form){with(this){with(group){with(formulas){ return ${item} }}}}`)).call(this.api.form, this.fc.formulas, this.api.top.form, group ? (this.subRuleData[group.id] || {}) : {}, ctx.rule, this.api);
+                            fn = () => (new Function('_formulas', '$form', '_group', '$rule', '$api', `with($form){with(this){with(_group){with(_formulas){ return ${item} }}}}`)).call(this.api.form, this.fc.formulas, this.api.top.form, group ? (this.subRuleData[group.id] || {}) : {}, ctx.rule, this.api);
                         }
                         return invoke(fn, undefined);
                     }, (n) => {
