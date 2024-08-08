@@ -1,6 +1,6 @@
 {
     "name": "@form-create/element-ui",
-    "version": "3.2.3",
+    "version": "3.2.4",
     "description": "element-ui动态表单|form-create is a form generation component that can generate dynamic rendering, data collection, verification and submission functions through JSON. Supports 5 UI frameworks, and supports the generation of any Vue components. Built-in 20 kinds of commonly used form components and custom components, no matter how complex forms can be easily handled.",
     "main": "./dist/form-create.min.js",
     "module": "./dist/form-create.esm.js",
@@ -47,13 +47,13 @@
     "dependencies": {
         "@form-create/component-elm-checkbox": "^3.2.0",
         "@form-create/component-elm-frame": "^3.2.0",
-        "@form-create/component-elm-group": "^3.2.0",
+        "@form-create/component-elm-group": "^3.2.4",
         "@form-create/component-elm-radio": "^3.2.0",
         "@form-create/component-elm-select": "^3.2.0",
         "@form-create/component-elm-tree": "^3.2.0",
         "@form-create/component-elm-upload": "^3.2.0",
         "@form-create/component-subform": "^3.1.34",
-        "@form-create/core": "^3.2.3",
+        "@form-create/core": "^3.2.4",
         "@form-create/utils": "^3.2.0"
     },
     "publishConfig": {
@@ -64,7 +64,7 @@
     },
     "devDependencies": {
         "@element-plus/icons-vue": "^0.2.7",
-        "@form-create/component-wangeditor": "^3.1.20",
+        "@form-create/component-wangeditor": "^3.2.4",
         "@vue/cli-plugin-babel": "~4.5.0",
         "@vue/cli-service": "^4.5.3",
         "element-plus": "^2.7.2",
