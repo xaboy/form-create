@@ -146,7 +146,6 @@ export default function useContext(Handler) {
                     computed = {value: computed}
                 }
                 Object.keys(computed).forEach(k => {
-                    const _val = deepGet(ctx.rule, k);
                     ctx.watch.push(watch(() => {
                         const item = computed[k];
                         if (!item) return undefined;
@@ -197,7 +196,7 @@ export default function useContext(Handler) {
                                 deepSet(ctx.rule, k, n);
                             }
                         });
-                    }, {immediate: _val == null || _val === ''}));
+                    }, {immediate: k === 'value' ? [undefined, null, ''].indexOf(ctx.rule.value) > -1 : true}));
                 });
 
             });
