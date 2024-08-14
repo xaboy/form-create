@@ -1,3 +1,7 @@
+._fc-upload{
+    width: 100%;
+}
+
 ._fc-exceed .el-upload {
     display: none;
 }

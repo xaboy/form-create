@@ -56,8 +56,12 @@ export default defineComponent({
             if (this.onPreview) {
                 this.onPreview(...arguments);
             } else {
-                this.previewImage = file.url;
-                this.previewVisible = true;
+                if ('text' === this.$attrs.listType) {
+                    window.open(file.url);
+                } else {
+                    this.previewImage = file.url;
+                    this.previewVisible = true;
+                }
             }
         },
         update(fileList) {
@@ -81,7 +85,7 @@ export default defineComponent({
     render() {
         const len = toArray(this.modelValue).length;
         return (
-            <><ElUpload key={len} list-type="picture-card" {...this.$attrs}
+            <div class="_fc-upload"><ElUpload key={len} list-type="picture-card" {...this.$attrs}
                 class={{'_fc-exceed': this.$attrs.limit ? this.$attrs.limit <= len : false}}
                 onPreview={this.handlePreview} onChange={this.handleChange}
                 onRemove={this.handleRemove}
@@ -98,9 +102,9 @@ export default defineComponent({
                 onClose={this.handleCancel}>
                 <img style="width: 100%" src={this.previewImage}/>
             </ElDialog>
-            </>);
+            </div>);
     },
-    mounted(){
-        this.$emit('fc.el',this.$refs.upload);
+    mounted() {
+        this.$emit('fc.el', this.$refs.upload);
     }
 })
