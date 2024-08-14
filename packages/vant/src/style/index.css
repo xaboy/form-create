@@ -6,11 +6,11 @@
     display: none !important;
 }
 
-.form-create-m .van-field .van-field:after {
+.form-create-m .van-field:has(.van-field__value > .van-field__body > .van-field__control>.van-field):after {
     display: none;
 }
 
-.form-create-m > .van-row > .van-col > .van-cell:after {
+.form-create-m .van-field > .van-field__value > .van-field__body > .van-field__control > .van-field:after {
     display: block;
 }
 
