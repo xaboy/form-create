@@ -163,8 +163,8 @@ export default function useLoader(Handler) {
                 } else {
                     if (ctx.originType !== ctx.rule.type) {
                         ctx.updateType();
-                        this.bindParser(ctx);
                     }
+                    this.bindParser(ctx);
                     this.appendValue(ctx.rule);
                     if (ctx.parent && ctx.parent !== parent) {
                         this.rmSubRuleData(ctx);
