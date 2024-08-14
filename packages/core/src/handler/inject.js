@@ -70,10 +70,12 @@ export default function useInject(Handler) {
             return event;
         },
         getInjectData(self, inject) {
-            const {option, rule} = this.vm.props;
+            const $api = self.__fc__ && self.__fc__.$api;
+            const vm = (self.__fc__ && self.__fc__.$handle.vm) || this.vm.props;
+            const {option, rule} = vm.props;
             return {
-                $f: this.api,
-                api: this.api,
+                $f: $api || this.api,
+                api: $api || this.api,
                 rule,
                 self: self.__origin__,
                 option,
