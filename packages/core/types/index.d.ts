@@ -107,6 +107,7 @@ export interface Driver {
         [id: string]: Parser;
     };
     updateOptions: (options:Object) => void;
+    updateWrap: (ctx: Object) => void;
     defaultRender: (children: Slots, ctx: Object) => VNodeChild | VNodeChild[];
     defaultPreview: (children: Slots, ctx: Object) => VNodeChild | VNodeChild[];
 }

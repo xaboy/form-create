@@ -18,6 +18,7 @@ export default function useLifecycle(Handler) {
             }
         },
         lifecycle(name) {
+            this.fc.targetFormDriver(name, this.api, this.fc);
             this.vm.emit(name, this.api);
             this.emitEvent(name, this.api);
         },

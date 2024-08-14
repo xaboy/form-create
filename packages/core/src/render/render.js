@@ -143,6 +143,7 @@ export default function useRender(Render) {
                         }
                         _vn = this.renderSides(_vn, ctx);
                         if ((!(!ctx.input && is.Undef(prop.native))) && prop.native !== true) {
+                            this.fc.targetFormDriver('updateWrap', ctx)
                             _vn = this.$manager.makeWrap(ctx, _vn);
                         }
                         if (ctx.none) {

@@ -221,7 +221,7 @@ export default function FormCreateFactory(config) {
     }
 
     function refreshData(id) {
-        if(id) {
+        if (id) {
             Object.keys(instance).forEach(v => {
                 const apis = Array.isArray(instance[v]) ? instance[v] : [instance[v]];
                 apis.forEach(that => {
@@ -337,10 +337,22 @@ export default function FormCreateFactory(config) {
                     this.$handle.api.refresh();
                 }, {deep: true}));
             }
-            const driver = this.vm.setupState.parent ? this.vm.setupState.parent.setupState.fc.renderDriver : this.vm.props.driver;
-            this.renderDriver = this.drivers[driver];
+            if (this.vm.props.driver) {
+                this.renderDriver = this.drivers[this.vm.props.driver];
+            }
+            if (!this.renderDriver && this.vm.setupState.parent) {
+                this.renderDriver = this.vm.setupState.parent.setupState.fc.renderDriver;
+            }
+            if (!this.renderDriver) {
+                this.renderDriver = this.drivers.default;
+            }
             this.initOptions();
             this.$handle.init();
+        },
+        targetFormDriver(method, ...args) {
+            if (this.renderDriver && this.renderDriver[method]) {
+                return invoke(() => this.renderDriver[method](...args));
+            }
         },
         globalDataDriver(id) {
             let split = id.split('.');
@@ -662,7 +674,7 @@ export default function FormCreateFactory(config) {
 
     const FcComponent = $form();
     setPrototypeOf(FcComponent, create);
-    Object.defineProperties(FcComponent,  {
+    Object.defineProperties(FcComponent, {
         fetch: {
             get() {
                 return create.fetch;

@@ -126,6 +126,7 @@ export default function useLoader(Handler) {
                     return !!(rule.field && this.fieldCtx[rule.field] && this.fieldCtx[rule.field][0] !== _rule.__fc__)
                 }
 
+                this.fc.targetFormDriver('loadRule', {rule, api: this.api}, this.fc);
                 this.ruleEffect(rule, 'init', {repeat: isRepeat()});
 
                 if (isRepeat()) {

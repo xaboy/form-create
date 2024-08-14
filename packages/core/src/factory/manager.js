@@ -60,11 +60,7 @@ extend(Manager.prototype, {
         return mergeProps(args.map(v => this.tidyOptions(v)), opt, this.mergeOptionsRule);
     },
     updateOptions(options) {
-        if (this.$handle.fc.renderDriver && this.$handle.fc.renderDriver.updateOptions) {
-            invoke(() => {
-                this.$handle.fc.renderDriver.updateOptions(options, {handle: this.$handle, api: this.$handle.api});
-            })
-        }
+        this.$handle.fc.targetFormDriver('updateOptions', options, {handle: this.$handle, api: this.$handle.api})
         this.options = this.mergeOptions([options], this.getDefaultOptions());
         this.update();
     },
