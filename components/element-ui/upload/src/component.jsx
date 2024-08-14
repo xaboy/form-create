@@ -88,9 +88,9 @@ export default defineComponent({
                 fileList={this.fileList}
                 v-slots={getSlot(this.$slots, ['default'])} ref="upload">
                 {(this.$slots.default?.() ||
-                    <ElIcon>
+                    ['text', 'picture'].indexOf(this.$attrs.listType) === -1 ? <ElIcon>
                         <IconUpload/>
-                    </ElIcon>
+                    </ElIcon> : <ElButton type="primary">点击上传</ElButton>
                 )}
             </ElUpload>
             <ElDialog appendToBody={true} modal={this.previewMask} title={this.modalTitle}
