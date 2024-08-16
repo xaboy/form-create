@@ -33,6 +33,7 @@ export default defineComponent({
         previewMask: undefined,
         onPreview: Function,
         modalTitle: String,
+        listType: String,
         modelValue: [Array, String]
     },
     emits: ['update:modelValue', 'change', 'remove', 'fc.el'],
@@ -56,7 +57,7 @@ export default defineComponent({
             if (this.onPreview) {
                 this.onPreview(...arguments);
             } else {
-                if ('text' === this.$attrs.listType) {
+                if ('text' === this.listType) {
                     window.open(file.url);
                 } else {
                     this.previewImage = file.url;
@@ -85,14 +86,14 @@ export default defineComponent({
     render() {
         const len = toArray(this.modelValue).length;
         return (
-            <div class="_fc-upload"><ElUpload key={len} list-type="picture-card" {...this.$attrs}
+            <div class="_fc-upload"><ElUpload key={len} {...this.$attrs} list-type={this.listType || 'picture-card'}
                 class={{'_fc-exceed': this.$attrs.limit ? this.$attrs.limit <= len : false}}
                 onPreview={this.handlePreview} onChange={this.handleChange}
                 onRemove={this.handleRemove}
                 fileList={this.fileList}
                 v-slots={getSlot(this.$slots, ['default'])} ref="upload">
                 {(this.$slots.default?.() ||
-                    ['text', 'picture'].indexOf(this.$attrs.listType) === -1 ? <ElIcon>
+                    ['text', 'picture'].indexOf(this.listType) === -1 ? <ElIcon>
                         <IconUpload/>
                     </ElIcon> : <ElButton type="primary">点击上传</ElButton>
                 )}
