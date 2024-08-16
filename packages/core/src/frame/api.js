@@ -90,6 +90,7 @@ export default function Api(h) {
         coverValue(formData) {
             const data = {...(formData || {})};
             h.deferSyncValue(() => {
+                h.appendData = {};
                 api.fields().forEach(key => {
                     const ctxs = h.fieldCtx[key];
                     if (ctxs) {
@@ -101,7 +102,7 @@ export default function Api(h) {
                     }
                 });
                 extend(h.appendData, data);
-            })
+            }, true)
         },
         setValue(field) {
             let formData = field;
@@ -115,7 +116,7 @@ export default function Api(h) {
                         ctx.rule.value = formData[key];
                     });
                 });
-            })
+            }, true)
         },
         removeField(field) {
             const ctx = h.getCtx(field);

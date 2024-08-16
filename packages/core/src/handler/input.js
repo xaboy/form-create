@@ -112,7 +112,7 @@ export default function useInput(Handler) {
             if (this.deferSyncFn === fn) {
                 this.deferSyncFn = null;
                 if (fn.sync) {
-                    this.syncValue();
+                    this.syncForm();
                 }
             }
         },

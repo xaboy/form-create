@@ -205,7 +205,6 @@ export default function $FormCreate(FormCreate, components, directives) {
             watch(modelValue, (n) => {
                 if (JSON.stringify(n || {}) === data.updateValue) return;
                 if(fapi.config.forceCoverValue){
-                    fc.$handle.appendData = {};
                     fapi.coverValue(n || {});
                 }else{
                     fapi.setValue(n || {});
