@@ -45,7 +45,7 @@ export default function $FormCreate(FormCreate, components, directives) {
                 default: () => ({})
             },
             extendOption: Boolean,
-            driver: String,
+            driver: [String, Object],
             modelValue: Object,
             disabled: {
                 type: Boolean,
@@ -55,6 +55,7 @@ export default function $FormCreate(FormCreate, components, directives) {
                 type: Boolean,
                 default: undefined,
             },
+            index: [String, Number],
             api: Object,
             name: String,
             subForm: {
@@ -204,12 +205,21 @@ export default function $FormCreate(FormCreate, components, directives) {
 
             watch(modelValue, (n) => {
                 if (JSON.stringify(n || {}) === data.updateValue) return;
-                if(fapi.config.forceCoverValue){
+                if (fapi.config.forceCoverValue) {
                     fapi.coverValue(n || {});
-                }else{
+                } else {
                     fapi.setValue(n || {});
                 }
             }, {deep: true});
+
+            watch(() => props.index, () => {
+                fapi.coverValue({});
+                nextTick(() => {
+                    nextTick(() => {
+                        fapi.clearValidateState();
+                    });
+                });
+            }, {flush: 'sync'});
 
             return {
                 fc: markRaw(fc),

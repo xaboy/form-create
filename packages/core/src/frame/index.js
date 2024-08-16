@@ -338,7 +338,7 @@ export default function FormCreateFactory(config) {
                 }, {deep: true}));
             }
             if (this.vm.props.driver) {
-                this.renderDriver = this.drivers[this.vm.props.driver];
+                this.renderDriver = typeof this.vm.props.driver === 'object' ? this.vm.props.driver : this.drivers[this.vm.props.driver];
             }
             if (!this.renderDriver && this.vm.setupState.parent) {
                 this.renderDriver = this.vm.setupState.parent.setupState.fc.renderDriver;
