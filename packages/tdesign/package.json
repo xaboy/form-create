@@ -1,6 +1,6 @@
 {
     "name": "@form-create/tdesign",
-    "version": "3.2.6",
+    "version": "3.2.7",
     "description": "tdesign动态表单|form-create is a form generation component that can generate dynamic rendering, data collection, verification and submission functions through JSON. Supports 5 UI frameworks, and supports the generation of any Vue components. Built-in 20 kinds of commonly used form components and custom components, no matter how complex forms can be easily handled.",
     "main": "./dist/form-create.min.js",
     "module": "./dist/form-create.esm.js",
@@ -49,7 +49,7 @@
         "@form-create/component-tdesign-frame": "^3.2.0",
         "@form-create/component-tdesign-group": "^3.2.4",
         "@form-create/component-tdesign-upload": "^3.2.0",
-        "@form-create/core": "^3.2.6",
+        "@form-create/core": "^3.2.7",
         "@form-create/utils": "^3.2.0"
     },
     "publishConfig": {
