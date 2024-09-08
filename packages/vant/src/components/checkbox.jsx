@@ -23,7 +23,7 @@ export default defineComponent({
         }
     },
     render() {
-        return <van-checkbox-group direction="horizontal" {...this.$attrs} modelValue={[...Array.isArray(this.modelValue) ? this.modelValue : []]}
+        return <van-checkbox-group direction="horizontal" {...this.$attrs} modelValue={Array.isArray(this.modelValue) ? this.modelValue : []}
             onUpdate:modelValue={this.onInput}>
             {(this.options || []).map(opt => {
                 const tmp = {...opt};
