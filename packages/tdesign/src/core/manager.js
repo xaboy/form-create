@@ -114,9 +114,10 @@ export default {
         const rule = ctx.prop;
         const uni = `${this.key}${ctx.key}`;
         const col = rule.col;
-        const isTitle = this.isTitle(rule);
+        const isTitle = this.isTitle(rule) && rule.wrap.title !== false;
         const labelWidth = (!col.labelWidth && !isTitle) ? 0 : col.labelWidth;
         const {layout, col: _col} = this.rule.props;
+        delete rule.wrap.title;
         let item
         if (isFalse(rule.wrap.show)) {
             item = children

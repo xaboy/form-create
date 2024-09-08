@@ -115,8 +115,9 @@ export default {
         const rule = ctx.prop;
         const uni = `${this.key}${ctx.key}`;
         const col = rule.col;
-        const isTitle = this.isTitle(rule);
+        const isTitle = this.isTitle(rule) && rule.wrap.title !== false;
         const {layout, col: _col} = this.rule.props;
+        delete rule.wrap.title;
         const item = isFalse(rule.wrap.show) ? children : this.$r(mergeProps([rule.wrap, {
             props: {
                 ...tidyRule(rule.wrap || {}),

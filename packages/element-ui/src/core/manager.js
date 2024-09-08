@@ -120,9 +120,10 @@ export default {
         const rule = ctx.prop;
         const uni = `${this.key}${ctx.key}`;
         const col = rule.col;
-        const isTitle = this.isTitle(rule);
+        const isTitle = this.isTitle(rule) && rule.wrap.title !== false;
         const labelWidth = (!col.labelWidth && !isTitle) ? 0 : col.labelWidth;
         const {inline, col: _col} = this.rule.props;
+        delete rule.wrap.title;
         const item = isFalse(rule.wrap.show) ? children : this.$r(mergeProps([rule.wrap, {
             props: {
                 labelWidth: labelWidth === void 0 ? labelWidth : toString(labelWidth),
