@@ -428,6 +428,7 @@ export default function FormCreateFactory(config) {
                         if (change) {
                             unwatch();
                             this.bus.$emit('$loadData.$var.' + key);
+                            return val;
                         }
                         val = invoke(() => handle(get, this.$handle.api))
                     })
