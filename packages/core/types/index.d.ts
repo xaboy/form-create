@@ -185,7 +185,7 @@ export interface util<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs
 
     setData(id: string, data: any): void;
 
-    setDataDriver(callback: (key: string) => any): void;
+    setDataDriver(id: string, callback: (key: string) => any): void;
 
     getData(id: string, defaultValue?: any): any;
 

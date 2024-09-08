@@ -178,7 +178,8 @@ export default function useContext(Handler) {
                                 }
                                 return or ? false : valid;
                             }
-                            return checkCondition(item);
+                            const val = checkCondition(item);
+                            return item.invert === true ? !val : val;
                         } else if (is.Function(item)) {
                             fn = () => item(this.api.form, this.api);
                         } else {
