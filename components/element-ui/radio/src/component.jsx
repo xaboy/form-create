@@ -54,8 +54,8 @@ export default defineComponent({
                 if (!input.value) {
                     return undefined;
                 }
-                return <Type value={customValue.value} label={customValue.value}>
-                    <ElInput modelValue={customValue.value}
+                return <Type checked={false} value={customValue.value || undefined} label={customValue.value || undefined}>
+                    <ElInput size="small" modelValue={customValue.value}
                         onUpdate:modelValue={updateCustomValue}></ElInput>
                 </Type>
             },
