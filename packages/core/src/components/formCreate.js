@@ -17,7 +17,7 @@ import toArray from '@form-create/utils/lib/toarray';
 import debounce from '@form-create/utils/lib/debounce';
 import toLine from '@form-create/utils/lib/toline';
 
-const getRuleInject = (vm, parent) => {
+const getGroupInject = (vm, parent) => {
     if (!vm || vm === parent) {
         return;
     }
@@ -25,7 +25,7 @@ const getRuleInject = (vm, parent) => {
         return vm.props.formCreateInject
     }
     if (vm.parent) {
-        return getRuleInject(vm.parent, parent);
+        return getGroupInject(vm.parent, parent);
     }
 }
 
@@ -91,7 +91,7 @@ export default function $FormCreate(FormCreate, components, directives) {
 
             const addSubForm = () => {
                 if (parent) {
-                    const inject = getRuleInject(vm, parent);
+                    const inject = getGroupInject(vm, parent);
                     if (inject) {
                         let sub;
                         if (isMore) {
@@ -107,7 +107,7 @@ export default function $FormCreate(FormCreate, components, directives) {
             };
 
             const rmSubForm = () => {
-                const inject = getRuleInject(vm, parent);
+                const inject = getGroupInject(vm, parent);
                 if (inject) {
                     if (isMore) {
                         const sub = toArray(inject.getSubForm());
@@ -228,6 +228,7 @@ export default function $FormCreate(FormCreate, components, directives) {
                 parent: parent ? markRaw(parent) : parent,
                 fapi: markRaw(fapi),
                 ...toRefs(data),
+                getGroupInject: () => getGroupInject(vm, parent),
                 refresh() {
                     ++data.unique;
                 },

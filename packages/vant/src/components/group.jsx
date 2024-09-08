@@ -218,6 +218,9 @@ export default defineComponent({
             const a = this.sort[index];
             this.sort[index] = this.sort[index + sort];
             this.sort[index + sort] = a;
+            this.formCreateInject.subForm(this.sort.map(k=>{
+                return this.cacheRule[k].$f;
+            }));
             this.formData(0);
         },
         makeIcon(total, index, key) {

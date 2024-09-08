@@ -5,6 +5,7 @@ import is, {hasProperty} from '@form-create/utils/lib/type';
 import extend from '@form-create/utils/lib/extend';
 import {format} from '@form-create/utils/lib/console';
 import {asyncFetch} from './fetch';
+import {nextTick} from 'vue';
 
 
 function copy(value) {
@@ -73,6 +74,24 @@ export default function Api(h) {
         },
         get children() {
             return allSubForm();
+        },
+        get siblings() {
+            const inject = h.vm.setupState.getGroupInject();
+            if (inject) {
+                const subForm = inject.getSubForm();
+                if (Array.isArray(subForm)) {
+                    return [...subForm];
+                }
+            }
+            return undefined;
+        },
+        get index() {
+            const siblings = api.siblings;
+            if (siblings) {
+                const idx = siblings.indexOf(api);
+                return idx > -1 ? idx : undefined;
+            }
+            return undefined;
         },
         formData(fields) {
             return tidyFields(fields).reduce((initial, id) => {
@@ -359,6 +378,9 @@ export default function Api(h) {
                     h.$render.clearCache(ctx);
                     ctx.rule.value = copy(ctx.defaultValue);
                 });
+            });
+            nextTick(() => {
+                api.clearValidateState();
             });
         },
         method(id, name) {
