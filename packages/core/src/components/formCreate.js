@@ -11,7 +11,7 @@ import {
     provide,
     reactive,
     toRefs,
-    watch
+    watch, watchEffect
 } from 'vue';
 import toArray from '@form-create/utils/lib/toarray';
 import debounce from '@form-create/utils/lib/debounce';
@@ -124,29 +124,31 @@ export default function $FormCreate(FormCreate, components, directives) {
             let styleEl = null;
 
             onBeforeMount(() => {
-                let content = '';
-                const globalClass = (props.option && props.option.globalClass) || {};
-                Object.keys(globalClass).forEach(k => {
-                    let subCss = '';
-                    globalClass[k].style && Object.keys(globalClass[k].style).forEach(key => {
-                        subCss += toLine(key) + ':' + globalClass[k].style[key] + ';';
+                watchEffect(() => {
+                    let content = '';
+                    const globalClass = (props.option && props.option.globalClass) || {};
+                    Object.keys(globalClass).forEach(k => {
+                        let subCss = '';
+                        globalClass[k].style && Object.keys(globalClass[k].style).forEach(key => {
+                            subCss += toLine(key) + ':' + globalClass[k].style[key] + ';';
+                        });
+                        if (globalClass[k].content) {
+                            subCss += globalClass[k].content + ';';
+                        }
+                        if (subCss) {
+                            content += `.${k}{${subCss}}`;
+                        }
                     });
-                    if (globalClass[k].content) {
-                        subCss += globalClass[k].content + ';';
+                    if (props.option && props.option.style) {
+                        content += props.option.style;
                     }
-                    if (subCss) {
-                        content += `.${k}{${subCss}}`;
+                    if (!styleEl) {
+                        styleEl = document.createElement('style');
+                        styleEl.type = 'text/css';
+                        document.head.appendChild(styleEl);
                     }
-                });
-                if (props.option && props.option.style) {
-                    content += props.option.style;
-                }
-                if (content) {
-                    styleEl = document.createElement('style');
-                    styleEl.type = 'text/css';
-                    styleEl.innerHTML = content;
-                    document.head.appendChild(styleEl);
-                }
+                    styleEl.innerHTML = content || '';
+                })
             });
 
             const emit$topForm = debounce(() => {
