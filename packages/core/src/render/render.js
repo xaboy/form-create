@@ -227,6 +227,9 @@ export default function useRender(Render) {
                     field: ctx.field,
                     rule: ctx.rule,
                     input: ctx.input,
+                    updateValue:(data) =>{
+                        this.$handle.onUpdateValue(ctx, data);
+                    }
                 }
             }
             const inject = state.ctxInject[ctx.id];
