@@ -579,6 +579,8 @@ export interface BaseApi<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
 
     getRule(id: string, origin: false): Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
 
+    getParentRule(id: string| Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>): undefined|Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
+
     getRefRule(name: string): Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> | Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>[];
 
     getRenderRule(id: string): Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;

@@ -434,6 +434,11 @@ export default function Api(h) {
             findRules(ctx ? ctx.loadChildrenPending() : rule.children);
             return rules;
         },
+        getParentRule(id) {
+            const flag = typeof id === 'object';
+            const ctx = flag ? byCtx(id) : h.getCtx(id);
+            return ctx.parent.rule;
+        },
         getParentSubRule(id) {
             const flag = typeof id === 'object';
             const ctx = flag ? byCtx(id) : h.getCtx(id);
