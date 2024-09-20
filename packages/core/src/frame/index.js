@@ -100,7 +100,7 @@ export default function FormCreateFactory(config) {
 
     function register() {
         const data = nameProp(...arguments);
-        if (data.id && data.prop) providers[data.id] = {...data.prop, name: data.id};
+        if (data.id && data.prop) providers[data.id] = is.Function(data.prop) ? data.prop : {...data.prop, name: data.id};
     }
 
     function componentAlias(alias) {
