@@ -22,6 +22,9 @@ export default function Handler(fc) {
         bus() {
             return fc.bus;
         },
+        preview() {
+            return (fc.vm.props.preview != null ? fc.vm.props.preview : (this.options.preview || false));
+        }
     })
     extend(this, {
         fc,
