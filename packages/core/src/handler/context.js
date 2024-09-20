@@ -4,7 +4,7 @@ import BaseParser from '../factory/parser';
 import {$del} from '@form-create/utils/lib/modify';
 import is, {hasProperty} from '@form-create/utils/lib/type';
 import {condition, deepGet, invoke} from '../frame/util';
-import {toRef, watch} from 'vue';
+import {computed, toRef, watch} from 'vue';
 import {attrs} from '../frame/attrs';
 import {deepSet} from '@form-create/utils';
 
@@ -138,16 +138,16 @@ export default function useContext(Handler) {
                 }));
             }
             this.bus.$once('load-end', () => {
-                let computed = ctx.rule.computed;
-                if (!computed) {
+                let computedRule = ctx.rule.computed;
+                if (!computedRule) {
                     return;
                 }
-                if (typeof computed !== 'object') {
-                    computed = {value: computed}
+                if (typeof computedRule !== 'object') {
+                    computedRule = {value: computedRule}
                 }
-                Object.keys(computed).forEach(k => {
-                    ctx.watch.push(watch(() => {
-                        const item = computed[k];
+                Object.keys(computedRule).forEach(k => {
+                    const computedValue = computed(() => {
+                        const item = computedRule[k];
                         if (!item) return undefined;
                         let fn;
                         if (typeof item === 'object') {
@@ -187,17 +187,24 @@ export default function useContext(Handler) {
                             fn = () => (new Function('_formulas', '$form', '_group', '$rule', '$api', `with($form){with(this){with(_group){with(_formulas){ return ${item} }}}}`)).call(this.api.form, this.fc.formulas, this.api.top.form, group ? (this.subRuleData[group.id] || {}) : {}, ctx.rule, this.api);
                         }
                         return invoke(fn, undefined);
-                    }, (n) => {
+                    });
+                    const callback = (n) => {
+                        if (k === 'value') {
+                            this.onInput(ctx, n);
+                        } else if (k[0] === '$') {
+                            this.api.setEffect(ctx.id, k, n);
+                        } else {
+                            deepSet(ctx.rule, k, n);
+                        }
+                    };
+                    if (k === 'value' ? [undefined, null, ''].indexOf(ctx.rule.value) > -1 : computedValue.value !== deepGet(ctx.rule, k)) {
+                        callback(computedValue.value);
+                    }
+                    ctx.watch.push(watch(computedValue, (n) => {
                         setTimeout(() => {
-                            if (k === 'value') {
-                                this.onInput(ctx, n);
-                            } else if (k[0] === '$') {
-                                this.api.setEffect(ctx.id, k, n);
-                            } else {
-                                deepSet(ctx.rule, k, n);
-                            }
+                            callback(n);
                         });
-                    }, {immediate: k === 'value' ? [undefined, null, ''].indexOf(ctx.rule.value) > -1 : true}));
+                    }));
                 });
 
             });

@@ -290,9 +290,17 @@ export default function useLoader(Handler) {
                     }
                 });
             });
-            hideLst.length && nextTick(() => {
-                hideLst.forEach(v => v());
-            });
+            if (hideLst.length) {
+                if (this.loading) {
+                    hideLst.length && this.bus.$once('load-end', () => {
+                        hideLst.forEach(v => v());
+                    });
+                } else {
+                    hideLst.length && nextTick(() => {
+                        hideLst.forEach(v => v());
+                    });
+                }
+            }
             this.vm.emit('control', ctx.origin, this.api);
             this.effect(ctx, 'control');
             return flag;
