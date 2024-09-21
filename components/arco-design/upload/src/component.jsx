@@ -82,7 +82,7 @@ export default defineComponent({
     },
     render() {
         return <>
-            <AUpload list-type={'picture-card'} {...this.$attrs} onPreview={this.handlePreview}
+            <AUpload listType={'picture-card'} {...this.$attrs} onPreview={this.handlePreview}
                 onSuccess={this.handleChange}
                 ref="upload" fileList={this.uploadList} onUpdate:fileList={this.inputRemove}
                 v-slots={this.$slots}/>

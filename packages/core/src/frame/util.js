@@ -5,6 +5,7 @@ import {arrayAttrs, normalAttrs} from './attrs';
 import {logError} from '@form-create/utils/lib/console';
 import {isVNode} from 'vue';
 import {upper} from '@form-create/utils/lib/toline';
+import toCase from '@form-create/utils/lib/tocase';
 
 export {parseJson, parseFn, toJson} from '@form-create/utils/lib/json';
 
@@ -138,6 +139,9 @@ export function toProps(rule) {
     const prop = {...(rule.props || {})};
 
     Object.keys(rule.on || {}).forEach(k => {
+        if(k.indexOf('-') > 0) {
+            k = toCase(k);
+        }
         const name = `on${upper(k)}`;
         if (Array.isArray(prop[name])) {
             prop[name] = [...prop[name], rule.on[k]];

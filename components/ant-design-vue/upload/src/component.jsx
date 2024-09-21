@@ -92,7 +92,7 @@ export default defineComponent({
         const aModal = resolveComponent('AModal');
         const props = {[aModal.props.open ? 'open' : 'visible']: this.previewVisible}
         return <>
-            <AUpload maxCount={this.limit} list-type={'picture-card'} {...this.$attrs} onPreview={this.handlePreview}
+            <AUpload maxCount={this.limit} listType={'picture-card'} {...this.$attrs} onPreview={this.handlePreview}
                 onChange={this.handleChange} fileList={this.uploadList}
                 ref="upload" v-slots={getSlot(this.$slots, ['default'])}>
                 {isShow ? (this.$slots.default?.() ||

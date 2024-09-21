@@ -91,7 +91,7 @@ export default defineComponent({
         return <>
             <n-upload max={this.limit} listType={'image-card'} {...this.$attrs} onPreview={this.handlePreview}
                 onFinish={this.handleChange} key={this.uploadList.length}
-                default-file-list={this.uploadList} onUpdate:fileList={this.inputRemove}
+                defaultFileList={this.uploadList} onUpdate:fileList={this.inputRemove}
                 v-slots={this.$slots} ref="el"/>
             <NModal preset={'card'} mask={this.previewMask} title={this.modalTitle} show={this.previewVisible}
                 style="width: 600px;"

@@ -52,7 +52,7 @@ export default defineComponent({
     },
     render() {
         return <ElTree {...this.$attrs} ref="tree" onCheck={this.updateValue}
-            onNode-click={this.updateValue}
+            onNodeClick={this.updateValue}
             v-slots={this.$slots}/>;
     },
     mounted() {
