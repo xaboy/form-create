@@ -72,12 +72,15 @@ extend(Handler.prototype, {
         });
     },
     init() {
-        this.appendData = {...(this.options.formData || {}), ...(this.fc.vm.props.modelValue || {}), ...this.appendData};
+        this.updateAppendData();
         this.useProvider();
         this.usePage();
         this.loadRule();
         this.$manager.__init();
         this.lifecycle('created');
+    },
+    updateAppendData() {
+        this.appendData = {...(this.options.formData || {}), ...(this.fc.vm.props.modelValue || {}), ...this.appendData};
     },
     isBreakWatch() {
         return this.loading || this.noWatchFn || this.reloading;

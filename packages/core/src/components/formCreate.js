@@ -74,8 +74,8 @@ export default function $FormCreate(FormCreate, components, directives) {
             const parent = inject('parentFC', null);
             let top = parent;
 
-            if(parent) {
-                while(top.setupState.parent) {
+            if (parent) {
+                while (top.setupState.parent) {
                     top = top.setupState.parent;
                 }
             } else {
@@ -201,6 +201,7 @@ export default function $FormCreate(FormCreate, components, directives) {
 
             watch(() => [...rule.value], (n) => {
                 if (fc.$handle.isBreakWatch() || n.length === data.renderRule.length && n.every(v => data.renderRule.indexOf(v) > -1)) return;
+                fc.$handle.updateAppendData();
                 fc.$handle.reloadRule(rule.value);
                 vm.setupState.renderRule();
             })
@@ -221,10 +222,11 @@ export default function $FormCreate(FormCreate, components, directives) {
                 } else {
                     fapi.setValue(n || {});
                 }
-            }, {deep: true});
+            }, {deep: true, flush: 'post'});
 
             watch(() => props.index, () => {
                 fapi.coverValue({});
+                fc.$handle.updateAppendData();
                 nextTick(() => {
                     nextTick(() => {
                         fapi.clearValidateState();

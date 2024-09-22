@@ -94,7 +94,9 @@ export default function useInput(Handler) {
             this.syncValue();
         },
         appendValue(rule) {
-            if (!rule.field || !hasProperty(this.appendData, rule.field)) return;
+            if ((!rule.field || !hasProperty(this.appendData, rule.field)) && !this.options.forceCoverValue) {
+                return ;
+            }
             rule.value = this.appendData[rule.field];
             delete this.appendData[rule.field];
         },
