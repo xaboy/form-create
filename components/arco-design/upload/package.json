@@ -1,6 +1,6 @@
 {
   "name": "@form-create/component-arco-upload",
-  "version": "3.2.0",
+  "version": "3.2.9",
   "description": "@form-create/arco-design 内置组件",
   "main": "./dist/index.min.js",
   "module": "./dist/index.esm.js",

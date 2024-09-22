@@ -1,6 +1,6 @@
 {
   "name": "@form-create/arco-design",
-  "version": "3.2.8",
+  "version": "3.2.9",
   "description": "arco-design动态表单|form-create is a form generation component that can generate dynamic rendering, data collection, verification and submission functions through JSON. Supports 5 UI frameworks, and supports the generation of any Vue components. Built-in 20 kinds of commonly used form components and custom components, no matter how complex forms can be easily handled.",
   "main": "./dist/form-create.min.js",
   "module": "./dist/form-create.esm.js",
@@ -49,9 +49,9 @@
     "@form-create/component-arco-frame": "^3.2.0",
     "@form-create/component-arco-group": "^3.2.8",
     "@form-create/component-arco-radio": "^3.2.0",
-    "@form-create/component-arco-upload": "^3.2.0",
+    "@form-create/component-arco-upload": "^3.2.9",
     "@form-create/component-subform": "^3.1.34",
-    "@form-create/core": "^3.2.8",
+    "@form-create/core": "^3.2.9",
     "@form-create/utils": "^3.2.0"
   },
   "publishConfig": {
