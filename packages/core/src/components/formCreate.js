@@ -72,6 +72,15 @@ export default function $FormCreate(FormCreate, components, directives) {
             const vm = getCurrentInstance();
             provide('parentFC', vm);
             const parent = inject('parentFC', null);
+            let top = parent;
+
+            if(parent) {
+                while(top.setupState.parent) {
+                    top = top.setupState.parent;
+                }
+            } else {
+                top = vm;
+            }
 
             const {rule, modelValue, subForm, inFor} = toRefs(props);
 
@@ -226,6 +235,7 @@ export default function $FormCreate(FormCreate, components, directives) {
             return {
                 fc: markRaw(fc),
                 parent: parent ? markRaw(parent) : parent,
+                top: markRaw(top),
                 fapi: markRaw(fapi),
                 ...toRefs(data),
                 getGroupInject: () => getGroupInject(vm, parent),

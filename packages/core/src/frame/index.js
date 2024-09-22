@@ -21,6 +21,7 @@ import html from '../parser/html';
 import uniqueId from '@form-create/utils/lib/unique';
 import {cookieDriver, localStorageDriver} from './dataDriver';
 import debounce from '@form-create/utils/lib/debounce';
+import {deepSet} from '@form-create/utils';
 
 function parseProp(name, id) {
     let prop;
@@ -232,7 +233,7 @@ export default function FormCreateFactory(config) {
     }
 
     function setData(id, data) {
-        loadData[id] = data;
+        deepSet(loadData, id, data);
         refreshData(id);
     }
 
@@ -294,8 +295,6 @@ export default function FormCreateFactory(config) {
             },
             drivers,
             renderDriver: null,
-            setData,
-            getData,
             refreshData,
             loadData,
             CreateNode,
@@ -304,6 +303,7 @@ export default function FormCreateFactory(config) {
             options: ref({}),
             extendApiFn,
             fetchCache: new WeakMap(),
+            tmpData: {},
         })
         listener.forEach(item => {
             this.bus.$on(item.name, item.callback);
@@ -437,6 +437,14 @@ export default function FormCreateFactory(config) {
                 }
             }
         },
+        setData(id, data, isGlobal) {
+            if(!isGlobal) {
+                deepSet(this.vm.setupState.top.setupState.fc.tmpData, id, data);
+                this.bus.$emit('$loadData.' + id);
+            } else {
+                setData(id, data);
+            }
+        },
         getLoadData(id, def) {
             let val = null;
             if (id != null) {
@@ -455,10 +463,11 @@ export default function FormCreateFactory(config) {
                     val = this.globalVarDriver(split.join('.'));
                     split = [];
                 } else {
-                    val = getData(id, def);
+                    const tmpData = this.vm.setupState.top.setupState.fc.tmpData;
+                    val = hasProperty(tmpData, key) ? deepGet(tmpData, id) : getData(key);
                     split = [];
                 }
-                if (split.length) {
+                if (val && split.length) {
                     val = deepGet(val, split);
                 }
             }
@@ -571,6 +580,7 @@ export default function FormCreateFactory(config) {
             listener.forEach(item => {
                 this.bus.$off(item.name, item.callback);
             });
+            this.tmpData = {};
             this.unwatch.forEach(fn => fn());
             this.unwatch = [];
             this.$handle.reloadRule([]);

@@ -633,7 +633,7 @@ export interface BaseApi<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
 
     getData(id: string, defaultValue?: any): any;
 
-    setData(id: string, value?: any): void;
+    setData(id: string, value?: any, isGlobal?: boolean): void;
 
     refreshData(id: string): void;
 

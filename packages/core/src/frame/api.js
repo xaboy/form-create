@@ -533,8 +533,8 @@ export default function Api(h) {
         getData(id, def) {
             return h.fc.getLoadData(id, def);
         },
-        setData(id, data) {
-            return h.fc.setData(id, data);
+        setData(id, data, isGlobal) {
+            return h.fc.setData(id, data, isGlobal);
         },
         refreshData(id) {
             return h.fc.refreshData(id);
