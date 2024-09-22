@@ -4,13 +4,13 @@ import {Api} from "./index";
 import {ComponentInternalInstance} from "@vue/runtime-core";
 
 export interface OptionAttrs {
-    col?: Boolean | ColProps & {
+    col?: Boolean | Partial<ColProps & {
         labelWidth?: number | string;
         show?: Boolean;
-    };
-    row?: Boolean | RowProps & {
+    }>;
+    row?: Boolean | Partial<RowProps & {
         show?: Boolean;
-    };
+    }>;
     info?: {
         show?: Boolean;
         native?: Boolean;
@@ -18,22 +18,22 @@ export interface OptionAttrs {
         align?: 'left' | 'right';
         info?: string;
     };
-    wrap?: Boolean | VNodeRule & FieldProps & {
+    wrap?: Boolean | Partial<VNodeRule & FieldProps & {
         show?: Boolean;
-    };
+    }>;
     form?: FormProps;
 
-    submitBtn?: Boolean | ButtonProps & {
+    submitBtn?: Boolean | Partial<ButtonProps & {
         click?: Function;
         innerText?: string;
         show?: Boolean;
-    };
+    }>;
 
-    resetBtn?: Boolean | ButtonProps & {
+    resetBtn?: Boolean | Partial<ButtonProps & {
         click?: Function;
         innerText?: string;
         show?: Boolean;
-    };
+    }>;
 
 }
 
