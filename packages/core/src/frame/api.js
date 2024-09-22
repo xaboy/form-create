@@ -386,7 +386,7 @@ export default function Api(h) {
         method(id, name) {
             const el = api.el(id);
             if (!el || !el[name])
-                throw new Error(format('err', `${name}方法不存在`));
+                throw new Error(format('err', `${name} 方法不存在`));
             return (...args) => {
                 return el[name](...args);
             }

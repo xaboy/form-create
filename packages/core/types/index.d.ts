@@ -320,7 +320,12 @@ export interface BaseRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> extend
     control?: Control<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>[];
     effect?: {
         fetch?: String | FetchEffectOption | ((rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => FetchEffectOption),
-        componentValidate?: string | boolean;
+        componentValidate?: string | boolean | {
+            method: string;
+            trigger?: string;
+            message?: string;
+            [key: string]: any;
+        };
         required?: boolean | string | object;
         loadData?: LoadDataEffectOption | Array<LoadDataEffectOption>;
         [key: string]: any;

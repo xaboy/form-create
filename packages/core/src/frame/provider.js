@@ -64,16 +64,22 @@ const loadData = function (fc) {
 const componentValidate = {
     name: 'componentValidate',
     load(attr, rule, api) {
-        const method = attr.getValue();
-        if (!method) {
+        let options = attr.getValue();
+        if (!options || options.method === false) {
             attr.clearProp();
             api.clearValidateState([rule.field]);
         } else {
+            if (!is.Object(options)) {
+                options = {method: options};
+            }
+            const method = options.method;
+            delete options.method;
             attr.getProp().validate = [{
+                ...options,
                 validator(...args) {
                     const ctx = byCtx(rule);
                     if (ctx) {
-                        return api.exec(ctx.id, method === true ? 'formCreateValidate' : method, ...args, {
+                        return api.exec(ctx.id, is.String(method) ? method : 'formCreateValidate', ...args, {
                             attr,
                             rule,
                             api
