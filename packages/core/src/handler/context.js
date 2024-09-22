@@ -149,44 +149,7 @@ export default function useContext(Handler) {
                     const computedValue = computed(() => {
                         const item = computedRule[k];
                         if (!item) return undefined;
-                        let fn;
-                        if (typeof item === 'object') {
-                            const group = ctx.getParentGroup();
-                            const checkCondition = (item) => {
-                                item = Array.isArray(item) ? {mode: 'AND', group: item} : item;
-                                if (!is.trueArray(item.group)) {
-                                    return true;
-                                }
-                                const or = item.mode === 'OR';
-                                let valid = true;
-                                for (let i = 0; i < item.group.length; i++) {
-                                    const one = item.group[i];
-                                    let flag;
-                                    if (one.mode) {
-                                        flag = checkCondition(one);
-                                    } else if (!condition[one.condition]) {
-                                        flag = false;
-                                    } else {
-                                        flag = (new Function('_$', '_$val', '$form', '_group', `with($form){with(this){with(_group){ return _$['${one.condition}'](${one.field}, ${one.compare ? one.compare : '_$val'}); }}}`)).call(this.api.form, condition, one.value, this.api.top.form, group ? (this.subRuleData[group.id] || {}) : {});
-                                    }
-                                    if (or && flag) {
-                                        return true;
-                                    }
-                                    if (!or) {
-                                        valid = valid && flag;
-                                    }
-                                }
-                                return or ? false : valid;
-                            }
-                            const val = checkCondition(item);
-                            return item.invert === true ? !val : val;
-                        } else if (is.Function(item)) {
-                            fn = () => item(this.api.form, this.api);
-                        } else {
-                            const group = ctx.getParentGroup();
-                            fn = () => (new Function('_formulas', '$form', '_group', '$rule', '$api', `with($form){with(this){with(_group){with(_formulas){ return ${item} }}}}`)).call(this.api.form, this.fc.formulas, this.api.top.form, group ? (this.subRuleData[group.id] || {}) : {}, ctx.rule, this.api);
-                        }
-                        return invoke(fn, undefined);
+                        return this.compute(ctx, item);
                     });
                     const callback = (n) => {
                         if (k === 'value') {
@@ -209,6 +172,46 @@ export default function useContext(Handler) {
 
             });
             this.watchEffect(ctx);
+        },
+        compute(ctx, item) {
+            let fn;
+            if (typeof item === 'object') {
+                const group = ctx.getParentGroup();
+                const checkCondition = (item) => {
+                    item = Array.isArray(item) ? {mode: 'AND', group: item} : item;
+                    if (!is.trueArray(item.group)) {
+                        return true;
+                    }
+                    const or = item.mode === 'OR';
+                    let valid = true;
+                    for (let i = 0; i < item.group.length; i++) {
+                        const one = item.group[i];
+                        let flag;
+                        if (one.mode) {
+                            flag = checkCondition(one);
+                        } else if (!condition[one.condition]) {
+                            flag = false;
+                        } else {
+                            flag = (new Function('$condition', '$val', '$form', '$group', `with($form){with(this){with($group){ return $condition['${one.condition}'](${one.field}, ${one.compare ? one.compare : '$val'}); }}}`)).call(this.api.form, condition, one.value, this.api.top.form, group ? (this.subRuleData[group.id] || {}) : {});
+                        }
+                        if (or && flag) {
+                            return true;
+                        }
+                        if (!or) {
+                            valid = valid && flag;
+                        }
+                    }
+                    return or ? false : valid;
+                }
+                const val = checkCondition(item);
+                return item.invert === true ? !val : val;
+            } else if (is.Function(item)) {
+                fn = () => item(this.api.form, this.api);
+            } else {
+                const group = ctx.getParentGroup();
+                fn = () => (new Function('$formulas', '$form', '$group', '$rule', '$api', `with($form){with(this){with($group){with($formulas){ return ${item} }}}}`)).call(this.api.form, this.fc.formulas, this.api.top.form, group ? (this.subRuleData[group.id] || {}) : {}, ctx.rule, this.api);
+            }
+            return invoke(fn, undefined);
         },
         updateChildren(ctx, n, o) {
             this.deferSyncValue(() => {
