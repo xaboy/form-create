@@ -513,7 +513,13 @@ export default function Api(h) {
                 opt = deepCopy(opt);
                 opt = h.loadFetchVar(opt);
                 h.beforeFetch(opt).then(() => {
-                    return asyncFetch(opt, h.fc.create.fetch).then(resolve).catch(reject);
+                    return asyncFetch(opt, h.fc.create.fetch).then((res)=>{
+                        invoke(()=>opt.onSuccess && opt.onSuccess(res));
+                        resolve(res);
+                    }).catch((e) => {
+                        invoke(()=>opt.onError && opt.onError(e));
+                        reject(e);
+                    });
                 });
             });
         },
@@ -523,8 +529,10 @@ export default function Api(h) {
                 _opt = h.loadFetchVar(_opt, get);
                 h.beforeFetch(_opt).then(() => {
                     return asyncFetch(_opt, h.fc.create.fetch).then(res => {
+                        invoke(()=>_opt.onSuccess && _opt.onSuccess(res));
                         callback && callback(res, change);
                     }).catch(e => {
+                        invoke(()=>_opt.onError && _opt.onError(e));
                         error && error(e);
                     });
                 });
