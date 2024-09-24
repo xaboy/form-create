@@ -107,7 +107,7 @@ export default {
         const {key, ref, $handle} = this;
         extend(this.rule, {key, ref});
         extend(this.rule.props, {
-            model: $handle.formData,
+            model: {...$handle.formData},
         });
     },
     render(children) {

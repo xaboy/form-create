@@ -23,7 +23,7 @@ export default function Handler(fc) {
             return fc.bus;
         },
         preview() {
-            return (fc.vm.props.preview != null ? fc.vm.props.preview : (this.options.preview || false));
+            return (fc.vm.props.preview != null ? fc.vm.props.preview : (fc.options.value.preview || false));
         }
     })
     extend(this, {
