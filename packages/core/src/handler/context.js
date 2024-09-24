@@ -208,8 +208,20 @@ export default function useContext(Handler) {
             } else if (is.Function(item)) {
                 fn = () => item(this.api.form, this.api);
             } else {
+                const that = this;
+                const formulas = Object.keys(this.fc.formulas).reduce((obj, k) => {
+                    obj[k] = function (...args) {
+                        return that.fc.formulas[k].call({
+                            that: this,
+                            rule: ctx.rule,
+                            api: that.api,
+                            fc: that.fc
+                        }, ...args);
+                    }
+                    return obj;
+                }, {})
                 const group = ctx.getParentGroup();
-                fn = () => (new Function('$formulas', '$form', '$group', '$rule', '$api', `with($form){with(this){with($group){with($formulas){ return ${item} }}}}`)).call(this.api.form, this.fc.formulas, this.api.top.form, group ? (this.subRuleData[group.id] || {}) : {}, ctx.rule, this.api);
+                fn = () => (new Function('$formulas', '$form', '$group', '$rule', '$api', `with($form){with(this){with($group){with($formulas){ return ${item} }}}}`)).call(this.api.form, formulas, this.api.top.form, group ? (this.subRuleData[group.id] || {}) : {}, ctx.rule, this.api);
             }
             return invoke(fn, undefined);
         },
