@@ -491,13 +491,9 @@ export default function FormCreateFactory(config) {
                 const key = split.shift();
                 const key2 = split.shift() || '';
                 const callback = debounce(() => {
-                    if (key !== id) {
-                        const temp = this.getLoadData(id, def);
-                        if (JSON.stringify(temp) !== JSON.stringify(unwatch[id].val)) {
-                            unwatch[id].val = temp;
-                            run(true);
-                        }
-                    } else {
+                    const temp = this.getLoadData(id, def);
+                    if (JSON.stringify(temp) !== JSON.stringify(unwatch[id].val)) {
+                        unwatch[id].val = temp;
                         run(true);
                     }
                 }, 0);
