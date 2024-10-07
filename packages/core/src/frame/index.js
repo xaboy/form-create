@@ -3,7 +3,7 @@ import {createApp, h, nextTick, reactive, ref, watch} from 'vue';
 import makerFactory from '../factory/maker';
 import Handle from '../handler';
 import fetch from './fetch';
-import {creatorFactory} from '..';
+import {creatorFactory, mergeRule} from '..';
 import BaseParser from '../factory/parser';
 import {copyRule, copyRules, deepGet, invoke, mergeGlobal, parseFn, parseJson, setPrototypeOf, toJson} from './util';
 import fragment from '../components/fragment';
@@ -76,6 +76,7 @@ export default function FormCreateFactory(config) {
     const CreateNode = CreateNodeFactory();
     const formulas = {};
     const isMobile = config.isMobile === true;
+    const prototype = {};
 
     exportAttrs(config.attrs || {});
 
@@ -101,7 +102,10 @@ export default function FormCreateFactory(config) {
 
     function register() {
         const data = nameProp(...arguments);
-        if (data.id && data.prop) providers[data.id] = is.Function(data.prop) ? data.prop : {...data.prop, name: data.id};
+        if (data.id && data.prop) providers[data.id] = is.Function(data.prop) ? data.prop : {
+            ...data.prop,
+            name: data.id
+        };
     }
 
     function componentAlias(alias) {
@@ -180,6 +184,8 @@ export default function FormCreateFactory(config) {
         const vm = app.mount(div);
         return vm.$refs.fc.fapi;
     }
+
+    setPrototypeOf(create, prototype);
 
     function factory(inherit) {
         let _config = {...config};
@@ -438,7 +444,7 @@ export default function FormCreateFactory(config) {
             }
         },
         setData(id, data, isGlobal) {
-            if(!isGlobal) {
+            if (!isGlobal) {
                 deepSet(this.vm.setupState.top.setupState.fc.tmpData, id, data);
                 this.bus.$emit('$loadData.' + id);
             } else {
@@ -492,8 +498,8 @@ export default function FormCreateFactory(config) {
                 const key2 = split.shift() || '';
                 const callback = debounce(() => {
                     const temp = this.getLoadData(id, def);
-                    if(!unwatch[id]) {
-                        return ;
+                    if (!unwatch[id]) {
+                        return;
                     } else if (JSON.stringify(temp) !== JSON.stringify(unwatch[id].val)) {
                         unwatch[id].val = temp;
                         run(true);
@@ -593,6 +599,7 @@ export default function FormCreateFactory(config) {
         extend(formCreate, {
             version: config.version,
             ui: config.ui,
+            isMobile,
             extendApi,
             getData,
             setDataDriver,
@@ -613,6 +620,7 @@ export default function FormCreateFactory(config) {
             componentAlias,
             copyRule,
             copyRules,
+            mergeRule,
             fetch,
             $form,
             parseFn,
@@ -627,7 +635,6 @@ export default function FormCreateFactory(config) {
     function useStatic(formCreate) {
         extend(formCreate, {
             create,
-            isMobile,
             install(app, options) {
                 globalConfig = {...globalConfig, ...(options || {})}
                 const key = '_installedFormCreate_' + config.ui;
@@ -650,8 +657,8 @@ export default function FormCreateFactory(config) {
         })
     }
 
-    useAttr(create);
-    useStatic(create);
+    useAttr(prototype);
+    useStatic(prototype);
 
     setDataDriver('$cookie', cookieDriver);
     setDataDriver('$localStorage', localStorageDriver);
@@ -682,19 +689,19 @@ export default function FormCreateFactory(config) {
     }
 
     const FcComponent = $form();
-    setPrototypeOf(FcComponent, create);
+    setPrototypeOf(FcComponent, prototype);
     Object.defineProperties(FcComponent, {
         fetch: {
             get() {
-                return create.fetch;
+                return prototype.fetch;
             },
             set(val) {
-                create.fetch = val;
+                prototype.fetch = val;
             }
         }
     })
 
-    FcComponent.util = create;
+    FcComponent.util = prototype;
 
     return FcComponent;
 }

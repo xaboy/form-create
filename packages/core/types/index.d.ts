@@ -146,7 +146,7 @@ export interface util<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs
 
     directive(directive: any): void;
 
-    register(name: string, effect: Effect<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>): void;
+    register(name: string, effect: Effect<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> | ((fc: Object) => void)): void;
 
     register(effect: Effect<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>): void;
 
