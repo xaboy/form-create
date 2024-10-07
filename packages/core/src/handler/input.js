@@ -87,15 +87,20 @@ export default function useInput(Handler) {
             }
             fields.reduce((initial, field) => {
                 const ctx = this.getCtx(field);
-                initial[field] = toRef(ctx.rule, 'value');
+                if (!this.isIgnore(ctx.rule)) {
+                    initial[field] = toRef(ctx.rule, 'value');
+                }
                 return initial;
             }, data);
             this.form = data;
             this.syncValue();
         },
+        isIgnore(rule) {
+            return rule.ignore || (this.options.ignoreHiddenFields && rule.hidden);
+        },
         appendValue(rule) {
             if ((!rule.field || !hasProperty(this.appendData, rule.field)) && !this.options.forceCoverValue) {
-                return ;
+                return;
             }
             rule.value = this.appendData[rule.field];
             delete this.appendData[rule.field];

@@ -97,7 +97,12 @@ export default function useContext(Handler) {
                         return;
                     }
                     this.watching = true;
-                    if (key === 'link') {
+                    if (key === 'hidden' && Boolean(n) !== Boolean(o)) {
+                        this.$render.clearCacheAll();
+                    }
+                    if ((key === 'ignore' && ctx.input) || (key === 'hidden' && ctx.input && this.options.ignoreHiddenFields)) {
+                        this.syncForm();
+                    } else if (key === 'link') {
                         ctx.link();
                         return;
                     } else if (['props', 'on', 'deep'].indexOf(key) > -1) {
@@ -107,8 +112,6 @@ export default function useContext(Handler) {
                         }
                     } else if (key === 'emit') {
                         this.parseEmit(ctx);
-                    } else if (key === 'hidden' && Boolean(n) !== Boolean(o)) {
-                        this.$render.clearCacheAll();
                     } else if (['prefix', 'suffix'].indexOf(key) > -1)
                         n && this.loadFn(n, ctx.rule);
                     else if (key === 'type') {

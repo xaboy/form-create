@@ -96,7 +96,7 @@ export default function Api(h) {
         formData(fields) {
             if (fields == null) {
                 return api.fields().reduce((initial, id) => {
-                    const ctx = (h.fieldCtx[id] || []).filter(ctx => !ctx.rule.ignore)[0];
+                    const ctx = (h.fieldCtx[id] || []).filter(ctx => !h.isIgnore(ctx.rule))[0];
                     if (!ctx) return initial;
                     initial[ctx.field] = copy(ctx.rule.value);
                     return initial;
@@ -111,7 +111,7 @@ export default function Api(h) {
         getValue(field) {
             const ctx = h.getFieldCtx(field);
             if (!ctx) {
-                if (h.options.appendValue !== false && hasProperty(h.appendData[field])) {
+                if (h.options.appendValue !== false && hasProperty(h.appendData, field)) {
                     return copy(h.appendData[field]);
                 }
                 return undefined;
