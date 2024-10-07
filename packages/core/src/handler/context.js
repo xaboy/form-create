@@ -56,10 +56,10 @@ export default function useContext(Handler) {
         getParser(ctx) {
             const list = this.fc.parsers;
             const renderDriver = this.fc.renderDriver;
-            if(renderDriver) {
+            if (renderDriver) {
                 const list = renderDriver.parsers || {};
                 const parser = list[ctx.originType] || list[toCase(ctx.type)] || list[ctx.trueType];
-                if(parser) {
+                if (parser) {
                     return parser;
                 }
             }
@@ -146,10 +146,15 @@ export default function useContext(Handler) {
                     computedRule = {value: computedRule}
                 }
                 Object.keys(computedRule).forEach(k => {
+                    let oldValue = undefined;
                     const computedValue = computed(() => {
                         const item = computedRule[k];
                         if (!item) return undefined;
-                        return this.compute(ctx, item);
+                        const value = this.compute(ctx, item);
+                        if (item.linkage && value === undefined) {
+                            return oldValue;
+                        }
+                        return value;
                     });
                     const callback = (n) => {
                         if (k === 'value') {
@@ -164,6 +169,7 @@ export default function useContext(Handler) {
                         callback(computedValue.value);
                     }
                     ctx.watch.push(watch(computedValue, (n) => {
+                        oldValue = n;
                         setTimeout(() => {
                             callback(n);
                         });
@@ -203,27 +209,34 @@ export default function useContext(Handler) {
                     }
                     return or ? false : valid;
                 }
-                const val = checkCondition(item);
-                return item.invert === true ? !val : val;
+                let val = checkCondition(item);
+                val = item.invert === true ? !val : val;
+                if (item.linkage) {
+                    return val ? invoke(() => this.computeValue(item.linkage, ctx, group), undefined) : undefined;
+                }
+                return val;
             } else if (is.Function(item)) {
                 fn = () => item(this.api.form, this.api);
             } else {
-                const that = this;
-                const formulas = Object.keys(this.fc.formulas).reduce((obj, k) => {
-                    obj[k] = function (...args) {
-                        return that.fc.formulas[k].call({
-                            that: this,
-                            rule: ctx.rule,
-                            api: that.api,
-                            fc: that.fc
-                        }, ...args);
-                    }
-                    return obj;
-                }, {})
                 const group = ctx.getParentGroup();
-                fn = () => (new Function('$formulas', '$form', '$group', '$rule', '$api', `with($form){with(this){with($group){with($formulas){ return ${item} }}}}`)).call(this.api.form, formulas, this.api.top.form, group ? (this.subRuleData[group.id] || {}) : {}, ctx.rule, this.api);
+                fn = () => this.computeValue(item, ctx, group);
             }
             return invoke(fn, undefined);
+        },
+        computeValue(str, ctx, group) {
+            const that = this;
+            const formulas = Object.keys(this.fc.formulas).reduce((obj, k) => {
+                obj[k] = function (...args) {
+                    return that.fc.formulas[k].call({
+                        that: this,
+                        rule: ctx.rule,
+                        api: that.api,
+                        fc: that.fc
+                    }, ...args);
+                }
+                return obj;
+            }, {})
+            return (new Function('$formulas', '$form', '$group', '$rule', '$api', `with($form){with(this){with($group){with($formulas){ return ${str} }}}}`)).call(this.api.form, formulas, this.api.top.form, group ? (this.subRuleData[group.id] || {}) : {}, ctx.rule, this.api);
         },
         updateChildren(ctx, n, o) {
             this.deferSyncValue(() => {
