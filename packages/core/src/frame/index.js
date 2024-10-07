@@ -450,9 +450,9 @@ export default function FormCreateFactory(config) {
             if (id != null) {
                 let split = id.split('.');
                 const key = split.shift();
-                if (key === '$form') {
+                if (key === '$topForm') {
                     val = this.$handle.api.top.formData();
-                } else if (key === '$subForm') {
+                } else if (key === '$form') {
                     val = this.$handle.api.formData();
                 } else if (key === '$options') {
                     val = this.options.value;
@@ -464,7 +464,7 @@ export default function FormCreateFactory(config) {
                     split = [];
                 } else {
                     const tmpData = this.vm.setupState.top.setupState.fc.tmpData;
-                    val = hasProperty(tmpData, key) ? deepGet(tmpData, id) : getData(key);
+                    val = hasProperty(tmpData, key) ? deepGet(tmpData, id) : getData(id);
                     split = [];
                 }
                 if (val && split.length) {
@@ -492,7 +492,9 @@ export default function FormCreateFactory(config) {
                 const key2 = split.shift() || '';
                 const callback = debounce(() => {
                     const temp = this.getLoadData(id, def);
-                    if (JSON.stringify(temp) !== JSON.stringify(unwatch[id].val)) {
+                    if(!unwatch[id]) {
+                        return ;
+                    } else if (JSON.stringify(temp) !== JSON.stringify(unwatch[id].val)) {
                         unwatch[id].val = temp;
                         run(true);
                     }
