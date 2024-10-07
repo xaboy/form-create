@@ -293,6 +293,7 @@ export interface BaseRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> extend
     modelEmit?: string;
     emitPrefix?: string;
     value?: any;
+    ignore?: Boolean;
     computed?: string | ((formData: FormData, api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => any);
     emit?: Array<string | { name: string; inject: any }>;
     link?: string[];

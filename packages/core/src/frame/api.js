@@ -94,16 +94,28 @@ export default function Api(h) {
             return undefined;
         },
         formData(fields) {
-            return tidyFields(fields).reduce((initial, id) => {
-                const ctx = h.getFieldCtx(id);
-                if (!ctx) return initial;
-                initial[ctx.field] = copy(ctx.rule.value);
-                return initial;
-            }, h.options.appendValue !== false ? copy(h.appendData) : {});
+            if (fields == null) {
+                return api.fields().reduce((initial, id) => {
+                    const ctx = (h.fieldCtx[id] || []).filter(ctx => !ctx.rule.ignore)[0];
+                    if (!ctx) return initial;
+                    initial[ctx.field] = copy(ctx.rule.value);
+                    return initial;
+                }, h.options.appendValue !== false ? copy(h.appendData) : {});
+            } else {
+                return tidyFields(fields).reduce((initial, id) => {
+                    initial[id] = api.getValue(id);
+                    return initial;
+                }, {});
+            }
         },
         getValue(field) {
             const ctx = h.getFieldCtx(field);
-            if (!ctx) return;
+            if (!ctx) {
+                if (h.options.appendValue !== false && hasProperty(h.appendData[field])) {
+                    return copy(h.appendData[field]);
+                }
+                return undefined;
+            }
             return copy(ctx.rule.value);
         },
         coverValue(formData) {
@@ -513,11 +525,11 @@ export default function Api(h) {
                 opt = deepCopy(opt);
                 opt = h.loadFetchVar(opt);
                 h.beforeFetch(opt).then(() => {
-                    return asyncFetch(opt, h.fc.create.fetch).then((res)=>{
-                        invoke(()=>opt.onSuccess && opt.onSuccess(res));
+                    return asyncFetch(opt, h.fc.create.fetch).then((res) => {
+                        invoke(() => opt.onSuccess && opt.onSuccess(res));
                         resolve(res);
                     }).catch((e) => {
-                        invoke(()=>opt.onError && opt.onError(e));
+                        invoke(() => opt.onError && opt.onError(e));
                         reject(e);
                     });
                 });
@@ -529,10 +541,10 @@ export default function Api(h) {
                 _opt = h.loadFetchVar(_opt, get);
                 h.beforeFetch(_opt).then(() => {
                     return asyncFetch(_opt, h.fc.create.fetch).then(res => {
-                        invoke(()=>_opt.onSuccess && _opt.onSuccess(res));
+                        invoke(() => _opt.onSuccess && _opt.onSuccess(res));
                         callback && callback(res, change);
                     }).catch(e => {
-                        invoke(()=>_opt.onError && _opt.onError(e));
+                        invoke(() => _opt.onError && _opt.onError(e));
                         error && error(e);
                     });
                 });
