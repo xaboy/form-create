@@ -452,6 +452,7 @@ export interface BaseOptions<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
     formData?: FormData;
     el?: Element | string;
     onSubmit?: (formData: FormData, api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
+    onReset?: (api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
     beforeFetch?: (config: FetchEffectOption, form: {
         api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>,
         rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>
