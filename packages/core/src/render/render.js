@@ -220,6 +220,9 @@ export default function useRender(Render) {
                     getSubForm: () => {
                         return this.$handle.subForm[ctx.id];
                     },
+                    slots: () => {
+                        return this.vm.setupState.top.slots;
+                    },
                     options: [],
                     children: [],
                     preview: false,
@@ -227,7 +230,7 @@ export default function useRender(Render) {
                     field: ctx.field,
                     rule: ctx.rule,
                     input: ctx.input,
-                    updateValue:(data) =>{
+                    updateValue: (data) => {
                         this.$handle.onUpdateValue(ctx, data);
                     }
                 }
@@ -329,10 +332,10 @@ export default function useRender(Render) {
         },
         defaultRender(ctx, children) {
             const prop = ctx.prop;
-            if (prop.component){
-                if(typeof prop.component === 'string'){
+            if (prop.component) {
+                if (typeof prop.component === 'string') {
                     return this.vNode.make(prop.component, prop, children);
-                }else{
+                } else {
                     return this.vNode.makeComponent(prop.component, prop, children);
                 }
             }
