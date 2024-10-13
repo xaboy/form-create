@@ -247,7 +247,7 @@ export default function useLoader(Handler) {
                         })
                             : (ctrl && ctx.ctrlRule.splice(ctx.ctrlRule.indexOf(ctrl) >>> 0, 1));
                         hideLst[valid ? 'push' : 'unshift'](() => {
-                            if (method === 'disabled') {
+                            if (method === 'disabled' || method === 'enabled') {
                                 this.api.disabled(!valid, rule);
                             } else if (method === 'display') {
                                 this.api.display(valid, rule);
