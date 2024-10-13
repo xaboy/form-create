@@ -97,6 +97,8 @@
     border-radius: 5px;
     margin-bottom: 25px;
     padding: 5px 5px 25px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 ._fc-m-group-arrow {
