@@ -40,6 +40,7 @@ export default function Handler(fc) {
         subForm: {},
         form: reactive({}),
         appendData: {},
+        ignoreFields: [],
         providers: {},
         cycleLoad: null,
         loadedId: 1,

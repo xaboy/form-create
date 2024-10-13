@@ -95,12 +95,13 @@ export default function Api(h) {
         },
         formData(fields) {
             if (fields == null) {
-                return api.fields().reduce((initial, id) => {
-                    const ctx = (h.fieldCtx[id] || []).filter(ctx => !h.isIgnore(ctx.rule))[0];
-                    if (!ctx) return initial;
-                    initial[ctx.field] = copy(ctx.rule.value);
-                    return initial;
-                }, h.options.appendValue !== false ? copy(h.appendData) : {});
+                const data = {};
+                Object.keys(h.form).forEach(k => {
+                    if (h.ignoreFields.indexOf(k) === -1) {
+                        data[k] = copy(h.form[k]);
+                    }
+                });
+                return data;
             } else {
                 return tidyFields(fields).reduce((initial, id) => {
                     initial[id] = api.getValue(id);

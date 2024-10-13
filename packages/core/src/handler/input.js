@@ -77,6 +77,7 @@ export default function useInput(Handler) {
         syncForm() {
             const data = reactive({});
             const fields = this.fields();
+            const ignoreFields = [];
             if (this.options.appendValue !== false) {
                 Object.keys(this.appendData).reduce((initial, field) => {
                     if (fields.indexOf(field) === -1) {
@@ -86,13 +87,15 @@ export default function useInput(Handler) {
                 }, data);
             }
             fields.reduce((initial, field) => {
-                const ctx = this.getCtx(field);
-                if (!this.isIgnore(ctx.rule)) {
-                    initial[field] = toRef(ctx.rule, 'value');
+                const ctx = (this.fieldCtx[field] || []).filter(ctx => !this.isIgnore(ctx.rule))[0] || (this.fieldCtx[field][0]);
+                if (this.isIgnore(ctx.rule)) {
+                    ignoreFields.push(field);
                 }
+                initial[field] = toRef(ctx.rule, 'value');
                 return initial;
             }, data);
             this.form = data;
+            this.ignoreFields = ignoreFields;
             this.syncValue();
         },
         isIgnore(rule) {
@@ -127,7 +130,13 @@ export default function useInput(Handler) {
             if (this.deferSyncFn) {
                 return this.deferSyncFn.sync = true;
             }
-            this.vm.setupState.updateValue({...this.form});
+            const data = {};
+            Object.keys(this.form).forEach(k => {
+                if (this.ignoreFields.indexOf(k) === -1) {
+                    data[k] = this.form[k];
+                }
+            });
+            this.vm.setupState.updateValue(data);
         },
         isChange(ctx, value) {
             return JSON.stringify(this.getFormData(ctx), strFn) !== JSON.stringify(value, strFn);
