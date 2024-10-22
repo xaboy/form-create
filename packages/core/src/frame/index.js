@@ -86,6 +86,7 @@ export default function FormCreateFactory(config) {
     let globalConfig = {global: {}};
     const loadData = {};
     const CreateNode = CreateNodeFactory();
+    const prototype = {};
 
     exportAttrs(config.attrs || {});
 
@@ -196,6 +197,8 @@ export default function FormCreateFactory(config) {
         return _this.api();
     }
 
+    Object.setPrototypeOf(create, prototype);
+
     function factory(inherit) {
         let _config = {...config};
         if (inherit) {
@@ -279,7 +282,7 @@ export default function FormCreateFactory(config) {
                     if (this.inFor) {
                         const idx = instance[this.name].indexOf(this);
                         instance[this.name].splice(idx, 1);
-                        if(!instance[this.name].length){
+                        if (!instance[this.name].length) {
                             delete instance[this.name];
                         }
                     } else {
@@ -296,7 +299,7 @@ export default function FormCreateFactory(config) {
         },
         initOptions() {
             this.options = {};
-            let options  = {formData: {}, submitBtn: {}, resetBtn: {}, ...deepCopy(globalConfig)};
+            let options = {formData: {}, submitBtn: {}, resetBtn: {}, ...deepCopy(globalConfig)};
             if (this.isSub()) {
                 this.mergeOptions(this.options, this.vm.$pfc.$f.config || {}, true);
             }
@@ -403,8 +406,8 @@ export default function FormCreateFactory(config) {
         })
     }
 
-    useAttr(create);
-    useStatic(create);
+    useAttr(prototype);
+    useStatic(prototype);
 
     CreateNode.use({fragment: 'fcFragment'});
 
@@ -422,5 +425,20 @@ export default function FormCreateFactory(config) {
         inherit.loadData && extend(loadData, inherit.loadData);
     }
 
-    return create;
+    const FcComponent = $form();
+    Object.setPrototypeOf(FcComponent, prototype);
+    Object.defineProperties(FcComponent, {
+        fetch: {
+            get() {
+                return prototype.fetch;
+            },
+            set(val) {
+                prototype.fetch = val;
+            }
+        }
+    })
+
+    FcComponent.util = prototype;
+
+    return FcComponent;
 }
