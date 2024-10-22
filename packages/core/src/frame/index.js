@@ -19,8 +19,6 @@ import {deepCopy} from '@form-create/utils/lib/deepextend';
 import html from '../parser/html';
 import uniqueId from '@form-create/utils/lib/unique';
 
-export let _vue = typeof window !== 'undefined' && window.Vue ? window.Vue : Vue;
-
 function _parseProp(name, id) {
     let prop;
     if (arguments.length === 2) {
@@ -44,7 +42,7 @@ function _getEl(options) {
 }
 
 function mountForm(rules, option) {
-    const $vm = new _vue({
+    const $vm = new Vue({
         data() {
             //todo 外部无法修改
             return {rule: rules, option: option || {}};
@@ -236,7 +234,7 @@ export default function FormCreateFactory(config) {
             getData,
             loadData,
             CreateNode,
-            bus: new _vue,
+            bus: new Vue,
             unwatch: null,
             options: {},
             extendApi: config.extendApi || (api => api)
@@ -391,8 +389,6 @@ export default function FormCreateFactory(config) {
                 globalConfig = {...globalConfig, ...(options || {})}
                 if (Vue._installedFormCreate === true) return;
                 Vue._installedFormCreate = true;
-                _vue = Vue;
-
                 const $formCreate = function (rules, opt = {}) {
                     return create(rules, opt, this);
                 };
