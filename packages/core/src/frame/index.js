@@ -175,11 +175,11 @@ export default function FormCreateFactory(config) {
     }
 
     function $form() {
-        return _vue.extend($FormCreate(FormCreate));
+        return $FormCreate(FormCreate, components, directives);
     }
 
     function $vnode() {
-        return _vue.extend(fragment);
+        return fragment;
     }
 
     //todo 检查回调函数作用域

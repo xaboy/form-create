@@ -15,13 +15,15 @@ const getRuleInject = (vm, parent) => {
     }
 }
 
-export default function $FormCreate(FormCreate) {
+export default function $FormCreate(FormCreate, components, directives) {
     return {
         name: NAME,
         componentName: NAME,
         model: {
             prop: 'api'
         },
+        components,
+        directives,
         provide() {
             return {
                 $pfc: this,
