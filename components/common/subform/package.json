@@ -3,13 +3,16 @@
   "version": "2.5.37",
   "description": "@form-create 内置组件",
   "main": "./dist/index.js",
-  "module": "./dist/index.js",
+  "module": "./dist/index.es.js",
   "unpkg": "./dist/index.js",
   "jsdelivr": "./dist/index.js",
+  "exports": {
+    "./*": "./*"
+  },
   "scripts": {
     "clean": "rimraf dist/",
-    "bili": "cross-env bili",
-    "build": "npm-run-all clean bili"
+    "vite:build": "vite build",
+    "build:component:vite": "npm-run-all clean vite:build"
   },
   "files": [
     "README.md",

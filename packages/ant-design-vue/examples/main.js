@@ -1,11 +1,3 @@
-/*
- * @Author       : djkloop
- * @Date         : 2020-12-23 13:48:23
- * @LastEditors   : djkloop
- * @LastEditTime  : 2020-12-23 14:08:17
- * @Description  : 头部注释
- * @FilePath      : /form-create2/packages/ant-design-vue/examples/main.js
- */
 import Vue from 'vue'
 import Antd from 'ant-design-vue';
 import 'ant-design-vue/dist/antd.css';

@@ -1,11 +1,3 @@
-<!--
- * @Author       : djkloop
- * @Date         : 2020-08-15 21:35:48
- * @LastEditors  : djkloop
- * @LastEditTime : 2020-08-15 22:00:47
- * @Description  : 头部注释
- * @FilePath     : /form-create2/packages/element-ui/examples/App.vue
--->
 <template>
     <div>
         <h1 class="title">FormCreate ElementUI Demo</h1>

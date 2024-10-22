@@ -1,17 +1,25 @@
 {
   "name": "@form-create/ant-design-vue",
   "version": "2.5.37",
-  "description": "ant-design-vue动态表单|form-create is a form generation component that can generate dynamic rendering, data collection, verification and submission functions through JSON. Supports 3 UI frameworks, and supports the generation of any Vue components. Built-in 20 kinds of commonly used form components and custom components, no matter how complex forms can be easily handled.",
+  "description": "AntDesignVue版本低代码表单|FormCreate 是一个可以通过 JSON 生成具有动态渲染、数据收集、验证和提交功能的低代码表单生成组件。支持6个UI框架，适配移动端，并且支持生成任何 Vue 组件。内置20种常用表单组件和自定义组件，再复杂的表单都可以轻松搞定。",
   "main": "./dist/form-create.min.js",
-  "module": "./dist/form-create.min.js",
+  "module": "./dist/form-create.esm.js",
   "unpkg": "./dist/form-create.min.js",
   "jsdelivr": "./dist/form-create.min.js",
   "typings": "./types/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/form-create.esm.js",
+      "types": "./types/index.d.ts",
+      "require": "./dist/form-create.min.js"
+    },
+    "./*": "./*"
+  },
   "scripts": {
     "clean": "rimraf dist/",
-    "dev:antdv": "vue-cli-service serve",
-    "bili": "cross-env UI_LIB=ant-design-vue bili",
-    "build": "npm-run-all clean bili"
+    "build:lib": "npm-run-all clean build:lib:vite",
+    "dev:antdv": "vite --config vite.dev.config.js",
+    "build:lib:vite": "vite build --config vite.build.config.js"
   },
   "repository": {
     "type": "git",
@@ -19,13 +27,14 @@
   },
   "keywords": [
     "动态表单",
+    "低代码",
     "@form-create",
     "form-builder",
     "form",
     "components",
-    "vue.js",
-    "ant-design-vue",
-    "json-form",
+    "vue",
+    "element-ui",
+    "lowcode",
     "dynamic-form"
   ],
   "files": [
@@ -43,20 +52,19 @@
   },
   "homepage": "http://www.form-create.com",
   "dependencies": {
-    "@form-create/component-antdv-frame": "^2.5.36",
-    "@form-create/component-antdv-group": "^2.5.37",
-    "@form-create/component-antdv-upload": "^2.5.36",
-    "@form-create/component-subform": "^2.5.37",
-    "@form-create/core": "^2.5.37",
-    "@form-create/utils": "^2.5.36"
+    "@form-create/component-antdv-frame": "workspace:^",
+    "@form-create/component-antdv-group": "workspace:^",
+    "@form-create/component-antdv-upload": "workspace:^",
+    "@form-create/component-subform": "workspace:^",
+    "@form-create/core": "workspace:^",
+    "@form-create/utils": "workspace:^",
+    "vite-plugin-antdv-fix": "^1.0.3"
   },
   "publishConfig": {
     "access": "public"
   },
   "devDependencies": {
-    "@form-create/component-wangeditor": "^2.5.15",
-    "@vue/cli-plugin-babel": "^4.5.9",
-    "@vue/cli-service": "^4.5.3",
+    "@form-create/component-wangeditor": "workspace:^",
     "ant-design-vue": "^1.5.3",
     "moment": "^2.24.0",
     "v-jsoneditor": "^1.4.2"

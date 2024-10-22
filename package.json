@@ -1,44 +1,44 @@
 {
     "name": "form-create",
     "private": true,
+    "description": "FormCreate低代码表单渲染器，通过JSON数据驱动表单渲染",
     "scripts": {
-        "build": "node tools/cli/run.js build",
+        "component:build": "pnpm -r build:component:vite",
+        "data:build": "pnpm -r build:data:vite",
+        "lib:build": "pnpm -r build:lib",
+        "build": "pnpm run component:build && pnpm run lib:build && pnpm run data:build",
         "dev:ele": "cd packages/element-ui && npm run dev:ele",
+        "dev:antdv": "cd packages/ant-design-vue && npm run dev:antdv",
         "dev:iview": "cd packages/iview && npm run dev:iview",
         "dev:iview4": "cd packages/iview4 && npm run dev:iview4",
         "dev:view-design": "cd packages/view-design && npm run dev:view-design",
-        "dev:antdv": "cd packages/ant-design-vue && npm run dev:antdv",
         "commit": "git cz",
         "lint": "eslint *.js",
-        "clear-all": "rimraf package-lock.json node_modules packages/*/node_modules components/*/*/node_modules packages/*/package-lock.json components/*/*/package-lock.json",
-        "bootstrap": "npm run clear-all && npm i && npm-run-all bootstrap:lerna",
-        "bootstrap:lerna": "lerna bootstrap -- --ignore-engines"
+        "clear:package": "rimraf packages/*/node_modules packages/*/package-lock.json packages/*/pnpm-lock.yaml",
+        "clear:component": "rimraf components/*/node_modules components/*/package-lock.json components/*/pnpm-lock.yaml",
+        "clear:self": "rimraf ./package-lock.json ./pnpm-lock.yaml",
+        "clear:all": "pnpm run clear:package && pnpm run clear:component && pnpm run clear:self",
+        "preinstall": "npx only-allow pnpm",
+        "bootstrap": "pnpm i"
     },
     "devDependencies": {
-        "@vue/cli-service": "^4.5.3",
-        "babel-eslint": "^10.1.0",
-        "bili": "~4.5.3",
-        "chalk": "^4.1.0",
+        "@vitejs/plugin-vue2": "^2.3.1",
+        "@vitejs/plugin-vue2-jsx": "^1.1.1",
         "commitizen": "^4.1.2",
         "cross-env": "^7.0.2",
-        "css-loader": "^4.2.1",
         "cz-conventional-changelog": "^3.2.0",
         "cz-customizable": "^6.3.0",
         "eslint": "^7.7.0",
         "eslint-plugin-vue": "^6.2.2",
         "figlet": "^1.5.0",
-        "html-webpack-plugin": "^4.3.0",
         "husky": "^4.2.5",
-        "lerna": "^3.22.1",
         "lint-staged": "^10.2.11",
         "npm-run-all": "^4.1.5",
-        "ora": "^5.0.0",
         "rimraf": "^3.0.2",
-        "shelljs": "^0.8.4",
-        "vue": "^2.7.8",
-        "vue-loader": "^15.10.0",
-        "vue-style-loader": "^4.1.2",
-        "vue-template-compiler": "^2.7.8"
+        "vite": "^5.2.0",
+        "vite-plugin-banner": "^0.8.0",
+        "vite-plugin-css-injected-by-js": "^3.5.1",
+        "vue": "^2.7.8"
     },
     "config": {
         "commitizen": {
@@ -55,11 +55,5 @@
             "eslint --fix",
             "git add"
         ]
-    },
-    "dependencies": {
-        "@vue/cli-plugin-babel": "^4.5.3",
-        "commander": "^6.0.0",
-        "rollup-plugin-cleanup": "^3.2.1",
-        "rollup-plugin-commonjs": "^10.1.0"
     }
 }

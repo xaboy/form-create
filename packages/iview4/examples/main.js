@@ -1,11 +1,3 @@
-/*
- * @Author       : djkloop
- * @Date         : 2020-12-23 13:48:23
- * @LastEditors   : djkloop
- * @LastEditTime  : 2020-12-23 14:01:29
- * @Description  : 头部注释
- * @FilePath      : /form-create2/packages/iview4/examples/main.js
- */
 import Vue from 'vue'
 import ViewUI from 'view-design'
 import 'view-design/dist/styles/iview.css'

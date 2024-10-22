@@ -3,13 +3,16 @@
   "version": "2.5.36",
   "description": "@form-create/iview 内置组件",
   "main": "./dist/index.js",
-  "module": "./dist/index.js",
+  "module": "./dist/index.es.js",
   "unpkg": "./dist/index.js",
   "jsdelivr": "./dist/index.js",
+  "exports": {
+    "./*": "./*"
+  },
   "scripts": {
     "clean": "rimraf dist/",
-    "bili": "cross-env bili",
-    "build": "npm-run-all clean bili"
+    "vite:build": "vite build",
+    "build:component:vite": "npm-run-all clean vite:build"
   },
   "files": [
     "README.md",
@@ -31,7 +34,7 @@
   "author": "xaboy",
   "license": "MIT",
   "dependencies": {
-    "@form-create/utils": "^2.5.36"
+    "@form-create/utils": "workspace:^"
   },
   "bugs": {
     "url": "https://github.com/xaboy/form-create/issues"
