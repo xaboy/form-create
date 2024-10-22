@@ -1,6 +1,6 @@
 {
   "name": "@form-create/component-wangeditor",
-  "version": "2.6.0-alpha.0",
+  "version": "2.6.0",
   "description": "@form-create 富文本组件",
   "main": "./dist/index.js",
   "module": "./dist/index.es.js",
