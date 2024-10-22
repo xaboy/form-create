@@ -356,6 +356,10 @@ export default function Api(h) {
                     ctx.rule.value = copy(ctx.defaultValue);
                 });
             });
+            if (fields == null) {
+                is.Function(h.options.onReset) && invoke(() => h.options.onReset(api));
+                h.vm.$emit('reset', api);
+            }
         },
         method(id, name) {
             const el = api.el(id);
