@@ -168,8 +168,8 @@ export default function useLoader(Handler) {
                 } else {
                     if (ctx.originType !== ctx.rule.type) {
                         ctx.updateType();
-                        this.bindParser(ctx);
                     }
+                    this.bindParser(ctx);
                     this.appendValue(ctx.rule);
                 }
                 [false, true].forEach(b => this.parseEmit(ctx, b));
