@@ -128,7 +128,7 @@ export default function extendApi(api, h) {
                 } else {
                     is.Function(failFn) && invoke(() => failFn(this, ...arguments));
                 }
-            });
+            }).catch(e=>{});
         },
     });
 
