@@ -356,6 +356,9 @@ export default function Api(h) {
                     ctx.rule.value = copy(ctx.defaultValue);
                 });
             });
+            h.vm.$nextTick(() => {
+                api.clearValidateState();
+            });
             if (fields == null) {
                 is.Function(h.options.onReset) && invoke(() => h.options.onReset(api));
                 h.vm.$emit('reset', api);
