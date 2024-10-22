@@ -1,32 +1,4 @@
 {
-  "packages": [
-    "packages/ant-design-vue",
-    "packages/core",
-    "packages/data",
-    "packages/element-ui",
-    "packages/iview",
-    "packages/iview4",
-    "packages/view-design",
-    "packages/utils",
-    "components/common/subform",
-    "components/common/wangeditor",
-    "components/ant-design-vue/frame",
-    "components/ant-design-vue/group",
-    "components/ant-design-vue/upload",
-    "components/element-ui/checkbox",
-    "components/element-ui/frame",
-    "components/element-ui/group",
-    "components/element-ui/radio",
-    "components/element-ui/select",
-    "components/element-ui/tree",
-    "components/element-ui/upload",
-    "components/iview/checkbox",
-    "components/iview/frame",
-    "components/iview/group",
-    "components/iview/radio",
-    "components/iview/select",
-    "components/iview/tree",
-    "components/iview/upload"
-  ],
+  "npmClient": "pnpm",
   "version": "2.5.37"
 }
