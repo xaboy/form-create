@@ -43,6 +43,9 @@
     "dependencies": {
         "@form-create/utils": "workspace:^"
     },
+    "devDependencies": {
+        "vue": "2.7"
+    },
     "publishConfig": {
         "access": "public"
     }

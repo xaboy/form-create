@@ -1,5 +1,4 @@
-import vue from '@vitejs/plugin-vue2';
-import vue2JsxPlugin from '@vitejs/plugin-vue2-jsx';
+import {createVuePlugin} from 'vite-plugin-vue2'
 import {defineConfig} from 'vite';
 import cssInjectedByJsPlugin from 'vite-plugin-css-injected-by-js';
 import banner from 'vite-plugin-banner'
@@ -62,8 +61,9 @@ export default defineConfig({
         'process.env.UI': '"core"',
     },
     plugins: [
-        vue(),
-        vue2JsxPlugin(),
+        createVuePlugin({
+            jsx: true,
+        }),
         cssInjectedByJsPlugin(),
         banner(getBanner(__banner__))
     ],

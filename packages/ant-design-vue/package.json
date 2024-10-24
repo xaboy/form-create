@@ -57,8 +57,7 @@
     "@form-create/component-antdv-upload": "workspace:^",
     "@form-create/component-subform": "workspace:^",
     "@form-create/core": "workspace:^",
-    "@form-create/utils": "workspace:^",
-    "vite-plugin-antdv-fix": "^1.0.3"
+    "@form-create/utils": "workspace:^"
   },
   "publishConfig": {
     "access": "public"
@@ -67,6 +66,8 @@
     "@form-create/component-wangeditor": "workspace:^",
     "ant-design-vue": "^1.5.3",
     "moment": "^2.24.0",
-    "v-jsoneditor": "^1.4.2"
+    "v-jsoneditor": "^1.4.2",
+    "vite-plugin-antdv-fix": "^1.0.3",
+    "vue": "2.7"
   }
 }

@@ -69,6 +69,7 @@
     "devDependencies": {
         "@form-create/component-wangeditor": "workspace:^",
         "iview": "^3.3.3",
-        "v-jsoneditor": "^1.4.2"
+        "v-jsoneditor": "^1.4.2",
+        "vue": "2.7"
     }
 }

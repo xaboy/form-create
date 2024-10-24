@@ -70,6 +70,7 @@
         "@form-create/component-wangeditor": "workspace:^",
         "element-ui": "^2.15.9",
         "rimraf": "^6.0.1",
-        "v-jsoneditor": "^1.4.2"
+        "v-jsoneditor": "^1.4.2",
+        "vue": "2.7"
     }
 }

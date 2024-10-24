@@ -22,8 +22,12 @@
         "bootstrap": "pnpm i"
     },
     "devDependencies": {
-        "@vitejs/plugin-vue2": "^2.3.1",
+        "@babel/preset-env": "^7.25.9",
+        "@rollup/plugin-babel": "^6.0.4",
+        "@vitejs/plugin-vue2": "^1.1.2",
         "@vitejs/plugin-vue2-jsx": "^1.1.1",
+        "@vue/babel-preset-jsx": "^1.4.0",
+        "@vue/composition-api": "^1.7.2",
         "commitizen": "^4.1.2",
         "cross-env": "^7.0.2",
         "cz-conventional-changelog": "^3.2.0",
@@ -32,14 +36,16 @@
         "eslint-plugin-vue": "^6.2.2",
         "figlet": "^1.5.0",
         "husky": "^4.2.5",
-        "lint-staged": "^10.2.11",
         "lerna": "^8.1.8",
+        "lint-staged": "^10.2.11",
         "npm-run-all": "^4.1.5",
         "rimraf": "^3.0.2",
         "vite": "^5.2.0",
         "vite-plugin-banner": "^0.8.0",
         "vite-plugin-css-injected-by-js": "^3.5.1",
-        "vue": "^2.7.8"
+        "vite-plugin-vue2": "^2.0.3",
+        "vue": "2.6.14",
+        "vue-template-compiler": "^2.6.14"
     },
     "config": {
         "commitizen": {

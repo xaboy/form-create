@@ -1,5 +1,4 @@
-import vue from '@vitejs/plugin-vue2';
-import vue2JsxPlugin from '@vitejs/plugin-vue2-jsx';
+import {createVuePlugin} from 'vite-plugin-vue2'
 import path from 'node:path';
 import {defineConfig} from 'vite';
 import {version} from './package.json'
@@ -10,7 +9,9 @@ console.log(rootPath);
 /* @type {import('vite').UserConfig} */
 export default defineConfig({
     root: rootPath,
-    plugins: [vue(), vue2JsxPlugin()],
+    plugins: [createVuePlugin({
+            jsx: true,
+        })],
     define: {
         'process.env.UI': '"view-design"',
         'process.env.VERSION': `'${version}'`,
