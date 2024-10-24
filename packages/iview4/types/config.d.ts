@@ -3,58 +3,58 @@ import {Col, Row, Tooltip, Poptip, Button, Form, FormItem} from "view-design";
 import {Api} from "./index";
 
 export interface OptionAttrs {
-    col?: Boolean | Col & {
+    col?: Boolean | Partial<Col & {
         labelWidth?: number | string;
         show?: Boolean;
-    };
-    row?: Boolean | Row & {
+    }>;
+    row?: Boolean | Partial<Row & {
         show?: Boolean;
-    };
-    info?: Boolean | (Tooltip | Poptip) & VNodeRule & {
+    }>;
+    info?: Boolean | Partial<(Tooltip | Poptip) & VNodeRule & {
         show?: Boolean;
         native?: Boolean;
         icon?: string;
         align?: 'left' | 'right';
         info?: string;
-    };
-    wrap?: Boolean | VNodeRule & {
+    }>;
+    wrap?: Boolean | Partial<VNodeRule & {
         labelWidth?: number;
         labelFor?: string;
         required?: boolean;
         error?: string;
         showMessage?: boolean;
         show?: Boolean;
-    };
-    form?: {
+    }>;
+    form?: Partial<{
         inline?: boolean;
         labelPosition?: 'left' | 'right' | 'top';
         labelWidth?: number;
         showMessage?: boolean;
         className?: any;
         col?: Boolean;
-    };
+    }>;
 
-    submitBtn?: Boolean | Button & {
+    submitBtn?: Boolean | Partial<Button & {
         click?: Function;
         innerText?: string;
         show?: Boolean;
-    };
+    }>;
 
-    resetBtn?: Boolean | Button & {
+    resetBtn?: Boolean | Partial<Button & {
         click?: Function;
         innerText?: string;
         show?: Boolean;
-    };
+    }>;
 
 }
 
-declare const optionAttrs: OptionAttrs & {
-    title?: Boolean | VNodeRule & {
+declare const optionAttrs: Partial<OptionAttrs & {
+    title?: Boolean | Partial<VNodeRule & {
         show?: Boolean;
         native?: Boolean;
         title?: string;
-    };
-};
+    }>;
+}>;
 
 export interface CreatorAttrs {
     col(props: typeof optionAttrs.col): this;

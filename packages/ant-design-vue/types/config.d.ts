@@ -4,21 +4,21 @@ import {FormModelItem} from "ant-design-vue/types/form-model/form-item";
 import {Api} from "./index";
 
 export interface OptionAttrs {
-    col?: Boolean | Col & {
+    col?: Boolean | Partial<Col & {
         labelWidth?: number | string;
         show?: Boolean;
-    };
+    }>;
     row?: Boolean | Row & {
         show?: Boolean;
     };
-    info?: Boolean | (Tooltip | Popover) & VNodeRule & {
+    info?: Boolean | Partial<(Tooltip | Popover) & VNodeRule & {
         show?: Boolean;
         native?: Boolean;
         icon?: string;
         align?: 'left' | 'right';
         info?: string;
-    };
-    wrap?: Boolean | VNodeRule & {
+    }>;
+    wrap?: Boolean | Partial<VNodeRule & {
         colon?: boolean;
         extra?: any;
         hasFeedback?: boolean;
@@ -31,8 +31,8 @@ export interface OptionAttrs {
         labelAlign?: 'left' | 'right';
         autoLink?: boolean;
         show?: Boolean;
-    };
-    form?: {
+    }>;
+    form?: Partial<{
         hideRequiredMark?: boolean;
         labelCol?: Col;
         layout?: 'horizontal' | 'inline' | 'vertical';
@@ -43,29 +43,29 @@ export interface OptionAttrs {
         validateOnRuleChange?: boolean;
         className?: any;
         col?: Boolean;
-    };
+    }>;
 
-    submitBtn?: Boolean | Button & {
+    submitBtn?: Boolean | Partial<Button & {
         click?: Function;
         innerText?: string;
         show?: Boolean;
-    };
+    }>;
 
-    resetBtn?: Boolean | Button & {
+    resetBtn?: Boolean | Partial<Button & {
         click?: Function;
         innerText?: string;
         show?: Boolean;
-    };
+    }>;
 
 }
 
-declare const optionAttrs: OptionAttrs & {
-    title?: Boolean | VNodeRule & {
+declare const optionAttrs: Partial<OptionAttrs & {
+    title?: Boolean | Partial<VNodeRule & {
         show?: Boolean;
         native?: Boolean;
         title?: string;
-    };
-};
+    }>;
+}>;
 
 export interface CreatorAttrs {
     col(props: typeof optionAttrs.col): this;
