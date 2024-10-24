@@ -211,12 +211,6 @@ importers:
       '@form-create/utils':
         specifier: workspace:^
         version: link:../utils
-      vite-plugin-antdv-fix:
-        specifier: ^1.0.3
-        version: 1.0.3
-      vue:
-        specifier: '2.7'
-        version: 2.7.16
     devDependencies:
       '@form-create/component-wangeditor':
         specifier: workspace:^
@@ -230,21 +224,24 @@ importers:
       v-jsoneditor:
         specifier: ^1.4.2
         version: 1.4.5
+      vite-plugin-antdv-fix:
+        specifier: ^1.0.3
+        version: 1.0.3
+      vue:
+        specifier: '2.7'
+        version: 2.7.16
 
   packages/core:
     dependencies:
       '@form-create/utils':
         specifier: workspace:^
         version: link:../utils
+    devDependencies:
       vue:
         specifier: '2.7'
         version: 2.7.16
 
-  packages/data:
-    dependencies:
-      vue:
-        specifier: '2.7'
-        version: 2.7.16
+  packages/data: {}
 
   packages/element-ui:
     dependencies:
@@ -278,9 +275,6 @@ importers:
       '@form-create/utils':
         specifier: workspace:^
         version: link:../utils
-      vue:
-        specifier: ~2.7.16
-        version: 2.7.16
     devDependencies:
       '@form-create/component-wangeditor':
         specifier: workspace:^
@@ -294,6 +288,9 @@ importers:
       v-jsoneditor:
         specifier: ^1.4.2
         version: 1.4.5
+      vue:
+        specifier: '2.7'
+        version: 2.7.16
 
   packages/iview:
     dependencies:
@@ -327,9 +324,6 @@ importers:
       '@form-create/utils':
         specifier: workspace:^
         version: link:../utils
-      vue:
-        specifier: '2.7'
-        version: 2.7.16
     devDependencies:
       '@form-create/component-wangeditor':
         specifier: workspace:^
@@ -340,6 +334,9 @@ importers:
       v-jsoneditor:
         specifier: ^1.4.2
         version: 1.4.5
+      vue:
+        specifier: '2.7'
+        version: 2.7.16
 
   packages/iview4:
     dependencies:
@@ -349,9 +346,6 @@ importers:
       '@form-create/iview':
         specifier: workspace:^
         version: link:../iview
-      vue:
-        specifier: '2.7'
-        version: 2.7.16
     devDependencies:
       '@form-create/component-wangeditor':
         specifier: workspace:^
@@ -362,9 +356,12 @@ importers:
       view-design:
         specifier: ^4.0.2
         version: 4.7.0(vue@2.7.16)
+      vue:
+        specifier: '2.7'
+        version: 2.7.16
 
   packages/utils:
-    dependencies:
+    devDependencies:
       vue:
         specifier: '2.7'
         version: 2.7.16
@@ -377,9 +374,6 @@ importers:
       '@form-create/iview':
         specifier: workspace:^
         version: link:../iview
-      vue:
-        specifier: '2.7'
-        version: 2.7.16
     devDependencies:
       '@form-create/component-wangeditor':
         specifier: workspace:^
@@ -390,6 +384,9 @@ importers:
       view-design:
         specifier: ^4.0.2
         version: 4.7.0(vue@2.7.16)
+      vue:
+        specifier: '2.7'
+        version: 2.7.16
 
 packages:
 
