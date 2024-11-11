@@ -7,14 +7,13 @@ const SUFFIX = '-FORM-CREATE-SUFFIX]]';
 
 const $T = '$FN:';
 const $TX = '$FNX:';
-const FUNCTION = 'function';
 
 export function toJson(obj, space) {
     return JSON.stringify(deepExtend(Array.isArray(obj) ? [] : {}, obj, true), function (key, val) {
         if (val && val._isVue === true)
             return undefined;
 
-        if (typeof val !== FUNCTION) {
+        if (typeof val !== 'function') {
             return val;
         }
         if (val.__json) {
@@ -49,11 +48,11 @@ export function parseFn(fn, mode) {
                 v.__json = fn;
                 v.__inject = true;
                 return v;
-            } else if (!mode && v.indexOf(FUNCTION) === 0 && v !== FUNCTION) {
+            } else if (!mode && v.indexOf('function ') === 0 && v !== 'function ') {
                 flag = true;
             }
             if (!flag) return fn;
-            const val = makeFn((v.indexOf(FUNCTION) === -1 && v.indexOf('(') !== 0) ? (FUNCTION + ' ' + v) : v);
+            const val = makeFn((v.indexOf('function ') === -1 && v.indexOf('(') !== 0) ? ('function ' + v) : v);
             val.__json = fn;
             return val;
         } catch (e) {
