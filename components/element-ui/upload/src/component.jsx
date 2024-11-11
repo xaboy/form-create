@@ -148,8 +148,8 @@ export default {
             </ElUpload>;
         },
         update() {
-            let files = this.$refs.upload.uploadFiles.map((file) => file.url).filter((url) => url !== undefined);
-            if (this.cacheFiles.length !== files.length || !files.length) {
+            let files = this.$refs.upload.uploadFiles.map((file) => file.url).filter((url) => url !== undefined && url.indexOf('blob:') !== 0);
+            if (JSON.stringify(files) !== JSON.stringify(this.cacheFiles)) {
                 this.cacheFiles = [...files];
                 this.$emit('input', this.limit === 1 ? (files[0] || '') : files);
             }
