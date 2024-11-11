@@ -306,7 +306,7 @@ export default function FormCreateFactory(config) {
         },
         mergeOptions(target, opt, parent) {
             opt = deepCopy(opt);
-            parent && ['page', 'onSubmit', 'mounted', 'reload', 'formData', 'el'].forEach((n) => {
+            parent && ['page', 'onSubmit', 'onReset', 'onCreated', 'onChange', 'onMounted', 'mounted', 'onReload', 'reload', 'formData', 'el'].forEach((n) => {
                 delete opt[n];
             });
             if (opt.global) {

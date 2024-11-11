@@ -21,6 +21,10 @@ export default function useLifecycle(Handler) {
             this.vm.$emit(name, this.api);
             this.emitEvent(name, this.api);
         },
+        targetReload(){
+            this.bus.$off('next-tick', this.nextReload);
+            this.bus.$once('next-tick', this.nextReload);
+        },
         emitEvent(name, ...args) {
             const _fn = this.options[name] || this.options[toCase('on-' + name)];
             if (_fn) {

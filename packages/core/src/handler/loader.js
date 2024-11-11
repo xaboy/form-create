@@ -320,8 +320,6 @@ export default function useLoader(Handler) {
                 this.refresh();
                 this.vm.$emit('reloading', this.api);
             });
-            this.bus.$off('next-tick', this.nextReload);
-            this.bus.$once('next-tick', this.nextReload);
             this.vm.$emit('update', this.api);
         },
         //todo 组件生成全部通过 alias

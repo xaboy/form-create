@@ -100,10 +100,13 @@ export default function $FormCreate(FormCreate, components, directives) {
                 },
                 deep: true
             },
-            rule(n) {
+            rule(n, o) {
                 if (n.length === this.renderRule.length && n.every(v => this.renderRule.indexOf(v) > -1)) return;
                 this.formCreate.$handle.reloadRule(n);
                 this._renderRule();
+                if (n !== o) {
+                    this.formCreate.$handle.targetReload();
+                }
             },
             disabled() {
                 this.$f.refresh();
