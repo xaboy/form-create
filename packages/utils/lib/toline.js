@@ -4,3 +4,7 @@ export default function toLine(name) {
         line = line.substr(1);
     return line;
 }
+
+export function upper(str) {
+    return str.replace(str[0], str[0].toLocaleUpperCase());
+}

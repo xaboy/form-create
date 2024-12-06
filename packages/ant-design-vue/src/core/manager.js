@@ -24,13 +24,20 @@ function tidyBool(opt, name) {
     }
 }
 
+function tidyRule(rule) {
+    const _rule = {...rule};
+    delete _rule.children;
+    return _rule;
+}
+
 export default {
     validate() {
         const form = this.form();
         if (form) {
             return form.validate();
+        } else {
+            return new Promise(v => v());
         }
-        return new Promise(v => v());
     },
     validateField(field) {
         const form = this.form();
@@ -40,14 +47,14 @@ export default {
                     e ? reject(e) : resolve(null);
                 })
             })
+        } else {
+            return new Promise(v => v());
         }
-        return new Promise(v => v());
     },
     clearValidateState(ctx) {
         const fItem = this.vm.$refs[ctx.wrapRef];
         if (fItem) {
-            fItem.validateMessage = '';
-            fItem.validateState = '';
+            fItem.clearValidate();
         }
     },
     tidyOptions(options) {
@@ -62,12 +69,7 @@ export default {
         return prop;
     },
     mergeProp(ctx) {
-        ctx.prop = mergeProps([{
-            info: this.options.info || {},
-            title: this.options.title || {},
-            wrap: this.options.wrap || {},
-            col: this.options.col || {},
-        }, ctx.prop], {
+        const def = {
             info: {
                 type: 'popover',
                 placement: 'topLeft',
@@ -76,7 +78,10 @@ export default {
             title: {},
             col: {span: 24},
             wrap: {},
-        }, {normal: ['title', 'info', 'col', 'wrap']});
+        };
+        ['info', 'wrap', 'col', 'title'].forEach(name => {
+            ctx.prop[name] = mergeProps([this.options[name] || {}, ctx.prop[name] || {}], def[name]);
+        });
     },
     getDefaultOptions() {
         return getConfig();
@@ -90,7 +95,7 @@ export default {
                     e.preventDefault();
                 }
             },
-            class: [form.className, form.class, 'form-create'],
+            class: [form.className, form.class, 'form-create', this.$handle.preview ? 'is-preview' : ''],
             style: form.style,
             type: 'form',
         };
@@ -100,73 +105,94 @@ export default {
         extend(this.rule, {key, ref});
         extend(this.rule.props, {
             model: $handle.formData,
-            // rules: $handle.validate(),
         });
     },
     render(children) {
-        if (children.length) {
-            children.push(this.makeFormBtn());
+        if (children.slotLen() && !this.$handle.preview) {
+            children.setSlot(undefined, () => this.makeFormBtn());
         }
-        return this.$r(this.rule, isFalse(this.options.row.show) ? children : [this.makeRow(children)]);
+        return this.$r(this.rule, isFalse(this.options.row.show) ? children.getSlots() : [this.makeRow(children)]);
     },
     makeWrap(ctx, children) {
         const rule = ctx.prop;
         const uni = `${this.key}${ctx.key}`;
         const col = rule.col;
+        const isTitle = this.isTitle(rule) && rule.wrap.title !== false;
         const {layout, col: _col} = this.rule.props;
+        delete rule.wrap.title;
         const item = isFalse(rule.wrap.show) ? children : this.$r(mergeProps([rule.wrap, {
             props: {
-                ...(rule.wrap || {}),
+                ...tidyRule(rule.wrap || {}),
                 prop: ctx.id,
                 rules: ctx.injectValidate(),
                 ...(layout !== 'horizontal' ? {labelCol: {}, wrapperCol: {}} : {})
             },
-            class: rule.className,
+            class: this.$render.mergeClass(rule.className, 'fc-form-item'),
             key: `${uni}fi`,
             ref: ctx.wrapRef,
             type: 'formItem',
-        }]), [children, this.makeInfo(rule, uni, ctx)]);
+        }]), {default: () => children, ...(isTitle ? {label: () => this.makeInfo(rule, uni, ctx)} : {})});
         return (layout === 'inline' || isFalse(_col) || isFalse(col.show)) ? item : this.makeCol(rule, uni, [item]);
     },
+    isTitle(rule) {
+        if (this.options.form.title === false) return false;
+        const title = rule.title;
+        return !((!title.title && !title.native) || isFalse(title.show));
+    },
     makeInfo(rule, uni, ctx) {
-        const titleProp = rule.title;
-        const infoProp = rule.info;
+        const titleProp = {...rule.title};
+        const infoProp = {...rule.info};
         if (this.options.form.title === false) return false;
         if ((!titleProp.title && !titleProp.native) || isFalse(titleProp.show)) return;
-        const isTool = isTooltip(infoProp);
+        const isTip = isTooltip(infoProp);
         const titleSlot = this.getSlot('title');
-        const children = [titleSlot ? titleSlot({title: titleProp.title || '', rule: ctx.rule, options: this.options}) :titleProp.title];
+        const children = [titleSlot ? titleSlot({title: ctx.refRule.__$title.value, rule: ctx.rule, options: this.options}) : ctx.refRule.__$title.value];
 
         if (!isFalse(infoProp.show) && (infoProp.info || infoProp.native) && !isFalse(infoProp.icon)) {
             const prop = {
                 type: infoProp.type || 'popover',
-                props: {...infoProp},
+                props: tidyRule(infoProp),
                 key: `${uni}pop`,
                 slot: 'label',
             };
-            const field = isTool ? 'title' : 'content';
+
+            delete prop.props.icon;
+            delete prop.props.show;
+            delete prop.props.info;
+            delete prop.props.align;
+            delete prop.props.native;
+
+            const field = isTip ? 'title' : 'content';
             if (infoProp.info && !hasProperty(prop.props, field)) {
-                prop.props[field] = infoProp.info;
+                prop.props[field] = ctx.refRule.__$info.value;
             }
-            children[infoProp.align !== 'left' ? 'unshift' : 'push'](this.$r(mergeProps([infoProp, prop]), [
-                this.$r({
+            children[infoProp.align !== 'left' ? 'unshift' : 'push'](this.$r(mergeProps([infoProp, prop]), {
+                [titleProp.slot || 'default']: () => this.$r({
                     type: 'icon',
                     props: {type: infoProp.icon === true ? 'question-circle-o' : infoProp.icon},
                     key: `${uni}i`
                 })
-            ]));
+            }))
         }
-        return this.$r(mergeProps([titleProp, {
-            props: titleProp,
-            slot: titleProp.slot || 'label',
+
+        const _prop = mergeProps([titleProp, {
+            props: tidyRule(titleProp),
             key: `${uni}tit`,
+            class: 'fc-form-title',
+            slot: titleProp.slot || 'label',
             type: titleProp.type || 'span',
-        }]), children);
+        }]);
+
+        delete _prop.props.show;
+        delete _prop.props.title;
+        delete _prop.props.native;
+
+        return this.$r(_prop, children);
     },
     makeCol(rule, uni, children) {
         const col = rule.col;
         return this.$r({
-            class: col.class,
+            class: this.$render.mergeClass(col.class, 'fc-form-col'),
             type: 'col',
             props: col || {span: 24},
             key: `${uni}col`
@@ -177,7 +203,7 @@ export default {
         return this.$r({
             type: 'row',
             props: row,
-            class: row.class,
+            class: this.$render.mergeClass(row.class, 'fc-form-row'),
             key: `${this.key}row`
         }, children)
     },
@@ -198,6 +224,7 @@ export default {
         }
         const item = this.$r({
             type: 'formItem',
+            class: 'fc-form-item fc-form-footer',
             key: `${this.key}fb`,
             props: {
                 labelCol,
@@ -210,43 +237,56 @@ export default {
             ? item
             : this.$r({
                 type: 'col',
+                class: 'fc-form-col',
                 props: {span: 24},
                 key: `${this.key}fc`
             }, [item]);
     },
+
     makeResetBtn() {
-        const resetBtn = this.options.resetBtn;
+        const resetBtn = {...this.options.resetBtn};
+        const innerText = resetBtn.innerText;
+        delete resetBtn.innerText;
+        delete resetBtn.click;
+        delete resetBtn.col;
+        delete resetBtn.show;
         return this.$r({
             type: 'button',
             props: resetBtn,
+            class: 'fc-reset-btn',
             style: {width: resetBtn.width, marginLeft: '10px'},
             on: {
                 click: () => {
                     const fApi = this.$handle.api;
-                    resetBtn.click
-                        ? resetBtn.click(fApi)
+                    this.options.resetBtn.click
+                        ? this.options.resetBtn.click(fApi)
                         : fApi.resetFields();
                 }
             },
             key: `${this.key}b2`,
-        }, [resetBtn.innerText]);
+        }, [innerText]);
     },
     makeSubmitBtn() {
-        const submitBtn = this.options.submitBtn;
-
+        const submitBtn = {...this.options.submitBtn};
+        const innerText = submitBtn.innerText;
+        delete submitBtn.innerText;
+        delete submitBtn.click;
+        delete submitBtn.col;
+        delete submitBtn.show;
         return this.$r({
             type: 'button',
             props: submitBtn,
+            class: 'fc-submit-btn',
             style: {width: submitBtn.width},
             on: {
                 click: () => {
                     const fApi = this.$handle.api;
-                    submitBtn.click
-                        ? submitBtn.click(fApi)
-                        : fApi.submit();
+                    this.options.submitBtn.click
+                        ? this.options.submitBtn.click(fApi)
+                        : fApi.submit().catch(()=>{});
                 }
             },
             key: `${this.key}b1`,
-        }, [submitBtn.innerText]);
+        }, [innerText]);
     }
 }

@@ -2,19 +2,13 @@ import extend from '@form-create/utils/lib/extend';
 import {$set} from '@form-create/utils/lib/modify';
 import is, {hasProperty} from '@form-create/utils/lib/type';
 import {invoke} from '../frame/util';
-import toArray from '@form-create/utils/lib/toarray';
+import {reactive, toRef} from 'vue';
 
 export default function useInput(Handler) {
     extend(Handler.prototype, {
-        getValue(ctx) {
-            if (is.Undef(ctx.cacheValue)) {
-                ctx.cacheValue = ctx.parser.toValue(this.getFormData(ctx), ctx);
-            }
-            return ctx.cacheValue;
-        },
         setValue(ctx, value, formValue, setFlag) {
             if (ctx.deleted) return;
-            ctx.cacheValue = value;
+            ctx.rule.value = value;
             this.changeStatus = true;
             this.nextRefresh();
             this.$render.clearCache(ctx);
@@ -23,6 +17,7 @@ export default function useInput(Handler) {
             this.valueChange(ctx, value);
             this.vm.$emit('change', ctx.field, value, ctx.origin, this.api, setFlag || false);
             this.effect(ctx, 'value');
+            this.targetHook(ctx, 'value', {value});
             this.emitEvent('change', ctx.field, value, {
                 rule: ctx.origin,
                 api: this.api,
@@ -31,63 +26,86 @@ export default function useInput(Handler) {
         },
         onInput(ctx, value) {
             let val;
-            if (ctx.input && (this.isQuote(ctx, val = ctx.parser.toValue(value, ctx)) || this.isChange(ctx, val))) {
+            if (ctx.input && (this.isQuote(ctx, val = ctx.parser.toValue(value, ctx)) || this.isChange(ctx, value))) {
                 this.setValue(ctx, val, value);
             }
         },
+        onUpdateValue(ctx, data) {
+            this.deferSyncValue(() => {
+                const group = ctx.getParentGroup();
+                const subForm = group ? this.subRuleData[group.id] : null;
+                const subData = {};
+                Object.keys(data || {}).forEach(k => {
+                    if (subForm && hasProperty(subForm, k)) {
+                        subData[k] = data[k];
+                    } else if (hasProperty(this.api.form, k)) {
+                        this.api.form[k] = data[k];
+                    } else if (this.api.top !== this.api && hasProperty(this.api.top.form, k)) {
+                        this.api.top.form[k] = data[k];
+                    }
+                });
+                if (Object.keys(subData).length) {
+                    this.api.setChildrenFormData(group.rule, subData);
+                }
+            })
+        },
+        onBaseInput(ctx, value) {
+            this.setFormData(ctx, value);
+            ctx.modelValue = value;
+            this.nextRefresh();
+            this.$render.clearCache(ctx);
+        },
         setFormData(ctx, value) {
-            $set(this.formData, ctx.id, value === null ? undefined : value);
+            ctx.modelValue = value;
+            const group = ctx.getParentGroup();
+            if (group) {
+                if (!this.subRuleData[group.id]) {
+                    this.subRuleData[group.id] = {};
+                }
+                this.subRuleData[group.id][ctx.field] = ctx.rule.value;
+            }
+            $set(this.formData, ctx.id, value);
+        },
+        rmSubRuleData(ctx) {
+            const group = ctx.getParentGroup();
+            if (group && this.subRuleData[group.id]) {
+                delete this.subRuleData[group.id][ctx.field];
+            }
         },
         getFormData(ctx) {
             return this.formData[ctx.id];
         },
-        validate() {
-            toEmpty(this.vm.validate);
-            this.fields().forEach(id => {
-                this.fieldCtx[id].forEach(ctx => {
-                    this.vm.validate[ctx.id] = toArray(ctx.rule.validate);
-                });
-            });
-            return this.vm.validate;
-        },
         syncForm() {
-            toEmpty(this.form);
-            Object.defineProperties(this.form, this.fields().reduce((initial, field) => {
-                const ctx = this.getFieldCtx(field);
-                const handle = this.valueHandle(ctx);
-                handle.configurable = true;
-                initial[field] = handle;
-                return initial;
-            }, this.options.appendValue !== false ? Object.keys(this.appendData).reduce((initial, field) => {
-                initial[field] = {
-                    enumerable: true,
-                    configurable: true,
-                    get: () => {
-                        return this.appendData[field];
-                    },
-                    set: (val) => {
-                        this.appendData[field] = val;
+            const data = {};
+            const fields = this.fields();
+            const ignoreFields = [];
+            if (this.options.appendValue !== false) {
+                Object.keys(this.appendData).reduce((initial, field) => {
+                    if (fields.indexOf(field) === -1) {
+                        initial[field] = toRef(this.appendData, field);
                     }
+                    return initial;
+                }, data);
+            }
+            fields.reduce((initial, field) => {
+                const ctx = (this.fieldCtx[field] || []).filter(ctx => !this.isIgnore(ctx.rule))[0] || (this.fieldCtx[field][0]);
+                if (this.isIgnore(ctx.rule)) {
+                    ignoreFields.push(field);
                 }
+                initial[field] = toRef(ctx.rule, 'value');
                 return initial;
-            }, {}) : {}));
+            }, data);
+            this.form = reactive(data);
+            this.ignoreFields = ignoreFields;
             this.syncValue();
         },
-        valueHandle(ctx) {
-            return {
-                enumerable: true,
-                get: () => {
-                    return this.getValue(ctx);
-                },
-                set: (value) => {
-                    if (this.isChange(ctx, value)) {
-                        this.setValue(ctx, value, ctx.parser.toFormValue(value, ctx), true);
-                    }
-                }
-            };
+        isIgnore(rule) {
+            return rule.ignore === true || (rule.ignore === 'hidden' && rule.hidden) || (this.options.ignoreHiddenFields && rule.hidden);
         },
         appendValue(rule) {
-            if (!rule.field || !hasProperty(this.appendData, rule.field)) return;
+            if ((!rule.field || !hasProperty(this.appendData, rule.field)) && !this.options.forceCoverValue) {
+                return;
+            }
             rule.value = this.appendData[rule.field];
             delete this.appendData[rule.field];
         },
@@ -105,7 +123,7 @@ export default function useInput(Handler) {
             if (this.deferSyncFn === fn) {
                 this.deferSyncFn = null;
                 if (fn.sync) {
-                    this.syncValue();
+                    this.syncForm();
                 }
             }
         },
@@ -113,10 +131,16 @@ export default function useInput(Handler) {
             if (this.deferSyncFn) {
                 return this.deferSyncFn.sync = true;
             }
-            this.vm._updateValue({...(this.options.appendValue !== false ? this.appendData : {}), ...this.form});
+            const data = {};
+            Object.keys(this.form).forEach(k => {
+                if (this.ignoreFields.indexOf(k) === -1) {
+                    data[k] = this.form[k];
+                }
+            });
+            this.vm.updateValue(data);
         },
         isChange(ctx, value) {
-            return JSON.stringify(ctx.rule.value, strFn) !== JSON.stringify(value === null ? undefined : value, strFn);
+            return JSON.stringify(this.getFormData(ctx), strFn) !== JSON.stringify(value, strFn);
         },
         isQuote(ctx, value) {
             return (is.Object(value) || Array.isArray(value)) && value === ctx.rule.value;
@@ -159,11 +183,6 @@ export default function useInput(Handler) {
     });
 }
 
-
 function strFn(key, val) {
     return typeof val === 'function' ? '' + val : val;
-}
-
-function toEmpty(obj) {
-    Object.keys(obj).forEach(k => delete obj[k]);
 }

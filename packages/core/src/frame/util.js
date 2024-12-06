@@ -1,12 +1,11 @@
+import deepExtend from '@form-create/utils/lib/deepextend';
 import is from '@form-create/utils/lib/type';
 import mergeProps from '@form-create/utils/lib/mergeprops';
 import {arrayAttrs, normalAttrs} from './attrs';
 import {logError} from '@form-create/utils/lib/console';
-import {parseJson, toJson} from '@form-create/utils/lib/json';
-import deepExtend from '@form-create/utils/lib/deepextend';
+import {toArray} from "@form-create/utils";
 
-export {parseFn} from '@form-create/utils/lib/json';
-export {parseJson, toJson}
+export {parseJson, parseFn, toJson} from '@form-create/utils/lib/json';
 
 export function enumerable(value, writable) {
     return {
@@ -18,8 +17,8 @@ export function enumerable(value, writable) {
 }
 
 //todo 优化位置
-export function copyRule(rule) {
-    return copyRules([rule])[0];
+export function copyRule(rule, mode) {
+    return copyRules([rule], mode || false)[0];
 }
 
 export function copyRules(rules, mode) {
@@ -72,6 +71,104 @@ export function invoke(fn, def) {
     }
     return def;
 }
+
+
+function parseChild(child, slot) {
+    let vnode = null;
+    if (is.Function(child)) {
+        vnode = child();
+    } else if (Array.isArray(child)) {
+        vnode = child.map((item) => parseChild(item, slot));
+    } else {
+        vnode = child;
+    }
+    if (vnode && slot) {
+        toArray(vnode).forEach((item) => {
+            if (item && typeof item === 'object') {
+                item.data.slot = slot || 'default';
+            }
+        })
+    }
+    return vnode;
+}
+
+function parseChildren(children, slot) {
+    if (is.Object(children)) {
+        const slots = {}
+        Object.keys(children).forEach(key => {
+            slots[key] = parseChild(children[key], key);
+        })
+        return slots;
+    } else {
+        return parseChild(children, slot);
+    }
+}
+
+export function makeSlotBag() {
+    const slotBag = {};
+
+    const slotName = (n) => n || 'default';
+
+    return {
+        setSlot(slot, vnFn) {
+            slot = slotName(slot);
+            if (!vnFn || (Array.isArray(vnFn) && vnFn.length))
+                return;
+            if (!slotBag[slot]) slotBag[slot] = [];
+            slotBag[slot].push(...(Array.isArray(vnFn) ? vnFn : [vnFn]));
+        },
+        getSlot(slot) {
+            slot = slotName(slot);
+            const children = [];
+            (slotBag[slot] || []).forEach(fn => {
+                if (Array.isArray(fn)) {
+                    children.push(...fn);
+                } else if (is.Function(fn)) {
+                    const res = fn();
+                    if (Array.isArray(res)) {
+                        children.push(...res);
+                    } else {
+                        children.push(res);
+                    }
+                } else if (!is.Undef(fn)) {
+                    children.push(fn);
+                }
+            })
+            return parseChildren(children, slot);
+        },
+        getSlots() {
+            let slots = [];
+            Object.keys(slotBag).forEach(k => {
+                slots = slots.concat(this.getSlot(k) || []);
+            })
+            return slots
+        },
+        slotLen(slot) {
+            slot = slotName(slot);
+            return slotBag[slot] ? slotBag[slot].length : 0;
+        },
+        mergeBag(bag) {
+            if (!bag) return this;
+            const slots = is.Function(bag.getSlots) ? bag.getSlots() : bag;
+            if (Array.isArray(bag) || bag.tag) {
+                this.setSlot(undefined, () => bag);
+            } else if (Array.isArray(slots)) {
+                this.setSlot(undefined, () => slots);
+            } else {
+                Object.keys(slots).forEach(k => {
+                    this.setSlot(k, slots[k]);
+                });
+            }
+            return this;
+        }
+    };
+}
+
+export function setPrototypeOf(o, proto) {
+    Object.setPrototypeOf(o, proto);
+    return o;
+}
+
 
 const changeType = (a, b) => {
     if (typeof a === 'string') {
@@ -129,3 +226,24 @@ export const condition = {
         return new RegExp(b, 'g').test(a);
     }
 };
+
+export function deepGet(val, split) {
+    (Array.isArray(split) ? split : (split || '').split('.')).forEach(k => {
+        if (val != null) {
+            val = val[k];
+        }
+    });
+    return val;
+}
+
+export function extractVar(str) {
+    const regex = /{{\s*(.*?)\s*}}/g;
+    let match;
+    const matches = {};
+    while ((match = regex.exec(str)) !== null) {
+        if (match[1]) {
+            matches[match[1]] = true;
+        }
+    }
+    return Object.keys(matches);
+}

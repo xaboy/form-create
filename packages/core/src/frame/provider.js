@@ -1,40 +1,54 @@
 import {err} from '@form-create/utils/lib/console';
-import {byCtx, invoke} from './util';
+import {byCtx, deepGet, invoke, parseFn} from './util';
 import is, {hasProperty} from '@form-create/utils/lib/type';
 import deepSet from '@form-create/utils/lib/deepset';
 import {deepCopy} from '@form-create/utils/lib/deepextend';
 import toArray from '@form-create/utils/lib/toarray';
+import debounce from '@form-create/utils/lib/debounce';
 
 const loadData = function (fc) {
     const loadData = {
         name: 'loadData',
         _fn: [],
-        created(inject, rule, api) {
+        mounted(inject, rule, api) {
             this.deleted(inject);
             let attrs = toArray(inject.getValue());
-            const events = [];
+            const unwatchs = [];
             attrs.forEach(attr => {
-                if (attr) {
-                    const on = () => {
-                        if (attr.watch !== false) {
-                            fc.bus.$off('p.loadData.' + attr.attr, on);
-                            fc.bus.$once('p.loadData.' + attr.attr, on);
+                if (attr && (attr.attr || attr.template)) {
+                    let fn = (get) => {
+                        let value;
+                        if (attr.template) {
+                            value = fc.$handle.loadStrVar(attr.template, get);
+                        } else {
+                            value = get(attr.attr, attr.default);
                         }
-                        let value = undefined;
-                        if (attr.attr) {
-                            value = fc.loadData[attr.attr] || attr.default;
-                            if (attr.copy !== false) {
-                                value = deepCopy(value)
+                        if (attr.copy !== false) {
+                            value = deepCopy(value)
+                        }
+                        const _rule = (attr.modify ? rule : inject.getProp());
+                        if (attr.to === 'child') {
+                            if (_rule.children) {
+                                _rule.children[0] = value;
+                            } else {
+                                _rule.children = [value];
                             }
+                        } else {
+                            deepSet(_rule, attr.to || 'options', value);
                         }
-                        deepSet(inject.getProp(), attr.to || 'options', value);
                         api.sync(rule);
+                    };
+                    let callback = (get) => fn(get);
+                    const unwatch = fc.watchLoadData(callback);
+                    fn = debounce(fn, attr.wait || 300)
+                    if (attr.watch !== false) {
+                        unwatchs.push(unwatch);
+                    } else {
+                        unwatch();
                     }
-                    events.push(() => fc.bus.$off('p.loadData.' + attr.attr, on));
-                    on();
                 }
             })
-            this._fn[inject.id] = events;
+            this._fn[inject.id] = unwatchs;
         },
         deleted(inject) {
             if (this._fn[inject.id]) {
@@ -46,23 +60,81 @@ const loadData = function (fc) {
             inject.clearProp();
         },
     };
-    loadData.watch = loadData.created;
+    loadData.watch = loadData.mounted;
     return loadData;
+}
+
+const t = function (fc) {
+    const t = {
+        name: 't',
+        _fn: [],
+        loaded(inject, rule, api) {
+            this.deleted(inject);
+            let attrs = inject.getValue() || {};
+            const unwatchs = [];
+            Object.keys(attrs).forEach(key => {
+                const attr = attrs[key];
+                if (attr) {
+                    const isObj = typeof attr === 'object';
+                    let fn = (get) => {
+                        let value = fc.t(isObj ? attr.attr : attr, isObj ? attr.params : null, get);
+                        const _rule = ((isObj && attr.modify) ? rule : inject.getProp());
+                        if (key === 'child') {
+                            if (_rule.children) {
+                                _rule.children[0] = value;
+                            } else {
+                                _rule.children = [value];
+                            }
+                        } else {
+                            deepSet(_rule, key, value);
+                        }
+                        api.sync(rule);
+                    };
+                    let callback = (get) => fn(get);
+                    const unwatch = fc.watchLoadData(callback);
+                    fn = debounce(fn, attr.wait || 300)
+                    if (attr.watch !== false) {
+                        unwatchs.push(unwatch);
+                    } else {
+                        unwatch();
+                    }
+                }
+            })
+            this._fn[inject.id] = unwatchs;
+        },
+        deleted(inject) {
+            if (this._fn[inject.id]) {
+                this._fn[inject.id].forEach(un => {
+                    un();
+                })
+                delete this._fn[inject.id];
+            }
+            inject.clearProp();
+        },
+    };
+    t.watch = t.loaded;
+    return t;
 }
 
 const componentValidate = {
     name: 'componentValidate',
     load(attr, rule, api) {
-        const method = attr.getValue();
-        if (!method) {
+        let options = attr.getValue();
+        if (!options || options.method === false) {
             attr.clearProp();
             api.clearValidateState([rule.field]);
         } else {
+            if (!is.Object(options)) {
+                options = {method: options};
+            }
+            const method = options.method;
+            delete options.method;
             attr.getProp().validate = [{
+                ...options,
                 validator(...args) {
                     const ctx = byCtx(rule);
                     if (ctx) {
-                        return api.exec(ctx.id, method === true ? 'formCreateValidate' : method, ...args, {
+                        return api.exec(ctx.id, is.String(method) ? method : 'formCreateValidate', ...args, {
                             attr,
                             rule,
                             api
@@ -76,6 +148,7 @@ const componentValidate = {
         componentValidate.load(...args);
     }
 };
+
 
 const fetch = function (fc) {
 
@@ -91,20 +164,22 @@ const fetch = function (fc) {
 
     function run(inject, rule, api) {
         let option = inject.value;
+        fetchAttr.deleted(inject);
+        if (is.Function(option)) {
+            option = option(rule, api);
+        }
+        option = parseOpt(option);
+
         const set = (val) => {
             if (val === undefined) {
                 inject.clearProp();
-                api.sync(rule);
             } else {
                 deepSet(inject.getProp(), option.to || 'options', val);
             }
+            api.sync(rule);
         }
-        if (is.Function(option)) {
-            option = option(rule, api);
 
-        }
-        option = parseOpt(option);
-        if (!option || !option.action) {
+        if (!option || (!option.action && !option.key)) {
             set(undefined);
             return;
         }
@@ -112,6 +187,21 @@ const fetch = function (fc) {
         if (!option.to) {
             option.to = 'options';
         }
+
+        if (option.key) {
+            const item = fc.$handle.options.globalData[option.key];
+            if (!item) {
+                set(undefined);
+                return;
+            }
+            if (item.type === 'static') {
+                set(item.data);
+                return;
+            } else {
+                option = {...option, ...item}
+            }
+        }
+
         const onError = option.onError;
 
         const check = () => {
@@ -121,106 +211,73 @@ const fetch = function (fc) {
                 return true;
             }
         }
-
-        const config = {
-            headers: {},
-            ...option,
-            onSuccess(body, flag) {
-                if (check()) return;
-                let fn = (v) => flag ? v : (hasProperty(v, 'data') ? v.data : v);
-                if (is.Function(option.parse)) {
-                    fn = option.parse;
-                } else if (option.parse && is.String(option.parse)) {
-                    fn = (v) => {
-                        option.parse.split('.').forEach(k => {
-                            if (v) {
-                                v = v[k];
-                            }
-                        })
-                        return v;
+        fetchAttr._fn[inject.id] = fc.watchLoadData(debounce((get, change) => {
+            if (change && option.watch === false) {
+                return fetchAttr._fn[inject.id]();
+            }
+            const _option = fc.$handle.loadFetchVar(deepCopy(option), get);
+            const config = {
+                headers: {},
+                ..._option,
+                onSuccess(body, flag) {
+                    if (check()) return;
+                    let fn = (v) => flag ? v : (hasProperty(v, 'data') ? v.data : v);
+                    const parse = parseFn(_option.parse);
+                    if (is.Function(parse)) {
+                        fn = parse;
+                    } else if (parse && is.String(parse)) {
+                        fn = (v) => {
+                            return deepGet(v, parse);
+                        }
                     }
+                    set(fn(body, rule, api));
+                    api.sync(rule);
+                },
+                onError(e) {
+                    set(undefined);
+                    if (check()) return;
+                    (onError || ((e) => err(e.message || 'fetch fail ' + _option.action)))(e, rule, api);
                 }
-                set(fn(body, rule, api))
-                api.sync(rule);
-            },
-            onError(e) {
-                set(undefined)
-                if (check()) return;
-                (onError || ((e) => err(e.message || 'fetch fail ' + option.action)))(e, rule, api);
-            }
-        };
-        fc.$handle.beforeFetch(config, {rule, api}).then(() => {
-            if (is.Function(option.action)) {
-                option.action(rule, api).then((val) => {
-                    config.onSuccess(val, true);
-                }).catch((e) => {
-                    config.onError(e);
-                });
-                return;
-            }
-            invoke(() => fc.create.fetch(config, {inject, rule, api}));
-        });
+            };
+            fc.$handle.beforeFetch(config, {rule, api}).then(() => {
+                if (is.Function(_option.action)) {
+                    _option.action(rule, api).then((val) => {
+                        config.onSuccess(val, true);
+                    }).catch((e) => {
+                        config.onError(e);
+                    });
+                    return;
+                }
+                invoke(() => fc.create.fetch(config, {inject, rule, api}));
+            });
+        }, option.wait || 600));
     }
 
-    return {
+    const fetchAttr = {
         name: 'fetch',
-        loaded(...args) {
+        _fn: [],
+        mounted(...args) {
             run(...args);
         },
         watch(...args) {
             run(...args);
         },
-    };
-}
-
-
-const $required = {
-    name: 'required',
-    load(inject, rule, api) {
-        const val = parseVal(inject.getValue());
-        if (val.required === false) {
-            inject.clearProp();
-            api.clearValidateState([rule.field]);
-        } else {
-            const validate = {
-                required: true,
-                validator(_, v, call) {
-                    is.empty(v) ? call(validate.message) : call();
-                },
-                ...val,
-            };
-            if (!validate.message) {
-                let title = rule.title || '';
-                validate.message = ((typeof title === 'object' ? title.title : title) || '') + '不能为空';
+        deleted(inject) {
+            if (this._fn[inject.id]) {
+                this._fn[inject.id]();
+                delete this._fn[inject.id];
             }
-            inject.getProp().validate = [validate];
-        }
-        api.sync(rule);
-    },
-    watch(...args) {
-        $required.load(...args);
-    }
+            inject.clearProp();
+        },
+    };
+
+    return fetchAttr;
 }
 
-function parseVal(val) {
-    if (is.Boolean(val)) {
-        return {required: val}
-    } else if (is.String(val)) {
-        return {message: val};
-    } else if (is.Undef(val)) {
-        return {required: false};
-    } else if (is.Function(val)) {
-        return {validator: val};
-    } else if (!is.Object(val)) {
-        return {};
-    } else {
-        return val;
-    }
-}
 
 export default {
     fetch,
     loadData,
-    required: $required,
+    t,
     componentValidate,
 };

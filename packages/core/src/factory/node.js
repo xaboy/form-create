@@ -24,7 +24,10 @@ export function CreateNodeFactory() {
             this.$h = vm.$createElement;
         },
         make(tag, data, children) {
-            if (Vue.config.isReservedTag(tag) && data.nativeOn) delete data.nativeOn;
+            if (Vue.config.isReservedTag(tag)) {
+                delete data?.nativeOn;
+                delete data?.props?.formCreateInject;
+            }
             return this.makeComponent(tag, data, children);
         },
         makeComponent(type, data, children) {

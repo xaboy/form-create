@@ -3,6 +3,7 @@ import useRender from './render';
 import extend from '@form-create/utils/lib/extend';
 import {funcProxy} from '../frame/util';
 
+let id = 1;
 export default function Render(handle) {
     extend(this, {
         $handle: handle,
@@ -10,6 +11,7 @@ export default function Render(handle) {
         vm: handle.vm,
         $manager: handle.$manager,
         vNode: new handle.fc.CreateNode(handle.vm),
+        id:id++
     });
 
     funcProxy(this, {

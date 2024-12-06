@@ -1,6 +1,7 @@
 import extend from '@form-create/utils/lib/extend';
 import is, {hasProperty} from '@form-create/utils/lib/type';
 import {mergeRule} from '../frame/util';
+import {watch} from 'vue';
 
 
 export default function useEffect(Handler) {
@@ -30,7 +31,6 @@ export default function useEffect(Handler) {
             provider._used = used;
         },
         watchEffect(ctx) {
-            const vm = this.vm;
             let effect = {
                 required: () => {
                     return (hasProperty(ctx.rule, '$required') ? ctx.rule['$required'] : ctx.rule?.effect?.required) || false;
@@ -44,8 +44,8 @@ export default function useEffect(Handler) {
                     effect[k.substr(1)] = () => ctx.rule[k];
                 }
             })
-            Object.keys(effect || {}).forEach(k => {
-                ctx.watch.push(vm.$watch(effect[k], (n) => {
+            Object.keys(effect).forEach(k => {
+                ctx.watch.push(watch(effect[k], (n) => {
                     this.effect(ctx, 'watch', {[k]: n});
                 }, {deep: true}));
             });
@@ -75,7 +75,7 @@ export default function useEffect(Handler) {
             return undefined;
         },
         emitEffect({ctx, rule, input, type, custom}, event, append) {
-            if (!type || type === 'fcFragment') return;
+            if (!type || ['fcFragment', 'fragment'].indexOf(type) > -1) return;
             const effect = custom ? custom : (Object.keys(rule).reduce((i, k) => {
                 if (k[0] === '$') {
                     i[k.substr(1)] = rule[k];

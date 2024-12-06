@@ -2,6 +2,55 @@
     margin-bottom: 22px;
 }
 
-.form-create .form-create .el-form-item .el-form-item {
-    margin-bottom: 0px;
+.form-create {
+    width: 100%;
+}
+
+.form-create.is-preview .fc-clock, .form-create .fc-none, .form-create.is-preview .el-form-item.is-required > .el-form-item__label-wrap > .el-form-item__label:before, .form-create.is-preview .el-form-item.is-required > .el-form-item__label:before {
+    display: none !important;
+}
+
+.fc-wrap-right > .el-form-item__label {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.fc-wrap-left > .el-form-item__label {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.fc-wrap-top.el-form-item {
+    display: block;
+}
+
+.fc-wrap-top.el-form-item > .el-form-item__label {
+    display: block;
+    height: auto;
+    line-height: 22px;
+    margin-bottom: 8px;
+    text-align: left;
+}
+
+.fc-wrap-top.el-form-item > .el-form-item__content {
+    margin-left: 0 !important;
+}
+
+.el-form--large .fc-wrap-top.el-form-item > .el-form-item__label {
+    line-height: 22px;
+    margin-bottom: 12px;
+}
+
+.el-form--default .fc-wrap-top.el-form-item > .el-form-item__label {
+    line-height: 22px;
+    margin-bottom: 8px;
+}
+
+.el-form--small .fc-wrap-top.el-form-item > .el-form-item__label {
+    line-height: 20px;
+    margin-bottom: 4px;
+}
+
+.fc-form-footer {
+    margin-top: 12px;
 }

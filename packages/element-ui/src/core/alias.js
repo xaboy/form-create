@@ -28,6 +28,7 @@ export default {
     autoComplete: PRE + 'Autocomplete',
     auto: PRE + 'Autocomplete',
     group: 'fcGroup',
+    array: 'fcGroup',
     object: 'fcSubForm',
     subForm: 'fcSubForm',
 }

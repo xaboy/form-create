@@ -1,7 +1,7 @@
 import extend from '@form-create/utils/lib/extend';
 import is from '@form-create/utils/lib/type';
 import toLine from '@form-create/utils/lib/toline';
-import {parseFn} from '../frame/util';
+import {extractVar, parseFn} from '../frame/util';
 
 
 export default function useInject(Handler) {
@@ -50,6 +50,7 @@ export default function useInject(Handler) {
                         const fn = (...arg) => {
                             this.vm.$emit(fieldKey, ...arg);
                             this.vm.$emit('emit-event', fieldKey, ...arg);
+                            this.bus.$emit(fieldKey, ...arg);
                         };
                         fn.__emit = true;
 
@@ -61,16 +62,17 @@ export default function useInject(Handler) {
                         }
                     }
                 });
-
             }
             ctx.computed[on ? 'on' : 'nativeOn'] = event;
             return event;
         },
         getInjectData(self, inject) {
-            const {option, rule} = this.vm.$options.propsData;
+            const $api = self.__fc__ && self.__fc__.$api;
+            const vm = (self.__fc__ && self.__fc__.$handle.vm) || this.vm;
+            const {option, rule} = (vm.$props || vm.$options.propsData);
             return {
-                api: this.api,
-                $f: this.api,
+                $f: $api || this.api,
+                api: $api || this.api,
                 rule,
                 self: self.__origin__,
                 option,
@@ -96,5 +98,49 @@ export default function useInject(Handler) {
             fn.__json = _fn.__json;
             return fn;
         },
+        loadStrVar(str, get) {
+            if (str && typeof str === 'string' && str.indexOf('{{') > -1 && str.indexOf('}}') > -1) {
+                const tmp = str;
+                const vars = extractVar(str);
+                let lastVal;
+                vars.forEach(v => {
+                    const split = v.split('||');
+                    const field = split[0].trim();
+                    if (field) {
+                        const def = (split[1] || '').trim();
+                        const val = get ? get(field, def) : this.fc.getLoadData(field, def);
+                        lastVal = val;
+                        str = str.replaceAll(`{{${v}}}`, val == null ? '' : val);
+                    }
+                })
+                if(vars.length === 1 && tmp === `{{${vars[0]}}}`) {
+                    return lastVal;
+                }
+            }
+            return str;
+        },
+        loadFetchVar(options, get) {
+            const loadVal = str => {
+                return this.loadStrVar(str, get);
+            }
+
+            options.action = loadVal(options.action);
+            if (options.headers) {
+                const _headers = {};
+                Object.keys(options.headers).forEach(k => {
+                    _headers[loadVal(k)] = loadVal(options.headers[k]);
+                });
+                options.headers = _headers;
+            }
+            if (options.data) {
+                const _data = {};
+                Object.keys(options.data).forEach(k => {
+                    _data[loadVal(k)] = loadVal(options.data[k]);
+                });
+                options.data = _data;
+            }
+
+            return options;
+        }
     })
 }

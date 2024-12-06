@@ -2,6 +2,7 @@
 
 import is from '@form-create/utils/lib/type';
 import {parseFn} from '@form-create/utils/lib/json';
+import {deepGet} from './util';
 
 function getError(action, option, xhr) {
     const msg = `fail to ${action} ${xhr.status}'`;
@@ -30,7 +31,16 @@ export default function fetch(option) {
     }
 
     const xhr = new XMLHttpRequest();
-    const action = option.action;
+    let action = option.action || '';
+
+    if (option.query) {
+        const queryString = new URLSearchParams(option.query).toString();
+        if (action.includes('?')) {
+            action += `&${queryString}`;
+        } else {
+            action += `?${queryString}`;
+        }
+    }
 
     xhr.onerror = function error(e) {
         option.onError(e);
@@ -67,16 +77,17 @@ export default function fetch(option) {
     const headers = option.headers || {};
 
     Object.keys(headers).forEach(item => {
-        if (headers[item] !== null) {
+        if (headers[item] != null) {
             xhr.setRequestHeader(item, headers[item]);
         }
     });
     xhr.send(formData);
 }
 
-export function asyncFetch(config) {
+
+export function asyncFetch(config, _fetch, api) {
     return new Promise((resolve, reject) => {
-        fetch({
+        (_fetch || fetch)({
             ...config,
             onSuccess(res) {
                 let fn = (v) => v;
@@ -85,15 +96,10 @@ export function asyncFetch(config) {
                     fn = parse;
                 } else if (parse && is.String(parse)) {
                     fn = (v) => {
-                        parse.split('.').forEach(k => {
-                            if (v) {
-                                v = v[k];
-                            }
-                        })
-                        return v;
+                        return deepGet(v, parse);
                     }
                 }
-                resolve(fn(res));
+                resolve(fn(res, undefined, api));
             },
             onError(err) {
                 reject(err);

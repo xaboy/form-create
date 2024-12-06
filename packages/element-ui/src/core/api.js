@@ -11,7 +11,7 @@ function tidyBtnProp(btn, def) {
 }
 
 export default function extendApi(api, h) {
-    extend(api, {
+    return {
         formEl() {
             return h.$manager.form();
         },
@@ -32,21 +32,19 @@ export default function extendApi(api, h) {
                     callback && callback(true);
                 }).catch((e) => {
                     reject(e);
-                    callback && callback(false, e);
+                    callback && callback(e);
                     h.vm.$emit('validate-fail', e, {api});
                 })
             });
         },
-        validateField: (field, callback) => {
+        validateField(field, callback) {
             return new Promise((resolve, reject) => {
                 const ctx = h.getFieldCtx(field);
                 if (!ctx) return;
                 const sub = h.subForm[ctx.id];
                 const all = [h.$manager.validateField(ctx.id)];
                 toArray(sub).forEach(v => {
-                    all.push(v.validate().catch(() => {
-                        return Promise.reject('子表单验证未通过');
-                    }));
+                    all.push(v.validate());
                 })
                 Promise.all(all).then(() => {
                     resolve(null);
@@ -116,21 +114,18 @@ export default function extendApi(api, h) {
             api.refreshOptions();
         },
         submit(successFn, failFn) {
-            api.validate((valid) => {
-                if (valid) {
+            return new Promise((resolve, reject) => {
+                api.validate().then(() => {
                     let formData = api.formData();
-                    if (is.Function(successFn))
-                        invoke(() => successFn(formData, this));
-                    else {
-                        is.Function(h.options.onSubmit) && invoke(() => h.options.onSubmit(formData, this));
-                        h.vm.$emit('submit', formData, this);
-                    }
-                } else {
-                    is.Function(failFn) && invoke(() => failFn(this, ...arguments));
-                }
-            }).catch(e=>{});
+                    is.Function(successFn) && invoke(() => successFn(formData, api));
+                    is.Function(h.options.onSubmit) && invoke(() => h.options.onSubmit(formData, api));
+                    h.vm.$emit('submit', formData, api);
+                    resolve(formData);
+                }).catch((...args) => {
+                    is.Function(failFn) && invoke(() => failFn(api, ...args));
+                    reject(...args)
+                })
+            });
         },
-    });
-
-    return api;
+    };
 }

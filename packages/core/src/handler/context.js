@@ -3,9 +3,13 @@ import toCase from '@form-create/utils/lib/tocase';
 import BaseParser from '../factory/parser';
 import {$del} from '@form-create/utils/lib/modify';
 import is, {hasProperty} from '@form-create/utils/lib/type';
-import {invoke} from '../frame/util';
+import {condition, deepGet, invoke} from '../frame/util';
+import {computed, nextTick, toRef, watch} from 'vue';
+import {attrs} from '../frame/attrs';
+import {deepSet} from '@form-create/utils';
+import toArray from '@form-create/utils/lib/toarray';
 
-const noneKey = ['field', 'value', 'vm', 'template', 'name', 'config', 'control', 'inject', 'sync', 'payload', 'optionsTo', 'update', 'component', 'cache'];
+const noneKey = ['field', 'value', 'vm', 'template', 'name', 'config', 'control', 'inject', 'sync', 'payload', 'optionsTo', 'update', 'slotUpdate', 'computed', 'component', 'cache'];
 
 export default function useContext(Handler) {
     extend(Handler.prototype, {
@@ -52,6 +56,14 @@ export default function useContext(Handler) {
         },
         getParser(ctx) {
             const list = this.fc.parsers;
+            const renderDriver = this.fc.renderDriver;
+            if (renderDriver) {
+                const list = renderDriver.parsers || {};
+                const parser = list[ctx.originType] || list[toCase(ctx.type)] || list[ctx.trueType];
+                if (parser) {
+                    return parser;
+                }
+            }
             return list[ctx.originType] || list[toCase(ctx.type)] || list[ctx.trueType] || BaseParser;
         },
         bindParser(ctx) {
@@ -72,21 +84,32 @@ export default function useContext(Handler) {
             }
         },
         watchCtx(ctx) {
-            const vm = this.vm;
-            Object.keys(ctx.rule).filter(k => k[0] !== '_' && k[0] !== '$' && noneKey.indexOf(k) === -1).forEach((key) => {
+            const all = attrs();
+            all.filter(k => k[0] !== '_' && k[0] !== '$' && noneKey.indexOf(k) === -1).forEach((key) => {
+                const ref = toRef(ctx.rule, key);
                 const flag = key === 'children';
-                ctx.watch.push(vm.$watch(() => ctx.rule[key], (n, o) => {
-                    if (this.loading || this.noWatchFn || this.reloading) return;
+                ctx.refRule[key] = ref;
+                ctx.watch.push(watch(flag ? () => is.Function(ref.value) ? ref.value : [...(ref.value || [])] : () => ref.value, (_, o) => {
+                    let n = ref.value;
+                    if (this.isBreakWatch()) return;
                     if (flag && ctx.parser.loadChildren === false) {
                         this.$render.clearCache(ctx);
                         this.nextRefresh();
                         return;
                     }
                     this.watching = true;
-                    // if (key === 'hidden')
-                    //     ctx.updateKey(true);
-                    // else
-                    if (key === 'link') {
+                    nextTick(() => {
+                        this.targetHook(ctx, 'watch', {key, oldValue: o, newValue: n});
+                    });
+                    if (key === 'hidden' && Boolean(n) !== Boolean(o)) {
+                        this.$render.clearCacheAll();
+                        nextTick(() => {
+                            this.targetHook(ctx, 'hidden', {value: n});
+                        });
+                    }
+                    if ((key === 'ignore' && ctx.input) || (key === 'hidden' && ctx.input && (ctx.rule.ignore === 'hidden' || this.options.ignoreHiddenFields))) {
+                        this.syncForm();
+                    } else if (key === 'link') {
                         ctx.link();
                         return;
                     } else if (['props', 'on', 'nativeOn', 'deep'].indexOf(key) > -1) {
@@ -101,46 +124,214 @@ export default function useContext(Handler) {
                     else if (key === 'type') {
                         ctx.updateType();
                         this.bindParser(ctx);
-                    } else if (key === 'children') {
-                        const flag = is.trueArray(n);
-                        this.deferSyncValue(() => {
-                            if (n !== o) {
-                                this.rmSub(o, ctx);
-                                this.$render.initOrgChildren();
-                            }
-                            flag && this.loadChildren(n, ctx);
-                            this.vm.$emit('update', this.api);
-                        });
+                    } else if (flag) {
+                        if (is.Function(o)) {
+                            o = ctx.getPending('children', []);
+                        }
+                        if (is.Function(n)) {
+                            n = ctx.loadChildrenPending();
+                        }
+                        this.updateChildren(ctx, n, o);
                     }
                     this.$render.clearCache(ctx);
                     this.refresh();
                     this.watching = false;
                 }, {deep: !flag, sync: flag}));
             });
+            ctx.refRule['__$title'] = computed(() => {
+                let title = (typeof ctx.rule.title === 'object' ? ctx.rule.title.title : ctx.rule.title) || '';
+                if (title) {
+                    const match = title.match(/^\{\{\s*\$t\.(.+)\s*\}\}$/);
+                    if (match) {
+                        title = this.api.t(match[1]);
+                    }
+                }
+                return title;
+            });
+            ctx.refRule['__$info'] = computed(() => {
+                let info = (typeof ctx.rule.info === 'object' ? ctx.rule.info.info : ctx.rule.info) || '';
+                if (info) {
+                    const match = info.match(/^\{\{\s*\$t\.(.+)\s*\}\}$/);
+                    if (match) {
+                        info = this.api.t(match[1]);
+                    }
+                }
+                return info;
+            });
+            ctx.refRule['__$validate'] = computed(() => {
+                return toArray(ctx.rule.validate).map(item => {
+                    const temp = {...item};
+                    if (temp.message) {
+                        const match = temp.message.match(/^\{\{\s*\$t\.(.+)\s*\}\}$/);
+                        if (match) {
+                            temp.message = this.api.t(match[1], {title: ctx.refRule.__$title.value});
+                        }
+                    }
+                    if (is.Function(temp.validator)) {
+                        const that = ctx;
+                        temp.validator = function (...args) {
+                            return item.validator.call({
+                                that: this,
+                                id: that.id,
+                                field: that.field,
+                                rule: that.rule,
+                                api: that.$handle.api,
+                            }, ...args)
+                        }
+                        return temp;
+                    }
+                    return temp;
+                });
+            });
+            if (ctx.input) {
+                const val = toRef(ctx.rule, 'value');
+                ctx.watch.push(watch(() => val.value, () => {
+                    let formValue = ctx.parser.toFormValue(val.value, ctx);
+                    if (this.isChange(ctx, formValue)) {
+                        this.setValue(ctx, val.value, formValue, true);
+                    }
+                }));
+            }
+            this.bus.$once('load-end', () => {
+                let computedRule = ctx.rule.computed;
+                if (!computedRule) {
+                    return;
+                }
+                if (typeof computedRule !== 'object') {
+                    computedRule = {value: computedRule}
+                }
+                Object.keys(computedRule).forEach(k => {
+                    let oldValue = undefined;
+                    const computedValue = computed(() => {
+                        const item = computedRule[k];
+                        if (!item) return undefined;
+                        const value = this.compute(ctx, item);
+                        if (item.linkage && value === undefined) {
+                            return oldValue;
+                        }
+                        return value;
+                    });
+                    const callback = (n) => {
+                        if (k === 'value') {
+                            this.onInput(ctx, n);
+                        } else if (k[0] === '$') {
+                            this.api.setEffect(ctx.id, k, n);
+                        } else {
+                            deepSet(ctx.rule, k, n);
+                        }
+                    };
+                    if (k === 'value' ? [undefined, null, ''].indexOf(ctx.rule.value) > -1 : computedValue.value !== deepGet(ctx.rule, k)) {
+                        callback(computedValue.value);
+                    }
+                    ctx.watch.push(watch(computedValue, (n) => {
+                        oldValue = n;
+                        setTimeout(() => {
+                            callback(n);
+                        });
+                    }));
+                });
+
+            });
             this.watchEffect(ctx);
         },
-        rmSub(sub, ctx) {
+        compute(ctx, item) {
+            let fn;
+            if (typeof item === 'object') {
+                const group = ctx.getParentGroup();
+                const checkCondition = (item) => {
+                    item = Array.isArray(item) ? {mode: 'AND', group: item} : item;
+                    if (!is.trueArray(item.group)) {
+                        return true;
+                    }
+                    const or = item.mode === 'OR';
+                    let valid = true;
+                    for (let i = 0; i < item.group.length; i++) {
+                        const one = item.group[i];
+                        let flag;
+                        let field = one.field;
+                        if (one.variable) {
+                            field = JSON.stringify(this.fc.getLoadData(one.variable) || '');
+                        }
+                        if (one.mode) {
+                            flag = checkCondition(one);
+                        } else if (!condition[one.condition]) {
+                            flag = false;
+                        } else if (is.Function(one.handler)) {
+                            flag = invoke(() => one.handler(this.api, ctx.rule));
+                        } else {
+                            flag = (new Function('$condition', '$val', '$form', '$group', '$rule', `with($form){with(this){with($group){ return $condition['${one.condition}'](${field}, ${one.compare ? one.compare : '$val'}); }}}`)).call(this.api.form, condition, one.value, this.api.top.form, group ? (this.subRuleData[group.id] || {}) : {}, ctx.rule);
+                        }
+                        if (or && flag) {
+                            return true;
+                        }
+                        if (!or) {
+                            valid = valid && flag;
+                        }
+                    }
+                    return or ? false : valid;
+                }
+                let val = checkCondition(item);
+                val = item.invert === true ? !val : val;
+                if (item.linkage) {
+                    return val ? invoke(() => this.computeValue(item.linkage, ctx, group), undefined) : undefined;
+                }
+                return val;
+            } else if (is.Function(item)) {
+                fn = () => item(this.api.form, this.api);
+            } else {
+                const group = ctx.getParentGroup();
+                fn = () => this.computeValue(item, ctx, group);
+            }
+            return invoke(fn, undefined);
+        },
+        computeValue(str, ctx, group) {
+            const that = this;
+            const formulas = Object.keys(this.fc.formulas).reduce((obj, k) => {
+                obj[k] = function (...args) {
+                    return that.fc.formulas[k].call({
+                        that: this,
+                        rule: ctx.rule,
+                        api: that.api,
+                        fc: that.fc
+                    }, ...args);
+                }
+                return obj;
+            }, {})
+            return (new Function('$formulas', '$form', '$group', '$rule', '$api', `with($form){with(this){with($group){with($formulas){ return ${str} }}}}`)).call(this.api.form, formulas, this.api.top.form, group ? (this.subRuleData[group.id] || {}) : {}, ctx.rule, this.api);
+        },
+        updateChildren(ctx, n, o) {
+            this.deferSyncValue(() => {
+                o && o.forEach((child) => {
+                    if ((n || []).indexOf(child) === -1 && child && !is.String(child) && child.__fc__ && child.__fc__.parent === ctx) {
+                        this.rmCtx(child.__fc__);
+                    }
+                });
+                if (is.trueArray(n)) {
+                    this.loadChildren(n, ctx);
+                    this.bus.$emit('update', this.api);
+                }
+            });
+        },
+        rmSub(sub) {
             is.trueArray(sub) && sub.forEach(r => {
-                r && r.__fc__ && r.__fc__.parent === ctx && this.rmCtx(r.__fc__);
+                r && r.__fc__ && this.rmCtx(r.__fc__);
             })
         },
         rmCtx(ctx) {
             if (ctx.deleted) return;
             const {id, field, input, name} = ctx;
-            if (ctx.input) {
-                Object.defineProperty(ctx.rule, 'value', {
-                    value: ctx.rule.value,
-                    writable: true
-                });
-            }
 
             $del(this.ctxs, id);
-            $del(this.$render.tempList, id);
-            $del(this.$render.orgChildren, id);
-            $del(this.vm.ctxInject, id);
             $del(this.formData, id);
             $del(this.subForm, id);
-            $del(ctx, 'cacheValue');
+            $del(this.vm.ctxInject, id);
+            const group = ctx.getParentGroup();
+            if (group && this.subRuleData[group.id]) {
+                $del(this.subRuleData[group.id], field);
+            }
+            if (ctx.group) {
+                $del(this.subRuleData, id);
+            }
 
             input && this.rmIdCtx(ctx, field, 'field');
             name && this.rmIdCtx(ctx, name, 'name');
@@ -152,12 +343,13 @@ export default function useContext(Handler) {
             this.deferSyncValue(() => {
                 if (!this.reloading) {
                     if (ctx.parser.loadChildren !== false) {
-                        if (is.trueArray(ctx.rule.children)) {
-                            ctx.rule.children.forEach(h => h.__fc__ && this.rmCtx(h.__fc__));
+                        const children = ctx.getPending('children', ctx.rule.children);
+                        if (is.trueArray(children)) {
+                            children.forEach(h => h.__fc__ && this.rmCtx(h.__fc__));
                         }
                     }
                     if (ctx.root === this.rules) {
-                        this.vm._renderRule();
+                        this.vm.renderRule();
                     }
                 }
             }, input);
@@ -170,6 +362,7 @@ export default function useContext(Handler) {
             this.$render.clearCache(ctx);
             ctx.delete();
             this.effect(ctx, 'deleted');
+            this.targetHook(ctx, 'deleted');
             input && !this.fieldCtx[field] && this.vm.$emit('removeField', field, ctx.rule, this.api);
             ctx.rule.__ctrl || this.vm.$emit('removeRule', ctx.rule, this.api);
             return ctx;

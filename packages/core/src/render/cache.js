@@ -6,19 +6,22 @@ export default function useCache(Render) {
             this.clearCacheAll();
         },
         clearCache(ctx) {
-            if(ctx.rule.cache){
+            if (ctx.rule.cache) {
                 return;
             }
             if (!this.cache[ctx.id]) {
-                ctx.parent && this.clearCache(ctx.parent);
+                if (ctx.parent) {
+                    this.clearCache(ctx.parent);
+                }
                 return;
             }
             if (this.cache[ctx.id].use === true || this.cache[ctx.id].parent) {
                 this.$handle.refresh();
             }
-            const parent = this.cache[ctx.id].parent;
+            if (this.cache[ctx.id].parent) {
+                this.clearCache(this.cache[ctx.id].parent);
+            }
             this.cache[ctx.id] = null;
-            parent && this.clearCache(parent);
         },
         clearCacheAll() {
             this.cache = {};

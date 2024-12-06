@@ -1,16 +1,17 @@
 import extend from '@form-create/utils/lib/extend';
-import {byCtx, copyRule, enumerable, getRule, invoke, parseFn, condition} from '../frame/util';
+import {byCtx, condition, copyRule, enumerable, getRule, invoke, parseFn} from '../frame/util';
 import is, {hasProperty} from '@form-create/utils/lib/type';
+import {$set} from '@form-create/utils/lib/modify';
 import {baseRule} from '../factory/creator';
 import RuleContext from '../factory/context';
 import mergeProps from '@form-create/utils/lib/mergeprops';
-import {$set} from '@form-create/utils';
+import {nextTick} from 'vue';
 
 export default function useLoader(Handler) {
     extend(Handler.prototype, {
         nextRefresh(fn) {
             const id = this.loadedId;
-            this.vm.$nextTick(() => {
+            nextTick(() => {
                 id === this.loadedId && (fn ? fn() : this.refresh());
             });
         },
@@ -23,8 +24,6 @@ export default function useLoader(Handler) {
 
             fullRule(rule);
             this.appendValue(rule);
-
-            rule.options = Array.isArray(rule.options) ? rule.options : [];
 
             [rule, rule['prefix'], rule['suffix']].forEach(item => {
                 if (!item) {
@@ -75,12 +74,11 @@ export default function useLoader(Handler) {
                 if (this.cycleLoad && this.pageEnd) {
                     return this.loadRule();
                 }
+                this.syncForm();
                 if (this.pageEnd) {
                     this.bus.$emit('load-end');
                 }
-                this.vm._renderRule();
-                this.$render.initOrgChildren();
-                this.syncForm();
+                this.vm.renderRule();
             });
         },
         loadChildren(children, parent) {
@@ -92,8 +90,8 @@ export default function useLoader(Handler) {
             if (this.cycleLoad) {
                 return this.loadRule();
             } else {
-                this.bus.$emit('load-end');
                 this.syncForm();
+                this.bus.$emit('load-end');
             }
             this.$render.clearCache(parent);
         },
@@ -114,12 +112,12 @@ export default function useLoader(Handler) {
                 }
             };
 
-            rules.map((_rule, index) => {
+            const ctxs = rules.map((_rule, index) => {
                 if (parent && !is.Object(_rule)) return;
                 if (!this.pageEnd && !parent && index >= this.first) return;
 
                 if (_rule.__fc__ && _rule.__fc__.root === rules && this.ctxs[_rule.__fc__.id]) {
-                    loadChildren(_rule.__fc__.rule.children, _rule.__fc__);
+                    loadChildren(_rule.__fc__.loadChildrenPending(), _rule.__fc__);
                     return _rule.__fc__;
                 }
 
@@ -129,6 +127,7 @@ export default function useLoader(Handler) {
                     return !!(rule.field && this.fieldCtx[rule.field] && this.fieldCtx[rule.field][0] !== _rule.__fc__)
                 }
 
+                this.fc.targetFormDriver('loadRule', {rule, api: this.api}, this.fc);
                 this.ruleEffect(rule, 'init', {repeat: isRepeat()});
 
                 if (isRepeat()) {
@@ -142,16 +141,13 @@ export default function useLoader(Handler) {
                 if (isInit) {
                     ctx = _rule.__fc__;
                     defaultValue = ctx.defaultValue;
-                    const check = !ctx.check(this);
                     if (ctx.deleted) {
-                        if (check) {
-                            if (isCtrl(ctx)) {
-                                return;
-                            }
-                            ctx.update(this);
+                        if (isCtrl(ctx)) {
+                            return;
                         }
+                        ctx.update(this);
                     } else {
-                        if (check) {
+                        if (!ctx.check(this)) {
                             if (isCtrl(ctx)) {
                                 return;
                             }
@@ -171,6 +167,9 @@ export default function useLoader(Handler) {
                     }
                     this.bindParser(ctx);
                     this.appendValue(ctx.rule);
+                    if (ctx.parent && ctx.parent !== parent) {
+                        this.rmSubRuleData(ctx);
+                    }
                 }
                 [false, true].forEach(b => this.parseEmit(ctx, b));
                 this.syncProp(ctx);
@@ -178,11 +177,15 @@ export default function useLoader(Handler) {
                 ctx.root = rules;
                 this.setCtx(ctx);
 
-                !isCopy && !isInit && this.effect(ctx, 'load');
+                if (!isCopy && !isInit) {
+                    this.effect(ctx, 'load');
+                    this.targetHook(ctx, 'load');
+                }
 
                 this.effect(ctx, 'created');
 
-                ctx.parser.loadChildren === false || loadChildren(ctx.rule.children, ctx);
+                const _load = ctx.loadChildrenPending()
+                ctx.parser.loadChildren === false || loadChildren(_load, ctx);
 
                 if (!parent) {
                     const _preIndex = preIndex(index);
@@ -204,11 +207,14 @@ export default function useLoader(Handler) {
                     this.effect(ctx, 'loaded');
                 }
 
-                if (ctx.input)
-                    Object.defineProperty(r, 'value', this.valueHandle(ctx));
+                // if (ctx.input)
+                //     Object.defineProperty(r, 'value', this.valueHandle(ctx));
                 if (this.refreshControl(ctx)) this.cycleLoad = true;
                 return ctx;
-            });
+            }).filter(v => !!v);
+            if (parent) {
+                parent.children = ctxs;
+            }
         },
         refreshControl(ctx) {
             return ctx.input && ctx.rule.control && this.useCtrl(ctx);
@@ -239,10 +245,10 @@ export default function useLoader(Handler) {
                 validate.reverse().forEach(({isHidden, valid, rule, prepend, append, child, ctrl, method}) => {
                     if (isHidden) {
                         valid ? ctx.ctrlRule.push({
-                            __ctrl: true,
-                            children: rule,
-                            valid
-                        })
+                                __ctrl: true,
+                                children: rule,
+                                valid
+                            })
                             : (ctrl && ctx.ctrlRule.splice(ctx.ctrlRule.indexOf(ctrl) >>> 0, 1));
                         hideLst[valid ? 'push' : 'unshift'](() => {
                             if (method === 'disabled' || method === 'enabled') {
@@ -253,7 +259,7 @@ export default function useLoader(Handler) {
                                 rule.forEach(item => {
                                     this.api.setEffect(item, 'required', valid);
                                 })
-                                if(!valid){
+                                if (!valid) {
                                     this.api.clearValidateState(rule);
                                 }
                             } else {
@@ -265,7 +271,7 @@ export default function useLoader(Handler) {
                     if (valid) {
                         flag = true;
                         const ruleCon = {
-                            type: 'fcFragment',
+                            type: 'fragment',
                             native: true,
                             __ctrl: true,
                             children: rule,
@@ -288,9 +294,17 @@ export default function useLoader(Handler) {
                     }
                 });
             });
-            hideLst.length && this.vm.$nextTick(() => {
-                hideLst.forEach(v => v());
-            });
+            if (hideLst.length) {
+                if (this.loading) {
+                    hideLst.length && this.bus.$once('load-end', () => {
+                        hideLst.forEach(v => v());
+                    });
+                } else {
+                    hideLst.length && nextTick(() => {
+                        hideLst.forEach(v => v());
+                    });
+                }
+            }
             this.vm.$emit('control', ctx.origin, this.api);
             this.effect(ctx, 'control');
             return flag;
@@ -305,9 +319,9 @@ export default function useLoader(Handler) {
             const ctxs = {...this.ctxs};
 
             this.clearNextTick();
-            this.$render.clearOrgChildren();
             this.initData(rules);
             this.fc.rules = rules;
+
             this.deferSyncValue(() => {
                 this.bus.$once('load-end', () => {
                     Object.keys(ctxs).filter(id => this.ctxs[id] === undefined)
@@ -321,10 +335,13 @@ export default function useLoader(Handler) {
                 this.vm.$emit('reloading', this.api);
             });
             this.vm.$emit('update', this.api);
+
+            this.bus.$off('next-tick', this.nextReload);
+            this.bus.$once('next-tick', this.nextReload);
         },
         //todo 组件生成全部通过 alias
         refresh() {
-            this.vm._refresh();
+            this.vm.refresh();
         },
     });
 }

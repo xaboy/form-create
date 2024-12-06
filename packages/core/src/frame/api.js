@@ -1,10 +1,11 @@
-import {byCtx, invoke, mergeRule, toJson} from './util';
+import {byCtx, invoke, mergeRule, parseFn, toJson} from './util';
 import {$set} from '@form-create/utils/lib/modify';
 import {deepCopy} from '@form-create/utils/lib/deepextend';
 import is, {hasProperty} from '@form-create/utils/lib/type';
 import extend from '@form-create/utils/lib/extend';
 import {format} from '@form-create/utils/lib/console';
 import {asyncFetch} from './fetch';
+import {nextTick} from 'vue';
 
 
 function copy(value) {
@@ -47,8 +48,14 @@ export default function Api(h) {
         get config() {
             return h.options
         },
+        set config(val) {
+            h.fc.options.value = val;
+        },
         get options() {
             return h.options
+        },
+        set options(val) {
+            h.fc.options.value = val;
         },
         get form() {
             return h.form
@@ -57,7 +64,7 @@ export default function Api(h) {
             return h.rules
         },
         get parent() {
-            return h.vm.$pfc && h.vm.$pfc.$f
+            return h.vm.parent && h.vm.parent.fapi
         },
         get top() {
             if (api.parent) {
@@ -68,34 +75,66 @@ export default function Api(h) {
         get children() {
             return allSubForm();
         },
+        get siblings() {
+            const inject = h.vm.getGroupInject();
+            if (inject) {
+                const subForm = inject.getSubForm();
+                if (Array.isArray(subForm)) {
+                    return [...subForm];
+                }
+            }
+            return undefined;
+        },
+        get index() {
+            const siblings = api.siblings;
+            if (siblings) {
+                const idx = siblings.indexOf(api);
+                return idx > -1 ? idx : undefined;
+            }
+            return undefined;
+        },
         formData(fields) {
-            return tidyFields(fields).reduce((initial, id) => {
-                const ctx = h.getFieldCtx(id);
-                if (!ctx) return initial;
-                initial[ctx.field] = copy(ctx.rule.value);
-                return initial;
-            }, h.options.appendValue !== false ? copy(h.appendData) : {});
+            if (fields == null) {
+                const data = {};
+                Object.keys(h.form).forEach(k => {
+                    if (h.ignoreFields.indexOf(k) === -1) {
+                        data[k] = copy(h.form[k]);
+                    }
+                });
+                return data;
+            } else {
+                return tidyFields(fields).reduce((initial, id) => {
+                    initial[id] = api.getValue(id);
+                    return initial;
+                }, {});
+            }
         },
         getValue(field) {
             const ctx = h.getFieldCtx(field);
-            if (!ctx) return;
+            if (!ctx) {
+                if (h.options.appendValue !== false && hasProperty(h.appendData, field)) {
+                    return copy(h.appendData[field]);
+                }
+                return undefined;
+            }
             return copy(ctx.rule.value);
         },
         coverValue(formData) {
             const data = {...(formData || {})};
             h.deferSyncValue(() => {
+                h.appendData = {};
                 api.fields().forEach(key => {
                     const ctxs = h.fieldCtx[key];
                     if (ctxs) {
-                        const flag = hasProperty(data, key);
+                        const flag = hasProperty(formData, key);
                         ctxs.forEach(ctx => {
-                            ctx.rule.value = flag ? data[key] : undefined;
+                            ctx.rule.value = flag ? formData[key] : undefined;
                         })
                         delete data[key];
                     }
                 });
                 extend(h.appendData, data);
-            })
+            }, true)
         },
         setValue(field) {
             let formData = field;
@@ -109,7 +148,7 @@ export default function Api(h) {
                         ctx.rule.value = formData[key];
                     });
                 });
-            })
+            }, true)
         },
         removeField(field) {
             const ctx = h.getCtx(field);
@@ -137,7 +176,8 @@ export default function Api(h) {
 
             if (ctx) {
                 if (child) {
-                    rules = ctx.rule.children;
+                    rules = ctx.getPending('children', ctx.rule.children);
+                    if (!Array.isArray(rules)) return;
                     index = ctx.rule.children.length - 1;
                 } else {
                     index = ctx.root.indexOf(ctx.origin);
@@ -152,7 +192,8 @@ export default function Api(h) {
 
             if (ctx) {
                 if (child) {
-                    rules = ctx.rule.children;
+                    rules = ctx.getPending('children', ctx.rule.children);
+                    if (!Array.isArray(rules)) return;
                 } else {
                     index = ctx.root.indexOf(ctx.origin);
                     rules = ctx.root;
@@ -181,7 +222,7 @@ export default function Api(h) {
         disabled(disabled, fields) {
             tidyFields(fields).forEach((field) => {
                 h.getCtxs(field).forEach(ctx => {
-                    ctx.rule.props && $set(ctx.rule.props, 'disabled', !!disabled);
+                    $set(ctx.rule.props, 'disabled', !!disabled);
                 });
             });
             h.refresh();
@@ -301,7 +342,7 @@ export default function Api(h) {
         },
         getRefRule: (id) => {
             const ctxs = h.getCtxs(id);
-            if (ctxs && ctxs.length) {
+            if (ctxs) {
                 const rules = ctxs.map(ctx => {
                     return ctx.rule;
                 })
@@ -346,7 +387,6 @@ export default function Api(h) {
             })
         },
         refreshValidate() {
-            h.vm.validate = {};
             api.refresh();
         },
         resetFields(fields) {
@@ -356,7 +396,7 @@ export default function Api(h) {
                     ctx.rule.value = copy(ctx.defaultValue);
                 });
             });
-            h.vm.$nextTick(() => {
+            nextTick(() => {
                 api.clearValidateState();
             });
             if (fields == null) {
@@ -367,7 +407,7 @@ export default function Api(h) {
         method(id, name) {
             const el = api.el(id);
             if (!el || !el[name])
-                throw new Error(format('err', `${name}方法不存在`));
+                throw new Error(format('err', `${name} 方法不存在`));
             return (...args) => {
                 return el[name](...args);
             }
@@ -394,6 +434,87 @@ export default function Api(h) {
             const ctx = h.getCtx(field);
             return ctx ? h.subForm[ctx.id] : undefined;
         },
+        getChildrenRuleList(id) {
+            const flag = typeof id === 'object';
+            const ctx = flag ? byCtx(id) : h.getCtx(id);
+            const rule = ctx ? ctx.rule : (flag ? id : api.getRule(id));
+            if (!rule) {
+                return [];
+            }
+            const rules = [];
+            const findRules = children => {
+                children && children.forEach(item => {
+                    if (typeof item !== 'object') {
+                        return;
+                    }
+                    if (item.field) {
+                        rules.push(item);
+                    }
+                    rules.push(...api.getChildrenRuleList(item));
+                });
+            }
+            findRules(ctx ? ctx.loadChildrenPending() : rule.children);
+            return rules;
+        },
+        getParentRule(id) {
+            const flag = typeof id === 'object';
+            const ctx = flag ? byCtx(id) : h.getCtx(id);
+            return ctx.parent.rule;
+        },
+        getParentSubRule(id) {
+            const flag = typeof id === 'object';
+            const ctx = flag ? byCtx(id) : h.getCtx(id);
+            if (ctx) {
+                const group = ctx.getParentGroup();
+                if (group) {
+                    return group.rule;
+                }
+            }
+        },
+        getChildrenFormData(id) {
+            const rules = api.getChildrenRuleList(id);
+            return rules.reduce((formData, rule) => {
+                formData[rule.field] = copy(rule.value);
+                return formData;
+            }, {});
+        },
+        setChildrenFormData(id, formData, cover) {
+            const rules = api.getChildrenRuleList(id);
+            h.deferSyncValue(() => {
+                rules.forEach(rule => {
+                    if (hasProperty(formData, rule.field)) {
+                        rule.value = formData[rule.field];
+                    } else if (cover) {
+                        rule.value = undefined;
+                    }
+                });
+            });
+        },
+        getGlobalEvent(name) {
+            let event = api.options.globalEvent[name];
+            if (event) {
+                if (typeof event === 'object') {
+                    event = event.handle;
+                }
+                return parseFn(event);
+            }
+            return undefined;
+        },
+        getGlobalData(name) {
+            return new Promise((resolve, inject) => {
+                let config = api.options.globalData[name];
+                if (!config) {
+                    resolve(h.fc.loadData[name]);
+                }
+                if (config.type === 'fetch') {
+                    api.fetch(config).then(res => {
+                        resolve(res);
+                    }).catch(inject);
+                } else {
+                    resolve(config.data);
+                }
+            });
+        },
         nextTick(fn) {
             h.bus.$once('next-tick', fn);
             h.refresh();
@@ -408,18 +529,51 @@ export default function Api(h) {
         deferSyncValue(fn, sync) {
             h.deferSyncValue(fn, sync);
         },
+        bus: h.bus,
         fetch(opt) {
             return new Promise((resolve, reject) => {
+                opt = deepCopy(opt);
+                opt = h.loadFetchVar(opt);
                 h.beforeFetch(opt).then(() => {
-                    return asyncFetch(opt).then(resolve).catch(reject);
+                    return asyncFetch(opt, h.fc.create.fetch, api).then((res) => {
+                        invoke(() => opt.onSuccess && opt.onSuccess(res));
+                        resolve(res);
+                    }).catch((e) => {
+                        invoke(() => opt.onError && opt.onError(e));
+                        reject(e);
+                    });
+                });
+            });
+        },
+        watchFetch(opt, callback, error) {
+            return h.fc.watchLoadData((get, change) => {
+                let _opt = deepCopy(opt);
+                _opt = h.loadFetchVar(_opt, get);
+                h.beforeFetch(_opt).then(() => {
+                    return asyncFetch(_opt, h.fc.create.fetch, api).then(res => {
+                        invoke(() => _opt.onSuccess && _opt.onSuccess(res));
+                        callback && callback(res, change);
+                    }).catch(e => {
+                        invoke(() => _opt.onError && _opt.onError(e));
+                        error && error(e);
+                    });
                 });
             });
         },
         getData(id, def) {
-            return h.fc.getData(id, def);
+            return h.fc.getLoadData(id, def);
         },
-        setData(id, data) {
-            return h.fc.setData(id, data);
+        setData(id, data, isGlobal) {
+            return h.fc.setData(id, data, isGlobal);
+        },
+        refreshData(id) {
+            return h.fc.refreshData(id);
+        },
+        t(id, params) {
+            return h.fc.t(id, params);
+        },
+        getLocale() {
+            return h.fc.getLocale();
         },
         helper: {
             tidyFields, props

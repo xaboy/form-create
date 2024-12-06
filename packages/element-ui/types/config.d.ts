@@ -103,7 +103,7 @@ export interface ApiAttrs {
 
     wrapEl(id: string): undefined | ElFormItem;
 
-    submit(success: (formData: FormData, api: Api) => void, fail: (api: Api) => void): void;
+    submit(success: (formData: FormData, $f: Api) => void, fail: ($f: Api) => void): Promise<any>;
 
     clearValidateState(fields?: string | string[], clearSub?: Boolean): void;
 

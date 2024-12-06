@@ -22,6 +22,7 @@ export default {
     tree: 'fcTree',
     autoComplete: 'AutoComplete',
     group: 'fcGroup',
+    array: 'fcGroup',
     subForm: 'fcSubForm',
     object: 'fcSubForm',
 }

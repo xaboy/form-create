@@ -10,10 +10,22 @@ import useInput from './input';
 import useContext from './context';
 import useLifecycle from './lifecycle';
 import useEffect from './effect';
+import {reactive} from 'vue';
 import is from '@form-create/utils/lib/type';
 
 
 export default function Handler(fc) {
+    funcProxy(this, {
+        options() {
+            return fc.options.value || {};
+        },
+        bus() {
+            return fc.bus;
+        },
+        preview() {
+            return (fc.vm.$options.propsData.preview != null ? fc.vm.$options.propsData.preview : (fc.options.value.preview || false));
+        }
+    })
     extend(this, {
         fc,
         vm: fc.vm,
@@ -23,10 +35,12 @@ export default function Handler(fc) {
         noWatchFn: null,
         deferSyncFn: null,
         isMounted: false,
-        formData: {},
+        formData: reactive({}),
+        subRuleData: reactive({}),
         subForm: {},
-        form: {},
+        form: reactive({}),
         appendData: {},
+        ignoreFields: [],
         providers: {},
         cycleLoad: null,
         loadedId: 1,
@@ -38,20 +52,14 @@ export default function Handler(fc) {
         }
     });
 
-    funcProxy(this, {
-        options() {
-            return fc.options;
-        },
-        bus() {
-            return fc.bus;
-        },
-    })
-
     this.initData(fc.rules);
 
     this.$manager = new fc.manager(this);
     this.$render = new Render(this);
-    this.api = fc.extendApi(Api(this), this);
+    this.api = fc.extendApiFn.reduce((api, fn) => {
+        extend(api, invoke(() => (fn(api, this) || api), {}));
+        return api;
+    }, Api(this));
 }
 
 extend(Handler.prototype, {
@@ -65,13 +73,18 @@ extend(Handler.prototype, {
         });
     },
     init() {
-        this.appendData = {...this.fc.options.formData || {}, ...this.vm.value || {}, ...this.appendData};
+        this.updateAppendData();
         this.useProvider();
         this.usePage();
         this.loadRule();
         this.$manager.__init();
         this.lifecycle('created');
-        this.vm.$set(this.vm, 'formData', this.formData);
+    },
+    updateAppendData() {
+        this.appendData = {...(this.options.formData || {}), ...(this.fc.vm.$options.propsData.value || {}), ...this.appendData};
+    },
+    isBreakWatch() {
+        return this.loading || this.noWatchFn || this.reloading;
     },
     beforeFetch(opt) {
         return new Promise((resolve) => {

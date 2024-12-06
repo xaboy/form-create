@@ -1,4 +1,4 @@
-import FormCreateFactory from './frame';
+import FormCreateFactory from './frame/index';
 import fragment from './components/fragment';
 import Creator, {creatorFactory} from './factory/creator';
 import Manager from './factory/manager';

@@ -18,12 +18,9 @@ export default function useLifecycle(Handler) {
             }
         },
         lifecycle(name) {
+            this.fc.targetFormDriver(name, this.api, this.fc);
             this.vm.$emit(name, this.api);
             this.emitEvent(name, this.api);
-        },
-        targetReload(){
-            this.bus.$off('next-tick', this.nextReload);
-            this.bus.$once('next-tick', this.nextReload);
         },
         emitEvent(name, ...args) {
             const _fn = this.options[name] || this.options[toCase('on-' + name)];
@@ -32,6 +29,15 @@ export default function useLifecycle(Handler) {
                 is.Function(fn) && invoke(() => fn(...args));
             }
             this.bus.$emit(name, ...args);
+        },
+        targetHook(ctx, name, args) {
+            let hook = ctx.prop?.hook?.[name];
+            if (hook) {
+                hook = Array.isArray(hook) ? hook : [hook];
+                hook.forEach(fn => {
+                    invoke(() => fn({...args || {}, rule: ctx.rule, api: this.api}));
+                });
+            }
         }
     })
 }

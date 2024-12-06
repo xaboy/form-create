@@ -1,24 +1,26 @@
-import extend from '@form-create/utils/lib/extend';
 import toArray from '@form-create/utils/lib/toarray';
-
+import {getCurrentInstance, provide, inject, nextTick, watch, toRefs, reactive, onBeforeMount, onMounted, onBeforeUnmount, onUpdated, markRaw} from 'vue';
+import debounce from '@form-create/utils/lib/debounce'
+import toLine from '@form-create/utils/lib/toline';
 const NAME = 'FormCreate';
 
-const getRuleInject = (vm, parent) => {
-    if (!vm || vm === parent) {
+const getGroupInject = (vm, parent) => {
+    if (!vm || vm === parent || !vm.$props) {
         return;
     }
-    if (vm.formCreateInject) {
-        return vm.formCreateInject
+    if (vm.$props.formCreateInject) {
+        return vm.$props.formCreateInject
     }
     if (vm.$parent) {
-        return getRuleInject(vm.$parent, parent);
+        return getGroupInject(vm.$parent, parent);
     }
 }
 
 export default function $FormCreate(FormCreate, components, directives) {
+    const name = 'FormCreate' + (FormCreate.isMobile ? 'Mobile' : '');
     return {
-        name: NAME,
-        componentName: NAME,
+        name,
+        componentName: name,
         model: {
             prop: 'api'
         },
@@ -33,21 +35,27 @@ export default function $FormCreate(FormCreate, components, directives) {
         props: {
             rule: {
                 type: Array,
-                required: true
+                required: true,
+                default: () => []
             },
             option: {
                 type: Object,
-                default: () => {
-                    return {};
-                }
+                default: () => ({})
             },
             extendOption: Boolean,
+            driver: [String, Object],
+            value: Object,
             disabled: {
                 type: Boolean,
                 default: undefined,
             },
-            value: Object,
+            preview: {
+                type: Boolean,
+                default: undefined,
+            },
+            index: [String, Number],
             api: Object,
+            locale: [String, Object],
             name: String,
             subForm: {
                 type: Boolean,
@@ -55,78 +63,45 @@ export default function $FormCreate(FormCreate, components, directives) {
             },
             inFor: Boolean,
         },
-        data() {
-            return {
-                formData: undefined,
+        render() {
+            return this.fc.render();
+        },
+        setup(props) {
+            const vm = getCurrentInstance().proxy;
+            provide('parentFC', vm);
+            const parent = inject('parentFC', null);
+            let top = parent;
+
+            if (parent) {
+                while (top.parent) {
+                    top = top.parent;
+                }
+            } else {
+                top = vm;
+            }
+
+            const {rule, value: modelValue, subForm, inFor} = toRefs(props);
+
+            const data = reactive({
+                ctxInject: {},
                 destroyed: false,
-                validate: {},
-                $f: undefined,
                 isShow: true,
                 unique: 1,
-                renderRule: [...this.rule || []],
-                ctxInject: {},
-                updateValue: JSON.stringify(this.value || {}),
-                isMore: !!this.inFor,
-            };
-        },
-        render() {
-            return this.formCreate.render();
-        },
-        methods: {
-            _refresh() {
-                ++this.unique;
-            },
-            _renderRule() {
-                this.renderRule = [...this.rule || []];
-            },
-            _updateValue(value) {
-                if (this.destroyed) return;
-                this.updateValue = JSON.stringify(value);
-                this.$emit('update:value', value);
-            }
-        },
-        watch: {
-            value: {
-                handler(n) {
-                    if (JSON.stringify(n || {}) === this.updateValue) return;
-                    this.$f.config.forceCoverValue ? this.$f.coverValue(n || {}) : this.$f.setValue(n || {});
-                },
-                deep: true
-            },
-            option: {
-                handler() {
-                    this.formCreate.initOptions();
-                    this.$f.refresh();
-                },
-                deep: true
-            },
-            rule(n, o) {
-                if (n.length === this.renderRule.length && n.every(v => this.renderRule.indexOf(v) > -1)) return;
-                this.formCreate.$handle.reloadRule(n);
-                this._renderRule();
-                if (n !== o) {
-                    this.formCreate.$handle.targetReload();
-                }
-            },
-            disabled() {
-                this.$f.refresh();
-            }
-        },
-        beforeCreate() {
-            this.formCreate = new FormCreate(this);
-            Object.keys(this.formCreate.prop).forEach(k => {
-                extend(this.$options[k], this.formCreate.prop[k]);
-            })
-            this.$emit('beforeCreate', this.formCreate.api());
-        },
-        created() {
-            const vm = this, fapi = this.formCreate.api();
+                renderRule: [...rule.value || []],
+                updateValue: JSON.stringify(modelValue.value || {}),
+            });
+
+            const fc = new FormCreate(vm);
+            const fapi = fc.api();
+
+            const isMore = inFor.value;
+
             const addSubForm = () => {
-                if (vm.$pfc) {
-                    const inject = getRuleInject(vm, vm.$pfc);
+                if (parent) {
+                    const inject = getGroupInject(vm, parent);
                     if (inject) {
                         let sub;
-                        if (vm.isMore) {
+                        if (isMore) {
                             sub = toArray(inject.getSubForm());
                             sub.push(fapi);
 
@@ -139,9 +114,9 @@ export default function $FormCreate(FormCreate, components, directives) {
             };
 
             const rmSubForm = () => {
-                const inject = getRuleInject(vm, vm.$pfc);
+                const inject = getGroupInject(vm, parent);
                 if (inject) {
-                    if (vm.isMore) {
+                    if (isMore) {
                         const sub = toArray(inject.getSubForm());
                         const idx = sub.indexOf(fapi);
                         if (idx > -1) {
@@ -153,13 +128,144 @@ export default function $FormCreate(FormCreate, components, directives) {
                 }
             };
 
-            vm.$on('hook:beforeDestroy', () => {
-                rmSubForm();
+            let styleEl = null;
+
+            onBeforeMount(() => {
+                watch(() => {
+                    let content = '';
+                    const globalClass = (props.option && props.option.globalClass) || {};
+                    Object.keys(globalClass).forEach(k => {
+                        let subCss = '';
+                        globalClass[k].style && Object.keys(globalClass[k].style).forEach(key => {
+                            subCss += toLine(key) + ':' + globalClass[k].style[key] + ';';
+                        });
+                        if (globalClass[k].content) {
+                            subCss += globalClass[k].content + ';';
+                        }
+                        if (subCss) {
+                            content += `.${k}{${subCss}}`;
+                        }
+                    });
+                    if (props.option && props.option.style) {
+                        content += props.option.style;
+                    }
+                    if (!styleEl) {
+                        styleEl = document.createElement('style');
+                        styleEl.type = 'text/css';
+                        document.head.appendChild(styleEl);
+                    }
+                    styleEl.innerHTML = content || '';
+                },() => {})
             });
 
-            this.$watch(() => this.subForm, (n) => {
+            const emit$topForm = debounce(() => {
+                fc.bus.$emit('$loadData.$topForm');
+            }, 100);
+
+            const emit$form = debounce(() => {
+                fc.bus.$emit('$loadData.$form');
+            }, 100);
+
+            const emit$change = (field) => {
+                fc.bus.$emit('change-$form.' + field);
+            };
+
+            onMounted(() => {
+                if (parent) {
+                    fapi.top.bus.$on('$loadData.$form', emit$topForm);
+                    fapi.top.bus.$on('change', emit$change);
+                }
+                fc.mounted();
+            });
+
+            onBeforeUnmount(() => {
+                if (parent) {
+                    fapi.top.bus.$off('$loadData.$form', emit$topForm);
+                    fapi.top.bus.$off('change', emit$change);
+                }
+                styleEl && document.head.removeChild(styleEl);
+                rmSubForm();
+                data.destroyed = true;
+                fc.unmount();
+            })
+
+            onUpdated(() => {
+                fc.updated();
+            });
+
+            watch(subForm, (n) => {
                 n ? addSubForm() : rmSubForm();
             }, {immediate: true});
-        }
+
+            watch(() => [...rule.value], (n) => {
+                if (fc.$handle.isBreakWatch() || n.length === data.renderRule.length && n.every(v => data.renderRule.indexOf(v) > -1)) return;
+                fc.$handle.updateAppendData();
+                fc.$handle.reloadRule(rule.value);
+                vm.renderRule();
+            })
+
+            watch(() => props.option, () => {
+                fc.initOptions();
+                fapi.refresh();
+            }, {deep: true});
+
+            watch(() => [props.disabled, props.preview], () => {
+                fapi.refresh();
+            });
+
+            watch(modelValue, (n) => {
+                if (JSON.stringify(n || {}) === data.updateValue) return;
+                if (fapi.config.forceCoverValue) {
+                    fapi.coverValue(n || {});
+                } else {
+                    fapi.setValue(n || {});
+                }
+            }, {deep: true, flush: 'post'});
+
+            watch(() => props.index, () => {
+                fapi.coverValue({});
+                fc.$handle.updateAppendData();
+                nextTick(() => {
+                    nextTick(() => {
+                        fapi.clearValidateState();
+                    });
+                });
+            }, {flush: 'sync'});
+
+            return {
+                fc: markRaw(fc),
+                parent: parent ? markRaw(parent) : parent,
+                top: markRaw(top),
+                fapi: markRaw(fapi),
+                ...toRefs(data),
+                getGroupInject: () => getGroupInject(vm, parent),
+                refresh() {
+                    ++data.unique;
+                },
+                renderRule() {
+                    data.renderRule = [...rule.value || []];
+                },
+                updateValue(value) {
+                    if (data.destroyed) return;
+                    const json = JSON.stringify(value);
+                    if (data.updateValue === json) {
+                        return;
+                    }
+                    data.updateValue = json;
+                    vm.$emit('update:value', value);
+                    nextTick(() => {
+                        emit$form();
+                        if (!parent) {
+                            emit$topForm();
+                        }
+                    });
+                }
+            }
+        },
+        created() {
+            const vm = getCurrentInstance().proxy;
+            vm.$emit('input', vm.fapi);
+            vm.fc.init();
+        },
     }
 }

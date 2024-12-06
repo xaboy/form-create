@@ -1,32 +1,15 @@
-import extend from '@form-create/utils/lib/extend';
+import extend, {copy} from '@form-create/utils/lib/extend';
 import mergeProps from '@form-create/utils/lib/mergeprops';
-import is, {hasProperty} from '@form-create/utils/lib/type';
-import Vue from 'vue';
-import {tip} from '@form-create/utils/lib/console';
-import {invoke, mergeRule} from '../frame/util';
+import is from '@form-create/utils/lib/type';
+import {invoke, makeSlotBag, mergeRule} from '../frame/util';
 import toCase, {lower} from '@form-create/utils/lib/tocase';
-import {$set, deepSet, toLine} from '@form-create/utils';
+import {deepSet, toLine} from '@form-create/utils';
+import {computed, nextTick} from 'vue';
 
 export default function useRender(Render) {
     extend(Render.prototype, {
         initRender() {
-            this.tempList = {};
-            this.clearOrgChildren();
-        },
-        initOrgChildren() {
-            const ctxs = this.$handle.ctxs;
-            this.orgChildren = Object.keys(ctxs).reduce((initial, id) => {
-                if (ctxs[id].parser.loadChildren !== false) {
-                    const children = ctxs[id].rule.children;
-                    initial[id] = is.trueArray(children) ? [...children] : [];
-                }
-
-                return initial;
-            }, {});
-
-        },
-        clearOrgChildren() {
-            this.orgChildren = {};
+            this.cacheConfig = {};
         },
         getTypeSlot(ctx) {
             const _fn = (vm) => {
@@ -47,52 +30,47 @@ export default function useRender(Render) {
             return _fn(this.vm);
         },
         render() {
+            // console.warn('renderrrrr', this.id);
             if (!this.vm.isShow) {
                 return;
             }
-            this.$h = this.vm.$createElement;
             this.$manager.beforeRender();
-
-            let vn;
-
-            const make = () => this.renderList();
-            make.renderSlot = slot => this.renderList(slot);
-            make.renderName = name => this.renderId(name);
-            make.renderField = field => this.renderId(field, 'field');
-
-            if (this.vm.$scopedSlots.container) {
-                vn = [this.vm.$scopedSlots.container(make)];
+            const slotBag = makeSlotBag();
+            this.sort.forEach((k) => {
+                this.renderSlot(slotBag, this.$handle.ctxs[k]);
+            });
+            return this.$manager.render(slotBag);
+        },
+        renderSlot(slotBag, ctx, parent) {
+            if (this.isFragment(ctx)) {
+                ctx.initProp();
+                this.mergeGlobal(ctx);
+                ctx.initNone();
+                const slots = this.renderChildren(ctx.loadChildrenPending(), ctx);
+                const def = slots.default;
+                def && slotBag.setSlot(ctx.rule.slot, def);
+                delete slots.default;
+                slotBag.mergeBag(slots);
             } else {
-                vn = make();
+                slotBag.setSlot(ctx.rule.slot, this.renderCtx(ctx, parent));
             }
-            return this.$manager.render(vn);
-        },
-        renderList(slot) {
-            return this.sort.map((id) => {
-                return slot ? this.renderSlot(this.$handle.ctxs[id], slot) : this.renderCtx(this.$handle.ctxs[id]);
-            }).filter((val) => val !== undefined);
-        },
-        makeVm(rule) {
-            const vm = rule.vm;
-            if (!vm)
-                return new Vue;
-            else if (is.Function(vm))
-                return invoke(() => rule.vm(this.$handle.getInjectData(rule)));
-            else if (!vm._isVue)
-                return new Vue(vm);
-            return vm;
         },
         mergeGlobal(ctx) {
             const g = this.$handle.options.global;
             if (!g) return;
-            //todo 缓存配置,更新 option 更新
-            if (!ctx.cacheConfig)
-                ctx.cacheConfig = g[ctx.originType] || g[ctx.type] || g[ctx.trueType] || {};
-            ctx.prop = mergeRule({}, [g['*'], ctx.cacheConfig, ctx.prop]);
+            if (!this.cacheConfig[ctx.trueType]) {
+                this.cacheConfig[ctx.trueType] = computed(() => {
+                    const g = this.$handle.options.global;
+                    return mergeRule({}, [g['*'], g[ctx.originType] || g[ctx.type] || g[ctx.type] || {}]);
+                });
+            }
+            ctx.prop = mergeRule({}, [this.cacheConfig[ctx.trueType].value, ctx.prop]);
         },
         setOptions(ctx) {
-            if (ctx.prop.optionsTo && ctx.prop.options) {
-                deepSet(ctx.prop, ctx.prop.optionsTo, ctx.prop.options);
+            const opt = ctx.loadPending({key: 'options', origin: ctx.prop.options, def: []});
+            ctx.prop.options = opt;
+            if (ctx.prop.optionsTo && opt) {
+                deepSet(ctx.prop, ctx.prop.optionsTo, opt);
             }
         },
         deepSet(ctx) {
@@ -101,185 +79,143 @@ export default function useRender(Render) {
                 deepSet(ctx.prop, str, deep[str]);
             });
         },
-        setTempProps(vm, ctx) {
-            if (!vm.$props) return;
-
-            const {prop} = ctx;
-            const keys = Object.keys(vm.$props);
-            const inject = this.injectProp(ctx);
-            const injectKeys = Object.keys(inject);
-
-            keys.forEach(key => {
-                if (hasProperty(prop.props, key))
-                    vm.$props[key] = prop.props[key];
-                else if (injectKeys.indexOf(key) > -1) vm.$props[key] = inject[key];
-            });
-
-            const key = (vm.$options.model && vm.$options.model.prop) || 'value';
-            if (keys.indexOf(key) > -1) {
-                vm.$props[key] = prop.value;
-            }
-        },
-        renderTemp(ctx) {
-            if (!Vue.compile) {
-                tip('当前使用的Vue构建版本不支持compile,无法使用template功能');
-                return [];
-            }
-            const rule = ctx.prop;
-            const {id, key} = ctx;
-
-            if (!this.tempList[id]) {
-                if (!ctx.el) {
-                    ctx.el = this.makeVm(rule);
-                    this.vm.$nextTick(() => ctx.parser.mounted(ctx));
-                }
-
-                let vm = ctx.el;
-                if (ctx.input)
-                    vm.$on((vm.$options.model && vm.$options.model.event) || 'input', (value) => {
-                        this.onInput(ctx, value);
-                    });
-
-                this.tempList[id] = {
-                    vm,
-                    template: Vue.compile(rule.template)
-                };
-            }
-
-            const {vm, template} = this.tempList[id];
-
-            this.setTempProps(vm, ctx);
-
-            const vn = template.render.call(vm);
-
-            if (is.Undef(vn.data)) vn.data = {};
-            vn.key = key;
-            vn.data.ref = ctx.ref;
-            vn.data.key = key;
-            return vn;
-        },
         parseSide(side, ctx) {
             return is.Object(side) ? mergeRule({props: {formCreateInject: ctx.prop.props.formCreateInject}}, side) : side;
         },
         renderSides(vn, ctx, temp) {
             const prop = ctx[temp ? 'rule' : 'prop'];
             return [this.renderRule(this.parseSide(prop.prefix, ctx)), vn, this.renderRule(this.parseSide(prop.suffix, ctx))];
-
-        },
-        renderSlot(ctx, slot) {
-            return ctx.rule.slot === slot ? this.renderCtx(ctx) : undefined;
         },
         renderId(name, type) {
             const ctxs = this.$handle[type === 'field' ? 'fieldCtx' : 'nameCtx'][name]
             return ctxs ? ctxs.map(ctx => this.renderCtx(ctx, ctx.parent)) : undefined;
         },
         renderCtx(ctx, parent) {
-            if (ctx.type === 'hidden') return;
-            const rule = ctx.rule;
-            if ((!this.cache[ctx.id]) || this.cache[ctx.id].slot !== rule.slot) {
-                let vn;
-                let cacheFlag = rule.cache !== false;
-                const _type = ctx.trueType;
-                const none = !(is.Undef(rule.display) || !!rule.display);
-                if (_type === 'template' && !rule.template) {
-                    vn = this.renderSides(this.renderChildren(ctx), ctx, true);
-                    if (none) {
-                        this.display(vn);
-                    }
-                    vn = this.item(ctx, vn);
-                } else if (_type === 'fcFragment') {
-                    vn = this.renderChildren(ctx);
-                } else {
+            try {
+                if (ctx.type === 'hidden') return;
+                const rule = ctx.rule;
+                if ((!this.cache[ctx.id]) || this.cache[ctx.id].slot !== rule.slot) {
+                    let vn;
                     ctx.initProp();
                     this.mergeGlobal(ctx);
+                    ctx.initNone();
                     this.$manager.tidyRule(ctx);
                     this.deepSet(ctx);
                     this.setOptions(ctx);
                     this.ctxProp(ctx);
                     let prop = ctx.prop;
-                    prop.preview = !!(hasProperty(prop, 'preview') ? prop.preview : (this.options.preview || false))
+                    prop.preview = !!(prop.preview != null ? prop.preview : this.$handle.preview);
                     prop.props.formCreateInject = this.injectProp(ctx);
+                    let cacheFlag = prop.cache !== false;
                     const preview = prop.preview;
 
                     if (prop.hidden) {
                         this.setCache(ctx, undefined, parent);
                         return;
                     }
-
-                    if (_type === 'template' && prop.template) {
-                        vn = this.renderTemp(ctx);
-                        cacheFlag = false;
-                    } else {
-                        let children = [];
+                    vn = (...slotValue) => {
+                        const inject = {
+                            rule,
+                            prop,
+                            preview,
+                            api: this.$handle.api,
+                            model: prop.model || {},
+                            slotValue
+                        }
+                        if (slotValue.length && rule.slotUpdate) {
+                            invoke(() => rule.slotUpdate(inject))
+                        }
+                        let children = {};
+                        const _load = ctx.loadChildrenPending();
                         if (ctx.parser.renderChildren) {
-                            children = ctx.parser.renderChildren(ctx);
+                            children = ctx.parser.renderChildren(_load, ctx);
                         } else if (ctx.parser.loadChildren !== false) {
-                            children = this.renderChildren(ctx);
+                            children = this.renderChildren(_load, ctx);
                         }
                         const slot = this.getTypeSlot(ctx);
+                        let _vn;
                         if (slot) {
-                            vn = slot({
-                                rule,
-                                prop,
-                                preview,
-                                children,
-                                api: this.$handle.api,
-                                model: prop.model || {}
-                            });
+                            inject.children = children;
+                            _vn = slot(inject)
                         } else {
-                            vn = preview ? ctx.parser.preview(children, ctx) : ctx.parser.render(children, ctx);
+                            _vn = preview ? ctx.parser.preview(copy(children), ctx) : ctx.parser.render(copy(children), ctx);
                         }
-                    }
-                    vn = this.renderSides(vn, ctx);
-                    if ((!(!ctx.input && is.Undef(prop.native))) && prop.native !== true) {
-                        vn = this.$manager.makeWrap(ctx, vn);
-                    }
-                    if (none) {
-                        vn = this.display(vn);
-                    }
-                    vn = this.item(ctx, vn)
-                }
-                if (cacheFlag) {
+                        _vn = this.renderSides(_vn, ctx);
+                        if ((!(!ctx.input && is.Undef(prop.native))) && prop.native !== true) {
+                            this.fc.targetFormDriver('updateWrap', ctx)
+                            _vn = this.$manager.makeWrap(ctx, _vn);
+                        }
+                        if (ctx.none) {
+                            console.log(_vn);
+                            if (Array.isArray(_vn)) {
+                                _vn = _vn.map(v => {
+                                    if (!v || !v.tag) {
+                                        return v;
+                                    }
+                                    return this.none(v);
+                                });
+                            } else {
+                                _vn = this.none(_vn);
+                            }
+                        }
+                        cacheFlag && this.setCache(ctx, () => {
+                            return this.stable(_vn);
+                        }, parent);
+                        return _vn
+                    };
                     this.setCache(ctx, vn, parent);
                 }
-                return vn;
-            }
-
-            return this.getCache(ctx);
-        },
-        display(vn) {
-            if (Array.isArray(vn)) {
-                const data = [];
-                vn.forEach(v => {
-                    if (Array.isArray(v)) return this.display(v);
-                    if (this.none(v)) data.push(v);
-                })
-                return data;
-            } else {
-                return this.none(vn);
+                return (...args) => {
+                    const cache = this.getCache(ctx);
+                    if (cache) {
+                        return cache(...args);
+                    } else if (this.cache[ctx.id]) {
+                        return;
+                    }
+                    const _vn = this.renderCtx(ctx, ctx.parent);
+                    if (_vn) {
+                        return _vn();
+                    }
+                };
+            } catch (e) {
+                console.error(e);
+                return;
             }
         },
         none(vn) {
-            if (vn && vn.data) {
-                if (Array.isArray(vn.data.style)) {
-                    vn.data.style.push({display: 'none'});
-                } else if(is.String(vn.data.style)) {
-                    vn.data.style += ';display:none;';
-                } else {
-                    vn.data.style = [vn.data.style, {display: 'none'}];
-                }
+            if (vn) {
+                vn.data.class = this.mergeClass(vn.data.class, 'fc-none')
                 return vn;
             }
         },
-        item(ctx, vn) {
-            return this.$h('fcFragment', {
-                slot: ctx.rule.slot,
-                key: ctx.key,
-            }, [vn]);
+        mergeClass(target, value) {
+            if (Array.isArray(target)) {
+                target.push(value);
+            } else {
+                return target ? [target, value] : value;
+            }
+            return target;
+        },
+        stable(vn) {
+            const list = Array.isArray(vn) ? vn : [vn];
+            list.forEach(v => {
+                if (v && v.tag && v.children && typeof v.children === 'object') {
+                    v.children.$stable = true;
+                    this.stable(v.children);
+                }
+            });
+            return vn;
+        },
+        getModelField(ctx) {
+            return ctx.prop.modelField || ctx.parser.modelField || this.fc.modelFields[this.vNode.aliasMap[ctx.type]] || this.fc.modelFields[ctx.type] || this.fc.modelFields[ctx.originType] || 'value';
+        },
+        isFragment(ctx) {
+            return ctx.type === 'fragment' || ctx.type === 'template';
         },
         injectProp(ctx) {
-            if (!this.vm.ctxInject[ctx.id]) {
-                $set(this.vm.ctxInject, ctx.id, {
+            const state = this.vm;
+            if (!state.ctxInject[ctx.id]) {
+                state.ctxInject[ctx.id] = {
                     api: this.$handle.api,
                     form: this.fc.create,
                     subForm: subForm => {
@@ -288,27 +224,27 @@ export default function useRender(Render) {
                     getSubForm: () => {
                         return this.$handle.subForm[ctx.id];
                     },
+                    slots: () => {
+                        return this.vm.top.$scopedSlots;
+                    },
                     options: [],
                     children: [],
-                    prop: {},
                     preview: false,
                     id: ctx.id,
                     field: ctx.field,
                     rule: ctx.rule,
                     input: ctx.input,
-                });
+                    updateValue: (data) => {
+                        this.$handle.onUpdateValue(ctx, data);
+                    }
+                }
             }
-            const inject = this.vm.ctxInject[ctx.id];
+            const inject = state.ctxInject[ctx.id];
             extend(inject, {
                 preview: ctx.prop.preview,
                 options: ctx.prop.options,
-                children: ctx.rule.children,
-                prop: (function () {
-                    const temp = {...ctx.prop};
-                    temp.on = temp.on ? {...temp.on} : {};
-                    delete temp.model;
-                    return temp;
-                }()),
+                prop: ctx.prop,
+                children: ctx.loadChildrenPending()
             });
             return inject;
         },
@@ -325,8 +261,8 @@ export default function useRender(Render) {
                         'hook:mounted': () => {
                             this.onMounted(ctx);
                         },
-                        'fc.sub-form': (subForm) => {
-                            this.$handle.addSubForm(ctx, subForm);
+                        'fc.updateValue': (data) => {
+                            this.$handle.onUpdateValue(ctx, data);
                         },
                         'fc.el': (el) => {
                             ctx.exportEl = el;
@@ -334,7 +270,7 @@ export default function useRender(Render) {
                                 (el.$el || el).__rule__ = ctx.rule;
                             }
                         }
-                    },
+                    }
                 }
             ]
 
@@ -349,6 +285,14 @@ export default function useRender(Render) {
                     },
                     expression: `formData.${ctx.id}`
                 };
+                if (ctx.prop.modelEmit) {
+                    props.push({
+                        on: {
+                            [ctx.prop.modelEmit]: () => this.onEmitInput(ctx)
+                        },
+
+                    })
+                }
             }
             mergeProps(props, ctx.prop);
             return ctx.prop;
@@ -360,63 +304,50 @@ export default function useRender(Render) {
             }
             ctx.parser.mounted(ctx);
             this.$handle.effect(ctx, 'mounted');
+            this.$handle.targetHook(ctx, 'mounted');
         },
         onInput(ctx, value) {
+            if (ctx.prop.modelEmit) {
+                this.$handle.onBaseInput(ctx, value);
+                return;
+            }
             this.$handle.onInput(ctx, value);
         },
-        renderChildren(ctx) {
-            const {children} = ctx.rule, orgChildren = this.orgChildren[ctx.id];
-
-            const isRm = child => {
-                return !is.String(child) && child.__fc__ && !this.$handle.ctxs[child.__fc__.id];
-            }
-
-            if (!is.trueArray(children) && orgChildren) {
-                this.$handle.deferSyncValue(() => {
-                    orgChildren.forEach(child => {
-                        if (!child) return;
-                        if (isRm(child)) {
-                            this.$handle.rmCtx(child.__fc__);
-                        }
-                    });
-                });
-                this.orgChildren[ctx.id] = [];
-                return [];
-            }
-
-            orgChildren && this.$handle.deferSyncValue(() => {
-                orgChildren.forEach(child => {
-                    if (!child) return;
-                    if (children.indexOf(child) === -1 && isRm(child)) {
-                        this.$handle.rmCtx(child.__fc__);
-                    }
-                });
-            });
-
-            return children.map(child => {
+        onEmitInput(ctx) {
+            this.$handle.setValue(ctx, ctx.parser.toValue(ctx.modelValue, ctx), ctx.modelValue);
+        },
+        renderChildren(children, ctx) {
+            if (!is.trueArray(children)) return {};
+            const slotBag = makeSlotBag()
+            children.map(child => {
                 if (!child) return;
-                if (is.String(child)) return child;
+                if (is.String(child)) return slotBag.setSlot(null, child);
                 if (child.__fc__) {
-                    return this.renderCtx(child.__fc__, ctx);
+                    return this.renderSlot(slotBag, child.__fc__, ctx);
                 }
                 if (child.type) {
-                    this.vm.$nextTick(() => {
+                    nextTick(() => {
                         this.$handle.loadChildren(children, ctx);
                         this.$handle.refresh();
                     });
                 }
             });
-
+            return slotBag.getSlots();
         },
         defaultRender(ctx, children) {
             const prop = ctx.prop;
-            if(prop.component)
-                return this.vNode.makeComponent(prop.component, prop, children)
+            if (prop.component) {
+                if (typeof prop.component === 'string') {
+                    return this.vNode.make(prop.component, prop, children);
+                } else {
+                    return this.vNode.makeComponent(prop.component, prop, children);
+                }
+            }
             if (this.vNode[ctx.type])
                 return this.vNode[ctx.type](prop, children);
             if (this.vNode[ctx.originType])
                 return this.vNode[ctx.originType](prop, children);
-            return this.vNode.make(lower(ctx.originType), prop, children);
+            return this.vNode.make(lower(prop.type), prop, children);
         },
         renderRule(rule, children, origin) {
             if (!rule) return undefined;
@@ -435,11 +366,18 @@ export default function useRender(Render) {
             }
 
             if (!type) return undefined;
-            let data = [[children]];
+
+            const slotBag = makeSlotBag();
             if (is.trueArray(rule.children)) {
-                data.push(rule.children.map(v => this.renderRule(v)));
+                rule.children.forEach(v => {
+                    v && slotBag.setSlot(v?.slot, () => this.renderRule(v));
+                });
             }
-            return this.$h(type, {...rule}, data);
+            const props = {...rule};
+            delete props.type;
+            delete props.is;
+
+            return this.vNode.make(type, props, slotBag.mergeBag(children).getSlots());
         }
     })
 }
