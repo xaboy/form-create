@@ -146,7 +146,6 @@ export default function useRender(Render) {
                             _vn = this.$manager.makeWrap(ctx, _vn);
                         }
                         if (ctx.none) {
-                            console.log(_vn);
                             if (Array.isArray(_vn)) {
                                 _vn = _vn.map(v => {
                                     if (!v || !v.tag) {

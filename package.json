@@ -12,6 +12,7 @@
         "dev:iview": "cd packages/iview && npm run dev:iview",
         "dev:iview4": "cd packages/iview4 && npm run dev:iview4",
         "dev:view-design": "cd packages/view-design && npm run dev:view-design",
+        "dev:vant": "cd packages/vant && npm run dev:vant",
         "commit": "git cz",
         "lint": "eslint *.js",
         "clear:package": "rimraf packages/*/node_modules packages/*/package-lock.json packages/*/pnpm-lock.yaml",
