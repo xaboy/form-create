@@ -1,18 +1,21 @@
 import {hasProperty} from '@form-create/utils/lib/type';
-import {defineComponent, markRaw, nextTick, watch} from 'vue';
 import deepExtend, {deepCopy} from '@form-create/utils/lib/deepextend';
 import extend from '@form-create/utils/lib/extend';
 
 const NAME = 'fcGroup';
 
-
-export default defineComponent({
+export default {
     name: NAME,
     props: {
         field: String,
-        rule: Array,
+        rule: [Array, Object],
+        rules: Array,
         expand: Number,
         options: Object,
+        formCreateInject: {
+            type: Object,
+            required: true,
+        },
         button: {
             type: Boolean,
             default: true
@@ -29,14 +32,18 @@ export default defineComponent({
             type: Array,
             default: () => []
         },
-        defaultValue: Object,
         sortBtn: {
+            type: Boolean,
+            default: true
+        },
+        defaultValue: Object,
+        disabled: {
             type: Boolean,
             default: false
         },
-        disabled: {
+        syncDisabled: {
             type: Boolean,
-            default: undefined
+            default: true
         },
         onBeforeRemove: {
             type: Function,
@@ -48,7 +55,6 @@ export default defineComponent({
             default: () => {
             }
         },
-        formCreateInject: Object,
         parse: Function,
     },
     data() {
@@ -57,12 +63,28 @@ export default defineComponent({
             cacheRule: {},
             cacheValue: {},
             sort: [],
-            form: markRaw(this.formCreateInject.form.$form())
+            type: undefined
         }
     },
-    emits: ['input', 'change', 'itemMounted', 'remove', 'add'],
+    computed: {
+        formRule() {
+            if (this.rules) {
+                return this.rules;
+            }
+            if (this.rule) {
+                return Array.isArray(this.rule) ? this.rule : [this.rule];
+            }
+            return [];
+        }
+    },
     watch: {
-        rule: {
+        cacheRule: {
+            handler(n) {
+                this.sort = Object.keys(n);
+            },
+            immediate: true
+        },
+        formRule: {
             handler(n, o) {
                 Object.keys(this.cacheRule).forEach(v => {
                     const item = this.cacheRule[v];
@@ -91,29 +113,28 @@ export default defineComponent({
                 this.expandRule(d);
             }
         },
-        value: {
-            handler(n) {
-                n = n || [];
-                let keys = Object.keys(this.sort), total = keys.length, len = total - n.length;
-                if (len < 0) {
-                    for (let i = len; i < 0; i++) {
-                        this.addRule(n.length + i, true);
-                    }
-                    for (let i = 0; i < total; i++) {
-                        this.setValue(keys[i], n[i]);
-                    }
-                } else {
-                    if (len > 0) {
-                        for (let i = 0; i < len; i++) {
-                            this.removeRule(keys[total - i - 1]);
-                        }
-                    }
-                    n.forEach((val, i) => {
-                        this.setValue(keys[i], n[i]);
-                    });
+        value(n, o) {
+            n = n || [];
+            let keys = this.sort, total = keys.length, len = total - n.length;
+            if (len < 0) {
+                for (let i = len; i < 0; i++) {
+                    this.addRule(n.length + i);
                 }
-            },
-            deep: true,
+                this.sort = Object.keys(this.cacheRule);
+                for (let i = 0; i < total; i++) {
+                    this.setValue(keys[i], n[i]);
+                }
+            } else {
+                if (len > 0) {
+                    for (let i = 0; i < len; i++) {
+                        this.removeRule(keys[total - i - 1]);
+                    }
+                    this.sort = Object.keys(this.cacheRule);
+                }
+                n.forEach((val, i) => {
+                    this.setValue(keys[i], n[i]);
+                });
+            }
         }
     },
     methods: {
@@ -142,7 +163,7 @@ export default defineComponent({
             this.input(value);
         },
         setValue(key, value) {
-            const field = this.field
+            const field = this.field, $f = this.cacheRule[key].$f;
             if (field) {
                 value = {[field]: this._value(value)};
             }
@@ -150,9 +171,10 @@ export default defineComponent({
                 return;
             }
             this.cache(key, value);
+            $f && $f.coverValue(value || {});
         },
         addRule(i, emit) {
-            const rule = this.formCreateInject.form.copyRules(this.rule || []);
+            const rule = this.formCreateInject.form.copyRules(this.formRule);
             const options = this.options ? {...this.options} : {
                 submitBtn: false,
                 resetBtn: false,
@@ -163,32 +185,30 @@ export default defineComponent({
                 extend(options.formData, this.field ? {[this.field]: defVal} : defVal);
             }
             this.parse && this.parse({rule, options, index: this.sort.length});
-            this.cacheRule[++this.len] = {rule, options};
+            this.$set(this.cacheRule, ++this.len, {rule, options});
             if (emit) {
-                nextTick(() => this.$emit('add', rule, Object.keys(this.cacheRule).length - 1));
+                this.$nextTick(() => this.$emit('add', rule, Object.keys(this.cacheRule).length - 1));
             }
         },
         add$f(i, key, $f) {
             this.cacheRule[key].$f = $f;
-            nextTick(() => {
+            this.$nextTick(() => {
                 this.$emit('itemMounted', $f, Object.keys(this.cacheRule).indexOf(key));
             });
         },
         removeRule(key, emit) {
             const index = Object.keys(this.cacheRule).indexOf(key);
-            delete this.cacheRule[key];
-            delete this.cacheValue[key];
+            this.$delete(this.cacheRule, key);
+            this.$delete(this.cacheValue, key);
             if (emit) {
-                nextTick(() => this.$emit('remove', index));
+                this.$nextTick(() => this.$emit('remove', index));
             }
         },
         add(i) {
             if (this.disabled || false === this.onBeforeAdd(this.value)) {
                 return;
             }
-            const value = [...this.value];
-            value.push(this.defaultValue ? deepCopy(this.defaultValue) : (this.field ? null : {}));
-            this.input(value);
+            this.addRule(i, true);
         },
         del(index, key) {
             if (this.disabled || false === this.onBeforeRemove(this.value, index)) {
@@ -200,32 +220,29 @@ export default defineComponent({
             this.input(value);
         },
         addIcon(key) {
-            return <div class="_fc-m-group-btn _fc-m-group-plus-minus" onClick={this.add}></div>;
+            return <div class="_fc-m-group-btn _fc-m-group-plus-minus" on-click={this.add}></div>;
         },
         delIcon(index, key) {
             return <div class="_fc-m-group-btn _fc-m-group-plus-minus _fc-m-group-minus"
-                onClick={() => this.del(index, key)}></div>
+                        onClick={() => this.del(index, key)}></div>
         },
         sortUpIcon(index) {
             return <div class="_fc-m-group-btn _fc-m-group-arrow _fc-m-group-up"
-                onClick={() => this.changeSort(index, -1)}></div>
+                        onClick={() => this.changeSort(index, -1)}></div>
         },
         sortDownIcon(index) {
             return <div class="_fc-m-group-btn _fc-m-group-arrow _fc-m-group-down"
-                onClick={() => this.changeSort(index, 1)}></div>
+                        onClick={() => this.changeSort(index, 1)}></div>
         },
         changeSort(index, sort) {
             const a = this.sort[index];
-            this.sort[index] = this.sort[index + sort];
+            this.$set(this.sort, index, this.sort[index + sort]);
             this.sort[index + sort] = a;
-            this.formCreateInject.subForm(this.sort.map(k=>{
-                return this.cacheRule[k].$f;
-            }));
             this.formData(0);
         },
         makeIcon(total, index, key) {
-            if (this.$slots.button) {
-                return this.$slots.button({
+            if (this.$scopedSlots.button) {
+                return this.$scopedSlots.button({
                     total,
                     index,
                     vm: this,
@@ -254,43 +271,44 @@ export default defineComponent({
         },
         expandRule(n) {
             for (let i = 0; i < n; i++) {
-                this.addRule(i);
+                this.value.push(this.field ? null : {});
             }
         }
     },
     created() {
+        this.type = this.formCreateInject.form.$form();
         const d = (this.expand || 0) - this.value.length;
-        for (let i = 0; i < this.value.length; i++) {
-            this.addRule(i);
-        }
         if (d > 0) {
             this.expandRule(d);
         }
-        watch(() => ({...this.cacheRule}), (n) => {
-            this.sort = Object.keys(n);
-        }, {immediate: true})
+        for (let i = 0; i < this.value.length; i++) {
+            this.addRule(i);
+        }
     },
     render() {
         const keys = this.sort;
         const button = this.button;
-        const Type = this.form;
-        const disabled = this.$props.disabled;
+        const Type = this.type;
+        const disabled = this.disabled;
+
         const children = keys.length === 0 ?
-            (this.$slots.default ? (this.$slots.default({
+            (this.$scopedSlots.default ? (this.$scopedSlots.default({
                 vm: this,
                 add: this.add
-            })) : <div key={'a_def'} class="_fc-m-group-plus-minus _fc-m-group-add fc-clock"
-                onClick={this.add}/>) : keys.map((key, index) => {
+            })) : <div key={'a_def'} class="_fc-m-group-plus-minus _fc-m-group-add"
+                       on-click={this.add}/>) : keys.map((key, index) => {
                 const {rule, options} = this.cacheRule[key];
                 const btn = button && !disabled ? this.makeIcon(keys.length, index, key) : [];
                 return <div class="_fc-m-group-container" key={key}>
                     <Type
                         key={key}
+                        on={{
+                            'update:value': (formData) => this.formData(key, formData),
+                            'emit-event': (name, ...args) => this.emitEvent(name, args, index, key),
+                            input: ($f) => this.add$f(index, key, $f)
+                        }}
                         props={{
                             disabled,
-                            'onUpdate:value': (formData) => this.formData(key, formData),
-                            'onEmit-event': (name, ...args) => this.emitEvent(name, args, index, key),
-                            onInput: ($f) => this.add$f(index, key, $f),
                             inFor: true,
                             value: this.field ? {[this.field]: this._value(this.value[index])} : this.value[index],
                             rule,
@@ -299,9 +317,9 @@ export default defineComponent({
                         }}
                     />
                     <div class="_fc-m-group-idx">{index + 1}</div>
-                    {(btn.length) ? <div class="_fc-m-group-handle fc-clock">{btn}</div> : null}
+                    {(btn.length) ? <div class="_fc-m-group-handle">{btn}</div> : null}
                 </div>
             });
         return <div key={'con'} class={'_fc-m-group ' + (disabled ? '_fc-m-group-disabled' : '')}>{children}</div>
-    }
-});
+    },
+}
