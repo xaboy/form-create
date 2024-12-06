@@ -1,0 +1,125 @@
+._fc-group{
+    display: flex;
+    min-height: 38px;
+    justify-content: center;
+    flex-direction: column;
+    width: 100%;
+}
+
+._fc-group-disabled ._fc-group-btn, ._fc-group-disabled ._fc-group-add{
+    cursor: not-allowed;
+}
+
+._fc-group-handle {
+    display: flex;
+    flex-direction: row;
+    position: absolute;
+    bottom: -15px;
+    right: 30px;
+    border-radius: 15px;
+    border: 1px dashed #d9d9d9;
+    padding: 3px 8px;
+    background-color: #ffffff;
+}
+
+._fc-group-btn{
+    cursor: pointer;
+}
+
+._fc-group-idx {
+    position: absolute;
+    bottom: -15px;
+    left: 10px;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #eee;
+    border-radius: 15px;
+    font-weight: 700;
+}
+
+._fc-group-handle ._fc-group-btn + ._fc-group-btn {
+    margin-left: 7px;
+}
+
+._fc-group-container{
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    border: 1px dashed #d9d9d9;
+    padding: 20px;
+    margin: 5px;
+    border-radius: 5px;
+    margin-bottom: 25px;
+    padding-bottom: 25px;
+}
+
+._fc-group-arrow {
+    position: relative;
+    width: 20px;
+    height: 20px;
+}
+
+._fc-group-arrow::before {
+    content: "";
+    position: absolute;
+    top: 8px;
+    left: 5px;
+    width: 9px;
+    height: 9px;
+    border-left: 2px solid #999;
+    border-top: 2px solid #999;
+}
+._fc-group-arrow::before {
+    transform: rotate(45deg);
+}
+
+._fc-group-arrow._fc-group-down {
+    transform: rotate(180deg);
+}
+
+._fc-group-plus-minus {
+    width: 20px;
+    height: 20px;
+    position: relative;
+    cursor: pointer;
+}
+
+._fc-group-plus-minus::before,
+._fc-group-plus-minus::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 60%;
+    height: 2px;
+    background-color: #409eff;
+    transform: translate(-50%, -50%);
+}
+
+._fc-group-plus-minus::before {
+    transform: translate(-50%, -50%) rotate(90deg);
+}
+
+._fc-group-plus-minus._fc-group-minus::before {
+    display: none;
+}
+._fc-group-plus-minus._fc-group-minus::after {
+    background-color: #f56c6c;
+}
+
+
+._fc-group-add{
+    cursor: pointer;
+    width: 25px;
+    height: 25px;
+    border: 1px solid rgb(64 158 255 / 50%);
+    border-radius: 15px;
+}
+
+._fc-group-add._fc-group-plus-minus::before, ._fc-group-add._fc-group-plus-minus::after {
+    width: 50%;
+}
+

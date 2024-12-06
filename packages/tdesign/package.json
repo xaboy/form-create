@@ -1,0 +1,69 @@
+{
+    "name": "@form-create/tdesign",
+    "version": "2.6.2",
+    "description": "TDesign版本低代码表单|FormCreate 是一个可以通过 JSON 生成具有动态渲染、数据收集、验证和提交功能的低代码表单生成组件。支持6个UI框架，适配移动端，并且支持生成任何 Vue 组件。内置20种常用表单组件和自定义组件，再复杂的表单都可以轻松搞定。",
+    "main": "./dist/form-create.min.js",
+    "module": "./dist/form-create.esm.js",
+    "unpkg": "./dist/form-create.min.js",
+    "jsdelivr": "./dist/form-create.min.js",
+    "typings": "./types/index.d.ts",
+    "exports": {
+        ".": {
+            "import": "./dist/form-create.esm.js",
+            "types": "./types/index.d.ts",
+            "require": "./dist/form-create.min.js"
+        },
+        "./*": "./*"
+    },
+    "scripts": {
+        "clean": "rimraf dist/",
+        "build:lib": "npm-run-all clean build:lib:vite",
+        "dev:td": "vite --config vite.dev.config.js",
+        "build:lib:vite": "vite build --config vite.build.config.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/xaboy/form-create.git"
+    },
+    "keywords": [
+        "动态表单",
+        "低代码",
+        "@form-create",
+        "form-builder",
+        "form",
+        "components",
+        "vue",
+        "tdesign",
+        "lowcode",
+        "dynamic-form"
+    ],
+    "files": [
+        "README.md",
+        "package.json",
+        "LICENSE",
+        "src",
+        "types",
+        "dist"
+    ],
+    "author": "xaboy",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/xaboy/form-create/issues"
+    },
+    "homepage": "http://www.form-create.com",
+    "dependencies": {
+        "@form-create/component-subform": "workspace:^",
+        "@form-create/core": "workspace:^",
+        "@form-create/utils": "workspace:^"
+    },
+    "publishConfig": {
+        "access": "public"
+    },
+    "devDependencies": {
+        "@form-create/component-wangeditor": "workspace:^",
+        "tdesign-vue": "naruto",
+        "rimraf": "^6.0.1",
+        "v-jsoneditor": "^1.4.2",
+        "vue": "2.7"
+    }
+}
