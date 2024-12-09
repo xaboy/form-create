@@ -10,6 +10,11 @@ function bind(ctx) {
     Object.defineProperties(ctx.origin, {
         __fc__: enumerable(ctx, true)
     });
+    if(ctx.rule !== ctx.origin) {
+        Object.defineProperties(ctx.rule, {
+            __fc__: enumerable(ctx, true)
+        });
+    }
 }
 
 export default function RuleContext(handle, rule, defaultValue) {
