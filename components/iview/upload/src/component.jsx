@@ -3,10 +3,18 @@ import './style.css';
 import getSlot from '@form-create/utils/lib/slot';
 
 function parseFile(file) {
+    if (typeof file === 'object') {
+        return file;
+    }
     return {
         url: file,
+        is_string: true,
         name: getFileName(file)
     };
+}
+
+function parseUpload(file) {
+    return {...file, file, value: file};
 }
 
 function getFileName(file) {
@@ -61,14 +69,14 @@ export default function createUpload(config) {
         created() {
             if (this.formCreateInject.prop.props.showUploadList === undefined)
                 this.formCreateInject.prop.props.showUploadList = false;
-            this.formCreateInject.prop.props.defaultFileList = toArray(this.value).map(parseFile);
+            this.formCreateInject.prop.props.defaultFileList = toArray(this.value).map(parseFile).map(parseUpload);
         },
         watch: {
             value(n) {
                 if (this.$refs.upload.fileList.every(file => {
                     return !file.status || file.status === 'finished';
                 })) {
-                    this.$refs.upload.fileList = toArray(n).map(parseFile);
+                    this.$refs.upload.fileList = toArray(n).map(parseFile).map(parseUpload);
                     this.uploadList = this.$refs.upload.fileList;
                 }
             },
@@ -146,7 +154,7 @@ export default function createUpload(config) {
                 </Upload>;
             },
             update() {
-                let files = this.$refs.upload.fileList.map((file) => file.url).filter((url) => url !== undefined);
+                let files = this.$refs.upload.fileList.map((v) =>  v.is_string ? v.url : (v.value || v.url)).filter((url) => url !== undefined);
                 if (this.cacheFiles.length !== files.length || !files.length) {
                     this.cacheFiles = [...files];
                     this.$emit('input', this.maxLength === 1 ? (files[0] || '') : files);

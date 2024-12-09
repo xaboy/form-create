@@ -5,12 +5,20 @@ const NAME = 'fcUpload';
 
 
 function parseFile(file, i) {
+    if (typeof file === 'object') {
+        return file;
+    }
     return {
         url: file,
+        is_string: true,
         name: getFileName(file),
         status: 'success',
         uid: i
     };
+}
+
+function parseUpload(file) {
+    return {...file, file, value: file};
 }
 
 function getFileName(file) {
@@ -48,12 +56,12 @@ export default defineComponent({
     emits: ['input', 'fc.el'],
     data() {
         return {
-            uploadList: toArray(this.value).map(parseFile)
+            uploadList: toArray(this.value).map(parseFile).map(parseUpload)
         }
     },
     watch: {
         value(n) {
-            this.uploadList = toArray(n).map(parseFile)
+            this.uploadList = toArray(n).map(parseFile).map(parseUpload)
         }
     },
     methods: {
@@ -70,7 +78,7 @@ export default defineComponent({
             this.input()
         },
         input() {
-            this.$emit('input', this.uploadList.map(v => v.url));
+            this.$emit('input', this.uploadList.map((v) => v.is_string ? v.url : (v.value || v.url)).filter((url) => url !== undefined));
         }
     },
     render() {

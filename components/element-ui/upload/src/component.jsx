@@ -3,11 +3,19 @@ import getSlot from '@form-create/utils/lib/slot';
 import './style.css';
 
 function parseFile(file, i) {
+    if (typeof file === 'object') {
+        return file;
+    }
     return {
         url: file,
+        is_string: true,
         name: getFileName(file),
         uid: i
     };
+}
+
+function parseUpload(file) {
+    return {...file, file, value: file};
 }
 
 function getFileName(file) {
@@ -62,14 +70,14 @@ export default {
         if (this.formCreateInject.prop.props.showFileList === undefined) {
             this.formCreateInject.prop.props.showFileList = false;
         }
-        this.formCreateInject.prop.props.fileList = toArray(this.value).map(parseFile);
+        this.formCreateInject.prop.props.fileList = toArray(this.value).map(parseFile).map(parseUpload);
     },
     watch: {
         value(n) {
             if (this.$refs.upload.uploadFiles.every(file => {
                 return !file.status || file.status === 'success';
             })) {
-                this.$refs.upload.uploadFiles = toArray(n).map(parseFile);
+                this.$refs.upload.uploadFiles = toArray(n).map(parseFile).map(parseUpload);
                 this.uploadList = this.$refs.upload.uploadFiles;
             }
         },
@@ -148,7 +156,7 @@ export default {
             </ElUpload>;
         },
         update() {
-            let files = this.$refs.upload.uploadFiles.map((file) => file.url).filter((url) => url !== undefined && url.indexOf('blob:') !== 0);
+            let files = this.$refs.upload.uploadFiles.map((v) => v.is_string ? v.url : (v.value || v.url)).filter((url) => url !== undefined);
             if (JSON.stringify(files) !== JSON.stringify(this.cacheFiles)) {
                 this.cacheFiles = [...files];
                 this.$emit('input', this.limit === 1 ? (files[0] || '') : files);

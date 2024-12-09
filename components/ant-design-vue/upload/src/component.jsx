@@ -4,8 +4,12 @@ import toArray from '@form-create/utils/lib/toarray';
 import getSlot from '@form-create/utils/lib/slot';
 
 const parseFile = function (file, uid) {
+        if (typeof file === 'object') {
+            return file;
+        }
         return {
             url: file,
+            is_string: true,
             name: getFileName(file),
             status: 'done',
             uid: uid + 1
@@ -13,7 +17,7 @@ const parseFile = function (file, uid) {
     }, getFileName = function (file) {
         return toString(file).split('/').pop()
     }, parseUpload = function (file) {
-        return {url: file.url, file};
+        return {...file, file, value: file};
     };
 
 const NAME = 'fcUpload';
@@ -56,7 +60,7 @@ export default {
         previewMask: undefined,
     },
     data() {
-        const fileList = this.value.map(parseFile);
+        const fileList = this.value.map(parseFile).map(parseUpload);
         return {
             defaultUploadList: fileList,
             previewImage: '',
@@ -91,7 +95,7 @@ export default {
             }
         },
         input() {
-            this.$emit('input', this.uploadList.map(v => v.url));
+            this.$emit('input', this.uploadList.map(v => v.is_string ? v.url : (v.value || v.url)).filter((url) => url !== undefined));
         },
 
     },
