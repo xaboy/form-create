@@ -242,7 +242,12 @@ export default function useRender(Render) {
             extend(inject, {
                 preview: ctx.prop.preview,
                 options: ctx.prop.options,
-                prop: ctx.prop,
+                prop: (function () {
+                    const temp = {...ctx.prop};
+                    temp.on = temp.on ? {...temp.on} : {};
+                    delete temp.model;
+                    return temp;
+                }()),
                 children: ctx.loadChildrenPending()
             });
             return inject;

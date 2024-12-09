@@ -20,6 +20,14 @@ function getFileName(file) {
 export default defineComponent({
     name: NAME,
     inheritAttrs: false,
+    formCreateParser: {
+        toFormValue(value) {
+            return toArray(value);
+        },
+        toValue(formValue, ctx) {
+            return ctx.prop.props.max === 1 ? (formValue[0] || '') : formValue;
+        }
+    },
     props: {
         max: {
             type: Number,
