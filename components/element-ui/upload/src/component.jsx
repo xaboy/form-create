@@ -40,7 +40,7 @@ export default {
         },
         uploadType: {
             type: String,
-            default: 'file'
+            default: 'image'
         },
         limit: {
             type: Number,
@@ -51,7 +51,12 @@ export default {
             default: true
         },
         previewMask: undefined,
+        showFileList: Boolean,
         modalTitle: String,
+        listType: {
+            type: String,
+            default: 'picture'
+        },
         handleIcon: {
             type: [String, Boolean],
             default: () => undefined
@@ -118,7 +123,7 @@ export default {
         },
         makeProgress(file, index) {
             return <ElProgress props={{percentage: file.percentage, type: 'circle', width: 52}} style="margin-top:2px;"
-                key={this.key('pg' + index)}/>
+                               key={this.key('pg' + index)}/>
         },
         makeIcons(file, index) {
             const icons = [];
@@ -134,25 +139,40 @@ export default {
             }
         },
         makeFiles() {
-            return this.uploadList.map((file, index) => this.$scopedSlots.fileList ? this.$scopedSlots.fileList({
-                file,
-                index,
-                vm: this
-            }) : <div key={this.key(index)}
-                class='fc-files'>{(file.percentage !== undefined && file.status !== 'success') ? this.makeProgress(file, index) : [this.makeItem(file, index), this.makeIcons(file, index)]}</div>);
+            if (this.listType === 'picture') {
+                return this.uploadList.map((file, index) => this.$scopedSlots.fileList ? this.$scopedSlots.fileList({
+                    file,
+                    index,
+                    vm: this
+                }) : <div key={this.key(index)}
+                          class='fc-files'>{(file.percentage !== undefined && file.status !== 'success') ? this.makeProgress(file, index) : [this.makeItem(file, index), this.makeIcons(file, index)]}</div>);
+            }
+        },
+        makeDefaultSlot() {
+            if (this.listType === 'picture') {
+                return <div class='fc-upload-btn'>
+                    <i class="el-icon-upload2"/>
+                </div>;
+            } else if(this.listType === 'text') {
+                return <ElButton type="primary">点击上传</ElButton>
+            } else {
+                return <i class="el-icon-upload2"/>
+            }
         },
         makeUpload() {
             const isShow = (!this.limit || this.limit > this.uploadList.length);
             return <ElUpload {...this.formCreateInject.prop} {...{
+                props: {
+                    listType: this.listType,
+                    showFileList: this.listType !== 'picture',
+                },
                 style: {display: 'inline-block'},
                 key: this.key('upload'),
                 ref: 'upload'
             }}>
                 {isShow ? <template slot="default">
-                    {this.$slots.default || <div class='fc-upload-btn'>
-                        <i class="el-icon-upload2"/>
-                    </div>}
-                </template> : null}{getSlot(this.$slots, ['default'])}
+                    {this.$slots.default || this.makeDefaultSlot()}
+                </template> : null}
             </ElUpload>;
         },
         update() {
@@ -168,14 +188,11 @@ export default {
     },
     render() {
         if (this.$refs.upload) {
-            if (this.formCreateInject.prop.props.showFileList === undefined) {
-                this.formCreateInject.prop.props.showFileList = this.$refs.upload.showFileList;
-            }
             this.formCreateInject.prop.props.fileList = this.$refs.upload.fileList;
         }
         return (
             <div
-                class='_fc-upload'>{[this.formCreateInject.prop.props.showFileList ? [] : this.makeFiles(), this.makeUpload()]}
+                class='_fc-upload'>{[this.makeFiles(), this.makeUpload()]}
                 <el-dialog
                     props={{
                         appendToBody: true,

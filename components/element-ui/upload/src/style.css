@@ -34,10 +34,6 @@
     opacity: 1;
 }
 
-._fc-upload .el-upload {
-    display: block;
-}
-
 ._fc-upload .fc-upload-btn, ._fc-upload .fc-files {
     display: inline-block;
     width: 58px;
