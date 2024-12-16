@@ -10,7 +10,7 @@ export default function getConfig() {
             gutter: 0,
         },
         submitBtn: {
-            type: 'primary',
+            type: 'info',
             loading: false,
             disabled: false,
             block: true,

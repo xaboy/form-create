@@ -84,9 +84,17 @@ function parseChild(child, slot) {
     }
     if (vnode && slot) {
         toArray(vnode).forEach((item) => {
-            if (item && typeof item === 'object') {
-                item.data.slot = slot || 'default';
-            }
+            const items = Array.isArray(item) ? item : [item];
+            items.forEach((one) => {
+                if (one && typeof one === 'object') {
+                    if (!one.data) {
+                        one.data = {};
+                    }
+                    if(!one.data.slot || one.data.slot === 'default') {
+                        one.data.slot = slot || 'default';
+                    }
+                }
+            })
         })
     }
     return vnode;

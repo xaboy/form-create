@@ -46,11 +46,10 @@ export default function useRender(Render) {
                 ctx.initProp();
                 this.mergeGlobal(ctx);
                 ctx.initNone();
-                const slots = this.renderChildren(ctx.loadChildrenPending(), ctx);
-                const def = slots.default;
-                def && slotBag.setSlot(ctx.rule.slot, def);
-                delete slots.default;
-                slotBag.mergeBag(slots);
+                const slots = this.renderChildren(ctx.loadChildrenPending(), ctx, ctx.rule.slot);
+                slots.forEach(vnode=>{
+                    slotBag.setSlot(ctx.rule.slot, vnode);
+                });
             } else {
                 slotBag.setSlot(ctx.rule.slot, this.renderCtx(ctx, parent));
             }
@@ -320,12 +319,15 @@ export default function useRender(Render) {
         onEmitInput(ctx) {
             this.$handle.setValue(ctx, ctx.parser.toValue(ctx.modelValue, ctx), ctx.modelValue);
         },
-        renderChildren(children, ctx) {
-            if (!is.trueArray(children)) return {};
+        renderChildren(children, ctx, pSlot) {
+            if (!is.trueArray(children)) return [];
             const slotBag = makeSlotBag()
             children.map(child => {
                 if (!child) return;
-                if (is.String(child)) return slotBag.setSlot(null, child);
+                if (is.String(child)) return slotBag.setSlot(null, pSlot ? this.renderRule({
+                    type: 'template',
+                    children: [child],
+                }) : child);
                 if (child.__fc__) {
                     return this.renderSlot(slotBag, child.__fc__, ctx);
                 }

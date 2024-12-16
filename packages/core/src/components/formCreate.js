@@ -263,9 +263,8 @@ export default function $FormCreate(FormCreate, components, directives) {
             }
         },
         created() {
-            const vm = getCurrentInstance().proxy;
-            vm.$emit('input', vm.fapi);
-            vm.fc.init();
-        },
+            this.$emit('input', this.fapi);
+            this.fc.init();
+        }
     }
 }

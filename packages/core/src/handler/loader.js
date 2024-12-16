@@ -1,5 +1,5 @@
 import extend from '@form-create/utils/lib/extend';
-import {byCtx, condition, copyRule, enumerable, getRule, invoke, parseFn} from '../frame/util';
+import {byCtx, condition, copyRule, enumerable, getRule, invoke, parseFn, parseJson, toJson} from '../frame/util';
 import is, {hasProperty} from '@form-create/utils/lib/type';
 import {$set} from '@form-create/utils/lib/modify';
 import {baseRule} from '../factory/creator';
@@ -151,7 +151,7 @@ export default function useLoader(Handler) {
                             if (isCtrl(ctx)) {
                                 return;
                             }
-                            rules[index] = _rule = _rule._clone ? _rule._clone() : copyRule(_rule);
+                            rules[index] = _rule = _rule._clone ? _rule._clone() : parseJson(toJson(_rule));
                             ctx = null;
                             isCopy = true;
                         }

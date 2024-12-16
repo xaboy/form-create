@@ -66,7 +66,12 @@ export function parseFn(fn, mode) {
                 flag = true;
             }
             if (!flag) return fn;
-            const val = makeFn(v);
+            let val;
+            try{
+                val = makeFn(v);
+            }catch (e){
+                val = makeFn('function ' + v);
+            }
             val.__json = fn;
             return val;
         } catch (e) {

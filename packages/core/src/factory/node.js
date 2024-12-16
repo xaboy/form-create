@@ -24,7 +24,7 @@ export function CreateNodeFactory() {
             this.$h = vm.$createElement;
         },
         make(tag, data, children) {
-            if (Vue.config.isReservedTag(tag)) {
+            if (Vue.isReservedTag ? (Vue.isReservedTag(tag)) : Vue?.config?.isReservedTag(tag)) {
                 delete data?.nativeOn;
                 delete data?.props?.formCreateInject;
             }

@@ -10,9 +10,9 @@ export default {
         ctx.prop.domProps.innerHTML = children;
         return ctx.vNode.make(ctx.prop.props.tag || 'div', ctx.prop);
     },
-    renderChildren(ctx) {
-        if (Array.isArray(ctx.rule.children)) {
-            return ctx.rule.children.filter(v => is.String(v)).join('');
+    renderChildren(children) {
+        if (Array.isArray(children)) {
+            return children.filter(v => is.String(v)).join('');
         }
         return '';
     }
