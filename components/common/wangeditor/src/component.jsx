@@ -34,7 +34,7 @@ export default {
         },
         value(n) {
             if (n !== this.editor.txt.html()) {
-                this.editor.txt.html(n);
+                this.editor.txt.html(n || '');
             }
         }
     },
@@ -50,6 +50,8 @@ export default {
         this.$nextTick(() => {
             this.editor = new WangEditor(`#editor${this.uni}`);
             this.editor.config.zIndex = 2;
+            this.editor.config.focus = false;
+            this.editor.config.autoFocus = false;
             this.config && _extends(this.editor.config, this.config);
             this.init && this.init(this.editor);
             this.editor.create();
