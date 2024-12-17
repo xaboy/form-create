@@ -309,6 +309,7 @@ export default function FormCreateFactory(config) {
             },
             drivers,
             renderDriver: null,
+            get: null,
             refreshData,
             loadData,
             CreateNode,
@@ -479,17 +480,7 @@ export default function FormCreateFactory(config) {
             if (option) {
                 const handle = is.Function(option) ? option : option.handle;
                 if (handle) {
-                    let val;
-                    const unwatch = this.watchLoadData((get, change) => {
-                        if (change) {
-                            unwatch();
-                            this.bus.$emit('$loadData.$var.' + key);
-                            return val;
-                        }
-                        val = invoke(() => handle(get, this.$handle.api))
-                    })
-                    this.unwatch.push(unwatch);
-                    return val;
+                    return deepGet(invoke(() => handle(this.get || ((...args) => this.getLoadData(...args)), this.$handle.api)), split);
                 }
             }
         },
@@ -539,9 +530,15 @@ export default function FormCreateFactory(config) {
             let unwatch = {};
 
             const run = (flag) => {
+                if (!this.get) {
+                    this.get = get;
+                }
                 invoke(() => {
                     fn(get, flag);
                 });
+                if (this.get === get) {
+                    this.get = undefined;
+                }
             };
 
             const get = (id, def) => {
