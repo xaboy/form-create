@@ -147,10 +147,14 @@ export default {
             }));
         }
 
+        let required = false;
+        (rule.validate || []).forEach((item) => {
+            required = required || (item && !!item.required);
+        })
         const _prop = mergeProps([titleProp, {
             props: tidyRule(titleProp),
             key: `${uni}tit`,
-            class: 'fc-form-title',
+            class: 'fc-form-title ' + (required ? 'is-required' : ''),
             on: {},
             type: titleProp.type || 'span',
         }]);

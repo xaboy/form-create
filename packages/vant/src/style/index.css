@@ -42,6 +42,12 @@
     align-items: center;
 }
 
+.form-create-m .fc-form-title.is-required:before {
+    margin-right: 2px;
+    color: #ee0a24;
+    content: "*";
+}
+
 .form-create-m.is-preview .van-field__label--required:before {
     display: none;
 }
