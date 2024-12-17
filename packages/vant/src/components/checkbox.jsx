@@ -8,6 +8,11 @@ export default defineComponent({
     props: {
         value: Array,
         options: Array,
+        direction: String,
+        checkedColor: String,
+        max: [String, Number],
+        disabled: Boolean,
+        formCreateInject: Object,
     },
     emits: ['input'],
     setup(props, _) {
@@ -23,7 +28,11 @@ export default defineComponent({
         }
     },
     render() {
-        return <van-checkbox-group direction="horizontal" {...this.$attrs}
+        return <van-checkbox-group {...this.formCreateInject.prop}
+                                   direction={this.direction || 'horizontal'}
+                                   checkedColor={this.checkedColor}
+                                   max={this.max}
+                                   disabled={this.disabled}
                                    value={Array.isArray(this.modelValue) ? this.modelValue : []}
                                    onInput={this.onInput}>
             {(this.options || []).map(opt => {

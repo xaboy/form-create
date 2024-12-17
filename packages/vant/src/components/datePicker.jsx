@@ -11,9 +11,12 @@ export default defineComponent({
         clearable: Boolean,
         placeholder: String,
         type: String,
+        title: String,
+        visibleItemCount: [Number, String],
         value: [String, Number],
         minDate: [String, Date],
         maxDate: [String, Date],
+        formCreateInject: Object,
     },
     emits: ['input', 'fc.el'],
     setup(props, _) {
@@ -80,9 +83,12 @@ export default defineComponent({
                        value={this.modelValue} border={false} isLink>{clearIcon()}</van-field>
             <van-popup value={this.show} onInput={(v) => this.show = v} round position="bottom">
                 <van-datetime-picker
+                    {...this.formCreateInject.prop}
+                    {...{props: this.dateRange}}
                     type={this.type || 'date'}
-                    {...{...this.$attrs, ...this.dateRange}}
                     value={this.formValue}
+                    title={this.title}
+                    visibleItemCount={this.visibleItemCount}
                     onConfirm={this.confirm}
                     onCancel={() => this.show = false}
                 />

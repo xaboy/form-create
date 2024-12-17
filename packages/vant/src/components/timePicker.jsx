@@ -12,6 +12,7 @@ export default defineComponent({
         placeholder: String,
         type: String,
         value: [String, Number],
+        formCreateInject: Object,
     },
     emits: ['input', 'fc.el'],
     setup(props, _) {
@@ -62,8 +63,8 @@ export default defineComponent({
                        value={this.modelValue} border={false} isLink>{clearIcon()}</van-field>
             <van-popup value={this.show} onInput={(v) => this.show = v} round position="bottom">
                 <van-datetime-picker
+                    {...this.formCreateInject.prop}
                     type={this.type || 'time'}
-                    {...this.$attrs}
                     value={this.formValue}
                     onConfirm={this.confirm}
                     onCancel={() => this.show = false}

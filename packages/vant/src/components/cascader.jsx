@@ -7,6 +7,8 @@ export default defineComponent({
     inheritAttrs: false,
     props: {
         placeholder: String,
+        title: String,
+        activeColor: String,
         disabled: Boolean,
         clearable: Boolean,
         fieldNames: Object,
@@ -14,6 +16,7 @@ export default defineComponent({
         options: Array,
         minDate: [String, Date],
         maxDate: [String, Date],
+        formCreateInject: Object,
     },
     emits: ['input', 'fc.el'],
     setup(props, _) {
@@ -94,8 +97,10 @@ export default defineComponent({
                        value={this.inputValue} border={false} isLink>{clearIcon()}</van-field>
             <van-popup value={this.show} onInput={(v) => this.show = v} round position="bottom">
                 <van-cascader
-                    {...this.$attrs}
+                    {...this.formCreateInject.prop}
                     value={this.modelValue}
+                    activeColor={this.activeColor}
+                    title={this.title}
                     showToolbar={true}
                     fieldNames={this.fieldNames}
                     options={this.options}

@@ -8,9 +8,12 @@ export default defineComponent({
     props: {
         disabled: Boolean,
         placeholder: String,
+        title: String,
+        visibleItemCount: [Number, String],
         columnsFieldNames: Object,
         value: [String, Number],
         options: Array,
+        formCreateInject: Object,
     },
     emits: ['input', 'fc.el'],
     setup(props, _) {
@@ -58,7 +61,9 @@ export default defineComponent({
                        value={this.inputValue} isLink/>
             <van-popup value={this.show} onInput={(v) => this.show = v} round position="bottom">
                 <van-picker
-                    {...this.$attrs}
+                    {...this.formCreateInject.prop}
+                    title={this.title}
+                    visibleItemCount={this.visibleItemCount}
                     showToolbar={true}
                     value={[this.modelValue]}
                     columnsFieldNames={this.columnsFieldNames}

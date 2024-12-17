@@ -7,7 +7,11 @@ export default defineComponent({
     inheritAttrs: false,
     props: {
         value: [String, Number],
+        disabled: Boolean,
+        direction: String,
+        checkedColor: String,
         options: Array,
+        formCreateInject: Object,
     },
     emits: ['input'],
     setup(props, _) {
@@ -23,7 +27,9 @@ export default defineComponent({
         }
     },
     render() {
-        return <van-radio-group direction="horizontal" {...this.$attrs} value={this.modelValue}
+        return <van-radio-group {...this.formCreateInject.prop}
+                                value={this.modelValue} disabled={this.disabled}
+                                checkedColor={this.checkedColor} direction={this.direction || 'horizontal'}
                                 onInput={this.onInput}>
             {(this.options || []).map(opt => {
                 const tmp = {...opt};
