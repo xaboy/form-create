@@ -53,8 +53,8 @@ export default function useLoader(Handler) {
             const rule = ctx.rule;
             is.trueArray(rule.sync) && mergeProps([{
                 on: rule.sync.reduce((pre, prop) => {
-                    pre[`update:${prop}`] = (val) => {
-                        rule.props[prop] = val;
+                    pre[(typeof prop === 'object' && prop.event) || `update:${prop}`] = (val) => {
+                        rule.props[(typeof prop === 'object' && prop.prop) || prop] = val;
                         this.vm.$emit('sync', prop, val, rule, this.fapi);
                     }
                     return pre
