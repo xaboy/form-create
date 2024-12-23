@@ -545,10 +545,13 @@ export default function Api(h) {
                 });
             });
         },
-        watchFetch(opt, callback, error) {
+        watchFetch(opt, callback, error, beforeFetch) {
             return h.fc.watchLoadData((get, change) => {
                 let _opt = deepCopy(opt);
                 _opt = h.loadFetchVar(_opt, get);
+                if (beforeFetch && beforeFetch(_opt, change) === false) {
+                    return;
+                }
                 h.beforeFetch(_opt).then(() => {
                     return asyncFetch(_opt, h.fc.create.fetch, api).then(res => {
                         invoke(() => _opt.onSuccess && _opt.onSuccess(res));
@@ -558,7 +561,7 @@ export default function Api(h) {
                         error && error(e);
                     });
                 });
-            });
+            }, opt.wait == null ? 1000 : opt.wait);
         },
         getData(id, def) {
             return h.fc.getLoadData(id, def);

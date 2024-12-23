@@ -526,7 +526,7 @@ export default function FormCreateFactory(config) {
             }
             return (val == null || val === '') ? def : val;
         },
-        watchLoadData(fn) {
+        watchLoadData(fn, wait) {
             let unwatch = {};
 
             const run = (flag) => {
@@ -559,7 +559,7 @@ export default function FormCreateFactory(config) {
                         unwatch[id].val = temp;
                         run(true);
                     }
-                }, 0);
+                }, wait || 0);
                 const un = watch(data, (n) => {
                     callback();
                 });
