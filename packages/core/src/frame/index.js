@@ -21,7 +21,7 @@ import html from '../parser/html';
 import uniqueId from '@form-create/utils/lib/unique';
 import {cookieDriver, localStorageDriver} from './dataDriver';
 import debounce from '@form-create/utils/lib/debounce';
-import {deepSet} from '@form-create/utils';
+import {$set, deepSet} from '@form-create/utils';
 
 function parseProp(name, id) {
     let prop;
@@ -72,6 +72,7 @@ function exportAttrs(attrs) {
 
 let id = 1;
 const instance = {};
+const defValueTag = Symbol('defValue');
 
 //todo 表单嵌套
 export default function FormCreateFactory(config) {
@@ -262,7 +263,10 @@ export default function FormCreateFactory(config) {
         const split = (id || '').split('.');
         id = split.shift();
         const field = split.join('.');
-        if (hasProperty(loadData, id)) {
+        if(!hasProperty(loadData, id)){
+            $set(loadData, id, defValueTag);
+        }
+        if (loadData[id] !== defValueTag) {
             let val = loadData[id];
             if (val && val._driver) {
                 val = val(field);
@@ -517,7 +521,10 @@ export default function FormCreateFactory(config) {
                     split = [];
                 } else {
                     const tmpData = this.vm.top.fc.tmpData;
-                    val = hasProperty(tmpData, key) ? deepGet(tmpData, id) : getData(id);
+                    if(!hasProperty(tmpData, key)){
+                        $set(tmpData, key, defValueTag);
+                    }
+                    val = tmpData[key] !== defValueTag ? deepGet(tmpData, id) : getData(id);
                     split = [];
                 }
                 if (val && split.length) {
@@ -606,7 +613,7 @@ export default function FormCreateFactory(config) {
             this.updateOptions(options);
         },
         mergeOptions(target, opt, parent) {
-            opt = deepCopy(opt);
+            opt = {...opt || {}};
             parent && ['page', 'onSubmit', 'onReset', 'onCreated', 'onChange', 'onMounted', 'mounted', 'onReload', 'reload', 'formData', 'el', 'globalClass', 'style'].forEach((n) => {
                 delete opt[n];
             });
