@@ -57,7 +57,10 @@ export default function Handler(fc) {
     this.$manager = new fc.manager(this);
     this.$render = new Render(this);
     this.api = fc.extendApiFn.reduce((api, fn) => {
-        extend(api, invoke(() => (fn(api, this) || api), {}));
+        const extendApi = invoke(() => fn(api, this));
+        if (extendApi && extendApi !== api) {
+            extend(api, extendApi);
+        }
         return api;
     }, Api(this));
 }
