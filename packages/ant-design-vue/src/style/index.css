@@ -14,3 +14,6 @@
     margin-bottom: -22px;
 }
 
+.form-create.is-preview .fc-clock, .form-create .fc-none, .form-create.is-preview .ant-form-item .ant-form-item-label >label.ant-form-item-required::before {
+    display: none !important;
+}

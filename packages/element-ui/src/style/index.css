@@ -6,6 +6,13 @@
     width: 100%;
 }
 
+.fc-form-row {
+    box-sizing: border-box;
+    display: flex;
+    flex-wrap: wrap;
+    position: relative;
+}
+
 .form-create.is-preview .fc-clock, .form-create .fc-none, .form-create.is-preview .el-form-item.is-required > .el-form-item__label-wrap > .el-form-item__label:before, .form-create.is-preview .el-form-item.is-required > .el-form-item__label:before {
     display: none !important;
 }
