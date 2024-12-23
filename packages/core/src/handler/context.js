@@ -3,7 +3,7 @@ import toCase from '@form-create/utils/lib/tocase';
 import BaseParser from '../factory/parser';
 import {$del} from '@form-create/utils/lib/modify';
 import is, {hasProperty} from '@form-create/utils/lib/type';
-import {condition, deepGet, invoke} from '../frame/util';
+import {condition, deepGet, invoke, convertFieldToConditions} from '../frame/util';
 import {computed, nextTick, toRef, watch} from 'vue';
 import {attrs} from '../frame/attrs';
 import {deepSet} from '@form-create/utils';
@@ -248,9 +248,17 @@ export default function useContext(Handler) {
                     for (let i = 0; i < item.group.length; i++) {
                         const one = item.group[i];
                         let flag;
-                        let field = one.field;
+                        let field = null;
                         if (one.variable) {
                             field = JSON.stringify(this.fc.getLoadData(one.variable) || '');
+                        } else if (one.field) {
+                            field = convertFieldToConditions(one.field || '');
+                        } else {
+                            return true;
+                        }
+                        let compare = one.compare;
+                        if(compare) {
+                            compare = convertFieldToConditions(compare || '');
                         }
                         if (one.mode) {
                             flag = checkCondition(one);
@@ -259,7 +267,7 @@ export default function useContext(Handler) {
                         } else if (is.Function(one.handler)) {
                             flag = invoke(() => one.handler(this.api, ctx.rule));
                         } else {
-                            flag = (new Function('$condition', '$val', '$form', '$group', '$rule', `with($form){with(this){with($group){ return $condition['${one.condition}'](${field}, ${one.compare ? one.compare : '$val'}); }}}`)).call(this.api.form, condition, one.value, this.api.top.form, group ? (this.subRuleData[group.id] || {}) : {}, ctx.rule);
+                            flag = (new Function('$condition', '$val', '$form', '$group', '$rule', `with($form){with(this){with($group){ return $condition['${one.condition}'](${field}, ${compare ? compare : '$val'}); }}}`)).call(this.api.form, condition, one.value, this.api.top.form, group ? (this.subRuleData[group.id] || {}) : {}, ctx.rule);
                         }
                         if (or && flag) {
                             return true;

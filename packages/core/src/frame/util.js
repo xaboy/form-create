@@ -255,3 +255,20 @@ export function extractVar(str) {
     }
     return Object.keys(matches);
 }
+
+export function convertFieldToConditions(field) {
+    let parts = field.split('.');
+    let conditions = [];
+    let currentCondition = '';
+
+    parts.forEach((part, index) => {
+        if (index === 0) {
+            currentCondition = part;
+        } else {
+            currentCondition += '.' + part;
+        }
+        conditions.push(currentCondition);
+    });
+
+    return conditions.join(' && ');
+}
