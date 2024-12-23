@@ -5,6 +5,7 @@ import deepSet from '@form-create/utils/lib/deepset';
 import {deepCopy} from '@form-create/utils/lib/deepextend';
 import toArray from '@form-create/utils/lib/toarray';
 import debounce from '@form-create/utils/lib/debounce';
+import {$set} from "@form-create/utils";
 
 const loadData = function (fc) {
     const loadData = {
@@ -29,9 +30,9 @@ const loadData = function (fc) {
                         const _rule = (attr.modify ? rule : inject.getProp());
                         if (attr.to === 'child') {
                             if (_rule.children) {
-                                _rule.children[0] = value;
+                                $set(_rule.children, 0, value);
                             } else {
-                                _rule.children = [value];
+                                $set(_rule, 'children', [value]);
                             }
                         } else {
                             deepSet(_rule, attr.to || 'options', value);
@@ -81,9 +82,9 @@ const t = function (fc) {
                         const _rule = ((isObj && attr.modify) ? rule : inject.getProp());
                         if (key === 'child') {
                             if (_rule.children) {
-                                _rule.children[0] = value;
+                                $set(_rule.children, 0, value);
                             } else {
-                                _rule.children = [value];
+                                $set(_rule, 'children', [value]);
                             }
                         } else {
                             deepSet(_rule, key, value);

@@ -21,7 +21,7 @@ export function CreateNodeFactory() {
     extend(CreateNode.prototype, {
         setVm(vm) {
             this.vm = vm;
-            this.$h = vm.$createElement;
+            this.h =this.$h = vm.$createElement;
         },
         make(tag, data, children) {
             if (Vue.isReservedTag ? (Vue.isReservedTag(tag)) : Vue?.config?.isReservedTag(tag)) {

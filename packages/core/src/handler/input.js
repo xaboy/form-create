@@ -1,5 +1,5 @@
 import extend from '@form-create/utils/lib/extend';
-import {$set} from '@form-create/utils/lib/modify';
+import {$del, $set} from '@form-create/utils/lib/modify';
 import is, {hasProperty} from '@form-create/utils/lib/type';
 import {invoke} from '../frame/util';
 import {reactive, toRef} from 'vue';
@@ -60,16 +60,16 @@ export default function useInput(Handler) {
             const group = ctx.getParentGroup();
             if (group) {
                 if (!this.subRuleData[group.id]) {
-                    this.subRuleData[group.id] = {};
+                    $set(this.subRuleData, group.id, {});
                 }
-                this.subRuleData[group.id][ctx.field] = ctx.rule.value;
+                $set(this.subRuleData[group.id], ctx.field, ctx.rule.value);
             }
             $set(this.formData, ctx.id, value);
         },
         rmSubRuleData(ctx) {
             const group = ctx.getParentGroup();
             if (group && this.subRuleData[group.id]) {
-                delete this.subRuleData[group.id][ctx.field];
+                $del(this.subRuleData[group.id], ctx.field);
             }
         },
         getFormData(ctx) {
