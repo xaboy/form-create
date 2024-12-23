@@ -52,9 +52,9 @@ export default {
     toValue(formValue, ctx) {
         const format = getFormat(ctx);
         if (Array.isArray(formValue))
-            return formValue.map(v => v ? v.format(format) : v);
+            return formValue.map(v => (v && v.format) ? v.format(format) : v);
         else
-            return formValue ? formValue.format(format) : formValue;
+            return (formValue && formValue.format) ? formValue.format(format) : formValue;
     },
     render(children, ctx) {
         const type = getType(ctx) + 'Picker';

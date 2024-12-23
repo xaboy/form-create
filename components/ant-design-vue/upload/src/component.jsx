@@ -52,10 +52,13 @@ export default {
         onHandle: {
             type: Function,
             default: function (file) {
-                this.previewImage = file.url;
-                this.previewVisible = true;
+                if(!this.$listeners.preview){
+                    this.previewImage = file.url;
+                    this.previewVisible = true;
+                }
             }
         },
+        listType: String,
         modalTitle: String,
         previewMask: undefined,
     },
@@ -97,7 +100,13 @@ export default {
         input() {
             this.$emit('input', this.uploadList.map(v => v.is_string ? v.url : (v.value || v.url)).filter((url) => url !== undefined));
         },
-
+        makeDefaultSlot() {
+            if (this.listType === 'picture-card') {
+                return <AIcon type="plus"/>;
+            } else {
+                return <AButton type="primary">点击上传</AButton>
+            }
+        },
     },
     render() {
         const isShow = (!this.limit || this.limit > this.uploadList.length);
@@ -111,12 +120,13 @@ export default {
                         change: this.handleChange.bind(this),
                     },
                     props: {
-                        defaultFileList: this.defaultUploadList
+                        defaultFileList: this.defaultUploadList,
+                        listType: this.listType,
                     },
                     ref: 'upload'
                 }}>
                 {isShow ? <template slot="default">{this.$slots.default ||
-                    <AIcon type="plus"/>}</template> : null}{getSlot(this.$slots, ['default'])}
+                    this.makeDefaultSlot()}</template> : null}{getSlot(this.$slots, ['default'])}
             </AUpload>
             <aModal props={{mask: this.previewMask, title: this.modalTitle, footer: null}}
                 v-model={this.previewVisible}>

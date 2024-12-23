@@ -15,7 +15,7 @@ export default {
     },
 
     toValue(formValue, ctx) {
-        return formValue ? formValue.format(getFormat(ctx)) : formValue;
+        return (formValue && formValue.format) ? formValue.format(getFormat(ctx)) : formValue;
     },
 
 }

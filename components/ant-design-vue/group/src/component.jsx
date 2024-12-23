@@ -296,7 +296,7 @@ export default {
             (this.$scopedSlots.default ? (this.$scopedSlots.default({
                 vm: this,
                 add: this.add
-            })) : <div key={'a_def'} class="_fc-group-plus-minus _fc-group-add"
+            })) : <div key={'a_def'} class="_fc-group-plus-minus _fc-group-add fc-clock"
                 on-click={this.add}/>) : keys.map((key, index) => {
                 const {rule, options} = this.cacheRule[key];
                 const btn = button && !disabled ? this.makeIcon(keys.length, index, key) : [];
@@ -318,7 +318,7 @@ export default {
                         }}
                     />
                     <div class="_fc-group-idx">{index + 1}</div>
-                    {(btn.length) ? <div class="_fc-group-handle">{btn}</div> : null}
+                    {(btn.length) ? <div class="_fc-group-handle fc-clock">{btn}</div> : null}
                 </div>
             });
         return <div key={'con'} class={'_fc-group ' + (disabled ? '_fc-group-disabled' : '')}>{children}</div>
