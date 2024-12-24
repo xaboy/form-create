@@ -362,27 +362,6 @@ importers:
 
   packages/tdesign:
     dependencies:
-      '@form-create/component-elm-checkbox':
-        specifier: workspace:^
-        version: link:../../components/element-ui/checkbox
-      '@form-create/component-elm-frame':
-        specifier: workspace:^
-        version: link:../../components/element-ui/frame
-      '@form-create/component-elm-group':
-        specifier: workspace:^
-        version: link:../../components/element-ui/group
-      '@form-create/component-elm-radio':
-        specifier: workspace:^
-        version: link:../../components/element-ui/radio
-      '@form-create/component-elm-select':
-        specifier: workspace:^
-        version: link:../../components/element-ui/select
-      '@form-create/component-elm-tree':
-        specifier: workspace:^
-        version: link:../../components/element-ui/tree
-      '@form-create/component-elm-upload':
-        specifier: workspace:^
-        version: link:../../components/element-ui/upload
       '@form-create/component-subform':
         specifier: workspace:^
         version: link:../../components/common/subform
@@ -401,12 +380,12 @@ importers:
         version: 6.0.1
       tdesign-vue:
         specifier: naruto
-        version: 1.10.5-naruto(vue@2.7.16)
+        version: 1.10.7-naruto(vue@2.7.16)
       v-jsoneditor:
         specifier: ^1.4.2
         version: 1.4.5
       vue:
-        specifier: ^2.7
+        specifier: '2.7'
         version: 2.7.16
 
   packages/utils:
@@ -5024,13 +5003,13 @@ packages:
     resolution: {integrity: sha512-DZ4yORTwrbTj/7MZYq2w+/ZFdI6OZ/f9SFHR+71gIVUZhOQPHzVCLpvRnPgyaMpfWxxk/4ONva3GQSyNIKRv6A==}
     engines: {node: '>=10'}
 
-  tdesign-icons-vue@0.2.5:
-    resolution: {integrity: sha512-wKah1jB2JqLf4dj9fyTUrjl+JfdVqP91HiXyE368Nm2VFxbA1HiQcwhnvRixwqTh7S3++/whq3pzV8BLcRtOeA==}
+  tdesign-icons-vue@0.3.2:
+    resolution: {integrity: sha512-FW1hqOoIBjnPzTOcGvWidVrWvyf0wHafxt7eAciz62hLU/Ix8TZ1AtFcG3QOafT0vpFPaBcCMVNNXvE5PSzuIA==}
     peerDependencies:
       vue: ^2.6.12
 
-  tdesign-vue@1.10.5-naruto:
-    resolution: {integrity: sha512-sNi/Ga/beo7gNdyhv11ufOKvnLB1s9zU7Dt14NjHVkSFnYDELr6ck+nTXKYQF3Y0Fd4PVVWn2YaGCCDISZMJ7Q==}
+  tdesign-vue@1.10.7-naruto:
+    resolution: {integrity: sha512-ZnzxLd6qTRneTo6AD68E8UP9TZ083meshuuwDAy/oLnu07wfngODVPJ1cJJ9aaHpO02wDAy+fVIafnObktoOeQ==}
     peerDependencies:
       vue: ~2.7.14
 
@@ -10475,13 +10454,13 @@ snapshots:
       mkdirp: 1.0.4
       yallist: 4.0.0
 
-  tdesign-icons-vue@0.2.5(vue@2.7.16):
+  tdesign-icons-vue@0.3.2(vue@2.7.16):
     dependencies:
       '@babel/runtime': 7.25.7
       classnames: 2.5.1
       vue: 2.7.16
 
-  tdesign-vue@1.10.5-naruto(vue@2.7.16):
+  tdesign-vue@1.10.7-naruto(vue@2.7.16):
     dependencies:
       '@babel/runtime': 7.25.7
       '@popperjs/core': 2.11.8
@@ -10497,7 +10476,7 @@ snapshots:
       mitt: 3.0.1
       raf: 3.4.1
       sortablejs: 1.15.6
-      tdesign-icons-vue: 0.2.5(vue@2.7.16)
+      tdesign-icons-vue: 0.3.2(vue@2.7.16)
       tinycolor2: 1.6.0
       validator: 13.12.0
       vue: 2.7.16
