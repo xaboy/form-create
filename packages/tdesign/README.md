@@ -35,14 +35,11 @@
 - 支持子表单和分组
 - 高性能
 - **适配移动端**
+- **多语言**
 
 ## 支持的UI框架
-- element-plus
-- ant-design-vue
-- naive-ui
-- arco-design
-- tdesign
-- vant
+
+[![FcDesigner](https://static.form-create.com/file/img/products.jpg)](https://form-create.com/)
 
 > 如果对您有帮助，您可以点右上角 "Star" 支持一下 谢谢！本项目还在不断开发完善中,如有任何建议或问题[请在这里提出](https://github.com/xaboy/form-create/issues/new)
 
@@ -79,16 +76,38 @@
 
 ## 包说明
 
-| 包名                                                                                                                                                                                                                                                                                                        | 说明                                                             |
-|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------|
-| @form-create/element-ui [![version](https://img.shields.io/npm/v/@form-create/element-ui/next.svg)](https://www.npmjs.com/package/@form-create/element-ui) [![npm](https://img.shields.io/npm/dt/@form-create/element-ui.svg)](https://www.npmjs.com/package/@form-create/element-ui)                     | [element-plus 版本](http://form-create.com/v3/element-ui/)       |
-| @form-create/ant-design-vue [![version](https://img.shields.io/npm/v/@form-create/ant-design-vue/next.svg)](https://www.npmjs.com/package/@form-create/ant-design-vue) [![npm](https://img.shields.io/npm/dt/@form-create/ant-design-vue.svg)](https://www.npmjs.com/package/@form-create/ant-design-vue) | [ant-design-vue 版本](http://form-create.com/v3/ant-design-vue/) |
-| @form-create/arco-design [![version](https://img.shields.io/npm/v/@form-create/arco-design/next.svg)](https://www.npmjs.com/package/@form-create/arco-design) [![npm](https://img.shields.io/npm/dt/@form-create/arco-design.svg)](https://www.npmjs.com/package/@form-create/arco-design)                | [arco-design 版本](http://form-create.com/v3/arco-design/)       |
-| @form-create/naive-ui [![version](https://img.shields.io/npm/v/@form-create/naive-ui/next.svg)](https://www.npmjs.com/package/@form-create/naive-ui) [![npm](https://img.shields.io/npm/dt/@form-create/naive-ui.svg)](https://www.npmjs.com/package/@form-create/naive-ui)                               | [naive-ui 版本](http://form-create.com/v3/naive-ui/)             |
-| @form-create/tdesign [![version](https://img.shields.io/npm/v/@form-create/tdesign/next.svg)](https://www.npmjs.com/package/@form-create/tdesign) [![npm](https://img.shields.io/npm/dt/@form-create/tdesign.svg)](https://www.npmjs.com/package/@form-create/tdesign)                                    | [tdesign 版本](http://form-create.com/v3/tdesign/)               |
-| @form-create/vant [![version](https://img.shields.io/npm/v/@form-create/vant.svg)](https://www.npmjs.com/package/@form-create/vant) [![npm](https://img.shields.io/npm/dt/@form-create/vant.svg)](https://www.npmjs.com/package/@form-create/vant)                                                        | [vant 版本(移动端)](http://form-create.com/v3/vant/)                |
-| @form-create/designer [![version](https://img.shields.io/npm/v/@form-create/designer.svg)](https://www.npmjs.com/package/@form-create/designer) [![npm](https://img.shields.io/npm/dt/@form-create/designer.svg)](https://www.npmjs.com/package/@form-create/designer)                                    | [可视化表单设计器](http://form-create.com/designer)                    |
+| 包名                                                                                                                                                                                                                                                                                                    | 说明                                                            |
+|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------|
+| @form-create/element-ui [![version](https://img.shields.io/npm/v/@form-create/element-ui/next.svg)](https://www.npmjs.com/package/@form-create/element-ui)                                                                                                                                            | [element-plus 版本](http://form-create.com/v3/element-ui/)      |
+| @form-create/ant-design-vue [![version](https://img.shields.io/npm/v/@form-create/ant-design-vue/next.svg)](https://www.npmjs.com/package/@form-create/ant-design-vue)                                                                                                                                | [ant-design-vue 版本](http://form-create.com/v3/ant-design-vue/) |
+| @form-create/arco-design [![version](https://img.shields.io/npm/v/@form-create/arco-design/next.svg)](https://www.npmjs.com/package/@form-create/arco-design)                                                                                                                                         | [arco-design 版本](http://form-create.com/v3/arco-design/)      |
+| @form-create/naive-ui [![version](https://img.shields.io/npm/v/@form-create/naive-ui/next.svg)](https://www.npmjs.com/package/@form-create/naive-ui)                                                                                                                                                  | [naive-ui 版本](http://form-create.com/v3/naive-ui/)            |
+| @form-create/tdesign [![version](https://img.shields.io/npm/v/@form-create/tdesign/next.svg)](https://www.npmjs.com/package/@form-create/tdesign)                                                                                                                                                     | [tdesign 版本](http://form-create.com/v3/tdesign/)              |
+| @form-create/iview [![version](https://img.shields.io/npm/v/@form-create/iview.svg)](https://www.npmjs.com/package/@form-create/iview)                                                                                                                                                                | [iview 版本](http://form-create.com/v2/iview/)                  |
+| @form-create/view-design [![version](https://img.shields.io/npm/v/@form-create/view-design.svg)](https://www.npmjs.com/package/@form-create/view-design)                                                                                                                                              | [view-design 版本](http://form-create.com/v2/iview/)            |
+| @form-create/vant [![version](https://img.shields.io/npm/v/@form-create/vant.svg)](https://www.npmjs.com/package/@form-create/vant)                                                                                                                                                                   | [vant 版本(移动端)](http://form-create.com/v3/vant/)               |
+| @form-create/designer [![version](https://img.shields.io/npm/v/@form-create/designer.svg)](https://www.npmjs.com/package/@form-create/designer)                                                                                                                                                       | [可视化表单设计器](http://form-create.com/v3/designer)                |
+| @form-create/vant-designer [![version](https://img.shields.io/npm/v/@form-create/vant-designer.svg)](https://www.npmjs.com/package/@form-create/designer)                                                                                                                                             | [移动端表单设计器](http://form-create.com/v3/mobile)                  |
 
+**分支说明**
+
+- **latest:** Vue2.0版本分支
+- **super:** Vue2.7版本分支(该版本功能和next分支功能一致)
+- **next:** Vue3.0版本分支
+
+例如:
+
+安装Vue2.7版本的@form-create/tdesign
+
+```sh
+npm install @form-create/tdesign@super
+```
+
+安装Vue3版本的@form-create/tdesign
+
+```sh
+npm install @form-create/tdesign@next
+```
 
 ## 示例
 
