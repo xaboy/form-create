@@ -113,7 +113,7 @@ export default function useInject(Handler) {
                         str = str.replaceAll(`{{${v}}}`, val == null ? '' : val);
                     }
                 })
-                if(vars.length === 1 && tmp === `{{${vars[0]}}}`) {
+                if (vars.length === 1 && tmp === `{{${vars[0]}}}`) {
                     return lastVal;
                 }
             }
@@ -124,21 +124,17 @@ export default function useInject(Handler) {
                 return this.loadStrVar(str, get);
             }
 
-            options.action = loadVal(options.action);
-            if (options.headers) {
-                const _headers = {};
-                Object.keys(options.headers).forEach(k => {
-                    _headers[loadVal(k)] = loadVal(options.headers[k]);
-                });
-                options.headers = _headers;
-            }
-            if (options.data) {
-                const _data = {};
-                Object.keys(options.data).forEach(k => {
-                    _data[loadVal(k)] = loadVal(options.data[k]);
-                });
-                options.data = _data;
-            }
+            options.action = loadVal(options.action || '');
+
+            ['headers', 'data', 'query'].forEach(key => {
+                if (options[key]) {
+                    const data = {};
+                    Object.keys(options[key]).forEach(k => {
+                        data[loadVal(k)] = loadVal(options[key][k]);
+                    });
+                    options[key] = data;
+                }
+            });
 
             return options;
         }
