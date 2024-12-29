@@ -6,9 +6,6 @@
   "module": "./dist/index.es.js",
   "unpkg": "./dist/index.js",
   "jsdelivr": "./dist/index.js",
-  "exports": {
-    "./*": "./*"
-  },
   "scripts": {
     "clean": "rimraf dist/",
     "vite:build": "vite build",

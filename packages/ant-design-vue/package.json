@@ -7,14 +7,6 @@
   "unpkg": "./dist/form-create.min.js",
   "jsdelivr": "./dist/form-create.min.js",
   "typings": "./types/index.d.ts",
-  "exports": {
-    ".": {
-      "import": "./dist/form-create.esm.js",
-      "types": "./types/index.d.ts",
-      "require": "./dist/form-create.min.js"
-    },
-    "./*": "./*"
-  },
   "scripts": {
     "clean": "rimraf dist/",
     "build:lib": "npm-run-all clean build:lib:vite",

@@ -6,9 +6,6 @@
     "module": "./src/index.js",
     "unpkg": "./dist/province_city.js",
     "jsdelivr": "./dist/province_city.js",
-    "exports": {
-        "./*": "./*"
-    },
     "scripts": {
         "clean": "rimraf dist/",
         "build:data:vite": "npm-run-all clean build:province_city build:province_city_code build:province_city_area build:province_city_area_code",
