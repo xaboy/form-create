@@ -375,9 +375,6 @@ export default function FormCreateFactory(config) {
         },
         t(id, params, get) {
             let value = get ? get('$t.' + id) : this.globalLanguageDriver(id);
-            if (value == null && this.vm.$i18n) {
-                return this.vm.$i18n.t(id, params);
-            }
             if (value == null) {
                 value = '';
             }
@@ -458,9 +455,6 @@ export default function FormCreateFactory(config) {
             }
             if (typeof locale === 'string') {
                 return locale;
-            }
-            if (this.vm.$i18n && this.vm.$i18n.locale) {
-                return this.vm.$i18n.locale;
             }
             return 'zh-cn';
         },
