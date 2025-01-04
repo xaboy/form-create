@@ -476,7 +476,7 @@ export default function FormCreateFactory(config) {
             const key = split.shift();
             const option = this.options.value.globalVariable && this.options.value.globalVariable[key];
             if (option) {
-                const handle = is.Function(option) ? option : option.handle;
+                const handle = is.Function(option) ? option : parseFn(option.handle);
                 if (handle) {
                     return deepGet(invoke(() => handle(this.get || ((...args) => this.getLoadData(...args)), this.$handle.api)), split);
                 }
