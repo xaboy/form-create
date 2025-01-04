@@ -713,6 +713,8 @@ export interface BaseApi<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
 
     getData(id: string, defaultValue?: any): any;
 
+    watchData(fn: (get: (id: string, defaultValue?: any) => any, change: boolean) => void): () => Function;
+
     setData(id: string, value?: any, isGlobal?: boolean): void;
 
     refreshData(id: string): void;
@@ -809,7 +811,9 @@ export interface FetchEffectOption {
 
 
 export interface LoadDataEffectOption {
-    attr: String;
+    attr?: String;
+    template?: String;
+    handler?: (get: (id: string, defaultValue?: any) => any, rule: Object, api: Object) => any;
     to?: String;
     copy?: boolean;
     watch?: boolean;

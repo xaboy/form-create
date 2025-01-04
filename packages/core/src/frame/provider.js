@@ -21,6 +21,8 @@ const loadData = function (fc) {
                         let value;
                         if (attr.template) {
                             value = fc.$handle.loadStrVar(attr.template, get);
+                        } else if (attr.handler && is.Function(attr.handler)) {
+                            value = attr.handler(get, rule, api);
                         } else {
                             value = get(attr.attr, attr.default);
                         }
