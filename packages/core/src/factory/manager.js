@@ -1,7 +1,6 @@
 import mergeProps from '@form-create/utils/lib/mergeprops';
 import unique from '@form-create/utils/lib/unique';
 import extend from '@form-create/utils/lib/extend';
-import {invoke} from '../frame/util';
 
 export function createManager(proto) {
     class CustomManager extends Manager {

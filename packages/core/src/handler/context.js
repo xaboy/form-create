@@ -3,7 +3,7 @@ import toCase from '@form-create/utils/lib/tocase';
 import BaseParser from '../factory/parser';
 import {$del} from '@form-create/utils/lib/modify';
 import is, {hasProperty} from '@form-create/utils/lib/type';
-import {condition, deepGet, invoke, convertFieldToConditions} from '../frame/util';
+import {condition, convertFieldToConditions, deepGet, invoke} from '../frame/util';
 import {computed, nextTick, toRef, watch} from 'vue';
 import {attrs} from '../frame/attrs';
 import {deepSet} from '@form-create/utils';

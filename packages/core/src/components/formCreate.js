@@ -1,7 +1,21 @@
 import toArray from '@form-create/utils/lib/toarray';
-import {getCurrentInstance, provide, inject, nextTick, watch, toRefs, reactive, onBeforeMount, onMounted, onBeforeUnmount, onUpdated, markRaw} from 'vue';
+import {
+    getCurrentInstance,
+    inject,
+    markRaw,
+    nextTick,
+    onBeforeMount,
+    onBeforeUnmount,
+    onMounted,
+    onUpdated,
+    provide,
+    reactive,
+    toRefs,
+    watch
+} from 'vue';
 import debounce from '@form-create/utils/lib/debounce'
 import toLine from '@form-create/utils/lib/toline';
+
 const NAME = 'FormCreate';
 
 const getGroupInject = (vm, parent) => {

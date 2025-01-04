@@ -1,5 +1,5 @@
 import extend from '@form-create/utils/lib/extend';
-import {byCtx, condition, copyRule, enumerable, getRule, invoke, parseFn, parseJson, toJson} from '../frame/util';
+import {byCtx, condition, enumerable, getRule, invoke, parseFn, parseJson, toJson} from '../frame/util';
 import is, {hasProperty} from '@form-create/utils/lib/type';
 import {$set} from '@form-create/utils/lib/modify';
 import {baseRule} from '../factory/creator';
