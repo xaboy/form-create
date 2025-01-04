@@ -1,6 +1,6 @@
 {
     "name": "@form-create/data",
-    "version": "2.7.0",
+    "version": "2.7.1",
     "description": "",
     "main": "./src/index.js",
     "module": "./src/index.js",
