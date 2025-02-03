@@ -21,7 +21,7 @@ export function CreateNodeFactory() {
     extend(CreateNode.prototype, {
         setVm(vm) {
             this.vm = vm;
-            this.h =this.$h = vm.$createElement;
+            this.h = this.$h = vm.$createElement;
         },
         make(tag, data, children) {
             if (Vue.isReservedTag ? (Vue.isReservedTag(tag)) : Vue?.config?.isReservedTag(tag)) {
@@ -32,6 +32,17 @@ export function CreateNodeFactory() {
         },
         makeComponent(type, data, children) {
             let Node = this.$h(type, parseProp(data), children || []);
+            if (Node?.componentOptions?.propsData && data?.props) {
+                const keys = Object.keys(Node.componentOptions.propsData);
+                if (!Node.data.attrs) {
+                    Node.data.attrs = {};
+                }
+                Object.keys(data.props).forEach(key => {
+                    if (Node.data.attrs[key] == null && keys.indexOf(key) === -1 && ['string', 'number', 'boolean'].indexOf(typeof data.props[key]) > -1) {
+                        Node.data.attrs[key] = data.props[key];
+                    }
+                })
+            }
             Node.context = this.vm;
             return Node;
         },
