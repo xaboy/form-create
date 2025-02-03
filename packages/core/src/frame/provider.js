@@ -11,7 +11,7 @@ const loadData = function (fc) {
     const loadData = {
         name: 'loadData',
         _fn: [],
-        mounted(inject, rule, api) {
+        loaded(inject, rule, api) {
             this.deleted(inject);
             let attrs = toArray(inject.getValue());
             const unwatchs = [];
@@ -259,7 +259,7 @@ const fetch = function (fc) {
     const fetchAttr = {
         name: 'fetch',
         _fn: [],
-        mounted(...args) {
+        loaded(...args) {
             run(...args);
         },
         watch(...args) {
