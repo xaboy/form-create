@@ -5,7 +5,7 @@ export const keyAttrs = ['type', 'slot', 'ignore', 'emitPrefix', 'value', 'name'
 
 export const arrayAttrs = ['validate', 'children', 'control'];
 
-export const normalAttrs = ['effect', 'deep'];
+export const normalAttrs = ['effect', 'deep', 'renderSlots'];
 
 export function attrs() {
     return [...keyAttrs, ...normalMerge, ...toArrayMerge, ...functionalMerge, ...arrayAttrs, ...normalAttrs];

@@ -124,13 +124,22 @@ export default function useRender(Render) {
                         if (slotValue.length && rule.slotUpdate) {
                             invoke(() => rule.slotUpdate(inject))
                         }
-                        let children = {};
+                        let children = [];
                         const _load = ctx.loadChildrenPending();
                         if (ctx.parser.renderChildren) {
                             children = ctx.parser.renderChildren(_load, ctx);
                         } else if (ctx.parser.loadChildren !== false) {
                             children = this.renderChildren(_load, ctx);
                         }
+                        Object.keys(prop.renderSlots || {}).forEach(key => {
+                            children.push(this.renderRule({
+                                type: 'template',
+                                slot: key,
+                            }, (() => {
+                                const rule = this.parseSide(prop.renderSlots[key], ctx);
+                                return this.renderRule(rule);
+                            })()))
+                        })
                         const slot = this.getTypeSlot(ctx);
                         let _vn;
                         if (slot) {
