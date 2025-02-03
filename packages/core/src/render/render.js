@@ -241,6 +241,9 @@ export default function useRender(Render) {
                     field: ctx.field,
                     rule: ctx.rule,
                     input: ctx.input,
+                    t: (...args) => {
+                        return this.$handle.api.t(...args);
+                    },
                     updateValue: (data) => {
                         this.$handle.onUpdateValue(ctx, data);
                     }

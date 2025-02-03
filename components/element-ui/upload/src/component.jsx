@@ -155,7 +155,7 @@ export default {
                     <i class="el-icon-upload2"/>
                 </div>;
             } else if(this.listType === 'text') {
-                return <ElButton type="primary">点击上传</ElButton>
+                return <ElButton type="primary">{this.formCreateInject.t('clickToUpload') || '点击上传'}</ElButton>
             } else {
                 return <i class="el-icon-upload2"/>
             }

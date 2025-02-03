@@ -46,11 +46,11 @@ export default function createFrame(config) {
             },
             okBtnText: {
                 type: String,
-                default: '确定'
+                default: ''
             },
             closeBtnText: {
                 type: String,
-                default: '关闭'
+                default: ''
             },
             modalTitle: String,
             handleIcon: {
@@ -279,10 +279,10 @@ export default function createFrame(config) {
                 if (!footer) return node;
                 if (closeBtn)
                     node.push(<Button
-                        on-click={() => (this.onCancel() !== false && this.closeModel(true))}>{closeBtnText}</Button>);
+                        on-click={() => (this.onCancel() !== false && this.closeModel(true))}>{closeBtnText || this.formCreateInject.t('close') || '关闭'}</Button>);
                 if (okBtn)
                     node.push(<Button type="primary"
-                        on-click={() => (this.onOk() !== false && this.closeModel())}>{okBtnText}</Button>);
+                        on-click={() => (this.onOk() !== false && this.closeModel())}>{okBtnText || this.formCreateInject.t('ok') || '确定'}</Button>);
                 return node;
             }
         },

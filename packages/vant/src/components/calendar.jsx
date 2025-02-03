@@ -22,6 +22,7 @@ export default defineComponent({
     setup(props, _) {
         const show = ref(false);
         const modelValue = toRef(props, 'value');
+        const formCreateInject = toRef(props, 'formCreateInject');
         const inputValue = ref(modelValue.value);
 
         watch(() => modelValue.value, (n) => {
@@ -71,7 +72,7 @@ export default defineComponent({
                 return inputValue.value.length ? inputValue.value.join(' - ') : '';
             },
             multiple() {
-                return inputValue.value.length ? `选择了 ${inputValue.value.length} 个日期` : '';
+                return inputValue.value.length ? (formCreateInject.value.t('selectedData', {length: inputValue.value.length}) ||`选择了 ${inputValue.value.length} 个日期`)  : '';
             }
         }
 

@@ -105,7 +105,7 @@ export default {
             if (this.listType === 'picture-card') {
                 return <AIcon type="plus"/>;
             } else {
-                return <AButton type="primary">点击上传</AButton>
+                return <AButton type="primary">{this.formCreateInject.t('clickToUpload') || '点击上传'}</AButton>
             }
         },
         doCustomRequest(option) {

@@ -83,7 +83,7 @@ export default defineComponent({
                         uploadValue();
                     }).catch(e => {
                         file.status = 'failed';
-                        file.message = '上传失败';
+                        file.message = this.formCreateInject.t('uploadFail') || '上传失败';
                         props.onError && props.onError(e, file);
                     });
                 }

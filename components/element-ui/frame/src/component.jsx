@@ -45,11 +45,11 @@ export default {
         },
         okBtnText: {
             type: String,
-            default: '确定'
+            default: ''
         },
         closeBtnText: {
             type: String,
-            default: '关闭'
+            default: ''
         },
         modalTitle: String,
         handleIcon: {
@@ -290,9 +290,9 @@ export default {
             }
             return <div slot="footer">
                 {closeBtn ? <ElButton
-                    on-click={() => (this.onCancel() !== false && (this.frameVisible = false))}>{closeBtnText}</ElButton> : null}
+                    on-click={() => (this.onCancel() !== false && (this.frameVisible = false))}>{closeBtnText || this.formCreateInject.t('close') || '关闭'}</ElButton> : null}
                 {okBtn ? <ElButton type="primary"
-                    on-click={() => (this.onOk() !== false && this.closeModel())}>{okBtnText}</ElButton> : null}
+                    on-click={() => (this.onOk() !== false && this.closeModel())}>{okBtnText || this.formCreateInject.t('ok') || '确定'}</ElButton> : null}
             </div>
         }
     },

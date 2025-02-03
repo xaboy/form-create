@@ -30,7 +30,7 @@ export default function getConfig() {
         submitBtn: {
             type: 'primary',
             disabled: false,
-            innerText: '提交',
+            innerText: '',
             loading: false,
             show: true,
             click: undefined,
@@ -39,7 +39,7 @@ export default function getConfig() {
             type: iviewConfig.resetBtnType,
             disabled: false,
             icon: iviewConfig.resetBtnIcon,
-            innerText: '重置',
+            innerText: '',
             loading: false,
             show: false,
             click: undefined,

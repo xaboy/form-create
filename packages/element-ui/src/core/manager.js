@@ -242,7 +242,7 @@ export default {
 
     makeResetBtn() {
         const resetBtn = {...this.options.resetBtn};
-        const innerText = resetBtn.innerText;
+        const innerText = resetBtn.innerText || this.$handle.api.t('reset') || '重置';
         delete resetBtn.innerText;
         delete resetBtn.click;
         delete resetBtn.col;
@@ -265,7 +265,7 @@ export default {
     },
     makeSubmitBtn() {
         const submitBtn = {...this.options.submitBtn};
-        const innerText = submitBtn.innerText;
+        const innerText = submitBtn.innerText || this.$handle.api.t('submit') || '提交';
         delete submitBtn.innerText;
         delete submitBtn.click;
         delete submitBtn.col;
