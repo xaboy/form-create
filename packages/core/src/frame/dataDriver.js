@@ -35,6 +35,18 @@ function getLocalStorage(name) {
     return null;
 }
 
+function getSessionStorage(name) {
+    const value = sessionStorage.getItem(name);
+    if (value) {
+        try {
+            return JSON.parse(value);
+        } catch (e) {
+            return value;
+        }
+    }
+    return null;
+}
+
 export function baseDriver(driver, name) {
     if (!name) {
         return null;
@@ -57,4 +69,8 @@ export function cookieDriver(name) {
 
 export function localStorageDriver(name) {
     return baseDriver(getLocalStorage, name);
+}
+
+export function sessionStorageDriver(name) {
+    return baseDriver(getSessionStorage, name);
 }
