@@ -52,6 +52,7 @@ export default {
         },
         previewMask: undefined,
         showFileList: Boolean,
+        httpRequest: Function,
         modalTitle: String,
         listType: {
             type: String,
@@ -165,6 +166,7 @@ export default {
                 props: {
                     listType: this.listType,
                     showFileList: this.listType !== 'picture',
+                    httpRequest: this.doHttpRequest
                 },
                 style: {display: 'inline-block'},
                 key: this.key('upload'),
@@ -184,6 +186,15 @@ export default {
         },
         handleCancel() {
             this.previewVisible = false;
+        },
+        doHttpRequest(option) {
+            if (this.httpRequest) {
+                return this.httpRequest(option);
+            } else {
+                option.source = 'upload';
+                option.method = 'post';
+                this.formCreateInject.api.fetch(option);
+            }
         },
     },
     render() {

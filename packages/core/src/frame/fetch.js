@@ -33,6 +33,13 @@ export default function fetch(option) {
     const xhr = new XMLHttpRequest();
     let action = option.action || '';
 
+    if (xhr.upload && option.onProgress) {
+        xhr.upload.addEventListener('progress', (evt) => {
+            evt.percent = evt.total > 0 ? (evt.loaded / evt.total) * 100 : 0
+            option.onProgress(evt)
+        })
+    }
+
     if (option.query) {
         const queryString = new URLSearchParams(option.query).toString();
         if (action.includes('?')) {
@@ -57,18 +64,21 @@ export default function fetch(option) {
     xhr.open(option.method || 'get', action, true);
 
     let formData;
-    if (option.data) {
-        if ((option.dataType || '').toLowerCase() !== 'json') {
+    if (option.data || option.file) {
+        if (option.file || (option.dataType || '').toLowerCase() !== 'json') {
             formData = new FormData();
-            Object.keys(option.data).map(key => {
+            Object.keys(option.data || {}).map(key => {
                 formData.append(key, option.data[key]);
             });
         } else {
-            formData = JSON.stringify(option.data);
+            formData = JSON.stringify(option.data || {});
             xhr.setRequestHeader('content-type', 'application/json');
         }
     }
 
+    if(option.file){
+        formData.append(option.filename, option.file, option.file.name)
+    }
 
     if (option.withCredentials && 'withCredentials' in xhr) {
         xhr.withCredentials = true;

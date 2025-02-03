@@ -60,6 +60,7 @@ export default {
         },
         listType: String,
         modalTitle: String,
+        customRequest: Function,
         previewMask: undefined,
     },
     data() {
@@ -107,6 +108,14 @@ export default {
                 return <AButton type="primary">点击上传</AButton>
             }
         },
+        doCustomRequest(option) {
+            if(this.customRequest) {
+                return this.customRequest(option);
+            } else {
+                option.source = 'upload';
+                this.formCreateInject.api.fetch(option);
+            }
+        },
     },
     render() {
         const isShow = (!this.limit || this.limit > this.uploadList.length);
@@ -122,6 +131,7 @@ export default {
                     props: {
                         defaultFileList: this.defaultUploadList,
                         listType: this.listType,
+                        customRequest: this.doCustomRequest,
                     },
                     ref: 'upload'
                 }}>
