@@ -2,7 +2,7 @@ import extend from '@form-create/utils/lib/extend';
 import {$del, $set} from '@form-create/utils/lib/modify';
 import is, {hasProperty} from '@form-create/utils/lib/type';
 import {invoke} from '../frame/util';
-import {reactive, toRef} from 'vue';
+import {nextTick, reactive, toRef} from 'vue';
 
 export default function useInput(Handler) {
     extend(Handler.prototype, {
@@ -23,6 +23,15 @@ export default function useInput(Handler) {
                 api: this.api,
                 setFlag: setFlag || false
             })
+            if (setFlag) {
+                nextTick(() => {
+                    nextTick(() => {
+                        nextTick(() => {
+                            this.api.clearValidateState(ctx.id);
+                        });
+                    });
+                });
+            }
         },
         onInput(ctx, value) {
             let val;

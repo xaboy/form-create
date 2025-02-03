@@ -60,7 +60,7 @@ export default function useRender(Render) {
             if (!this.cacheConfig[ctx.trueType]) {
                 this.cacheConfig[ctx.trueType] = computed(() => {
                     const g = this.$handle.options.global;
-                    return mergeRule({}, [g['*'], g[ctx.originType] || g[ctx.type] || g[ctx.type] || {}]);
+                    return mergeRule({}, [g['*'] || g.default || {}, g[ctx.originType] || g[ctx.type] || g[ctx.type] || {}]);
                 });
             }
             ctx.prop = mergeRule({}, [this.cacheConfig[ctx.trueType].value, ctx.prop]);
