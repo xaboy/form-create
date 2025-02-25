@@ -94,10 +94,12 @@ export default function FormCreateFactory(config) {
     };
     const maker = makerFactory();
     let globalConfig = {global: {}};
-    const loadData = reactive({});
+    const isMobile = config.isMobile === true;
+    const loadData = reactive({
+        $mobile: isMobile,
+    });
     const CreateNode = CreateNodeFactory();
     const formulas = {};
-    const isMobile = config.isMobile === true;
     const prototype = {};
 
     exportAttrs(config.attrs || {});
@@ -522,6 +524,8 @@ export default function FormCreateFactory(config) {
                 } else if (key === '$t') {
                     val = this.globalLanguageDriver(split.join('.'));
                     split = [];
+                } else if (key === '$preview') {
+                    return this.$handle.preview;
                 } else {
                     const tmpData = this.vm.top.fc.tmpData;
                     if (!hasProperty(tmpData, key)) {
