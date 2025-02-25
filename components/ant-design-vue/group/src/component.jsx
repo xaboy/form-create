@@ -130,8 +130,8 @@ export default {
                     for (let i = 0; i < len; i++) {
                         this.removeRule(keys[total - i - 1]);
                     }
+                    this.sort = Object.keys(this.cacheRule);
                 }
-                this.sort = Object.keys(this.cacheRule);
                 n.forEach((val, i) => {
                     this.setValue(keys[i], n[i]);
                 });
