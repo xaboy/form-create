@@ -218,7 +218,7 @@ const fetch = function (fc) {
             if (change && option.watch === false) {
                 return fetchAttr._fn[inject.id]();
             }
-            const _option = fc.$handle.loadFetchVar(deepCopy(option), get);
+            const _option = fc.$handle.loadFetchVar(deepCopy(option), get, rule);
             const config = {
                 headers: {},
                 ..._option,

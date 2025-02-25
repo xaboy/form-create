@@ -1,7 +1,7 @@
 import extend from '@form-create/utils/lib/extend';
-import is from '@form-create/utils/lib/type';
+import is, {hasProperty} from '@form-create/utils/lib/type';
 import toLine from '@form-create/utils/lib/toline';
-import {extractVar, parseFn} from '../frame/util';
+import {deepGet, extractVar, parseFn} from '../frame/util';
 
 
 export default function useInject(Handler) {
@@ -98,7 +98,7 @@ export default function useInject(Handler) {
             fn.__json = _fn.__json;
             return fn;
         },
-        loadStrVar(str, get) {
+        loadStrVar(str, get, group) {
             if (str && typeof str === 'string' && str.indexOf('{{') > -1 && str.indexOf('}}') > -1) {
                 const tmp = str;
                 const vars = extractVar(str);
@@ -108,7 +108,24 @@ export default function useInject(Handler) {
                     const field = split[0].trim();
                     if (field) {
                         const def = (split[1] || '').trim();
-                        const val = get ? get(field, def) : this.fc.getLoadData(field, def);
+                        let val;
+                        let flag = false;
+                        if (group && field.indexOf('$form.') === 0) {
+                            const _split = field.split('.');
+                            _split.shift();
+                            if (hasProperty(group.value, _split[0])) {
+                                flag = true;
+                                val = get ? get({
+                                    id: '$form.' + _split[0] + '_' + group.rule.__fc__.id,
+                                    getValue: () => {
+                                        return deepGet(group.value, _split);
+                                    }
+                                }) : deepGet(group.value, _split);
+                            }
+                        }
+                        if (!flag) {
+                            val = get ? get(field, def) : this.fc.getLoadData(field, def)
+                        }
                         lastVal = val;
                         str = str.replaceAll(`{{${v}}}`, val == null ? '' : val);
                     }
@@ -119,9 +136,13 @@ export default function useInject(Handler) {
             }
             return str;
         },
-        loadFetchVar(options, get) {
+        loadFetchVar(options, get, rule) {
+            let group;
+            if (rule && rule.__fc__) {
+                group = rule.__fc__.getParentGroup();
+            }
             const loadVal = str => {
-                return this.loadStrVar(str, get);
+                return this.loadStrVar(str, get, group ? {rule, value: (this.subRuleData[group.id] || {})} : null);
             }
 
             options.action = loadVal(options.action || '');

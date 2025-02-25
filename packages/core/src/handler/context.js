@@ -267,7 +267,7 @@ export default function useContext(Handler) {
                         } else if (is.Function(one.handler)) {
                             flag = invoke(() => one.handler(this.api, ctx.rule));
                         } else {
-                            flag = (new Function('$condition', '$val', '$form', '$group', '$rule', `with($form){with(this){with($group){ return $condition['${one.condition}'](${field}, ${compare ? compare : '$val'}); }}}`)).call(this.api.form, condition, one.value, this.api.top.form, group ? (this.subRuleData[group.id] || {}) : {}, ctx.rule);
+                            flag = invoke(() => (new Function('$condition', '$val', '$form', '$group', '$rule', `with($form){with(this){with($group){ return $condition['${one.condition}'](${field}, ${compare ? compare : '$val'}); }}}`)).call(this.api.form, condition, one.value, this.api.top.form, group ? (this.subRuleData[group.id] || {}) : {}, ctx.rule));
                         }
                         if (or && flag) {
                             return true;

@@ -42,10 +42,12 @@ export default function fetch(option) {
 
     if (option.query) {
         const queryString = new URLSearchParams(option.query).toString();
-        if (action.includes('?')) {
-            action += `&${queryString}`;
-        } else {
-            action += `?${queryString}`;
+        if (queryString) {
+            if (action.includes('?')) {
+                action += `&${queryString}`;
+            } else {
+                action += `?${queryString}`;
+            }
         }
     }
 
