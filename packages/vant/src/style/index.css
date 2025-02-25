@@ -17,6 +17,7 @@
 .form-create-m .van-field > .van-field__value > .van-field__body > .van-field__control > .van-field:after,.form-create-m .van-field > .van-field__value > .van-field__body > .van-field__control > * > .van-field:after {
     display: block;
     right: 0;
+    left: 0;
 }
 
 .form-create-m .fc-form-item > .van-field__value > .van-field__body > .van-field__control > .van-cell {

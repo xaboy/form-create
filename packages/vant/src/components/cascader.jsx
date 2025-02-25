@@ -18,7 +18,7 @@ export default defineComponent({
         maxDate: [String, Date],
         formCreateInject: Object,
     },
-    emits: ['input', 'fc.el'],
+    emits: ['input', 'fc.el', 'change'],
     setup(props, _) {
         const show = ref(false);
         const modelValue = toRef(props, 'value');
@@ -60,6 +60,7 @@ export default defineComponent({
 
         const onInput = (val) => {
             _.emit('input', val);
+            _.emit('change', val);
         }
 
         return {

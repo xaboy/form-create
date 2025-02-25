@@ -14,7 +14,7 @@ export default defineComponent({
         disabled: Boolean,
         formCreateInject: Object,
     },
-    emits: ['input'],
+    emits: ['input', 'change'],
     setup(props, _) {
         const modelValue = toRef(props, 'value', []);
         const options = toRef(props, 'options');
@@ -24,6 +24,7 @@ export default defineComponent({
             modelValue,
             onInput(val) {
                 _.emit('input', val);
+                _.emit('change', val);
             },
         }
     },
