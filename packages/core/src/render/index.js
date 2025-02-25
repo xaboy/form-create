@@ -11,7 +11,9 @@ export default function Render(handle) {
         vm: handle.vm,
         $manager: handle.$manager,
         vNode: new handle.fc.CreateNode(handle.vm),
-        id:id++
+        force: false,
+        tmpInput: null,
+        id: id++
     });
 
     funcProxy(this, {

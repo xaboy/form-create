@@ -519,6 +519,16 @@ export default function Api(h) {
                 }
             });
         },
+        renderRule(id, onInput, force) {
+            const flag = typeof id === 'object';
+            const ctx = flag ? byCtx(id) : h.getCtx(id);
+            return ctx ? h.$render.createRuleVnode(ctx, onInput, force) : undefined;
+        },
+        renderChildren(id, onInput, force) {
+            const flag = typeof id === 'object';
+            const ctx = flag ? byCtx(id) : h.getCtx(id);
+            return ctx ? h.$render.createChildrenVnodes(ctx, onInput, force) : undefined;
+        },
         nextTick(fn) {
             h.bus.$once('next-tick', fn);
             h.refresh();
