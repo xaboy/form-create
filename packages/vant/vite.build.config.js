@@ -40,7 +40,7 @@ export default defineConfig({
         target: 'es2015',
         lib: {
             entry: 'src/index.js',
-            name: 'formCreate',
+            name: 'formCreateMobile',
             formats: ['esm', 'umd', 'umd'], // 指定打包模式为 es
             fileName: (format) => {
                 //向前兼容
@@ -54,7 +54,7 @@ export default defineConfig({
                 // 在 UMD 构建模式下为这些外部化的依赖提供一个全局变量
                 globals: {
                     vue: 'Vue',
-                    vant: 'Vant'
+                    vant: 'vant'
                 }
             }
         },
