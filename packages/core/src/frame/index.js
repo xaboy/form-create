@@ -508,11 +508,11 @@ export default function FormCreateFactory(config) {
                 let split = id.split('.');
                 const key = split.shift();
                 if (key === '$topForm') {
-                    val = this.$handle.api.top.formData();
+                    val = this.$handle.api.top.formData(true);
                 } else if (key === '$scopeForm') {
-                    val = this.$handle.api.scope.formData();
+                    val = this.$handle.api.scope.formData(true);
                 } else if (key === '$form') {
-                    val = this.$handle.api.formData();
+                    val = this.$handle.api.formData(true);
                 } else if (key === '$options') {
                     val = this.options.value;
                 } else if (key === '$globalData') {

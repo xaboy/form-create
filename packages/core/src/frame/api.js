@@ -105,10 +105,10 @@ export default function Api(h) {
             return undefined;
         },
         formData(fields) {
-            if (fields == null) {
+            if (fields == null || typeof fields === 'boolean') {
                 const data = {};
                 Object.keys(h.form).forEach(k => {
-                    if (h.ignoreFields.indexOf(k) === -1) {
+                    if (fields === true || h.ignoreFields.indexOf(k) === -1) {
                         data[k] = copy(h.form[k]);
                     }
                 });
