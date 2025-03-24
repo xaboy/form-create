@@ -16,7 +16,7 @@ const required = {
                 trigger: 'onBlur',
                 ...val,
             };
-            const title = rule.__fc__.refRule.__$title.value;
+            const title = rule.__fc__.refRule?.__$title?.value;
             if (!validate.message) {
                 validate.message = api.t('required', {title}) || (title + (api.getLocale() === 'en' ? ' is required' : '不能为空'));
             } else {

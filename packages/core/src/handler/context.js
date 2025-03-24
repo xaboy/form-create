@@ -164,7 +164,7 @@ export default function useContext(Handler) {
                     if (temp.message) {
                         const match = temp.message.match(/^\{\{\s*\$t\.(.+)\s*\}\}$/);
                         if (match) {
-                            temp.message = this.api.t(match[1], {title: ctx.refRule.__$title.value});
+                            temp.message = this.api.t(match[1], {title: ctx.refRule?.__$title?.value});
                         }
                     }
                     if (is.Function(temp.validator)) {
