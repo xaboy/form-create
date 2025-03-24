@@ -14,8 +14,8 @@ const getType = function (ctx) {
     return type;
 };
 
-const toMoment = function (val) {
-    return val instanceof moment ? val : moment(val);
+const toMoment = function (val, format) {
+    return val instanceof moment ? val : moment(val, format);
 };
 
 function getFormat(ctx) {
@@ -37,15 +37,16 @@ export default {
     }()),
     toFormValue(value, ctx) {
         let parseValue, type = getType(ctx);
+        const format = getFormat(ctx);
         const isArr = Array.isArray(value);
         if (type === 'range') {
             if (isArr) {
-                parseValue = value.map(v => v ? toMoment(v) : null);
+                parseValue = value.map(v => v ? toMoment(v, format) : null);
             } else {
                 parseValue = []
             }
         } else {
-            parseValue = isArr ? ((value[0] ? toMoment(value[0]) : null) || null) : (value ? toMoment(value) : null);
+            parseValue = isArr ? ((value[0] ? toMoment(value[0], format) : null) || null) : (value ? toMoment(value, format) : null);
         }
         return parseValue;
     },
