@@ -508,6 +508,8 @@ export default function FormCreateFactory(config) {
                 const key = split.shift();
                 if (key === '$topForm') {
                     val = this.$handle.api.top.formData();
+                } else if (key === '$scopeForm') {
+                    val = this.$handle.api.scope.formData();
                 } else if (key === '$form') {
                     val = this.$handle.api.formData();
                 } else if (key === '$options') {

@@ -176,6 +176,10 @@ export default function $FormCreate(FormCreate, components, directives) {
                 fc.bus.$emit('$loadData.$topForm');
             }, 100);
 
+            const emit$scopeForm = debounce(function () {
+                fc.bus.$emit('$loadData.$scopeForm');
+            }, 100);
+
             const emit$form = debounce(() => {
                 fc.bus.$emit('$loadData.$form');
             }, 100);
@@ -189,6 +193,9 @@ export default function $FormCreate(FormCreate, components, directives) {
                     fapi.top.bus.$on('$loadData.$form', emit$topForm);
                     fapi.top.bus.$on('change', emit$change);
                 }
+                if (fapi !== fapi.scope) {
+                    fapi.scope.bus.$on('$loadData.$scopeForm', emit$scopeForm);
+                }
                 fc.mounted();
             });
 
@@ -196,6 +203,9 @@ export default function $FormCreate(FormCreate, components, directives) {
                 if (parent) {
                     fapi.top.bus.$off('$loadData.$form', emit$topForm);
                     fapi.top.bus.$off('change', emit$change);
+                }
+                if (fapi !== fapi.scope) {
+                    fapi.scope.bus.$off('$loadData.$scopeForm', emit$scopeForm);
                 }
                 styleEl && document.head.removeChild(styleEl);
                 rmSubForm();
@@ -271,6 +281,9 @@ export default function $FormCreate(FormCreate, components, directives) {
                         emit$form();
                         if (!parent) {
                             emit$topForm();
+                            emit$scopeForm();
+                        } else if (!subForm.value) {
+                            emit$scopeForm();
                         }
                     });
                 }

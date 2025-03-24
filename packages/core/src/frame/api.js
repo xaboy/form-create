@@ -72,6 +72,17 @@ export default function Api(h) {
             }
             return api;
         },
+        get scope() {
+            let parent = h.vm;
+            while (parent && parent.fapi) {
+                if (!parent.$props.subForm) {
+                    return parent.fapi;
+                } else {
+                    parent = parent.parent;
+                }
+            }
+            return api.top;
+        },
         get children() {
             return allSubForm();
         },
