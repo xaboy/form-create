@@ -221,17 +221,17 @@ export default function $FormCreate(FormCreate, components, directives) {
                 n ? addSubForm() : rmSubForm();
             }, {immediate: true});
 
+            watch(() => props.option, () => {
+                fc.initOptions();
+                fapi.refresh();
+            }, {deep: true});
+
             watch(() => [...rule.value], (n) => {
                 if (fc.$handle.isBreakWatch() || n.length === data.renderRule.length && n.every(v => data.renderRule.indexOf(v) > -1)) return;
                 fc.$handle.updateAppendData();
                 fc.$handle.reloadRule(rule.value);
                 vm.renderRule();
             })
-
-            watch(() => props.option, () => {
-                fc.initOptions();
-                fapi.refresh();
-            }, {deep: true});
 
             watch(() => [props.disabled, props.preview], () => {
                 fapi.refresh();

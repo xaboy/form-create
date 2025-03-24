@@ -589,7 +589,11 @@ export default function Api(h) {
             }, opt.wait == null ? 1000 : opt.wait);
         },
         getData(id, def) {
-            return h.fc.getLoadData(id, def);
+            if (h.fc.get) {
+                return h.fc.get(id, def);
+            } else {
+                return h.fc.getLoadData(id, def);
+            }
         },
         setData(id, data, isGlobal) {
             return h.fc.setData(id, data, isGlobal);
