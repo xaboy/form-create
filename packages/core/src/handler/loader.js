@@ -253,7 +253,7 @@ export default function useLoader(Handler) {
                         hideLst[valid ? 'push' : 'unshift'](() => {
                             if (method === 'disabled' || method === 'enabled') {
                                 this.api.disabled(!valid, rule);
-                            } else if (method === 'display') {
+                            } else if (method === 'display' || method === 'show') {
                                 this.api.display(valid, rule);
                             } else if (method === 'required') {
                                 rule.forEach(item => {
@@ -262,6 +262,8 @@ export default function useLoader(Handler) {
                                 if (!valid) {
                                     this.api.clearValidateState(rule);
                                 }
+                            } else if (method === 'if') {
+                                this.api.hidden(!valid, rule);
                             } else {
                                 this.api.hidden(!valid, rule);
                             }
