@@ -35,7 +35,7 @@ export default function useLifecycle(Handler) {
             if (hook) {
                 hook = Array.isArray(hook) ? hook : [hook];
                 hook.forEach(fn => {
-                    invoke(() => fn({...args || {}, rule: ctx.rule, api: this.api}));
+                    invoke(() => fn({...args || {}, self: ctx.rule, rule: ctx.rule, $f: this.api, api: this.api, option: this.vm.$props.option}));
                 });
             }
         }
