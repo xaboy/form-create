@@ -7,6 +7,7 @@ import input from './input';
 import timePicker from './timePicker';
 import tree from './tree';
 import row from './row';
+import transfer from './transfer';
 
 export default [
     checkbox,
@@ -18,4 +19,5 @@ export default [
     radio,
     select,
     row,
+    transfer,
 ]
