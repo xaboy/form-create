@@ -89,14 +89,28 @@ extend(Handler.prototype, {
     isBreakWatch() {
         return this.loading || this.noWatchFn || this.reloading;
     },
-    beforeFetch(opt) {
-        return new Promise((resolve) => {
+    globalBeforeFetch(opt) {
+        return new Promise((resolve, reject) => {
             const source = this.options.beforeFetch && invoke(() => this.options.beforeFetch(opt, {api: this.api}));
             if (source && is.Function(source.then)) {
-                source.then(resolve);
+                source.then(resolve).catch(reject);
             } else {
                 resolve();
             }
+        });
+    },
+    beforeFetch(opt) {
+        return new Promise((resolve, reject) => {
+            const res = opt && opt.beforeFetch && invoke(() => opt.beforeFetch(opt, {api: this.api}));
+            if (res && is.Function(res.then)) {
+                res.then(resolve).catch(reject);
+            } else if (res === false) {
+                reject();
+            } else {
+                resolve();
+            }
+        }).then(() => {
+            return this.globalBeforeFetch(opt);
         });
     },
 })
