@@ -267,7 +267,7 @@ export default function useContext(Handler) {
                         } else if (is.Function(one.handler)) {
                             flag = invoke(() => one.handler(this.api, ctx.rule));
                         } else {
-                            flag = invoke(() => (new Function('$condition', '$val', '$form', '$group', '$rule', `with($form){with(this){with($group){ return $condition['${one.condition}'](${field}, ${compare ? compare : '$val'}); }}}`)).call(this.api.form, condition, one.value, this.api.top.form, group ? (this.subRuleData[group.id] || {}) : {}, ctx.rule));
+                            flag = invoke(() => (new Function('$condition', '$val', '$form', '$scope', '$group', '$rule', `with($form){with($scope){with(this){with($group){ return $condition['${one.condition}'](${field}, ${compare ? compare : '$val'}); }}}}`)).call(this.api.form, condition, one.value, this.api.top.form, this.api.top === this.api.scope ? {} : this.api.scope.form, group ? (this.subRuleData[group.id] || {}) : {}, ctx.rule));
                         }
                         if (or && flag) {
                             return true;
@@ -305,7 +305,7 @@ export default function useContext(Handler) {
                 }
                 return obj;
             }, {})
-            return (new Function('$formulas', '$form', '$group', '$rule', '$api', `with($form){with(this){with($group){with($formulas){ return ${str} }}}}`)).call(this.api.form, formulas, this.api.top.form, group ? (this.subRuleData[group.id] || {}) : {}, ctx.rule, this.api);
+            return (new Function('$formulas', '$form', '$scope', '$group', '$rule', '$api', `with($form){with($scope){with(this){with($group){with($formulas){ return ${str} }}}}}`)).call(this.api.form, formulas, this.api.top.form, this.api.top === this.api.scope ? {} : this.api.scope.form, group ? (this.subRuleData[group.id] || {}) : {}, ctx.rule, this.api);
         },
         updateChildren(ctx, n, o) {
             this.deferSyncValue(() => {

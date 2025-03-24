@@ -11,7 +11,7 @@ const loadData = function (fc) {
     const loadData = {
         name: 'loadData',
         _fn: [],
-        loaded(inject, rule, api) {
+        mounted(inject, rule, api) {
             this.deleted(inject);
             let attrs = toArray(inject.getValue());
             const unwatchs = [];
