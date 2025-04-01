@@ -9,7 +9,7 @@ export default {
     cascader: PRE + 'Cascader',
     timePicker: PRE + 'TimePicker',
     datePicker: PRE + 'DatePicker',
-    'switch': PRE + 'Switch',
+    'switch': 'fc-switch',
     select: PRE + 'Select',
     checkbox: 'fc-checkbox',
     radio: 'fc-radio',

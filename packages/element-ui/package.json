@@ -51,6 +51,7 @@
         "@form-create/component-elm-group": "^3.2.19",
         "@form-create/component-elm-radio": "^3.2.18",
         "@form-create/component-elm-select": "^3.2.18",
+        "@form-create/component-elm-switch": "^3.2.18",
         "@form-create/component-elm-tree": "^3.2.18",
         "@form-create/component-elm-upload": "^3.2.18",
         "@form-create/component-subform": "^3.1.34",

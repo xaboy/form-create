@@ -12,7 +12,7 @@ export default {
     timePicker: PRE + '-time-picker',
     timeSelect: PRE + '-time-select',
     datePicker: PRE + '-date-picker',
-    'switch': PRE + '-switch',
+    'switch': 'fc-switch',
     select: 'fc-select',
     checkbox: 'fc-checkbox',
     radio: 'fc-radio',

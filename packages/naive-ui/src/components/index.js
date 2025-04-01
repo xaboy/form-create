@@ -4,6 +4,7 @@ import Frame from '@form-create/component-naive-frame/src/index'
 import Group from '@form-create/component-naive-group/src/index'
 import Upload from '@form-create/component-naive-upload/src/index'
 import SubForm from '@form-create/component-subform/src/index'
+import Switch from '@form-create/component-naive-switch/src/index'
 import Eye from './icon/Eye.vue'
 import Info from './icon/Info'
 import Trash from './icon/Trash.vue'
@@ -17,5 +18,6 @@ export default [
     Frame,
     Eye,
     Info,
-    Trash
+    Trash,
+    Switch
 ]
