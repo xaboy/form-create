@@ -48,6 +48,9 @@ export default function Api(h) {
         get isScope() {
             return h.vm.$props.subForm === false;
         },
+        get isPreview() {
+            return h.preview;
+        },
         get config() {
             return h.options
         },

@@ -23,7 +23,12 @@ export default function Handler(fc) {
             return fc.bus;
         },
         preview() {
-            return (fc.vm.$options.propsData.preview != null ? fc.vm.$options.propsData.preview : (fc.options.value.preview || false));
+            if (fc.vm.$options.propsData.preview != null) {
+                return fc.vm.$options.propsData.preview;
+            } else if (fc.vm.parent && fc.vm.parent.$props.preview != null) {
+                return fc.vm.parent.$props.preview;
+            }
+            return fc.options.value.preview || false;
         }
     })
     extend(this, {
@@ -111,7 +116,7 @@ extend(Handler.prototype, {
             }
         }).then(() => {
             return this.globalBeforeFetch(opt);
-        });
+        }).catch(()=>{});
     },
 })
 

@@ -362,7 +362,7 @@ export default function FormCreateFactory(config) {
                 this.renderDriver = typeof this.vm.$options.propsData.driver === 'object' ? this.vm.$options.propsData.driver : this.drivers[this.vm.$options.propsData.driver];
             }
             if (!this.renderDriver && this.vm.parent) {
-                this.renderDriver = this.vm.parent.renderDriver;
+                this.renderDriver = this.vm.parent.fc.renderDriver;
             }
             if (!this.renderDriver) {
                 this.renderDriver = this.drivers.default;
@@ -490,7 +490,7 @@ export default function FormCreateFactory(config) {
                         }
                     });
                     this.unwatch.push(unwatch);
-                    return val;
+                    return deepGet(val, split);
                 }
             }
         },

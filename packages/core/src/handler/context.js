@@ -253,7 +253,7 @@ export default function useContext(Handler) {
                             field = JSON.stringify(this.fc.getLoadData(one.variable) || '');
                         } else if (one.field) {
                             field = convertFieldToConditions(one.field || '');
-                        } else {
+                        } else if(!one.mode){
                             return true;
                         }
                         let compare = one.compare;
@@ -305,7 +305,7 @@ export default function useContext(Handler) {
                 }
                 return obj;
             }, {})
-            return (new Function('$formulas', '$form', '$scope', '$group', '$rule', '$api', `with($form){with($scope){with(this){with($group){with($formulas){ return ${str} }}}}}`)).call(this.api.form, formulas, this.api.top.form, this.api.top === this.api.scope ? {} : this.api.scope.form, group ? (this.subRuleData[group.id] || {}) : {}, ctx.rule, this.api);
+            return invoke(() => (new Function('$formulas', '$form', '$scope', '$group', '$rule', '$api', `with($form){with($scope){with(this){with($group){with($formulas){ return ${str} }}}}}`)).call(this.api.form, formulas, this.api.top.form, this.api.top === this.api.scope ? {} : this.api.scope.form, group ? (this.subRuleData[group.id] || {}) : {}, ctx.rule, this.api));
         },
         updateChildren(ctx, n, o) {
             this.deferSyncValue(() => {

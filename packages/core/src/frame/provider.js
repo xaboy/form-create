@@ -6,52 +6,55 @@ import {deepCopy} from '@form-create/utils/lib/deepextend';
 import toArray from '@form-create/utils/lib/toarray';
 import debounce from '@form-create/utils/lib/debounce';
 import {$set} from "@form-create/utils";
+import {nextTick} from 'vue';
 
 const loadData = function (fc) {
     const loadData = {
         name: 'loadData',
         _fn: [],
-        mounted(inject, rule, api) {
+        loaded(inject, rule, api) {
             this.deleted(inject);
-            let attrs = toArray(inject.getValue());
-            const unwatchs = [];
-            attrs.forEach(attr => {
-                if (attr && (attr.attr || attr.template)) {
-                    let fn = (get) => {
-                        let value;
-                        if (attr.template) {
-                            value = fc.$handle.loadStrVar(attr.template, get);
-                        } else if (attr.handler && is.Function(attr.handler)) {
-                            value = attr.handler(get, rule, api);
-                        } else {
-                            value = get(attr.attr, attr.default);
-                        }
-                        if (attr.copy !== false) {
-                            value = deepCopy(value)
-                        }
-                        const _rule = (attr.modify ? rule : inject.getProp());
-                        if (attr.to === 'child') {
-                            if (_rule.children) {
-                                $set(_rule.children, 0, value);
+            nextTick(() => {
+                let attrs = toArray(inject.getValue());
+                const unwatchs = [];
+                attrs.forEach(attr => {
+                    if (attr && (attr.attr || attr.template)) {
+                        let fn = (get) => {
+                            let value;
+                            if (attr.template) {
+                                value = fc.$handle.loadStrVar(attr.template, get);
+                            } else if (attr.handler && is.Function(attr.handler)) {
+                                value = attr.handler(get, rule, api);
                             } else {
-                                $set(_rule, 'children', [value]);
+                                value = get(attr.attr, attr.default);
                             }
+                            if (attr.copy !== false) {
+                                value = deepCopy(value)
+                            }
+                            const _rule = (attr.modify ? rule : inject.getProp());
+                            if (attr.to === 'child') {
+                                if (_rule.children) {
+                                    $set(_rule.children, 0, value);
+                                } else {
+                                    $set(_rule, 'children', [value]);
+                                }
+                            } else {
+                                deepSet(_rule, attr.to || 'options', value);
+                            }
+                            api.sync(rule);
+                        };
+                        let callback = (get) => fn(get);
+                        const unwatch = fc.watchLoadData(callback);
+                        fn = debounce(fn, attr.wait || 300)
+                        if (attr.watch !== false) {
+                            unwatchs.push(unwatch);
                         } else {
-                            deepSet(_rule, attr.to || 'options', value);
+                            unwatch();
                         }
-                        api.sync(rule);
-                    };
-                    let callback = (get) => fn(get);
-                    const unwatch = fc.watchLoadData(callback);
-                    fn = debounce(fn, attr.wait || 300)
-                    if (attr.watch !== false) {
-                        unwatchs.push(unwatch);
-                    } else {
-                        unwatch();
                     }
-                }
-            })
-            this._fn[inject.id] = unwatchs;
+                })
+                this._fn[inject.id] = unwatchs;
+            });
         },
         deleted(inject) {
             if (this._fn[inject.id]) {
@@ -63,7 +66,7 @@ const loadData = function (fc) {
             inject.clearProp();
         },
     };
-    loadData.watch = loadData.mounted;
+    loadData.watch = loadData.loaded;
     return loadData;
 }
 
@@ -234,7 +237,6 @@ const fetch = function (fc) {
                         }
                     }
                     set(fn(body, rule, api));
-                    api.sync(rule);
                 },
                 onError(e) {
                     set(undefined);

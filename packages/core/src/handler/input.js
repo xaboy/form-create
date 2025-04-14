@@ -152,7 +152,7 @@ export default function useInput(Handler) {
             return JSON.stringify(this.getFormData(ctx), strFn) !== JSON.stringify(value, strFn);
         },
         isQuote(ctx, value) {
-            return (is.Object(value) || Array.isArray(value)) && value === ctx.rule.value;
+            return (value instanceof Function || is.Object(value) || Array.isArray(value)) && value === ctx.rule.value;
         },
         refreshUpdate(ctx, val, origin, field) {
             if (is.Function(ctx.rule.update)) {

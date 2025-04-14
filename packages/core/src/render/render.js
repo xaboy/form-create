@@ -270,6 +270,15 @@ export default function useRender(Render) {
             const {ref, key, rule} = ctx;
             this.$manager.mergeProp(ctx);
             ctx.parser.mergeProp(ctx);
+            const on = {...ctx.prop.on || {}};
+            const nativeOn = {};
+            Object.keys(on).forEach(key => {
+                if (key.indexOf('native.') === 0) {
+                    nativeOn[key.replace('native.', '')] = on[key];
+                    delete on[key];
+                }
+            })
+            ctx.prop.on = on;
             const props = [
                 {
                     ref: ref,
@@ -289,6 +298,9 @@ export default function useRender(Render) {
                             }
                         }
                     }
+                },
+                {
+                    nativeOn
                 }
             ]
 
