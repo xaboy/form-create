@@ -23,8 +23,14 @@ export default function Api(h) {
     }
 
     function props(fields, key, val) {
-        tidyFields(fields).forEach(field => {
-            h.getCtxs(field).forEach(ctx => {
+        if (is.Undef(fields)) {
+            fields = Object.keys({...h.fieldCtx, ...h.nameCtx});
+        } else if (!Array.isArray(fields)) {
+            fields = [fields];
+        }
+        fields.forEach(field => {
+            const ctxs = h.fieldCtx[field] || h.nameCtx[field];
+            ctxs && ctxs.forEach(ctx => {
                 $set(ctx.rule, key, val);
                 h.$render.clearCache(ctx);
             });
