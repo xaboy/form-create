@@ -209,7 +209,9 @@ export default {
             if (this.disabled || false === this.onBeforeAdd(this.value)) {
                 return;
             }
-            this.addRule(i, true);
+            const value = [...this.value];
+            value.push(this.defaultValue ? deepCopy(this.defaultValue) : (this.field ? null : {}));
+            this.input(value);
         },
         del(index, key) {
             if (this.disabled || false === this.onBeforeRemove(this.value, index)) {
