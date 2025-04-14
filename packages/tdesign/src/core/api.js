@@ -24,7 +24,7 @@ export default function extendApi(api, h) {
             return new Promise((resolve, reject) => {
                 const forms = api.children;
                 const all = [h.$manager.validate()];
-                forms.forEach(v => {
+                forms.filter(v=>!v.isScope).forEach(v => {
                     all.push(v.validate());
                 })
                 Promise.all(all).then(() => {
@@ -43,7 +43,7 @@ export default function extendApi(api, h) {
                 if (!ctx) return;
                 const sub = h.subForm[ctx.id];
                 const all = [h.$manager.validateField(ctx.id)];
-                toArray(sub).forEach(v => {
+                toArray(sub).filter(v=>!v.isScope).forEach(v => {
                     all.push(v.validate());
                 })
                 Promise.all(all).then(() => {

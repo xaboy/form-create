@@ -45,6 +45,9 @@ export default function Api(h) {
     }
 
     const api = {
+        get isScope() {
+            return h.vm.$props.subForm === false;
+        },
         get config() {
             return h.options
         },
