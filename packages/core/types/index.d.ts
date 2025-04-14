@@ -519,6 +519,7 @@ export interface BaseOptions<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
     preview?: boolean;
     appendValue?: boolean;
     ignoreHiddenFields?: boolean;
+    validateOnSubmit?: boolean;
     forceCoverValue?: boolean;
     formData?: FormData;
     el?: Element | string;
