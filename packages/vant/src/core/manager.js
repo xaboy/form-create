@@ -88,14 +88,14 @@ export default {
                     e.preventDefault();
                 }
             },
-            class: [form.className, form.class, 'form-create-m', this.$handle.preview ? 'is-preview' : ''],
             style: form.style,
             type: 'form',
         };
     },
     beforeRender() {
         const {key, ref} = this;
-        extend(this.rule, {key, ref});
+        const form = this.options.form;
+        extend(this.rule, {key, ref, class: [form.className, form.class, 'form-create-m', this.$handle.preview ? 'is-preview' : '']});
     },
     render(children) {
         if (children.slotLen() && !this.$handle.preview) {

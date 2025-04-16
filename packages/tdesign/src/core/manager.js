@@ -90,14 +90,14 @@ export default {
                     e.preventDefault && e.preventDefault();
                 }
             },
-            class: [form.className, form.class, 'form-create', this.$handle.preview ? 'is-preview' : ''],
             style: form.style,
             type: 'form',
         };
     },
     beforeRender() {
         const {key, ref, $handle} = this;
-        extend(this.rule, {key, ref});
+        const form = this.options.form;
+        extend(this.rule, {key, ref, class: [form.className, form.class, 'form-create', this.$handle.preview ? 'is-preview' : '']});
         extend(this.rule.props, {
             data: $handle.formData,
         });

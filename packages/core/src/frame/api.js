@@ -116,6 +116,9 @@ export default function Api(h) {
             }
             return undefined;
         },
+        get formulas() {
+            return {...h.fc.formulas};
+        },
         formData(fields) {
             if (fields == null || typeof fields === 'boolean') {
                 const data = {};
@@ -498,10 +501,12 @@ export default function Api(h) {
                 }
             }
         },
-        getChildrenFormData(id) {
+        getChildrenFormData(id, flag) {
             const rules = api.getChildrenRuleList(id);
             return rules.reduce((formData, rule) => {
-                formData[rule.field] = copy(rule.value);
+                if (rule.ignore !== true || flag === true) {
+                    formData[rule.field] = copy(rule.value);
+                }
                 return formData;
             }, {});
         },

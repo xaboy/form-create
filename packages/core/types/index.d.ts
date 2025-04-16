@@ -553,6 +553,9 @@ export interface BaseApi<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
     readonly parent: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> | undefined;
     readonly top: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
     readonly children: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>[];
+    readonly formulas: {
+        [key: string]: Function;
+    };
 
     formData(): FormData;
 
@@ -692,7 +695,7 @@ export interface BaseApi<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
 
     getChildrenRuleList(field: string | Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>): Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>[];
 
-    getChildrenFormData(field: string | Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>): FormData;
+    getChildrenFormData(field: string | Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, flag?: boolean): FormData;
 
     setChildrenFormData(field: string | Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, formData: FormData, cover: boolean): void;
 
