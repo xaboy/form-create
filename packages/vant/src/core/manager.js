@@ -61,6 +61,11 @@ export default {
     tidyRule({prop}) {
         tidy(prop, 'title');
         tidy(prop, 'info');
+        prop.validate && prop.validate.forEach(item => {
+            if (is.String(item.pattern)) {
+                item.pattern = new RegExp(item.pattern);
+            }
+        });
         return prop;
     },
     mergeProp(ctx) {
