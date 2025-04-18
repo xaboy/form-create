@@ -116,8 +116,20 @@ extend(Handler.prototype, {
             }
         }).then(() => {
             return this.globalBeforeFetch(opt);
-        }).catch(()=>{});
+        });
     },
+    beforeSubmit(formData) {
+        return new Promise((resolve, reject) => {
+            const res = this.options.beforeSubmit && invoke(() => this.options.beforeSubmit(formData, {api: this.api}));
+            if (res && is.Function(res.then)) {
+                res.then(resolve).catch(reject);
+            } else if (res === false) {
+                reject();
+            } else {
+                resolve();
+            }
+        });
+    }
 })
 
 useInject(Handler);

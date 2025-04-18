@@ -584,7 +584,7 @@ export default function Api(h) {
                         invoke(() => opt.onError && opt.onError(e));
                         reject(e);
                     });
-                });
+                }).catch(e => {});
             });
         },
         watchFetch(opt, callback, error, beforeFetch) {
@@ -602,7 +602,7 @@ export default function Api(h) {
                         invoke(() => _opt.onError && _opt.onError(e));
                         error && error(e);
                     });
-                });
+                }).catch(e => {});
             }, opt.wait == null ? 1000 : opt.wait);
         },
         getData(id, def) {

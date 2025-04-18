@@ -529,6 +529,9 @@ export interface BaseOptions<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
         api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>,
         rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>
     }) => void | Promise<any>;
+    beforeSubmit?: (formData: Object, form: {
+        api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>,
+    }) => void | boolean | Promise<any>;
     mounted?: (api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
     reload?: (api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
     onMounted?: (api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;

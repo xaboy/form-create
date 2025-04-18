@@ -118,10 +118,12 @@ export default function extendApi(api, h) {
                 const promise = h.options.validateOnSubmit === false ? Promise.resolve() : api.validate();
                 promise.then(() => {
                     let formData = api.formData();
-                    is.Function(successFn) && invoke(() => successFn(formData, api));
-                    is.Function(h.options.onSubmit) && invoke(() => h.options.onSubmit(formData, api));
-                    h.vm.$emit('submit', formData, api);
-                    resolve(formData);
+                    h.beforeSubmit(formData).then(() => {
+                        is.Function(successFn) && invoke(() => successFn(formData, api));
+                        is.Function(h.options.onSubmit) && invoke(() => h.options.onSubmit(formData, api));
+                        h.vm.$emit('submit', formData, api);
+                        resolve(formData);
+                    }).catch((e) => {})
                 }).catch((...args) => {
                     is.Function(failFn) && invoke(() => failFn(api, ...args));
                     reject(...args)
