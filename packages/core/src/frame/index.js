@@ -22,6 +22,7 @@ import uniqueId from '@form-create/utils/lib/unique';
 import {cookieDriver, localStorageDriver, sessionStorageDriver} from './dataDriver';
 import debounce from '@form-create/utils/lib/debounce';
 import {$set, deepSet} from '@form-create/utils';
+import baseLanguage from "./language";
 
 function parseProp(name, id) {
     let prop;
@@ -469,7 +470,10 @@ export default function FormCreateFactory(config) {
             if (value == null) {
                 const language = this.options.value.language || {};
                 const locale = this.getLocale();
-                value = deepGet(language[locale], id);
+                value = deepGet(language[locale] || {}, id);
+                if (value == null) {
+                    value = deepGet(baseLanguage[locale] || {}, id);
+                }
             }
             return value;
         },

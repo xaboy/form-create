@@ -84,6 +84,27 @@ export default {
     getDefaultOptions() {
         return getConfig();
     },
+    adapterValidate(validate, validator) {
+        if (validate.trigger === 'change') {
+            validate.trigger = 'onChange';
+        } else if (validate.trigger === 'blur') {
+            validate.trigger = 'onBlur';
+        }
+        validate.validator = (value) => {
+            return new Promise((resolve) => {
+                const callback = (err) => {
+                    validate.message = err;
+                    if (err) {
+                        resolve(false);
+                    } else {
+                        resolve();
+                    }
+                }
+                return validator(value, callback);
+            })
+        }
+        return validate;
+    },
     update() {
         const form = this.options.form;
         this.rule = {

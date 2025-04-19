@@ -42,6 +42,12 @@ extend(Manager.prototype, {
     form() {
         return this.vm.$refs[this.ref];
     },
+    adapterValidate(validate, validator) {
+        validate.validator = (rule, value, callback) => {
+            return validator(value, callback);
+        }
+        return validate;
+    },
     getSlot(name){
         const _fn = (vm) => {
             if (vm) {

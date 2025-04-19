@@ -159,13 +159,17 @@ export default function useContext(Handler) {
                 return info;
             });
             ctx.refRule['__$validate'] = computed(() => {
+                const t = (msg) => {
+                    const match = msg.match(/^\{\{\s*\$t\.(.+)\s*\}\}$/);
+                    if (match) {
+                        return this.api.t(match[1], {title: ctx.refRule?.__$title?.value});
+                    }
+                    return msg;
+                }
                 return toArray(ctx.rule.validate).map(item => {
                     const temp = {...item};
                     if (temp.message) {
-                        const match = temp.message.match(/^\{\{\s*\$t\.(.+)\s*\}\}$/);
-                        if (match) {
-                            temp.message = this.api.t(match[1], {title: ctx.refRule?.__$title?.value});
-                        }
+                        temp.message = t(temp.message);
                     }
                     if (is.Function(temp.validator)) {
                         const that = ctx;
@@ -178,7 +182,16 @@ export default function useContext(Handler) {
                                 api: that.$handle.api,
                             }, ...args)
                         }
-                        return temp;
+                    }
+                    if (temp.adapter) {
+                        if (typeof temp.error === 'object') {
+                            const msg = {...temp.error};
+                            Object.keys(msg).forEach((key) => {
+                                msg[key] = t(msg[key]);
+                            })
+                            temp.error = msg;
+                        }
+                        return this.adapterValidate(temp, ctx);
                     }
                     return temp;
                 });
@@ -234,6 +247,177 @@ export default function useContext(Handler) {
             });
             this.watchEffect(ctx);
         },
+        adapterValidate(validate, ctx) {
+            const validator = (value, callback) => {
+                const before = validate.beforeValidate && invoke(() => validate.beforeValidate({
+                    value,
+                    api: this.api,
+                    validate,
+                    rule: ctx.rule
+                }));
+                if (before === false) {
+                    callback();
+                } else {
+                    const key = this.validator(value, validate);
+                    if (!key) {
+                        if (validate.validator) {
+                            const res = validate.validator && invoke(() => validate.validator(value, callback));
+                            if (res && is.Function(res.then)) {
+                                res.then(() => callback()).catch((e) => callback(e));
+                            }
+                        } else {
+                            callback();
+                        }
+                    } else {
+                        let message = '';
+                        if (typeof validate.error === 'object') {
+                            message = validate.error[key] || validate.error.default;
+                        }
+                        if (!message && typeof validate.message === 'string') {
+                            message = validate.message;
+                        }
+                        if (!message) {
+                            message = this.getValidateMessage(ctx, {key, rule: validate[key]});
+                        }
+                        callback(message);
+                    }
+                }
+            }
+            return this.$manager.adapterValidate({
+                required: validate.required,
+                message: validate.message,
+                target: validate.trigger,
+            }, validator);
+        },
+        getValidateMessage(ctx, invalid) {
+            const formatRule = Array.isArray(invalid.rule) ? invalid.rule.join(',') : ('' + invalid.rule);
+            return this.api.t(invalid.key === 'required' ? invalid.key : ('validate.' + invalid.key), {
+                [invalid.key]: formatRule,
+                title: ctx.refRule?.__$title?.value
+            });
+        },
+        validator(value, validate) {
+            const isEmpty = is.empty(value);
+            if (isEmpty) {
+                if (validate.required) {
+                    return 'required'
+                }
+                return;
+            }
+            for (const [key, rule] of Object.entries(validate)) {
+                switch (key) {
+                    case 'len':
+                    case 'maxLen':
+                    case 'minLen':
+                        const check = (val) => {
+                            if (key === 'len') {
+                                return val === rule;
+                            } else if (key === 'maxLen') {
+                                return val <= rule;
+                            } else {
+                                return val >= rule;
+                            }
+                        }
+                        if (Array.isArray(value)) {
+                            if (!check(value.length)) {
+                                return key;
+                            }
+                        } else if (typeof value === 'object') {
+                            return key;
+                        } else if (!check(('' + value).length)) {
+                            return key;
+                        }
+                        break;
+                    case 'pattern':
+                        const reg = typeof rule === 'string' ? new RegExp(rule) : rule;
+                        if (!reg.test('' + value)) {
+                            return key;
+                        }
+                        break;
+                    case 'uppercase':
+                        if (rule && (typeof value !== 'string' || !/^[A-Z]*$/.test(value))) {
+                            return key;
+                        }
+                        break;
+                    case 'lowercase':
+                        if (rule && (typeof value !== 'string' || !/^[a-z]*$/.test(value))) {
+                            return key;
+                        }
+                        break;
+                    case 'min':
+                    case 'max':
+                    case 'positive':
+                    case 'negative':
+                    case 'integer':
+                    case 'number':
+                        const num = Number(value);
+                        if (Number.isNaN(num)) {
+                            return key;
+                        }
+                        if (key === 'min' && num < rule) {
+                            return key;
+                        }
+                        if (key === 'max' && num > rule) {
+                            return key;
+                        }
+                        if (key === 'positive' && num <= 0) {
+                            return key;
+                        }
+                        if (key === 'negative' && num >= 0) {
+                            return key;
+                        }
+                        if (key === 'integer' && !Number.isInteger(num)) {
+                            return key;
+                        }
+                        break;
+                    case 'equal':
+                        if (value !== rule) {
+                            return key;
+                        }
+                        break;
+                    case 'enum':
+                        if (Array.isArray(rule) && !rule.includes(value)) {
+                            return key;
+                        }
+                        break;
+                    case 'hasKeys':
+                        if (typeof value !== 'object' || Array.isArray(rule) && rule.some(key => !(key in value))) {
+                            return key;
+                        }
+                        break;
+                    case 'email':
+                        const regexEmail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+                        if (!regexEmail.test('' + value)) {
+                            return key;
+                        }
+                        break;
+                    case 'url':
+                        const regexUrl = new RegExp(
+                            '^(?!mailto:)(?:(?:http|https|ftp)://)(?:\\S+(?::\\S*)?@)?(?:(?:(?:[1-9]\\d?|1\\d\\d|2[01]\\d|22[0-3])(?:\\.(?:1?\\d{1,2}|2[0-4]\\d|25[0-5])){2}(?:\\.(?:[0-9]\\d?|1\\d\\d|2[0-4]\\d|25[0-4]))|(?:(?:[a-z\\u00a1-\\uffff0-9]+-?)*[a-z\\u00a1-\\uffff0-9]+)(?:\\.(?:[a-z\\u00a1-\\uffff0-9]+-?)*[a-z\\u00a1-\\uffff0-9]+)*(?:\\.(?:[a-z\\u00a1-\\uffff]{2,})))|localhost)(?::\\d{2,5})?(?:(/|\\?|#)[^\\s]*)?$',
+                            'i'
+                        );
+                        if (!regexUrl.test('' + value)) {
+                            return key;
+                        }
+                        break;
+                    case 'ip':
+                        const regexIp =
+                            /^(2(5[0-5]{1}|[0-4]\d{1})|[0-1]?\d{1,2})(\.(2(5[0-5]{1}|[0-4]\d{1})|[0-1]?\d{1,2})){3}$/;
+                        if (!regexIp.test('' + value)) {
+                            return key;
+                        }
+                        break;
+                    case 'phone':
+                        const regexPhone = /^(?:(?:\+|00)86)?1[3-9]\d{9}$/;
+                        if (!regexPhone.test('' + value)) {
+                            return key;
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+        },
         compute(ctx, item) {
             let fn;
             if (typeof item === 'object') {
@@ -253,11 +437,11 @@ export default function useContext(Handler) {
                             field = JSON.stringify(this.fc.getLoadData(one.variable) || '');
                         } else if (one.field) {
                             field = convertFieldToConditions(one.field || '');
-                        } else if(!one.mode){
+                        } else if (!one.mode) {
                             return true;
                         }
                         let compare = one.compare;
-                        if(compare) {
+                        if (compare) {
                             compare = convertFieldToConditions(compare || '');
                         }
                         if (one.mode) {
