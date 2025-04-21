@@ -1,0 +1,51 @@
+{
+  "name": "@form-create/component-naive-switch",
+  "version": "3.2.18",
+  "description": "@form-create/naive-ui 内置组件",
+  "main": "./dist/index.min.js",
+  "module": "./dist/index.esm.js",
+  "unpkg": "./dist/index.min.js",
+  "jsdelivr": "./dist/index.min.js",
+  "scripts": {
+    "clean": "rimraf dist/",
+    "bili": "cross-env bili",
+    "build": "npm-run-all clean bili"
+  },
+  "files": [
+    "README.md",
+    "package.json",
+    "LICENSE",
+    "src",
+    "dist"
+  ],
+  "keywords": [
+    "@form-create",
+    "form-create-component",
+    "naive-ui"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xaboy/form-create.git"
+  },
+  "author": "xaboy",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/xaboy/form-create/issues"
+  },
+  "homepage": "http://www.form-create.com",
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@form-create/utils": "^3.2.18"
+  },
+  "buildFormCreateOptions": {
+    "name": "@form-create/component-naive-switch",
+    "exportName": "FcSwitch",
+    "formats": [
+      "umd",
+      "esm"
+    ]
+  },
+  "gitHead": "3d024534b3ee103a96da1d3629582c0cdf19d9a8"
+}

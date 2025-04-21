@@ -51,6 +51,7 @@
     "@form-create/component-naive-group": "^3.2.22",
     "@form-create/component-naive-radio": "^3.2.18",
     "@form-create/component-naive-upload": "^3.2.18",
+    "@form-create/component-naive-switch": "^3.2.18",
     "@form-create/component-subform": "^3.1.34",
     "@form-create/core": "^3.2.22",
     "@form-create/utils": "^3.2.18"

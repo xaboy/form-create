@@ -17,5 +17,5 @@ module.exports = {
             ]
         }
     },
-    transpileDependencies: ['@form-create']
+    transpileDependencies: ['@form-create', 'date-fns']
 }
