@@ -276,6 +276,11 @@ export default function useRender(Render) {
                 if (key.indexOf('native.') === 0) {
                     nativeOn[key.replace('native.', '')] = on[key];
                     delete on[key];
+                } else if (this.$handle.options.transformEventName !== false) {
+                    const line = toLine(key);
+                    if (line !== key.toLowerCase() && !on[line]) {
+                        on[line] = on[key];
+                    }
                 }
             })
             ctx.prop.on = on;

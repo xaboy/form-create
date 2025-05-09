@@ -521,6 +521,7 @@ export interface BaseOptions<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
     ignoreHiddenFields?: boolean;
     validateOnSubmit?: boolean;
     forceCoverValue?: boolean;
+    transformEventName?: boolean;
     formData?: FormData;
     el?: Element | string;
     onSubmit?: (formData: FormData, api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
