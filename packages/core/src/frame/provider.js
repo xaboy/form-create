@@ -20,13 +20,20 @@ const loadData = function (fc) {
                 attrs.forEach(attr => {
                     if (attr && (attr.attr || attr.template)) {
                         let fn = (get) => {
+                            let group;
+                            if (rule && rule.__fc__) {
+                                group = rule.__fc__.getParentGroup();
+                            }
                             let value;
                             if (attr.template) {
-                                value = fc.$handle.loadStrVar(attr.template, get);
+                                value = fc.$handle.loadStrVar(attr.template, get, group ? {rule, value: (fc.$handle.subRuleData[group.id] || {})} : null);
                             } else if (attr.handler && is.Function(attr.handler)) {
                                 value = attr.handler(get, rule, api);
                             } else {
-                                value = get(attr.attr, attr.default);
+                                value = fc.$handle.loadStrVar(`{{${attr.attr}}}`, get, group ? {rule, value: (fc.$handle.subRuleData[group.id] || {})} : null);
+                            }
+                            if ((value == null || value === '') && attr.default != null) {
+                                value = attr.default;
                             }
                             if (attr.copy !== false) {
                                 value = deepCopy(value)

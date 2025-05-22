@@ -10,6 +10,7 @@ import {deepSet} from '@form-create/utils';
 import toArray from '@form-create/utils/lib/toarray';
 
 const noneKey = ['field', 'value', 'vm', 'template', 'name', 'config', 'control', 'inject', 'sync', 'payload', 'optionsTo', 'update', 'slotUpdate', 'computed', 'component', 'cache'];
+const oldValueTag = Symbol('oldValue');
 
 export default function useContext(Handler) {
     extend(Handler.prototype, {
@@ -214,13 +215,12 @@ export default function useContext(Handler) {
                     computedRule = {value: computedRule}
                 }
                 Object.keys(computedRule).forEach(k => {
-                    let oldValue = undefined;
                     const computedValue = computed(() => {
                         const item = computedRule[k];
                         if (!item) return undefined;
                         const value = this.compute(ctx, item);
-                        if (item.linkage && value === undefined) {
-                            return oldValue;
+                        if (item.linkage && value === oldValueTag) {
+                            return oldValueTag;
                         }
                         return value;
                     });
@@ -236,12 +236,14 @@ export default function useContext(Handler) {
                     if (k === 'value' ? [undefined, null, ''].indexOf(ctx.rule.value) > -1 : computedValue.value !== deepGet(ctx.rule, k)) {
                         callback(computedValue.value);
                     }
-                    ctx.watch.push(watch(computedValue, (n) => {
-                        oldValue = n;
+                    ctx.watch.push(watch(computedValue, (n, o) => {
+                        if (n === oldValueTag || n === o) {
+                            return;
+                        }
                         setTimeout(() => {
                             callback(n);
                         });
-                    }));
+                    }, {deep: true}));
                 });
 
             });
@@ -258,7 +260,7 @@ export default function useContext(Handler) {
                 if (before === false) {
                     callback();
                 } else {
-                    const key = this.validator(value, validate);
+                    const key = this.validator(ctx, value, validate);
                     if (!key) {
                         if (validate.validator) {
                             const res = validate.validator && invoke(() => validate.validator(value, callback));
@@ -296,7 +298,7 @@ export default function useContext(Handler) {
                 title: ctx.refRule?.__$title?.value
             });
         },
-        validator(value, validate) {
+        validator(ctx, value, validate) {
             const isEmpty = is.empty(value);
             if (isEmpty) {
                 if (validate.required) {
@@ -413,6 +415,11 @@ export default function useContext(Handler) {
                             return key;
                         }
                         break;
+                    case 'computed':
+                        if (!this.compute(ctx, rule)) {
+                            return key;
+                        }
+                        break;
                     default:
                         break;
                 }
@@ -465,7 +472,7 @@ export default function useContext(Handler) {
                 let val = checkCondition(item);
                 val = item.invert === true ? !val : val;
                 if (item.linkage) {
-                    return val ? invoke(() => this.computeValue(item.linkage, ctx, group), undefined) : undefined;
+                    return val ? invoke(() => this.computeValue(item.linkage, ctx, group), undefined) : oldValueTag;
                 }
                 return val;
             } else if (is.Function(item)) {
