@@ -56,7 +56,7 @@ export function parseFn(fn, mode) {
                 v.__inject = true;
                 return v;
             } else if (v.indexOf('$FNX:') === 0) {
-                v = makeFn('function($inject){' + v.substring(5) + '}');
+                v = makeFn('function($inject){\n' + v.substring(5) + '\n}');
                 v.__json = fn;
                 v.__inject = true;
                 return v;
