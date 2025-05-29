@@ -544,7 +544,7 @@ export default function useContext(Handler) {
                     if (ctx.parser.loadChildren !== false) {
                         const children = ctx.getPending('children', ctx.rule.children);
                         if (is.trueArray(children)) {
-                            children.forEach(h => h.__fc__ && this.rmCtx(h.__fc__));
+                            children.forEach(h => h && h.__fc__ && this.rmCtx(h.__fc__));
                         }
                     }
                     if (ctx.root === this.rules) {

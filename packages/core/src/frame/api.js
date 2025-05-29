@@ -154,7 +154,7 @@ export default function Api(h) {
                     if (ctxs) {
                         const flag = hasProperty(formData, key);
                         ctxs.forEach(ctx => {
-                            ctx.rule.value = flag ? formData[key] : undefined;
+                            $set(ctx.rule, 'value', flag ? formData[key] : undefined);
                         })
                         delete data[key];
                     }
@@ -171,7 +171,7 @@ export default function Api(h) {
                     const ctxs = h.fieldCtx[key];
                     if (!ctxs) return h.appendData[key] = formData[key];
                     ctxs.forEach(ctx => {
-                        ctx.rule.value = formData[key];
+                        $set(ctx.rule, 'value', formData[key]);
                     });
                 });
             }, true)
@@ -515,9 +515,9 @@ export default function Api(h) {
             h.deferSyncValue(() => {
                 rules.forEach(rule => {
                     if (hasProperty(formData, rule.field)) {
-                        rule.value = formData[rule.field];
+                        $set(rule, 'value', formData[rule.field]);
                     } else if (cover) {
-                        rule.value = undefined;
+                        $set(rule, 'value', undefined);
                     }
                 });
             });
@@ -537,8 +537,7 @@ export default function Api(h) {
                 let config = api.options.globalData[name];
                 if (!config) {
                     resolve(h.fc.loadData[name]);
-                }
-                if (config.type === 'fetch') {
+                } else if (config.type === 'fetch') {
                     api.fetch(config).then(res => {
                         resolve(res);
                     }).catch(inject);

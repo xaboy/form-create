@@ -581,7 +581,7 @@ export default function FormCreateFactory(config) {
                     const temp = getValue ? getValue() : this.getLoadData(id, def);
                     if (!unwatch[id]) {
                         return;
-                    } else if (JSON.stringify(temp) !== JSON.stringify(unwatch[id].val)) {
+                    } else if (((temp instanceof Function || is.Object(temp) || Array.isArray(temp)) && temp === unwatch[id].val) || JSON.stringify(temp) !== JSON.stringify(unwatch[id].val)) {
                         unwatch[id].val = temp;
                         run(true);
                     }

@@ -208,10 +208,10 @@ export default function $FormCreate(FormCreate, components, directives) {
                 if (fapi !== fapi.scope) {
                     fapi.scope.bus.$off('$loadData.$scopeForm', emit$scopeForm);
                 }
-                styleEl && document.head.removeChild(styleEl);
                 rmSubForm();
                 data.destroyed = true;
                 fc.unmount();
+                styleEl && (styleEl.parentNode || styleEl.parentElement) && document.head.removeChild(styleEl);
             })
 
             onUpdated(() => {
