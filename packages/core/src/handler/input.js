@@ -97,8 +97,9 @@ export default function useInput(Handler) {
                 }, data);
             }
             fields.reduce((initial, field) => {
-                const ctx = (this.fieldCtx[field] || []).filter(ctx => !this.isIgnore(ctx.rule))[0] || (this.fieldCtx[field][0]);
-                if (this.isIgnore(ctx.rule)) {
+                let ctx = (this.fieldCtx[field] || []).filter(ctx => !this.isIgnore(ctx))[0];
+                if (!ctx) {
+                    ctx = this.fieldCtx[field][0];
                     ignoreFields.push(field);
                 }
                 initial[field] = toRef(ctx.rule, 'value');
@@ -108,8 +109,8 @@ export default function useInput(Handler) {
             this.ignoreFields = ignoreFields;
             this.syncValue();
         },
-        isIgnore(rule) {
-            return rule.ignore === true || (rule.ignore === 'hidden' && rule.hidden) || (this.options.ignoreHiddenFields && rule.hidden);
+        isIgnore(ctx) {
+            return ctx.rule.ignore === true || ((ctx.rule.ignore === 'hidden' || this.options.ignoreHiddenFields) && ctx.hasHidden());
         },
         appendValue(rule) {
             if ((!rule.field || !hasProperty(this.appendData, rule.field)) && !this.options.forceCoverValue) {

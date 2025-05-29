@@ -172,6 +172,9 @@ extend(RuleContext.prototype, {
     initNone() {
         this.none = !(is.Undef(this.prop.display) || !!this.prop.display)
     },
+    hasHidden() {
+        return (!!this.rule.hidden) || (this.parent ? this.parent.hasHidden() : false);
+    },
     injectValidate() {
         return this.prop.validate;
     },
