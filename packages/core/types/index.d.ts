@@ -388,6 +388,41 @@ export interface BaseRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> extend
             rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>,
             api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>
         }) => void;
+        deepLoad?: (evt: {
+            rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>,
+            parent: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>,
+            api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>
+        }) => void;
+        deepMounted?: (evt: {
+            rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>,
+            parent: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>,
+            api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>
+        }) => void;
+        deepDeleted?: (evt: {
+            rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>,
+            parent: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>,
+            api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>
+        }) => void;
+        deepValue?: (evt: {
+            value: any,
+            rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>,
+            parent: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>,
+            api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>
+        }) => void;
+        deepHidden?: (evt: {
+            value: boolean,
+            rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>,
+            parent: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>,
+            api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>
+        }) => void;
+        deepWatch?: (evt: {
+            key: string,
+            oldValue: any,
+            newValue: any,
+            rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>,
+            parent: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>,
+            api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>
+        }) => void;
     }
 
     [key: string]: any;

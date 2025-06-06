@@ -2,7 +2,7 @@ import extend from '@form-create/utils/lib/extend';
 import is from '@form-create/utils/lib/type';
 import {invoke, parseFn} from '../frame/util';
 import toCase from '@form-create/utils/lib/tocase';
-
+import {upper} from '@form-create/utils/lib/toline';
 
 export default function useLifecycle(Handler) {
     extend(Handler.prototype, {
@@ -32,11 +32,29 @@ export default function useLifecycle(Handler) {
         },
         targetHook(ctx, name, args) {
             let hook = ctx.prop?.hook?.[name];
-            if (hook) {
-                hook = Array.isArray(hook) ? hook : [hook];
-                hook.forEach(fn => {
-                    invoke(() => fn({...args || {}, self: ctx.rule, rule: ctx.rule, $f: this.api, api: this.api, option: this.vm.$props.option}));
-                });
+            let run = (on, p) => {
+                if (on) {
+                    on = Array.isArray(on) ? on : [on];
+                    on.forEach(fn => {
+                        invoke(() => fn({
+                            ...args || {},
+                            self: ctx.rule,
+                            rule: ctx.rule,
+                            parent: p?.rule,
+                            $f: this.api,
+                            api: this.api,
+                            option: this.vm.$props.option
+                        }));
+                    });
+                }
+            }
+            run(hook);
+            let deepName = 'deep' + upper(name);
+            let parent = ctx.parent;
+            while (parent) {
+                let deepHook = parent.prop?.hook?.[deepName];
+                run(deepHook, parent);
+                parent = parent.parent;
             }
         }
     })
