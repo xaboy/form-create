@@ -71,6 +71,7 @@ export default function $FormCreate(FormCreate, components, directives) {
             index: [String, Number],
             api: Object,
             locale: [String, Object],
+            t: Function,
             name: String,
             subForm: {
                 type: Boolean,
