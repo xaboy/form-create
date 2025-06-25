@@ -135,6 +135,8 @@ export default {
         const col = rule.col;
         const isTitle = this.isTitle(rule) && rule.wrap.title !== false;
         const {col: _col} = this.rule.props;
+        const cls = rule.wrap.class;
+        delete rule.wrap.class;
         delete rule.wrap.title;
         const item = isFalse(rule.wrap.show) ? children : this.$r(mergeProps([rule.wrap, {
             props: {
@@ -144,7 +146,7 @@ export default {
                 name: ctx.id,
                 rules: ctx.injectValidate(),
             },
-            class: this.$render.mergeClass(rule.className, 'fc-form-item'),
+            class: this.$render.mergeClass(cls || rule.className, 'fc-form-item'),
             key: `${uni}fi`,
             ref: ctx.wrapRef,
             type: 'formItem',

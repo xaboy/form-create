@@ -130,6 +130,8 @@ export default {
         const isTitle = this.isTitle(rule) && rule.wrap.title !== false;
         const labelWidth = (!col.labelWidth && !isTitle) ? 0 : col.labelWidth;
         const {layout, col: _col} = this.rule.props;
+        const cls = rule.wrap.class;
+        delete rule.wrap.class;
         delete rule.wrap.title;
         let item
         if (isFalse(rule.wrap.show)) {
@@ -143,7 +145,7 @@ export default {
                     rules: rule.validate,
                     label: isTitle ? () => this.makeInfo(rule, uni, ctx) : undefined,
                 },
-                class: this.$render.mergeClass(rule.className, 'fc-form-item'),
+                class: this.$render.mergeClass(cls || rule.className, 'fc-form-item'),
                 key: `${uni}fi`,
                 ref: ctx.wrapRef,
                 type: 'formItem',
