@@ -62,6 +62,7 @@ export default {
             type: [String, Boolean],
             default: () => undefined
         },
+        uploadText: String,
         value: [Array, String]
     },
     data() {
@@ -155,7 +156,7 @@ export default {
                     <i class="el-icon-upload2"/>
                 </div>;
             } else if(this.listType === 'text') {
-                return <ElButton type="primary">{this.formCreateInject.t('clickToUpload') || '点击上传'}</ElButton>
+                return <ElButton type="primary">{this.formCreateInject.t('clickToUpload') || this.uploadText || '点击上传'}</ElButton>
             } else {
                 return <i class="el-icon-upload2"/>
             }

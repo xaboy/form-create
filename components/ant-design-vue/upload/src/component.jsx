@@ -59,6 +59,7 @@ export default {
             }
         },
         listType: String,
+        uploadText: String,
         modalTitle: String,
         customRequest: Function,
         previewMask: undefined,
@@ -105,7 +106,7 @@ export default {
             if (this.listType === 'picture-card') {
                 return <AIcon type="plus"/>;
             } else {
-                return <AButton type="primary">{this.formCreateInject.t('clickToUpload') || '点击上传'}</AButton>
+                return <AButton type="primary">{this.formCreateInject.t('clickToUpload') || this.uploadText || '点击上传'}</AButton>
             }
         },
         doCustomRequest(option) {
