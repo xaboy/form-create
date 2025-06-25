@@ -5,3 +5,7 @@
 .form-create .form-create .ivu-form-item .ivu-form-item {
     margin-bottom: 0px;
 }
+
+.form-create.is-preview .fc-clock, .form-create .fc-none {
+    display: none !important;
+}
