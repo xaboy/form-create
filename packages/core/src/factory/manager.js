@@ -79,6 +79,8 @@ extend(Manager.prototype, {
     getDefaultOptions() {
         return {};
     },
+    fieldChange(ctx, value, formValue, setFlag) {
+    },
     render(children) {
     }
 })

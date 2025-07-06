@@ -32,6 +32,7 @@ export default function useInput(Handler) {
                     });
                 });
             }
+            this.$manager.fieldChange(ctx, value, formValue, setFlag);
         },
         onInput(ctx, value) {
             let val;

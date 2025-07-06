@@ -58,6 +58,12 @@ export default {
             fItem.clearValidate();
         }
     },
+    fieldChange(ctx, value, formValue, setFlag) {
+        if (!setFlag) {
+            this.vm.$refs[ctx.wrapRef]?.validate('change')?.catch(() => {
+            });
+        }
+    },
     tidyOptions(options) {
         ['submitBtn', 'resetBtn', 'row', 'info', 'wrap', 'col', 'title'].forEach(name => {
             tidyBool(options, name);

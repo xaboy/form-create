@@ -237,6 +237,9 @@ export default function useRender(Render) {
                     slots: () => {
                         return this.vm.top.$scopedSlots;
                     },
+                    getWrap: () => {
+                        return this.vm.$refs[ctx.wrapRef];
+                    },
                     options: [],
                     children: [],
                     preview: false,

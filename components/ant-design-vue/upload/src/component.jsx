@@ -100,7 +100,9 @@ export default {
             }
         },
         input() {
-            this.$emit('input', this.uploadList.map(v => v.is_string ? v.url : (v.value || v.url)).filter((url) => url !== undefined));
+            const value = this.uploadList.map(v => v.is_string ? v.url : (v.value || v.url)).filter((url) => url !== undefined);
+            this.$emit('input', value);
+            this.$emit('change', value);
         },
         makeDefaultSlot() {
             if (this.listType === 'picture-card') {
