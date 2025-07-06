@@ -515,7 +515,10 @@ export default function FormCreateFactory(config) {
             if (id != null) {
                 let split = id.split('.');
                 const key = split.shift();
-                if (key === '$topForm') {
+                val = deepGet(this.vm.top.fc.tmpData, id);
+                if (val != null) {
+                    return val;
+                } else if (key === '$topForm') {
                     val = this.$handle.api.top.formData(true);
                 } else if (key === '$scopeForm') {
                     val = this.$handle.api.scope.formData(true);
@@ -538,11 +541,7 @@ export default function FormCreateFactory(config) {
                 } else if (key === '$preview') {
                     return this.$handle.preview;
                 } else {
-                    const tmpData = this.vm.top.fc.tmpData;
-                    if (!hasProperty(tmpData, key)) {
-                        $set(tmpData, key, defValueTag);
-                    }
-                    val = tmpData[key] !== defValueTag ? deepGet(tmpData, id) : getData(id);
+                    val = getData(id);
                     split = [];
                 }
                 if (val && split.length) {

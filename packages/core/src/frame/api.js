@@ -546,6 +546,12 @@ export default function Api(h) {
                 }
             });
         },
+        setGlobalData(name, value) {
+            api.setData('$globalData.' + name, value);
+        },
+        setGlobalVar(name, value) {
+            api.setData('$var.' + name, value);
+        },
         renderRule(id, onInput, force) {
             const flag = typeof id === 'object';
             const ctx = flag ? byCtx(id) : h.getCtx(id);
