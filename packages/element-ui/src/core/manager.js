@@ -60,8 +60,7 @@ export default {
     },
     fieldChange(ctx, value, formValue, setFlag) {
         if (!setFlag) {
-            this.vm.$refs[ctx.wrapRef]?.validate('change')?.catch(() => {
-            });
+            this.vm.$refs[ctx.wrapRef]?.validate('change');
         }
     },
     tidyOptions(options) {
