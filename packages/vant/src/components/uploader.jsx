@@ -92,7 +92,7 @@ export default defineComponent({
     },
     render() {
         return <van-uploader {...this.formCreateInject.prop} fileList={this.fileList} maxCount={this.maxCount}
-            onInput={(v) => this.fileList = v}
+            onInput={(v) => this.fileList = v} scopedSlots={this.$scopedSlots}
             afterRead={this.uploadFile} onDelete={this.onDelete}/>
     }
 
