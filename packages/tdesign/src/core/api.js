@@ -34,6 +34,7 @@ export default function extendApi(api, h) {
                     reject(e);
                     callback && callback(e);
                     h.vm.$emit('validate-fail', e, {api});
+                    h.emitEvent('validate-fail', e, {api});
                 })
             });
         },
