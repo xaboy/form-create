@@ -226,7 +226,7 @@ export default function $FormCreate(FormCreate, components, directives) {
             watch(() => props.option, () => {
                 fc.initOptions();
                 fapi.refresh();
-            }, {deep: true});
+            }, {deep: true, flush: 'sync'});
 
             watch(() => [...rule.value], (n) => {
                 if (fc.$handle.isBreakWatch() || n.length === data.renderRule.length && n.every(v => data.renderRule.indexOf(v) > -1)) return;

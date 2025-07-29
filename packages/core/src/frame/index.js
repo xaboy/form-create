@@ -357,7 +357,7 @@ export default function FormCreateFactory(config) {
                 this.unwatch.push(watch(() => this.vm.parent.fc.options.value, () => {
                     this.initOptions();
                     this.$handle.api.refresh();
-                }, {deep: true}));
+                }, {deep: true, flush: 'sync'}));
             }
             if (this.vm.$options.propsData.driver) {
                 this.renderDriver = typeof this.vm.$options.propsData.driver === 'object' ? this.vm.$options.propsData.driver : this.drivers[this.vm.$options.propsData.driver];
@@ -488,16 +488,7 @@ export default function FormCreateFactory(config) {
             if (option) {
                 const handle = is.Function(option) ? option : parseFn(option.handle);
                 if (handle) {
-                    let val;
-                    const unwatch = this.watchLoadData((get, flag) => {
-                        if (flag) {
-                            this.bus.$emit('$loadData.$var.' + key);
-                            unwatch();
-                        } else {
-                            val = handle(get, this.$handle.api);
-                        }
-                    });
-                    this.unwatch.push(unwatch);
+                    let val = handle((...args) => this.$handle.api.getData(...args), this.$handle.api);
                     return deepGet(val, split);
                 }
             }
