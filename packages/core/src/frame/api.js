@@ -360,6 +360,26 @@ export default function Api(h) {
                 return origin ? ctx.origin : ctx.rule;
             }
         },
+        findType(type, origin) {
+            let rule = undefined;
+            Object.keys(h.ctxs).forEach(k => {
+                const ctx = h.ctxs[k];
+                if (ctx.rule.type === type) {
+                    rule = origin ? ctx.origin : ctx.rule;
+                }
+            });
+            return rule;
+        },
+        findTypes(type, origin) {
+            let rules = [];
+            Object.keys(h.ctxs).forEach(k => {
+                const ctx = h.ctxs[k];
+                if (ctx.rule.type === type) {
+                    rules.push(origin ? ctx.origin : ctx.rule);
+                }
+            });
+            return rules;
+        },
         getRenderRule: (id) => {
             const ctx = h.getCtx(id);
             if (ctx) {
