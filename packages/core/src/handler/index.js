@@ -23,8 +23,8 @@ export default function Handler(fc) {
             return fc.bus;
         },
         preview() {
-            if (fc.vm.$options.propsData.preview != null) {
-                return fc.vm.$options.propsData.preview;
+            if (fc.vm.$props.preview != null) {
+                return fc.vm.$props.preview;
             } else if (fc.vm.parent && fc.vm.parent.$props.preview != null) {
                 return fc.vm.parent.$props.preview;
             }
@@ -89,7 +89,7 @@ extend(Handler.prototype, {
         this.lifecycle('created');
     },
     updateAppendData() {
-        this.appendData = {...(this.options.formData || {}), ...(this.fc.vm.$options.propsData.value || {}), ...this.appendData};
+        this.appendData = {...(this.options.formData || {}), ...(this.fc.vm.$props.value || {}), ...this.appendData};
     },
     isBreakWatch() {
         return this.loading || this.noWatchFn || this.reloading;

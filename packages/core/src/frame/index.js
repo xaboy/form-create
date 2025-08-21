@@ -306,9 +306,9 @@ export default function FormCreateFactory(config) {
             modelFields,
             formulas,
             isMobile,
-            rules: vm.$options.propsData.rule,
-            name: vm.$options.propsData.name || uniqueId(),
-            inFor: vm.$options.propsData.inFor,
+            rules: vm.$props.rule,
+            name: vm.$props.name || uniqueId(),
+            inFor: vm.$props.inFor,
 
             prop: {
                 components,
@@ -359,8 +359,8 @@ export default function FormCreateFactory(config) {
                     this.$handle.api.refresh();
                 }, {deep: true, flush: 'sync'}));
             }
-            if (this.vm.$options.propsData.driver) {
-                this.renderDriver = typeof this.vm.$options.propsData.driver === 'object' ? this.vm.$options.propsData.driver : this.drivers[this.vm.$options.propsData.driver];
+            if (this.vm.$props.driver) {
+                this.renderDriver = typeof this.vm.$props.driver === 'object' ? this.vm.$props.driver : this.drivers[this.vm.$props.driver];
             }
             if (!this.renderDriver && this.vm.parent) {
                 this.renderDriver = this.vm.parent.fc.renderDriver;
@@ -622,7 +622,7 @@ export default function FormCreateFactory(config) {
             if (this.isSub()) {
                 options = this.mergeOptions(options, this.vm.parent.fc.options.value || {}, true);
             }
-            options = this.mergeOptions(options, this.vm.$options.propsData.option || {});
+            options = this.mergeOptions(options, this.vm.$props.option || {});
             this.updateOptions(options);
         },
         mergeOptions(target, opt, parent) {
