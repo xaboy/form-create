@@ -19,9 +19,10 @@ export function CreateNodeFactory() {
     }
 
     extend(CreateNode.prototype, {
-        setVm(vm) {
-            this.vm = vm;
-            this.h = this.$h = vm.$createElement;
+        setVm(handle) {
+            this.handle = handle;
+            this.vm = handle.vm;
+            this.h = this.$h = handle.vm.$createElement;
         },
         make(tag, data, children) {
             if (Vue.isReservedTag ? (Vue.isReservedTag(tag)) : Vue?.config?.isReservedTag(tag)) {
@@ -31,6 +32,10 @@ export function CreateNodeFactory() {
             return this.makeComponent(tag, data, children);
         },
         makeComponent(type, data, children) {
+            const component = this.handle.fc.prop.components[type];
+            if(component) {
+                type = component;
+            }
             let Node = this.$h(type, parseProp(data), children || []);
             if (Node?.componentOptions?.propsData && data?.props) {
                 const keys = Object.keys(Node.componentOptions.propsData);
@@ -59,10 +64,10 @@ export function CreateNodeFactory() {
                 const line = toLine(k);
                 const lower = toString(k).toLocaleLowerCase();
                 const v = nodes[k];
+                CreateNode.alias(k, v);
                 [k, line, lower].forEach(n => {
-                    CreateNode.alias(k, v);
                     CreateNode.prototype[n] = function (data, children) {
-                        return this.make(v, data, children);
+                        return this.make(aliasMap[k] || n, data, children);
                     };
                 });
             });

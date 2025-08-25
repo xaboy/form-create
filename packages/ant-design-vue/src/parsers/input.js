@@ -15,7 +15,7 @@ export default {
         let type = ctx.prop.props.type;
         if (['textarea', 'search'].indexOf(type) === -1) type = 'input';
 
-        type = (type === 'textarea' ? 'ATextarea' : (type === 'search' ? 'AInputSearch' : 'AInput'));
+        type = (type === 'textarea' ? 'aTextarea' : (type === 'search' ? 'aInputSearch' : 'aInput'));
         return ctx.$render.vNode.make(type, ctx.prop, children);
     }
 }

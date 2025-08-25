@@ -10,7 +10,7 @@ export default function Render(handle) {
         fc: handle.fc,
         vm: handle.vm,
         $manager: handle.$manager,
-        vNode: new handle.fc.CreateNode(handle.vm),
+        vNode: new handle.fc.CreateNode(handle),
         force: false,
         tmpInput: null,
         id: id++
