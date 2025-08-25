@@ -597,6 +597,9 @@ export default function Api(h) {
             h.deferSyncValue(fn, sync);
         },
         bus: h.bus,
+        getCurrentFormRule() {
+            return h.vm.getGroupInject()?.rule;
+        },
         fetch(opt) {
             return new Promise((resolve, reject) => {
                 opt = deepCopy(opt);

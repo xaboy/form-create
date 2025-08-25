@@ -703,6 +703,8 @@ export interface BaseApi<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
 
     getRule(id: string, origin: false): Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
 
+    getCurrentFormRule(): Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
+
     findType(type: string, origin: true): FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
 
     findType(type: string, origin: false): Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
