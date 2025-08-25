@@ -202,20 +202,6 @@ const fetch = function (fc) {
             option.to = 'options';
         }
 
-        if (option.key) {
-            const item = fc.$handle.options.globalData[option.key];
-            if (!item) {
-                set(undefined);
-                return;
-            }
-            if (item.type === 'static') {
-                set(item.data);
-                return;
-            } else {
-                option = {...option, ...item}
-            }
-        }
-
         const onError = option.onError;
 
         const check = () => {
@@ -228,6 +214,14 @@ const fetch = function (fc) {
         fetchAttr._fn[inject.id] = fc.watchLoadData(debounce((get, change) => {
             if (change && option.watch === false) {
                 return fetchAttr._fn[inject.id]();
+            }
+            if(option.key) {
+                const res = get('$globalData.' + option.key);
+                if (res) {
+                    if (check()) return;
+                    set(res);
+                }
+                return ;
             }
             const _option = fc.$handle.loadFetchVar(deepCopy(option), get, rule);
             const config = {

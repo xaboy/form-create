@@ -14,17 +14,17 @@ export default function useEffect(Handler) {
                     prop = prop(this.fc);
                 }
                 prop._c = getComponent(prop);
-                this.onEffect(prop);
+                this.onEffect(prop, k);
                 this.providers[k] = prop;
             });
         },
-        onEffect(provider) {
+        onEffect(provider, key) {
             const used = [];
             (provider._c || ['*']).forEach(name => {
                 const type = name === '*' ? '*' : this.getType(name);
                 if (used.indexOf(type) > -1) return;
                 used.push(type);
-                this.bus.$on(`p:${provider.name}:${type}:${provider.input ? 1 : 0}`, (event, args) => {
+                this.bus.$on(`p:${key || provider.name}:${type}:${provider.input ? 1 : 0}`, (event, args) => {
                     provider[event] && provider[event](...args);
                 });
             });

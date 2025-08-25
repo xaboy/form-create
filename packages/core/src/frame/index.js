@@ -372,6 +372,7 @@ export default function FormCreateFactory(config) {
             this.$handle.init();
         },
         targetFormDriver(method, ...args) {
+            this.bus.$emit(method, ...args);
             if (this.renderDriver && this.renderDriver[method]) {
                 return invoke(() => this.renderDriver[method](...args));
             }
@@ -446,6 +447,9 @@ export default function FormCreateFactory(config) {
                         });
                     };
                     const unwatch = this.watchLoadData(callback);
+                    if(option.watch === false) {
+                        unwatch();
+                    }
                     this.unwatch.push(unwatch);
                     return val;
                 }
@@ -619,10 +623,13 @@ export default function FormCreateFactory(config) {
                 globalEvent: {},
                 globalData: {}, ...deepCopy(globalConfig)
             };
-            if (this.isSub()) {
+            const isSubForm = this.isSub();
+            if (isSubForm) {
                 options = this.mergeOptions(options, this.vm.parent.fc.options.value || {}, true);
             }
             options = this.mergeOptions(options, this.vm.$props.option || {});
+            const api = this.api();
+            this.targetFormDriver('initOptions', options, {api, isSubForm});
             this.updateOptions(options);
         },
         mergeOptions(target, opt, parent) {

@@ -22,7 +22,7 @@ function install(FormCreate) {
     });
     if (Field.props) {
         Field.props.value = {
-            type: [String, Number, Array, Object, Boolean],
+            type: [String, Number, Array, Object, Boolean, Function],
             default: '',
         };
     }
