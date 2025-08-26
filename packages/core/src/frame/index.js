@@ -440,6 +440,7 @@ export default function FormCreateFactory(config) {
                             return;
                         }
                         const options = this.$handle.loadFetchVar(copy(option), get);
+                        options.targetRule = this.targetRule;
                         this.$handle.api.fetch(options).then(res => {
                             _emit(res);
                         }).catch(e => {

@@ -111,7 +111,7 @@ export function asyncFetch(config, _fetch, api) {
                         return deepGet(v, parse);
                     }
                 }
-                resolve(fn(res, undefined, api));
+                resolve(fn(res, config.targetRule, api));
             },
             onError(err) {
                 reject(err);

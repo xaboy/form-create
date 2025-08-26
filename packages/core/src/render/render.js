@@ -3,7 +3,7 @@ import mergeProps from '@form-create/utils/lib/mergeprops';
 import is from '@form-create/utils/lib/type';
 import {invoke, makeSlotBag, mergeRule} from '../frame/util';
 import toCase, {lower} from '@form-create/utils/lib/tocase';
-import {deepSet, toLine} from '@form-create/utils';
+import {$set, deepSet, toLine} from '@form-create/utils';
 import {computed, nextTick} from 'vue';
 
 export default function useRender(Render) {
@@ -225,7 +225,7 @@ export default function useRender(Render) {
         injectProp(ctx) {
             const state = this.vm;
             if (!state.ctxInject[ctx.id]) {
-                state.ctxInject[ctx.id] = {
+                $set(state.ctxInject, ctx.id, {
                     api: this.$handle.api,
                     form: this.fc.create,
                     subForm: subForm => {
@@ -253,10 +253,10 @@ export default function useRender(Render) {
                     updateValue: (data) => {
                         this.$handle.onUpdateValue(ctx, data);
                     }
-                }
+                });
             }
             const inject = state.ctxInject[ctx.id];
-            extend(inject, {
+            const data = {
                 preview: ctx.prop.preview,
                 options: ctx.prop.options,
                 prop: (function () {
@@ -266,7 +266,10 @@ export default function useRender(Render) {
                     return temp;
                 }()),
                 children: ctx.loadChildrenPending()
-            });
+            };
+            Object.keys(data).forEach(key => {
+                $set(inject, key, data[key]);
+            })
             return inject;
         },
         ctxProp(ctx) {

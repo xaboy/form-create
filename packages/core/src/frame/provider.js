@@ -216,7 +216,9 @@ const fetch = function (fc) {
                 return fetchAttr._fn[inject.id]();
             }
             if(option.key) {
+                fc.targetRule = rule;
                 const res = get('$globalData.' + option.key);
+                delete fc.targetRule;
                 if (res) {
                     if (check()) return;
                     set(res);
