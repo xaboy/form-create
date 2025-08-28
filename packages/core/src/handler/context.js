@@ -478,7 +478,7 @@ export default function useContext(Handler) {
                 }
                 return val;
             } else if (is.Function(item)) {
-                fn = () => item(this.api.form, this.api);
+                fn = () => item(this.api.form, this.api, ctx.rule);
             } else {
                 const group = ctx.getParentGroup();
                 fn = () => this.computeValue(item, ctx, group);
