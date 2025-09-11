@@ -19,6 +19,7 @@ export default {
     radio: 'fc-radio',
     input: PRE + '-field',
     field: PRE + '-field',
+    textarea: PRE + '-field',
     formItem: PRE + '-field',
     form: PRE + '-form',
     col: PRE + '-col',

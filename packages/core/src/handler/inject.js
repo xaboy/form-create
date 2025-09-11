@@ -181,7 +181,7 @@ export default function useInject(Handler) {
 
             ['headers', 'data', 'query'].forEach(key => {
                 if (options[key]) {
-                    const data = {};
+                    const data = Array.isArray(options[key]) ? [] : {};
                     Object.keys(options[key]).forEach(k => {
                         data[loadVal(k)] = loadVal(options[key][k]);
                     });
