@@ -1,6 +1,7 @@
 export {default as debounce} from './debounce';
 export {default as toArray} from './toarray';
 export {default as toString} from './tostring';
+export {default as toPromise} from './topromise';
 export {default as toLine} from './toline';
 export {default as toDate} from './todate';
 export {default as deepExtend, deepExtendArgs, deepCopy} from './deepextend';

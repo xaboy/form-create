@@ -1,6 +1,7 @@
 import {hasProperty} from '@form-create/utils/lib/type';
 import deepExtend, {deepCopy} from '@form-create/utils/lib/deepextend';
 import extend from '@form-create/utils/lib/extend';
+import {toPromise} from '@form-create/utils';
 
 const NAME = 'fcGroup';
 
@@ -213,13 +214,20 @@ export default {
             this.input(value);
         },
         del(index, key) {
-            if (this.disabled || false === this.onBeforeRemove(this.value, index)) {
+            if (this.disabled) {
                 return;
             }
-            this.removeRule(key, true);
-            const value = [...this.value];
-            value.splice(index, 1);
-            this.input(value);
+            const del = () => {
+                this.removeRule(key, true);
+                const value = [...this.value];
+                value.splice(index, 1);
+                this.input(value);
+            }
+            toPromise(this.onBeforeRemove(this.modelValue, index)).then(res => {
+                if (false !== res) {
+                    del();
+                }
+            })
         },
         addIcon(key) {
             return <div class="_fc-m-group-btn _fc-m-group-plus-minus" on-click={this.add}></div>;
