@@ -1,6 +1,6 @@
 {
   "name": "@form-create/component-elm-upload",
-  "version": "2.7.11",
+  "version": "2.7.17",
   "description": "@form-create/element-ui 内置组件",
   "main": "./dist/index.js",
   "module": "./dist/index.es.js",
