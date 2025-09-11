@@ -7,6 +7,7 @@ import toArray from '@form-create/utils/lib/toarray';
 import debounce from '@form-create/utils/lib/debounce';
 import {$set} from "@form-create/utils";
 import {nextTick} from 'vue';
+import {toPromise} from '@form-create/utils';
 
 const loadData = function (fc) {
     const loadData = {
@@ -244,7 +245,9 @@ const fetch = function (fc) {
                             return deepGet(v, parse);
                         }
                     }
-                    set(fn(body, rule, api));
+                    toPromise(fn(body, rule, api)).then(res => {
+                        set(res);
+                    })
                 },
                 onError(e) {
                     set(undefined);
@@ -254,7 +257,7 @@ const fetch = function (fc) {
             };
             fc.$handle.beforeFetch(config, {rule, api}).then(() => {
                 if (is.Function(_option.action)) {
-                    _option.action(rule, api).then((val) => {
+                    toPromise(_option.action(rule, api)).then((val) => {
                         config.onSuccess(val, true);
                     }).catch((e) => {
                         config.onError(e);

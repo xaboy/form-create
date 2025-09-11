@@ -3,6 +3,7 @@
 import is from '@form-create/utils/lib/type';
 import {parseFn} from '@form-create/utils/lib/json';
 import {deepGet} from './util';
+import {toPromise} from '@form-create/utils';
 
 function getError(action, option, xhr) {
     const msg = `fail to ${action} ${xhr.status}'`;
@@ -41,7 +42,11 @@ export default function fetch(option) {
     }
 
     if (option.query) {
-        const queryString = new URLSearchParams(option.query).toString();
+        const query = is.String(option.query) ? option.query : Object.keys(option.query).reduce((acc, key) => {
+            acc[key] = (option.query[key] === null || option.query[key] === undefined) ? '' : option.query[key];
+            return acc;
+        }, {});
+        const queryString = new URLSearchParams(query).toString();
         if (queryString) {
             if (action.includes('?')) {
                 action += `&${queryString}`;
@@ -111,7 +116,9 @@ export function asyncFetch(config, _fetch, api) {
                         return deepGet(v, parse);
                     }
                 }
-                resolve(fn(res, config.targetRule, api));
+                toPromise(fn(res, config.targetRule, api)).then(res => {
+                    resolve(res);
+                });
             },
             onError(err) {
                 reject(err);
