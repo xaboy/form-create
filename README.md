@@ -131,7 +131,7 @@ npm install @form-create/element-ui@next
 
 ## 感谢
 
-[时光弧线](https://github.com/shiguanghuxian)  |  [wxxtqk](https://github.com/wxxtqk)  |  [williamBoss](https://github.com/williamBoss)  |  [HeyMrLin](https://github.com/HeyMrLin)  |  [djkloop](https://github.com/djkloop)  |  [daiwenyong](https://github.com/daiwenyong) | [JetBrains](https://www.jetbrains.com/?from=form-create)
+[时光弧线](https://github.com/shiguanghuxian)  |  [wxxtqk](https://github.com/wxxtqk)  |  [williamBoss](https://github.com/williamBoss)  |  [HeyMrLin](https://github.com/HeyMrLin)  |  [djkloop](https://github.com/djkloop)  |  [daiwenyong](https://github.com/daiwenyong)  | [zgz0412](https://github.com/zgz0412) | [JetBrains](https://www.jetbrains.com/?from=form-create)
 
 ## License
 
