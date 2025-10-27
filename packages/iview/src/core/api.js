@@ -23,7 +23,11 @@ export default function extendApi(api, h) {
         validate(callback) {
             return new Promise((resolve, reject) => {
                 const forms = api.children;
-                const all = [h.$manager.validate()];
+                const all = [new Promise((resolve, reject) => {
+                    h.$manager.validate().then(valid => {
+                        valid ? resolve(valid) : reject();
+                    })
+                })];
                 forms.filter(v=>!v.isScope).forEach(v => {
                     all.push(v.validate());
                 })
