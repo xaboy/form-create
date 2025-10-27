@@ -288,7 +288,7 @@ export default function useContext(Handler) {
             return this.$manager.adapterValidate({
                 required: validate.required,
                 message: validate.message,
-                target: validate.trigger,
+                trigger: validate.trigger,
             }, validator);
         },
         getValidateMessage(ctx, invalid) {
