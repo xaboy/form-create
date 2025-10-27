@@ -440,12 +440,16 @@ export default function useContext(Handler) {
                         const one = item.group[i];
                         let flag;
                         let field = null;
+                        let variableVal = null;
                         if (one.variable) {
-                            field = JSON.stringify(this.fc.getLoadData(one.variable)) || '';
+                            variableVal = this.fc.getLoadData(one.variable);
                         } else if (one.field) {
                             field = convertFieldToConditions(one.field || '');
                         } else if (!one.mode) {
                             return true;
+                        }
+                        if(!one.variable && !one.field) {
+                            return false;
                         }
                         let compare = one.compare;
                         if (compare) {
@@ -458,7 +462,7 @@ export default function useContext(Handler) {
                         } else if (is.Function(one.handler)) {
                             flag = invoke(() => one.handler(this.api, ctx.rule));
                         } else {
-                            flag = invoke(() => (new Function('$condition', '$val', '$form', '$scope', '$group', '$rule', `with($form){with($scope){with(this){with($group){ return $condition['${one.condition}'](${field}, ${compare ? compare : '$val'}); }}}}`)).call(this.api.form, condition, one.value, this.api.top.form, this.api.top === this.api.scope ? {} : this.api.scope.form, group ? (this.subRuleData[group.id] || {}) : {}, ctx.rule));
+                            flag = invoke(() => (new Function('$condition', '$variableVal', '$val', '$form', '$scope', '$group', '$rule', `with($form){with($scope){with(this){with($group){ return $condition['${one.condition}'](${one.variable ? '$variableVal' : field}, ${compare ? compare : '$val'}); }}}}`)).call(this.api.form, condition, variableVal, one.value, this.api.top.form, this.api.top === this.api.scope ? {} : this.api.scope.form, group ? (this.subRuleData[group.id] || {}) : {}, ctx.rule));
                         }
                         if (or && flag) {
                             return true;
