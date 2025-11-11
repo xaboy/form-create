@@ -180,13 +180,15 @@ export default {
             key: `${uni}tit`,
             class: 'fc-form-title',
             type: titleProp.type || 'span',
-        }]);
-
-        if (flag && infoProp.info && !_prop.props.onClick) {
-            _prop.props.onClick = () => {
-                showNotify({type: 'warning', message: ctx.refRule?.__$info?.value, duration: 1000});
+            on: {
+                click: (...args) => {
+                    if (flag && infoProp.info) {
+                        showNotify({type: 'warning', message: ctx.refRule?.__$info?.value, duration: 1000});
+                    }
+                    this.$handle.targetHook(ctx, 'titleClick', {args});
+                }
             }
-        }
+        }]);
 
         delete _prop.props.show;
         delete _prop.props.title;

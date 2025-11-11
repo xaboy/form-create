@@ -192,6 +192,11 @@ export default {
             key: `${uni}tit`,
             class: 'fc-form-title',
             type: titleProp.type || 'span',
+            on: {
+                click: (...args) => {
+                    this.$handle.targetHook(ctx, 'titleClick', {args});
+                }
+            }
         }]);
 
         delete _prop.props.show;
