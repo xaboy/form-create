@@ -364,10 +364,10 @@ export default function useRender(Render) {
             const slotBag = makeSlotBag()
             children.map(child => {
                 if (!child) return;
-                if (is.String(child)) return slotBag.setSlot(null, pSlot ? this.renderRule({
+                if (is.String(child) || is.Number(child)) return slotBag.setSlot(null, pSlot ? this.renderRule({
                     type: 'template',
-                    children: [child],
-                }) : child);
+                    children: [`${child}`],
+                }) : `${child}`);
                 if (child.__fc__) {
                     return this.renderSlot(slotBag, child.__fc__, ctx);
                 }
@@ -414,7 +414,7 @@ export default function useRender(Render) {
         },
         renderRule(rule, children, origin) {
             if (!rule) return undefined;
-            if (is.String(rule)) return rule;
+            if (is.String(rule) || is.Number(rule)) return `${rule}`;
 
             let type;
             if (origin) {
