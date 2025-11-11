@@ -108,7 +108,7 @@ export default function useContext(Handler) {
                             this.targetHook(ctx, 'hidden', {value: n});
                         });
                     }
-                    if ((key === 'ignore' && ctx.input) || (key === 'hidden' && ctx.input && (ctx.rule.ignore === 'hidden' || this.options.ignoreHiddenFields))) {
+                    if ((key === 'ignore' && ctx.input) || (key === 'hidden' && (ctx.rule.ignore === 'hidden' || this.options.ignoreHiddenFields))) {
                         this.syncForm();
                     } else if (key === 'link') {
                         ctx.link();
@@ -447,9 +447,6 @@ export default function useContext(Handler) {
                             field = convertFieldToConditions(one.field || '');
                         } else if (!one.mode) {
                             return true;
-                        }
-                        if(!one.variable && !one.field) {
-                            return false;
                         }
                         let compare = one.compare;
                         if (compare) {
