@@ -186,6 +186,11 @@ export default {
             class: 'fc-form-title',
             slot: titleProp.slot || 'label',
             type: titleProp.type || 'span',
+            on: {
+                click: (...args) => {
+                    this.$handle.targetHook(ctx, 'titleClick', {args});
+                }
+            }
         }]);
 
         delete _prop.props.show;

@@ -183,15 +183,16 @@ export default {
             props: tidyRule(titleProp),
             key: `${uni}tit`,
             class: 'fc-form-title ' + (required ? 'is-required' : ''),
-            on: {},
+            on: {
+                click: (...args) => {
+                    if (flag && infoProp.info) {
+                        Notify({type: 'warning', message: ctx.refRule?.__$info?.value, duration: 1000});
+                    }
+                    this.$handle.targetHook(ctx, 'titleClick', {args});
+                }
+            },
             type: titleProp.type || 'span',
         }]);
-
-        if (flag && infoProp.info && !_prop.on.click) {
-            _prop.on.click = () => {
-                Notify({type: 'warning', message: ctx.refRule?.__$info?.value, duration: 1000});
-            }
-        }
 
         delete _prop.props.show;
         delete _prop.props.title;
