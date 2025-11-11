@@ -53,6 +53,7 @@ export interface OptionAttrs {
         inlineMessage?: boolean
         size?: ComponentSize
         show?: Boolean;
+        labelPosition?: 'left' | 'right' | 'top' | ''
     }>;
     form?: Partial<{
         inline?: boolean
