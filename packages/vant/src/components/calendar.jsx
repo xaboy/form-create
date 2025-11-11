@@ -116,7 +116,7 @@ export default defineComponent({
             <van-field ref="el" placeholder={this.placeholder} readonly disabled={this.$props.disabled}
                        onClick={this.open}
                        value={this.getStrValue()} isLink border={false}>{clearIcon()}</van-field>
-            <van-calendar {...this.formCreateInject.prop} {...{props: this.dateRange}}
+            <van-calendar {...this.$attrs} {...{props: this.dateRange}}
                           title={this.title} value={this.show} onInput={v => (this.show = v)}
                           type={this.type}
                           onConfirm={this.confirm} defaultDate={this.defaultDate}/>
