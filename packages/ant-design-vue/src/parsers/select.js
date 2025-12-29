@@ -1,5 +1,18 @@
-import checkbox from './checkbox';
+import {hasProperty} from "@form-create/utils/lib/type";
 
 export default {
-    ...checkbox, name: 'select'
+    name: 'select',
+    mergeProp(ctx) {
+        const props = ctx.prop.props;
+        if (!hasProperty(props, 'options'))
+            props.options = ctx.prop.options || [];
+        if(props.mode === 'combobox') {
+            if(!props.optionLabelProp) {
+                props.optionLabelProp = 'children'
+            }
+            if(!props.optionFilterProp) {
+                props.optionFilterProp = 'children'
+            }
+        }
+    }
 };

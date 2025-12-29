@@ -19,7 +19,12 @@ const toMoment = function (val, format) {
 };
 
 function getFormat(ctx) {
-    return ctx.prop.props.format || (ctx.el ? ctx.el.format : '') || FORMAT_TYPE[getType(ctx)];
+    const format = ctx.prop.props.format || (ctx.el ? ctx.el.format : '');
+    if (format) {
+        return format;
+    }
+    const type = getType(ctx);
+    return (FORMAT_TYPE[type] + ((ctx.prop.props.showTime && (!type || type === 'date')) ? ' HH:mm:ss' : ''));
 }
 
 const name = 'datePicker';
@@ -31,7 +36,7 @@ export default {
             initial[type] = creatorFactory(name, {type});
             return initial
         }, {
-            dateRange: creatorFactory(name, {type:'range'}),
+            dateRange: creatorFactory(name, {type: 'range'}),
             datetimeRange: creatorFactory(name, m => m.props({type: 'range', showTime: true}))
         })
     }()),
