@@ -561,6 +561,15 @@ export default function Api(h) {
                 }
             });
         },
+        emitGlobalEvent(name, ...args) {
+            const fn = api.getGlobalEvent(name);
+            if(fn) {
+                const data = h.getInjectData({}, undefined);
+                data.args = [...args];
+                args.unshift(data);
+                return fn.apply(null, args);
+            }
+        },
         setGlobalData(name, value) {
             api.setData('$globalData.' + name, value);
         },
