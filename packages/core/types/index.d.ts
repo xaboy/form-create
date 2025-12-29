@@ -192,7 +192,7 @@ export interface util<MakerAttrs, OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs
 
     refreshData(id: string): void;
 
-    extendApi(fn: (api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => Object): void;
+    extendApi(fn: (api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => Object | void): void;
 
     setModelField(type: string, field: string): void;
 

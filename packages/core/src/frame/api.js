@@ -598,6 +598,9 @@ export default function Api(h) {
             h.deferSyncValue(fn, sync);
         },
         emit(name, ...args) {
+            if (h.vm.emitsOptions && !h.vm.emitsOptions[name]) {
+                h.vm.emitsOptions[name] = null;
+            }
             h.vm.emit(name, ...args);
         },
         bus: h.bus,
@@ -608,15 +611,20 @@ export default function Api(h) {
             return new Promise((resolve, reject) => {
                 opt = deepCopy(opt);
                 opt = h.loadFetchVar(opt);
+                const fail = (e) => {
+                    invoke(() => opt.onError && opt.onError(e));
+                    reject(e);
+                }
                 h.beforeFetch(opt).then(() => {
                     return asyncFetch(opt, h.fc.create.fetch, api).then((res) => {
                         invoke(() => opt.onSuccess && opt.onSuccess(res));
                         resolve(res);
                     }).catch((e) => {
-                        invoke(() => opt.onError && opt.onError(e));
-                        reject(e);
+                        fail(e);
                     });
-                }).catch(e => {});
+                }).catch(e => {
+                    fail(e);
+                });
             });
         },
         watchFetch(opt, callback, error, beforeFetch) {
@@ -626,15 +634,20 @@ export default function Api(h) {
                 if (beforeFetch && beforeFetch(_opt, change) === false) {
                     return;
                 }
+                const fail = (e) => {
+                    invoke(() => _opt.onError && _opt.onError(e));
+                    error && error(e);
+                }
                 h.beforeFetch(_opt).then(() => {
                     return asyncFetch(_opt, h.fc.create.fetch, api).then(res => {
                         invoke(() => _opt.onSuccess && _opt.onSuccess(res));
                         callback && callback(res, change);
                     }).catch(e => {
-                        invoke(() => _opt.onError && _opt.onError(e));
-                        error && error(e);
+                        fail(e);
                     });
-                }).catch(e => {});
+                }).catch(e => {
+                    fail(e);
+                });
             }, opt.wait == null ? 1000 : opt.wait);
         },
         getData(id, def) {

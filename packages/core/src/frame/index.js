@@ -716,7 +716,7 @@ export default function FormCreateFactory(config) {
             create,
             install(app, options) {
                 globalConfig = {...globalConfig, ...(options || {})}
-                const key = '_installedFormCreate_' + config.ui;
+                const key = `_installedFormCreate${isMobile ? 'Mobile' : ''}_${config.ui}`;
                 if (app[key] === true) return;
                 app[key] = true;
 

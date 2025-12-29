@@ -30,6 +30,7 @@
     line-height: 22px;
     margin-bottom: 8px;
     text-align: left;
+    float: unset;
 }
 
 .el-form--large .fc-wrap-top.el-form-item > .el-form-item__label {
