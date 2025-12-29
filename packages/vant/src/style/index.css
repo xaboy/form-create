@@ -10,14 +10,13 @@
     display: none !important;
 }
 
-.form-create-m .van-field:has(.van-field__value > .van-field__body > .van-field__control>.van-field):after {
-    display: none;
+.form-create-m .fc-form-item:after {
+    content: ' ' !important;
+    display: block !important;
 }
 
-.form-create-m .van-field > .van-field__value > .van-field__body > .van-field__control > .van-field:after,.form-create-m .van-field > .van-field__value > .van-field__body > .van-field__control > * > .van-field:after {
-    display: block;
-    right: 0;
-    left: 0;
+.form-create-m > .van-row > .van-col--24:last-of-type > .van-cell:last-of-type:after {
+    display: none !important;
 }
 
 .form-create-m .fc-form-item > .van-field__value > .van-field__body > .van-field__control > .van-cell {
@@ -28,10 +27,6 @@
     padding-left: 0;
     padding-right: 0;
     --van-padding-md: 0;
-}
-
-.form-create-m > .van-row > .van-col--24:last-of-type > .van-cell:last-of-type:after {
-    display: none;
 }
 
 .form-create-m .fc-reset-btn {
