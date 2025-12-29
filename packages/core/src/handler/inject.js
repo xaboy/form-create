@@ -2,6 +2,7 @@ import extend from '@form-create/utils/lib/extend';
 import is, {hasProperty} from '@form-create/utils/lib/type';
 import toLine from '@form-create/utils/lib/toline';
 import {deepGet, extractVar, invoke, parseFn, parseTemplateToTree} from '../frame/util';
+import toCase from '@form-create/utils/lib/tocase';
 
 
 export default function useInject(Handler) {
@@ -57,10 +58,10 @@ export default function useInject(Handler) {
                         fn.__emit = true;
 
                         if (!eventInject && inject === false) {
-                            event[eventName] = fn;
+                            event[toCase(eventName)] = fn;
                         } else {
                             let _inject = eventInject || inject || this.options.injectEvent;
-                            event[eventName] = is.Undef(_inject) ? fn : this.inject(rule, fn, _inject);
+                            event[toCase(eventName)] = is.Undef(_inject) ? fn : this.inject(rule, fn, _inject);
                         }
                     }
 

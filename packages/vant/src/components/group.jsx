@@ -292,9 +292,6 @@ export default defineComponent({
             }
             return btn;
         },
-        emitEvent(name, args, index, key) {
-            this.$emit(name, ...args, this.cacheRule[key].$f, index);
-        },
         expandRule(n) {
             for (let i = 0; i < n; i++) {
                 this.modelValue.push(this.field ? null : {});
@@ -352,7 +349,6 @@ export default defineComponent({
                                 {...{
                                     disabled,
                                     'onUpdate:modelValue': (formData) => this.formData(key, formData),
-                                    'onEmit-event': (name, ...args) => this.emitEvent(name, args, index, key),
                                     'onUpdate:api': ($f) => this.add$f(index, key, $f),
                                     inFor: true,
                                     modelValue: this.field ? {[this.field]: this._value(this.modelValue[index])} : this.modelValue[index],
@@ -370,7 +366,6 @@ export default defineComponent({
                             {...{
                                 disabled,
                                 'onUpdate:modelValue': (formData) => this.formData(key, formData),
-                                'onEmit-event': (name, ...args) => this.emitEvent(name, args, index, key),
                                 'onUpdate:api': ($f) => this.add$f(index, key, $f),
                                 inFor: true,
                                 modelValue: this.field ? {[this.field]: this._value(this.modelValue[index])} : this.modelValue[index],

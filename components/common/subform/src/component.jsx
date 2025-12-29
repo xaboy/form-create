@@ -68,7 +68,6 @@ export default defineComponent({
             disabled={this.disabled}
             onUpdate:modelValue={this.formData}
             modelValue={this.modelValue}
-            onEmit-event={this.$emit}
             onUpdate:api={this.add$f}
             rule={this.rule}
             option={this.options} extendOption={true}/>
