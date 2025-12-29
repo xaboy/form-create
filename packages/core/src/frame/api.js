@@ -613,21 +613,30 @@ export default function Api(h) {
             return new Promise((resolve, reject) => {
                 opt = deepCopy(opt);
                 opt = h.loadFetchVar(opt);
+                const fail = (e) => {
+                    invoke(() => opt.onError && opt.onError(e));
+                    reject(e);
+                }
                 h.beforeFetch(opt).then(() => {
                     return asyncFetch(opt, h.fc.create.fetch, api).then((res) => {
                         invoke(() => opt.onSuccess && opt.onSuccess(res));
                         resolve(res);
                     }).catch((e) => {
-                        invoke(() => opt.onError && opt.onError(e));
-                        reject(e);
+                        fail(e);
                     });
-                }).catch(e => {});
+                }).catch(e => {
+                    fail(e);
+                });
             });
         },
         watchFetch(opt, callback, error, beforeFetch) {
             return h.fc.watchLoadData((get, change) => {
                 let _opt = deepCopy(opt);
                 _opt = h.loadFetchVar(_opt, get);
+                const fail = (e) => {
+                    invoke(() => _opt.onError && _opt.onError(e));
+                    error && error(e);
+                }
                 if (beforeFetch && beforeFetch(_opt, change) === false) {
                     return;
                 }
@@ -636,10 +645,11 @@ export default function Api(h) {
                         invoke(() => _opt.onSuccess && _opt.onSuccess(res));
                         callback && callback(res, change);
                     }).catch(e => {
-                        invoke(() => _opt.onError && _opt.onError(e));
-                        error && error(e);
+                        fail(e);
                     });
-                }).catch(e => {});
+                }).catch(e => {
+                    fail(e);
+                });
             }, opt.wait == null ? 1000 : opt.wait);
         },
         getData(id, def) {

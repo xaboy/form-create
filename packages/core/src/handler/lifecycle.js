@@ -38,6 +38,7 @@ export default function useLifecycle(Handler) {
                     on.forEach(fn => {
                         invoke(() => fn({
                             ...args || {},
+                            args: Object.values(args),
                             self: ctx.rule,
                             rule: ctx.rule,
                             parent: p?.rule,

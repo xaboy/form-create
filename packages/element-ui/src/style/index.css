@@ -37,6 +37,7 @@
     line-height: 22px;
     margin-bottom: 8px;
     text-align: left;
+    float: unset;
 }
 
 .fc-wrap-top.el-form-item > .el-form-item__content {

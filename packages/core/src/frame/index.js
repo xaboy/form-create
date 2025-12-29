@@ -724,8 +724,9 @@ export default function FormCreateFactory(config) {
             create,
             install(Vue, options) {
                 globalConfig = {...globalConfig, ...(options || {})}
-                if (Vue._installedFormCreate === true) return;
-                Vue._installedFormCreate = true;
+                const key = `_installedFormCreate${isMobile ? 'Mobile' : ''}_${config.ui}`;
+                if (Vue[key] === true) return;
+                Vue[key] = true;
                 const $formCreate = function (rules, opt = {}) {
                     return create(rules, opt, this);
                 };
