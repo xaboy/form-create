@@ -4,6 +4,7 @@ const required = {
     name: 'required',
     load(inject, rule, api) {
         const val = parseVal(inject.getValue());
+        let _title = undefined;
         if (val.required === false) {
             inject.clearProp();
             api.clearValidateState([rule.field]);
@@ -11,21 +12,29 @@ const required = {
             const validate = {
                 required: true,
                 validator(_, v) {
+                    updateMessage();
                     return new Promise((resolve, reject) => {
                         is.empty(v) ? reject(validate.message) : resolve();
                     })
                 },
                 ...val,
             };
-            const title = rule.__fc__.refRule?.__$title?.value;
-            if (!validate.message) {
-                validate.message = api.t('required', {title}) || (title + (api.getLocale() === 'en' ? ' is required' : '不能为空'));
-            } else {
-                const match = validate.message.match(/^\{\{\s*\$t\.(.+)\s*\}\}$/);
-                if (match) {
-                    validate.message = api.t(match[1], {title});
+            const updateMessage = () => {
+                const title = rule.__fc__.refRule.__$title?.value;
+                if (_title === title) {
+                    return;
+                }
+                _title = title;
+                if (!val.message) {
+                    validate.message = api.t('required', {title}) || (title + (api.getLocale() === 'en' ? ' is required' : '不能为空'));
+                } else {
+                    const match = val.message.match(/^\{\{\s*\$t\.(.+)\s*\}\}$/);
+                    if (match) {
+                        validate.message = api.t(match[1], {title});
+                    }
                 }
             }
+            updateMessage();
             inject.getProp().validate = [validate];
         }
         api.sync(rule);
