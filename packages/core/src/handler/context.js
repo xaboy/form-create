@@ -59,8 +59,8 @@ export default function useContext(Handler) {
             const list = this.fc.parsers;
             const renderDriver = this.fc.renderDriver;
             if (renderDriver) {
-                const list = renderDriver.parsers || {};
-                const parser = list[ctx.originType] || list[toCase(ctx.type)] || list[ctx.trueType];
+                const parsers = renderDriver.parsers || {};
+                const parser = parsers[ctx.originType] || parsers[toCase(ctx.type)] || parsers[ctx.trueType];
                 if (parser) {
                     return parser;
                 }

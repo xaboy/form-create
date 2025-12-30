@@ -37,8 +37,8 @@ export default function useLifecycle(Handler) {
                     on = Array.isArray(on) ? on : [on];
                     on.forEach(fn => {
                         invoke(() => fn({
+                            args: Object.values(args || {}),
                             ...args || {},
-                            args: Object.values(args),
                             self: ctx.rule,
                             rule: ctx.rule,
                             parent: p?.rule,

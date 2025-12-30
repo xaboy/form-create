@@ -137,7 +137,12 @@ export default function FormCreateFactory(config) {
         CreateNode.use(alias);
     }
 
-    function parser() {
+    function parser(key) {
+        if (arguments.length === 0) {
+            return BaseParser;
+        } else if (typeof key === 'string' && arguments.length === 1) {
+            return parsers[toCase(key)];
+        }
         const data = nameProp(...arguments);
         if (!data.id || !data.prop) return BaseParser;
         const name = toCase(data.id);
