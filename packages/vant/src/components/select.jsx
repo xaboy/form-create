@@ -1,4 +1,5 @@
 import {computed, defineComponent, ref, toRef} from 'vue';
+import {normalizeOptions} from "../core/utils";
 
 const NAME = 'fcSelect';
 
@@ -19,8 +20,14 @@ export default defineComponent({
     setup(props, _) {
         const show = ref(false);
         const modelValue = toRef(props, 'value');
-        const options = toRef(props, 'options');
         const fieldNames = toRef(props, 'columnsFieldNames', {});
+        const options = computed(() => {
+            if (fieldNames?.value?.text) {
+                return props.options || [];
+            } else {
+                return normalizeOptions(props.options || []);
+            }
+        })
 
         const inputValue = computed(() => {
             if (modelValue.value == null || modelValue.value === '') {

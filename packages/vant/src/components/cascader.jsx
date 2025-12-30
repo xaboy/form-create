@@ -1,4 +1,5 @@
-import {defineComponent, ref, toRef, watch} from 'vue';
+import {computed, defineComponent, ref, toRef, watch} from 'vue';
+import {normalizeOptions} from "../core/utils";
 
 const NAME = 'fcCascader';
 
@@ -22,8 +23,14 @@ export default defineComponent({
     setup(props, _) {
         const show = ref(false);
         const modelValue = toRef(props, 'value');
-        const options = toRef(props, 'options');
         const fieldNames = toRef(props, 'fieldNames', {});
+        const options = computed(() => {
+            if (fieldNames?.value?.text) {
+                return props.options || [];
+            } else {
+                return normalizeOptions(props.options || []);
+            }
+        })
 
         const findOptions = (options, value, path) => {
             for (let i = 0; i < options.length; i++) {
@@ -66,7 +73,7 @@ export default defineComponent({
         return {
             show,
             inputValue,
-            options,
+            options2: options,
             open() {
                 if (props.disabled) {
                     return;
@@ -91,7 +98,6 @@ export default defineComponent({
                 <i class="van-badge__wrapper van-icon van-icon-clear van-field__clear"
                    onClick={this.clear} slot="right-icon"></i> : undefined;
         }
-
         return <div class="_fc-cascader">
             <van-field ref="el" placeholder={this.placeholder} readonly disabled={this.$props.disabled}
                        onClick={this.open}
@@ -102,9 +108,8 @@ export default defineComponent({
                     value={this.modelValue}
                     activeColor={this.activeColor}
                     title={this.title}
-                    showToolbar={true}
                     fieldNames={this.fieldNames}
-                    options={this.options}
+                    props={{options: this.options2, showToolbar: true}}
                     onClose={() => this.show = false}
                     onFinish={this.confirm}
                 />
