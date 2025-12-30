@@ -1,4 +1,5 @@
-import {defineComponent, ref, toRef, watch} from 'vue';
+import {computed, defineComponent, ref, toRef, watch} from 'vue';
+import {normalizeOptions} from '../core/utils';
 
 const NAME = 'fcCascader';
 
@@ -19,8 +20,14 @@ export default defineComponent({
     setup(props, _) {
         const show = ref(false);
         const modelValue = toRef(props, 'modelValue');
-        const options = toRef(props, 'options');
         const fieldNames = toRef(props, 'fieldNames', {});
+        const options = computed(() => {
+            if (fieldNames?.value?.text) {
+                return props.options || [];
+            } else {
+                return normalizeOptions(props.options || []);
+            }
+        })
 
         const findOptions = (options, value, path) => {
             for (let i = 0; i < options.length; i++) {
