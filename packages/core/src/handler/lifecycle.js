@@ -38,7 +38,7 @@ export default function useLifecycle(Handler) {
                 if (on) {
                     on = Array.isArray(on) ? on : [on];
                     on.forEach(fn => {
-                        invoke(() => fn({...args || {}, args: Object.values(args), self: ctx.rule, rule: ctx.rule, parent: p?.rule, $f: this.api, api: this.api, option: this.vm.props.option}));
+                        invoke(() => fn({args: Object.values(args || {}), ...args || {}, self: ctx.rule, rule: ctx.rule, parent: p?.rule, $f: this.api, api: this.api, option: this.vm.props.option}));
                     });
                 }
             }
