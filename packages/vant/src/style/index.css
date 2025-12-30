@@ -15,11 +15,11 @@
     display: block !important;
 }
 
-.form-create-m > .van-row > .van-col--24:last-of-type > .van-cell:last-of-type:after {
+.form-create-m .fc-form-item .van-cell:not(.fc-form-item):after {
     display: none !important;
 }
 
-.form-create-m .fc-form-item > .van-field__value > .van-field__body > .van-field__control > .van-cell {
+.form-create-m .fc-form-item .van-cell:not(.fc-form-item) {
     padding: 0;
 }
 
