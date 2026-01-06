@@ -75,7 +75,7 @@ export default function useRender(Render) {
             }
         },
         deepSet(ctx) {
-            const deep = ctx.rule.deep;
+            const deep = ctx.prop.deep;
             deep && Object.keys(deep).sort((a, b) => a.length < b.length ? -1 : 1).forEach(str => {
                 deepSet(ctx.prop, str, deep[str]);
             });

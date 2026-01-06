@@ -12,6 +12,7 @@ import useLifecycle from './lifecycle';
 import useEffect from './effect';
 import {reactive} from 'vue';
 import is from '@form-create/utils/lib/type';
+import {deepCopy} from '@form-create/utils/lib/deepextend';
 
 
 export default function Handler(fc) {
@@ -89,7 +90,7 @@ extend(Handler.prototype, {
         this.lifecycle('created');
     },
     updateAppendData() {
-        this.appendData = {...(this.options.formData || {}), ...(this.fc.vm.props.modelValue || {}), ...this.appendData};
+        this.appendData = {...deepCopy(this.options.formData || {}), ...(this.fc.vm.props.modelValue || {}), ...this.appendData};
     },
     isBreakWatch() {
         return this.loading || this.noWatchFn || this.reloading;

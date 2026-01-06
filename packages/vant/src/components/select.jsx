@@ -10,7 +10,7 @@ export default defineComponent({
         disabled: Boolean,
         placeholder: String,
         columnsFieldNames: Object,
-        modelValue: [String, Number],
+        modelValue: [String, Number, Boolean],
         options: Array,
     },
     emits: ['update:modelValue', 'fc.el', 'change'],

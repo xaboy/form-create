@@ -52,7 +52,7 @@ export default function useContext(Handler) {
             this.setIdCtx(ctx, field, 'field');
             this.setFormData(ctx, ctx.parser.toFormValue(rule.value, ctx));
             if (this.isMounted && !this.reloading) {
-                this.vm.emit('change', ctx.field, rule.value, ctx.origin, this.api);
+                this.vm.emit('change', ctx.field, rule.value, ctx.origin, this.api, false, true);
             }
         },
         getParser(ctx) {

@@ -6,7 +6,7 @@ export default defineComponent({
     name: NAME,
     inheritAttrs: false,
     props: {
-        modelValue: [String, Number],
+        modelValue: [String, Number, Boolean],
         options: Array,
     },
     emits: ['update:modelValue', 'change'],
