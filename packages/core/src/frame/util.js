@@ -76,7 +76,6 @@ export function invoke(fn, def) {
 
 export function makeSlotBag() {
     const slotBag = {};
-
     const slotName = (n) => n || 'default';
 
     return {
