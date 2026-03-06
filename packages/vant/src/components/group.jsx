@@ -245,26 +245,28 @@ export default defineComponent({
         sortIcon(index, total) {
             const canMoveUp = index > 0;
             const canMoveDown = index < total - 1;
+            const btn = [];
 
             if (!canMoveUp && !canMoveDown) {
-                return null;
+                return btn;
             }
-
-            if (canMoveUp && canMoveDown) {
+            if (this.type === 'card' && canMoveUp && canMoveDown) {
                 // 显示合并的上下箭头按钮
-                return <div class="_fc-m-group-btn _fc-m-group-sort">
-                    <div class="_fc-m-group-sort-up" onClick={() => this.changeSort(index, -1)}></div>
-                    <div class="_fc-m-group-sort-down" onClick={() => this.changeSort(index, 1)}></div>
-                </div>;
+                btn.push(<div class="_fc-group-btn _fc-group-sort">
+                    <div class=" _fc-group-sort-up" onClick={() => this.changeSort(index, -1)}></div>
+                    <div class=" _fc-group-sort-down" onClick={() => this.changeSort(index, 1)}></div>
+                </div>);
+                return btn;
             }
 
             if (canMoveUp) {
-                return this.sortUpIcon(index);
+                btn.push(this.sortUpIcon(index));
             }
 
             if (canMoveDown) {
-                return this.sortDownIcon(index);
+                btn.push(this.sortDownIcon(index));
             }
+            return btn;
         },
         makeIcon(total, index, key) {
             if (this.$slots.button) {
@@ -287,7 +289,7 @@ export default defineComponent({
             if (this.sortBtn) {
                 const sortBtn = this.sortIcon(index, total);
                 if (sortBtn) {
-                    btn.push(sortBtn);
+                    btn.push(...sortBtn);
                 }
             }
             return btn;
