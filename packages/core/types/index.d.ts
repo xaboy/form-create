@@ -299,7 +299,7 @@ export interface BaseRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> extend
     value?: any;
     ignore?: Boolean | 'hidden';
     computed?: {
-        [key: string]: (formData: Object, api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => any;
+        [key: string]: (formData: FormData, api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => any;
     }
     emit?: Array<string | { name: string; inject: any }>;
     link?: string[];
