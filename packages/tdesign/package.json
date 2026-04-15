@@ -57,7 +57,7 @@
         "access": "public"
     },
     "peerDependencies": {
-        "vue": "^3.1.0"
+        "vue": "^3.5.12"
     },
     "devDependencies": {
         "@form-create/component-wangeditor": "^3.2.14",

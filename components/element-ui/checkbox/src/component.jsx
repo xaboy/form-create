@@ -93,7 +93,7 @@ export default defineComponent({
     render() {
         const name = this.type === 'button' ? 'ElCheckboxButton' : 'ElCheckbox';
         const Type = resolveComponent(name);
-        return <ElCheckboxGroup {...this.$attrs} modelValue={this.value} v-slots={getSlot(this.$slots, ['default'])}
+        return <ElCheckboxGroup {...this.$attrs} modelValue={this.value === null ? undefined : this.value} v-slots={getSlot(this.$slots, ['default'])}
             onUpdate:modelValue={this.onInput} ref="el">{this.options.map((opt, index) => {
                 const props = {...opt};
                 const value = props.value;

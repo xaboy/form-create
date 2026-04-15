@@ -351,6 +351,10 @@ export interface BaseRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> extend
             rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>,
             api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>
         }) => void;
+        beforeUnmount?: (evt: {
+            rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>,
+            api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>
+        }) => void;
         deleted?: (evt: {
             rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>,
             api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>
@@ -785,6 +789,7 @@ export interface Effect<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
     control?: (data: EffectValue, rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
     deleted?: (data: EffectValue, rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
     mounted?: (data: EffectValue, rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
+    beforeUnmount?: (data: EffectValue, rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => void;
 }
 
 export interface Slots {

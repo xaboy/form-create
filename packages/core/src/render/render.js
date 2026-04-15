@@ -151,7 +151,7 @@ export default function useRender(Render) {
                             _vn = preview ? ctx.parser.preview(copy(children), ctx) : ctx.parser.render(copy(children), ctx);
                         }
                         _vn = this.renderSides(_vn, ctx);
-                        if ((!(!ctx.input && is.Undef(prop.native))) && prop.native !== true) {
+                        if ((ctx.input || !is.Undef(prop.native) || prop.col.show !== false) && prop.native !== true) {
                             this.fc.targetFormDriver('updateWrap', ctx)
                             _vn = this.$manager.makeWrap(ctx, _vn);
                         }
@@ -275,6 +275,10 @@ export default function useRender(Render) {
                         vnodeMounted: (vn) => {
                             vn.el.__rule__ = ctx.rule;
                             this.onMounted(ctx, vn.el);
+                        },
+                        vnodeBeforeUnmount: () => {
+                            this.$handle.effect(ctx, 'beforeUnmount');
+                            this.$handle.targetHook(ctx, 'beforeUnmount');
                         },
                         'fc.updateValue': (data) => {
                             this.$handle.onUpdateValue(ctx, data);
