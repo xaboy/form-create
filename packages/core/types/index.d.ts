@@ -298,7 +298,9 @@ export interface BaseRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> extend
     emitPrefix?: string;
     value?: any;
     ignore?: Boolean | 'hidden';
-    computed?: string | ((formData: FormData, api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => any);
+    computed?: {
+        [key: string]: (formData: FormData, api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>, rule: Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => any;
+    }
     emit?: Array<string | { name: string; inject: any }>;
     link?: string[];
     sync?: string[];
