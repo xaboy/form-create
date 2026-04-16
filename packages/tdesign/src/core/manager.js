@@ -134,7 +134,7 @@ export default {
         delete rule.wrap.class;
         delete rule.wrap.title;
         let item
-        if (isFalse(rule.wrap.show)) {
+        if ((is.Undef(rule.wrap.show) ? !ctx.input : isFalse(rule.wrap.show))) {
             item = children
         } else {
             item = this.$r(mergeProps([rule.wrap, {

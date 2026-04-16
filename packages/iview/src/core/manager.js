@@ -123,7 +123,7 @@ export default {
         const cls = rule.wrap.class;
         delete rule.wrap.class;
         delete rule.wrap.title;
-        const item = isFalse(rule.wrap.show) ? children : this.$r(mergeProps([rule.wrap, {
+        const item = (is.Undef(rule.wrap.show) ? !ctx.input : isFalse(rule.wrap.show)) ? children : this.$r(mergeProps([rule.wrap, {
             props: {
                 labelWidth,
                 ...tidyRule(rule.wrap || {}),

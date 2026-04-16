@@ -60,6 +60,6 @@
     "moment": "^2.24.0",
     "v-jsoneditor": "^1.4.2",
     "vite-plugin-antdv-fix": "^1.0.3",
-    "vue": "2.7"
+    "vue": "2.7.16"
   }
 }

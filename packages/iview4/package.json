@@ -54,6 +54,6 @@
         "@form-create/component-wangeditor": "workspace:^",
         "v-jsoneditor": "^1.4.2",
         "view-design": "^4.0.2",
-        "vue": "2.7"
+        "vue": "2.7.16"
     }
 }
