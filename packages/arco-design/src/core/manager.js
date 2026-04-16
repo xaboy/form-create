@@ -205,7 +205,8 @@ export default {
         return this.$r(_prop, children);
     },
     makeCol(rule, uni, children) {
-        const col = rule.col;
+        const col = {...rule.col};
+        delete col.show;
         return this.$r({
             class: this.$render.mergeClass(col.class, 'fc-form-col'),
             type: 'col',

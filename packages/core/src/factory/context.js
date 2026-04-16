@@ -168,6 +168,9 @@ extend(RuleContext.prototype, {
         delete rule.children;
         delete rule.validate;
         this.prop = mergeRule({}, [rule, ...Object.keys(this.payload).map(k => this.payload[k]), this.computed]);
+        if (rule.col && rule.col?.show !== false) {
+            this.prop.col.show = true;
+        }
         this.prop.validate = [...this.refRule?.__$validate?.value || [], ...this.prop.validate || []]
     },
     initNone() {
