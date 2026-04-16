@@ -12,6 +12,8 @@
     <span>&nbsp;|&nbsp;</span>
     <a href="https://form-create.com/v2/guide/" target="_blank">帮助文档</a>
     <span>&nbsp;|&nbsp;</span>
+    <a href="https://view.form-create.com/skills" target="_blank">Agent Skills</a>
+    <span>&nbsp;|&nbsp;</span>
     <a href="https://form-create.com/designer/" target="_blank">可视化表单设计器</a>
     <span>&nbsp;|&nbsp;</span>
     <a href="https://form-create.com/v3/mobile/" target="_blank">移动端表单设计器</a>
