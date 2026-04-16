@@ -228,7 +228,7 @@ importers:
         specifier: ^1.0.3
         version: 1.0.3
       vue:
-        specifier: '2.7'
+        specifier: 2.7.16
         version: 2.7.16
 
   packages/core:
@@ -238,7 +238,7 @@ importers:
         version: link:../utils
     devDependencies:
       vue:
-        specifier: '2.7'
+        specifier: 2.7.16
         version: 2.7.16
 
   packages/data: {}
@@ -289,7 +289,7 @@ importers:
         specifier: ^1.4.2
         version: 1.4.5
       vue:
-        specifier: '2.7'
+        specifier: 2.7.16
         version: 2.7.16
 
   packages/iview:
@@ -335,7 +335,7 @@ importers:
         specifier: ^1.4.2
         version: 1.4.5
       vue:
-        specifier: '2.7'
+        specifier: 2.7.16
         version: 2.7.16
 
   packages/iview4:
@@ -357,7 +357,7 @@ importers:
         specifier: ^4.0.2
         version: 4.7.0(vue@2.7.16)
       vue:
-        specifier: '2.7'
+        specifier: 2.7.16
         version: 2.7.16
 
   packages/tdesign:
@@ -380,12 +380,12 @@ importers:
         version: 6.0.1
       tdesign-vue:
         specifier: naruto
-        version: 1.10.7-naruto(vue@2.7.16)
+        version: 1.14.5-naruto(vue@2.7.16)
       v-jsoneditor:
         specifier: ^1.4.2
         version: 1.4.5
       vue:
-        specifier: '2.7'
+        specifier: 2.7.16
         version: 2.7.16
 
   packages/utils:
@@ -441,7 +441,7 @@ importers:
         specifier: ^4.0.2
         version: 4.7.0(vue@2.7.16)
       vue:
-        specifier: '2.7'
+        specifier: 2.7.16
         version: 2.7.16
 
 packages:
@@ -1722,9 +1722,6 @@ packages:
 
   '@types/estree@1.0.6':
     resolution: {integrity: sha512-AYnb1nQyY49te+VRAVgmzfcgjYS91mY5P0TKUDCLEM+gNnA+3T6rWITXRLYCpahpqSQbN5cE+gHpnPyXjHWxcw==}
-
-  '@types/lodash@4.14.182':
-    resolution: {integrity: sha512-/THyiqyQAP9AfARo4pF+aCGcyiQ94tX/Is2I7HofNRqoYLgN1PBoOWu2/zTA5zMxzP5EFutMtWtGAFRKUe961Q==}
 
   '@types/minimatch@3.0.5':
     resolution: {integrity: sha512-Klz949h02Gz2uZCMGwDUSDS1YBlTdDDgbWHi+81l29tQALUtvz4rAYi5uoVhE5Lagoq6DeqAUlbrHvW/mXDgdQ==}
@@ -3837,6 +3834,9 @@ packages:
     resolution: {integrity: sha512-iPZK6eYjbxRu3uB4/WZ3EsEIMJFMqAoopl3R+zuq0UjcAm/MO6KCweDgPfP3elTztoKP3KtnVHxTn2NHBSDVUw==}
     engines: {node: '>=10'}
 
+  lodash-es@4.18.1:
+    resolution: {integrity: sha512-J8xewKD/Gk22OZbhpOVSwcs60zhd95ESDwezOFuA3/099925PdHJ7OFHNTGtajL3AlZkykD32HykiMo+BIBI8A==}
+
   lodash.debounce@4.0.8:
     resolution: {integrity: sha512-FT1yDzDYEoYWhnSGnpE/4Kj1fLZkDFyqRb7fNt6FdYOSxlUWAtp42Eh6Wb0rGIv/m9Bgo7x4GhQbm5Ys4SG5ow==}
 
@@ -5003,13 +5003,13 @@ packages:
     resolution: {integrity: sha512-DZ4yORTwrbTj/7MZYq2w+/ZFdI6OZ/f9SFHR+71gIVUZhOQPHzVCLpvRnPgyaMpfWxxk/4ONva3GQSyNIKRv6A==}
     engines: {node: '>=10'}
 
-  tdesign-icons-vue@0.3.2:
-    resolution: {integrity: sha512-FW1hqOoIBjnPzTOcGvWidVrWvyf0wHafxt7eAciz62hLU/Ix8TZ1AtFcG3QOafT0vpFPaBcCMVNNXvE5PSzuIA==}
+  tdesign-icons-vue@0.4.4:
+    resolution: {integrity: sha512-g5Gmbu34B0KDOlrcZqj3qkAfHYbc7iJWa6wQUV7AAiRQBWKidJWN9fc4uXUsImRfaz0a6F06jsRykdmCmoNrsA==}
     peerDependencies:
       vue: ^2.6.12
 
-  tdesign-vue@1.10.7-naruto:
-    resolution: {integrity: sha512-ZnzxLd6qTRneTo6AD68E8UP9TZ083meshuuwDAy/oLnu07wfngODVPJ1cJJ9aaHpO02wDAy+fVIafnObktoOeQ==}
+  tdesign-vue@1.14.5-naruto:
+    resolution: {integrity: sha512-0o+FUVUdrZhiLJp6aLZQ9BLaZQSW7CQ4fdZSTOV78JPE6nm/EphFmT93JySITMfaEva+ZukAj8dE/gAp/NPWig==}
     peerDependencies:
       vue: ~2.7.14
 
@@ -7047,8 +7047,6 @@ snapshots:
     optional: true
 
   '@types/estree@1.0.6': {}
-
-  '@types/lodash@4.14.182': {}
 
   '@types/minimatch@3.0.5': {}
 
@@ -9221,6 +9219,8 @@ snapshots:
     dependencies:
       p-locate: 5.0.0
 
+  lodash-es@4.18.1: {}
+
   lodash.debounce@4.0.8: {}
 
   lodash.ismatch@4.4.0: {}
@@ -10454,29 +10454,28 @@ snapshots:
       mkdirp: 1.0.4
       yallist: 4.0.0
 
-  tdesign-icons-vue@0.3.2(vue@2.7.16):
+  tdesign-icons-vue@0.4.4(vue@2.7.16):
     dependencies:
       '@babel/runtime': 7.25.7
       classnames: 2.5.1
       vue: 2.7.16
 
-  tdesign-vue@1.10.7-naruto(vue@2.7.16):
+  tdesign-vue@1.14.5-naruto(vue@2.7.16):
     dependencies:
       '@babel/runtime': 7.25.7
       '@popperjs/core': 2.11.8
       '@types/clipboard': 2.0.10
-      '@types/lodash': 4.14.182
       '@types/raf': 3.4.3
       '@types/sortablejs': 1.15.8
       '@types/tinycolor2': 1.4.6
       '@types/validator': 13.12.2
       clipboard: 2.0.11
       dayjs: 1.11.10
-      lodash: 4.17.21
+      lodash-es: 4.18.1
       mitt: 3.0.1
       raf: 3.4.1
       sortablejs: 1.15.6
-      tdesign-icons-vue: 0.3.2(vue@2.7.16)
+      tdesign-icons-vue: 0.4.4(vue@2.7.16)
       tinycolor2: 1.6.0
       validator: 13.12.0
       vue: 2.7.16
