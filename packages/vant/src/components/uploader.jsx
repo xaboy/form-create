@@ -56,6 +56,33 @@ export default defineComponent({
             _.emit('update:modelValue', props.maxCount === 1 ? (files[0] || '') : files);
         };
 
+        const uploadFile = (file, onSuccess) => {
+            file.status = 'uploading';
+            if (afterRead.value) {
+                return afterRead.value(file);
+            } else {
+                const data = {...props.data || {}};
+                data[props.uploadName || 'file'] = file.file;
+                props.formCreateInject.api.fetch({
+                    action: props.action,
+                    dataType: 'formData',
+                    source: 'upload',
+                    headers: props.headers || {},
+                    method: props.method || 'post',
+                    data
+                }).then(res => {
+                    file.status = 'success';
+                    props.onSuccess && props.onSuccess(res, file);
+                    onSuccess(true);
+                }).catch(e => {
+                    onSuccess(false);
+                    file.status = 'failed';
+                    file.message = props.formCreateInject.t('uploadFail') || '上传失败';
+                    props.onError && props.onError(e, file);
+                });
+            }
+        }
+
         return {
             fileList,
             modelValue,
@@ -63,37 +90,25 @@ export default defineComponent({
                 uploadValue();
                 _.emit('delete', file);
             },
-            uploadFile(file) {
-                file.status = 'uploading';
-                if (afterRead.value) {
-                    return afterRead.value(file);
-                } else {
-                    const data = props.data || {};
-                    data[props.uploadName || 'file'] = file.file;
-                    props.formCreateInject.api.fetch({
-                        action: props.action,
-                        dataType: 'formData',
-                        source: 'upload',
-                        headers: props.headers || {},
-                        method: props.method || 'post',
-                        data
-                    }).then(res => {
-                        file.status = 'success';
-                        props.onSuccess && props.onSuccess(res, file);
+            uploadFiles(file) {
+                const files = Array.isArray(file) ? file : [file];
+                Promise.all(files.map((file) => {
+                    return new Promise(resolve => {
+                        uploadFile(file, resolve);
+                    })
+                })).then((res) => {
+                    if(res.filter((item) => !!item).length > 0) {
                         uploadValue();
-                    }).catch(e => {
-                        file.status = 'failed';
-                        file.message = this.formCreateInject.t('uploadFail') || '上传失败';
-                        props.onError && props.onError(e, file);
-                    });
-                }
-            }
+                    }
+                });
+            },
+            uploadFile
         }
     },
     render() {
         return <van-uploader {...this.$attrs} model-value={this.fileList} maxCount={this.maxCount}
             onUpdate:model-value={(v) => this.fileList = v}
-            afterRead={this.uploadFile} onDelete={this.onDelete} v-slots={this.$slots}/>
+            afterRead={this.uploadFiles} onDelete={this.onDelete} v-slots={this.$slots}/>
     }
 
 });
