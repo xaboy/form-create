@@ -607,9 +607,9 @@ export default function Api(h) {
         getCurrentFormRule() {
             return h.vm.setupState.getGroupInject()?.rule;
         },
-        fetch(opt) {
+        fetch(_opt) {
             return new Promise((resolve, reject) => {
-                opt = deepCopy(opt);
+                let opt = {..._opt};
                 opt = h.loadFetchVar(opt);
                 const fail = (e) => {
                     invoke(() => opt.onError && opt.onError(e));
@@ -629,7 +629,7 @@ export default function Api(h) {
         },
         watchFetch(opt, callback, error, beforeFetch) {
             return h.fc.watchLoadData((get, change) => {
-                let _opt = deepCopy(opt);
+                let _opt = {...opt};
                 _opt = h.loadFetchVar(_opt, get);
                 if (beforeFetch && beforeFetch(_opt, change) === false) {
                     return;

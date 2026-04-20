@@ -177,6 +177,9 @@ export default function useInject(Handler) {
             if (rule && rule.__fc__) {
                 group = rule.__fc__.getParentGroup();
             }
+            if(!group && options.targetRule && options.targetRule.__fc__) {
+                group = options.targetRule.__fc__.getParentGroup();
+            }
             const loadVal = str => {
                 return this.loadStrVar(str, get, group ? {rule, value: (this.subRuleData[group.id] || {})} : null);
             }
