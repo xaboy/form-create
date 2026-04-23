@@ -26,6 +26,7 @@ export default {
     col: PRE + '-col',
     row: PRE + '-row',
     tree: 'fc-tree',
+    inputTag: PRE + '-input-tag',
     autoComplete: PRE + '-autocomplete',
     auto: PRE + '-autocomplete',
     group: 'fc-group',

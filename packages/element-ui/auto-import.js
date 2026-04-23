@@ -27,7 +27,9 @@ import {
     ElUpload,
     ElIcon,
     ElProgress,
+    ElInputTag,
 } from 'element-plus';
+import 'element-plus/es/components/input-tag/style/css'
 import 'element-plus/es/components/button/style/css'
 import 'element-plus/es/components/form/style/css'
 import 'element-plus/es/components/form-item/style/css'
@@ -87,6 +89,7 @@ export default function install(formCreate) {
         app.component(ElIcon.name) || app.use(ElIcon);
         app.component(ElTimePicker.name) || app.use(ElTimePicker);
         app.component(ElProgress.name) || app.use(ElProgress);
+        app.component(ElInputTag.name) || app.use(ElInputTag);
     });
 
 }
