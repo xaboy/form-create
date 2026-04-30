@@ -139,6 +139,8 @@ export interface ApiAttrs {
 
     validateField(field: string, callback?: (state: any) => void): Promise<any>;
 
+    validateFields(fields: string | string[], callback?: (state: any) => void): Promise<any>;
+
     submitBtnProps(props: ButtonProps): void;
 
     resetBtnProps(props: ButtonProps): void;

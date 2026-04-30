@@ -472,6 +472,31 @@ export default function Api(h) {
             const ctx = h.getCtx(id);
             if (ctx) return ctx.el || h.vm.refs[ctx.ref];
         },
+        scrollTo(id, arg = {block: 'center', inline: 'nearest', behavior: 'smooth'}) {
+            const raw = api.el(id);
+            if (!raw) return;
+            const root = raw.$el !== undefined ? raw.$el : raw;
+            if (!root) return;
+            const el = root.nodeType === 1 ? root : root.firstElementChild;
+            el && typeof el.scrollIntoView === 'function' && el.scrollIntoView(arg);
+        },
+        focus(id) {
+            const raw = api.el(id);
+            if (!raw) return;
+            const tryFocus = (node) => {
+                if (!node || typeof node.focus !== 'function') return false;
+                invoke(() => node.focus());
+                return true;
+            };
+            if (tryFocus(raw)) return;
+            const root = raw.$el !== undefined ? raw.$el : raw;
+            if (tryFocus(root)) return;
+            const el = root && (root.nodeType === 1 ? root : root.firstElementChild);
+            if (tryFocus(el)) return;
+            if (!el || !el.querySelector) return;
+            const inner = el.querySelector('input:not([type=hidden]):not([disabled]),textarea:not([disabled]),select:not([disabled]),[tabindex]:not([tabindex="-1"])');
+            tryFocus(inner);
+        },
         closeModal: (id) => {
             h.bus.$emit('fc:closeModal:' + id);
         },
