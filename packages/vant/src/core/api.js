@@ -41,7 +41,11 @@ export default function extendApi(api, h) {
         validateField(field, callback) {
             return new Promise((resolve, reject) => {
                 const ctx = h.getFieldCtx(field);
-                if (!ctx) return;
+                if (!ctx) {
+                    resolve(null);
+                    callback && callback(null);
+                    return;
+                }
                 const sub = h.subForm[ctx.id];
                 const all = [h.$manager.validateField(ctx.id)];
                 toArray(sub).filter(v=>!v.isScope).forEach(v => {
@@ -55,6 +59,20 @@ export default function extendApi(api, h) {
                     callback && callback(e);
                     h.vm.$emit('validate-field-fail', e, {field, api});
                 })
+            });
+        },
+        validateFields(fields, callback) {
+            return new Promise((resolve, reject) => {
+                if (!Array.isArray(fields))
+                    fields = [fields];
+                const list = fields.map(field => api.validateField(field));
+                Promise.all(list).then(() => {
+                    resolve(null);
+                    callback && callback(null);
+                }).catch((e) => {
+                    reject(e);
+                    callback && callback(e);
+                });
             });
         },
         clearValidateState(fields, clearSub = true) {

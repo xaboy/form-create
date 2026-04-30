@@ -742,6 +742,10 @@ export interface BaseApi<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
 
     el(id: string): any;
 
+    scrollTo(id: string, arg?: boolean | ScrollIntoViewOptions): void;
+
+    focus(id: string): void;
+
     closeModal(id: string): void;
 
     resetFields(): void;

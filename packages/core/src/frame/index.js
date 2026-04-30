@@ -640,7 +640,7 @@ export default function FormCreateFactory(config) {
         },
         mergeOptions(target, opt, parent) {
             opt = {...opt || {}};
-            parent && ['page', 'onSubmit', 'onReset', 'onCreated', 'onChange', 'onMounted', 'mounted', 'beforeUnmount', 'onBeforeUnmount', 'onReload', 'reload', 'formData', 'el', 'globalClass', 'style'].forEach((n) => {
+            parent && ['page', 'onSubmit', 'onReset', 'onCreated', 'onChange', 'onMounted', 'mounted', 'beforeUnmount', 'beforeSubmit', 'onBeforeUnmount', 'onReload', 'reload', 'formData', 'el', 'globalClass', 'style'].forEach((n) => {
                 delete opt[n];
             });
             if (opt.global) {
