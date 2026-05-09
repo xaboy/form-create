@@ -1,7 +1,7 @@
 {
     "name": "@form-create/element-ui",
     "version": "3.2.42",
-    "description": "Element Plus版本低代码表单|FormCreate 是一个可以通过 JSON 生成具有动态渲染、数据收集、验证和提交功能的低代码表单生成组件。支持6个UI框架，适配移动端，并且支持生成任何 Vue 组件。内置20种常用表单组件和自定义组件，再复杂的表单都可以轻松搞定。",
+    "description": "Element Plus 版本低代码表单 | FormCreate 是一个可以通过 JSON 生成具有动态渲染、数据收集、验证和提交功能的低代码表单生成组件。支持多个 UI 框架，适配移动端，并且支持生成任何 Vue 组件。内置 20 种常用表单组件和自定义组件，再复杂的表单都可以轻松搞定。",
     "main": "./dist/form-create.min.js",
     "module": "./dist/form-create.esm.js",
     "unpkg": "./dist/form-create.min.js",
@@ -9,9 +9,9 @@
     "typings": "./types/index.d.ts",
     "scripts": {
         "clean": "rimraf dist/",
-        "dev:ele": "vue-cli-service serve",
-        "bili": "cross-env UI_LIB=element-ui bili",
-        "build": "npm-run-all clean bili"
+        "dev:ele": "vite --config vite.dev.config.mjs",
+        "build:lib:vite": "vite build --config vite.build.config.mjs",
+        "build:lib": "npm-run-all clean build:lib:vite"
     },
     "repository": {
         "type": "git",
@@ -46,16 +46,16 @@
     },
     "homepage": "http://www.form-create.com/v3/",
     "dependencies": {
-        "@form-create/component-elm-checkbox": "^3.2.39",
-        "@form-create/component-elm-frame": "^3.2.31",
-        "@form-create/component-elm-group": "^3.2.38",
-        "@form-create/component-elm-radio": "^3.2.31",
-        "@form-create/component-elm-select": "^3.2.37",
-        "@form-create/component-elm-tree": "^3.2.31",
-        "@form-create/component-elm-upload": "^3.2.31",
-        "@form-create/component-subform": "^3.2.34",
-        "@form-create/core": "^3.2.42",
-        "@form-create/utils": "^3.2.31"
+        "@form-create/component-elm-checkbox": "workspace:^",
+        "@form-create/component-elm-frame": "workspace:^",
+        "@form-create/component-elm-group": "workspace:^",
+        "@form-create/component-elm-radio": "workspace:^",
+        "@form-create/component-elm-select": "workspace:^",
+        "@form-create/component-elm-tree": "workspace:^",
+        "@form-create/component-elm-upload": "workspace:^",
+        "@form-create/component-subform": "workspace:^",
+        "@form-create/core": "workspace:^",
+        "@form-create/utils": "workspace:^"
     },
     "publishConfig": {
         "access": "public"
@@ -64,29 +64,16 @@
         "vue": "^3.5.12"
     },
     "devDependencies": {
-        "@element-plus/icons-vue": "^0.2.7",
-        "@form-create/component-wangeditor": "^3.2.14",
-        "@vue/cli-plugin-babel": "~4.5.0",
-        "@vue/cli-service": "^4.5.3",
+        "@element-plus/icons-vue": "^2.3.1",
+        "@form-create/component-wangeditor": "workspace:^",
+        "@vitejs/plugin-vue": "^5.2.4",
+        "@vitejs/plugin-vue-jsx": "^4.2.0",
         "element-plus": "^2.8.3",
-        "v-jsoneditor": "^1.4.2"
-    },
-    "buildFormCreateOptions": {
-        "name": "@form-create/element-ui",
-        "exportName": "formCreate",
-        "extendExternals": [
-            "element-plus",
-            "ElementPlus",
-            "@element-plus/icons-vue"
-        ],
-        "extendGlobal": {
-            "vue": "Vue"
-        },
-        "fileName": "form-create",
-        "formats": [
-            "umd",
-            "esm"
-        ]
-    },
-    "gitHead": "3d024534b3ee103a96da1d3629582c0cdf19d9a8"
+        "npm-run-all": "^4.1.5",
+        "rimraf": "^6.0.1",
+        "v-jsoneditor": "^1.4.2",
+        "vite": "^5.4.21",
+        "vite-plugin-banner": "^0.8.0",
+        "vite-plugin-css-injected-by-js": "^3.5.2"
+    }
 }

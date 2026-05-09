@@ -7,7 +7,7 @@
  * @FilePath     : /form-create2/packages/element-ui/examples/main.js
  */
 import {createApp,h, defineComponent} from 'vue'
-import Info from "@element-plus/icons-vue/dist/es/info-filled.mjs"
+import {InfoFilled as Info} from "@element-plus/icons-vue"
 import FormCreate from '../src'
 import install from '../auto-import'
 import App from './App.vue'

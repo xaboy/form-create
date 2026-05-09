@@ -31,8 +31,8 @@ function install(FormCreate) {
 
 export default function VantFormCreate() {
     return FormCreateFactory({
-        ui: 'process.env.UI',
-        version: 'process.env.VERSION',
+        ui: `${process.env.UI}`,
+        version: `${process.env.VERSION}`,
         manager,
         extendApi,
         install,

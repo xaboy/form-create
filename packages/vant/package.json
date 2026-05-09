@@ -1,7 +1,7 @@
 {
     "name": "@form-create/vant",
     "version": "3.2.42",
-    "description": "VantUI版本低代码表单|FormCreate 是一个可以通过 JSON 生成具有动态渲染、数据收集、验证和提交功能的低代码表单生成组件。支持6个UI框架，适配移动端，并且支持生成任何 Vue 组件。内置20种常用表单组件和自定义组件，再复杂的表单都可以轻松搞定。",
+    "description": "Vant 版本（移动端）低代码表单 | FormCreate 是一个可以通过 JSON 生成具有动态渲染、数据收集、验证和提交功能的低代码表单生成组件。",
     "main": "./dist/form-create.min.js",
     "module": "./dist/form-create.esm.js",
     "unpkg": "./dist/form-create.min.js",
@@ -9,9 +9,9 @@
     "typings": "./types/index.d.ts",
     "scripts": {
         "clean": "rimraf dist/",
-        "dev:vant": "vue-cli-service serve",
-        "bili": "cross-env UI_LIB=vant bili",
-        "build": "npm-run-all clean bili"
+        "dev:vant": "vite --config vite.dev.config.mjs",
+        "build:lib:vite": "vite build --config vite.build.config.mjs",
+        "build:lib": "npm-run-all clean build:lib:vite"
     },
     "repository": {
         "type": "git",
@@ -47,10 +47,10 @@
     },
     "homepage": "http://www.form-create.com/v3/",
     "dependencies": {
-        "@form-create/component-subform": "^3.2.34",
-        "@form-create/core": "^3.2.42",
-        "@form-create/utils": "^3.2.31",
-        "dayjs": "^1.11.11"
+        "@form-create/component-subform": "workspace:^",
+        "@form-create/core": "workspace:^",
+        "@form-create/utils": "workspace:^",
+        "dayjs": "^1.11.13"
     },
     "publishConfig": {
         "access": "public"
@@ -59,25 +59,14 @@
         "vue": "^3.5.12"
     },
     "devDependencies": {
-        "@vue/cli-plugin-babel": "~4.5.0",
-        "@vue/cli-service": "^4.5.3",
+        "@vitejs/plugin-vue": "^5.2.4",
+        "@vitejs/plugin-vue-jsx": "^4.2.0",
+        "npm-run-all": "^4.1.5",
+        "rimraf": "^6.0.1",
         "v-jsoneditor": "^1.4.2",
-        "vant": "^4.9"
-    },
-    "buildFormCreateOptions": {
-        "name": "@form-create/vant",
-        "exportName": "formCreateMobile",
-        "extendExternals": [
-            "vant"
-        ],
-        "extendGlobal": {
-            "vue": "Vue"
-        },
-        "fileName": "form-create",
-        "formats": [
-            "umd",
-            "esm"
-        ]
-    },
-    "gitHead": "3d024534b3ee103a96da1d3629582c0cdf19d9a8"
+        "vant": "^4.9.10",
+        "vite": "^5.4.21",
+        "vite-plugin-banner": "^0.8.0",
+        "vite-plugin-css-injected-by-js": "^3.5.2"
+    }
 }

@@ -1,60 +1,55 @@
 {
-  "name": "@form-create/component-antdv-group",
-  "version": "3.2.38",
-  "description": "@form-create/ant-design-vue 内置组件",
-  "main": "./dist/index.min.js",
-  "module": "./dist/index.esm.js",
-  "unpkg": "./dist/index.min.js",
-  "jsdelivr": "./dist/index.min.js",
-  "scripts": {
-    "clean": "rimraf dist/",
-    "bili": "cross-env bili",
-    "build": "npm-run-all clean bili"
-  },
-  "files": [
-    "README.md",
-    "package.json",
-    "LICENSE",
-    "src",
-    "dist"
-  ],
-  "keywords": [
-    "@form-create",
-    "ant-design-vue",
-    "form-create-component"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/xaboy/form-create.git"
-  },
-  "author": "xaboy",
-  "license": "MIT",
-  "dependencies": {
-    "@form-create/utils": "^3.2.31"
-  },
-  "devDependencies": {
-    "@ant-design/icons-vue": "^6.0.1"
-  },
-  "bugs": {
-    "url": "https://github.com/xaboy/form-create/issues"
-  },
-  "homepage": "http://www.form-create.com",
-  "publishConfig": {
-    "access": "public"
-  },
-  "buildFormCreateOptions": {
     "name": "@form-create/component-antdv-group",
-    "extendExternals": [
-      "@ant-design/icons-vue"
-    ],
-    "exportName": "FcGroup",
-    "extendGlobal": {
-      "@ant-design/icons-vue": "iconsVue"
+    "version": "3.2.38",
+    "description": "@form-create/ant-design-vue 内置组件",
+    "main": "./dist/index.min.js",
+    "module": "./dist/index.esm.js",
+    "unpkg": "./dist/index.min.js",
+    "jsdelivr": "./dist/index.min.js",
+    "scripts": {
+        "clean": "rimraf dist/",
+        "vite:build": "vite build",
+        "build:component:vite": "npm-run-all clean vite:build"
     },
-    "formats": [
-      "umd",
-      "esm"
-    ]
-  },
-  "gitHead": "3d024534b3ee103a96da1d3629582c0cdf19d9a8"
+    "files": [
+        "README.md",
+        "package.json",
+        "LICENSE",
+        "src",
+        "dist"
+    ],
+    "keywords": [
+        "@form-create",
+        "ant-design-vue",
+        "form-create-component"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/xaboy/form-create.git"
+    },
+    "author": "xaboy",
+    "license": "MIT",
+    "dependencies": {
+        "@form-create/utils": "workspace:^"
+    },
+    "devDependencies": {
+        "@ant-design/icons-vue": "^6.0.1",
+        "@vitejs/plugin-vue": "^5.2.4",
+        "@vitejs/plugin-vue-jsx": "^4.2.0",
+        "npm-run-all": "^4.1.5",
+        "rimraf": "^6.0.1",
+        "vite": "^5.4.21",
+        "vite-plugin-banner": "^0.8.0",
+        "vite-plugin-css-injected-by-js": "^3.5.2"
+    },
+    "bugs": {
+        "url": "https://github.com/xaboy/form-create/issues"
+    },
+    "homepage": "http://www.form-create.com",
+    "publishConfig": {
+        "access": "public"
+    },
+    "peerDependencies": {
+        "vue": "^3.5.12"
+    }
 }

@@ -1,38 +1,11 @@
 {
-  "packages": [
-    "packages/ant-design-vue",
-    "packages/arco-design",
-    "packages/core",
-    "packages/element-ui",
-    "packages/tdesign",
-    "packages/naive-ui",
-    "packages/vant",
-    "packages/utils",
-    "components/common/subform",
-    "components/common/wangeditor",
-    "components/ant-design-vue/frame",
-    "components/ant-design-vue/group",
-    "components/ant-design-vue/upload",
-    "components/element-ui/checkbox",
-    "components/element-ui/frame",
-    "components/element-ui/group",
-    "components/element-ui/radio",
-    "components/element-ui/select",
-    "components/element-ui/tree",
-    "components/element-ui/upload",
-    "components/arco-design/checkbox",
-    "components/arco-design/frame",
-    "components/arco-design/group",
-    "components/arco-design/radio",
-    "components/arco-design/upload",
-    "components/naive-ui/checkbox",
-    "components/naive-ui/frame",
-    "components/naive-ui/group",
-    "components/naive-ui/radio",
-    "components/naive-ui/upload",
-    "components/tdesign/frame",
-    "components/tdesign/upload",
-    "components/tdesign/group"
-  ],
-  "version": "3.2.42"
+  "$schema": "node_modules/lerna/schemas/lerna-schema.json",
+  "npmClient": "pnpm",
+  "version": "3.2.42",
+  "useWorkspaces": true,
+  "command": {
+    "publish": {
+      "registry": "https://registry.npmjs.org/"
+    }
+  }
 }

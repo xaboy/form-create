@@ -1,0 +1,5 @@
+packages:
+  # 主包：UI 适配层
+  - 'packages/*'
+  # 业务组件（按 UI 框架分组的二级目录）
+  - 'components/**'

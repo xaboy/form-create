@@ -1,11 +1,8 @@
 {
     "name": "@form-create/utils",
     "version": "3.2.31",
-    "description": "",
+    "description": "FormCreate 工具函数库",
     "main": "./lib/index.js",
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
-    },
     "files": [
         "README.md",
         "package.json",
@@ -27,6 +24,5 @@
     "homepage": "http://www.form-create.com",
     "publishConfig": {
         "access": "public"
-    },
-    "gitHead": "3d024534b3ee103a96da1d3629582c0cdf19d9a8"
+    }
 }
