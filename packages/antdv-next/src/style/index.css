@@ -1,0 +1,15 @@
+.form-create .form-create .ant-form-item {
+    margin-bottom: 22px;
+}
+
+.form-create{
+    width: 100%;
+}
+
+.form-create.is-preview .fc-clock, .form-create .fc-none, .form-create.is-preview .ant-form-item .ant-form-item-label >label.ant-form-item-required::before {
+    display: none !important;
+}
+
+.fc-form-footer {
+    margin-top: 12px;
+}

@@ -66,9 +66,6 @@ importers:
         specifier: ^3.5.12
         version: 3.5.34(typescript@5.9.3)
     devDependencies:
-      '@ant-design/icons-vue':
-        specifier: ^6.0.1
-        version: 6.1.0(vue@3.5.34(typescript@5.9.3))
       '@vitejs/plugin-vue':
         specifier: ^5.2.4
         version: 5.2.4(vite@5.4.21(@types/node@25.6.2))(vue@3.5.34(typescript@5.9.3))
@@ -100,9 +97,6 @@ importers:
         specifier: ^3.5.12
         version: 3.5.34(typescript@5.9.3)
     devDependencies:
-      '@ant-design/icons-vue':
-        specifier: ^6.0.1
-        version: 6.1.0(vue@3.5.34(typescript@5.9.3))
       '@vitejs/plugin-vue':
         specifier: ^5.2.4
         version: 5.2.4(vite@5.4.21(@types/node@25.6.2))(vue@3.5.34(typescript@5.9.3))
@@ -930,7 +924,7 @@ importers:
         specifier: ^4.2.0
         version: 4.2.0(vite@5.4.21(@types/node@25.6.2))(vue@3.5.34(typescript@5.9.3))
       antdv-next:
-        specifier: ^1.0.5
+        specifier: ^1.2.0
         version: 1.2.2(date-fns@4.1.0)(vue@3.5.34(typescript@5.9.3))
       dayjs:
         specifier: ^1.11.20
@@ -1298,11 +1292,6 @@ packages:
 
   '@ant-design/icons-svg@4.4.2':
     resolution: {integrity: sha512-vHbT+zJEVzllwP+CM+ul7reTEfBR0vgxFe7+lREAsAA7YGsYpboiq2sQNeQeRvh09GfQgs/GyFEvZpJ9cLXpXA==}
-
-  '@ant-design/icons-vue@6.1.0':
-    resolution: {integrity: sha512-EX6bYm56V+ZrKN7+3MT/ubDkvJ5rK/O2t380WFRflDcVFgsvl3NLH7Wxeau6R8DbrO5jWR6DSTC3B6gYFp77AA==}
-    peerDependencies:
-      vue: '>=3.0.3'
 
   '@ant-design/icons-vue@7.0.1':
     resolution: {integrity: sha512-eCqY2unfZK6Fe02AwFlDHLfoyEFreP6rBwAZMIJ1LugmfMiVgwWDYlp1YsRugaPtICYOabV1iWxXdP12u9U43Q==}
@@ -5679,12 +5668,6 @@ snapshots:
 
   '@ant-design/icons-svg@4.4.2': {}
 
-  '@ant-design/icons-vue@6.1.0(vue@3.5.34(typescript@5.9.3))':
-    dependencies:
-      '@ant-design/colors': 6.0.0
-      '@ant-design/icons-svg': 4.4.2
-      vue: 3.5.34(typescript@5.9.3)
-
   '@ant-design/icons-vue@7.0.1(vue@3.5.34(typescript@5.9.3))':
     dependencies:
       '@ant-design/colors': 6.0.0
@@ -6795,7 +6778,7 @@ snapshots:
   '@v-c/slick@1.0.2(vue@3.5.34(typescript@5.9.3))':
     dependencies:
       '@v-c/util': 1.0.19(vue@3.5.34(typescript@5.9.3))
-      es-toolkit: 1.45.1
+      es-toolkit: 1.46.1
       vue: 3.5.34(typescript@5.9.3)
 
   '@v-c/slider@1.0.10(vue@3.5.34(typescript@5.9.3))':
@@ -7896,8 +7879,7 @@ snapshots:
 
   es-toolkit@1.45.1: {}
 
-  es-toolkit@1.46.1:
-    optional: true
+  es-toolkit@1.46.1: {}
 
   esbuild@0.21.5:
     optionalDependencies:

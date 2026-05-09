@@ -1,0 +1,76 @@
+{
+    "name": "@form-create/antdv-next",
+    "version": "3.2.42",
+    "description": "antdv-next 版本低代码表单 | FormCreate 是一个可以通过 JSON 生成具有动态渲染、数据收集、验证和提交功能的低代码表单生成组件。",
+    "main": "./dist/form-create.min.js",
+    "module": "./dist/form-create.esm.js",
+    "unpkg": "./dist/form-create.min.js",
+    "jsdelivr": "./dist/form-create.min.js",
+    "typings": "./types/index.d.ts",
+    "scripts": {
+        "clean": "rimraf dist/",
+        "dev:antdv-next": "vite --config vite.dev.config.mjs",
+        "build:lib:vite": "vite build --config vite.build.config.mjs",
+        "build:lib": "npm-run-all clean build:lib:vite"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/xaboy/form-create.git"
+    },
+    "keywords": [
+        "动态表单",
+        "低代码",
+        "@form-create",
+        "form-builder",
+        "form",
+        "components",
+        "vue3",
+        "antdv-next",
+        "ant-design-vue",
+        "lowcode",
+        "dynamic-form"
+    ],
+    "files": [
+        "README.md",
+        "package.json",
+        "LICENSE",
+        "auto-import.js",
+        "auto-import.d.ts",
+        "src",
+        "types",
+        "dist"
+    ],
+    "author": "xaboy",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/xaboy/form-create/issues"
+    },
+    "homepage": "http://www.form-create.com/v3/",
+    "dependencies": {
+        "@form-create/component-antdv-frame": "workspace:^",
+        "@form-create/component-antdv-group": "workspace:^",
+        "@form-create/component-antdv-upload": "workspace:^",
+        "@form-create/component-subform": "workspace:^",
+        "@form-create/core": "workspace:^",
+        "@form-create/utils": "workspace:^"
+    },
+    "publishConfig": {
+        "access": "public"
+    },
+    "peerDependencies": {
+        "vue": "^3.5.12"
+    },
+    "devDependencies": {
+        "@form-create/component-wangeditor": "workspace:^",
+        "@vitejs/plugin-vue": "^5.2.4",
+        "@vitejs/plugin-vue-jsx": "^4.2.0",
+        "antdv-next": "^1.2.0",
+        "dayjs": "^1.11.20",
+        "npm-run-all": "^4.1.5",
+        "rimraf": "^6.0.1",
+        "v-jsoneditor": "^1.4.2",
+        "vite": "^5.4.21",
+        "vite-plugin-banner": "^0.8.0",
+        "vite-plugin-css-injected-by-js": "^3.5.2"
+    }
+}

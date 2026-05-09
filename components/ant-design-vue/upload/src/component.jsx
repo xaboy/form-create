@@ -108,7 +108,7 @@ export default defineComponent({
         const isShow = (!this.limit || this.limit > this.uploadList.length);
         const aModal = resolveComponent('AModal');
         const props = {[aModal.props.open ? 'open' : 'visible']: this.previewVisible}
-        return <>
+        return <div class="_fc-upload">
             <AUpload maxCount={this.limit} listType={this.listType || 'picture-card'} {...this.$attrs}
                 onPreview={this.handlePreview}
                 onChange={this.handleChange} fileList={this.uploadList} customRequest={this.doCustomRequest}
@@ -121,7 +121,7 @@ export default defineComponent({
                 onCancel={() => this.previewVisible = false} footer={null}>
                 <img style="width: 100%" src={this.previewImage}/>
             </aModal>
-        </>;
+        </div>;
     },
     mounted() {
         this.$emit('fc.el', this.$refs.upload);
