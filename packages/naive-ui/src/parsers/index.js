@@ -5,6 +5,7 @@ import input from './input';
 import tree from './tree';
 import row from './row';
 import textarea from './textarea';
+import dynamicInput from './dynamicInput';
 
 export default [
     datePicker,
@@ -13,5 +14,6 @@ export default [
     textarea,
     tree,
     select,
+    dynamicInput,
     row,
 ]

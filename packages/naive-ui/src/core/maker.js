@@ -43,6 +43,13 @@ function useSelect(m) {
     m.selectMultiple = creatorFactory(name, {multiple: true});
 }
 
+function useMore(maker) {
+    ['treeSelect', 'transfer', 'mention', 'inputOtp', 'dynamicInput'].reduce((maker, name) => {
+        maker[name] = creatorFactory(name);
+        return maker;
+    }, maker);
+}
+
 function useUpload(maker) {
     const types = {
         image: ['image', 0],
@@ -65,5 +72,6 @@ useSlider(maker);
 useFrame(maker);
 useUpload(maker);
 useSelect(maker);
+useMore(maker);
 
 export default maker;

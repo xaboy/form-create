@@ -339,6 +339,66 @@ export default function rule() {
             ],
         }).validate([
             {required: true, type: 'array', min: 2, message: '至少选择2个', trigger: 'change'}
+        ]),
+
+        //TreeSelect 树选择
+        maker.treeSelect('部门(树选择)', 'dept_id', null).props({
+            clearable: true,
+            options: [
+                {
+                    label: '研发中心',
+                    key: 'rd',
+                    children: [
+                        {label: '前端组', key: 'rd-fe'},
+                        {label: '后端组', key: 'rd-be'},
+                    ]
+                },
+                {
+                    label: '销售中心',
+                    key: 'sale',
+                    children: [
+                        {label: '华东', key: 'sale-east'},
+                        {label: '华南', key: 'sale-south', disabled: true},
+                    ]
+                }
+            ]
+        }),
+
+        //Transfer 穿梭框
+        maker.transfer('权限分配(穿梭框)', 'perm_keys', [1, 4]).props({
+            filterable: true,
+            sourceTitle: '可选权限',
+            targetTitle: '已分配',
+            options: Array.from({length: 10}, (_, i) => ({
+                label: `备选项 ${i}`,
+                value: i,
+                disabled: i % 4 === 0
+            }))
+        }),
+
+        //Mention 提及
+        maker.mention('提及用户', 'mention_txt', '').props({
+            placeholder: '输入 @ 触发提及',
+            options: [
+                {label: 'xaboy', value: 'xaboy'},
+                {label: 'alice', value: 'alice'},
+                {label: 'bob', value: 'bob'},
+            ]
+        }),
+
+        //InputOtp 验证码输入
+        maker.inputOtp('短信验证码', 'sms_code', []).props({
+            length: 6,
+            placeholder: '请输入验证码'
+        }),
+
+        //DynamicInput 动态输入
+        maker.dynamicInput('收货电话(可多个)', 'phones', ['13800000000']).props({
+            min: 1,
+            max: 5,
+            placeholder: '请输入手机号'
+        }).validate([
+            {required: true, type: 'array', min: 1, message: '至少填一个手机号', trigger: 'change'}
         ])
     ];
 }

@@ -9,4 +9,8 @@ export default {
     slider: 'value',
     treeSelect: 'value',
     switch: 'value',
+    transfer: 'value',
+    mention: 'value',
+    inputOtp: 'value',
+    dynamicInput: 'value',
 }
