@@ -13,6 +13,7 @@
         "dev:arco": "pnpm --filter @form-create/arco-design run dev:arco",
         "dev:naive": "pnpm --filter @form-create/naive-ui run dev:naive",
         "dev:vant": "pnpm --filter @form-create/vant run dev:vant",
+        "dev:tiny": "pnpm --filter @form-create/tiny-vue run dev:tiny",
         "commit": "git cz",
         "lint": "eslint *.js",
         "clear:package": "rimraf packages/*/node_modules packages/*/package-lock.json packages/*/pnpm-lock.yaml",

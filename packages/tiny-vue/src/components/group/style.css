@@ -1,0 +1,445 @@
+._fc-group{
+    display: flex;
+    min-height: 38px;
+    justify-content: center;
+    flex-direction: column;
+    width: 100%;
+}
+
+._fc-group-disabled ._fc-group-btn, ._fc-group-disabled ._fc-group-add{
+    cursor: not-allowed;
+}
+
+._fc-group-handle {
+    display: flex;
+    flex-direction: row;
+    position: absolute;
+    bottom: -15px;
+    right: 30px;
+    border-radius: 15px;
+    border: 1px dashed #d9d9d9;
+    padding: 3px 8px;
+    background-color: #ffffff;
+}
+
+._fc-group-btn{
+    cursor: pointer;
+}
+
+._fc-group-idx {
+    position: absolute;
+    bottom: -15px;
+    left: 10px;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #eee;
+    border-radius: 15px;
+    font-weight: 700;
+}
+
+._fc-group-handle ._fc-group-btn + ._fc-group-btn {
+    margin-left: 7px;
+}
+
+._fc-group-container{
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    border: 1px dashed #d9d9d9;
+    border-radius: 5px;
+    margin: 5px 5px 25px;
+    padding: 20px 20px 25px;
+}
+
+._fc-group-arrow {
+    position: relative;
+    width: 20px;
+    height: 20px;
+}
+
+._fc-group-arrow::before {
+    content: "";
+    position: absolute;
+    top: 8px;
+    left: 5px;
+    width: 9px;
+    height: 9px;
+    border-left: 2px solid #999;
+    border-top: 2px solid #999;
+}
+._fc-group-arrow::before {
+    transform: rotate(45deg);
+}
+
+._fc-group-arrow._fc-group-down {
+    transform: rotate(180deg);
+}
+
+._fc-group-plus-minus {
+    width: 20px;
+    height: 20px;
+    position: relative;
+    cursor: pointer;
+}
+
+._fc-group-plus-minus::before,
+._fc-group-plus-minus::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 60%;
+    height: 2px;
+    background-color: #1476ff;
+    transform: translate(-50%, -50%);
+}
+
+._fc-group-plus-minus::before {
+    transform: translate(-50%, -50%) rotate(90deg);
+}
+
+._fc-group-plus-minus._fc-group-minus::before {
+    display: none;
+}
+._fc-group-plus-minus._fc-group-minus::after {
+    background-color: #f56c6c;
+}
+
+
+._fc-group-add{
+    cursor: pointer;
+    width: 25px;
+    height: 25px;
+    border: 1px solid rgb(20 118 255 / 50%);
+    border-radius: 15px;
+}
+
+._fc-group-add._fc-group-plus-minus::before, ._fc-group-add._fc-group-plus-minus::after {
+    width: 50%;
+}
+
+/* ===== Card 类型样式 ===== */
+/* 主容器 */
+._fc-group._fc-group-card {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 16px;
+}
+
+/* 禁用状态 */
+._fc-group._fc-group-card._fc-group-disabled ._fc-group-btn,
+._fc-group._fc-group-card._fc-group-disabled ._fc-group-add {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+/* 卡片容器 */
+._fc-group._fc-group-card ._fc-group-container {
+    position: relative;
+    background: #ffffff;
+    border: 1px solid #f0f0f0;
+    border-radius: 6px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    margin: 0;
+}
+
+/* 卡片头部 */
+._fc-group._fc-group-card ._fc-group-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px 12px;
+    border-bottom: 1px solid #f0f0f0;
+    background: #fafafa;
+}
+
+/* 序号标签 */
+._fc-group._fc-group-card ._fc-group-idx {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    background: #f0f0f0;
+    color: #666666;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    margin-right: 12px;
+    flex-shrink: 0;
+    position: static;
+    border: 1px solid #e0e0e0;
+}
+
+/* 标题区域 */
+._fc-group._fc-group-card ._fc-group-title {
+    flex: 1;
+    font-size: 14px;
+    font-weight: 500;
+    color: rgba(0, 0, 0, 0.85);
+    line-height: 1.5715;
+}
+
+/* 操作按钮组 - 头部右侧 */
+._fc-group._fc-group-card ._fc-group-handle {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-left: 12px;
+    flex-shrink: 0;
+    position: static;
+    bottom: auto;
+    right: auto;
+    border-radius: 0;
+    border: none;
+    padding: 0;
+    background-color: transparent;
+    flex-direction: row;
+}
+
+/* 按钮基础样式 */
+._fc-group._fc-group-card ._fc-group-btn {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+    border: 1px solid #d9d9d9;
+    background: #ffffff;
+    color: rgba(0, 0, 0, 0.45);
+    position: relative;
+}
+
+._fc-group._fc-group-card ._fc-group-btn:hover {
+    color: #1476ff;
+    border-color: #1476ff;
+    background: #eff6ff;
+}
+
+._fc-group._fc-group-card ._fc-group-btn:active {
+    color: #0a5fbf;
+    border-color: #0a5fbf;
+}
+
+/* 箭头按钮 */
+._fc-group._fc-group-card ._fc-group-arrow {
+    position: relative;
+}
+
+._fc-group._fc-group-card ._fc-group-arrow::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 5px;
+    height: 5px;
+    border-left: 1px solid currentColor;
+    border-top: 1px solid currentColor;
+    transform: translate(-50%, -50%) rotate(45deg);
+}
+
+._fc-group._fc-group-card ._fc-group-arrow._fc-group-down {
+    transform: rotate(180deg);
+}
+
+/* 合并的上下箭头按钮 */
+._fc-group._fc-group-card ._fc-group-sort {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 24px;
+}
+
+._fc-group._fc-group-card ._fc-group-sort::before,
+._fc-group._fc-group-card ._fc-group-sort::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    width: 4px;
+    height: 4px;
+    border-left: 1px solid currentColor;
+    border-top: 1px solid currentColor;
+    transform: translateX(-50%);
+}
+
+._fc-group._fc-group-card ._fc-group-sort::before {
+    top: 6px;
+    transform: translateX(-50%) rotate(45deg);
+}
+
+._fc-group._fc-group-card ._fc-group-sort::after {
+    bottom: 6px;
+    transform: translateX(-50%) rotate(225deg);
+}
+
+/* 合并按钮的上下点击区域 */
+._fc-group._fc-group-card ._fc-group-sort-up,
+._fc-group._fc-group-card ._fc-group-sort-down {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 12px;
+    cursor: pointer;
+    z-index: 1;
+}
+
+._fc-group._fc-group-card ._fc-group-sort-up {
+    top: 0;
+}
+
+._fc-group._fc-group-card ._fc-group-sort-down {
+    bottom: 0;
+}
+
+._fc-group._fc-group-card ._fc-group-sort-up:hover,
+._fc-group._fc-group-card ._fc-group-sort-down:hover {
+    background: rgba(20, 118, 255, 0.1);
+}
+
+/* 加减按钮 */
+._fc-group._fc-group-card ._fc-group-plus-minus {
+    position: relative;
+    background: #1476ff;
+    border-color: #1476ff;
+    color: white;
+    width: 24px;
+    height: 24px;
+}
+
+._fc-group._fc-group-card ._fc-group-plus-minus:hover {
+    background: #3791ff;
+    border-color: #3791ff;
+    color: white;
+}
+
+._fc-group._fc-group-card ._fc-group-plus-minus::before,
+._fc-group._fc-group-card ._fc-group-plus-minus::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 8px;
+    height: 1px;
+    background-color: currentColor;
+    transform: translate(-50%, -50%);
+}
+
+._fc-group._fc-group-card ._fc-group-plus-minus::before {
+    transform: translate(-50%, -50%) rotate(90deg);
+}
+
+._fc-group._fc-group-card ._fc-group-plus-minus._fc-group-minus {
+    background: #f56c6c;
+    border-color: #f56c6c;
+}
+
+._fc-group._fc-group-card ._fc-group-plus-minus._fc-group-minus:hover {
+    background: #f78989;
+    border-color: #f78989;
+}
+
+._fc-group._fc-group-card ._fc-group-plus-minus._fc-group-minus::before {
+    display: none;
+}
+
+/* 表单内容区域 */
+._fc-group._fc-group-card ._fc-group-content {
+    padding: 20px;
+}
+
+/* 添加按钮 - 与加号按钮风格一致 */
+._fc-group._fc-group-card ._fc-group-add {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+    border: 1px solid #d9d9d9;
+    background: #ffffff;
+    color: rgba(0, 0, 0, 0.45);
+    position: relative;
+}
+
+._fc-group._fc-group-card ._fc-group-add:hover {
+    color: #1476ff;
+    border-color: #1476ff;
+    background: #eff6ff;
+}
+
+._fc-group._fc-group-card ._fc-group-add._fc-group-plus-minus {
+    width: 24px;
+    height: 24px;
+    background: #1476ff;
+    border-color: #1476ff;
+    color: white;
+}
+
+._fc-group._fc-group-card ._fc-group-add._fc-group-plus-minus:hover {
+    background: #3791ff;
+    border-color: #3791ff;
+    color: white;
+}
+
+._fc-group._fc-group-card ._fc-group-add._fc-group-plus-minus::before,
+._fc-group._fc-group-card ._fc-group-add._fc-group-plus-minus::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 8px;
+    height: 1px;
+    background-color: currentColor;
+    transform: translate(-50%, -50%);
+}
+
+._fc-group._fc-group-card ._fc-group-add._fc-group-plus-minus::before {
+    transform: translate(-50%, -50%) rotate(90deg);
+}
+
+/* 空状态样式 */
+._fc-group._fc-group-card ._fc-group-empty {
+    text-align: center;
+    padding: 40px 20px;
+    color: rgba(0, 0, 0, 0.45);
+    font-size: 14px;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    ._fc-group._fc-group-card ._fc-group-container {
+        margin: 0 -8px;
+        border-radius: 0;
+        border-left: none;
+        border-right: none;
+    }
+
+    ._fc-group._fc-group-card ._fc-group-header {
+        padding: 12px 16px 8px;
+    }
+
+    ._fc-group._fc-group-card ._fc-group-content {
+        padding: 16px;
+    }
+
+    ._fc-group._fc-group-card ._fc-group-handle {
+        gap: 2px;
+    }
+
+    ._fc-group._fc-group-card ._fc-group-btn {
+        width: 22px;
+        height: 22px;
+    }
+}

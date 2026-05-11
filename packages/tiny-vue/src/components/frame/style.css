@@ -1,0 +1,82 @@
+._fc-frame ._fc-files img {
+    width: 100%;
+    height: 100%;
+    display: inline-block;
+    vertical-align: top;
+}
+
+._fc-frame > div {
+    display: flex;
+}
+
+._fc-frame ._fc-upload-btn {
+    border: 1px dashed #c0ccda;
+    cursor: pointer;
+}
+
+._fc-frame._fc-disabled ._fc-upload-btn,
+._fc-frame._fc-disabled .tiny-button {
+    cursor: not-allowed !important;
+    color: #999;
+}
+
+._fc-frame ._fc-upload-cover {
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, .6);
+    transition: opacity .3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+._fc-frame ._fc-upload-cover .icon {
+    color: #fff;
+    font-size: 18px;
+    cursor: pointer;
+    width: 1em;
+    height: 1em;
+}
+
+._fc-frame ._fc-files:hover ._fc-upload-cover {
+    opacity: 1;
+}
+
+._fc-frame .tiny-upload {
+    display: block;
+}
+
+._fc-frame ._fc-upload-icon {
+    cursor: pointer;
+    width: 1em;
+    height: 1em;
+}
+
+._fc-frame ._fc-upload-btn,
+._fc-frame ._fc-files {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 58px;
+    height: 58px;
+    text-align: center;
+    line-height: 58px;
+    border: 1px solid #c0ccda;
+    border-radius: 4px;
+    overflow: hidden;
+    background: #fff;
+    position: relative;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, .1);
+    margin-right: 4px;
+    box-sizing: border-box;
+}
+
+._fc-frame ._fc-upload-btn .icon {
+    font-size: 24px;
+    color: #8a8e99;
+}

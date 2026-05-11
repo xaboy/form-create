@@ -1,0 +1,20 @@
+.form-create .form-create .tiny-form-item {
+    margin-bottom: 22px;
+}
+
+.form-create{
+    width: 100%;
+}
+
+.form-create.is-preview .fc-clock, .form-create .fc-none, .form-create.is-preview .tiny-form-item.is-required>.tiny-form-item__label::before {
+    display: none !important;
+}
+
+.fc-form-footer {
+    margin-top: 12px;
+}
+
+
+.form-create .tiny-form-item__content > .tiny-picker, .form-create .tiny-form-item__content > .tiny-numeric {
+    width: 280px;
+}

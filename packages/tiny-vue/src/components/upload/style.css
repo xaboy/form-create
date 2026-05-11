@@ -1,0 +1,22 @@
+._fc-upload {
+    width: 100%;
+}
+
+._fc-upload ._fc-tiny-svg-icon {
+    width: 1em;
+    height: 1em;
+    vertical-align: middle;
+}
+
+._fc-upload ._fc-upload-plus {
+    font-size: 28px;
+    color: #8a8e99;
+}
+
+._fc-upload._fc-exceed .tiny-upload {
+    display: none;
+}
+
+._fc-upload .tiny-upload-list.is-disabled .tiny-upload {
+    cursor: not-allowed !important;
+}
