@@ -251,11 +251,11 @@ export default function rule() {
         //upload 上传组件
         maker.upload('轮播图', 'pic', ['http://form-create.com/logo.png'])
             .props({
-                'action': 'http://127.0.0.1:8324/api/test',
+                'action': 'https://service-bv448zsw-1257786608.gz.apigw.tencentcs.com/api/upload-demo',
                 'max': 2,
                 'name': 'file',
                 'onSuccess': function (res, file) {
-                    file.url = res.data.url;
+                    file.url = 'http://form-create.com/logo.png';
                 }
             }),
 
@@ -366,7 +366,6 @@ export default function rule() {
 
         //Transfer 穿梭框
         maker.transfer('权限分配(穿梭框)', 'perm_keys', [1, 4]).props({
-            filterable: true,
             sourceTitle: '可选权限',
             targetTitle: '已分配',
             options: Array.from({length: 10}, (_, i) => ({

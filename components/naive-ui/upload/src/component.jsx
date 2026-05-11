@@ -44,9 +44,12 @@ export default defineComponent({
             type: Function,
             required: true
         },
+        name: String,
         onPreview: Function,
         modalTitle: String,
         previewMask: undefined,
+        customRequest: Function,
+        formCreateInject: Object,
     },
     emits: ['update:modelValue', 'finish', 'fc.el'],
     data() {
@@ -65,7 +68,7 @@ export default defineComponent({
         handleChange({event, file}) {
             this.$emit('finish', ...arguments);
             const list = this.uploadList;
-            this.onSuccess(JSON.parse(event.target.response), file);
+            this.onSuccess(event ? JSON.parse(event.target.response) : file?.file.res, file);
             if (file.url) list.push({
                 url: file.url,
                 file,
@@ -88,13 +91,35 @@ export default defineComponent({
                 this.previewImage = file.url;
                 this.previewVisible = true;
             }
+        },
+        doCustomRequest(option) {
+            const request = this.customRequest;
+            if (request) {
+                return request(option);
+            }
+            const onProgress = option.onProgress;
+            option.method = option.method || 'post';
+            option.file = option.file?.file || option.file;
+            option.filename = this.name || 'file';
+            option.source = 'upload';
+            option.onSuccess = (e) => {
+                option.file.res = e;
+                option.onFinish();
+            };
+            if (onProgress) {
+                option.onProgress = (evt) => {
+                    onProgress(evt.percent, evt);
+                }
+            }
+            return this.formCreateInject.api.fetch(option);
         }
 
     },
     render() {
         return <>
-            <n-upload max={this.limit} listType={'image-card'} {...this.$attrs} onPreview={this.handlePreview}
+            <n-upload max={this.limit} listType={'image-card'} name={this.name} {...this.$attrs} onPreview={this.handlePreview}
                 onFinish={this.handleChange} key={this.uploadList.length}
+                customRequest={this.doCustomRequest}
                 defaultFileList={this.uploadList} onUpdate:fileList={this.inputRemove}
                 v-slots={this.$slots} ref="el"/>
             <NModal preset={'card'} mask={this.previewMask} title={this.modalTitle} show={this.previewVisible}
