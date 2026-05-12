@@ -6,7 +6,7 @@ export default function getConfig() {
             labelWidth: '125px',
             disabled: false,
             size: undefined,
-            validateType: 'tip',
+            validateType: 'text',
         },
         row: {
             show: true,
