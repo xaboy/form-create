@@ -3,13 +3,14 @@ import {creatorFactory} from '@form-create/core/src/index';
 const maker = {};
 
 useAlias(maker);
+useTreeSelect(maker);
 useInput(maker);
 useSelect(maker);
 useUpload(maker);
 useFrame(maker);
 
 function useAlias(maker) {
-    ['group', 'tree', 'switch', 'upload', 'cascader', 'rangeInput', 'transfer', 'tagInput', 'colorPicker', 'datePicker', 'dateRangePicker', 'timePicker', 'timeRangePicker', 'textarea', 'input', 'frame', 'inputNumber'].forEach(name => {
+    ['group', 'tree', 'treeSelect', 'switch', 'upload', 'cascader', 'rangeInput', 'transfer', 'tagInput', 'colorPicker', 'datePicker', 'dateRangePicker', 'timePicker', 'timeRangePicker', 'textarea', 'input', 'frame', 'inputNumber'].forEach(name => {
         maker[name] = creatorFactory(name);
     });
     maker.number = maker.inputNumber;
@@ -21,9 +22,13 @@ function useAlias(maker) {
     maker.tag = maker.tagInput;
 }
 
+function useTreeSelect(maker) {
+    maker.treeSelectMultiple = creatorFactory('treeSelect', {multiple: true});
+}
+
 function useInput(maker) {
     ['password', 'url', 'text', 'tel'].reduce((maker, type) => {
-        maker[type] = creatorFactory(name, {type});
+        maker[type] = creatorFactory('input', {type});
         return maker;
     }, maker);
 }

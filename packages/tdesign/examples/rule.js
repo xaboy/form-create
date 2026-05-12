@@ -330,15 +330,57 @@ export default function mock() {
         }),
 
         {
-            type: 'treeSelect',
-            title: 'tree1',
-            field: 'tree1',
-            value: ['guangzhou'],
-            props: {
-                multiple: true,
-                data: treeData
-            }
+            type: 'row',
+            children: [
+                // ColorPicker 颜色选择（与 maker.color 等价）
+                maker.colorPicker('主题色', 'theme_color', '#0052d9').props({
+                    format: 'HEX',
+                    clearable: true,
+                }).col({span: 6}),
+
+                // TreeSelect 树形选择（单选）
+                maker.treeSelect('收货地区(树选择)', 'region_ts', 'guangzhou').props({
+                    clearable: true,
+                    placeholder: '请选择',
+                    data: treeData,
+                }).col({span: 9}),
+
+                // TreeSelect 多选
+                maker.treeSelectMultiple('多选地区', 'region_ts_multi', ['guangzhou', 'shenzhen']).props({
+                    clearable: true,
+                    data: treeData,
+                }).col({span: 9}),
+            ],
         },
+        {
+            type: 'row',
+            children: [
+                // Transfer 穿梭框（data 须为扁平的 { value, label } 列表）
+                maker.transfer('分配项(穿梭框)', 'transfer_keys', ['1', '4']).props({
+                    data: transferFlatData,
+                    search: true,
+                    title: ['待选', '已选'],
+                }).col({span: 12}),
+
+                // TagInput 标签输入
+                maker.tagInput('关键词', 'keywords', ['vue', 'tdesign']).props({
+                    clearable: true,
+                    placeholder: '输入后回车添加标签',
+                    minCollapsedNum: 1,
+                }).col({span: 12}),
+            ],
+        },
+        {
+            type: 'row',
+            children: [
+                // RangeInput 范围输入（值为长度为 2 的数组）
+                maker.rangeInput('价格区间', 'price_range', ['', '']).props({
+                    placeholder: ['最低价', '最高价'],
+                    clearable: true,
+                }).col({span: 12}),
+            ],
+        },
+
         //tree 树形组件
         maker.tree('权限', 'tree', ['guangzhou', 'shenzhen']).props({
             data: treeData,
@@ -348,11 +390,6 @@ export default function mock() {
             {validator: val => val.length >= 2, message: '至少选择2个'}
         ]),
 
-        maker.transfer('穿梭框', 'transfer', []).props({
-            data: treeData
-        }),
-        maker.tagInput('标签输入框', 'tag', []),
-        maker.rangeInput('范围输入框', 'range'),
     ];
 }
 
@@ -385,4 +422,13 @@ var treeData = [
             },
         ],
     },
+]
+
+/** Transfer 要求扁平 data，勿与树形 treeData 混用 */
+var transferFlatData = [
+    {value: '1', label: '选项一'},
+    {value: '2', label: '选项二'},
+    {value: '3', label: '选项三', disabled: true},
+    {value: '4', label: '选项四'},
+    {value: '5', label: '选项五'},
 ]

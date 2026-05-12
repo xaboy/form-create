@@ -52,6 +52,8 @@ export default defineComponent({
         onRemove: {
             type: Function,
         },
+        name: String,
+        requestMethod: Function,
     },
     emits: ['update:modelValue', 'fc.el'],
     data() {
@@ -79,6 +81,26 @@ export default defineComponent({
         },
         input() {
             this.$emit('update:modelValue', this.uploadList.map((v) => v.is_string ? v.url : (v.value || v.url)).filter((url) => url !== undefined));
+        },
+        doRequestMethod(files) {
+            const request = this.requestMethod;
+            if (request) {
+                return request(files);
+            }
+            const fileItem = Array.isArray(files) ? files[0] : files;
+            const rawFile = fileItem?.raw || fileItem?.file || fileItem;
+
+            return new Promise((resolve, reject) => {
+                const option = {
+                    method: this.$attrs?.method || 'post',
+                    file: rawFile,
+                    filename: this.name || 'file',
+                    source: 'upload',
+                    onSuccess: (res) => resolve({status: 'success', response: res}),
+                    onError: (err) => reject(err),
+                };
+                this.formCreateInject.api.fetch(option);
+            });
         }
     },
     render() {
@@ -92,7 +114,9 @@ export default defineComponent({
                 theme="image"
                 accept="image/*"
                 modelValue={uploadList}
+                name={this.name}
                 {...this.$attrs}
+                requestMethod={this.doRequestMethod}
                 onSuccess={handleSuccess}
                 onRemove={handleRemove}
                 v-slots={$slots}
