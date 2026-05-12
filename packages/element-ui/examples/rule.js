@@ -403,6 +403,76 @@ export default function mock() {
             ],
         }).validate([
             {required: true, type: 'array', min: 2, message: '至少选择2个', trigger: 'change'}
-        ])
+        ]),
+
+        // InputTag 标签输入（modelValue 为 string[]）
+        maker.inputTag('标签输入', 'fc_tags', ['vue', 'element-plus']).props({
+            clearable: true,
+            placeholder: '输入后回车添加标签',
+        }),
+
+        // Mention 提及（modelValue 为 string，配合 prefix 与 options）
+        maker.mention('提及用户', 'mention_text', '').props({
+            prefix: '@',
+            placeholder: '输入 @ 触发下拉',
+            options: [
+                {label: 'xaboy', value: 'xaboy'},
+                {label: 'alice', value: 'alice'},
+                {label: 'bob', value: 'bob'},
+            ],
+        }),
+
+        // InputOtp 验证码输入（需 element-plus >= 2.14，modelValue 为 string）
+        maker.inputOtp('短信验证码', 'sms_otp', '').props({
+            length: 6,
+        }),
+
+        // Transfer 穿梭框（右侧 modelValue 为 data 中项的 key 数组；data 默认字段为 key / label）
+        maker.transfer('穿梭框', 'transfer_keys', [1, 4]).props({
+            titles: ['待选列表', '已选列表'],
+            filterable: true,
+            data: transferListData,
+        }),
+
+        // TreeSelect 树形选择（data 为 Element Plus Tree 结构，节点唯一字段默认与示例一致使用 value）
+        maker.treeSelect('树形选择', 'tree_sel', '1-1').props({
+            clearable: true,
+            placeholder: '请选择',
+            data: treeSelectSampleData,
+            checkStrictly: true,
+            renderAfterExpand: false,
+        }),
+
+        maker.treeSelectMultiple('树形选择(多选)', 'tree_sel_m', ['1-1', '2-1']).props({
+            data: treeSelectSampleData,
+            checkStrictly: true,
+            renderAfterExpand: false,
+        }),
     ];
 }
+
+var treeSelectSampleData = [
+    {
+        value: '1',
+        label: '一级 1',
+        children: [
+            {value: '1-1', label: '二级 1-1'},
+            {value: '1-2', label: '二级 1-2'},
+        ],
+    },
+    {
+        value: '2',
+        label: '一级 2',
+        children: [
+            {value: '2-1', label: '二级 2-1'},
+        ],
+    },
+]
+
+var transferListData = [
+    {key: 1, label: '备选项 1'},
+    {key: 2, label: '备选项 2'},
+    {key: 3, label: '备选项 3', disabled: true},
+    {key: 4, label: '备选项 4'},
+    {key: 5, label: '备选项 5'},
+]

@@ -28,6 +28,9 @@ import {
     ElIcon,
     ElProgress,
     ElInputTag,
+    ElTransfer,
+    ElTreeSelect,
+    ElMention,
 } from 'element-plus';
 import 'element-plus/es/components/input-tag/style/css'
 import 'element-plus/es/components/button/style/css'
@@ -58,6 +61,9 @@ import 'element-plus/es/components/color-picker/style/css'
 import 'element-plus/es/components/date-picker/style/css'
 import 'element-plus/es/components/time-picker/style/css'
 import 'element-plus/es/components/progress/style/css'
+import 'element-plus/es/components/transfer/style/css'
+import 'element-plus/es/components/tree-select/style/css'
+import 'element-plus/es/components/mention/style/css'
 
 export default function install(formCreate) {
     formCreate.useApp((_, app) => {
@@ -90,6 +96,9 @@ export default function install(formCreate) {
         app.component(ElTimePicker.name) || app.use(ElTimePicker);
         app.component(ElProgress.name) || app.use(ElProgress);
         app.component(ElInputTag.name) || app.use(ElInputTag);
+        app.component(ElTransfer.name) || app.use(ElTransfer);
+        app.component(ElTreeSelect.name) || app.use(ElTreeSelect);
+        app.component(ElMention.name) || app.use(ElMention);
     });
 
 }
