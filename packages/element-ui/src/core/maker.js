@@ -9,12 +9,13 @@ useUpload(maker);
 useFrame(maker);
 
 function useAlias(maker) {
-    ['group', 'tree', 'switch', 'upload', 'autoComplete', 'checkbox', 'cascader', 'colorPicker', 'datePicker', 'frame', 'inputNumber', 'radio', 'rate'].forEach(name => {
+    ['group', 'tree', 'switch', 'upload', 'autoComplete', 'checkbox', 'cascader', 'colorPicker', 'datePicker', 'frame', 'inputNumber', 'inputTag', 'radio', 'rate'].forEach(name => {
         maker[name] = creatorFactory(name);
     });
     maker.auto = maker.autoComplete;
     maker.number = maker.inputNumber;
     maker.color = maker.colorPicker;
+    maker.tag = maker.inputTag;
 }
 
 function useSelect(maker) {
