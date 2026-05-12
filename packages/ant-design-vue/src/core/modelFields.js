@@ -7,5 +7,7 @@ export default {
     rate: 'value',
     slider: 'value',
     treeSelect: 'value',
+    transfer: 'targetKeys',
+    mentions: 'value',
     switch: 'checked',
 }

@@ -16,6 +16,8 @@ import {
     Upload,
     Tree,
     TreeSelect,
+    Transfer,
+    Mentions,
     Tooltip,
     Popover,
     Modal,
@@ -35,7 +37,8 @@ export default function install(formCreate) {
         app.component(DatePicker.name) || app.use(DatePicker);
         app.component(TimePicker.name) || app.use(TimePicker);
         app.component(TreeSelect.name) || app.use(TreeSelect);
-        app.component(TreeSelect.name) || app.use(TreeSelect);
+        app.component(Transfer.name) || app.use(Transfer);
+        app.component(Mentions.name) || app.use(Mentions);
         app.component(Col.name) || app.component(Col.name, Col);
         app.component(Row.name) || app.component(Row.name, Row);
         app.component(Button.name) || app.use(Button);

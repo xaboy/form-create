@@ -52,6 +52,49 @@ export default function rule() {
             ]
         }),
 
+        maker.treeSelect('地区', 'treeSelectOpts', 'east-sh').props({
+            allowClear: true,
+            treeData: [
+                {
+                    title: '华东',
+                    value: 'east',
+                    children: [
+                        {title: '上海', value: 'east-sh'},
+                        {title: '杭州', value: 'east-hz'},
+                    ],
+                },
+                {
+                    title: '华南',
+                    value: 'south',
+                    children: [{title: '深圳', value: 'south-sz'}],
+                },
+            ]
+        }),
+
+        // Transfer 穿梭框（表单值为右侧 targetKeys，dataSource 项为 key + title）
+        maker.transfer('权限分配', 'transfer_keys', ['1', '4']).props({
+            titles: ['待选', '已选'],
+            showSearch: true,
+            dataSource: [
+                {key: '1', title: '用户管理'},
+                {key: '2', title: '角色管理'},
+                {key: '3', title: '菜单配置', disabled: true},
+                {key: '4', title: '操作日志'},
+                {key: '5', title: '系统设置'},
+            ],
+        }),
+
+        // Mentions 提及（modelValue 为字符串，options 为 { value, label }）
+        maker.mentions('抄送提及', 'mention_users', '').props({
+            prefix: '@',
+            placeholder: '输入 @ 选择用户',
+            options: [
+                {value: 'afc163', label: 'afc163'},
+                {value: 'zombieJ', label: 'zombieJ'},
+                {value: 'yesmeck', label: 'yesmeck'},
+            ],
+        }),
+
         //cascader 多级联动组件
         maker.cascader({title: '所在区域', style: 'color:red'}, 'address', ['陕西省', '西安市', '新城区']).effect({address: 1}),
 

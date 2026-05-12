@@ -3,7 +3,7 @@ import {creatorFactory} from '@form-create/core/src/index';
 const maker = {};
 
 function useAlias(maker) {
-    ['treeSelect', 'upload', 'frame', 'autoComplete', 'cascader', 'datePicker', 'frame', 'inputNumber',  'inputPassword', 'radio', 'rate', 'switch', 'rate', 'slider', 'timePicker'].reduce((maker, name) => {
+    ['treeSelect', 'transfer', 'mentions', 'upload', 'frame', 'autoComplete', 'cascader', 'datePicker', 'frame', 'inputNumber',  'inputPassword', 'radio', 'rate', 'switch', 'rate', 'slider', 'timePicker'].reduce((maker, name) => {
         maker[name] = creatorFactory(name);
         return maker;
     }, maker);

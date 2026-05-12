@@ -19,6 +19,8 @@ export default {
     input: PRE + 'Input',
     inputNumber: PRE + 'InputNumber',
     treeSelect: PRE + 'TreeSelect',
+    transfer: PRE + 'Transfer',
+    mentions: PRE + 'Mentions',
     search: PRE + 'InputSearch',
     inputPassword: PRE + 'InputPassword',
     textarea: PRE + 'Textarea',
