@@ -92,6 +92,7 @@ export default defineComponent({
                 }
                 option.method = 'post';
                 option.file = option.fileItem.file;
+                option.source = 'upload';
                 if (onProgress) {
                     option.onProgress = (evt) => {
                         onProgress(evt.percent, evt);

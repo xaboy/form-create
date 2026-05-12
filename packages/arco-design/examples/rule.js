@@ -325,6 +325,69 @@ export default function rule() {
             ],
         }).validate([
             {required: true, type: 'array', min: 2, message: '至少选择2个', trigger: 'change'}
-        ])
+        ]),
+        maker.treeSelect('部门(树选择)', 'dept_id', 12).props({
+            allowClear: true,
+            placeholder: '请选择部门',
+            data: [
+                {
+                    title: 'parent 1',
+                    key: 1,
+                    children: [
+                        {
+                            title: 'parent 1-1',
+                            key: 2,
+                            children: [
+                                {title: 'leaf 1-1-1', key: 11, disabled: true},
+                                {title: 'leaf 1-1-2', key: 12},
+                            ],
+                        },
+                        {
+                            title: 'parent 1-2',
+                            key: 3,
+                            children: [
+                                {title: 'leaf 1-2-1', key: 13},
+                                {title: 'leaf 1-2-2', key: 14},
+                            ],
+                        },
+                    ],
+                },
+            ],
+        }),
+
+        maker.treeSelectMultiple('部门多选(树选择)', 'dept_ids', ['rd-fe', 'rd-be']).props({
+            allowClear: true,
+            placeholder: '可多选',
+            data: [
+                {
+                    title: '研发中心',
+                    key: 'rd',
+                    children: [
+                        {title: '前端组', key: 'rd-fe'},
+                        {title: '后端组', key: 'rd-be'},
+                    ],
+                },
+                {
+                    title: '销售中心',
+                    key: 'sale',
+                    children: [
+                        {title: '华东', key: 'sale-east'},
+                        {title: '华南', key: 'sale-south', disabled: true},
+                    ],
+                },
+            ],
+        }),
+        maker.transfer('权限分配(穿梭框)', 'perm_keys', ['1', '4']).props({
+            title: ['可选权限', '已选权限'],
+            data: Array.from({length: 10}, (_, i) => ({
+                value: String(i),
+                label: '权限项 ' + i,
+                disabled: i % 4 === 0,
+            })),
+            showSearch: true,
+        }),
+        maker.verificationCode('短信验证码', 'sms_code', '').props({
+            length: 6,
+        }),
     ];
 }

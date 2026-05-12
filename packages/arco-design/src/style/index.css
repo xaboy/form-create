@@ -6,6 +6,10 @@
     display: none !important;
 }
 
+.fc-form-item .arco-verification-code {
+    width: unset;
+}
+
 .fc-form-footer {
     margin-top: 12px;
 }

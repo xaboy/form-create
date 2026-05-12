@@ -3,7 +3,7 @@ import {creatorFactory} from '@form-create/core/src/index';
 const maker = {};
 
 function useAlias(maker) {
-    ['inputTag', 'checkbox', 'upload', 'frame', 'autoComplete', 'cascader', 'datePicker', 'frame', 'inputNumber', 'radio', 'rate', 'switch', 'slider', 'timePicker'].reduce((maker, name) => {
+    ['inputTag', 'checkbox', 'upload', 'frame', 'autoComplete', 'cascader', 'datePicker', 'frame', 'inputNumber', 'radio', 'rate', 'switch', 'slider', 'timePicker', 'treeSelect', 'transfer', 'verificationCode'].reduce((maker, name) => {
         maker[name] = creatorFactory(name);
         return maker;
     }, maker);
@@ -42,6 +42,11 @@ function useSelect(m) {
     m.selectMultiple = creatorFactory(name, {multiple: true});
 }
 
+function useTreeSelect(maker) {
+    const name = 'treeSelect';
+    maker.treeSelectMultiple = creatorFactory(name, {multiple: true});
+}
+
 function useUpload(maker) {
     const types = {
         image: ['image', 0],
@@ -64,5 +69,6 @@ useSlider(maker);
 useFrame(maker);
 useUpload(maker);
 useSelect(maker);
+useTreeSelect(maker);
 
 export default maker;
