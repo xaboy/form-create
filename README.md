@@ -21,14 +21,14 @@
   <a href="https://github.com/xaboy/form-create" target="_blank"><img src="https://img.shields.io/npm/dt/@form-create/element-ui.svg" alt="dt" /></a>
 </p>
 
-**FormCreate 是一个可以通过 JSON 生成具有动态渲染、数据收集、验证和提交功能的低代码表单生成组件。支持6个UI框架，适配移动端，并且支持生成任何 Vue 组件。内置20种常用表单组件和自定义组件，再复杂的表单都可以轻松搞定。**
+**FormCreate 是一个可以通过 JSON 生成具有动态渲染、数据收集、验证和提交功能的低代码表单生成组件。支持8个UI框架，适配移动端，并且支持生成任何 Vue 组件。内置20+种常用表单组件和自定义组件，再复杂的表单都可以轻松搞定。**
 
 [![FcDesigner](https://static.form-create.com/file/img/banner-m2.jpg?20260306)](https://pro.form-create.com/view)
 
 ## 特点
 - 使用JSON数据生成表单
 - 支持扩展，生成任何Vue组件和HTML标签
-- 支持6个UI框架
+- 支持8个UI框架
 - 支持组件之间联动
 - 提供丰富的表单操作API
 - 支持子表单和分组
@@ -80,9 +80,11 @@
 |-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------|
 | @form-create/element-ui [![version](https://img.shields.io/npm/v/@form-create/element-ui/next.svg)](https://www.npmjs.com/package/@form-create/element-ui)                                                                                                                                            | [element-plus 版本](http://form-create.com/v3/element-ui/)      |
 | @form-create/ant-design-vue [![version](https://img.shields.io/npm/v/@form-create/ant-design-vue/next.svg)](https://www.npmjs.com/package/@form-create/ant-design-vue)                                                                                                                                | [ant-design-vue 版本](http://form-create.com/v3/ant-design-vue/) |
+| @form-create/antdv-next [![version](https://img.shields.io/npm/v/@form-create/antdv-next/next.svg)](https://www.npmjs.com/package/@form-create/antdv-next)                                                                                                                                            | [antdv-next 版本](http://form-create.com/v3/antdv-next/)        |
 | @form-create/arco-design [![version](https://img.shields.io/npm/v/@form-create/arco-design/next.svg)](https://www.npmjs.com/package/@form-create/arco-design)                                                                                                                                         | [arco-design 版本](http://form-create.com/v3/arco-design/)      |
 | @form-create/naive-ui [![version](https://img.shields.io/npm/v/@form-create/naive-ui/next.svg)](https://www.npmjs.com/package/@form-create/naive-ui)                                                                                                                                                  | [naive-ui 版本](http://form-create.com/v3/naive-ui/)            |
 | @form-create/tdesign [![version](https://img.shields.io/npm/v/@form-create/tdesign/next.svg)](https://www.npmjs.com/package/@form-create/tdesign)                                                                                                                                                     | [tdesign 版本](http://form-create.com/v3/tdesign/)              |
+| @form-create/tiny-vue [![version](https://img.shields.io/npm/v/@form-create/tiny-vue/next.svg)](https://www.npmjs.com/package/@form-create/tiny-vue)                                                                                                                                                  | [tiny-vue 版本(OpenTiny)](http://form-create.com/v3/tiny-vue/)  |
 | @form-create/iview [![version](https://img.shields.io/npm/v/@form-create/iview.svg)](https://www.npmjs.com/package/@form-create/iview)                                                                                                                                                                | [iview 版本](http://form-create.com/v2/iview/)                  |
 | @form-create/view-design [![version](https://img.shields.io/npm/v/@form-create/view-design.svg)](https://www.npmjs.com/package/@form-create/view-design)                                                                                                                                              | [view-design 版本](http://form-create.com/v2/iview/)            |
 | @form-create/vant [![version](https://img.shields.io/npm/v/@form-create/vant.svg)](https://www.npmjs.com/package/@form-create/vant)                                                                                                                                                                   | [vant 版本(移动端)](http://form-create.com/v3/vant/)               |

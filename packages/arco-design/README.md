@@ -24,14 +24,14 @@
   <a href="https://github.com/xaboy/form-create" target="_blank"><img src="https://img.shields.io/npm/dt/@form-create/element-ui.svg" alt="dt" /></a>
 </p>
 
-**FormCreate 是一个可以通过 JSON 生成具有动态渲染、数据收集、验证和提交功能的低代码表单生成组件。支持6个UI框架，适配移动端，并且支持生成任何 Vue 组件。内置20种常用表单组件和自定义组件，再复杂的表单都可以轻松搞定。**
+**FormCreate 是一个可以通过 JSON 生成具有动态渲染、数据收集、验证和提交功能的低代码表单生成组件。支持8个UI框架，适配移动端，并且支持生成任何 Vue 组件。内置20种常用表单组件和自定义组件，再复杂的表单都可以轻松搞定。**
 
 [![FcDesigner](https://static.form-create.com/file/img/banner-m2.jpg?20251027)](https://pro.form-create.com/view)
 
 ## 特点
 - 使用JSON数据生成表单
 - 支持扩展，生成任何Vue组件和HTML标签
-- 支持6个UI框架
+- 支持8个UI框架
 - 支持组件之间联动
 - 提供丰富的表单操作API
 - 支持子表单和分组

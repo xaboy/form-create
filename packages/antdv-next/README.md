@@ -12,86 +12,123 @@
     <span>&nbsp;|&nbsp;</span>
     <a href="https://form-create.com/v3/guide/" target="_blank">帮助文档</a>
     <span>&nbsp;|&nbsp;</span>
-    <a href="https://www.antdv-next.cn/" target="_blank">antdv-next</a>
+    <a href="https://view.form-create.com/skills" target="_blank">Agent Skills</a>
     <span>&nbsp;|&nbsp;</span>
     <a href="https://pro.form-create.com/view/" target="_blank">可视化表单设计器</a>
+    <span>&nbsp;|&nbsp;</span>
+    <a href="https://pro.form-create.com/mobile/" target="_blank">移动端表单设计器</a>
 </p>
 
 <p align="center">
-  <a href="https://github.com/xaboy/form-create" target="_blank"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="MIT" /></a>
+  <a href="https://github.com/xaboy/form-create" target="_blank"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="TIM" /></a>
+  <a href="https://github.com/xaboy/form-create" target="_blank"><img src="https://img.shields.io/npm/dt/@form-create/antdv-next.svg" alt="dt" /></a>
 </p>
 
-**FormCreate 是一个可以通过 JSON 生成具有动态渲染、数据收集、验证和提交功能的低代码表单生成组件。支持多个UI框架，适配移动端，并且支持生成任何 Vue 组件。内置20种常用表单组件和自定义组件，再复杂的表单都可以轻松搞定。**
+**FormCreate 是一个可以通过 JSON 生成具有动态渲染、数据收集、验证和提交功能的低代码表单生成组件。支持8个UI框架，适配移动端，并且支持生成任何 Vue 组件。内置20种常用表单组件和自定义组件，再复杂的表单都可以轻松搞定。**
 
-本包是 [antdv-next](https://www.antdv-next.cn/) 的适配实现, 基于 [`Ant Design Vue`](https://www.antdv.com/) API 兼容, 提供完整的 Vue3 低代码表单能力.
+[![FcDesigner](https://static.form-create.com/file/img/banner-m2.jpg?20251027)](https://pro.form-create.com/view)
 
 ## 特点
-- 使用 JSON 数据生成表单
-- 支持扩展, 生成任何 Vue 组件和 HTML 标签
-- 支持组件之间联动 (control)
-- 提供丰富的表单操作 API
+- 使用JSON数据生成表单
+- 支持扩展，生成任何Vue组件和HTML标签
+- 支持8个UI框架
+- 支持组件之间联动
+- 提供丰富的表单操作API
 - 支持子表单和分组
 - 高性能
-- 多语言
+- **适配移动端**
+- **多语言**
 
-## 安装
+## 支持的UI框架
+
+[![FcDesigner](https://static.form-create.com/file/img/products.jpg)](https://form-create.com/)
+
+
+> 如果对您有帮助，您可以点右上角 "Star" 支持一下 谢谢！本项目还在不断开发完善中,如有任何建议或问题[请在这里提出](https://github.com/xaboy/form-create/issues/new)
+
+> 开发者讨论群[629709230](https://jq.qq.com/?_wv=1027&k=F1FlEFIV)
+
+
+- **预览**
+
+![demo1](https://raw.githubusercontent.com/xaboy/form-create/dev/images/demo-live3.gif)
+
+![demo2](https://form-create.com/v3/img/form-create.mobile.jpg)
+
+<details>
+<summary><b>更多</b></summary>
+
+- **操作表单**
+
+[详细说明](https://www.form-create.com/v3/instance.html)
+
+![demo2](https://raw.githubusercontent.com/xaboy/form-create/dev/images/demo-live2.gif)
+
+- **`group` 组件**
+
+[详细说明](https://www.form-create.com/v3/guide/group.html)
+
+![demo3](https://raw.githubusercontent.com/xaboy/form-create/dev/images/demo-group.gif)
+
+- **`control` 配置项**
+
+[详细说明](https://www.form-create.com/v3/guide/control.html)
+
+![demo2](https://raw.githubusercontent.com/xaboy/form-create/dev/images/demo-live4.gif)
+</details>
+
+## 包说明
+
+| 包名                                                                                                                                                                                                                                                                                                    | 说明                                                            |
+|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------|
+| @form-create/element-ui [![version](https://img.shields.io/npm/v/@form-create/element-ui/next.svg)](https://www.npmjs.com/package/@form-create/element-ui)                                                                                                                                            | [element-plus 版本](http://form-create.com/v3/element-ui/)      |
+| @form-create/ant-design-vue [![version](https://img.shields.io/npm/v/@form-create/ant-design-vue/next.svg)](https://www.npmjs.com/package/@form-create/ant-design-vue)                                                                                                                                | [ant-design-vue 版本](http://form-create.com/v3/ant-design-vue/) |
+| @form-create/antdv-next [![version](https://img.shields.io/npm/v/@form-create/antdv-next/next.svg)](https://www.npmjs.com/package/@form-create/antdv-next)                                                                                                                                            | [antdv-next 版本](http://form-create.com/v3/antdv-next/)        |
+| @form-create/arco-design [![version](https://img.shields.io/npm/v/@form-create/arco-design/next.svg)](https://www.npmjs.com/package/@form-create/arco-design)                                                                                                                                         | [arco-design 版本](http://form-create.com/v3/arco-design/)      |
+| @form-create/naive-ui [![version](https://img.shields.io/npm/v/@form-create/naive-ui/next.svg)](https://www.npmjs.com/package/@form-create/naive-ui)                                                                                                                                                  | [naive-ui 版本](http://form-create.com/v3/naive-ui/)            |
+| @form-create/tdesign [![version](https://img.shields.io/npm/v/@form-create/tdesign/next.svg)](https://www.npmjs.com/package/@form-create/tdesign)                                                                                                                                                     | [tdesign 版本](http://form-create.com/v3/tdesign/)              |
+| @form-create/tiny-vue [![version](https://img.shields.io/npm/v/@form-create/tiny-vue/next.svg)](https://www.npmjs.com/package/@form-create/tiny-vue)                                                                                                                                                  | [tiny-vue 版本(OpenTiny)](http://form-create.com/v3/tiny-vue/)  |
+| @form-create/iview [![version](https://img.shields.io/npm/v/@form-create/iview.svg)](https://www.npmjs.com/package/@form-create/iview)                                                                                                                                                                | [iview 版本](http://form-create.com/v2/iview/)                  |
+| @form-create/view-design [![version](https://img.shields.io/npm/v/@form-create/view-design.svg)](https://www.npmjs.com/package/@form-create/view-design)                                                                                                                                              | [view-design 版本](http://form-create.com/v2/iview/)            |
+| @form-create/vant [![version](https://img.shields.io/npm/v/@form-create/vant.svg)](https://www.npmjs.com/package/@form-create/vant)                                                                                                                                                                   | [vant 版本(移动端)](http://form-create.com/v3/vant/)               |
+| @form-create/designer [![version](https://img.shields.io/npm/v/@form-create/designer.svg)](https://www.npmjs.com/package/@form-create/designer)                                                                                                                                                       | [可视化表单设计器](http://form-create.com/v3/designer)                |
+| @form-create/vant-designer [![version](https://img.shields.io/npm/v/@form-create/vant-designer.svg)](https://www.npmjs.com/package/@form-create/designer)                                                                                                                                             | [移动端表单设计器](http://form-create.com/v3/mobile)                  |
+
+**分支说明**
+
+- **latest:** Vue2.0版本分支
+- **super:** Vue2.7版本分支(该版本功能和next分支功能一致)
+- **next:** Vue3.0版本分支
+
+例如:
+
+安装Vue3版本的@form-create/antdv-next
 
 ```sh
-npm install @form-create/antdv-next
-# 同时需要安装 antdv-next 作为 peer dependency
-npm install antdv-next
+npm install @form-create/antdv-next@next
 ```
 
-> **环境要求**: `antdv-next` 是 Pure ESM 包,要求 Node.js >= 18, 推荐使用 Vite/Rollup 等支持 package.json `exports` 字段的现代构建工具。
-> 本包的开发服务器已迁移至 Vite,执行 `npm run dev:antdv-next` 即可启动。
+> 本包仅适配 Vue3 (`vue ^3.5.12`), 同时需要安装 `antdv-next` 作为 peer dependency: `npm install antdv-next`.
 
-## 快速开始
+## 示例
 
-```js
-import { createApp } from 'vue'
-import 'antdv-next/dist/reset.css'
-import FormCreate from '@form-create/antdv-next'
-import install from '@form-create/antdv-next/auto-import'
-import App from './App.vue'
+- [在线示例](https://www.form-create.com/v3/guide/demo.html)
 
-FormCreate.use(install)
 
-const app = createApp(App)
-app.use(FormCreate)
-app.mount('#app')
-```
 
-```vue
-<template>
-  <form-create :rule="rule" v-model:api="fapi" v-model="formData" />
-</template>
+<details>
+<summary><b>效果图</b></summary>
 
-<script setup>
-import { ref } from 'vue'
-import { maker } from '@form-create/antdv-next'
+![https://raw.githubusercontent.com/xaboy/form-create/dev/images/sample110.jpg](https://raw.githubusercontent.com/xaboy/form-create/dev/images/sample110.jpg)
+</details>
 
-const fapi = ref({})
-const formData = ref({})
-const rule = ref([
-  maker.input('用户名', 'username').validate([
-    { required: true, message: '请输入用户名', trigger: 'blur' }
-  ]),
-  maker.password('密码', 'password').validate([
-    { required: true, message: '请输入密码', trigger: 'blur' }
-  ]),
-])
-</script>
-```
 
-## 兼容性
+## 联系
+![http://static.form-create.com/file/img/support.jpg](http://static.form-create.com/file/img/support.jpg)
 
-`antdv-next` 与 `ant-design-vue` 的组件 API/标签 (`a-input`, `a-form`, `a-date-picker` 等) 完全兼容, 因此本适配包与 `@form-create/ant-design-vue` 的 rule/maker/api 用法保持一致.
+## 感谢
 
-## 相关包
-
-- [@form-create/ant-design-vue](https://www.npmjs.com/package/@form-create/ant-design-vue) - ant-design-vue 适配包
-- [@form-create/element-ui](https://www.npmjs.com/package/@form-create/element-ui) - element-plus 适配包
-- [@form-create/core](https://www.npmjs.com/package/@form-create/core) - 核心库
+[时光弧线](https://github.com/shiguanghuxian)  |  [wxxtqk](https://github.com/wxxtqk)  |  [williamBoss](https://github.com/williamBoss)  |  [HeyMrLin](https://github.com/HeyMrLin)  |  [djkloop](https://github.com/djkloop)  |  [daiwenyong](https://github.com/daiwenyong) | [JetBrains](https://www.jetbrains.com/?from=form-create)
 
 ## License
 

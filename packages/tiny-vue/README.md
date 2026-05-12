@@ -1,58 +1,137 @@
-# @form-create/tiny-vue
+<p align="center">
+    <a href="https://www.form-create.com" target="_blank">
+        <img width="300" alt="FormCreate" src="https://static.form-create.com/file/img/info-logo2.png">
+    </a>
+</p>
+<p align="center">
+    基于 OpenTiny TinyVue 的低代码表单生成组件
+</p>
 
-[![NPM version](https://img.shields.io/npm/v/@form-create/tiny-vue.svg)](https://www.npmjs.com/package/@form-create/tiny-vue)
-[![License](https://img.shields.io/npm/l/@form-create/tiny-vue.svg)](LICENSE)
+<p align="center">
+    <a href="https://www.form-create.com/" target="_blank">官网</a>
+    <span>&nbsp;|&nbsp;</span>
+    <a href="https://form-create.com/v3/guide/" target="_blank">帮助文档</a>
+    <span>&nbsp;|&nbsp;</span>
+    <a href="https://view.form-create.com/skills" target="_blank">Agent Skills</a>
+    <span>&nbsp;|&nbsp;</span>
+    <a href="https://pro.form-create.com/view/" target="_blank">可视化表单设计器</a>
+    <span>&nbsp;|&nbsp;</span>
+    <a href="https://pro.form-create.com/mobile/" target="_blank">移动端表单设计器</a>
+</p>
 
-> 基于 [OpenTiny TinyVue](https://opentiny.design/tiny-vue) 组件库的 [FormCreate](https://github.com/xaboy/form-create) 低代码表单适配。
+<p align="center">
+  <a href="https://github.com/xaboy/form-create" target="_blank"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="TIM" /></a>
+  <a href="https://github.com/xaboy/form-create" target="_blank"><img src="https://img.shields.io/npm/dt/@form-create/tiny-vue.svg" alt="dt" /></a>
+</p>
 
-通过 JSON 生成具有动态渲染、数据收集、验证和提交功能的低代码表单生成组件。
+**FormCreate 是一个可以通过 JSON 生成具有动态渲染、数据收集、验证和提交功能的低代码表单生成组件。支持8个UI框架，适配移动端，并且支持生成任何 Vue 组件。内置20种常用表单组件和自定义组件，再复杂的表单都可以轻松搞定。**
 
-## 安装
+[![FcDesigner](https://static.form-create.com/file/img/banner-m2.jpg?20251027)](https://pro.form-create.com/view)
 
-```bash
-pnpm add @form-create/tiny-vue @opentiny/vue @opentiny/vue-icon @opentiny/vue-theme
+## 特点
+- 使用JSON数据生成表单
+- 支持扩展，生成任何Vue组件和HTML标签
+- 支持8个UI框架
+- 支持组件之间联动
+- 提供丰富的表单操作API
+- 支持子表单和分组
+- 高性能
+- **适配移动端**
+- **多语言**
+
+## 支持的UI框架
+
+[![FcDesigner](https://static.form-create.com/file/img/products.jpg)](https://form-create.com/)
+
+
+> 如果对您有帮助，您可以点右上角 "Star" 支持一下 谢谢！本项目还在不断开发完善中,如有任何建议或问题[请在这里提出](https://github.com/xaboy/form-create/issues/new)
+
+> 开发者讨论群[629709230](https://jq.qq.com/?_wv=1027&k=F1FlEFIV)
+
+
+- **预览**
+
+![demo1](https://raw.githubusercontent.com/xaboy/form-create/dev/images/demo-live3.gif)
+
+![demo2](https://form-create.com/v3/img/form-create.mobile.jpg)
+
+<details>
+<summary><b>更多</b></summary>
+
+- **操作表单**
+
+[详细说明](https://www.form-create.com/v3/instance.html)
+
+![demo2](https://raw.githubusercontent.com/xaboy/form-create/dev/images/demo-live2.gif)
+
+- **`group` 组件**
+
+[详细说明](https://www.form-create.com/v3/guide/group.html)
+
+![demo3](https://raw.githubusercontent.com/xaboy/form-create/dev/images/demo-group.gif)
+
+- **`control` 配置项**
+
+[详细说明](https://www.form-create.com/v3/guide/control.html)
+
+![demo2](https://raw.githubusercontent.com/xaboy/form-create/dev/images/demo-live4.gif)
+</details>
+
+## 包说明
+
+| 包名                                                                                                                                                                                                                                                                                                    | 说明                                                            |
+|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------|
+| @form-create/element-ui [![version](https://img.shields.io/npm/v/@form-create/element-ui/next.svg)](https://www.npmjs.com/package/@form-create/element-ui)                                                                                                                                            | [element-plus 版本](http://form-create.com/v3/element-ui/)      |
+| @form-create/ant-design-vue [![version](https://img.shields.io/npm/v/@form-create/ant-design-vue/next.svg)](https://www.npmjs.com/package/@form-create/ant-design-vue)                                                                                                                                | [ant-design-vue 版本](http://form-create.com/v3/ant-design-vue/) |
+| @form-create/antdv-next [![version](https://img.shields.io/npm/v/@form-create/antdv-next/next.svg)](https://www.npmjs.com/package/@form-create/antdv-next)                                                                                                                                            | [antdv-next 版本](http://form-create.com/v3/antdv-next/)        |
+| @form-create/arco-design [![version](https://img.shields.io/npm/v/@form-create/arco-design/next.svg)](https://www.npmjs.com/package/@form-create/arco-design)                                                                                                                                         | [arco-design 版本](http://form-create.com/v3/arco-design/)      |
+| @form-create/naive-ui [![version](https://img.shields.io/npm/v/@form-create/naive-ui/next.svg)](https://www.npmjs.com/package/@form-create/naive-ui)                                                                                                                                                  | [naive-ui 版本](http://form-create.com/v3/naive-ui/)            |
+| @form-create/tdesign [![version](https://img.shields.io/npm/v/@form-create/tdesign/next.svg)](https://www.npmjs.com/package/@form-create/tdesign)                                                                                                                                                     | [tdesign 版本](http://form-create.com/v3/tdesign/)              |
+| @form-create/tiny-vue [![version](https://img.shields.io/npm/v/@form-create/tiny-vue/next.svg)](https://www.npmjs.com/package/@form-create/tiny-vue)                                                                                                                                                  | [tiny-vue 版本(OpenTiny)](http://form-create.com/v3/tiny-vue/)  |
+| @form-create/iview [![version](https://img.shields.io/npm/v/@form-create/iview.svg)](https://www.npmjs.com/package/@form-create/iview)                                                                                                                                                                | [iview 版本](http://form-create.com/v2/iview/)                  |
+| @form-create/view-design [![version](https://img.shields.io/npm/v/@form-create/view-design.svg)](https://www.npmjs.com/package/@form-create/view-design)                                                                                                                                              | [view-design 版本](http://form-create.com/v2/iview/)            |
+| @form-create/vant [![version](https://img.shields.io/npm/v/@form-create/vant.svg)](https://www.npmjs.com/package/@form-create/vant)                                                                                                                                                                   | [vant 版本(移动端)](http://form-create.com/v3/vant/)               |
+| @form-create/designer [![version](https://img.shields.io/npm/v/@form-create/designer.svg)](https://www.npmjs.com/package/@form-create/designer)                                                                                                                                                       | [可视化表单设计器](http://form-create.com/v3/designer)                |
+| @form-create/vant-designer [![version](https://img.shields.io/npm/v/@form-create/vant-designer.svg)](https://www.npmjs.com/package/@form-create/designer)                                                                                                                                             | [移动端表单设计器](http://form-create.com/v3/mobile)                  |
+
+**分支说明**
+
+- **latest:** Vue2.0版本分支
+- **super:** Vue2.7版本分支(该版本功能和next分支功能一致)
+- **next:** Vue3.0版本分支
+
+例如:
+
+安装Vue3版本的@form-create/tiny-vue
+
+```sh
+npm install @form-create/tiny-vue@next
 ```
 
-## 使用
+> 本包仅适配 Vue3 (`vue ^3.5.12`), 同时需要安装 `@opentiny/vue`、`@opentiny/vue-icon`、`@opentiny/vue-theme` 作为 peer dependency: `npm install @opentiny/vue @opentiny/vue-icon @opentiny/vue-theme`.
 
-```js
-import { createApp } from 'vue'
-import FormCreate from '@form-create/tiny-vue'
-import install from '@form-create/tiny-vue/auto-import'
-import '@opentiny/vue-theme/index.css'
-import App from './App.vue'
+## 示例
 
-FormCreate.use(install)
-const app = createApp(App)
-app.use(FormCreate)
-app.mount('#app')
-```
+- [在线示例](https://www.form-create.com/v3/guide/demo.html)
 
-模板中使用：
 
-```vue
-<template>
-  <form-create :rule="rule" v-model="formData" :option="{ resetBtn: true }" />
-</template>
 
-<script setup>
-import { ref } from 'vue'
-const formData = ref({})
-const rule = ref([
-  { type: 'input', field: 'name', title: '姓名', value: '', validate: [{ required: true, message: '请输入姓名' }] },
-  { type: 'select', field: 'city', title: '城市', value: '', options: [
-    { label: '北京', value: 'bj' }, { label: '上海', value: 'sh' }
-  ] },
-])
-</script>
-```
+<details>
+<summary><b>效果图</b></summary>
 
-## 链接
+![https://raw.githubusercontent.com/xaboy/form-create/dev/images/sample110.jpg](https://raw.githubusercontent.com/xaboy/form-create/dev/images/sample110.jpg)
+</details>
 
-- 官网：<https://form-create.com>
-- GitHub：<https://github.com/xaboy/form-create>
-- TinyVue：<https://opentiny.design/tiny-vue>
+
+## 联系
+![http://static.form-create.com/file/img/support.jpg](http://static.form-create.com/file/img/support.jpg)
+
+## 感谢
+
+[时光弧线](https://github.com/shiguanghuxian)  |  [wxxtqk](https://github.com/wxxtqk)  |  [williamBoss](https://github.com/williamBoss)  |  [HeyMrLin](https://github.com/HeyMrLin)  |  [djkloop](https://github.com/djkloop)  |  [daiwenyong](https://github.com/daiwenyong) | [JetBrains](https://www.jetbrains.com/?from=form-create)
 
 ## License
 
-MIT © xaboy
+[MIT](http://opensource.org/licenses/MIT)
+
+Copyright (c) 2018-present xaboy
