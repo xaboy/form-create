@@ -14,7 +14,7 @@ export default {
     datePicker: PRE + 'date-picker',
     'switch': PRE + 'switch',
     inputNumber: PRE + 'numeric',
-    number: PRE + 'numeric',
+    numeric: PRE + 'numeric',
     input: PRE + 'input',
     textarea: PRE + 'input',
     formItem: PRE + 'form-item',

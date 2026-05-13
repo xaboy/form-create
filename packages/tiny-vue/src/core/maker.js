@@ -18,7 +18,7 @@ function useAlias(maker) {
         maker[name] = creatorFactory(name);
     });
     maker.auto = maker.autoComplete;
-    maker.number = maker.inputNumber;
+    maker.numeric = maker.inputNumber;
     maker.color = maker.colorPicker;
     maker.ip = maker.ipAddress;
 }
