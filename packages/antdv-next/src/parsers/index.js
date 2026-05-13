@@ -9,6 +9,7 @@ import tree from './tree';
 import row from './row';
 import rangePicker from './rangePicker';
 import timeRangePicker from './timeRangePicker';
+import transfer from './transfer';
 
 export default [
     checkbox,
@@ -22,4 +23,5 @@ export default [
     radio,
     select,
     row,
+    transfer,
 ]

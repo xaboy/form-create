@@ -23,6 +23,7 @@ import {
     Row,
     ColorPicker,
     Mentions,
+    Transfer,
 } from 'antdv-next';
 
 export default function install(formCreate) {
@@ -51,5 +52,6 @@ export default function install(formCreate) {
         app.component(Modal.name) || app.use(Modal);
         app.component(ColorPicker.name) || app.use(ColorPicker);
         app.component(Mentions.name) || app.use(Mentions);
+        app.component(Transfer.name) || app.use(Transfer);
     });
 }

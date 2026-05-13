@@ -10,4 +10,5 @@ export default {
     switch: 'checked',
     colorPicker: 'value',
     mentions: 'value',
+    transfer: 'targetKeys',
 }

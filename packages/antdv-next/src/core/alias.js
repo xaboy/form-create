@@ -31,6 +31,7 @@ export default {
     autoComplete: PRE + 'AutoComplete',
     colorPicker: PRE + 'ColorPicker',
     mentions: PRE + 'Mentions',
+    transfer: PRE + 'Transfer',
     group: 'fcGroup',
     array: 'fcGroup',
     subForm: 'fcSubForm',
