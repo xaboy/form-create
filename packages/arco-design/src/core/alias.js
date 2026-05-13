@@ -30,6 +30,7 @@ export default {
     transfer: PRE + 'Transfer',
     verificationCode: PRE + 'VerificationCode',
     autoComplete: PRE + 'AutoComplete',
+    mention: PRE + 'Mention',
     group: 'fcGroup',
     array: 'fcGroup',
     subForm: 'fcSubForm',

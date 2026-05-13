@@ -44,6 +44,8 @@ import Popover from '@arco-design/web-vue/es/popover';
 import '@arco-design/web-vue/es/popover/style/css';
 import InputTag from '@arco-design/web-vue/es/input-tag';
 import '@arco-design/web-vue/es/input-tag/style/css';
+import Mention from '@arco-design/web-vue/es/mention';
+import '@arco-design/web-vue/es/mention/style/css';
 import Modal from '@arco-design/web-vue/es/modal';
 import '@arco-design/web-vue/es/modal/style/css';
 import Grid from '@arco-design/web-vue/es/grid';
@@ -76,5 +78,6 @@ export default function install(formCreate) {
         app.component(Tooltip.name) || app.use(Tooltip);
         app.component(Popover.name) || app.use(Popover);
         app.component(Modal.name) || app.use(Modal);
+        app.component(Mention.name) || app.use(Mention);
     });
 }

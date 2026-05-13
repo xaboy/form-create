@@ -389,5 +389,16 @@ export default function rule() {
         maker.verificationCode('短信验证码', 'sms_code', '').props({
             length: 6,
         }),
+        {
+            type: 'mention',
+            title: '备注',
+            field: 'note',
+            value: '',
+            props: {
+                placeholder: '输入 @ 选择成员',
+                prefix: '@',
+                data: [ '张三', '李四', '王五'],
+            },
+        }
     ];
 }
