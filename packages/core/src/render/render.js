@@ -151,6 +151,12 @@ export default function useRender(Render) {
                             _vn = preview ? ctx.parser.preview(copy(children), ctx) : ctx.parser.render(copy(children), ctx);
                         }
                         _vn = this.renderSides(_vn, ctx);
+                        if (prop.title?.show) {
+                            prop.wrap = {... prop.wrap||{}, show: true};
+                            if(!prop.native) {
+                                prop.native = false;
+                            }
+                        }
                         if (((!(!ctx.input && is.Undef(prop.native))) || prop.col?.show === true) && prop.native !== true) {
                             this.fc.targetFormDriver('updateWrap', ctx)
                             _vn = this.$manager.makeWrap(ctx, _vn);
