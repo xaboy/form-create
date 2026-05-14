@@ -1,6 +1,6 @@
 {
     "name": "@form-create/component-tdesign-group",
-    "version": "3.2.38",
+    "version": "3.3.0-alpha.0",
     "description": "@form-create/tdesign 内置组件",
     "main": "./dist/index.min.js",
     "module": "./dist/index.esm.js",
