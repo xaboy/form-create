@@ -10,9 +10,10 @@ useUpload(maker);
 useFrame(maker);
 
 function useAlias(maker) {
-    ['group', 'tree', 'treeSelect', 'switch', 'upload', 'cascader', 'rangeInput', 'transfer', 'tagInput', 'colorPicker', 'datePicker', 'dateRangePicker', 'timePicker', 'timeRangePicker', 'textarea', 'input', 'frame', 'inputNumber'].forEach(name => {
+    ['group', 'tree', 'treeSelect', 'switch', 'upload', 'cascader', 'autoComplete', 'rangeInput', 'transfer', 'tagInput', 'colorPicker', 'datePicker', 'dateRangePicker', 'timePicker', 'timeRangePicker', 'textarea', 'input', 'frame', 'inputNumber'].forEach(name => {
         maker[name] = creatorFactory(name);
     });
+    maker.auto = maker.autoComplete;
     maker.number = maker.inputNumber;
     maker.color = maker.colorPicker;
     maker.date = maker.datePicker;

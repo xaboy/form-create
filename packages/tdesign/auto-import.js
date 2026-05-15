@@ -3,6 +3,7 @@ import {Row, Col} from 'tdesign-vue-next/es/grid';
 import {Input} from 'tdesign-vue-next/es/input';
 import {Button} from 'tdesign-vue-next/es/button';
 import {Cascader} from 'tdesign-vue-next/es/cascader';
+import {AutoComplete} from 'tdesign-vue-next/es/auto-complete';
 import {CheckboxGroup} from 'tdesign-vue-next/es/checkbox';
 import {RadioGroup} from 'tdesign-vue-next/es/radio';
 import {ColorPicker} from 'tdesign-vue-next/es/color-picker';
@@ -33,6 +34,7 @@ export default function install(formCreate) {
         app.component(Input.name) || app.use(Input);
         app.component(Button.name) || app.use(Button);
         app.component(Cascader.name) || app.use(Cascader);
+        app.component(AutoComplete.name) || app.use(AutoComplete);
         app.component(CheckboxGroup.name) || app.use(CheckboxGroup);
         app.component(RadioGroup.name) || app.use(RadioGroup);
         app.component(ColorPicker.name) || app.use(ColorPicker);

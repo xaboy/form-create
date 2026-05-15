@@ -39,6 +39,25 @@ export default function mock() {
         })
             .info('自定义内容'),
 
+        // AutoComplete 自动补全
+        maker.autoComplete('自动补全', 'auto_complete', '').props({
+            clearable: true,
+            placeholder: '请输入关键词',
+            filterable: true,
+            options: [
+                {label: 'TDesign Vue Next', value: 'tdesign-vue-next'},
+                {label: 'TDesign React', value: 'tdesign-react'},
+                {label: 'TDesign MiniProgram', value: 'tdesign-miniprogram'},
+            ],
+        }).inject(true).on({
+            change(inject, value) {
+                inject.self.props({options: !value ? [] : [
+                    {label: value, value},
+                    {label: value + value, value: value + value},
+                ]})
+            },
+        }),
+
         // input 输入框组件
         maker.input('商品名称', 'goods_name', 'iphone').props({
             placeholder: '请输入商品名称',

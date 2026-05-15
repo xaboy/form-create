@@ -5,6 +5,8 @@ export default {
     slider: PRE + 'Slider',
     upload: 'fcUpload',
     cascader: PRE + 'Cascader',
+    autoComplete: PRE + 'AutoComplete',
+    auto: PRE + 'AutoComplete',
     popup: PRE + 'Popup',
     tooltip: PRE + 'Tooltip',
     colorPicker: PRE + 'ColorPicker',
