@@ -50,6 +50,8 @@ export default defineComponent({
         previewMask: undefined,
         customRequest: Function,
         formCreateInject: Object,
+        listType: String,
+        uploadText: String,
     },
     emits: ['update:modelValue', 'finish', 'fc.el'],
     data() {
@@ -117,11 +119,13 @@ export default defineComponent({
     },
     render() {
         return <>
-            <n-upload max={this.limit} listType={'image-card'} name={this.name} {...this.$attrs} onPreview={this.handlePreview}
+            <n-upload max={this.limit} listType={this.listType} name={this.name} {...this.$attrs} onPreview={this.handlePreview}
                 onFinish={this.handleChange} key={this.uploadList.length}
                 customRequest={this.doCustomRequest}
                 defaultFileList={this.uploadList} onUpdate:fileList={this.inputRemove}
-                v-slots={this.$slots} ref="el"/>
+                      v-slots={this.$slots} ref="el">
+                {(['text', 'image'].indexOf(this.listType) === -1 ? undefined : <NButton>{this.formCreateInject.t('clickToUpload') || this.uploadText || '点击上传'}</NButton>)}
+            </n-upload>
             <NModal preset={'card'} mask={this.previewMask} title={this.modalTitle} show={this.previewVisible}
                 style="width: 600px;"
                 onUpdate:show={(n) => this.previewVisible = n}>
