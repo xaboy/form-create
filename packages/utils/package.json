@@ -1,6 +1,6 @@
 {
     "name": "@form-create/utils",
-    "version": "3.3.0-alpha.0",
+    "version": "3.3.0",
     "description": "FormCreate 工具函数库",
     "main": "./lib/index.js",
     "files": [

@@ -1,6 +1,6 @@
 {
     "name": "@form-create/vant",
-    "version": "3.3.0-alpha.0",
+    "version": "3.3.0",
     "description": "Vant 版本（移动端）低代码表单 | FormCreate 是一个可以通过 JSON 生成具有动态渲染、数据收集、验证和提交功能的低代码表单生成组件。",
     "main": "./dist/form-create.min.js",
     "module": "./dist/form-create.esm.js",
