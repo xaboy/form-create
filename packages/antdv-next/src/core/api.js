@@ -1,6 +1,6 @@
 import extend from '@form-create/utils/lib/extend';
 import is from '@form-create/utils/lib/type';
-import {invoke} from '@form-create/core/src/frame/util';
+import {byCtx, invoke} from '@form-create/core/src/frame/util';
 import toArray from '@form-create/utils/lib/toarray';
 
 function tidyBtnProp(btn, def) {
@@ -40,7 +40,8 @@ export default function extendApi(api, h) {
         },
         validateField(field, callback) {
             return new Promise((resolve, reject) => {
-                const ctx = h.getFieldCtx(field);
+                const flag = typeof field === 'object';
+                const ctx = flag ? byCtx(field) : h.getCtx(field);
                 if (!ctx) {
                     resolve(null);
                     callback && callback(null);
