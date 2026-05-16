@@ -1,4 +1,4 @@
-import {hasProperty} from '@form-create/utils/lib/type';
+import is, {hasProperty} from '@form-create/utils/lib/type';
 import deepExtend, {deepCopy} from '@form-create/utils/lib/deepextend';
 import extend from '@form-create/utils/lib/extend';
 import {toPromise} from '@form-create/utils';
@@ -157,7 +157,7 @@ export default {
             }
             const value = keys.map(k => {
                 const data = key === k ? formData : {...this.cacheRule[k].$f.form};
-                const value = this.field ? data[this.field] || null : data;
+                const value = this.field ? (is.Undef(data[this.field]) ?  null : data[this.field]) : data;
                 this.cache(k, value);
                 return value;
             });
