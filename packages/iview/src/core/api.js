@@ -66,6 +66,20 @@ export default function extendApi(api, h) {
                 })
             });
         },
+        validateFields(fields, callback) {
+            return new Promise((resolve, reject) => {
+                if (!Array.isArray(fields))
+                    fields = [fields];
+                const list = fields.map(field => api.validateField(field));
+                Promise.all(list).then(() => {
+                    resolve(null);
+                    callback && callback(null);
+                }).catch((e) => {
+                    reject(e);
+                    callback && callback(e);
+                });
+            });
+        },
         clearValidateState(fields, clearSub = true) {
             api.helper.tidyFields(fields).forEach(field => {
                 if (clearSub) this.clearSubValidateState(field);

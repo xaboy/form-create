@@ -104,6 +104,8 @@ export interface ApiAttrs {
 
     validateField(field: string, callback?: (valid?: boolean) => void): Promise<any>;
 
+    validateFields(fields: string | string[], callback?: (state: any) => void): Promise<any>;
+
     submitBtnProps(props: Button): void;
 
     resetBtnProps(props: Button): void;
