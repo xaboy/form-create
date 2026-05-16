@@ -1,6 +1,6 @@
 {
   "name": "@form-create/component-elm-group",
-  "version": "2.7.17",
+  "version": "2.7.27",
   "description": "@form-create/element-ui 内置组件",
   "main": "./dist/index.js",
   "module": "./dist/index.es.js",
