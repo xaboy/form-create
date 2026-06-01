@@ -21,6 +21,7 @@ export default {
     inputNumber: PRE + 'InputNumber',
     number: PRE + 'InputNumber',
     input: PRE + 'Input',
+    rate: PRE + 'Rate',
     rangeInput: PRE + 'RangeInput',
     tagInput: PRE + 'TagInput',
     textarea: PRE + 'Textarea',

@@ -756,6 +756,7 @@ export default function FormCreateFactory(config) {
     useApp((_, app) => {
         app.mixin({
             props: ['formCreateInject'],
+            emits: ['fc.updateValue', 'fc.el']
         })
     })
 

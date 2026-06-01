@@ -103,16 +103,16 @@ export default defineComponent({
         }
     },
     render() {
-        return <>
+        return <div class="_fc-upload">
             <AUpload listType={'picture-card'} {...this.$attrs} onPreview={this.handlePreview}
                 onSuccess={this.handleChange} customRequest={this.doCustomRequest}
                 ref="upload" fileList={this.uploadList} onUpdate:fileList={this.inputRemove}
                 v-slots={this.$slots}/>
-            <aModal mask={this.previewMask} title={this.modalTitle} visible={this.previewVisible}
+            <aModal mask={this.previewMask} title={this.modalTitle || '预览'} visible={this.previewVisible}
                 onCancel={() => this.previewVisible = false} footer={null}>
                 <img style="width: 100%" src={this.previewImage}/>
             </aModal>
-        </>;
+        </div>;
     },
     mounted() {
         this.$emit('fc.el', this.$refs.upload);

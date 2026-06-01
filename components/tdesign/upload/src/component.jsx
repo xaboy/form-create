@@ -108,9 +108,9 @@ export default defineComponent({
             uploadList,
             handleSuccess, handleRemove, $slots
         } = this
-        return <>
+        return <div class="_fc-upload" style="width: 100%;">
             <t-upload
-                max={this.limit}
+                max={this.limit || undefined}
                 theme="image"
                 accept="image/*"
                 modelValue={uploadList}
@@ -123,7 +123,7 @@ export default defineComponent({
                 ref="el"
             >
             </t-upload>
-        </>
+        </div>
     },
     mounted(){
         this.$emit('fc.el',this.$refs.el);

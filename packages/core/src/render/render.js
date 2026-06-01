@@ -152,7 +152,7 @@ export default function useRender(Render) {
                         }
                         _vn = this.renderSides(_vn, ctx);
                         if (prop.title?.show) {
-                            prop.wrap = {... prop.wrap||{}, show: true};
+                            prop.wrap = {show: true, ... prop.wrap||{}};
                             if(!prop.native) {
                                 prop.native = false;
                             }

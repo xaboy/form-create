@@ -24,6 +24,7 @@ export default {
     form: PRE + 'Form',
     frame: 'fcFrame',
     col: PRE + 'Col',
+    colorPicker: PRE + 'ColorPicker',
     row: PRE + 'Row',
     tree: PRE + 'Tree',
     treeSelect: PRE + 'TreeSelect',

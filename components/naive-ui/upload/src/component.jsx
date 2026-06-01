@@ -50,7 +50,10 @@ export default defineComponent({
         previewMask: undefined,
         customRequest: Function,
         formCreateInject: Object,
-        listType: String,
+        listType: {
+            type: String,
+            default: 'image-card'
+        },
         uploadText: String,
     },
     emits: ['update:modelValue', 'finish', 'fc.el'],
@@ -89,7 +92,7 @@ export default defineComponent({
         handlePreview(file) {
             if (this.onPreview) {
                 this.onPreview(...arguments)
-            } else {
+            } else if (this.listType === 'image-card') {
                 this.previewImage = file.url;
                 this.previewVisible = true;
             }
@@ -118,8 +121,8 @@ export default defineComponent({
 
     },
     render() {
-        return <>
-            <n-upload max={this.limit} listType={this.listType} name={this.name} {...this.$attrs} onPreview={this.handlePreview}
+        return <div class="_fc-upload" style="width: 100%;">
+            <n-upload max={this.limit || undefined}  listType={this.listType} name={this.name} {...this.$attrs} onPreview={this.handlePreview}
                 onFinish={this.handleChange} key={this.uploadList.length}
                 customRequest={this.doCustomRequest}
                 defaultFileList={this.uploadList} onUpdate:fileList={this.inputRemove}
@@ -131,7 +134,7 @@ export default defineComponent({
                 onUpdate:show={(n) => this.previewVisible = n}>
                 <img style="width: 100%" src={this.previewImage}/>
             </NModal>
-        </>;
+        </div>;
     },
     mounted() {
         this.$emit('fc.el', this.$refs.el);

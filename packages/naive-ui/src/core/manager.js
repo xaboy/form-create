@@ -134,10 +134,11 @@ export default {
     makeInfo(rule, uni, ctx) {
         const titleProp = {...rule.title};
         const infoProp = {...rule.info};
+        const form = this.options.form;
         if (this.options.form.title === false) return false;
         if ((!titleProp.title && !titleProp.native) || isFalse(titleProp.show)) return;
         const titleSlot = this.getSlot('title');
-        const children = [titleSlot ? titleSlot({title: ctx.refRule?.__$title?.value, rule: ctx.rule, options: this.options}) : ctx.refRule?.__$title?.value];
+        const children = [titleSlot ? titleSlot({title: ctx.refRule?.__$title?.value, rule: ctx.rule, options: this.options}) : ((ctx.refRule?.__$title?.value) + (form.labelSuffix || form['label-suffix'] || ''))];
 
         if (!isFalse(infoProp.show) && (infoProp.info || infoProp.native) && !isFalse(infoProp.icon)) {
             const prop = {
