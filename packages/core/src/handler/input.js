@@ -10,9 +10,10 @@ export default function useInput(Handler) {
             if (ctx.deleted) return;
             ctx.rule.value = value;
             this.changeStatus = true;
-            this.nextRefresh();
-            this.$render.clearCache(ctx);
+            //先写入 formData，再按 value-only 失效，便于 syncModelProp 读到新值
             this.setFormData(ctx, formValue);
+            this.$render.clearCache(ctx, 'value');
+            this.nextRefresh();
             this.syncValue();
             this.valueChange(ctx, value);
             this.vm.emit('change', ctx.field, value, ctx.origin, this.api, setFlag || false);
@@ -61,9 +62,8 @@ export default function useInput(Handler) {
         },
         onBaseInput(ctx, value) {
             this.setFormData(ctx, value);
-            ctx.modelValue = value;
+            this.$render.clearCache(ctx, 'value');
             this.nextRefresh();
-            this.$render.clearCache(ctx);
         },
         setFormData(ctx, value) {
             ctx.modelValue = value;
@@ -151,7 +151,23 @@ export default function useInput(Handler) {
             this.vm.setupState.updateValue(data);
         },
         isChange(ctx, value) {
-            return JSON.stringify(this.getFormData(ctx), strFn) !== JSON.stringify(value, strFn);
+            const old = this.getFormData(ctx);
+            //每次输入都会走到这里，先用等价的快速路径挡掉基本类型，
+            //避免对富文本、表格这类大值反复做序列化
+            if (old === value) {
+                return false;
+            }
+            const type = typeof old;
+            if (type === typeof value) {
+                if (type === 'string' || type === 'boolean') {
+                    return true;
+                }
+                //NaN / Infinity 会被序列化成 null，只有有限数才能直接比较
+                if (type === 'number' && Number.isFinite(old) && Number.isFinite(value)) {
+                    return true;
+                }
+            }
+            return JSON.stringify(old, strFn) !== JSON.stringify(value, strFn);
         },
         isQuote(ctx, value) {
             return (value instanceof Function || is.Object(value) || Array.isArray(value)) && value === ctx.rule.value;

@@ -128,7 +128,7 @@ export default {
         const uni = `${this.key}${ctx.key}`;
         const col = rule.col;
         const isTitle = this.isTitle(rule) && rule.wrap.title !== false;
-        const labelWidth = (!col.labelWidth && !isTitle) ? 0 : col.labelWidth;
+        const labelWidth = (!col?.labelWidth && !isTitle) ? 0 : col?.labelWidth;
         const {layout, col: _col} = this.rule.props;
         const cls = rule.wrap.class;
         delete rule.wrap.class;

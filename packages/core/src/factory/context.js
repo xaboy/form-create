@@ -42,6 +42,7 @@ export default function RuleContext(handle, rule, defaultValue) {
         computed: {},
         payload: {},
         refRule: {},
+        handlers: null,
         input: isInput,
         el: undefined,
         exportEl: undefined,
@@ -219,6 +220,11 @@ extend(RuleContext.prototype, {
             children: [],
             cacheConfig: null,
             none: false,
+            handlers: null,
+            //rule.__fc__ 是不可配置的强引用，ctx 往往比表单活得更久，
+            //这里必须主动释放 DOM，否则已卸载的节点会一直被规则树持有
+            el: undefined,
+            exportEl: undefined,
         })
     },
     rmCtrl() {

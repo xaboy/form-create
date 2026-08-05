@@ -30,6 +30,51 @@ const getGroupInject = (vm, parent) => {
     }
 }
 
+//单字段快路径：基本类型直接比，避免大表每次 sync 都整表 toJson
+function valueEqual(a, b) {
+    if (a === b) {
+        return true;
+    }
+    if (a == null || b == null) {
+        return a === b;
+    }
+    const type = typeof a;
+    if (type !== typeof b) {
+        return false;
+    }
+    if (type === 'string' || type === 'boolean') {
+        return false;
+    }
+    if (type === 'number') {
+        return Number.isNaN(a) && Number.isNaN(b);
+    }
+    //对象/数组仅在引用不同时才序列化该字段
+    return toJson(a) === toJson(b);
+}
+
+function formEqual(a, b) {
+    if (a === b) {
+        return true;
+    }
+    a = a || {};
+    b = b || {};
+    const keysA = Object.keys(a);
+    const keysB = Object.keys(b);
+    if (keysA.length !== keysB.length) {
+        return false;
+    }
+    for (let i = 0; i < keysA.length; i++) {
+        const key = keysA[i];
+        if (!Object.prototype.hasOwnProperty.call(b, key)) {
+            return false;
+        }
+        if (!valueEqual(a[key], b[key])) {
+            return false;
+        }
+    }
+    return true;
+}
+
 export default function $FormCreate(FormCreate, components, directives) {
     return defineComponent({
         name: 'FormCreate' + (FormCreate.isMobile ? 'Mobile' : ''),
@@ -93,8 +138,9 @@ export default function $FormCreate(FormCreate, components, directives) {
                 isShow: true,
                 unique: 1,
                 renderRule: [...rule.value || []],
-                updateValue: JSON.stringify(modelValue.value || {}),
             });
+            //最近一次对外同步的表单快照；用字段级比较替代整表 toJson 字符串
+            let lastForm = modelValue.value || {};
 
             const fc = new FormCreate(vm);
             const fapi = fc.api();
@@ -227,7 +273,7 @@ export default function $FormCreate(FormCreate, components, directives) {
             });
 
             watch(modelValue, (n) => {
-                if (toJson(n || {}) === data.updateValue) return;
+                if (formEqual(n || {}, lastForm)) return;
                 if (fapi.config.forceCoverValue) {
                     fapi.coverValue(n || {});
                 } else {
@@ -260,11 +306,10 @@ export default function $FormCreate(FormCreate, components, directives) {
                 },
                 updateValue(value) {
                     if (data.destroyed) return;
-                    const json = toJson(value);
-                    if (data.updateValue === json) {
+                    if (formEqual(value, lastForm)) {
                         return;
                     }
-                    data.updateValue = json;
+                    lastForm = value;
                     vm.emit('update:modelValue', value);
                     nextTick(() => {
                         emit$form();

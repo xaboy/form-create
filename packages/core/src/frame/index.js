@@ -318,12 +318,15 @@ export default function FormCreateFactory(config) {
             loadData,
             CreateNode,
             bus: new Mitt(),
-            unwatch: [],
+            //使用 Set 保存，停止侦听时可以自行摘除，避免长期运行下无限堆积
+            unwatch: new Set(),
             options: ref({}),
             extendApiFn,
             fetchCache: new WeakMap(),
             tmpData: reactive({}),
         })
+        //兼容
+        this.unwatch.push = this.unwatch.add;
         listener.forEach(item => {
             this.bus.$on(item.name, item.callback);
         });
@@ -351,7 +354,7 @@ export default function FormCreateFactory(config) {
     extend(FormCreate.prototype, {
         init() {
             if (this.isSub()) {
-                this.unwatch.push(watch(() => this.vm.setupState.parent.setupState.fc.options.value, () => {
+                this.unwatch.add(watch(() => this.vm.setupState.parent.setupState.fc.options.value, () => {
                     this.initOptions();
                     this.$handle.api.refresh();
                 }, {deep: true, flush: 'sync'}));
@@ -448,7 +451,6 @@ export default function FormCreateFactory(config) {
                     if(option.watch === false) {
                         unwatch();
                     }
-                    this.unwatch.push(unwatch);
                     return val;
                 }
             }
@@ -605,8 +607,9 @@ export default function FormCreateFactory(config) {
             const un = () => {
                 Object.keys(unwatch).forEach(k => unwatch[k].fn());
                 unwatch = {};
+                this.unwatch.delete(un);
             }
-            this.unwatch.push(un);
+            this.unwatch.add(un);
             return un;
         },
         isSub() {
@@ -670,8 +673,8 @@ export default function FormCreateFactory(config) {
                 this.bus.$off(item.name, item.callback);
             });
             this.tmpData = {};
-            this.unwatch.forEach(fn => fn());
-            this.unwatch = [];
+            [...this.unwatch].forEach(fn => fn());
+            this.unwatch.clear();
             this.$handle.reloadRule([]);
         },
         updated() {

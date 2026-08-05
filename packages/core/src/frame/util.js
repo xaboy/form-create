@@ -27,8 +27,12 @@ export function copyRules(rules, mode) {
     return deepExtend([], [...rules], mode || false);
 }
 
+//保持同一个引用，mergeProps 才能按 opt 命中分类缓存；
+//arrayAttrs / normalAttrs 由 exportAttrs 原地追加，数组引用本身不会变
+const ruleMergeOpt = {array: arrayAttrs, normal: normalAttrs};
+
 export function mergeRule(rule, merge) {
-    mergeProps(Array.isArray(merge) ? merge : [merge], rule, {array: arrayAttrs, normal: normalAttrs});
+    mergeProps(Array.isArray(merge) ? merge : [merge], rule, ruleMergeOpt);
     return rule;
 }
 

@@ -18,7 +18,7 @@ const loadData = function (fc) {
                 let attrs = toArray(inject.getValue());
                 const unwatchs = [];
                 attrs.forEach(attr => {
-                    if (attr && (attr.attr || attr.template)) {
+                    if (attr && (attr.attr || attr.template || attr.handler)) {
                         let fn = (get) => {
                             let group;
                             if (rule && rule.__fc__) {

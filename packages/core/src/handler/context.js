@@ -12,8 +12,58 @@ import toArray from '@form-create/utils/lib/toarray';
 const noneKey = ['field', 'value', 'vm', 'template', 'name', 'config', 'control', 'inject', 'sync', 'payload', 'optionsTo', 'update', 'slotUpdate', 'computed', 'component', 'cache'];
 const oldValueTag = Symbol('oldValue');
 
+const conditionArgs = ['$condition', '$variableVal', '$val', '$form', '$scope', '$group', '$rule'];
+const computeArgs = ['$formulas', '$form', '$scope', '$group', '$rule', '$api'];
+
+//条件与公式都在 computed 里反复求值，而函数体只由规则中的字符串决定，
+//这里缓存编译结果，避免每次求值都重新编译一个函数
+const fnCache = new Map();
+const fnCacheLimit = 1000;
+
+function compileFn(args, body) {
+    const key = args.join(',') + '|' + body;
+    let fn = fnCache.get(key);
+    if (!fn) {
+        //公式一般是有限的几种，超出上限说明调用方在动态拼接，整体丢弃防止无限增长
+        if (fnCache.size >= fnCacheLimit) {
+            fnCache.clear();
+        }
+        fn = new Function(...args, body);
+        fnCache.set(key, fn);
+    }
+    return fn;
+}
+
 export default function useContext(Handler) {
     extend(Handler.prototype, {
+        //computed 更新原先各自 setTimeout(0)，N 个字段同时联动就会拆成 N 个宏任务，
+        //Vue 在任务之间各 flush 一次，render 被放大 N 倍。
+        //这里改成按入队顺序在同一个宏任务里串行执行，并在 flush 期间继续吞掉级联入队，
+        //相对顺序与原先一致，只是把中间多余的渲染合并掉。
+        scheduleComputedUpdate(fn) {
+            (this._computedQueue || (this._computedQueue = [])).push(fn);
+            if (this._computedFlushing || this._computedScheduled) {
+                return;
+            }
+            this._computedScheduled = true;
+            setTimeout(() => {
+                this._computedScheduled = false;
+                this._computedFlushing = true;
+                try {
+                    const queue = this._computedQueue || [];
+                    this._computedQueue = [];
+                    for (let i = 0; i < queue.length; i++) {
+                        invoke(queue[i]);
+                        if (this._computedQueue && this._computedQueue.length) {
+                            queue.push(...this._computedQueue);
+                            this._computedQueue = [];
+                        }
+                    }
+                } finally {
+                    this._computedFlushing = false;
+                }
+            });
+        },
         getCtx(id) {
             return this.getFieldCtx(id) || this.getNameCtx(id)[0] || this.ctxs[id];
         },
@@ -85,60 +135,89 @@ export default function useContext(Handler) {
             }
         },
         watchCtx(ctx) {
-            const all = attrs();
-            all.filter(k => k[0] !== '_' && k[0] !== '$' && noneKey.indexOf(k) === -1).forEach((key) => {
-                const ref = toRef(ctx.rule, key);
-                const flag = key === 'children';
-                ctx.refRule[key] = ref;
-                ctx.watch.push(watch(flag ? () => is.Function(ref.value) ? ref.value : [...(ref.value || [])] : () => ref.value, (_, o) => {
-                    let n = ref.value;
-                    if (this.isBreakWatch()) return;
-                    if (flag && ctx.parser.loadChildren === false) {
-                        this.$render.clearCache(ctx);
-                        this.nextRefresh();
-                        return;
-                    }
-                    this.watching = true;
-                    nextTick(() => {
-                        this.targetHook(ctx, 'watch', {key, oldValue: o, newValue: n});
-                    });
-                    if (key === 'hidden' && Boolean(n) !== Boolean(o)) {
-                        this.$render.clearCacheAll();
-                        nextTick(() => {
-                            this.targetHook(ctx, 'hidden', {value: n});
-                        });
-                    }
-                    if ((key === 'ignore' && ctx.input) || (key === 'hidden' && (ctx.rule.ignore === 'hidden' || this.options.ignoreHiddenFields))) {
-                        this.syncForm();
-                    } else if (key === 'link') {
-                        ctx.link();
-                        return;
-                    } else if (['props', 'on', 'deep'].indexOf(key) > -1) {
-                        this.parseInjectEvent(ctx.rule, n || {});
-                        if (key === 'props' && ctx.input) {
-                            this.setFormData(ctx, ctx.parser.toFormValue(ctx.rule.value, ctx));
-                        }
-                    } else if (key === 'emit') {
-                        this.parseEmit(ctx);
-                    } else if (['prefix', 'suffix'].indexOf(key) > -1)
-                        n && this.loadFn(n, ctx.rule);
-                    else if (key === 'type') {
-                        ctx.updateType();
-                        this.bindParser(ctx);
-                    } else if (flag) {
-                        if (is.Function(o)) {
-                            o = ctx.getPending('children', []);
-                        }
-                        if (is.Function(n)) {
-                            n = ctx.loadChildrenPending();
-                        }
-                        this.updateChildren(ctx, n, o);
-                    }
+            const watchKeys = attrs().filter(k => k[0] !== '_' && k[0] !== '$' && noneKey.indexOf(k) === -1);
+            const watched = {};
+
+            const makeHandler = (key, ref, flag) => (_, o) => {
+                let n = ref.value;
+                if (this.isBreakWatch()) return;
+                if (flag && ctx.parser.loadChildren === false) {
                     this.$render.clearCache(ctx);
-                    this.refresh();
-                    this.watching = false;
-                }, {deep: !flag, sync: flag}));
+                    this.nextRefresh();
+                    return;
+                }
+                this.watching = true;
+                nextTick(() => {
+                    this.targetHook(ctx, 'watch', {key, oldValue: o, newValue: n});
+                });
+                if (key === 'hidden' && Boolean(n) !== Boolean(o)) {
+                    //hidden 只决定自己这一条渲不渲染，兄弟节点的 vnode 内容并不受影响，
+                    //由末尾的 clearCache(ctx) 失效自身与父链即可。
+                    //早先这里清空全表缓存，几百个字段同时联动时会退化成 O(n²) 次 prop 重建
+                    nextTick(() => {
+                        this.targetHook(ctx, 'hidden', {value: n});
+                    });
+                }
+                if ((key === 'ignore' && ctx.input) || (key === 'hidden' && (ctx.rule.ignore === 'hidden' || this.options.ignoreHiddenFields))) {
+                    this.syncForm();
+                } else if (key === 'link') {
+                    ctx.link();
+                    return;
+                } else if (['props', 'on', 'deep'].indexOf(key) > -1) {
+                    this.parseInjectEvent(ctx.rule, n || {});
+                    if (key === 'props' && ctx.input) {
+                        this.setFormData(ctx, ctx.parser.toFormValue(ctx.rule.value, ctx));
+                    }
+                } else if (key === 'emit') {
+                    this.parseEmit(ctx);
+                } else if (['prefix', 'suffix'].indexOf(key) > -1)
+                    n && this.loadFn(n, ctx.rule);
+                else if (key === 'type') {
+                    ctx.updateType();
+                    this.bindParser(ctx);
+                } else if (flag) {
+                    if (is.Function(o)) {
+                        o = ctx.getPending('children', []);
+                    }
+                    if (is.Function(n)) {
+                        n = ctx.loadChildrenPending();
+                    }
+                    this.updateChildren(ctx, n, o);
+                }
+                this.$render.clearCache(ctx);
+                this.refresh();
+                this.watching = false;
+            };
+
+            const watchKey = (key, appeared) => {
+                if (watched[key]) return;
+                watched[key] = true;
+                const ref = ctx.refRule[key];
+                const flag = key === 'children';
+                const handler = makeHandler(key, ref, flag);
+                ctx.watch.push(watch(flag ? () => is.Function(ref.value) ? ref.value : [...(ref.value || [])] : () => ref.value, handler, {deep: !flag, sync: flag}));
+                //属性是这一次才出现的，补发一次由 undefined 变为当前值的通知
+                appeared && handler(ref.value, undefined);
+            };
+
+            //只为规则上已存在的属性建立侦听。一条规则可写的属性有二十多个，
+            //实际用到的往往不到十个，全量创建 deep watcher 是初始化的主要开销。
+            //refRule 仍然保留全部 toRef，对外行为不变。
+            watchKeys.forEach(key => {
+                ctx.refRule[key] = toRef(ctx.rule, key);
+                if (hasProperty(ctx.rule, key)) {
+                    watchKey(key);
+                }
             });
+
+            //规则上新增属性时补建对应侦听，保证「后来才写上的属性」同样能响应
+            ctx.watch.push(watch(() => Object.keys(ctx.rule).join('|'), () => {
+                watchKeys.forEach(key => {
+                    if (!watched[key] && hasProperty(ctx.rule, key)) {
+                        watchKey(key, true);
+                    }
+                });
+            }));
             ctx.refRule['__$title'] = computed(() => {
                 let title = (typeof ctx.rule.title === 'object' ? ctx.rule.title.title : ctx.rule.title) || '';
                 if (title) {
@@ -237,12 +316,10 @@ export default function useContext(Handler) {
                         callback(computedValue.value);
                     }
                     ctx.watch.push(watch(computedValue, (n) => {
-                        if(n === oldValueTag) {
-                            return ;
+                        if (n === oldValueTag) {
+                            return;
                         }
-                        setTimeout(() => {
-                            callback(n);
-                        });
+                        this.scheduleComputedUpdate(() => callback(n));
                     }, {deep: true}));
                 });
 
@@ -459,7 +536,7 @@ export default function useContext(Handler) {
                         } else if (is.Function(one.handler)) {
                             flag = invoke(() => one.handler(this.api, ctx.rule));
                         } else {
-                            flag = invoke(() => (new Function('$condition', '$variableVal', '$val', '$form', '$scope', '$group', '$rule', `with($form){with($scope){with(this){with($group){ return $condition['${one.condition}'](${one.variable ? '$variableVal' : field}, ${compare ? compare : '$val'}); }}}}`)).call(this.api.form, condition, variableVal, one.value, this.api.top.form, this.api.top === this.api.scope ? {} : this.api.scope.form, group ? (this.subRuleData[group.id] || {}) : {}, ctx.rule));
+                            flag = invoke(() => compileFn(conditionArgs, `with($form){with($scope){with(this){with($group){ return $condition['${one.condition}'](${one.variable ? '$variableVal' : field}, ${compare ? compare : '$val'}); }}}}`).call(this.api.form, condition, variableVal, one.value, this.api.top.form, this.api.top === this.api.scope ? {} : this.api.scope.form, group ? (this.subRuleData[group.id] || {}) : {}, ctx.rule));
                         }
                         if (or && flag) {
                             return true;
@@ -499,7 +576,7 @@ export default function useContext(Handler) {
                 }
                 return obj;
             }, {})
-            return invoke(() => (new Function('$formulas', '$form', '$scope', '$group', '$rule', '$api', `with($form){with($scope){with(this){with($group){with($formulas){ return ${str} }}}}}`)).call(this.api.form, formulas, this.api.top.form, this.api.top === this.api.scope ? {} : this.api.scope.form, group ? (this.subRuleData[group.id] || {}) : {}, ctx.rule, this.api), undefined);
+            return invoke(() => compileFn(computeArgs, `with($form){with($scope){with(this){with($group){with($formulas){ return ${str} }}}}}`).call(this.api.form, formulas, this.api.top.form, this.api.top === this.api.scope ? {} : this.api.scope.form, group ? (this.subRuleData[group.id] || {}) : {}, ctx.rule, this.api), undefined);
         },
         updateChildren(ctx, n, o) {
             this.deferSyncValue(() => {
