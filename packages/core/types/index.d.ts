@@ -534,8 +534,6 @@ export interface BaseOptions<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
     ignoreHiddenFields?: boolean;
     validateOnSubmit?: boolean;
     forceCoverValue?: boolean;
-    //值变更时是否启用 value-only 渲染（跳过完整 initProp，仅同步 model 并重建布局）；默认 true
-    valueOnly?: boolean;
     formData?: FormData;
     el?: Element | string;
     onValidateFail?: (e: Object, form: {api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>}) => void;

@@ -12,7 +12,7 @@ export default function useInput(Handler) {
             this.changeStatus = true;
             //先写入 formData，再按 value-only 失效，便于 syncModelProp 读到新值
             this.setFormData(ctx, formValue);
-            this.$render.clearCache(ctx, 'value');
+            this.$render.clearCache(ctx);
             this.nextRefresh();
             this.syncValue();
             this.valueChange(ctx, value);
@@ -62,7 +62,7 @@ export default function useInput(Handler) {
         },
         onBaseInput(ctx, value) {
             this.setFormData(ctx, value);
-            this.$render.clearCache(ctx, 'value');
+            this.$render.clearCache(ctx);
             this.nextRefresh();
         },
         setFormData(ctx, value) {

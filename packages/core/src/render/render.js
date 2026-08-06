@@ -1,13 +1,10 @@
-import extend from '@form-create/utils/lib/extend';
+import extend, {copy} from '@form-create/utils/lib/extend';
 import mergeProps from '@form-create/utils/lib/mergeprops';
-import is, {hasProperty} from '@form-create/utils/lib/type';
+import is from '@form-create/utils/lib/type';
 import {invoke, makeSlotBag, mergeRule} from '../frame/util';
 import toCase, {lower} from '@form-create/utils/lib/tocase';
 import {deepSet, toLine} from '@form-create/utils';
 import {computed, nextTick} from 'vue';
-
-//manager.mergeProp / makeWrap 会改写的布局字段；value-only 复用前必须从 rule 重建
-const layoutPropKeys = ['info', 'wrap', 'col', 'title'];
 
 export default function useRender(Render) {
     extend(Render.prototype, {
@@ -47,14 +44,9 @@ export default function useRender(Render) {
         },
         renderSlot(slotBag, ctx, parent) {
             if (this.isFragment(ctx)) {
-                //fragment 自身不产出 vnode，原先每轮渲染都要重算一次 prop。
-                //prop 的依赖与 renderCtx 完全相同，因此沿用 clearCache 的失效时机按 ctx 记忆
-                if (this.force || !this.fragmentProp[ctx.id]) {
-                    ctx.initProp();
-                    this.mergeGlobal(ctx);
-                    ctx.initNone();
-                    this.fragmentProp[ctx.id] = true;
-                }
+                ctx.initProp();
+                this.mergeGlobal(ctx);
+                ctx.initNone();
                 const slots = this.renderChildren(ctx.loadChildrenPending(), ctx);
                 const def = slots.default;
                 def && slotBag.setSlot(ctx.rule.slot, () => def());
@@ -75,33 +67,7 @@ export default function useRender(Render) {
                     return mergeRule({}, [g['*'] || g.default || {}, g[originType] || g[type] || {}]);
                 });
             }
-            ctx.prop = mergeRule({}, [this.cacheConfig[trueType].value, ctx.prop]);
-        },
-        //value-only 跳过了 tidyRule/mergeProp，而 makeWrap 会原地 delete wrap.title/class，
-        //render 也会改写 wrap/native。这里从 rule 还原布局字段再走 manager 合并，
-        //避免污染后的 prop 被下一轮复用。
-        renewLayoutProp(ctx) {
-            const prop = ctx.prop;
-            if (!prop) return;
-            const rule = ctx.rule;
-            layoutPropKeys.forEach(name => {
-                if (hasProperty(rule, name)) {
-                    const val = rule[name];
-                    //浅拷贝，避免后续 deepSet / tidyRule 写回污染原始 rule
-                    prop[name] = is.Object(val) ? {...val} : val;
-                } else {
-                    delete prop[name];
-                }
-            });
-            if (hasProperty(rule, 'native')) {
-                prop.native = rule.native;
-            } else {
-                delete prop.native;
-            }
-            this.$manager.tidyRule(ctx);
-            //与完整构建对齐：deep 可能写 wrap/col/title，必须在 mergeProp 前重放
-            this.deepSet(ctx);
-            this.$manager.mergeProp(ctx);
+            ctx.prop = mergeRule({}, [this.cacheConfig[ctx.trueType].value, ctx.prop]);
         },
         setOptions(ctx) {
             const opt = ctx.loadPending({key: 'options', origin: ctx.prop.options, def: []});
@@ -133,22 +99,13 @@ export default function useRender(Render) {
                 const rule = ctx.rule;
                 if (this.force || (!this.cache[ctx.id]) || this.cache[ctx.id].slot !== rule.slot) {
                     let vn;
-                    //value-only：setValue 已写回 model，父链也只需重拼 vnode，不必重跑 prop 管线
-                    const reuseProp = !this.force && this.valueOnly[ctx.id] && ctx.prop;
-                    delete this.valueOnly[ctx.id];
-                    if (!reuseProp) {
-                        ctx.initProp();
-                        this.mergeGlobal(ctx);
-                        ctx.initNone();
-                        this.$manager.tidyRule(ctx);
-                        this.deepSet(ctx);
-                        this.setOptions(ctx);
-                        this.ctxProp(ctx);
-                    } else {
-                        //makeWrap / render 会原地改写 wrap、native 等布局字段；
-                        //value-only 跳过了 tidyRule/mergeProp，必须从 rule 重建后再合并
-                        this.renewLayoutProp(ctx);
-                    }
+                    ctx.initProp();
+                    this.mergeGlobal(ctx);
+                    ctx.initNone();
+                    this.$manager.tidyRule(ctx);
+                    this.deepSet(ctx);
+                    this.setOptions(ctx);
+                    this.ctxProp(ctx);
                     let prop = ctx.prop;
                     prop.preview = !!(prop.preview != null ? prop.preview : this.$handle.preview);
                     prop.props.formCreateInject = this.injectProp(ctx);
@@ -193,8 +150,7 @@ export default function useRender(Render) {
                             inject.children = children;
                             _vn = slot(inject)
                         } else {
-                            //children 每轮 vn() 新建；内置 parser 不 mutate，无需再浅拷贝
-                            _vn = preview ? ctx.parser.preview(children, ctx) : ctx.parser.render(children, ctx);
+                            _vn = preview ? ctx.parser.preview(copy(children), ctx) : ctx.parser.render(copy(children), ctx);
                         }
                         _vn = this.renderSides(_vn, ctx);
                         if (prop.title?.show) {
