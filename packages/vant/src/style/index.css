@@ -492,4 +492,22 @@
     }
 }
 
+.form-create-m.is-numbered {
+    counter-reset: q;
+}
+
+.form-create-m.is-numbered .fc-form-title {
+    counter-increment: q;
+}
+
+.form-create-m.is-numbered .fc-form-title::before {
+    content: counter(q) '. ';
+    color: var(--fc-number-color, inherit);
+    font-weight: 600;
+}
+
+.form-create-m.is-numbered.is-number-chinese .fc-form-title::before {
+    content: counter(q, simp-chinese-informal) '、';
+}
+
 

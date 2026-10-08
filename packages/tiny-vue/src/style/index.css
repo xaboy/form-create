@@ -14,6 +14,24 @@
     margin-top: 12px;
 }
 
+.form-create.is-numbered {
+    counter-reset: q;
+}
+
+.form-create.is-numbered .fc-form-title {
+    counter-increment: q;
+}
+
+.form-create.is-numbered .fc-form-title::before {
+    content: counter(q) '. ';
+    color: var(--fc-number-color, inherit);
+    font-weight: 600;
+}
+
+.form-create.is-numbered.is-number-chinese .fc-form-title::before {
+    content: counter(q, simp-chinese-informal) '、';
+}
+
 
 .form-create .tiny-form-item__content > .tiny-picker, .form-create .tiny-form-item__content > .tiny-numeric {
     width: 280px;
