@@ -30,6 +30,17 @@ const getGroupInject = (vm, parent) => {
     }
 }
 
+/**
+ * 当前环境能否往 head 注入 style。
+ * uni-app 的 App / 小程序以及 SSR 没有 document，此时返回 false。
+ * @returns {boolean}
+ */
+function canInjectStyleSheet() {
+    return typeof document !== 'undefined'
+        && typeof document.createElement === 'function'
+        && document.head != null;
+}
+
 export default function $FormCreate(FormCreate, components, directives) {
     return defineComponent({
         name: 'FormCreate' + (FormCreate.isMobile ? 'Mobile' : ''),
@@ -136,6 +147,9 @@ export default function $FormCreate(FormCreate, components, directives) {
             let styleEl = null;
 
             onBeforeMount(() => {
+                if (!canInjectStyleSheet()) {
+                    return;
+                }
                 watchEffect(() => {
                     let content = '';
                     const globalClass = (props.option && props.option.globalClass) || {};
@@ -201,7 +215,9 @@ export default function $FormCreate(FormCreate, components, directives) {
                 rmSubForm();
                 data.destroyed = true;
                 fc.unmount();
-                styleEl && (styleEl.parentNode || styleEl.parentElement) && document.head.removeChild(styleEl);
+                if (styleEl && styleEl.parentNode) {
+                    styleEl.parentNode.removeChild(styleEl);
+                }
             })
 
             onUpdated(() => {
