@@ -35,11 +35,35 @@ export default function useRender(Render) {
                 return;
             }
             this.$manager.beforeRender();
+            this.applyShowNumber(this.$manager.rule);
             const slotBag = makeSlotBag();
             this.sort.forEach((k) => {
                 this.renderSlot(slotBag, this.$handle.ctxs[k]);
             });
             return this.$manager.render(slotBag);
+        },
+        applyShowNumber(rule) {
+            const options = this.$handle.options || {};
+            if (!options.showNumber || !rule) {
+                return;
+            }
+            rule.class = this.mergeClass(rule.class, 'is-numbered');
+            if (options.showNumber === 'chinese') {
+                rule.class = this.mergeClass(rule.class, 'is-number-chinese');
+            }
+            const color = options.numberColor;
+            const baseStyle = (options.form || {}).style;
+            if (!color) {
+                rule.style = baseStyle;
+                return;
+            }
+            if (is.String(baseStyle)) {
+                rule.style = `${baseStyle};--fc-number-color:${color}`;
+            } else if (Array.isArray(baseStyle)) {
+                rule.style = baseStyle.concat({'--fc-number-color': color});
+            } else {
+                rule.style = {...(baseStyle || {}), '--fc-number-color': color};
+            }
         },
         renderSlot(slotBag, ctx, parent) {
             if (this.isFragment(ctx)) {

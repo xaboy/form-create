@@ -561,6 +561,10 @@ export interface BaseOptions<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
     preview?: boolean;
     appendValue?: boolean;
     ignoreHiddenFields?: boolean;
+    /** 题号。true、'decimal' 为「1. 」，'chinese' 为「一、」，false 不显示 */
+    showNumber?: boolean | 'decimal' | 'chinese';
+    /** 题号颜色，写入 --fc-number-color；留空则跟随外部文字颜色 */
+    numberColor?: string;
     validateOnSubmit?: boolean;
     forceCoverValue?: boolean;
     transformEventName?: boolean;
