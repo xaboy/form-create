@@ -30,5 +30,9 @@ export default function getConfig() {
             col: undefined,
             click: undefined,
         },
+        info: {
+            type: 'popover',
+            render: 'html',
+        },
     };
 }

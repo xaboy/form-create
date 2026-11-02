@@ -22,6 +22,7 @@ import {Upload} from 'tdesign-vue-next/es/upload';
 import {Tree} from 'tdesign-vue-next/es/tree';
 import {Dialog} from 'tdesign-vue-next/es/dialog';
 import {Popup} from 'tdesign-vue-next/es/popup';
+import {Tooltip} from 'tdesign-vue-next/es/tooltip';
 import {Transfer} from 'tdesign-vue-next/es/transfer';
 import 'tdesign-vue-next/es/style/index.css'
 
@@ -55,6 +56,7 @@ export default function install(formCreate) {
         app.component(Textarea.name) || app.use(Textarea);
         app.component(Dialog.name) || app.use(Dialog);
         app.component(Popup.name) || app.use(Popup);
+        app.component(Tooltip.name) || app.use(Tooltip);
         app.component(Transfer.name) || app.use(Transfer);
     });
 

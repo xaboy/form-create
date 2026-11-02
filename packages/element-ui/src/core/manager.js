@@ -8,6 +8,18 @@ function isTooltip(info) {
     return info.type === 'tooltip';
 }
 
+function isInfoText(info) {
+    return info.render === 'text' || info.render === 'innerText';
+}
+
+function infoContentRule(value, asText) {
+    const content = value == null ? '' : String(value);
+    return {
+        type: 'div',
+        props: asText ? {textContent: content} : {innerHTML: content},
+    };
+}
+
 function tidy(props, name) {
     if (!hasProperty(props, name)) return;
     if (is.String(props[name])) {
@@ -78,6 +90,8 @@ export default {
     mergeProp(ctx) {
         const def = {
             info: {
+                type: 'popover',
+                render: 'html',
                 trigger: 'hover',
                 placement: 'top-start',
                 icon: true,
@@ -174,13 +188,11 @@ export default {
             delete prop.props.info;
             delete prop.props.align;
             delete prop.props.native;
-
-            const field = 'content';
-            if (infoProp.info && !hasProperty(prop.props, field)) {
-                prop.props[field] = ctx.refRule?.__$info?.value;
-            }
+            delete prop.props.render;
+            prop.props.width = 'auto';
 
             children[infoProp.align !== 'left' ? 'unshift' : 'push'](this.$r(mergeProps([infoProp, prop]), {
+                [isTip ? 'content' : 'default']: () => this.$r(infoContentRule(ctx.refRule?.__$info?.value, isInfoText(infoProp))),
                 [titleProp.slot || (isTip ? 'default' : 'reference')]: () => this.$r({
                     type: 'ElIcon',
                     style: 'top:2px',

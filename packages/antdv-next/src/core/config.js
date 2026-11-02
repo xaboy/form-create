@@ -34,5 +34,9 @@ export default function getConfig() {
             col: UNDEF,
             click: UNDEF
         },
+        info: {
+            type: 'popover',
+            render: 'html',
+        },
     };
 }

@@ -8,6 +8,18 @@ function isTooltip(info) {
     return info.type === 'tooltip';
 }
 
+function isInfoText(info) {
+    return info.render === 'text' || info.render === 'innerText';
+}
+
+function infoContentRule(value) {
+    const content = value == null ? '' : String(value);
+    return {
+        type: 'div',
+        props: {innerHTML: content},
+    };
+}
+
 function tidy(props, name) {
     if (!hasProperty(props, name)) return;
     if (is.String(props[name])) {
@@ -76,6 +88,8 @@ export default {
     mergeProp(ctx) {
         const def = {
             info: {
+                type: 'popover',
+                render: 'html',
                 trigger: 'hover',
                 placement: 'top-start',
                 icon: true,
@@ -172,20 +186,28 @@ export default {
             delete prop.props.info;
             delete prop.props.align;
             delete prop.props.native;
+            delete prop.props.render;
+            delete prop.props.type;
 
             const field = 'content';
-            if (infoProp.info && !hasProperty(prop.props, field)) {
-                prop.props[field] = ctx.refRule?.__$info?.value;
-            }
-
-            children[infoProp.align !== 'left' ? 'unshift' : 'push'](this.$r(mergeProps([infoProp, prop]), {
+            const infoValue = ctx.refRule?.__$info?.value;
+            const slots = {
                 [titleProp.slot || (isTip ? 'default' : 'reference')]: () => this.$r({
                     type: infoProp.icon === true ? 'icon-warning' : infoProp.icon,
                     class: 'fc-form-info-icon',
                     style: 'top:2px;display:inline-flex;vertical-align:middle;cursor:help;',
                     key: `${uni}i`
                 })
-            }));
+            };
+            if (infoProp.info && !hasProperty(prop.props, field)) {
+                if (isInfoText(infoProp)) {
+                    prop.props[field] = infoValue == null ? '' : String(infoValue);
+                } else {
+                    slots[isTip ? 'content' : 'default'] = () => this.$r(infoContentRule(infoValue));
+                }
+            }
+
+            children[infoProp.align !== 'left' ? 'unshift' : 'push'](this.$r(mergeProps([infoProp, prop]), slots));
         }
         const _prop = mergeProps([titleProp, {
             props: tidyRule(titleProp),

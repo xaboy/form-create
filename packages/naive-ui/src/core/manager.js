@@ -15,6 +15,18 @@ function isFalse(val) {
     return val === false;
 }
 
+function isInfoText(info) {
+    return info.render === 'text' || info.render === 'innerText';
+}
+
+function infoContentRule(value) {
+    const content = value == null ? '' : String(value);
+    return {
+        type: 'div',
+        props: {innerHTML: content},
+    };
+}
+
 function tidyBool(opt, name) {
     if (hasProperty(opt, name) && !is.Object(opt[name])) {
         opt[name] = {show: !!opt[name]};
@@ -63,6 +75,7 @@ export default {
         const def = {
             info: {
                 type: 'popover',
+                render: 'html',
                 placement: 'top-start',
                 icon: 'icon-info'
             },
@@ -152,9 +165,11 @@ export default {
             delete prop.props.info;
             delete prop.props.align;
             delete prop.props.native;
+            delete prop.props.render;
 
+            const infoValue = ctx.refRule?.__$info?.value;
             children[infoProp.align !== 'left' ? 'unshift' : 'push'](this.$r(mergeProps([infoProp, prop]), {
-                [infoProp.slot || 'default']: () => ctx.refRule?.__$info?.value,
+                [infoProp.slot || 'default']: () => isInfoText(infoProp) ? (infoValue == null ? '' : String(infoValue)) : this.$r(infoContentRule(infoValue)),
                 [titleProp.slot || 'trigger']: () => this.$r({
                     type: 'NIcon',
                     props: {

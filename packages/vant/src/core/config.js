@@ -31,5 +31,8 @@ export default function getConfig() {
             col: undefined,
             click: undefined,
         },
+        info: {
+            render: 'html',
+        },
     };
 }

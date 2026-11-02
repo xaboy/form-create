@@ -14,6 +14,18 @@ function isFalse(val) {
     return val === false;
 }
 
+function isInfoText(info) {
+    return info.render === 'text' || info.render === 'innerText';
+}
+
+function infoContentRule(value) {
+    const content = value == null ? '' : String(value);
+    return {
+        type: 'div',
+        props: {innerHTML: content},
+    };
+}
+
 function tidyBool(opt, name) {
     if (hasProperty(opt, name) && !is.Object(opt[name])) {
         opt[name] = {show: !!opt[name]};
@@ -75,6 +87,7 @@ export default {
         const def = {
             info: {
                 type: 'popover',
+                render: 'html',
                 position: 'tl',
                 icon: 'icon-info-circle'
             },
@@ -174,18 +187,25 @@ export default {
             delete prop.props.info;
             delete prop.props.align;
             delete prop.props.native;
+            delete prop.props.render;
 
             const field = 'content';
-            if (infoProp.info && !hasProperty(prop.props, field)) {
-                prop.props[field] = ctx.refRule?.__$info?.value;
-            }
-            children[infoProp.align !== 'left' ? 'unshift' : 'push'](this.$r(mergeProps([infoProp, prop]), {
+            const infoValue = ctx.refRule?.__$info?.value;
+            const slots = {
                 [titleProp.slot || 'default']: () => this.$r({
                     type: infoProp.icon === true ? 'icon-info-circle' : (infoProp.icon || ''),
                     props: {type: infoProp.icon === true ? 'icon-info-circle' : infoProp.icon},
                     key: `${uni}i`
                 })
-            }))
+            };
+            if (infoProp.info && !hasProperty(prop.props, field)) {
+                if (isInfoText(infoProp)) {
+                    prop.props[field] = infoValue == null ? '' : String(infoValue);
+                } else {
+                    slots.content = () => this.$r(infoContentRule(infoValue));
+                }
+            }
+            children[infoProp.align !== 'left' ? 'unshift' : 'push'](this.$r(mergeProps([infoProp, prop]), slots))
         }
 
         const _prop = mergeProps([titleProp, {

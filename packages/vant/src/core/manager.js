@@ -15,6 +15,18 @@ function isFalse(val) {
     return val === false;
 }
 
+function isInfoText(info) {
+    return info.render === 'text' || info.render === 'innerText';
+}
+
+function infoContentRule(value) {
+    const content = value == null ? '' : String(value);
+    return {
+        type: 'div',
+        props: {innerHTML: content},
+    };
+}
+
 function tidyBool(opt, name) {
     if (hasProperty(opt, name) && !is.Object(opt[name])) {
         opt[name] = {show: !!opt[name]};
@@ -71,6 +83,7 @@ export default {
     mergeProp(ctx) {
         const def = {
             info: {
+                render: 'html',
                 icon: true,
             },
             title: {},
@@ -183,7 +196,12 @@ export default {
             on: {
                 click: (...args) => {
                     if (flag && infoProp.info) {
-                        showNotify({type: 'warning', message: ctx.refRule?.__$info?.value, duration: 1000});
+                        const value = ctx.refRule?.__$info?.value;
+                        showNotify({
+                            type: 'warning',
+                            message: isInfoText(infoProp) ? (value == null ? '' : String(value)) : this.$r(infoContentRule(value)),
+                            duration: 1000
+                        });
                     }
                     this.$handle.targetHook(ctx, 'titleClick', {args});
                 }
