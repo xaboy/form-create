@@ -633,6 +633,10 @@ export interface BaseApi<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
 
     disabled(disabled: Boolean, field: string | Array<string>): void;
 
+    required(required: Boolean): void;
+
+    required(required: Boolean, field: string | Array<string>): void;
+
     model(): Rule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
 
     model(origin: true): FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>;
