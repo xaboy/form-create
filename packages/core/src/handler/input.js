@@ -8,6 +8,17 @@ export default function useInput(Handler) {
     extend(Handler.prototype, {
         setValue(ctx, value, formValue, setFlag) {
             if (ctx.deleted) return;
+            if (this.options.trim) {
+                if (is.String(value)) {
+                    value = value.trim();
+                }
+                if (is.String(formValue)) {
+                    formValue = formValue.trim();
+                }
+                if (value === ctx.rule.value) {
+                    return;
+                }
+            }
             ctx.rule.value = value;
             this.changeStatus = true;
             //先写入 formData，再按 value-only 失效，便于 syncModelProp 读到新值
