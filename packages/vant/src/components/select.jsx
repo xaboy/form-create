@@ -8,6 +8,7 @@ export default defineComponent({
     inheritAttrs: false,
     props: {
         disabled: Boolean,
+        clearable: Boolean,
         placeholder: String,
         columnsFieldNames: Object,
         modelValue: [String, Number, Boolean],
@@ -57,12 +58,23 @@ export default defineComponent({
                 onInput(selectedValues[0]);
                 show.value = false;
             },
+            clear(e) {
+                e.stopPropagation();
+                onInput('');
+            }
         }
     },
     render() {
+        const clearIcon = () => {
+            return this.$props.clearable && this.modelValue ?
+                <i class="van-badge__wrapper van-icon van-icon-clear van-field__clear"
+                   onClick={this.clear}></i> : undefined;
+        }
         return <div class="_fc-select">
             <van-field ref="el" placeholder={this.placeholder} readonly disabled={this.$props.disabled} onClick={this.open}
-                model-value={this.inputValue} isLink/>
+                model-value={this.inputValue} isLink v-slots={{
+                'right-icon': clearIcon
+            }}/>
             <van-popup show={this.show} onUpdate:show={(v) => this.show = v} round position="bottom">
                 <van-picker
                     {...this.$attrs}
