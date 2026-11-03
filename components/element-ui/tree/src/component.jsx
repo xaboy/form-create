@@ -1,5 +1,6 @@
 import {defineComponent} from 'vue';
 import toArray from '@form-create/utils/lib/toarray';
+import './style.css';
 
 const NAME = 'fcTree';
 
@@ -17,6 +18,7 @@ export default defineComponent({
     },
     props: {
         type: String,
+        disabled: Boolean,
         modelValue: {
             type: [Array, String, Number],
             default: () => ([])
@@ -30,6 +32,10 @@ export default defineComponent({
     },
     methods: {
         updateValue() {
+            if (this.disabled) {
+                this.setValue();
+                return;
+            }
             if (!this.$refs.tree) return;
             let value;
             if (this.type === 'selected') {
@@ -48,10 +54,23 @@ export default defineComponent({
             } else {
                 this.$refs.tree.setCheckedKeys(toArray(this.modelValue));
             }
+        },
+        onClickCapture(e) {
+            if (!this.disabled) return;
+            if (e.target.closest && e.target.closest('.el-checkbox')) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
         }
     },
     render() {
-        return <ElTree {...this.$attrs} ref="tree" onCheck={this.updateValue}
+        const attrs = {...this.$attrs};
+        if (this.disabled) {
+            attrs.draggable = false;
+        }
+        return <ElTree {...attrs} ref="tree" aria-disabled={this.disabled || undefined}
+            onClickCapture={this.onClickCapture}
+            onCheck={this.updateValue}
             onNodeClick={this.updateValue}
             v-slots={this.$slots}/>;
     },
