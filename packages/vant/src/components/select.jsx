@@ -8,6 +8,7 @@ export default defineComponent({
     inheritAttrs: false,
     props: {
         disabled: Boolean,
+        clearable: Boolean,
         placeholder: String,
         title: String,
         visibleItemCount: [Number, String],
@@ -60,13 +61,22 @@ export default defineComponent({
                 onInput(selectedValue.value);
                 show.value = false;
             },
+            clear(e) {
+                e.stopPropagation();
+                onInput('');
+            }
         }
     },
     render() {
+        const clearIcon = () => {
+            return this.$props.clearable && !this.$props.disabled && this.value ?
+                <i class="van-badge__wrapper van-icon van-icon-clear van-field__clear"
+                   onClick={this.clear} slot="right-icon"></i> : undefined;
+        }
         return <div class="_fc-select">
             <van-field ref="el" placeholder={this.placeholder} readonly disabled={this.$props.disabled}
                        onClick={this.open}
-                       value={this.inputValue} isLink/>
+                       value={this.inputValue} isLink>{clearIcon()}</van-field>
             <van-popup value={this.show} onInput={(v) => this.show = v} round position="bottom">
                 <van-picker
                     {...this.formCreateInject.prop}

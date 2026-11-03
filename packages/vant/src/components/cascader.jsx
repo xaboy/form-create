@@ -94,7 +94,7 @@ export default defineComponent({
     },
     render() {
         const clearIcon = () => {
-            return this.$props.clearable && this.inputValue ?
+            return this.$props.clearable && !this.$props.disabled && this.inputValue ?
                 <i class="van-badge__wrapper van-icon van-icon-clear van-field__clear"
                    onClick={this.clear} slot="right-icon"></i> : undefined;
         }
