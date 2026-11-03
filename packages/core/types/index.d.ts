@@ -567,6 +567,8 @@ export interface BaseOptions<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
     numberColor?: string;
     validateOnSubmit?: boolean;
     forceCoverValue?: boolean;
+    /** 为 true 时，写入字符串值前去掉两端空白 */
+    trim?: boolean;
     transformEventName?: boolean;
     formData?: FormData;
     el?: Element | string;
