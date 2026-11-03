@@ -253,6 +253,9 @@ export default {
         getSrc(src) {
             return !this.srcKey ? src : src[this.srcKey];
         },
+        onFrameLoad(e) {
+            this.frameLoad(e.target.contentWindow || {});
+        },
         frameLoad(iframe) {
             this.onLoad(iframe);
             try {
@@ -309,11 +312,6 @@ export default {
         }
 
         const {width = '30%', height, src, title, modalTitle} = this.$props;
-        this.$nextTick(() => {
-            if (this.$refs.frame) {
-                this.frameLoad(this.$refs.frame.contentWindow || {});
-            }
-        });
         return <div class="_fc-frame">{node}
             <el-dialog
                 props={{appendToBody: true, modal: this.previewMask, title: modalTitle, visible: this.previewVisible}}
@@ -322,7 +320,7 @@ export default {
             </el-dialog>
             <el-dialog props={{width, title, appendToBody: true, ...this.modal, visible: this.frameVisible}}
                 on-close={() => (this.closeModel(true))}>
-                {(this.frameVisible || !this.reload) ? <iframe ref="frame" src={src} frameBorder="0" style={{
+                {(this.frameVisible || !this.reload) ? <iframe ref="frame" src={src} frameBorder="0" on-load={this.onFrameLoad} style={{
                     'height': height,
                     'border': '0 none',
                     'width': '100%'

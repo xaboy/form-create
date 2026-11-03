@@ -243,6 +243,9 @@ export default function createFrame(config) {
             getSrc(src) {
                 return !(this.srcKey) ? src : src[this.srcKey];
             },
+            onFrameLoad(e) {
+                this.frameLoad(e.target.contentWindow || {});
+            },
             frameLoad(iframe) {
                 this.onLoad(iframe);
                 try {
@@ -297,11 +300,6 @@ export default function createFrame(config) {
             else
                 node = this.makeFiles();
             const {width, height, src, title, modalTitle} = this.$props;
-            this.$nextTick(() => {
-                if (this.$refs.frame) {
-                    this.frameLoad(this.$refs.frame.contentWindow || {});
-                }
-            });
             return <div class="_fc-frame">{node}
                 <Modal v-model={this.previewVisible}
                     props={{mask: this.previewMask, title: modalTitle, footerHide: true}}>
@@ -309,7 +307,7 @@ export default function createFrame(config) {
                 </Modal>
                 <Modal props={{width, title, ...this.modal}} v-model={this.frameVisible}
                     on-on-cancel={() => (this.closeModel(true))}>
-                    {(this.frameVisible || !this.reload) ? <iframe ref="frame" src={src} frameBorder="0" style={{
+                    {(this.frameVisible || !this.reload) ? <iframe ref="frame" src={src} frameBorder="0" on-load={this.onFrameLoad} style={{
                         'height': height,
                         'border': '0 none',
                         'width': '100%'

@@ -240,6 +240,9 @@ export default {
         getSrc(src) {
             return !this.srcKey ? src : src[this.srcKey];
         },
+        onFrameLoad(e) {
+            this.frameLoad(e.target.contentWindow || {});
+        },
         frameLoad(iframe) {
             this.onLoad(iframe);
             try {
@@ -295,18 +298,13 @@ export default {
             Node = this.makeFiles();
 
         const {width = '30%', height, src, title, modalTitle} = this.$props;
-        this.$nextTick(() => {
-            if (this.$refs.frame) {
-                this.frameLoad(this.$refs.frame.contentWindow || {});
-            }
-        });
         return <div class="_fc-frame">{Node}
             <aModal props={{mask: this.previewMask, title: modalTitle, footer: null}} v-model={this.previewVisible}>
                 <img style="width: 100%" src={this.previewImage}/>
             </aModal>
             <aModal props={{width, title, ...this.modal, visible: this.frameVisible}}
                 on-cancel={() => (this.closeModal(true))}>
-                {(this.frameVisible || !this.reload) ? <iframe ref="frame" src={src} frameborder="0" style={{
+                {(this.frameVisible || !this.reload) ? <iframe ref="frame" src={src} frameborder="0" on-load={this.onFrameLoad} style={{
                     'height': height,
                     'border': '0 none',
                     'width': '100%'
