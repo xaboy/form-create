@@ -7,6 +7,10 @@ settings:
 importers:
 
   .:
+    dependencies:
+      dayjs:
+        specifier: ^1.11.23
+        version: 1.11.23
     devDependencies:
       '@vitejs/plugin-vue':
         specifier: ^5.2.4
@@ -1288,9 +1292,6 @@ importers:
       '@form-create/utils':
         specifier: workspace:^
         version: link:../utils
-      dayjs:
-        specifier: ^1.11.13
-        version: 1.11.20
       vue:
         specifier: ^3.5.12
         version: 3.5.34(typescript@5.9.3)
@@ -3714,6 +3715,9 @@ packages:
 
   dayjs@1.11.20:
     resolution: {integrity: sha512-YbwwqR/uYpeoP4pu043q+LTDLFBLApUP6VxRihdfNTqu4ubqMlGDLd6ErXhEgsyvY0K6nCs7nggYumAN+9uEuQ==}
+
+  dayjs@1.11.23:
+    resolution: {integrity: sha512-QDTCU0M0MxR3hQfnlDJfwekQiaanm1ubOD231u73WBckQ/fsamwRLiE2GBz6D3a/xF1NgfiDLJjXBa1hYOYTtQ==}
 
   debug@4.4.3:
     resolution: {integrity: sha512-RGwwWnwQvkVfavKVt22FGLw+xYSdzARwm0ru6DhTVA3umU5hZc28V3kO4stgYryrTlLpuvgI9GiijltAjNbcqA==}
@@ -6491,7 +6495,7 @@ snapshots:
       b-tween: 0.3.3
       b-validate: 1.5.3
       compute-scroll-into-view: 1.0.20
-      dayjs: 1.11.20
+      dayjs: 1.11.23
       number-precision: 1.6.0
       resize-observer-polyfill: 1.5.1
       scroll-into-view-if-needed: 2.2.31
@@ -9505,7 +9509,7 @@ snapshots:
       '@v-c/util': 1.0.19(vue@3.5.34(typescript@5.9.3))
       vue: 3.5.34(typescript@5.9.3)
 
-  '@v-c/picker@1.0.4(date-fns@4.1.0)(dayjs@1.11.20)(vue@3.5.34(typescript@5.9.3))':
+  '@v-c/picker@1.0.4(date-fns@4.1.0)(dayjs@1.11.23)(vue@3.5.34(typescript@5.9.3))':
     dependencies:
       '@v-c/overflow': 1.0.5(vue@3.5.34(typescript@5.9.3))
       '@v-c/resize-observer': 1.0.8(vue@3.5.34(typescript@5.9.3))
@@ -9514,7 +9518,7 @@ snapshots:
       vue: 3.5.34(typescript@5.9.3)
     optionalDependencies:
       date-fns: 4.1.0
-      dayjs: 1.11.20
+      dayjs: 1.11.23
 
   '@v-c/portal@1.0.8(vue@3.5.34(typescript@5.9.3))':
     dependencies:
@@ -9876,7 +9880,7 @@ snapshots:
       array-tree-filter: 2.1.0
       async-validator: 4.2.5
       csstype: 3.2.3
-      dayjs: 1.11.20
+      dayjs: 1.11.23
       dom-align: 1.12.4
       dom-scroll-into-view: 2.0.1
       lodash: 4.18.1
@@ -9912,7 +9916,7 @@ snapshots:
       '@v-c/mutate-observer': 1.0.1(vue@3.5.34(typescript@5.9.3))
       '@v-c/notification': 1.0.0(vue@3.5.34(typescript@5.9.3))
       '@v-c/pagination': 1.0.0(vue@3.5.34(typescript@5.9.3))
-      '@v-c/picker': 1.0.4(date-fns@4.1.0)(dayjs@1.11.20)(vue@3.5.34(typescript@5.9.3))
+      '@v-c/picker': 1.0.4(date-fns@4.1.0)(dayjs@1.11.23)(vue@3.5.34(typescript@5.9.3))
       '@v-c/progress': 1.0.0(vue@3.5.34(typescript@5.9.3))
       '@v-c/qrcode': 1.0.0(vue@3.5.34(typescript@5.9.3))
       '@v-c/rate': 1.0.1(vue@3.5.34(typescript@5.9.3))
@@ -9935,7 +9939,7 @@ snapshots:
       '@v-c/util': 1.0.19(vue@3.5.34(typescript@5.9.3))
       '@v-c/virtual-list': 1.0.7(vue@3.5.34(typescript@5.9.3))
       '@vueuse/core': 14.3.0(vue@3.5.34(typescript@5.9.3))
-      dayjs: 1.11.20
+      dayjs: 1.11.23
       es-toolkit: 1.45.1
       scroll-into-view-if-needed: 3.1.0
       throttle-debounce: 5.0.2
@@ -10461,6 +10465,8 @@ snapshots:
 
   dayjs@1.11.20: {}
 
+  dayjs@1.11.23: {}
+
   debug@4.4.3:
     dependencies:
       ms: 2.1.3
@@ -10561,7 +10567,7 @@ snapshots:
       '@types/lodash-es': 4.17.12
       '@vueuse/core': 12.0.0(typescript@5.9.3)
       async-validator: 4.2.5
-      dayjs: 1.11.20
+      dayjs: 1.11.23
       lodash: 4.18.1
       lodash-es: 4.18.1
       lodash-unified: 1.0.3(@types/lodash-es@4.17.12)(lodash-es@4.18.1)(lodash@4.18.1)
@@ -10582,7 +10588,7 @@ snapshots:
       '@types/lodash-es': 4.17.12
       '@vueuse/core': 14.3.0(vue@3.5.34(typescript@5.9.3))
       async-validator: 4.2.5
-      dayjs: 1.11.20
+      dayjs: 1.11.23
       lodash: 4.18.1
       lodash-es: 4.18.1
       lodash-unified: 1.0.3(@types/lodash-es@4.17.12)(lodash-es@4.18.1)(lodash@4.18.1)
@@ -13112,7 +13118,7 @@ snapshots:
       '@types/sortablejs': 1.15.9
       '@types/tinycolor2': 1.4.6
       '@types/validator': 13.15.10
-      dayjs: 1.11.20
+      dayjs: 1.11.23
       lodash-es: 4.18.1
       mitt: 3.0.1
       sortablejs: 1.15.7

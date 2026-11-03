@@ -4,10 +4,19 @@ import mergeProps from '@form-create/utils/lib/mergeprops';
 import {arrayAttrs, normalAttrs} from './attrs';
 import {logError} from '@form-create/utils/lib/console';
 import {isVNode} from 'vue';
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+import isoWeek from 'dayjs/plugin/isoWeek';
+import quarterOfYear from 'dayjs/plugin/quarterOfYear';
+
+dayjs.extend(customParseFormat);
+dayjs.extend(isoWeek);
+dayjs.extend(quarterOfYear);
 import {upper} from '@form-create/utils/lib/toline';
 import toCase from '@form-create/utils/lib/tocase';
 
 export {parseJson, parseFn, toJson} from '@form-create/utils/lib/json';
+export {dayjs};
 
 export function enumerable(value, writable) {
     return {
@@ -179,6 +188,179 @@ const changeType = (a, b) => {
     return b;
 }
 
+function toTimestamp(value) {
+    if (is.Number(value)) {
+        if (!Number.isFinite(value) || value < 1e9) {
+            return NaN;
+        }
+        return value >= 1e11 ? value : value * 1000;
+    }
+    if (!is.String(value)) {
+        return NaN;
+    }
+    const text = value.trim();
+    if (/^\d{11,}$/.test(text)) {
+        return Number(text);
+    }
+    if (/^\d{10}$/.test(text)) {
+        return Number(text) * 1000;
+    }
+    return NaN;
+}
+
+function parseTime(value) {
+    let current;
+    if (is.Date(value)) {
+        current = dayjs(value);
+    } else {
+        const timestamp = toTimestamp(value);
+        if (!Number.isNaN(timestamp)) {
+            current = dayjs(timestamp);
+        } else if (is.String(value)) {
+            current = dayjs(value.trim().replace('T', ' '), ['YYYY-MM-DD HH:mm:ss', 'YYYY-MM-DD'], true);
+        }
+    }
+    return current && current.isValid() ? current : null;
+}
+
+function readOffset(value) {
+    if (typeof value !== 'number' || !Number.isInteger(value) || value < 0) {
+        return NaN;
+    }
+    return value;
+}
+
+function span(start, end) {
+    return [start.valueOf(), end.valueOf()];
+}
+
+function everyValue(value, check) {
+    if (Array.isArray(value)) {
+        return value.length > 0 && value.every(item => check(item));
+    }
+    return check(value);
+}
+
+function compareOffset(value, offset, unit, sign) {
+    const count = readOffset(offset);
+    if (Number.isNaN(count)) {
+        return false;
+    }
+    const target = dayjs().add(sign * count, unit).valueOf();
+    return everyValue(value, (item) => {
+        const current = parseTime(item);
+        if (!current) {
+            return false;
+        }
+        const time = current.valueOf();
+        return sign < 0 ? time < target : time > target;
+    });
+}
+
+function compareDate(value, target, sign) {
+    const right = parseTime(target);
+    if (!right) {
+        return false;
+    }
+    const time = right.valueOf();
+    return everyValue(value, (item) => {
+        const left = parseTime(item);
+        if (!left) {
+            return false;
+        }
+        return sign < 0 ? left.valueOf() < time : left.valueOf() > time;
+    });
+}
+
+const periodRange = {
+    recent7Day(now) {
+        return span(now.startOf('day').subtract(6, 'day'), now.endOf('day'));
+    },
+    recent30Day(now) {
+        return span(now.startOf('day').subtract(29, 'day'), now.endOf('day'));
+    },
+    coming7Day(now) {
+        return span(now.startOf('day'), now.add(6, 'day').endOf('day'));
+    },
+    coming30Day(now) {
+        return span(now.startOf('day'), now.add(29, 'day').endOf('day'));
+    },
+    thisWeek(now) {
+        return span(now.startOf('isoWeek'), now.endOf('isoWeek'));
+    },
+    lastWeek(now) {
+        const start = now.startOf('isoWeek').subtract(1, 'week');
+        return span(start, start.endOf('isoWeek'));
+    },
+    nextWeek(now) {
+        const start = now.startOf('isoWeek').add(1, 'week');
+        return span(start, start.endOf('isoWeek'));
+    },
+    thisMonth(now) {
+        return span(now.startOf('month'), now.endOf('month'));
+    },
+    lastMonth(now) {
+        const start = now.startOf('month').subtract(1, 'month');
+        return span(start, start.endOf('month'));
+    },
+    nextMonth(now) {
+        const start = now.startOf('month').add(1, 'month');
+        return span(start, start.endOf('month'));
+    },
+    recentMonth(now) {
+        return span(now.subtract(1, 'month').startOf('day'), now.endOf('day'));
+    },
+    comingMonth(now) {
+        return span(now.startOf('day'), now.add(1, 'month').endOf('day'));
+    },
+    recent3Month(now) {
+        return span(now.subtract(3, 'month').startOf('day'), now.endOf('day'));
+    },
+    recent6Month(now) {
+        return span(now.subtract(6, 'month').startOf('day'), now.endOf('day'));
+    },
+    thisQuarter(now) {
+        return span(now.startOf('quarter'), now.endOf('quarter'));
+    },
+    lastQuarter(now) {
+        const start = now.startOf('quarter').subtract(1, 'quarter');
+        return span(start, start.endOf('quarter'));
+    },
+    nextQuarter(now) {
+        const start = now.startOf('quarter').add(1, 'quarter');
+        return span(start, start.endOf('quarter'));
+    },
+    thisYear(now) {
+        return span(now.startOf('year'), now.endOf('year'));
+    },
+    lastYear(now) {
+        const start = now.startOf('year').subtract(1, 'year');
+        return span(start, start.endOf('year'));
+    },
+    nextYear(now) {
+        const start = now.startOf('year').add(1, 'year');
+        return span(start, start.endOf('year'));
+    },
+    recentYear(now) {
+        return span(now.subtract(1, 'year').startOf('day'), now.endOf('day'));
+    },
+    comingYear(now) {
+        return span(now.startOf('day'), now.add(1, 'year').endOf('day'));
+    },
+};
+
+function inPeriod(value, name) {
+    const build = is.String(name) ? periodRange[name] : null;
+    if (!build) {
+        return false;
+    }
+    const [start, end] = build(dayjs());
+    return everyValue(value, (item) => {
+        const current = parseTime(item);
+        return !!current && current.valueOf() >= start && current.valueOf() <= end;
+    });
+}
+
 export const condition = {
     '==': (a, b) => {
         return JSON.stringify(a) === JSON.stringify(changeType(a, b));
@@ -224,6 +406,39 @@ export const condition = {
     },
     pattern(a, b) {
         return new RegExp(b, 'g').test(a);
+    },
+    beforeDay(a, b) {
+        return compareOffset(a, b, 'day', -1);
+    },
+    afterDay(a, b) {
+        return compareOffset(a, b, 'day', 1);
+    },
+    beforeWeek(a, b) {
+        return compareOffset(a, b, 'week', -1);
+    },
+    afterWeek(a, b) {
+        return compareOffset(a, b, 'week', 1);
+    },
+    beforeMonth(a, b) {
+        return compareOffset(a, b, 'month', -1);
+    },
+    afterMonth(a, b) {
+        return compareOffset(a, b, 'month', 1);
+    },
+    beforeYear(a, b) {
+        return compareOffset(a, b, 'year', -1);
+    },
+    afterYear(a, b) {
+        return compareOffset(a, b, 'year', 1);
+    },
+    beforeDate(a, b) {
+        return compareDate(a, b, -1);
+    },
+    afterDate(a, b) {
+        return compareDate(a, b, 1);
+    },
+    period(a, b) {
+        return inPeriod(a, b);
     }
 };
 

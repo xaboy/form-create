@@ -41,12 +41,11 @@ export default defineConfig({
             }
         },
         rollupOptions: {
-            external: ['vue', 'Vue', 'vant', 'dayjs'],
+            external: ['vue', 'Vue', 'vant'],
             output: {
                 globals: {
                     vue: 'Vue',
-                    vant: 'vant',
-                    dayjs: 'dayjs'
+                    vant: 'vant'
                 }
             }
         }
