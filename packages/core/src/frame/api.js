@@ -253,6 +253,20 @@ export default function Api(h) {
             });
             h.refresh();
         },
+        required(required, fields) {
+            const flag = !!required;
+            tidyFields(fields).forEach((field) => {
+                h.getCtxs(field).forEach(ctx => {
+                    const value = hasProperty(ctx.rule, '$required') ? ctx.rule.$required : (ctx.rule.effect && ctx.rule.effect.required);
+                    if (is.Object(value)) {
+                        $set(value, 'required', flag);
+                    } else {
+                        api.setEffect(ctx.id, 'required', flag);
+                    }
+                });
+            });
+            h.refresh();
+        },
         all(origin) {
             return Object.keys(h.ctxs).map(k => {
                 const ctx = h.ctxs[k];
