@@ -1,0 +1,10 @@
+.el-tree[aria-disabled="true"] {
+    pointer-events: none;
+}
+
+.el-tree[aria-disabled="true"] .el-checkbox,
+.el-tree[aria-disabled="true"] .el-checkbox__input,
+.el-tree[aria-disabled="true"] .el-checkbox__inner {
+    pointer-events: auto;
+    cursor: not-allowed;
+}

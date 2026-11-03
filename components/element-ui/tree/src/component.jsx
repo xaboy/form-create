@@ -1,5 +1,6 @@
 import toArray from '@form-create/utils/lib/toarray';
 import getSlot from '@form-create/utils/lib/slot';
+import './style.css';
 
 const NAME = 'fcTree';
 
@@ -23,10 +24,11 @@ export default {
             type: String,
             default: 'checked'
         },
+        disabled: Boolean,
         value: {
             type: [Array, String, Number],
             default: () => ([])
-        }
+        },
     },
     watch: {
         value() {
@@ -38,6 +40,10 @@ export default {
             this.updateValue()
         },
         updateValue() {
+            if (this.disabled) {
+                this.setValue();
+                return;
+            }
             if (!this.$refs.tree) return;
             const type = this.type.toLocaleLowerCase();
             let value;
@@ -51,6 +57,7 @@ export default {
             this.$emit('input', value);
         },
         setValue() {
+            if (!this.$refs.tree) return;
             const type = this.type.toLocaleLowerCase();
 
             if (type === 'selected') {
@@ -58,10 +65,24 @@ export default {
             } else {
                 this.$refs.tree.setCheckedKeys(toArray(this.value));
             }
+        },
+        onClickCapture(e) {
+            if (!this.disabled) return;
+            if (e.target.closest && e.target.closest('.el-checkbox')) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
         }
     },
     render() {
-        return <ElTree {...this.formCreateInject.prop} ref="tree" on-check={() => this.updateValue()}
+        const data = {...this.formCreateInject.prop};
+        data.props = {...(data.props || {})};
+        delete data.props.disabled;
+        if (this.disabled) {
+            data.props.draggable = false;
+            data.attrs = {...(data.attrs || {}), 'aria-disabled': 'true'};
+        }
+        return <ElTree {...data} ref="tree" nativeOn={{'!click': this.onClickCapture}} on-check={() => this.updateValue()}
             on-node-click={() => this.updateValue()}>{getSlot(this.$slots)}</ElTree>;
     },
     mounted() {
