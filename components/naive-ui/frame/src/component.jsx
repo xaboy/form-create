@@ -1,6 +1,6 @@
 import toArray from '@form-create/utils/lib/toarray';
 import Mitt from '@form-create/utils/lib/mitt';
-import {defineComponent, resolveComponent, nextTick} from 'vue';
+import {defineComponent, resolveComponent} from 'vue';
 import './style.css';
 import IconFolder from './IconFolder.vue';
 import IconClose from './IconClose';
@@ -258,6 +258,9 @@ export default defineComponent({
         getSrc(src) {
             return !this.srcKey ? src : src[this.srcKey];
         },
+        onFrameLoad(e) {
+            this.frameLoad(e.target.contentWindow || {});
+        },
         frameLoad(iframe) {
             this.onLoad(iframe);
             try {
@@ -313,11 +316,6 @@ export default defineComponent({
             Node = this.makeFiles();
 
         const {width = '30%', height, src, title, modalTitle} = this.$props;
-        nextTick(() => {
-            if (this.$refs.frame) {
-                this.frameLoad(this.$refs.frame.contentWindow || {});
-            }
-        });
         return <div class={{'_fc-frame': true, '_fc-disabled': this.disabled}}>{Node}
             <nModal preset={'card'} mask={this.previewMask} title={modalTitle} show={this.previewVisible}
                 style="width: 600px;"
@@ -329,7 +327,7 @@ export default defineComponent({
                 onUpdate:show={() => (this.closeModal(true))} v-slots={
                     {action: () => this.makeFooter()}
                 }>
-                {(this.frameVisible || !this.reload) ? <iframe ref="frame" src={src} frameborder="0" style={{
+                {(this.frameVisible || !this.reload) ? <iframe ref="frame" src={src} frameborder="0" onLoad={this.onFrameLoad} style={{
                     height,
                     'border': '0 none',
                     'width': '100%'

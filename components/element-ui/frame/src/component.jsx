@@ -1,6 +1,6 @@
 import toArray from '@form-create/utils/lib/toarray';
 import Mitt from '@form-create/utils/lib/mitt';
-import {defineComponent, nextTick, resolveComponent} from 'vue';
+import {defineComponent, resolveComponent} from 'vue';
 import './style.css';
 import IconCircleClose from './IconCircleClose.vue';
 import IconDocument from './IconDocument.vue';
@@ -261,6 +261,9 @@ export default defineComponent({
         getSrc(src) {
             return !this.srcKey ? src : src[this.srcKey];
         },
+        onFrameLoad(e) {
+            this.frameLoad(e.target.contentWindow || {});
+        },
         frameLoad(iframe) {
             this.onLoad(iframe);
             try {
@@ -315,11 +318,6 @@ export default defineComponent({
         }
 
         const {width = '30%', height, src, title, modalTitle} = this.$props;
-        nextTick(() => {
-            if (this.$refs.frame) {
-                this.frameLoad(this.$refs.frame.contentWindow || {});
-            }
-        });
         return <div class={{'_fc-frame': true, '_fc-disabled': this.disabled}}>{node}
             <ElDialog appendToBody={true} modal={this.previewMask} title={modalTitle} modelValue={this.previewVisible}
                 onClose={this.handleCancel}>
@@ -329,7 +327,7 @@ export default defineComponent({
                 onClose={() => (this.closeModel(true))} v-slots={{
                     footer: () => this.makeFooter()
                 }}>
-                {(this.frameVisible || !this.reload) ? <iframe ref="frame" src={src} frameBorder="0" style={{
+                {(this.frameVisible || !this.reload) ? <iframe ref="frame" src={src} frameBorder="0" onLoad={this.onFrameLoad} style={{
                     height,
                     'border': '0 none',
                     'width': '100%'
