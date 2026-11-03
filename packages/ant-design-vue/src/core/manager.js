@@ -7,6 +7,18 @@ function isTooltip(info) {
     return info.type === 'tooltip';
 }
 
+function isInfoText(info) {
+    return info.render === 'text' || info.render === 'innerText';
+}
+
+function infoHtmlRule(value) {
+    const content = value == null ? '' : String(value);
+    return {
+        type: 'div',
+        domProps: {innerHTML: content},
+    };
+}
+
 function tidy(props, name) {
     if (!hasProperty(props, name)) return;
     if (is.String(props[name])) {
@@ -72,6 +84,7 @@ export default {
         const def = {
             info: {
                 type: 'popover',
+                render: 'html',
                 placement: 'topLeft',
                 icon: 'question-circle-o'
             },
@@ -163,18 +176,26 @@ export default {
             delete prop.props.info;
             delete prop.props.align;
             delete prop.props.native;
+            delete prop.props.render;
+            delete prop.props.type;
 
             const field = isTip ? 'title' : 'content';
-            if (infoProp.info && !hasProperty(prop.props, field)) {
-                prop.props[field] = ctx.refRule?.__$info?.value;
-            }
-            children[infoProp.align !== 'left' ? 'unshift' : 'push'](this.$r(mergeProps([infoProp, prop]), {
+            const infoValue = ctx.refRule?.__$info?.value;
+            const slots = {
                 [titleProp.slot || 'default']: () => this.$r({
                     type: 'icon',
                     props: {type: infoProp.icon === true ? 'question-circle-o' : infoProp.icon},
                     key: `${uni}i`
                 })
-            }))
+            };
+            if (infoProp.info && !hasProperty(prop.props, field)) {
+                if (isInfoText(infoProp)) {
+                    prop.props[field] = infoValue == null ? '' : String(infoValue);
+                } else {
+                    slots[field] = () => this.$r(infoHtmlRule(infoValue));
+                }
+            }
+            children[infoProp.align !== 'left' ? 'unshift' : 'push'](this.$r(mergeProps([infoProp, prop]), slots))
         }
 
         const _prop = mergeProps([titleProp, {

@@ -16,6 +16,8 @@ export interface OptionAttrs {
         icon?: string;
         align?: 'left' | 'right';
         info?: string;
+        /** html 使用 innerHTML，text 使用文本，默认 html */
+        render?: 'html' | 'text';
     }>;
     wrap?: Boolean | Partial<VNodeRule & {
         labelWidth?: number;

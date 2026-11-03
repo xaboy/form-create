@@ -27,5 +27,9 @@ export default function getConfig() {
             col: undefined,
             click: undefined,
         },
+        info: {
+            type: 'popup',
+            render: 'html',
+        },
     };
 }

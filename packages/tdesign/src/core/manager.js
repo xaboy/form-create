@@ -15,6 +15,18 @@ function isFalse(val) {
     return val === false;
 }
 
+function isInfoText(info) {
+    return info.render === 'text' || info.render === 'innerText';
+}
+
+function infoHtmlRule(value) {
+    const content = value == null ? '' : String(value);
+    return {
+        type: 'div',
+        domProps: {innerHTML: content},
+    };
+}
+
 function tidyBool(opt, name) {
     if (hasProperty(opt, name) && !is.Object(opt[name])) {
         opt[name] = {show: !!opt[name]};
@@ -66,6 +78,7 @@ export default {
         const def = {
             info: {
                 type: 'popup',
+                render: 'html',
                 placement: 'top-left',
                 showArrow: true,
                 icon: 'QuestionCircleOutlined',
@@ -181,10 +194,13 @@ export default {
             delete prop.props.info;
             delete prop.props.align;
             delete prop.props.native;
+            delete prop.props.render;
+            delete prop.props.type;
 
             const field = 'content';
             if (infoProp.info && !hasProperty(prop.props, field)) {
-                prop.props[field] = ctx.refRule?.__$info?.value;
+                const value = ctx.refRule?.__$info?.value;
+                prop.props[field] = isInfoText(infoProp) ? (value == null ? '' : String(value)) : () => this.$r(infoHtmlRule(value));
             }
 
             children[infoProp.align !== 'left' ? 'unshift' : 'push'](this.$r(mergeProps([infoProp, prop]), {

@@ -7,6 +7,7 @@ export const iviewConfig = {
 export function info() {
     return {
         type: 'poptip',
+        render: 'html',
         trigger: 'hover',
         placement: 'top-start',
         wordWrap: true,
@@ -43,6 +44,10 @@ export default function getConfig() {
             loading: false,
             show: false,
             click: undefined,
+        },
+        info: {
+            type: 'poptip',
+            render: 'html',
         },
     };
 }

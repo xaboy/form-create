@@ -8,6 +8,18 @@ function isTooltip(info) {
     return info.type === 'tooltip';
 }
 
+function isInfoText(info) {
+    return info.render === 'text' || info.render === 'innerText';
+}
+
+function infoHtmlRule(value) {
+    const content = value == null ? '' : String(value);
+    return {
+        type: 'div',
+        domProps: {innerHTML: content},
+    };
+}
+
 function tidy(props, name) {
     if (!hasProperty(props, name)) return;
     if (is.String(props[name])) {
@@ -77,6 +89,8 @@ export default {
     mergeProp(ctx) {
         const def = {
             info: {
+                type: 'popover',
+                render: 'html',
                 trigger: 'hover',
                 placement: 'top-start',
                 icon: 'el-icon-warning',
@@ -174,19 +188,29 @@ export default {
             delete prop.props.info;
             delete prop.props.align;
             delete prop.props.native;
+            delete prop.props.render;
+            delete prop.props.type;
 
             const field = 'content';
-            if (infoProp.info && !hasProperty(prop.props, field)) {
-                prop.props[field] = ctx.refRule?.__$info?.value;
-            }
-            children[infoProp.align !== 'left' ? 'unshift' : 'push'](this.$r(mergeProps([infoProp, prop]), [
+            const infoValue = ctx.refRule?.__$info?.value;
+            const nodes = [
                 this.$r({
                     type: 'i',
                     slot: isTip ? 'default' : 'reference',
                     class: infoProp.icon === true ? 'el-icon-warning' : infoProp.icon,
                     key: `${uni}i`
                 })
-            ]));
+            ];
+            if (infoProp.info && !hasProperty(prop.props, field)) {
+                if (isInfoText(infoProp)) {
+                    prop.props[field] = infoValue == null ? '' : String(infoValue);
+                } else {
+                    const content = infoHtmlRule(infoValue);
+                    if (isTip) content.slot = 'content';
+                    nodes.push(this.$r(content));
+                }
+            }
+            children[infoProp.align !== 'left' ? 'unshift' : 'push'](this.$r(mergeProps([infoProp, prop]), nodes));
         }
         const _prop = mergeProps([titleProp, {
             props: tidyRule(titleProp),

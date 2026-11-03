@@ -15,6 +15,19 @@ function isFalse(val) {
     return val === false;
 }
 
+function isInfoText(info) {
+    return info.render === 'text' || info.render === 'innerText';
+}
+
+function infoHtmlRule(value) {
+    const content = value == null ? '' : String(value);
+    return {
+        type: 'div',
+        slot: 'content',
+        domProps: {innerHTML: content},
+    };
+}
+
 function tidyBool(opt, name) {
     if (hasProperty(opt, name) && !is.Object(opt[name])) {
         opt[name] = {show: !!opt[name]};
@@ -166,19 +179,27 @@ export default {
             delete prop.props.info;
             delete prop.props.align;
             delete prop.props.native;
+            delete prop.props.render;
+            delete prop.props.type;
 
             const field = 'content';
-            if (infoProp.info && !hasProperty(prop.props, field)) {
-                prop.props[field] = ctx.refRule?.__$info?.value;
-            }
-            children[infoProp.align !== 'left' ? 'unshift' : 'push'](this.$r(mergeProps([infoProp, prop]), [
+            const infoValue = ctx.refRule?.__$info?.value;
+            const nodes = [
                 this.$r({
                     type: 'icon',
                     props: {type: infoProp.icon === true ? iviewConfig.infoIcon : infoProp.icon, size: 16},
                     style: 'margin-top: -1px',
                     key: `${uni}i`
                 })
-            ]));
+            ];
+            if (infoProp.info && !hasProperty(prop.props, field)) {
+                if (isInfoText(infoProp)) {
+                    prop.props[field] = infoValue == null ? '' : String(infoValue);
+                } else {
+                    nodes.push(this.$r(infoHtmlRule(infoValue)));
+                }
+            }
+            children[infoProp.align !== 'left' ? 'unshift' : 'push'](this.$r(mergeProps([infoProp, prop]), nodes));
         }
         const _prop = mergeProps([titleProp, {
             props: tidyRule(titleProp),
