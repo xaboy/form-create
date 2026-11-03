@@ -258,7 +258,7 @@ export interface Control<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs> {
     value?: any;
     handle?: (val: any, api: Api<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>) => boolean;
     method?: 'display' | 'disabled' | 'hidden' | 'required';
-    condition?: '==' | '!=' | '<>' | '>' | '>=' | '<' | '<=' | 'in' | 'notIn' | 'on' | 'notOn' | 'between' | 'notBetween' | 'empty' | 'notEmpty' | 'pattern';
+    condition?: '==' | '!=' | '<>' | '>' | '>=' | '<' | '<=' | 'in' | 'notIn' | 'on' | 'notOn' | 'between' | 'notBetween' | 'empty' | 'notEmpty' | 'pattern' | 'beforeDay' | 'afterDay' | 'beforeWeek' | 'afterWeek' | 'beforeMonth' | 'afterMonth' | 'beforeYear' | 'afterYear' | 'beforeDate' | 'afterDate' | 'period';
     rule: FormRule<OptionAttrs, CreatorAttrs, RuleAttrs, ApiAttrs>[] | string[];
 }
 

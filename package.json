@@ -53,5 +53,8 @@
         "commitizen": {
             "path": "./node_modules/cz-customizable"
         }
+    },
+    "dependencies": {
+        "dayjs": "^1.11.23"
     }
 }

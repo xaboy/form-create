@@ -2,11 +2,11 @@ import FormCreateFactory from './frame/index';
 import fragment from './components/fragment';
 import Creator, {creatorFactory} from './factory/creator';
 import Manager from './factory/manager';
-import {copyRule, copyRules, mergeRule, parseJson, toJson} from './frame/util';
+import {copyRule, copyRules, mergeRule, parseJson, toJson, dayjs} from './frame/util';
 
 export {
     creatorFactory, Creator, Manager,
-    parseJson, toJson, copyRule, copyRules, mergeRule, fragment
+    parseJson, toJson, copyRule, copyRules, mergeRule, fragment, dayjs
 };
 
 export default FormCreateFactory;
