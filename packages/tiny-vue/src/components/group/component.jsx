@@ -5,6 +5,26 @@ import extend from '@form-create/utils/lib/extend';
 import {toPromise} from '@form-create/utils';
 import './style.css';
 
+const DRAG_EDGE = 4;
+
+function hitGroupIndex(rects, x, y) {
+    let found = null;
+    let best = Infinity;
+    rects.forEach((rect, index) => {
+        if (x < rect.left || x > rect.right || y < rect.top || y > rect.bottom) {
+            return;
+        }
+        const dx = x - (rect.left + rect.right) / 2;
+        const dy = y - (rect.top + rect.bottom) / 2;
+        const dist = dx * dx + dy * dy;
+        if (dist < best) {
+            best = dist;
+            found = index;
+        }
+    });
+    return found;
+}
+
 const NAME = 'fcGroup';
 
 export default defineComponent({
@@ -70,6 +90,8 @@ export default defineComponent({
             cacheRule: {},
             cacheValue: {},
             sort: [],
+            dragFrom: null,
+            dragOverIndex: null,
             form: markRaw(this.formCreateInject.form.$form())
         }
     },
@@ -229,47 +251,122 @@ export default defineComponent({
             return <div class="_fc-group-btn _fc-group-plus-minus _fc-group-minus"
                 onClick={() => this.del(index, key)}></div>
         },
-        sortUpIcon(index) {
-            return <div class="_fc-group-btn _fc-group-arrow _fc-group-up"
-                onClick={() => this.changeSort(index, -1)}></div>
-        },
-        sortDownIcon(index) {
-            return <div class="_fc-group-btn _fc-group-arrow _fc-group-down"
-                onClick={() => this.changeSort(index, 1)}></div>
-        },
-        changeSort(index, sort) {
-            const a = this.sort[index];
-            this.sort[index] = this.sort[index + sort];
-            this.sort[index + sort] = a;
+        moveSort(from, to) {
+            if (from === to || from < 0 || to < 0 || from >= this.sort.length || to >= this.sort.length) {
+                return;
+            }
+            const next = this.sort.slice();
+            const [item] = next.splice(from, 1);
+            next.splice(to, 0, item);
+            this.sort = next;
             this.formCreateInject.subForm(this.sort.map(k => {
                 return this.cacheRule[k].$f;
             }));
             this.formData(0);
         },
-        sortIcon(index, total) {
-            const canMoveUp = index > 0;
-            const canMoveDown = index < total - 1;
-            const btn = [];
-
-            if (!canMoveUp && !canMoveDown) {
-                return btn;
+        dragStart(e, index) {
+            this.dragFrom = index;
+            this.dragOverIndex = null;
+            if (!e.dataTransfer) {
+                return;
             }
-            if (this.type === 'card' && canMoveUp && canMoveDown) {
-                btn.push(<div class="_fc-group-btn _fc-group-sort">
-                    <div class=" _fc-group-sort-up" onClick={() => this.changeSort(index, -1)}></div>
-                    <div class=" _fc-group-sort-down" onClick={() => this.changeSort(index, 1)}></div>
-                </div>);
-                return btn;
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/plain', String(index));
+            const container = e.currentTarget.closest('._fc-group-container');
+            if (container) {
+                const rect = container.getBoundingClientRect();
+                e.dataTransfer.setDragImage(container, e.clientX - rect.left, e.clientY - rect.top);
             }
-
-            if (canMoveUp) {
-                btn.push(this.sortUpIcon(index));
+        },
+        dragEnd() {
+            this.dragFrom = null;
+            this.dragOverIndex = null;
+        },
+        itemBounds(el) {
+            const rect = el.getBoundingClientRect();
+            let top = rect.top;
+            let right = rect.right;
+            let bottom = rect.bottom;
+            let left = rect.left;
+            el.querySelectorAll(':scope > ._fc-group-handle, :scope > ._fc-group-idx').forEach(node => {
+                const bound = node.getBoundingClientRect();
+                top = Math.min(top, bound.top);
+                right = Math.max(right, bound.right);
+                bottom = Math.max(bottom, bound.bottom);
+                left = Math.min(left, bound.left);
+            });
+            return {
+                top: top - DRAG_EDGE,
+                right: right + DRAG_EDGE,
+                bottom: bottom + DRAG_EDGE,
+                left: left - DRAG_EDGE,
+            };
+        },
+        locateDrag(e) {
+            const items = e.currentTarget.querySelectorAll(':scope > ._fc-group-container');
+            return hitGroupIndex(Array.from(items, item => this.itemBounds(item)), e.clientX, e.clientY);
+        },
+        groupDragOver(e) {
+            if (this.dragFrom == null || this.disabled) {
+                return;
             }
-
-            if (canMoveDown) {
-                btn.push(this.sortDownIcon(index));
+            const index = this.locateDrag(e);
+            if (this.dragOverIndex !== index) {
+                this.dragOverIndex = index;
             }
-            return btn;
+            e.preventDefault();
+            if (e.dataTransfer) {
+                e.dataTransfer.dropEffect = index == null || index === this.dragFrom ? 'none' : 'move';
+            }
+        },
+        groupDragLeave(e) {
+            if (this.dragFrom == null) {
+                return;
+            }
+            const next = e.relatedTarget;
+            if (next && e.currentTarget.contains(next)) {
+                return;
+            }
+            const rect = e.currentTarget.getBoundingClientRect();
+            if (e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom) {
+                return;
+            }
+            this.dragOverIndex = null;
+        },
+        groupDrop(e) {
+            if (this.dragFrom == null) {
+                return;
+            }
+            e.preventDefault();
+            const from = this.dragFrom;
+            const to = this.locateDrag(e);
+            this.dragFrom = null;
+            this.dragOverIndex = null;
+            if (to == null || from === to) {
+                return;
+            }
+            this.moveSort(from, to);
+        },
+        canDrag(total) {
+            return this.sortBtn && !this.disabled && total > 1;
+        },
+        indexIcon(index, total) {
+            const sortable = this.canDrag(total);
+            return <div class={{'_fc-group-idx': true, '_fc-group-drag': sortable}} draggable={sortable}
+                role={sortable ? 'button' : undefined} aria-label={sortable ? '拖动排序' : undefined}
+                title={sortable ? '拖动排序' : undefined}
+                onDragstart={sortable ? (e) => this.dragStart(e, index) : undefined}
+                onDragend={sortable ? this.dragEnd : undefined}>
+                {sortable ? <span class="_fc-group-grip" lang="en">⋮⋮</span> : null}
+                <span>{index + 1}</span>
+            </div>;
+        },
+        dragHandle(index, total) {
+            if (!this.canDrag(total)) {
+                return null;
+            }
+            return <div class="_fc-group-drag-btn" lang="en" draggable={true} role="button" aria-label="拖动排序" title="拖动排序"
+                onDragstart={(e) => this.dragStart(e, index)} onDragend={this.dragEnd}>⋮⋮</div>;
         },
         makeIcon(total, index, key) {
             if (this.$slots.button) {
@@ -288,12 +385,6 @@ export default defineComponent({
             }
             if (total > this.min) {
                 btn.push(this.delIcon(index, key));
-            }
-            if (this.sortBtn) {
-                const sortBtn = this.sortIcon(index, total);
-                if (sortBtn) {
-                    btn.push(...sortBtn);
-                }
             }
             return btn;
         },
@@ -340,9 +431,13 @@ export default defineComponent({
                 const title = this.getTitle(index, key);
 
                 if (isCardType) {
-                    return <div class="_fc-group-container" key={key}>
+                    return <div class={{
+                        '_fc-group-container': true,
+                        '_fc-group-dragging': this.dragFrom === index,
+                        '_fc-group-drag-over': this.dragOverIndex === index && this.dragFrom !== index
+                    }} key={key}>
                         <div class="_fc-group-header">
-                            {title === false ? <div class="_fc-group-idx">{index + 1}</div> : null}
+                            {title === false ? this.indexIcon(index, keys.length) : this.dragHandle(index, keys.length)}
                             {title !== false ? <div class="_fc-group-title">{title}</div> : null}
                             <div class="_fc-group-handle fc-clock">
                                 {(btn.length) ? btn : null}
@@ -366,7 +461,11 @@ export default defineComponent({
                         </div>
                     </div>
                 } else {
-                    return <div class="_fc-group-container" key={key}>
+                    return <div class={{
+                        '_fc-group-container': true,
+                        '_fc-group-dragging': this.dragFrom === index,
+                        '_fc-group-drag-over': this.dragOverIndex === index && this.dragFrom !== index
+                    }} key={key}>
                         <Type
                             key={key}
                             {...{
@@ -381,12 +480,13 @@ export default defineComponent({
                                 extendOption: true
                             }}
                         />
-                        <div class="_fc-group-idx">{index + 1}</div>
+                        {this.indexIcon(index, keys.length)}
                         {(btn.length) ? <div class="_fc-group-handle fc-clock">{btn}</div> : null}
                     </div>
                 }
             });
         return <div key={'con'}
-            class={'_fc-group ' + (disabled ? '_fc-group-disabled' : '') + (isCardType ? ' _fc-group-card' : '')}>{children}</div>
+            class={'_fc-group ' + (disabled ? '_fc-group-disabled' : '') + (isCardType ? ' _fc-group-card' : '')}
+            onDragenter={this.groupDragOver} onDragover={this.groupDragOver} onDragleave={this.groupDragLeave} onDrop={this.groupDrop}>{children}</div>
     }
 });

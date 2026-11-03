@@ -26,6 +26,31 @@
     cursor: pointer;
 }
 
+._fc-group-idx._fc-group-drag {
+    cursor: grab;
+    width: auto;
+    min-width: 30px;
+    padding: 0 8px;
+    gap: 4px;
+    user-select: none;
+}
+
+._fc-group-idx._fc-group-drag:active {
+    cursor: grabbing;
+}
+
+._fc-group-grip {
+    flex-shrink: 0;
+    color: #666;
+    font-weight: 500;
+    line-height: 1;
+    font-size: 14px;
+}
+
+._fc-group-dragging {
+    opacity: 0.55;
+}
+
 ._fc-group-idx {
     position: absolute;
     bottom: -15px;
@@ -37,7 +62,7 @@
     justify-content: center;
     background: #eee;
     border-radius: 15px;
-    font-weight: 700;
+    font-weight: 500;
 }
 
 ._fc-group-handle ._fc-group-btn + ._fc-group-btn {
@@ -52,30 +77,6 @@
     border-radius: 5px;
     margin: 5px 5px 25px;
     padding: 20px 20px 25px;
-}
-
-._fc-group-arrow {
-    position: relative;
-    width: 20px;
-    height: 20px;
-}
-
-._fc-group-arrow::before {
-    content: "";
-    position: absolute;
-    top: 8px;
-    left: 5px;
-    width: 9px;
-    height: 9px;
-    border-left: 2px solid #999;
-    border-top: 2px solid #999;
-}
-._fc-group-arrow::before {
-    transform: rotate(45deg);
-}
-
-._fc-group-arrow._fc-group-down {
-    transform: rotate(180deg);
 }
 
 ._fc-group-plus-minus {
@@ -204,6 +205,31 @@
     flex-direction: row;
 }
 
+._fc-group._fc-group-card ._fc-group-idx._fc-group-drag {
+    width: auto;
+    min-width: 24px;
+    height: 24px;
+    padding: 0 6px;
+    gap: 3px;
+    cursor: grab;
+}
+
+._fc-group._fc-group-card ._fc-group-drag-btn {
+    cursor: grab;
+    margin-right: 8px;
+    flex-shrink: 0;
+    color: rgba(0, 0, 0, 0.45);
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: -1px;
+    user-select: none;
+}
+
+._fc-group._fc-group-card ._fc-group-drag-btn:active {
+    cursor: grabbing;
+}
+
 /* 按钮基础样式 */
 ._fc-group._fc-group-card ._fc-group-btn {
     cursor: pointer;
@@ -230,83 +256,6 @@
     border-color: #096dd9;
 }
 
-/* 箭头按钮 */
-._fc-group._fc-group-card ._fc-group-arrow {
-    position: relative;
-}
-
-._fc-group._fc-group-card ._fc-group-arrow::before {
-    content: "";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 5px;
-    height: 5px;
-    border-left: 1px solid currentColor;
-    border-top: 1px solid currentColor;
-    transform: translate(-50%, -50%) rotate(45deg);
-}
-
-._fc-group._fc-group-card ._fc-group-arrow._fc-group-down {
-    transform: rotate(180deg);
-}
-
-/* 合并的上下箭头按钮 */
-._fc-group._fc-group-card ._fc-group-sort {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 24px;
-}
-
-._fc-group._fc-group-card ._fc-group-sort::before,
-._fc-group._fc-group-card ._fc-group-sort::after {
-    content: "";
-    position: absolute;
-    left: 50%;
-    width: 4px;
-    height: 4px;
-    border-left: 1px solid currentColor;
-    border-top: 1px solid currentColor;
-    transform: translateX(-50%);
-}
-
-._fc-group._fc-group-card ._fc-group-sort::before {
-    top: 6px;
-    transform: translateX(-50%) rotate(45deg);
-}
-
-._fc-group._fc-group-card ._fc-group-sort::after {
-    bottom: 6px;
-    transform: translateX(-50%) rotate(225deg);
-}
-
-/* 合并按钮的上下点击区域 */
-._fc-group._fc-group-card ._fc-group-sort-up,
-._fc-group._fc-group-card ._fc-group-sort-down {
-    position: absolute;
-    left: 0;
-    right: 0;
-    height: 12px;
-    cursor: pointer;
-    z-index: 1;
-}
-
-._fc-group._fc-group-card ._fc-group-sort-up {
-    top: 0;
-}
-
-._fc-group._fc-group-card ._fc-group-sort-down {
-    bottom: 0;
-}
-
-._fc-group._fc-group-card ._fc-group-sort-up:hover,
-._fc-group._fc-group-card ._fc-group-sort-down:hover {
-    background: rgba(24, 144, 255, 0.1);
-}
-
 /* 加减按钮 */
 ._fc-group._fc-group-card ._fc-group-plus-minus {
     position: relative;
@@ -329,8 +278,6 @@
     position: absolute;
     top: 50%;
     left: 50%;
-    width: 8px;
-    height: 1px;
     background-color: currentColor;
     transform: translate(-50%, -50%);
 }
@@ -399,14 +346,17 @@
     position: absolute;
     top: 50%;
     left: 50%;
-    width: 8px;
-    height: 1px;
     background-color: currentColor;
     transform: translate(-50%, -50%);
 }
 
 ._fc-group._fc-group-card ._fc-group-add._fc-group-plus-minus::before {
     transform: translate(-50%, -50%) rotate(90deg);
+}
+
+._fc-group-container._fc-group-drag-over,
+._fc-group._fc-group-card ._fc-group-container._fc-group-drag-over {
+    border-color: #409eff;
 }
 
 /* 空状态样式 */
